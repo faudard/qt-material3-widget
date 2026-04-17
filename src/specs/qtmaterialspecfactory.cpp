@@ -59,6 +59,22 @@ ButtonSpec SpecFactory::elevatedButtonSpec(const Theme& theme, Density density) 
     spec.elevationRole = ElevationRole::Level1;
     return spec;
 }
+FabSpec SpecFactory::fabSpec(const Theme& theme, Density) const
+{
+    FabSpec spec;
+    spec.containerColor = theme.colorScheme().color(ColorRole::PrimaryContainer);
+    spec.iconColor = theme.colorScheme().color(ColorRole::OnPrimaryContainer);
+    spec.disabledContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
+    spec.disabledIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.stateLayerColor = spec.iconColor;
+    return spec;
+}
+FabSpec SpecFactory::extendedFabSpec(const Theme& theme, Density density) const
+{
+    FabSpec spec = fabSpec(theme, density);
+    spec.touchTarget = QSize(80, 56);
+    return spec;
+}
 IconButtonSpec SpecFactory::iconButtonSpec(const Theme& theme, Density) const
 {
     IconButtonSpec spec;
@@ -114,6 +130,54 @@ DialogSpec SpecFactory::dialogSpec(const Theme& theme) const
     spec.scrimColor = theme.colorScheme().color(ColorRole::Scrim);
     return spec;
 }
+NavigationDrawerSpec SpecFactory::navigationDrawerSpec(const Theme& theme) const
+{
+    NavigationDrawerSpec spec;
+    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
+    spec.contentColor = theme.colorScheme().color(ColorRole::OnSurface);
+    spec.scrimColor = theme.colorScheme().color(ColorRole::Scrim);
+    return spec;
+}
+BottomSheetSpec SpecFactory::bottomSheetSpec(const Theme& theme) const
+{
+    BottomSheetSpec spec;
+    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
+    spec.contentColor = theme.colorScheme().color(ColorRole::OnSurface);
+    spec.scrimColor = theme.colorScheme().color(ColorRole::Scrim);
+    return spec;
+}
+BannerSpec SpecFactory::bannerSpec(const Theme& theme) const
+{
+    BannerSpec spec;
+    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
+    spec.headlineColor = theme.colorScheme().color(ColorRole::OnSurface);
+    spec.supportingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.actionColor = theme.colorScheme().color(ColorRole::Primary);
+    return spec;
+}
+CardSpec SpecFactory::cardSpec(const Theme& theme) const
+{
+    CardSpec spec;
+    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
+    spec.outlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
+    spec.contentColor = theme.colorScheme().color(ColorRole::OnSurface);
+    return spec;
+}
+AppBarSpec SpecFactory::topAppBarSpec(const Theme& theme) const
+{
+    AppBarSpec spec;
+    spec.containerColor = theme.colorScheme().color(ColorRole::Surface);
+    spec.titleColor = theme.colorScheme().color(ColorRole::OnSurface);
+    spec.navigationIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.actionIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    return spec;
+}
+AppBarSpec SpecFactory::bottomAppBarSpec(const Theme& theme) const
+{
+    AppBarSpec spec = topAppBarSpec(theme);
+    spec.elevationRole = ElevationRole::Level2;
+    return spec;
+}
 TextFieldSpec SpecFactory::outlinedTextFieldSpec(const Theme& theme, Density) const
 {
     TextFieldSpec spec;
@@ -133,6 +197,40 @@ TextFieldSpec SpecFactory::filledTextFieldSpec(const Theme& theme, Density densi
 {
     TextFieldSpec spec = outlinedTextFieldSpec(theme, density);
     spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHighest);
+    return spec;
+}
+AutocompletePopupSpec SpecFactory::autocompletePopupSpec(const Theme& theme) const
+{
+    AutocompletePopupSpec spec;
+    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
+    spec.textColor = theme.colorScheme().color(ColorRole::OnSurface);
+    spec.selectedContainerColor = theme.colorScheme().color(ColorRole::SecondaryContainer);
+    spec.selectedTextColor = theme.colorScheme().color(ColorRole::OnSecondaryContainer);
+    return spec;
+}
+DateFieldSpec SpecFactory::dateFieldSpec(const Theme& theme) const
+{
+    DateFieldSpec spec;
+    spec.leadingIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.trailingIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.placeholderColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    return spec;
+}
+ListItemSpec SpecFactory::listItemSpec(const Theme& theme) const
+{
+    ListItemSpec spec;
+    spec.containerColor = Qt::transparent;
+    spec.headlineColor = theme.colorScheme().color(ColorRole::OnSurface);
+    spec.supportingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.leadingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.trailingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnSurface);
+    return spec;
+}
+DividerSpec SpecFactory::dividerSpec(const Theme& theme) const
+{
+    DividerSpec spec;
+    spec.color = theme.colorScheme().color(ColorRole::OutlineVariant);
     return spec;
 }
 } // namespace QtMaterial

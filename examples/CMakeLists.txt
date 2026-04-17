@@ -34,6 +34,8 @@ qtmaterial3_add_example_executable(qtmaterial3_gallery
     gallery/pages/surfacespage.cpp
     gallery/pages/inputspage.cpp
     gallery/themecontrols/themetoolbar.cpp
+    gallery/pages/navigationpage.cpp
+    gallery/pages/datapage.cpp
 )
 target_include_directories(qtmaterial3_gallery PRIVATE gallery)
 target_link_libraries(qtmaterial3_gallery

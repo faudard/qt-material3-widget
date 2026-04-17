@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(qt-material3-widgets
-    VERSION 0.3.0
+    VERSION 0.4.0
     DESCRIPTION "Material 3 widgets for Qt Widgets"
     LANGUAGES CXX
 )
@@ -180,6 +180,16 @@ set(QTMATERIAL3_SPECS_SOURCES
     src/specs/qtmaterialswitchspec.cpp
     src/specs/qtmaterialdialogspec.cpp
     src/specs/qtmaterialtextfieldspec.cpp
+    src/specs/qtmaterialfabspec.cpp
+    src/specs/qtmaterialcardspec.cpp
+    src/specs/qtmaterialnavigationdrawerspec.cpp
+    src/specs/qtmaterialbottomsheetspec.cpp
+    src/specs/qtmaterialbannerspec.cpp
+    src/specs/qtmaterialappbarspec.cpp
+    src/specs/qtmateriallistitemspec.cpp
+    src/specs/qtmaterialdividerspec.cpp
+    src/specs/qtmaterialautocompletepopupspec.cpp
+    src/specs/qtmaterialdatefieldspec.cpp
 )
 
 set(QTMATERIAL3_SPECS_HEADERS
@@ -190,6 +200,16 @@ set(QTMATERIAL3_SPECS_HEADERS
     include/qtmaterial/specs/qtmaterialswitchspec.h
     include/qtmaterial/specs/qtmaterialdialogspec.h
     include/qtmaterial/specs/qtmaterialtextfieldspec.h
+    include/qtmaterial/specs/qtmaterialfabspec.h
+    include/qtmaterial/specs/qtmaterialcardspec.h
+    include/qtmaterial/specs/qtmaterialnavigationdrawerspec.h
+    include/qtmaterial/specs/qtmaterialbottomsheetspec.h
+    include/qtmaterial/specs/qtmaterialbannerspec.h
+    include/qtmaterial/specs/qtmaterialappbarspec.h
+    include/qtmaterial/specs/qtmateriallistitemspec.h
+    include/qtmaterial/specs/qtmaterialdividerspec.h
+    include/qtmaterial/specs/qtmaterialautocompletepopupspec.h
+    include/qtmaterial/specs/qtmaterialdatefieldspec.h
     include/qtmaterial/specs/qtmaterialspecfactory.h
 )
 
@@ -270,20 +290,56 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     src/widgets/buttons/qtmaterialtextbutton.cpp
     src/widgets/buttons/qtmaterialfilledbutton.cpp
     src/widgets/buttons/qtmaterialiconbutton.cpp
+    src/widgets/buttons/qtmaterialfilledtonalbutton.cpp
+    src/widgets/buttons/qtmaterialoutlinedbutton.cpp
+    src/widgets/buttons/qtmaterialelevatedbutton.cpp
+    src/widgets/buttons/qtmaterialfab.cpp
+    src/widgets/buttons/qtmaterialextendedfab.cpp
     src/widgets/selection/qtmaterialcheckbox.cpp
     src/widgets/selection/qtmaterialswitch.cpp
+    src/widgets/selection/qtmaterialradiobutton.cpp
     src/widgets/surfaces/qtmaterialdialog.cpp
+    src/widgets/surfaces/qtmaterialnavigationdrawer.cpp
+    src/widgets/surfaces/qtmaterialbottomsheet.cpp
+    src/widgets/surfaces/qtmaterialbanner.cpp
+    src/widgets/surfaces/qtmaterialcard.cpp
+    src/widgets/surfaces/qtmaterialtopappbar.cpp
+    src/widgets/surfaces/qtmaterialbottomappbar.cpp
     src/widgets/inputs/qtmaterialoutlinedtextfield.cpp
+    src/widgets/inputs/qtmaterialfilledtextfield.cpp
+    src/widgets/inputs/qtmaterialautocompletepopup.cpp
+    src/widgets/inputs/qtmaterialdatefield.cpp
+    src/widgets/data/qtmateriallistitem.cpp
+    src/widgets/data/qtmateriallist.cpp
+    src/widgets/data/qtmaterialdivider.cpp
 )
 
 set(QTMATERIAL3_WIDGETS_HEADERS
     include/qtmaterial/widgets/buttons/qtmaterialtextbutton.h
     include/qtmaterial/widgets/buttons/qtmaterialfilledbutton.h
     include/qtmaterial/widgets/buttons/qtmaterialiconbutton.h
+    include/qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h
+    include/qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h
+    include/qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h
+    include/qtmaterial/widgets/buttons/qtmaterialfab.h
+    include/qtmaterial/widgets/buttons/qtmaterialextendedfab.h
     include/qtmaterial/widgets/selection/qtmaterialcheckbox.h
     include/qtmaterial/widgets/selection/qtmaterialswitch.h
+    include/qtmaterial/widgets/selection/qtmaterialradiobutton.h
     include/qtmaterial/widgets/surfaces/qtmaterialdialog.h
+    include/qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h
+    include/qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h
+    include/qtmaterial/widgets/surfaces/qtmaterialbanner.h
+    include/qtmaterial/widgets/surfaces/qtmaterialcard.h
+    include/qtmaterial/widgets/surfaces/qtmaterialtopappbar.h
+    include/qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h
     include/qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h
+    include/qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h
+    include/qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h
+    include/qtmaterial/widgets/inputs/qtmaterialdatefield.h
+    include/qtmaterial/widgets/data/qtmateriallistitem.h
+    include/qtmaterial/widgets/data/qtmateriallist.h
+    include/qtmaterial/widgets/data/qtmaterialdivider.h
 )
 
 qtm3_add_library(qtmaterial3_widgets SHARED

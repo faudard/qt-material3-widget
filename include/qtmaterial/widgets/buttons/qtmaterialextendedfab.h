@@ -1,0 +1,12 @@
+#pragma once
+#include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
+namespace QtMaterial {
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialExtendedFab : public QtMaterialFilledButton
+{
+    Q_OBJECT
+public:
+    explicit QtMaterialExtendedFab(QWidget* parent = nullptr);
+    ~QtMaterialExtendedFab() override;
+    QSize sizeHint() const override;
+};
+} // namespace QtMaterial

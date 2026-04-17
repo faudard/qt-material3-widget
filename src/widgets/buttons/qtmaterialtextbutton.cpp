@@ -28,10 +28,7 @@ QSize QtMaterialTextButton::sizeHint() const
 }
 void QtMaterialTextButton::mousePressEvent(QMouseEvent* event)
 {
-    if (m_ripple)
-    {
-        m_ripple->addRipple(QtMaterial::mousePosition(event));
-    }
+    if (m_ripple) m_ripple->addRipple(QtMaterial::mousePosition(event));
     QtMaterialAbstractButton::mousePressEvent(event);
 }
 void QtMaterialTextButton::paintEvent(QPaintEvent*)
