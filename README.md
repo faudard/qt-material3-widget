@@ -1,20 +1,32 @@
 # qt-material3-widgets
 
-rework change architecture of : 
-https://github.com/laserpants/qt-material-widgets
+Material 3 widget toolkit for Qt Widgets.
 
-it will be inspired also by the work on telegram. 
+## Layered modules
 
-It will be shared library.
+- `qtmaterial3_theme` — tokens, schemes, builder, manager
+- `qtmaterial3_legacy` — temporary migration bridge
+- `qtmaterial3_core` — widget bases and interaction state
+- `qtmaterial3_specs` — immutable component specs and factory
+- `qtmaterial3_effects` — ripple, focus, shadow, transitions, scrim
+- `qtmaterial3_widgets` — public widget implementations
 
-Phase 1 shared-library-first skeleton for a Qt Widgets Material 3 project.
+## Phase 5 focus
 
-Included:
-- qtmaterial3_theme shared library
-- qtmaterial3_legacy shared library
-- typed theme/token API
-- fallback theme builder
-- theme manager + observer
-- legacy alias bridge
-- test scaffolding
-- theme playground example
+- packaging and install/export
+- accessibility and keyboard correctness
+- performance and memory review
+- public API stabilization
+- documentation and release readiness
+
+
+## Phase 6 additions
+
+This scaffold extends the Phase 5 tree with:
+- advanced inputs (`DatePicker`, autocomplete maturity)
+- navigation (`NavigationRail`, `Menu`)
+- compact controls (`Chip`, `SegmentedButton`)
+- data widgets (`Table`, `GridList`, `Carousel`)
+- gallery, docs, benchmarks, and test scaffolding for the new families
+
+This remains a design skeleton. Several files are intentionally stubs so the repo structure stays clear before detailed implementation work begins.

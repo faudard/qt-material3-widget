@@ -14,7 +14,7 @@ ThemeToolbar::ThemeToolbar(QWidget* parent) : QWidget(parent)
     layout->addWidget(mode);
     layout->addWidget(seed);
     layout->addStretch(1);
-    QObject::connect(mode, qOverload<int>(&QComboBox::currentIndexChanged), this, [mode](int) {
+    QObject::connect(mode, &QComboBox::currentIndexChanged, this, [mode]() {
         auto options = QtMaterial::ThemeManager::instance().options();
         options.mode = mode->currentIndex() == 0 ? QtMaterial::ThemeMode::Light : QtMaterial::ThemeMode::Dark;
         QtMaterial::ThemeManager::instance().setThemeOptions(options);
