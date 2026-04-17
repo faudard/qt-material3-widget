@@ -8,8 +8,12 @@ struct QTMATERIAL3_SPECS_EXPORT TextFieldSpec {
     QColor activeIndicatorColor;
     QColor outlineColor;
     QColor focusedOutlineColor;
+    QColor disabledOutlineColor;
     QColor inputTextColor;
+    QColor disabledInputTextColor;
     QColor labelColor;
+    QColor focusedLabelColor;
+    QColor disabledLabelColor;
     QColor supportingTextColor;
     QColor cursorColor;
     QColor errorColor;
@@ -23,5 +27,11 @@ struct QTMATERIAL3_SPECS_EXPORT TextFieldSpec {
     int horizontalPadding = 16;
     int verticalPadding = 8;
     int supportingTopSpacing = 4;
+    int supportingHeight = 16;
+    int cornerRadius = 4;
+    int labelRestingTop = 18;
+    int labelFloatingTop = 8;
+    int editorTopPadding = 24;
+    int editorBottomPadding = 8;
 };
 } // namespace QtMaterial
