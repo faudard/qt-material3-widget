@@ -8,9 +8,11 @@ project(qt-material3-widgets
 
 include(GNUInstallDirs)
 include(CTest)
+include(CMakePackageConfigHelpers)
 
 option(QTMATERIAL3_BUILD_TESTS "Build tests" ${BUILD_TESTING})
 option(QTMATERIAL3_BUILD_EXAMPLES "Build examples" ON)
+option(QTMATERIAL3_BUILD_BENCHMARKS "Build benchmark executables" OFF)
 option(QTMATERIAL3_USE_MCU "Use Material Color Utilities backend" ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets)
@@ -371,6 +373,10 @@ set_target_properties(qtmaterial3_widgets PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
+set(QTMATERIAL3_CMAKE_INSTALL_DIR
+    ${CMAKE_INSTALL_LIBDIR}/cmake/QtMaterial3Widgets
+)
+
 install(
     TARGETS
         qtmaterial3_theme
@@ -394,7 +400,27 @@ install(
     EXPORT QtMaterial3WidgetsTargets
     FILE QtMaterial3WidgetsTargets.cmake
     NAMESPACE QtMaterial3::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/QtMaterial3Widgets
+    DESTINATION ${QTMATERIAL3_CMAKE_INSTALL_DIR}
+)
+
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/packaging/QtMaterial3WidgetsConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/QtMaterial3WidgetsConfig.cmake
+    INSTALL_DESTINATION ${QTMATERIAL3_CMAKE_INSTALL_DIR}
+)
+
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/QtMaterial3WidgetsConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+install(
+    FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/QtMaterial3WidgetsConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/QtMaterial3WidgetsConfigVersion.cmake
+        ${CMAKE_CURRENT_SOURCE_DIR}/packaging/QtMaterial3WidgetsMacros.cmake
+    DESTINATION ${QTMATERIAL3_CMAKE_INSTALL_DIR}
 )
 
 if(QTMATERIAL3_BUILD_TESTS)
@@ -403,4 +429,8 @@ endif()
 
 if(QTMATERIAL3_BUILD_EXAMPLES)
     add_subdirectory(examples)
+endif()
+
+if(QTMATERIAL3_BUILD_BENCHMARKS)
+    add_subdirectory(benchmarks)
 endif()
