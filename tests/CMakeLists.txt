@@ -1,37 +1,37 @@
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test Widgets)
 
-function(qtmaterial3_add_test_executable target source)
+function(qtm3_add_test target source)
     if(COMMAND qt_add_executable)
         qt_add_executable(${target} ${source})
     else()
         add_executable(${target} ${source})
     endif()
+
+    target_link_libraries(${target}
+        PRIVATE
+            Qt${QT_VERSION_MAJOR}::Test
+            ${ARGN}
+    )
+
+    add_test(NAME ${target} COMMAND ${target})
 endfunction()
 
-qtmaterial3_add_test_executable(tst_themebuilder theme/tst_themebuilder.cpp)
-target_link_libraries(tst_themebuilder PRIVATE Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme)
-add_test(NAME tst_themebuilder COMMAND tst_themebuilder)
+qtm3_add_test(tst_themebuilder theme/tst_themebuilder.cpp qtmaterial3_theme)
+qtm3_add_test(tst_thememanager theme/tst_thememanager.cpp qtmaterial3_theme)
+qtm3_add_test(tst_legacyaliasmap legacy/tst_legacyaliasmap.cpp qtmaterial3_theme qtmaterial3_legacy)
+qtm3_add_test(tst_interactionstate core/tst_interactionstate.cpp qtmaterial3_core)
+qtm3_add_test(tst_specfactory specs/tst_specfactory.cpp qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
 
-qtmaterial3_add_test_executable(tst_thememanager theme/tst_thememanager.cpp)
-target_link_libraries(tst_thememanager PRIVATE Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme)
-add_test(NAME tst_thememanager COMMAND tst_thememanager)
+qtm3_add_test(tst_statelayerpainter effects/tst_statelayerpainter.cpp qtmaterial3_effects)
+qtm3_add_test(tst_ripplecontroller effects/tst_ripplecontroller.cpp qtmaterial3_effects)
+qtm3_add_test(tst_focusindicator effects/tst_focusindicator.cpp qtmaterial3_effects)
+qtm3_add_test(tst_shadowrenderer effects/tst_shadowrenderer.cpp qtmaterial3_effects)
+qtm3_add_test(tst_transitioncontroller effects/tst_transitioncontroller.cpp qtmaterial3_effects)
 
-qtmaterial3_add_test_executable(tst_legacyaliasmap legacy/tst_legacyaliasmap.cpp)
-target_link_libraries(tst_legacyaliasmap PRIVATE Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme qtmaterial3_legacy)
-add_test(NAME tst_legacyaliasmap COMMAND tst_legacyaliasmap)
-
-qtmaterial3_add_test_executable(tst_shapes theme/tst_shapes.cpp)
-target_link_libraries(tst_shapes PRIVATE Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme)
-add_test(NAME tst_shapes COMMAND tst_shapes)
-
-qtmaterial3_add_test_executable(tst_statelayer theme/tst_statelayer.cpp)
-target_link_libraries(tst_statelayer PRIVATE Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme)
-add_test(NAME tst_statelayer COMMAND tst_statelayer)
-
-qtmaterial3_add_test_executable(tst_interactionstate core/tst_interactionstate.cpp)
-target_link_libraries(tst_interactionstate PRIVATE Qt${QT_VERSION_MAJOR}::Test qtmaterial3_core)
-add_test(NAME tst_interactionstate COMMAND tst_interactionstate)
-
-qtmaterial3_add_test_executable(tst_specfactory specs/tst_specfactory.cpp)
-target_link_libraries(tst_specfactory PRIVATE Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
-add_test(NAME tst_specfactory COMMAND tst_specfactory)
+qtm3_add_test(tst_textbutton widgets/buttons/tst_textbutton.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_filledbutton widgets/buttons/tst_filledbutton.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_iconbutton widgets/buttons/tst_iconbutton.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_checkbox widgets/selection/tst_checkbox.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_switch widgets/selection/tst_switch.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_dialog widgets/surfaces/tst_dialog.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_outlinedtextfield widgets/inputs/tst_outlinedtextfield.cpp qtmaterial3_widgets)

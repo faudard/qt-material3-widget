@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(qt-material3-widgets
-    VERSION 0.2.0
+    VERSION 0.3.0
     DESCRIPTION "Material 3 widgets for Qt Widgets"
     LANGUAGES CXX
 )
@@ -27,7 +27,7 @@ endif()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
-macro(qtmaterial3_add_library target)
+macro(qtm3_add_library target)
     if(COMMAND qt_add_library)
         qt_add_library(${target} ${ARGN})
     else()
@@ -66,7 +66,7 @@ set(QTMATERIAL3_THEME_HEADERS
     include/qtmaterial/theme/qtmaterialstatelayer.h
 )
 
-qtmaterial3_add_library(qtmaterial3_theme SHARED
+qtm3_add_library(qtmaterial3_theme SHARED
     ${QTMATERIAL3_THEME_SOURCES}
     ${QTMATERIAL3_THEME_HEADERS}
 )
@@ -99,7 +99,7 @@ set(QTMATERIAL3_LEGACY_HEADERS
     include/qtmaterial/theme/qtmateriallegacyaliasmap.h
 )
 
-qtmaterial3_add_library(qtmaterial3_legacy SHARED
+qtm3_add_library(qtmaterial3_legacy SHARED
     ${QTMATERIAL3_LEGACY_SOURCES}
     ${QTMATERIAL3_LEGACY_HEADERS}
 )
@@ -145,7 +145,7 @@ set(QTMATERIAL3_CORE_HEADERS
     include/qtmaterial/core/qtmaterialinputcontrol.h
 )
 
-qtmaterial3_add_library(qtmaterial3_core SHARED
+qtm3_add_library(qtmaterial3_core SHARED
     ${QTMATERIAL3_CORE_SOURCES}
     ${QTMATERIAL3_CORE_HEADERS}
 )
@@ -193,7 +193,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     include/qtmaterial/specs/qtmaterialspecfactory.h
 )
 
-qtmaterial3_add_library(qtmaterial3_specs SHARED
+qtm3_add_library(qtmaterial3_specs SHARED
     ${QTMATERIAL3_SPECS_SOURCES}
     ${QTMATERIAL3_SPECS_HEADERS}
 )
@@ -219,12 +219,110 @@ set_target_properties(qtmaterial3_specs PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
+set(QTMATERIAL3_EFFECTS_SOURCES
+    src/effects/qtmaterialripplecontroller.cpp
+    src/effects/qtmaterialstatelayerpainter.cpp
+    src/effects/qtmaterialfocusindicator.cpp
+    src/effects/qtmaterialshadowrenderer.cpp
+    src/effects/qtmaterialshadowcache.cpp
+    src/effects/qtmaterialtransitioncontroller.cpp
+    src/effects/qtmaterialscrimwidget.cpp
+)
+
+set(QTMATERIAL3_EFFECTS_HEADERS
+    include/qtmaterial/effects/qtmaterialripplecontroller.h
+    include/qtmaterial/effects/qtmaterialstatelayerpainter.h
+    include/qtmaterial/effects/qtmaterialfocusindicator.h
+    include/qtmaterial/effects/qtmaterialshadowrenderer.h
+    include/qtmaterial/effects/qtmaterialshadowcache.h
+    include/qtmaterial/effects/qtmaterialtransitioncontroller.h
+    include/qtmaterial/effects/qtmaterialscrimwidget.h
+)
+
+qtm3_add_library(qtmaterial3_effects SHARED
+    ${QTMATERIAL3_EFFECTS_SOURCES}
+    ${QTMATERIAL3_EFFECTS_HEADERS}
+)
+add_library(QtMaterial3::Effects ALIAS qtmaterial3_effects)
+
+target_compile_features(qtmaterial3_effects PUBLIC cxx_std_17)
+target_compile_definitions(qtmaterial3_effects PRIVATE QTMATERIAL3_EFFECTS_LIBRARY)
+target_link_libraries(qtmaterial3_effects
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Widgets
+        qtmaterial3_theme
+        qtmaterial3_core
+)
+target_include_directories(qtmaterial3_effects
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+set_target_properties(qtmaterial3_effects PROPERTIES
+    OUTPUT_NAME QtMaterial3Effects
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+)
+
+set(QTMATERIAL3_WIDGETS_SOURCES
+    src/widgets/buttons/qtmaterialtextbutton.cpp
+    src/widgets/buttons/qtmaterialfilledbutton.cpp
+    src/widgets/buttons/qtmaterialiconbutton.cpp
+    src/widgets/selection/qtmaterialcheckbox.cpp
+    src/widgets/selection/qtmaterialswitch.cpp
+    src/widgets/surfaces/qtmaterialdialog.cpp
+    src/widgets/inputs/qtmaterialoutlinedtextfield.cpp
+)
+
+set(QTMATERIAL3_WIDGETS_HEADERS
+    include/qtmaterial/widgets/buttons/qtmaterialtextbutton.h
+    include/qtmaterial/widgets/buttons/qtmaterialfilledbutton.h
+    include/qtmaterial/widgets/buttons/qtmaterialiconbutton.h
+    include/qtmaterial/widgets/selection/qtmaterialcheckbox.h
+    include/qtmaterial/widgets/selection/qtmaterialswitch.h
+    include/qtmaterial/widgets/surfaces/qtmaterialdialog.h
+    include/qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h
+)
+
+qtm3_add_library(qtmaterial3_widgets SHARED
+    ${QTMATERIAL3_WIDGETS_SOURCES}
+    ${QTMATERIAL3_WIDGETS_HEADERS}
+)
+add_library(QtMaterial3::Widgets ALIAS qtmaterial3_widgets)
+
+target_compile_features(qtmaterial3_widgets PUBLIC cxx_std_17)
+target_compile_definitions(qtmaterial3_widgets PRIVATE QTMATERIAL3_WIDGETS_LIBRARY)
+target_link_libraries(qtmaterial3_widgets
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Widgets
+        qtmaterial3_theme
+        qtmaterial3_core
+        qtmaterial3_specs
+        qtmaterial3_effects
+)
+target_include_directories(qtmaterial3_widgets
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+set_target_properties(qtmaterial3_widgets PROPERTIES
+    OUTPUT_NAME QtMaterial3Widgets
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+)
+
 install(
     TARGETS
         qtmaterial3_theme
         qtmaterial3_legacy
         qtmaterial3_core
         qtmaterial3_specs
+        qtmaterial3_effects
+        qtmaterial3_widgets
     EXPORT QtMaterial3WidgetsTargets
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

@@ -24,7 +24,19 @@ qtmaterial3_add_example_executable(qtmaterial3_core_playground
     core-playground/main.cpp
     core-playground/testcontrolwidget.cpp
 )
-target_link_libraries(qtmaterial3_core_playground
+target_link_libraries(qtmaterial3_core_playground PRIVATE Qt${QT_VERSION_MAJOR}::Widgets qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
+
+qtmaterial3_add_example_executable(qtmaterial3_gallery
+    gallery/main.cpp
+    gallery/gallerywindow.cpp
+    gallery/pages/buttonspage.cpp
+    gallery/pages/selectionpage.cpp
+    gallery/pages/surfacespage.cpp
+    gallery/pages/inputspage.cpp
+    gallery/themecontrols/themetoolbar.cpp
+)
+target_include_directories(qtmaterial3_gallery PRIVATE gallery)
+target_link_libraries(qtmaterial3_gallery
     PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
@@ -32,4 +44,6 @@ target_link_libraries(qtmaterial3_core_playground
         qtmaterial3_theme
         qtmaterial3_core
         qtmaterial3_specs
+        qtmaterial3_effects
+        qtmaterial3_widgets
 )
