@@ -1,21 +1,8 @@
 #include "qtmaterial/theme/qtmaterialtheme.h"
-
 namespace QtMaterial {
-
-Theme::Theme()
-    : m_mode(ThemeMode::Light)
-    , m_contrast(ContrastMode::Standard)
-    , m_options()
-{}
-
-Theme::Theme(const ThemeOptions& options)
-    : m_mode(options.mode)
-    , m_contrast(options.contrast)
-    , m_options(options)
-{}
-
+Theme::Theme() : m_mode(ThemeMode::Light), m_contrast(ContrastMode::Standard), m_options(), m_colorScheme(), m_typography(), m_shapes(), m_elevations(), m_motion(), m_stateLayer() {}
+Theme::Theme(const ThemeOptions& options) : m_mode(options.mode), m_contrast(options.contrast), m_options(options), m_colorScheme(), m_typography(), m_shapes(), m_elevations(), m_motion(), m_stateLayer() {}
 Theme::~Theme() = default;
-
 ThemeMode Theme::mode() const noexcept { return m_mode; }
 void Theme::setMode(ThemeMode mode) noexcept { m_mode = mode; m_options.mode = mode; }
 ContrastMode Theme::contrastMode() const noexcept { return m_contrast; }
@@ -35,5 +22,4 @@ const MotionTokens& Theme::motion() const noexcept { return m_motion; }
 MotionTokens& Theme::motion() noexcept { return m_motion; }
 const StateLayer& Theme::stateLayer() const noexcept { return m_stateLayer; }
 StateLayer& Theme::stateLayer() noexcept { return m_stateLayer; }
-
 } // namespace QtMaterial

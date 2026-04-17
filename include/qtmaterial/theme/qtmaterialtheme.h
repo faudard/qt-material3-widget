@@ -2,12 +2,12 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialcolorscheme.h"
-#include "qtmaterial/theme/qtmaterialtypographyscale.h"
-#include "qtmaterial/theme/qtmaterialshapescale.h"
 #include "qtmaterial/theme/qtmaterialelevationscale.h"
 #include "qtmaterial/theme/qtmaterialmotiontokens.h"
+#include "qtmaterial/theme/qtmaterialshapescale.h"
 #include "qtmaterial/theme/qtmaterialstatelayer.h"
 #include "qtmaterial/theme/qtmaterialthemeoptions.h"
+#include "qtmaterial/theme/qtmaterialtypographyscale.h"
 
 namespace QtMaterial {
 
@@ -20,10 +20,8 @@ public:
 
     ThemeMode mode() const noexcept;
     void setMode(ThemeMode mode) noexcept;
-
     ContrastMode contrastMode() const noexcept;
     void setContrastMode(ContrastMode contrast) noexcept;
-
     bool isDark() const noexcept;
 
     const ThemeOptions& options() const noexcept;
@@ -31,19 +29,14 @@ public:
 
     const ColorScheme& colorScheme() const noexcept;
     ColorScheme& colorScheme() noexcept;
-
     const TypographyScale& typography() const noexcept;
     TypographyScale& typography() noexcept;
-
     const ShapeScale& shapes() const noexcept;
     ShapeScale& shapes() noexcept;
-
     const ElevationScale& elevations() const noexcept;
     ElevationScale& elevations() noexcept;
-
     const MotionTokens& motion() const noexcept;
     MotionTokens& motion() noexcept;
-
     const StateLayer& stateLayer() const noexcept;
     StateLayer& stateLayer() noexcept;
 

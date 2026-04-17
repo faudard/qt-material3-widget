@@ -8,7 +8,8 @@ ThemeOptions::ThemeOptions()
     , contrast(ContrastMode::Standard)
     , expressive(false)
     , useMaterialColorUtilities(true)
-{}
+{
+}
 
 ThemeOptions::~ThemeOptions() = default;
 

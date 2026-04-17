@@ -27,3 +27,11 @@ add_test(NAME tst_shapes COMMAND tst_shapes)
 qtmaterial3_add_test_executable(tst_statelayer theme/tst_statelayer.cpp)
 target_link_libraries(tst_statelayer PRIVATE Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme)
 add_test(NAME tst_statelayer COMMAND tst_statelayer)
+
+qtmaterial3_add_test_executable(tst_interactionstate core/tst_interactionstate.cpp)
+target_link_libraries(tst_interactionstate PRIVATE Qt${QT_VERSION_MAJOR}::Test qtmaterial3_core)
+add_test(NAME tst_interactionstate COMMAND tst_interactionstate)
+
+qtmaterial3_add_test_executable(tst_specfactory specs/tst_specfactory.cpp)
+target_link_libraries(tst_specfactory PRIVATE Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
+add_test(NAME tst_specfactory COMMAND tst_specfactory)

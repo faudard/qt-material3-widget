@@ -1,8 +1,7 @@
 #include "qtmaterial/theme/qtmateriallegacyaliasmap.h"
-
 namespace QtMaterial {
-
-std::optional<ColorRole> LegacyAliasMap::colorRoleForKey(const QString& key) {
+std::optional<ColorRole> LegacyAliasMap::colorRoleForKey(const QString& key)
+{
     if (key == QStringLiteral("primary1")) return ColorRole::Primary;
     if (key == QStringLiteral("primary2")) return ColorRole::PrimaryContainer;
     if (key == QStringLiteral("primary3")) return ColorRole::OnSurface;
@@ -18,8 +17,8 @@ std::optional<ColorRole> LegacyAliasMap::colorRoleForKey(const QString& key) {
     if (key == QStringLiteral("disabled3")) return ColorRole::SurfaceContainerHigh;
     return std::nullopt;
 }
-
-QString LegacyAliasMap::legacyKeyForColorRole(ColorRole role) {
+QString LegacyAliasMap::legacyKeyForColorRole(ColorRole role)
+{
     switch (role) {
     case ColorRole::Primary: return QStringLiteral("primary1");
     case ColorRole::PrimaryContainer: return QStringLiteral("primary2");
@@ -33,5 +32,4 @@ QString LegacyAliasMap::legacyKeyForColorRole(ColorRole role) {
     default: return QString();
     }
 }
-
 } // namespace QtMaterial

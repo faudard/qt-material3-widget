@@ -11,10 +11,10 @@ private slots:
 void tst_StateLayer::hasDefaultOpacities() {
     QtMaterial::ThemeBuilder builder;
     const QtMaterial::Theme theme = builder.buildLightFromSeed(QColor("#6750A4"));
-    QCOMPARE(theme.stateLayer().hoverOpacity(), 0.08);
-    QCOMPARE(theme.stateLayer().focusOpacity(), 0.10);
-    QCOMPARE(theme.stateLayer().pressOpacity(), 0.10);
-    QCOMPARE(theme.stateLayer().dragOpacity(), 0.16);
+    QVERIFY(qFuzzyCompare(theme.stateLayer().hoverOpacity, qreal(0.08)));
+    QVERIFY(qFuzzyCompare(theme.stateLayer().focusOpacity, qreal(0.10)));
+    QVERIFY(qFuzzyCompare(theme.stateLayer().pressOpacity, qreal(0.10)));
+    QVERIFY(qFuzzyCompare(theme.stateLayer().dragOpacity, qreal(0.16)));
 }
 
 QTEST_MAIN(tst_StateLayer)
