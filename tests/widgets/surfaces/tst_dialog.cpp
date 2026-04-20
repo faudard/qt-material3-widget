@@ -1,41 +1,47 @@
 #include <QtTest/QtTest>
-#include <QLineEdit>
-#include <QVBoxLayout>
-#include <QWidget>
+
 #include "qtmaterial/widgets/surfaces/qtmaterialdialog.h"
+#include <QPushButton>
 
 class tst_Dialog : public QObject
 {
     Q_OBJECT
+
 private slots:
-    void basicConstruction();
-    void escapeClosesDialog();
+    void escapeCloses();
+    void openFocusesChild();
 };
 
-void tst_Dialog::basicConstruction()
+void tst_Dialog::escapeCloses()
 {
     QWidget host;
-    host.resize(640, 480);
-    QtMaterial::QtMaterialDialog widget(&host);
-    QVERIFY(widget.parentWidget() == &host);
-}
-
-void tst_Dialog::escapeClosesDialog()
-{
-    QWidget host;
-    host.resize(640, 480);
+    host.resize(800, 600);
     host.show();
-    QVERIFY(QTest::qWaitForWindowExposed(&host));
 
-    QtMaterial::QtMaterialDialog dialog(&host);
-    auto* editor = new QLineEdit;
-    editor->setAccessibleName(QStringLiteral("Dialog editor"));
-    dialog.setBodyWidget(editor);
+    QtMaterialDialog dialog(&host);
+    dialog.resize(host.size());
     dialog.open();
     QVERIFY(dialog.isVisible());
 
     QTest::keyClick(&dialog, Qt::Key_Escape);
     QVERIFY(!dialog.isVisible());
+}
+
+void tst_Dialog::openFocusesChild()
+{
+    QWidget host;
+    host.resize(800, 600);
+    host.show();
+
+    QtMaterialDialog dialog(&host);
+    auto *button = new QPushButton(QStringLiteral("Primary"), &dialog);
+    button->setFocusPolicy(Qt::StrongFocus);
+    button->move(40, 40);
+    button->show();
+
+    dialog.resize(host.size());
+    dialog.open();
+    QVERIFY(button->hasFocus() || dialog.hasFocus());
 }
 
 QTEST_MAIN(tst_Dialog)

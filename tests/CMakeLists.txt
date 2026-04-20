@@ -58,6 +58,7 @@ qtm3_add_test(tst_datefield widgets/inputs/tst_datefield.cpp qtmaterial3_widgets
 qtm3_add_test(tst_listitem widgets/data/tst_listitem.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_list widgets/data/tst_list.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_divider widgets/data/tst_divider.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_filledtextfield_render render/inputs/tst_filledtextfield_render.cpp qtmaterial3_widgets)
 
 # Phase 5 note: add accessibility, keyboard, and installed-package consumer checks here.
 

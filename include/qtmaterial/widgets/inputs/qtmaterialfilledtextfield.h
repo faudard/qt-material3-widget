@@ -1,8 +1,11 @@
 #pragma once
 
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
+#include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+class SpecFactory;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialFilledTextField : public QtMaterialOutlinedTextField
 {
