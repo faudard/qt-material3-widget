@@ -1,15 +1,55 @@
 #include <QtTest/QtTest>
-#include <QWidget>
+
 #include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
-class tst_Iconbutton : public QObject
+
+class tst_QtMaterialIconButton : public QObject
 {
     Q_OBJECT
 private slots:
-    void basicConstruction();
+    void constructs();
+    void keyboardActivation();
+    void selectionState();
+    void sizeHintUsesTouchTarget();
 };
-void tst_Iconbutton::basicConstruction()
+
+void tst_QtMaterialIconButton::constructs()
 {
-    QtMaterial::QtMaterialIconButton widget; QVERIFY(widget.sizeHint().width() >= 40);
+    QtMaterial::QtMaterialIconButton button;
+    QVERIFY(button.isEnabled());
 }
-QTEST_MAIN(tst_Iconbutton)
+
+void tst_QtMaterialIconButton::keyboardActivation()
+{
+    QtMaterial::QtMaterialIconButton button;
+    button.setIcon(QIcon::fromTheme(QStringLiteral("document-open")));
+    button.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&button));
+
+    QSignalSpy clickedSpy(&button, &QAbstractButton::clicked);
+    QVERIFY(clickedSpy.isValid());
+
+    button.setFocus();
+    QVERIFY(button.hasFocus());
+
+    QTest::keyClick(&button, Qt::Key_Space);
+    QCOMPARE(clickedSpy.count(), 1);
+}
+
+void tst_QtMaterialIconButton::selectionState()
+{
+    QtMaterial::QtMaterialIconButton button;
+    QVERIFY(!button.isSelected());
+    button.setSelected(true);
+    QVERIFY(button.isSelected());
+}
+
+void tst_QtMaterialIconButton::sizeHintUsesTouchTarget()
+{
+    QtMaterial::QtMaterialIconButton button;
+    const QSize hint = button.sizeHint();
+    QVERIFY(hint.width() >= 48);
+    QVERIFY(hint.height() >= 48);
+}
+
+QTEST_MAIN(tst_QtMaterialIconButton)
 #include "tst_iconbutton.moc"
