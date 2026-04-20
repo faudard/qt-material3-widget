@@ -17,6 +17,7 @@ public:
     bool hasErrorState() const noexcept;
     void setHasErrorState(bool value);
 protected:
+    virtual void syncAccessibilityState();
     QRect contentRect() const;
     QRect supportingTextRect() const;
 private:

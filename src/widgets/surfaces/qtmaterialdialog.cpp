@@ -4,11 +4,11 @@
 #include <QPainter>
 #include <QResizeEvent>
 #include <QVBoxLayout>
-
 #include "qtmaterial/effects/qtmaterialscrimwidget.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "private/qtmaterialsurfacerenderhelper_p.h"
+#include "../../core/private/qtmaterialaccessibilityhelper_p.h"
 
 namespace QtMaterial {
 
@@ -23,6 +23,12 @@ QtMaterialDialog::QtMaterialDialog(QWidget* parent)
     if (m_scrim) {
         m_scrim->hide();
     }
+    setFocusPolicy(Qt::StrongFocus);
+    QObject::connect(m_transition, &QtMaterialTransitionController::progressChanged, this, [this](qreal value) {
+        updateScrimForProgress(value);
+        update();
+    });
+    syncAccessibilityState();
 }
 
 QtMaterialDialog::~QtMaterialDialog() = default;
@@ -43,6 +49,7 @@ void QtMaterialDialog::setBodyWidget(QWidget* widget)
         m_bodyWidget->setParent(this);
         m_layout->addWidget(m_bodyWidget);
     }
+    syncAccessibilityState();
 }
 
 QWidget* QtMaterialDialog::bodyWidget() const
@@ -55,17 +62,24 @@ void QtMaterialDialog::open()
     resolveSpecIfNeeded();
     if (m_scrim) {
         m_scrim->setGeometry(parentWidget() ? parentWidget()->rect() : rect());
-        QColor scrim = m_spec.scrimColor;
-        scrim.setAlphaF(0.32 * qMax(0.0, m_transition ? m_transition->progress() : 1.0));
-        m_scrim->setScrimColor(scrim);
         m_scrim->show();
     }
     show();
     raise();
-    setFocus(Qt::OtherFocusReason);
     if (m_transition) {
         m_transition->startForward();
+    } else {
+        updateScrimForProgress(1.0);
     }
+
+    QWidget* focusTarget = m_bodyWidget ? m_bodyWidget->focusWidget() : nullptr;
+    if (!focusTarget && m_bodyWidget && m_bodyWidget->focusPolicy() != Qt::NoFocus) {
+        focusTarget = m_bodyWidget;
+    }
+    if (!focusTarget) {
+        focusTarget = this;
+    }
+    focusTarget->setFocus(Qt::OtherFocusReason);
 }
 
 void QtMaterialDialog::close()
@@ -73,10 +87,36 @@ void QtMaterialDialog::close()
     if (m_transition) {
         m_transition->startBackward();
     }
+    updateScrimForProgress(0.0);
     hide();
     if (m_scrim) {
         m_scrim->hide();
     }
+}
+
+void QtMaterialDialog::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Escape && isVisible()) {
+        close();
+        event->accept();
+        return;
+    }
+    QtMaterialOverlaySurface::keyPressEvent(event);
+}
+
+void QtMaterialDialog::syncAccessibilityState()
+{
+    AccessibilityHelper::applyDialogAccessibility(this, m_bodyWidget);
+}
+
+void QtMaterialDialog::updateScrimForProgress(const qreal progress)
+{
+    if (!m_scrim) {
+        return;
+    }
+    QColor scrim = m_spec.scrimColor;
+    scrim.setAlphaF(0.32 * qBound(0.0, progress, 1.0));
+    m_scrim->setScrimColor(scrim);
 }
 
 void QtMaterialDialog::themeChangedEvent(const Theme& theme)
@@ -98,6 +138,7 @@ void QtMaterialDialog::resolveSpecIfNeeded() const
     SpecFactory factory;
     m_spec = factory.dialogSpec(theme());
     m_specDirty = false;
+    syncAccessibilityState();
 }
 
 void QtMaterialDialog::syncChildGeometry()

@@ -1,4 +1,5 @@
 #pragma once
+class QKeyEvent;
 #include <QPointer>
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
 #include "qtmaterial/specs/qtmaterialdialogspec.h"
@@ -21,6 +22,7 @@ public:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
     void invalidateResolvedSpec() override;
@@ -28,6 +30,8 @@ protected:
 private:
     void resolveSpecIfNeeded() const;
     void syncChildGeometry();
+    void syncAccessibilityState();
+    void updateScrimForProgress(qreal progress);
 
     mutable bool m_specDirty = true;
     mutable DialogSpec m_spec;

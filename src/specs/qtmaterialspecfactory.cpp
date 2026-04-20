@@ -262,7 +262,7 @@ DateFieldSpec SpecFactory::dateFieldSpec(const Theme& theme) const
     DateFieldSpec spec;
     // spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHighest);
     // spec.textColor = theme.colorScheme().color(ColorRole::OnSurface);
-    // spec.placeholderColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.placeholderColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     // spec.iconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     return spec;
 }

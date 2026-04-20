@@ -133,6 +133,7 @@ set(QTMATERIAL3_CORE_SOURCES
     src/core/qtmaterialabstractbutton.cpp
     src/core/qtmaterialselectioncontrol.cpp
     src/core/qtmaterialinputcontrol.cpp
+    src/core/private/qtmaterialaccessibilityhelper.cpp
 )
 
 set(QTMATERIAL3_CORE_HEADERS

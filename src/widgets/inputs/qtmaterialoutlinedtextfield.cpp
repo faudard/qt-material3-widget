@@ -7,6 +7,7 @@
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "private/qtmaterialtextfieldshellhelper_p.h"
+#include "../../core/private/qtmaterialaccessibilityhelper_p.h"
 
 namespace QtMaterial {
 
@@ -19,7 +20,10 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
     if (m_lineEdit) {
         m_lineEdit->setFrame(false);
         m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
+        m_lineEdit->setClearButtonEnabled(false);
     }
+    setFocusProxy(m_lineEdit);
+    syncAccessibilityState();
 }
 
 QtMaterialOutlinedTextField::~QtMaterialOutlinedTextField() = default;
@@ -33,6 +37,7 @@ void QtMaterialOutlinedTextField::setText(const QString& text)
 {
     if (m_lineEdit) {
         m_lineEdit->setText(text);
+        syncAccessibilityState();
         update();
     }
 }
@@ -57,6 +62,12 @@ QSize QtMaterialOutlinedTextField::minimumSizeHint() const
 QtMaterialOutlinedTextField::ShellVariant QtMaterialOutlinedTextField::shellVariant() const
 {
     return ShellVariant::Outlined;
+}
+
+void QtMaterialOutlinedTextField::syncAccessibilityState()
+{
+    QtMaterialInputControl::syncAccessibilityState();
+    AccessibilityHelper::applyInputAccessibility(this, m_lineEdit, labelText(), supportingText(), errorText(), hasErrorState());
 }
 
 TextFieldSpec QtMaterialOutlinedTextField::resolveTextFieldSpec(const SpecFactory& factory) const
@@ -103,6 +114,7 @@ void QtMaterialOutlinedTextField::resizeEvent(QResizeEvent* event)
     if (m_lineEdit) {
         m_lineEdit->setGeometry(layout.editorRect);
     }
+    syncAccessibilityState();
 }
 
 void QtMaterialOutlinedTextField::paintEvent(QPaintEvent*)
