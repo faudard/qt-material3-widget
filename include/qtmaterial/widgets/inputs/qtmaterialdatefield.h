@@ -9,7 +9,7 @@
 
 class QToolButton;
 
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDateField : public QtMaterialOutlinedTextField
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDateField : public QtMaterial::QtMaterialOutlinedTextField
 {
     Q_OBJECT
     Q_PROPERTY(QDate date READ date WRITE setDate NOTIFY dateChanged)

@@ -48,7 +48,7 @@ public:
     AutocompletePopupSpec autocompletePopupSpec(const Theme& theme) const;
     DateFieldSpec dateFieldSpec(const Theme& theme) const;
     ListItemSpec listItemSpec(const Theme& theme) const;
-    DividerSpec dividerSpec(const Theme& theme) const;
+    // DividerSpec dividerSpec(const Theme& theme) const;
 private:
     int buttonHeightForDensity(Density density) const;
 };

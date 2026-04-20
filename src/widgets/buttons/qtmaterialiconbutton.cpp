@@ -1,6 +1,6 @@
 #include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
 
-#include <QChangeEvent>
+// #include <QChangeEvent>
 #include <QEnterEvent>
 #include <QEvent>
 #include <QFontMetrics>
@@ -20,10 +20,10 @@ namespace {
 
 static QColor effectiveContainerColor(const IconButtonSpec& spec, bool enabled, bool selected)
 {
-    if (!enabled) {
-        return selected ? spec.disabledSelectedContainerColor : spec.disabledContainerColor;
-    }
-    return selected ? spec.selectedContainerColor : spec.containerColor;
+    // if (!enabled) {
+    //     return selected ? spec.disabledSelectedContainerColor : spec.disabledContainerColor;
+    // }
+    // return selected ? spec.selectedContainerColor : spec.containerColor;
 }
 
 static QColor effectiveIconColor(const IconButtonSpec& spec, bool enabled, bool selected)
@@ -57,21 +57,21 @@ static qreal radiusForSpec(const IconButtonSpec& spec)
 
 static qreal stateLayerOpacity(const QtMaterialIconButton* button, const Theme& theme)
 {
-    const auto& state = button->interactionState();
+    // const auto& state = button->interactionState();
     const auto& layer = theme.stateLayer();
 
     if (!button->isEnabled()) {
         return 0.0;
     }
-    if (state.isPressed()) {
-        return layer.pressOpacity;
-    }
-    if (state.isFocused()) {
-        return layer.focusOpacity;
-    }
-    if (state.isHovered()) {
-        return layer.hoverOpacity;
-    }
+    // if (state.isPressed()) {
+    //     return layer.pressOpacity;
+    // }
+    // if (state.isFocused()) {
+    //     return layer.focusOpacity;
+    // }
+    // if (state.isHovered()) {
+    //     return layer.hoverOpacity;
+    // }
     return 0.0;
 }
 
@@ -82,8 +82,8 @@ QtMaterialIconButton::QtMaterialIconButton(QWidget* parent)
 {
     setFocusPolicy(Qt::StrongFocus);
     setCheckable(false);
-    setAutoDefault(false);
-    setDefault(false);
+    // setAutoDefault(false);
+    // setDefault(false);
     invalidateResolvedSpec();
 }
 
@@ -145,17 +145,17 @@ void QtMaterialIconButton::paintEvent(QPaintEvent* event)
         );
     }
 
-    if (rippleController()) {
-        rippleController()->setClipPath(m_cachedContainerPath);
-        rippleController()->paint(&painter, m_spec.stateLayerColor);
-    }
+    // if (rippleController()) {
+    //     rippleController()->setClipPath(m_cachedContainerPath);
+    //     rippleController()->paint(&painter, m_spec.stateLayerColor);
+    // }
 
     if (hasFocus()) {
         QtMaterialFocusIndicator::paintPathFocusRing(
             &painter,
             m_cachedContainerPath,
-            m_spec.focusRingColor,
-            m_spec.focusRingWidth
+            // m_spec.focusRingColor,
+            // m_spec.focusRingWidth
         );
     }
 

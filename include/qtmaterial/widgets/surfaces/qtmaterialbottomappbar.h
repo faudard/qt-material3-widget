@@ -15,7 +15,7 @@ namespace QtMaterial {
 struct BottomAppBarSpec;
 }
 
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialBottomAppBar : public QtMaterialSurface
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialBottomAppBar : public QtMaterial::QtMaterialSurface
 {
     Q_OBJECT
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
@@ -86,7 +86,7 @@ private:
 
     mutable bool m_specDirty = true;
     mutable bool m_layoutDirty = true;
-    mutable QtMaterial::BottomAppBarSpec m_spec;
+    // mutable QtMaterial::BottomAppBarSpec m_spec;
     mutable QRect m_visualRect;
     mutable QRect m_navRect;
     mutable QRect m_titleRect;

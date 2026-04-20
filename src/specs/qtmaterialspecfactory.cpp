@@ -278,7 +278,7 @@ AutocompletePopupSpec SpecFactory::autocompletePopupSpec(const Theme& theme) con
     AutocompletePopupSpec spec;
     spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
     spec.textColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.hoverColor = theme.colorScheme().color(ColorRole::SurfaceVariant);
+    // spec.hoverColor = theme.colorScheme().color(ColorRole::SurfaceVariant);
     return spec;
 }
 
@@ -296,17 +296,17 @@ ListItemSpec SpecFactory::listItemSpec(const Theme& theme) const
     ListItemSpec spec;
     spec.containerColor = Qt::transparent;
     spec.headlineColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.supportingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.leadingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.trailingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    // spec.supportingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    // spec.leadingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    // spec.trailingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnSurface);
     return spec;
 }
 
-DividerSpec SpecFactory::dividerSpec(const Theme& theme) const
-{
-    DividerSpec spec;
-    spec.color = theme.colorScheme().color(ColorRole::OutlineVariant);
-    return spec;
-}
+// DividerSpec SpecFactory::dividerSpec(const Theme& theme) const
+// {
+//     DividerSpec spec;
+//     spec.color = theme.colorScheme().color(ColorRole::OutlineVariant);
+//     return spec;
+// }
 } // namespace QtMaterial

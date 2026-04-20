@@ -3,6 +3,7 @@
 #include <QFontMetrics>
 
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 
 namespace QtMaterial {
 namespace {
@@ -36,18 +37,18 @@ QtMaterialExtendedFab::QtMaterialExtendedFab(QWidget* parent)
     setCheckable(false);
 }
 
-QtMaterialExtendedFab::QtMaterialExtendedFab(const QString& text, QWidget* parent)
-    : QtMaterialFilledButton(text, parent)
-{
-    setCheckable(false);
-}
+// QtMaterialExtendedFab::QtMaterialExtendedFab(const QString& text, QWidget* parent)
+//     : QtMaterialFilledButton(text, parent)
+// {
+//     setCheckable(false);
+// }
 
-QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& text, QWidget* parent)
-    : QtMaterialFilledButton(text, parent)
-{
-    setIcon(icon);
-    setCheckable(false);
-}
+// QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& text, QWidget* parent)
+//     : QtMaterialFilledButton(text, parent)
+// {
+//     setIcon(icon);
+//     setCheckable(false);
+// }
 
 QtMaterialExtendedFab::~QtMaterialExtendedFab() = default;
 

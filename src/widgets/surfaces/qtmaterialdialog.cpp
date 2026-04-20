@@ -13,11 +13,13 @@
 #include <QWidget>
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
+#include "qtmaterial/effects/qtmaterialscrimwidget.h"
 #include "qtmaterial/effects/qtmaterialshadowrenderer.h"
+#include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 
-namespace {
+namespace QtMaterial {
 
 QWidget* firstFocusableDescendant(QWidget* root)
 {
@@ -42,7 +44,7 @@ QWidget* firstFocusableDescendant(QWidget* root)
     return nullptr;
 }
 
-} // namespace
+
 
 QtMaterialDialog::QtMaterialDialog(QWidget* parent)
     : QtMaterialOverlaySurface(parent)
@@ -272,3 +274,5 @@ QWidget* QtMaterialDialog::firstFocusableChild() const
 {
     return firstFocusableDescendant(const_cast<QtMaterialDialog*>(this));
 }
+
+} // namespace

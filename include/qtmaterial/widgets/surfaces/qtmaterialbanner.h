@@ -4,7 +4,8 @@
 #include <QPointer>
 #include <QString>
 
-#include "qtmaterial/widgets/surfaces/qtmaterialsurface.h"
+#include "qtmaterial/core/qtmaterialsurface.h"
+#include "qtmaterial/specs/qtmaterialbannerspec.h"
 
 class QAbstractButton;
 class QPaintEvent;
@@ -16,7 +17,7 @@ struct BannerSpec;
 class Theme;
 }
 
-class QtMaterialBanner : public QtMaterialSurface
+class QtMaterialBanner : public QtMaterial::QtMaterialSurface
 {
     Q_OBJECT
 

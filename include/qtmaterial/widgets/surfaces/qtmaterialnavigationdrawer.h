@@ -16,7 +16,7 @@ class QHideEvent;
 class QtMaterialScrimWidget;
 class QtMaterialTransitionController;
 
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialNavigationDrawer : public QtMaterialOverlaySurface
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialNavigationDrawer : public QtMaterial::QtMaterialOverlaySurface
 {
     Q_OBJECT
 public:

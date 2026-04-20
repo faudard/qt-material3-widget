@@ -4,7 +4,7 @@
 #include <QRect>
 
 #include "qtmaterial/qtmaterialglobal.h"
-#include "qtmaterial/widgets/buttons/qtmaterialabstractbutton.h"
+#include "qtmaterial/core/qtmaterialabstractbutton.h"
 #include "qtmaterial/specs/qtmaterialiconbuttonspec.h"
 
 namespace QtMaterial {
