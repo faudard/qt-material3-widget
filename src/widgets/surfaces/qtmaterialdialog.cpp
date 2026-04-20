@@ -7,6 +7,7 @@
 #include <QPainterPath>
 #include <QResizeEvent>
 #include <QVBoxLayout>
+#include <qstyle.h>
 
 #include "qtmaterial/effects/qtmaterialscrimwidget.h"
 #include "qtmaterial/effects/qtmaterialshadowrenderer.h"

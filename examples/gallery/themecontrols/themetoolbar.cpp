@@ -14,11 +14,16 @@ ThemeToolbar::ThemeToolbar(QWidget* parent) : QWidget(parent)
     layout->addWidget(mode);
     layout->addWidget(seed);
     layout->addStretch(1);
-    QObject::connect(mode, &QComboBox::currentIndexChanged, this, [mode]() {
-        auto options = QtMaterial::ThemeManager::instance().options();
-        options.mode = mode->currentIndex() == 0 ? QtMaterial::ThemeMode::Light : QtMaterial::ThemeMode::Dark;
-        QtMaterial::ThemeManager::instance().setThemeOptions(options);
-    });
+    QObject::connect(
+        mode,
+        static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this,
+        [](int index) {
+            auto options = QtMaterial::ThemeManager::instance().options();
+            options.mode = index == 0 ? QtMaterial::ThemeMode::Light : QtMaterial::ThemeMode::Dark;
+            QtMaterial::ThemeManager::instance().setThemeOptions(options);
+        }
+        );
     QObject::connect(seed, &QPushButton::clicked, this, []() {
         QColor color = QColorDialog::getColor(QtMaterial::ThemeManager::instance().options().sourceColor);
         if (!color.isValid()) return;
