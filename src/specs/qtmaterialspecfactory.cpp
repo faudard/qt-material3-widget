@@ -23,6 +23,7 @@ ButtonSpec SpecFactory::textButtonSpec(const Theme& theme, Density density) cons
     spec.disabledContainerColor = Qt::transparent;
     spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
+    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.outlineColor = Qt::transparent;
     spec.disabledOutlineColor = Qt::transparent;
     spec.containerHeight = buttonHeightForDensity(density);
@@ -38,6 +39,7 @@ ButtonSpec SpecFactory::filledButtonSpec(const Theme& theme, Density density) co
     spec.disabledContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
     spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnPrimary);
+    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.elevationRole = ElevationRole::Level1;
     return spec;
 }
@@ -51,6 +53,7 @@ ButtonSpec SpecFactory::filledTonalButtonSpec(const Theme& theme, Density densit
     spec.disabledContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
     spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = spec.labelColor;
+    spec.focusRingColor = theme.colorScheme().color(ColorRole::Secondary);
     return spec;
 }
 
@@ -60,6 +63,7 @@ ButtonSpec SpecFactory::outlinedButtonSpec(const Theme& theme, Density density) 
     spec.containerColor = Qt::transparent;
     spec.outlineColor = theme.colorScheme().color(ColorRole::Outline);
     spec.disabledOutlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
+    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     return spec;
 }
 
@@ -74,6 +78,7 @@ ButtonSpec SpecFactory::elevatedButtonSpec(const Theme& theme, Density density) 
     spec.disabledContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
     spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = spec.labelColor;
+    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.elevationRole = ElevationRole::Level1;
     return spec;
 }
@@ -252,7 +257,7 @@ AutocompletePopupSpec SpecFactory::autocompletePopupSpec(const Theme& theme) con
 {
     AutocompletePopupSpec spec;
     spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    // spec.textColor = theme.colorScheme().color(ColorRole::OnSurface);
+    spec.textColor = theme.colorScheme().color(ColorRole::OnSurface);
     // spec.hoverColor = theme.colorScheme().color(ColorRole::SurfaceVariant);
     return spec;
 }

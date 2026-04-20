@@ -1,22 +1,31 @@
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Test)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Test)
 
-qt_add_executable(benchmark_theme_switch
+function(qtmaterial3_add_benchmark_executable target)
+    if(COMMAND qt_add_executable)
+        qt_add_executable(${target} ${ARGN})
+    else()
+        add_executable(${target} ${ARGN})
+    endif()
+endfunction()
+
+qtmaterial3_add_benchmark_executable(benchmark_theme_switch
     theme/benchmark_theme_switch.cpp
 )
 target_link_libraries(benchmark_theme_switch
-    PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Test qtmaterial3_theme
+    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme
 )
 
-qt_add_executable(benchmark_ripple
+qtmaterial3_add_benchmark_executable(benchmark_ripple
     effects/benchmark_ripple.cpp
 )
 target_link_libraries(benchmark_ripple
-    PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Test qtmaterial3_theme qtmaterial3_core qtmaterial3_effects
+    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme qtmaterial3_core qtmaterial3_effects
 )
 
-qt_add_executable(benchmark_widget_creation
+qtmaterial3_add_benchmark_executable(benchmark_widget_creation
     widgets/benchmark_widget_creation.cpp
 )
 target_link_libraries(benchmark_widget_creation
-    PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Test qtmaterial3_theme qtmaterial3_core qtmaterial3_specs qtmaterial3_effects qtmaterial3_widgets
+    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme qtmaterial3_core qtmaterial3_specs qtmaterial3_effects qtmaterial3_widgets
 )

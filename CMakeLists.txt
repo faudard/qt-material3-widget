@@ -140,6 +140,7 @@ set(QTMATERIAL3_CORE_HEADERS
     include/qtmaterial/core/qtmaterialdensity.h
     include/qtmaterial/core/qtmaterialwidget.h
     include/qtmaterial/core/qtmaterialinteractionstate.h
+    include/qtmaterial/core/qtmaterialeventcompat.h
     include/qtmaterial/core/qtmaterialcontrol.h
     include/qtmaterial/core/qtmaterialsurface.h
     include/qtmaterial/core/qtmaterialoverlaysurface.h

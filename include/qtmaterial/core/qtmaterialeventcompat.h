@@ -1,7 +1,9 @@
 #pragma once
 
-#include <QtCore/qglobal.h>
+#include <QEvent>
 #include <QMouseEvent>
+#include <QPointF>
+#include <QtGlobal>
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QEnterEvent>
@@ -15,7 +17,7 @@ using EnterEvent = QEnterEvent;
 using EnterEvent = QEvent;
 #endif
 
-inline QPointF mousePosition(QMouseEvent *event)
+inline QPointF mousePosition(const QMouseEvent* event)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return event->position();

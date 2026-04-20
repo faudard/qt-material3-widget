@@ -3,9 +3,28 @@
 #include <QAbstractButton>
 #include <QFontMetrics>
 #include <QIcon>
+#include <QPainter>
 #include <QtMath>
 
 namespace QtMaterial::ButtonRenderHelper {
+
+namespace {
+QPixmap tintPixmap(const QPixmap& source, const QColor& color)
+{
+    if (source.isNull()) {
+        return source;
+    }
+
+    QPixmap tinted(source.size());
+    tinted.fill(Qt::transparent);
+
+    QPainter painter(&tinted);
+    painter.drawPixmap(0, 0, source);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painter.fillRect(tinted.rect(), color);
+    return tinted;
+}
+} // namespace
 
 QRectF containerRect(const QRectF& widgetRect, const ButtonSpec& spec)
 {
@@ -102,23 +121,44 @@ ContentLayout layoutContent(
     return layout;
 }
 
+QPixmap tintedIconPixmap(
+    const QAbstractButton* button,
+    const ButtonSpec& spec,
+    const QColor& iconColor)
+{
+    const QPixmap base = button->icon().pixmap(QSize(spec.iconSize, spec.iconSize), QIcon::Normal, QIcon::Off);
+    return tintPixmap(base, iconColor);
+}
+
 void paintContent(
     QPainter* painter,
     const QAbstractButton* button,
     const ButtonSpec& spec,
     const QRect& containerRect,
     const QColor& textColor,
+    const QColor& iconColor,
     const QFont& font,
     const QString& text)
 {
     const ContentLayout layout = layoutContent(button, spec, containerRect, font, text);
+    paintContentLayout(painter, button, spec, layout, textColor, iconColor, font);
+}
 
+void paintContentLayout(
+    QPainter* painter,
+    const QAbstractButton* button,
+    const ButtonSpec& spec,
+    const ContentLayout& layout,
+    const QColor& textColor,
+    const QColor& iconColor,
+    const QFont& font)
+{
     painter->save();
     painter->setFont(font);
     painter->setPen(textColor);
 
     if (layout.hasIcon) {
-        const QPixmap pixmap = button->icon().pixmap(QSize(spec.iconSize, spec.iconSize), button->isEnabled() ? QIcon::Normal : QIcon::Disabled);
+        const QPixmap pixmap = tintedIconPixmap(button, spec, iconColor);
         painter->drawPixmap(layout.iconRect, pixmap);
     }
 

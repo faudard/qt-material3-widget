@@ -11,6 +11,7 @@ struct QTMATERIAL3_SPECS_EXPORT ButtonSpec {
     QColor disabledContainerColor;
     QColor disabledLabelColor;
     QColor stateLayerColor;
+    QColor focusRingColor;
     QColor outlineColor;
     QColor disabledOutlineColor;
     ShapeRole shapeRole = ShapeRole::Full;

@@ -1,6 +1,7 @@
 #include "qtmaterial/widgets/selection/qtmaterialswitch.h"
 
 #include <QMouseEvent>
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 #include <QPainter>
 
 #include "private/qtmaterialselectionrenderhelper_p.h"
@@ -8,7 +9,6 @@
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
-#include "qtmaterial/core/qtmaterialeventcompat.h"
 
 namespace QtMaterial {
 QtMaterialSwitch::QtMaterialSwitch(QWidget* parent)

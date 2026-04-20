@@ -1,4 +1,5 @@
 #include "qtmaterial/core/qtmaterialcontrol.h"
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 namespace QtMaterial {
 QtMaterialControl::QtMaterialControl(QWidget* parent) : QtMaterialWidget(parent), m_state(), m_density(Density::Default) { setAttribute(Qt::WA_Hover, true); }
 QtMaterialControl::~QtMaterialControl() = default;
@@ -12,14 +13,7 @@ QtMaterialInteractionState& QtMaterialControl::interactionState() noexcept { ret
 void QtMaterialControl::themeChangedEvent(const QtMaterial::Theme&) { invalidateResolvedSpec(); updateGeometry(); update(); }
 void QtMaterialControl::invalidateResolvedSpec() {}
 void QtMaterialControl::stateChangedEvent() { update(); }
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-void QtMaterialControl::enterEvent(QEnterEvent *event)
-#else
-void QtMaterialControl::enterEvent(QEvent *event)
-#endif
-{ m_state.setHovered(true); stateChangedEvent(); QtMaterialWidget::enterEvent(event); }
-
+void QtMaterialControl::enterEvent(EnterEvent* event) { m_state.setHovered(true); stateChangedEvent(); QtMaterialWidget::enterEvent(event); }
 void QtMaterialControl::leaveEvent(QEvent* event) { m_state.setHovered(false); m_state.setPressed(false); stateChangedEvent(); QtMaterialWidget::leaveEvent(event); }
 void QtMaterialControl::focusInEvent(QFocusEvent* event) { m_state.setFocused(true); stateChangedEvent(); QtMaterialWidget::focusInEvent(event); }
 void QtMaterialControl::focusOutEvent(QFocusEvent* event) { m_state.setFocused(false); m_state.setPressed(false); stateChangedEvent(); QtMaterialWidget::focusOutEvent(event); }

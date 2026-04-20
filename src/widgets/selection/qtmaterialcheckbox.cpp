@@ -1,11 +1,11 @@
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
 
 #include <QMouseEvent>
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 #include <QPainter>
 #include <QPainterPath>
 
 #include "private/qtmaterialselectionrenderhelper_p.h"
-#include "qtmaterial/core/qtmaterialeventcompat.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"

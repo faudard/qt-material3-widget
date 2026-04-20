@@ -1,6 +1,7 @@
 #include "qtmaterial/widgets/selection/qtmaterialradiobutton.h"
 
 #include <QMouseEvent>
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 #include <QPainter>
 #include <QPainterPath>
 
@@ -8,7 +9,6 @@
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
-#include "qtmaterial/core/qtmaterialeventcompat.h"
 
 namespace QtMaterial {
 QtMaterialRadioButton::QtMaterialRadioButton(QWidget* parent) : QtMaterialSelectionControl(parent), m_ripple(new QtMaterialRippleController(this))

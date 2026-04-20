@@ -3,6 +3,7 @@
 #include <QFocusEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "private/qtmaterialaccessibilityhelper_p.h"
@@ -31,6 +32,7 @@ void QtMaterialAbstractButton::setDensity(Density density)
     if (m_density == density) return;
     m_density = density;
     invalidateResolvedSpec();
+    contentChangedEvent();
     updateGeometry();
     update();
 }
@@ -43,6 +45,7 @@ void QtMaterialAbstractButton::setText(const QString& text)
     QAbstractButton::setText(text);
     syncAccessibilityState();
     invalidateResolvedSpec();
+    contentChangedEvent();
     updateGeometry();
     update();
 }
@@ -51,6 +54,7 @@ void QtMaterialAbstractButton::setIcon(const QIcon& icon)
 {
     QAbstractButton::setIcon(icon);
     invalidateResolvedSpec();
+    contentChangedEvent();
     updateGeometry();
     update();
 }
@@ -69,12 +73,9 @@ void QtMaterialAbstractButton::themeChangedEvent(const Theme&)
 void QtMaterialAbstractButton::invalidateResolvedSpec() {}
 void QtMaterialAbstractButton::stateChangedEvent() { update(); }
 void QtMaterialAbstractButton::syncAccessibilityState() { AccessibilityHelper::applyButtonAccessibility(this); }
+void QtMaterialAbstractButton::contentChangedEvent() {}
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-void QtMaterialAbstractButton::enterEvent(QEnterEvent* event)
-#else
-void QtMaterialAbstractButton::enterEvent(QEvent* event)
-#endif
+void QtMaterialAbstractButton::enterEvent(EnterEvent* event)
 {
     m_state.setHovered(true);
     stateChangedEvent();

@@ -55,10 +55,11 @@ void QtMaterialOutlinedButton::paintEvent(QPaintEvent*)
     if (theme().typography().contains(m_spec.labelTypeRole)) {
         resolvedFont = theme().typography().style(m_spec.labelTypeRole).font;
     }
-    ButtonRenderHelper::paintContent(&painter, this, m_spec, visualRect.toAlignedRect(), isEnabled() ? m_spec.labelColor : m_spec.disabledLabelColor, resolvedFont, text());
+    const QColor contentColor = isEnabled() ? m_spec.labelColor : m_spec.disabledLabelColor;
+    ButtonRenderHelper::paintContent(&painter, this, m_spec, visualRect.toAlignedRect(), contentColor, contentColor, resolvedFont, text());
 
     if (interactionState().isFocused()) {
-        QtMaterialFocusIndicator::paintRectFocusRing(&painter, visualRect, m_spec.stateLayerColor, radius, 2.0);
+        QtMaterialFocusIndicator::paintRectFocusRing(&painter, visualRect, m_spec.focusRingColor, radius, 2.0);
     }
 }
 

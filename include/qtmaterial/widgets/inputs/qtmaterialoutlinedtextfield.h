@@ -33,13 +33,13 @@ protected:
         Filled,
     };
 
-    void syncAccessibilityState() override;
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
     void invalidateResolvedSpec() override;
 
     virtual ShellVariant shellVariant() const;
+    void syncAccessibilityState() override;
     virtual TextFieldSpec resolveTextFieldSpec(const SpecFactory& factory) const;
     void ensureSpecResolved() const;
     const TextFieldSpec& spec() const;

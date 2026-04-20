@@ -1,6 +1,7 @@
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
 
 #include <QMouseEvent>
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 #include <QPainter>
 
 #include "private/qtmaterialbuttonrenderhelper_p.h"
@@ -8,7 +9,7 @@
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
-#include "qtmaterial/core/qtmaterialeventcompat.h"
+
 namespace QtMaterial {
 
 QtMaterialTextButton::QtMaterialTextButton(QWidget* parent)
@@ -69,7 +70,9 @@ QSize QtMaterialTextButton::minimumSizeHint() const
 
 void QtMaterialTextButton::mousePressEvent(QMouseEvent* event)
 {
-    if (m_ripple) m_ripple->addRipple(QtMaterial::mousePosition(event));
+    if (m_ripple) {
+        m_ripple->addRipple(QtMaterial::mousePosition(event));
+    }
     QtMaterialAbstractButton::mousePressEvent(event);
 }
 
@@ -98,10 +101,11 @@ void QtMaterialTextButton::paintEvent(QPaintEvent*)
     if (theme().typography().contains(m_spec.labelTypeRole)) {
         resolvedFont = theme().typography().style(m_spec.labelTypeRole).font;
     }
-    ButtonRenderHelper::paintContent(&painter, this, m_spec, visualRect.toAlignedRect(), isEnabled() ? m_spec.labelColor : m_spec.disabledLabelColor, resolvedFont, text());
+    const QColor contentColor = isEnabled() ? m_spec.labelColor : m_spec.disabledLabelColor;
+    ButtonRenderHelper::paintContent(&painter, this, m_spec, visualRect.toAlignedRect(), contentColor, contentColor, resolvedFont, text());
 
     if (interactionState().isFocused()) {
-        QtMaterialFocusIndicator::paintPathFocusRing(&painter, path, m_spec.stateLayerColor, 2.0);
+        QtMaterialFocusIndicator::paintPathFocusRing(&painter, path, m_spec.focusRingColor, 2.0);
     }
 
     Q_UNUSED(radius)

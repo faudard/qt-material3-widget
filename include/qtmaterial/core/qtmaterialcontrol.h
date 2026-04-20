@@ -1,14 +1,10 @@
 #pragma once
-#include <QEnterEvent>
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 #include <QFocusEvent>
+class QEvent;
 #include "qtmaterial/core/qtmaterialdensity.h"
 #include "qtmaterial/core/qtmaterialinteractionstate.h"
 #include "qtmaterial/core/qtmaterialwidget.h"
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <QEnterEvent>
-#else
-#include <QEvent>
-#endif
 namespace QtMaterial {
 class QTMATERIAL3_CORE_EXPORT QtMaterialControl : public QtMaterialWidget
 {
@@ -27,11 +23,7 @@ protected:
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
     virtual void invalidateResolvedSpec();
     virtual void stateChangedEvent();
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    void enterEvent(QEnterEvent *event) override;
-#else
-    void enterEvent(QEvent *event) override;
-#endif
+    void enterEvent(EnterEvent* event) override;
     void leaveEvent(QEvent* event) override;
     void focusInEvent(QFocusEvent* event) override;
     void focusOutEvent(QFocusEvent* event) override;
