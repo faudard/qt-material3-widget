@@ -11,8 +11,8 @@ InputsPage::InputsPage(QWidget* parent) : QWidget(parent)
     outlined->setLabelText(QStringLiteral("Outlined text field"));
     auto* filled = new QtMaterial::QtMaterialFilledTextField(this);
     filled->setLabelText(QStringLiteral("Filled text field"));
-    auto* date = new QtMaterial::QtMaterialDateField(this);
-    auto* popup = new QtMaterial::QtMaterialAutocompletePopup(this);
+    auto* date = new QtMaterialDateField(this);
+    auto* popup = new QtMaterialAutocompletePopup(this);
     popup->setSuggestions({QStringLiteral("Alpha"), QStringLiteral("Beta"), QStringLiteral("Gamma")});
     layout->addWidget(outlined);
     layout->addWidget(filled);

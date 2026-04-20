@@ -1,5 +1,6 @@
 
 #include <QtTest/QtTest>
+#include <qlineedit.h>
 
 #include "qtmaterial/widgets/inputs/qtmaterialdatefield.h"
 

@@ -1,9 +1,6 @@
 #pragma once
 
-#include <QPointer>
-#include <QRect>
-#include <QPainterPath>
-
+#include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
 
 class QKeyEvent;
@@ -11,27 +8,24 @@ class QResizeEvent;
 class QShowEvent;
 
 namespace QtMaterial {
+
 class QtMaterialScrimWidget;
 class QtMaterialTransitionController;
 class BottomSheetSpec;
 
-
-class QtMaterialBottomSheet : public QtMaterialOverlaySurface
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialBottomSheet : public QtMaterialOverlaySurface
 {
     Q_OBJECT
+
 public:
-    enum class SheetState {
-        Closed,
-        Opening,
-        Open,
-        Closing
-    };
+    enum class SheetState { Closed, Opening, Open, Closing };
 
     explicit QtMaterialBottomSheet(QWidget *parent = nullptr);
     ~QtMaterialBottomSheet() override;
 
     void open();
     void close();
+
     bool isOpen() const noexcept;
 
     void setModal(bool modal);
@@ -72,9 +66,10 @@ private:
 
     QPointer<QtMaterialScrimWidget> m_scrim;
     QPointer<QtMaterialTransitionController> m_transition;
+
     SheetState m_state = SheetState::Closed;
     bool m_modal = true;
     int m_expandedHeight = 320;
 };
 
-}
+} // namespace QtMaterial

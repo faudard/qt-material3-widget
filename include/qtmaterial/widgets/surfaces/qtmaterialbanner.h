@@ -1,13 +1,14 @@
 #pragma once
 
+#include <QAbstractButton>
 #include <QIcon>
 #include <QPointer>
 #include <QString>
 
+#include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialsurface.h"
 #include "qtmaterial/specs/qtmaterialbannerspec.h"
 
-class QAbstractButton;
 class QPaintEvent;
 class QResizeEvent;
 class QKeyEvent;
@@ -17,9 +18,10 @@ struct BannerSpec;
 class Theme;
 }
 
-class QtMaterialBanner : public QtMaterial::QtMaterialSurface
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialBanner : public QtMaterial::QtMaterialSurface
 {
     Q_OBJECT
+    Q_DISABLE_COPY(QtMaterialBanner)
 
 public:
     explicit QtMaterialBanner(QWidget* parent = nullptr);
@@ -80,6 +82,5 @@ private:
     mutable QPainterPath m_containerPath;
     mutable QString m_elidedTitle;
     mutable QString m_elidedBody;
-
     QPointer<QAbstractButton> m_dismissButton;
 };

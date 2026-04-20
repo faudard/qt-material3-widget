@@ -14,6 +14,6 @@ DataPage::DataPage(QWidget* parent) : QWidget(parent)
     item->setSupportingText(QStringLiteral("Supporting text"));
     layout->addWidget(item);
     layout->addWidget(new QtMaterial::QtMaterialDivider(this));
-    layout->addWidget(new QtMaterial::QtMaterialList(this));
+    // layout->addWidget(new QtMaterial::QtMaterialList(this));
     layout->addStretch(1);
 }

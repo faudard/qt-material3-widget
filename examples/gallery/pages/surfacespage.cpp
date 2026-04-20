@@ -8,9 +8,9 @@ SurfacesPage::SurfacesPage(QWidget* parent) : QWidget(parent)
     auto* layout = new QVBoxLayout(this);
     auto* dialog = new QtMaterial::QtMaterialDialog(this);
     dialog->setMinimumHeight(160);
-    auto* banner = new QtMaterial::QtMaterialBanner(this);
-    banner->setHeadlineText(QStringLiteral("Banner headline"));
-    banner->setSupportingText(QStringLiteral("Supporting text for the banner surface."));
+    auto* banner = new QtMaterialBanner(this);
+    // banner->setHeadlineText(QStringLiteral("Banner headline"));
+    // banner->setSupportingText(QStringLiteral("Supporting text for the banner surface."));
     auto* card = new QtMaterial::QtMaterialCard(this);
     layout->addWidget(dialog);
     layout->addWidget(banner);

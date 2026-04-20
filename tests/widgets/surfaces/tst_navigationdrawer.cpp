@@ -22,9 +22,9 @@ void tst_QtMaterialNavigationDrawer::construction()
 void tst_QtMaterialNavigationDrawer::edgeApi()
 {
     QtMaterial::QtMaterialNavigationDrawer drawer;
-    // QCOMPARE(drawer.edge(), QtMaterialNavigationDrawer::Edge::Left);
-    // drawer.setEdge(QtMaterialNavigationDrawer::Edge::Right);
-    // QCOMPARE(drawer.edge(), QtMaterialNavigationDrawer::Edge::Right);
+    QCOMPARE(drawer.edge(), QtMaterial::QtMaterialNavigationDrawer::Edge::Left);
+    drawer.setEdge(QtMaterial::QtMaterialNavigationDrawer::Edge::Right);
+    QCOMPARE(drawer.edge(), QtMaterial::QtMaterialNavigationDrawer::Edge::Right);
 }
 
 void tst_QtMaterialNavigationDrawer::escapeCloses()

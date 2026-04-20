@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QImage>
+#include <qlineedit.h>
 
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 
