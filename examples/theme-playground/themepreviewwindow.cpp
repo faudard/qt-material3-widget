@@ -34,6 +34,7 @@ ThemePreviewWindow::ThemePreviewWindow(QWidget* parent)
 
     m_modeLabel->setObjectName(QStringLiteral("modeLabel"));
     m_eyebrowLabel->setObjectName(QStringLiteral("eyebrowLabel"));
+    m_eyebrowLabel->setText(tr("Design system preview").toUpper());
     m_titleLabel->setObjectName(QStringLiteral("titleLabel"));
     m_supportingLabel->setObjectName(QStringLiteral("supportingLabel"));
     m_paletteLabel->setObjectName(QStringLiteral("paletteLabel"));
@@ -181,38 +182,36 @@ void ThemePreviewWindow::refreshPreview()
 
     setStyleSheet(QStringLiteral(
                       "#themePreviewWindow {"
-                      "  background: %1;"
+                      "  background-color: %1;"
                       "}"
 
                       "#previewCard {"
-                      "  background: %2;"
+                      "  background-color: %2;"
                       "  border: 1px solid %3;"
                       "  border-radius: 28px;"
                       "}"
 
                       "QLabel {"
                       "  color: %4;"
-                      "  background: transparent;"
+                      "  background-color: transparent;"
                       "}"
 
                       "#modeLabel {"
                       "  color: %5;"
                       "  font-size: 12px;"
-                      "  font-weight: 600;"
-                      "  letter-spacing: 0.5px;"
+                      "  font-weight: bold;"
                       "}"
 
                       "#eyebrowLabel {"
                       "  color: %5;"
                       "  font-size: 12px;"
-                      "  font-weight: 700;"
-                      "  text-transform: uppercase;"
+                      "  font-weight: bold;"
                       "}"
 
                       "#titleLabel {"
                       "  color: %4;"
                       "  font-size: 24px;"
-                      "  font-weight: 700;"
+                      "  font-weight: bold;"
                       "}"
 
                       "#supportingLabel {"
@@ -226,67 +225,67 @@ void ThemePreviewWindow::refreshPreview()
                       "}"
 
                       "#filledButton {"
-                      "  background: %6;"
+                      "  background-color: %6;"
                       "  color: %7;"
                       "  border: none;"
                       "  border-radius: 20px;"
                       "  padding: 10px 18px;"
                       "  min-height: 40px;"
-                      "  font-weight: 700;"
+                      "  font-weight: bold;"
                       "}"
                       "#filledButton:hover {"
-                      "  background: %8;"
+                      "  background-color: %8;"
                       "}"
                       "#filledButton:pressed {"
-                      "  background: %9;"
+                      "  background-color: %9;"
                       "}"
 
                       "#tonalButton {"
-                      "  background: %10;"
+                      "  background-color: %10;"
                       "  color: %11;"
                       "  border: none;"
                       "  border-radius: 20px;"
                       "  padding: 10px 18px;"
                       "  min-height: 40px;"
-                      "  font-weight: 700;"
+                      "  font-weight: bold;"
                       "}"
                       "#tonalButton:hover {"
-                      "  background: %12;"
+                      "  background-color: %12;"
                       "}"
                       "#tonalButton:pressed {"
-                      "  background: %13;"
+                      "  background-color: %13;"
                       "}"
 
                       "#textButton {"
-                      "  background: transparent;"
+                      "  background-color: transparent;"
                       "  color: %6;"
                       "  border: none;"
                       "  border-radius: 20px;"
                       "  padding: 10px 14px;"
                       "  min-height: 40px;"
-                      "  font-weight: 700;"
+                      "  font-weight: bold;"
                       "}"
                       "#textButton:hover {"
-                      "  background: %14;"
+                      "  background-color: %14;"
                       "}"
                       "#textButton:pressed {"
-                      "  background: %15;"
+                      "  background-color: %15;"
                       "}").arg(
-                          surface.name(),                 // 1
-                          surfaceContainerHigh.name(),    // 2
-                          outlineVariant.name(),          // 3
-                          onSurface.name(),               // 4
-                          outline.name(),                 // 5
-                          primary.name(),                 // 6
-                          onPrimary.name(),               // 7
-                          filledHover.name(),             // 8
-                          filledPressed.name(),           // 9
-                          secondaryContainer.name(),      // 10
-                          onSecondaryContainer.name(),    // 11
-                          tonalHover.name(),              // 12
-                          tonalPressed.name(),            // 13
-                          textHover.name(),               // 14
-                          textPressed.name()              // 15
+                          surface.name(),
+                          surfaceContainerHigh.name(),
+                          outlineVariant.name(),
+                          onSurface.name(),
+                          outline.name(),
+                          primary.name(),
+                          onPrimary.name(),
+                          filledHover.name(),
+                          filledPressed.name(),
+                          secondaryContainer.name(),
+                          onSecondaryContainer.name(),
+                          tonalHover.name(),
+                          tonalPressed.name(),
+                          textHover.name(),
+                          textPressed.name()
                           ));
 
     m_confirmButton->setText(tr("Confirm"));
