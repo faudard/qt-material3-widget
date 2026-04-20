@@ -1,15 +1,20 @@
 #include <QtTest/QtTest>
+
 #include "qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h"
-class TestQtMaterialFilledTextField : public QObject
+
+class tst_FilledTextField : public QObject
 {
     Q_OBJECT
+
 private slots:
-    void constructs();
+    void createsLineEditHost();
 };
-void TestQtMaterialFilledTextField::constructs()
+
+void tst_FilledTextField::createsLineEditHost()
 {
-    QtMaterial::QtMaterialFilledTextField widget;
-    QVERIFY(true);
+    QtMaterial::QtMaterialFilledTextField field;
+    QVERIFY(field.lineEdit() != nullptr);
 }
-QTEST_MAIN(TestQtMaterialFilledTextField)
+
+QTEST_MAIN(tst_FilledTextField)
 #include "tst_filledtextfield.moc"

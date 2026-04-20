@@ -1,15 +1,21 @@
 #include <QtTest/QtTest>
+
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
-class TestQtMaterialCard : public QObject
+
+class tst_Card : public QObject
 {
     Q_OBJECT
+
 private slots:
-    void constructs();
+    void hasSaneMinimumSize();
 };
-void TestQtMaterialCard::constructs()
+
+void tst_Card::hasSaneMinimumSize()
 {
-    QtMaterial::QtMaterialCard widget;
-    QVERIFY(true);
+    QtMaterial::QtMaterialCard card;
+    QVERIFY(card.minimumSizeHint().width() >= 160);
+    QVERIFY(card.minimumSizeHint().height() >= 100);
 }
-QTEST_MAIN(TestQtMaterialCard)
+
+QTEST_MAIN(tst_Card)
 #include "tst_card.moc"

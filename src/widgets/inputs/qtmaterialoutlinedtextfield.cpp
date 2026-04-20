@@ -1,52 +1,132 @@
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
+
 #include <QLineEdit>
 #include <QPainter>
 #include <QResizeEvent>
-#include "qtmaterial/effects/qtmaterialfocusindicator.h"
+
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "private/qtmaterialtextfieldshellhelper_p.h"
+
 namespace QtMaterial {
+
 QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
     : QtMaterialInputControl(parent)
     , m_lineEdit(new QLineEdit(this))
     , m_transition(new QtMaterialTransitionController(this))
 {
     setMinimumHeight(64);
+    if (m_lineEdit) {
+        m_lineEdit->setFrame(false);
+        m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
+    }
 }
+
 QtMaterialOutlinedTextField::~QtMaterialOutlinedTextField() = default;
-QString QtMaterialOutlinedTextField::text() const { return m_lineEdit ? m_lineEdit->text() : QString(); }
-void QtMaterialOutlinedTextField::setText(const QString& text) { if (m_lineEdit) m_lineEdit->setText(text); }
-QLineEdit* QtMaterialOutlinedTextField::lineEdit() const { return m_lineEdit; }
-void QtMaterialOutlinedTextField::themeChangedEvent(const Theme& theme) { QtMaterialInputControl::themeChangedEvent(theme); m_specDirty = true; }
-void QtMaterialOutlinedTextField::invalidateResolvedSpec() { m_specDirty = true; }
-void QtMaterialOutlinedTextField::resolveSpecIfNeeded() const
+
+QString QtMaterialOutlinedTextField::text() const
 {
-    if (!m_specDirty) return;
+    return m_lineEdit ? m_lineEdit->text() : QString();
+}
+
+void QtMaterialOutlinedTextField::setText(const QString& text)
+{
+    if (m_lineEdit) {
+        m_lineEdit->setText(text);
+        update();
+    }
+}
+
+QLineEdit* QtMaterialOutlinedTextField::lineEdit() const
+{
+    return m_lineEdit;
+}
+
+QSize QtMaterialOutlinedTextField::sizeHint() const
+{
+    ensureSpecResolved();
+    return QSize(220, spec().minHeight + 24);
+}
+
+QSize QtMaterialOutlinedTextField::minimumSizeHint() const
+{
+    ensureSpecResolved();
+    return QSize(120, spec().minHeight + 20);
+}
+
+QtMaterialOutlinedTextField::ShellVariant QtMaterialOutlinedTextField::shellVariant() const
+{
+    return ShellVariant::Outlined;
+}
+
+TextFieldSpec QtMaterialOutlinedTextField::resolveTextFieldSpec(const SpecFactory& factory) const
+{
+    return factory.outlinedTextFieldSpec(theme(), density());
+}
+
+void QtMaterialOutlinedTextField::themeChangedEvent(const Theme& theme)
+{
+    QtMaterialInputControl::themeChangedEvent(theme);
+    m_specDirty = true;
+}
+
+void QtMaterialOutlinedTextField::invalidateResolvedSpec()
+{
+    m_specDirty = true;
+}
+
+void QtMaterialOutlinedTextField::ensureSpecResolved() const
+{
+    if (!m_specDirty) {
+        return;
+    }
+
     SpecFactory factory;
-    m_spec = factory.outlinedTextFieldSpec(theme(), density());
+    m_spec = resolveTextFieldSpec(factory);
     m_specDirty = false;
 }
+
+const TextFieldSpec& QtMaterialOutlinedTextField::spec() const
+{
+    ensureSpecResolved();
+    return m_spec;
+}
+
 void QtMaterialOutlinedTextField::resizeEvent(QResizeEvent* event)
 {
     QtMaterialInputControl::resizeEvent(event);
-    if (m_lineEdit) m_lineEdit->setGeometry(contentRect());
-}
-void QtMaterialOutlinedTextField::paintEvent(QPaintEvent*)
-{
-    resolveSpecIfNeeded();
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    QRectF box = rect().adjusted(1, 1, -1, -24);
-    const QColor outline = hasErrorState() ? m_spec.errorColor : (interactionState().isFocused() ? m_spec.focusedOutlineColor : m_spec.outlineColor);
-    painter.setPen(QPen(outline, interactionState().isFocused() ? 2.0 : 1.0));
-    painter.setBrush(Qt::NoBrush);
-    painter.drawRoundedRect(box, 4.0, 4.0);
-    painter.setPen(hasErrorState() ? m_spec.errorColor : m_spec.labelColor);
-    painter.drawText(QRect(12, 0, width() - 24, 20), Qt::AlignLeft | Qt::AlignVCenter, labelText());
-    painter.setPen(hasErrorState() ? m_spec.errorColor : m_spec.supportingTextColor);
-    painter.drawText(supportingTextRect(), Qt::AlignLeft | Qt::AlignVCenter, hasErrorState() ? errorText() : supportingText());
-    if (interactionState().isFocused()) {
-        QtMaterialFocusIndicator::paintRectFocusRing(&painter, box.adjusted(-2, -2, 2, 2), m_spec.focusedOutlineColor, 6.0, 1.5);
+    ensureSpecResolved();
+    const auto variant = shellVariant() == ShellVariant::Filled
+        ? QtMaterialTextFieldShellHelper::Variant::Filled
+        : QtMaterialTextFieldShellHelper::Variant::Outlined;
+    const auto layout = QtMaterialTextFieldShellHelper::layoutFor(rect(), spec(), theme(), variant);
+    if (m_lineEdit) {
+        m_lineEdit->setGeometry(layout.editorRect);
     }
 }
+
+void QtMaterialOutlinedTextField::paintEvent(QPaintEvent*)
+{
+    ensureSpecResolved();
+
+    const auto variant = shellVariant() == ShellVariant::Filled
+        ? QtMaterialTextFieldShellHelper::Variant::Filled
+        : QtMaterialTextFieldShellHelper::Variant::Outlined;
+    const auto layout = QtMaterialTextFieldShellHelper::layoutFor(rect(), spec(), theme(), variant);
+
+    QPainter painter(this);
+    QtMaterialTextFieldShellHelper::paintShell(
+        &painter,
+        layout,
+        theme(),
+        spec(),
+        interactionState(),
+        variant,
+        labelText(),
+        supportingText(),
+        errorText(),
+        hasErrorState(),
+        font());
+}
+
 } // namespace QtMaterial

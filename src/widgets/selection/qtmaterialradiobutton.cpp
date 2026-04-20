@@ -10,7 +10,6 @@
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/core/qtmaterialeventcompat.h"
 
-
 namespace QtMaterial {
 QtMaterialRadioButton::QtMaterialRadioButton(QWidget* parent) : QtMaterialSelectionControl(parent), m_ripple(new QtMaterialRippleController(this))
 {
