@@ -298,6 +298,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     src/widgets/buttons/qtmaterialelevatedbutton.cpp
     src/widgets/buttons/qtmaterialfab.cpp
     src/widgets/buttons/qtmaterialextendedfab.cpp
+    src/widgets/selection/private/qtmaterialselectionrenderhelper.cpp
     src/widgets/selection/qtmaterialcheckbox.cpp
     src/widgets/selection/qtmaterialswitch.cpp
     src/widgets/selection/qtmaterialradiobutton.cpp

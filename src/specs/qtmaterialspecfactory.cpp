@@ -23,7 +23,6 @@ ButtonSpec SpecFactory::textButtonSpec(const Theme& theme, Density density) cons
     spec.disabledContainerColor = Qt::transparent;
     spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
-    // spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.outlineColor = Qt::transparent;
     spec.disabledOutlineColor = Qt::transparent;
     spec.containerHeight = buttonHeightForDensity(density);
@@ -39,7 +38,6 @@ ButtonSpec SpecFactory::filledButtonSpec(const Theme& theme, Density density) co
     spec.disabledContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
     spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnPrimary);
-    // spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.elevationRole = ElevationRole::Level1;
     return spec;
 }
@@ -53,7 +51,6 @@ ButtonSpec SpecFactory::filledTonalButtonSpec(const Theme& theme, Density densit
     spec.disabledContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
     spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = spec.labelColor;
-    // spec.focusRingColor = theme.colorScheme().color(ColorRole::Secondary);
     return spec;
 }
 
@@ -63,7 +60,6 @@ ButtonSpec SpecFactory::outlinedButtonSpec(const Theme& theme, Density density) 
     spec.containerColor = Qt::transparent;
     spec.outlineColor = theme.colorScheme().color(ColorRole::Outline);
     spec.disabledOutlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
-    // spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     return spec;
 }
 
@@ -78,7 +74,6 @@ ButtonSpec SpecFactory::elevatedButtonSpec(const Theme& theme, Density density) 
     spec.disabledContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
     spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = spec.labelColor;
-    // spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.elevationRole = ElevationRole::Level1;
     return spec;
 }
@@ -122,7 +117,7 @@ CheckboxSpec SpecFactory::checkboxSpec(const Theme& theme, Density density) cons
     spec.disabledSelectedContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
     spec.disabledUnselectedOutlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
     spec.labelColor = theme.colorScheme().color(ColorRole::OnSurface);
-    // spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     if (density == Density::Compact) spec.spacing = 8;
@@ -137,7 +132,7 @@ RadioButtonSpec SpecFactory::radioButtonSpec(const Theme& theme, Density density
     spec.unselectedOutlineColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.disabledColor = theme.colorScheme().color(ColorRole::OutlineVariant);
     spec.labelColor = theme.colorScheme().color(ColorRole::OnSurface);
-    // spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     if (density == Density::Compact) spec.spacing = 8;
@@ -152,17 +147,17 @@ SwitchSpec SpecFactory::switchSpec(const Theme& theme, Density density) const
     spec.selectedHandleColor = theme.colorScheme().color(ColorRole::OnPrimary);
     spec.unselectedTrackColor = theme.colorScheme().color(ColorRole::SurfaceVariant);
     spec.unselectedHandleColor = theme.colorScheme().color(ColorRole::Outline);
-    // spec.disabledSelectedTrackColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    // spec.disabledSelectedHandleColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    // spec.disabledUnselectedTrackColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    // spec.disabledUnselectedHandleColor = theme.colorScheme().color(ColorRole::OutlineVariant);
+    spec.disabledSelectedTrackColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
+    spec.disabledSelectedHandleColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.disabledUnselectedTrackColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
+    spec.disabledUnselectedHandleColor = theme.colorScheme().color(ColorRole::OutlineVariant);
     spec.iconColor = theme.colorScheme().color(ColorRole::OnPrimary);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
-    // spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    // spec.labelColor = theme.colorScheme().color(ColorRole::OnSurface);
-    // spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    // if (density == Density::Compact) spec.spacing = 8;
-    // if (density == Density::Comfortable) spec.spacing = 14;
+    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
+    spec.labelColor = theme.colorScheme().color(ColorRole::OnSurface);
+    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    if (density == Density::Compact) spec.spacing = 8;
+    if (density == Density::Comfortable) spec.spacing = 14;
     return spec;
 }
 
@@ -257,7 +252,7 @@ AutocompletePopupSpec SpecFactory::autocompletePopupSpec(const Theme& theme) con
 {
     AutocompletePopupSpec spec;
     spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    // spec.textColor = theme.colorScheme().color(ColorRole::OnSurface);
+    spec.textColor = theme.colorScheme().color(ColorRole::OnSurface);
     // spec.hoverColor = theme.colorScheme().color(ColorRole::SurfaceVariant);
     return spec;
 }
@@ -267,7 +262,7 @@ DateFieldSpec SpecFactory::dateFieldSpec(const Theme& theme) const
     DateFieldSpec spec;
     // spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHighest);
     // spec.textColor = theme.colorScheme().color(ColorRole::OnSurface);
-    // spec.placeholderColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.placeholderColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     // spec.iconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     return spec;
 }
@@ -277,7 +272,7 @@ ListItemSpec SpecFactory::listItemSpec(const Theme& theme) const
     ListItemSpec spec;
     spec.containerColor = Qt::transparent;
     // spec.textColor = theme.colorScheme().color(ColorRole::OnSurface);
-    // spec.supportingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.supportingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     // spec.selectedContainerColor = theme.colorScheme().color(ColorRole::SecondaryContainer);
     return spec;
 }

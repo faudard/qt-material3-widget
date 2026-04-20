@@ -7,5 +7,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialFilledTonalButton : public QtMaterial
 public:
     explicit QtMaterialFilledTonalButton(QWidget* parent = nullptr);
     ~QtMaterialFilledTonalButton() override;
+protected:
+    ButtonSpec resolveButtonSpec() const override;
 };
 } // namespace QtMaterial

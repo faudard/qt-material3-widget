@@ -11,6 +11,7 @@ struct QTMATERIAL3_SPECS_EXPORT CheckboxSpec {
     QColor disabledSelectedContainerColor;
     QColor disabledUnselectedOutlineColor;
     QColor labelColor;
+    QColor disabledLabelColor;
     QColor stateLayerColor;
     QColor focusRingColor;
     TypeRole labelTypeRole = TypeRole::BodyLarge;
@@ -19,5 +20,8 @@ struct QTMATERIAL3_SPECS_EXPORT CheckboxSpec {
     int indicatorSize = 18;
     int spacing = 12;
     int outlineWidth = 2;
+    int cornerRadius = 4;
+    int checkmarkStrokeWidth = 2;
+    int stateLayerSize = 40;
 };
 } // namespace QtMaterial

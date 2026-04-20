@@ -7,5 +7,8 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialElevatedButton : public QtMaterialFil
 public:
     explicit QtMaterialElevatedButton(QWidget* parent = nullptr);
     ~QtMaterialElevatedButton() override;
+protected:
+    void paintEvent(QPaintEvent* event) override;
+    ButtonSpec resolveButtonSpec() const override;
 };
 } // namespace QtMaterial

@@ -9,6 +9,7 @@ struct QTMATERIAL3_SPECS_EXPORT RadioButtonSpec {
     QColor unselectedOutlineColor;
     QColor disabledColor;
     QColor labelColor;
+    QColor disabledLabelColor;
     QColor stateLayerColor;
     QColor focusRingColor;
     TypeRole labelTypeRole = TypeRole::BodyLarge;
@@ -18,5 +19,6 @@ struct QTMATERIAL3_SPECS_EXPORT RadioButtonSpec {
     int dotSize = 10;
     int spacing = 12;
     int outlineWidth = 2;
+    int stateLayerSize = 40;
 };
 } // namespace QtMaterial

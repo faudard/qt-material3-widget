@@ -8,5 +8,8 @@ public:
     explicit QtMaterialFab(QWidget* parent = nullptr);
     ~QtMaterialFab() override;
     QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
+protected:
+    ButtonSpec resolveButtonSpec() const override;
 };
 } // namespace QtMaterial
