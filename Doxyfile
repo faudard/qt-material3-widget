@@ -1,0 +1,56 @@
+PROJECT_NAME           = qt-material3-widget
+PROJECT_BRIEF          = Material 3 widgets for Qt Widgets
+PROJECT_NUMBER         = 0.4.0
+OUTPUT_DIRECTORY       = build/doxygen
+CREATE_SUBDIRS         = NO
+OUTPUT_LANGUAGE        = English
+USE_MDFILE_AS_MAINPAGE = README.md
+MARKDOWN_SUPPORT       = YES
+TOC_INCLUDE_HEADINGS   = 2
+
+INPUT                  = include/qtmaterial README.md docs/public-api docs/architecture docs/migration
+FILE_PATTERNS          = *.h *.hpp *.md
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = */build/* */tests/* */benchmarks/* */examples/* */src/*
+
+# Bootstrap mode: expose the current public headers even before they are fully annotated.
+# Once header comments are in place, consider switching EXTRACT_ALL back to NO.
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = NO
+EXTRACT_LOCAL_CLASSES  = NO
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+HIDE_UNDOC_NAMESPACES  = NO
+HIDE_FRIEND_COMPOUNDS  = YES
+HIDE_IN_BODY_DOCS      = YES
+INTERNAL_DOCS          = NO
+
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = NO
+QUIET                  = YES
+
+GENERATE_HTML          = NO
+GENERATE_LATEX         = NO
+GENERATE_XML           = YES
+XML_OUTPUT             = xml
+XML_PROGRAMLISTING     = NO
+
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+SEARCH_INCLUDES        = NO
+SKIP_FUNCTION_MACROS   = YES
+PREDEFINED             += Q_OBJECT=
+PREDEFINED             += signals=public
+PREDEFINED             += slots=
+PREDEFINED             += Q_SIGNALS=public
+PREDEFINED             += Q_SLOTS=
+PREDEFINED             += QTMATERIAL3_THEME_EXPORT=
+PREDEFINED             += QTMATERIAL3_LEGACY_EXPORT=
+PREDEFINED             += QTMATERIAL3_CORE_EXPORT=
+PREDEFINED             += QTMATERIAL3_SPECS_EXPORT=
+PREDEFINED             += QTMATERIAL3_EFFECTS_EXPORT=
+PREDEFINED             += QTMATERIAL3_WIDGETS_EXPORT=

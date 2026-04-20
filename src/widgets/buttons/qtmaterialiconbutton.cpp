@@ -153,7 +153,7 @@ void QtMaterialIconButton::paintEvent(QPaintEvent* event)
     if (hasFocus()) {
         QtMaterialFocusIndicator::paintPathFocusRing(
             &painter,
-            m_cachedContainerPath,
+            m_cachedContainerPath,m_spec.,
             // m_spec.focusRingColor,
             // m_spec.focusRingWidth
         );

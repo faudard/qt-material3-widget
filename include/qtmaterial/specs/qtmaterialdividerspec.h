@@ -11,6 +11,13 @@ namespace QtMaterial {
 
 struct QTMATERIAL3_WIDGETS_EXPORT DividerSpec
 {
+    DividerSpec();
+    DividerSpec(const DividerSpec& other);
+    DividerSpec(DividerSpec&& other);
+    DividerSpec& operator=(const DividerSpec& other);
+    DividerSpec& operator=(DividerSpec&& other);
+    ~DividerSpec();
+
     QColor color;
     QColor insetColor;
     ShapeRole shapeRole = ShapeRole::None;

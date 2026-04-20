@@ -1,6 +1,6 @@
 #include "qtmaterial/widgets/selection/qtmaterialswitch.h"
 
-#include <QChangeEvent>
+// #include <QChangeEvent>
 #include <QFontMetrics>
 #include <QKeyEvent>
 #include <QMouseEvent>

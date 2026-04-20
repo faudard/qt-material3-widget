@@ -1,2 +1,4 @@
 #pragma once
-// Reserved for future private implementation details in Phase 3.
+
+// Private dialog helpers can live here later.
+// Do not redeclare QtMaterialDialog in this file.
