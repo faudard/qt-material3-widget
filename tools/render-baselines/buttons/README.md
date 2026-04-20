@@ -1,18 +1,14 @@
-# Button render baselines
+# Button Render Baselines
 
 This directory stores PNG baselines for button render regression tests.
 
-Generate or update baselines by running the render tests with:
+Suggested files for `QtMaterialFilledTonalButton`:
 
+- `filledtonalbutton_default_light.png`
+- `filledtonalbutton_disabled_light.png`
+
+To update baselines locally, run the render tests with:
+
+```bash
+QTMATERIAL3_UPDATE_BASELINES=1 ctest --output-on-failure -R filledtonalbutton_render
 ```
-QTMATERIAL3_UPDATE_BASELINES=1 ctest -R filledbutton_render
-```
-
-Committed baselines should be captured with a fixed Qt version, DPI, and font environment where possible.
-
-Expected baseline files may include:
-
-- filledbutton_default_light.png
-- filledbutton_disabled_light.png
-- outlinedbutton_default_light.png
-- outlinedbutton_disabled_light.png
