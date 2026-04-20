@@ -14,14 +14,14 @@ private slots:
 
 void tst_QtMaterialBottomSheet::construction()
 {
-    QtMaterialBottomSheet sheet;
+    QtMaterial::QtMaterialBottomSheet sheet;
     QVERIFY(!sheet.isOpen());
     QVERIFY(sheet.expandedHeight() >= 120);
 }
 
 void tst_QtMaterialBottomSheet::modalApi()
 {
-    QtMaterialBottomSheet sheet;
+    QtMaterial::QtMaterialBottomSheet sheet;
     sheet.setModal(false);
     QVERIFY(!sheet.isModal());
     sheet.setModal(true);
@@ -35,7 +35,7 @@ void tst_QtMaterialBottomSheet::escapeCloses()
     host.show();
     QVERIFY(QTest::qWaitForWindowExposed(&host));
 
-    QtMaterialBottomSheet sheet(&host);
+    QtMaterial::QtMaterialBottomSheet sheet(&host);
     sheet.open();
     QVERIFY(sheet.isVisible());
 

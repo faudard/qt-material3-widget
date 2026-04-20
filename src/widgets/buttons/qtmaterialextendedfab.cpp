@@ -6,7 +6,6 @@
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 
 namespace QtMaterial {
-namespace {
 
 ButtonSpec extendedFabToButtonSpec(const FabSpec& fab)
 {
@@ -29,7 +28,6 @@ ButtonSpec extendedFabToButtonSpec(const FabSpec& fab)
     return spec;
 }
 
-} // namespace
 
 QtMaterialExtendedFab::QtMaterialExtendedFab(QWidget* parent)
     : QtMaterialFilledButton(parent)
@@ -37,18 +35,18 @@ QtMaterialExtendedFab::QtMaterialExtendedFab(QWidget* parent)
     setCheckable(false);
 }
 
-// QtMaterialExtendedFab::QtMaterialExtendedFab(const QString& text, QWidget* parent)
-//     : QtMaterialFilledButton(text, parent)
-// {
-//     setCheckable(false);
-// }
+QtMaterialExtendedFab::QtMaterialExtendedFab(const QString& text, QWidget* parent)
+    : QtMaterialFilledButton(parent)
+{
+    setCheckable(false);
+}
 
-// QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& text, QWidget* parent)
-//     : QtMaterialFilledButton(text, parent)
-// {
-//     setIcon(icon);
-//     setCheckable(false);
-// }
+QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& text, QWidget* parent)
+    : QtMaterialFilledButton(parent)
+{
+    setIcon(icon);
+    setCheckable(false);
+}
 
 QtMaterialExtendedFab::~QtMaterialExtendedFab() = default;
 

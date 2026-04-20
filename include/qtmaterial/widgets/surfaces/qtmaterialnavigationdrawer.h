@@ -12,6 +12,7 @@ class QKeyEvent;
 class QResizeEvent;
 class QShowEvent;
 class QHideEvent;
+namespace QtMaterial {
 
 class QtMaterialScrimWidget;
 class QtMaterialTransitionController;
@@ -73,3 +74,4 @@ private:
     QPointer<QtMaterialScrimWidget> m_scrim;
     QtMaterialTransitionController* m_transition = nullptr;
 };
+}

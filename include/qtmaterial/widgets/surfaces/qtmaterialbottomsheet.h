@@ -5,7 +5,6 @@
 #include <QPainterPath>
 
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
-#include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
 
 class QKeyEvent;
 class QResizeEvent;
