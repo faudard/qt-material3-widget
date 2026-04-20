@@ -12,6 +12,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialFilledTextField : public QtMaterialOu
     Q_OBJECT
 public:
     explicit QtMaterialFilledTextField(QWidget* parent = nullptr);
+    explicit QtMaterialFilledTextField(const QString& labelText, QWidget* parent = nullptr);
     ~QtMaterialFilledTextField() override;
 
 protected:

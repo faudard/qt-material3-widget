@@ -9,6 +9,12 @@ QtMaterialFilledTextField::QtMaterialFilledTextField(QWidget* parent)
 {
 }
 
+QtMaterialFilledTextField::QtMaterialFilledTextField(const QString& labelText, QWidget* parent)
+    : QtMaterialOutlinedTextField(parent)
+{
+    setLabelText(labelText);
+}
+
 QtMaterialFilledTextField::~QtMaterialFilledTextField() = default;
 
 QtMaterialOutlinedTextField::ShellVariant QtMaterialFilledTextField::shellVariant() const

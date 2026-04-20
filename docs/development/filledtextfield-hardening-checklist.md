@@ -1,15 +1,13 @@
 # Filled Text Field Hardening Checklist
 
-This pass finalizes `QtMaterialFilledTextField` as a real variant of the shared
-text-field shell architecture.
+This pass keeps `QtMaterialFilledTextField` aligned with the shared text-field shell while tightening the variant for real use.
 
 ## Goals
 
-- reuse the shared shell from `QtMaterialOutlinedTextField`
-- resolve `filledTextFieldSpec(...)` through `SpecFactory`
-- keep focus forwarding on the hosted `QLineEdit`
-- ensure accessibility metadata flows to the internal editor
-- add render baseline scaffolding for the filled variant
+- keep the filled variant on the shared shell architecture
+- add a convenience constructor for label-first construction
+- ensure content-driven shell invalidation is reflected in tests
+- add a focused-state render baseline alongside default and error baselines
 
 ## What should remain shared
 
@@ -18,9 +16,10 @@ text-field shell architecture.
 - focus/error state handling
 - line-edit palette syncing
 - accessibility synchronization
+- `contentChangedEvent()` invalidation path from the outlined base
 
 ## What should differ by variant
 
 - container fill treatment
-- outline/bottom-line visual behavior
+- filled-shell focus and indicator visuals
 - spec selection (`filledTextFieldSpec` vs `outlinedTextFieldSpec`)

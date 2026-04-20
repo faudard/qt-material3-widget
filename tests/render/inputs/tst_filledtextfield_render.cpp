@@ -12,6 +12,7 @@ class tst_FilledTextFieldRender : public QObject
     Q_OBJECT
 private slots:
     void rendersDefaultState();
+    void rendersFocusedState();
     void rendersErrorState();
 
 private:
@@ -63,6 +64,24 @@ void tst_FilledTextFieldRender::rendersDefaultState()
     const QImage image = widget.grab().toImage();
     QVERIFY(!image.isNull());
     verifyOrUpdateBaseline(image, QStringLiteral("filledtextfield_default_light.png"));
+}
+
+void tst_FilledTextFieldRender::rendersFocusedState()
+{
+    QtMaterial::QtMaterialFilledTextField widget;
+    widget.setLabelText(QStringLiteral("Name"));
+    widget.resize(widget.sizeHint());
+    widget.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&widget));
+
+    widget.setFocus(Qt::TabFocusReason);
+    QVERIFY(QTest::qWaitFor([&widget]() {
+        return widget.lineEdit() && widget.lineEdit()->hasFocus();
+    }));
+
+    const QImage image = widget.grab().toImage();
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("filledtextfield_focused_light.png"));
 }
 
 void tst_FilledTextFieldRender::rendersErrorState()
