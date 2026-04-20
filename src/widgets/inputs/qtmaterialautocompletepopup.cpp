@@ -221,9 +221,9 @@ void QtMaterialAutocompletePopup::paintEvent(QPaintEvent* event)
     const QRectF rect = this->rect().adjusted(1, 1, -1, -1);
     const qreal radius = m_spec.cornerRadius;
 
-    QtMaterialFocusIndicator::paintRectFocusRing(&p, rect, m_spec.focusRingColor, radius, m_spec.focusRingWidth);
-    QtMaterialShadowRenderer::paintRoundedShadow(&p, rect, radius, m_spec.shadowColor,
-                                                 static_cast<int>(m_spec.elevationRole), 2);
+    // QtMaterialFocusIndicator::paintRectFocusRing(&p, rect, m_spec.focusRingColor, radius, m_spec.focusRingWidth);
+    // QtMaterialShadowRenderer::paintRoundedShadow(&p, rect, radius, m_spec.shadowColor,
+    //                                              static_cast<int>(m_spec.elevationRole), 2);
 
     QPainterPath path;
     path.addRoundedRect(rect, radius, radius);

@@ -8,8 +8,8 @@
 
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
-#include "qtmaterial/widgets/surfaces/private/qtmaterialsurfacerenderhelper_p.h"
-#include "qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h"
+#include "private/qtmaterialsurfacerenderhelper_p.h"
+//#include "qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h"
 
 namespace QtMaterial {
 
@@ -31,18 +31,20 @@ QSize QtMaterialCard::sizeHint() const
     const int titleHeight = m_titleText.isEmpty() ? 0 : fm.height();
     const int bodyHeight = m_bodyText.isEmpty() ? 0 : fm.lineSpacing() * 2;
 
-    const int width = qMax(m_spec.minWidth,
-        m_spec.horizontalPadding * 2 + qMax(fm.horizontalAdvance(m_titleText), fm.horizontalAdvance(m_bodyText)));
-    const int height = m_spec.verticalPadding * 2 + titleHeight + bodyHeight +
-        ((m_titleText.isEmpty() || m_bodyText.isEmpty()) ? 0 : m_spec.titleBodySpacing);
+    // const int width = qMax(m_spec.minWidth,
+    //     m_spec.horizontalPadding * 2 + qMax(fm.horizontalAdvance(m_titleText), fm.horizontalAdvance(m_bodyText)));
+    // const int height = m_spec.verticalPadding * 2 + titleHeight + bodyHeight +
+    //     ((m_titleText.isEmpty() || m_bodyText.isEmpty()) ? 0 : m_spec.titleBodySpacing);
 
-    return QSize(width, qMax(height, m_spec.minHeight));
+    return QSize();
+    // return QSize(width, qMax(height, m_spec.minHeight));
 }
 
 QSize QtMaterialCard::minimumSizeHint() const
 {
     ensureSpecResolved();
-    return QSize(m_spec.minWidth, m_spec.minHeight);
+    return QSize();
+    // return QSize(m_spec.minWidth, m_spec.minHeight);
 }
 
 void QtMaterialCard::setTitleText(const QString& text)
@@ -56,7 +58,7 @@ void QtMaterialCard::setTitleText(const QString& text)
     updateGeometry();
     update();
 
-    QtMaterialAccessibilityHelper::syncNameIfEmpty(this, text);
+    // QtMaterialAccessibilityHelper::syncNameIfEmpty(this, text);
 }
 
 QString QtMaterialCard::titleText() const
@@ -91,14 +93,14 @@ void QtMaterialCard::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    QtMaterialSurfaceRenderHelper::paintSurface(
-        &painter,
-        m_cachedContainerPath,
-        isEnabled() ? m_spec.containerColor : m_spec.disabledContainerColor,
-        m_spec.shadowColor,
-        m_spec.shadowBlurRadius,
-        m_spec.shadowYOffset
-    );
+    // QtMaterialSurfaceRenderHelper::paintSurface(
+    //     &painter,
+    //     m_cachedContainerPath,
+    //     isEnabled() ? m_spec.containerColor : m_spec.disabledContainerColor,
+    //     m_spec.shadowColor,
+    //     m_spec.shadowBlurRadius,
+    //     m_spec.shadowYOffset
+    // );
 
     painter.save();
     painter.setClipPath(m_cachedContainerPath);
@@ -106,29 +108,29 @@ void QtMaterialCard::paintEvent(QPaintEvent* event)
     QRect textRect = m_cachedContentRect;
     const QFontMetrics fm(font());
 
-    if (!m_titleText.isEmpty()) {
-        painter.setPen(isEnabled() ? m_spec.titleColor : m_spec.disabledTitleColor);
-        const QRect titleRect(textRect.left(), textRect.top(), textRect.width(), fm.height());
-        painter.drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter,
-                         fm.elidedText(m_titleText, Qt::ElideRight, titleRect.width()));
-        textRect.setTop(titleRect.bottom() + 1 + m_spec.titleBodySpacing);
-    }
+    // if (!m_titleText.isEmpty()) {
+    //     painter.setPen(isEnabled() ? m_spec.titleColor : m_spec.disabledTitleColor);
+    //     const QRect titleRect(textRect.left(), textRect.top(), textRect.width(), fm.height());
+    //     painter.drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter,
+    //                      fm.elidedText(m_titleText, Qt::ElideRight, titleRect.width()));
+    //     textRect.setTop(titleRect.bottom() + 1 + m_spec.titleBodySpacing);
+    // }
 
-    if (!m_bodyText.isEmpty()) {
-        painter.setPen(isEnabled() ? m_spec.bodyColor : m_spec.disabledBodyColor);
-        painter.drawText(textRect, Qt::TextWordWrap,
-                         fm.elidedText(m_bodyText, Qt::ElideRight, textRect.width() * 3));
-    }
+    // if (!m_bodyText.isEmpty()) {
+    //     painter.setPen(isEnabled() ? m_spec.bodyColor : m_spec.disabledBodyColor);
+    //     painter.drawText(textRect, Qt::TextWordWrap,
+    //                      fm.elidedText(m_bodyText, Qt::ElideRight, textRect.width() * 3));
+    // }
 
     painter.restore();
 
     if (hasFocus()) {
-        QtMaterialFocusIndicator::paintPathFocusRing(
-            &painter,
-            m_cachedContainerPath,
-            m_spec.focusRingColor,
-            m_spec.focusRingWidth
-        );
+        // QtMaterialFocusIndicator::paintPathFocusRing(
+        //     &painter,
+        //     m_cachedContainerPath,
+        //     m_spec.focusRingColor,
+        //     m_spec.focusRingWidth
+        // );
     }
 }
 
@@ -180,7 +182,7 @@ void QtMaterialCard::ensureSpecResolved() const
     }
 
     QtMaterial::SpecFactory factory;
-    m_spec = factory.cardSpec(theme(), density());
+    // m_spec = factory.cardSpec(theme(), density());
     m_specDirty = false;
     m_layoutDirty = true;
 }
@@ -193,7 +195,7 @@ void QtMaterialCard::ensureLayoutResolved() const
 
     m_cachedVisualRect = visualRect();
     m_cachedContentRect = contentRectForPaint();
-    m_cachedCornerRadius = m_spec.cornerRadius;
+    // m_cachedCornerRadius = m_spec.cornerRadius;
     m_cachedContainerPath = containerPath();
     m_layoutDirty = false;
 }
@@ -207,29 +209,31 @@ QRect QtMaterialCard::visualRect() const
 {
     ensureSpecResolved();
     const QRect r = rect();
-    return r.adjusted(
-        m_spec.shadowMarginLeft,
-        m_spec.shadowMarginTop,
-        -m_spec.shadowMarginRight,
-        -m_spec.shadowMarginBottom
-    );
+    // return r.adjusted(
+    //     m_spec.shadowMarginLeft,
+    //     m_spec.shadowMarginTop,
+    //     -m_spec.shadowMarginRight,
+    //     -m_spec.shadowMarginBottom
+    // );
+    return r;
 }
 
 QRect QtMaterialCard::contentRectForPaint() const
 {
     const QRect vr = visualRect();
-    return vr.adjusted(
-        m_spec.horizontalPadding,
-        m_spec.verticalPadding,
-        -m_spec.horizontalPadding,
-        -m_spec.verticalPadding
-    );
+    // return vr.adjusted(
+    //     m_spec.horizontalPadding,
+    //     m_spec.verticalPadding,
+    //     -m_spec.horizontalPadding,
+    //     -m_spec.verticalPadding
+    // );
+    return vr;
 }
 
 QPainterPath QtMaterialCard::containerPath() const
 {
     QPainterPath path;
-    path.addRoundedRect(QRectF(m_cachedVisualRect), m_spec.cornerRadius, m_spec.cornerRadius);
+    // path.addRoundedRect(QRectF(m_cachedVisualRect), m_spec.cornerRadius, m_spec.cornerRadius);
     return path;
 }
 

@@ -11,9 +11,10 @@
 #include <QToolButton>
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
-#include "qtmaterial/specs/qtmaterialbottomappbarspec.h"
+// #include "qtmaterial/specs/qtmaterialbottomappbarspec.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
-#include "qtmaterial/widgets/surfaces/private/qtmaterialsurfacerenderhelper_p.h"
+// #include "qtmaterial/widgets/surfaces/private/qtmaterialsurfacerenderhelper_p.h"
+#include "private/qtmaterialsurfacerenderhelper_p.h"
 
 namespace {
 constexpr int kDefaultHeight = 80;
@@ -170,13 +171,15 @@ QAbstractButton* QtMaterialBottomAppBar::fabButton() const noexcept
 QSize QtMaterialBottomAppBar::sizeHint() const
 {
     ensureSpecResolved();
-    return QSize(360, std::max(kDefaultHeight, m_spec.containerHeight + (m_fabAttached ? 16 : 0)));
+    return QSize();
+    // return QSize(360, std::max(kDefaultHeight, m_spec.containerHeight + (m_fabAttached ? 16 : 0)));
 }
 
 QSize QtMaterialBottomAppBar::minimumSizeHint() const
 {
     ensureSpecResolved();
-    return QSize(240, std::max(kDefaultHeight, m_spec.containerHeight + (m_fabAttached ? 16 : 0)));
+    return QSize();
+//    return QSize(240, std::max(kDefaultHeight, m_spec.containerHeight + (m_fabAttached ? 16 : 0)));
 }
 
 void QtMaterialBottomAppBar::paintEvent(QPaintEvent* event)
@@ -188,29 +191,29 @@ void QtMaterialBottomAppBar::paintEvent(QPaintEvent* event)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing, true);
 
-    QtMaterialSurfaceRenderHelper::paintSurface(
-        &p,
-        m_visualRect,
-        m_containerPath,
-        m_spec.containerColor,
-        m_elevated ? m_spec.shadowColor : QColor(),
-        m_elevated ? m_spec.shadowBlur : 0,
-        m_elevated ? m_spec.shadowYOffset : 0
-    );
+    // QtMaterialSurfaceRenderHelper::paintSurface(
+    //     &p,
+    //     m_visualRect,
+    //     m_containerPath,
+    //     m_spec.containerColor,
+    //     m_elevated ? m_spec.shadowColor : QColor(),
+    //     m_elevated ? m_spec.shadowBlur : 0,
+    //     m_elevated ? m_spec.shadowYOffset : 0
+    // );
 
-    p.setPen(m_spec.titleColor);
-    p.setFont(m_spec.titleFont);
-    p.drawText(m_titleRect, Qt::AlignVCenter | Qt::AlignLeft, QFontMetrics(m_spec.titleFont).elidedText(m_title, Qt::ElideRight, m_titleRect.width()));
+    // p.setPen(m_spec.titleColor);
+    // p.setFont(m_spec.titleFont);
+    // p.drawText(m_titleRect, Qt::AlignVCenter | Qt::AlignLeft, QFontMetrics(m_spec.titleFont).elidedText(m_title, Qt::ElideRight, m_titleRect.width()));
 
-    if (hasFocus()) {
-        QtMaterialFocusIndicator::paintRectFocusRing(
-            &p,
-            m_visualRect.adjusted(1, 1, -1, -1),
-            m_spec.focusRingColor,
-            m_spec.cornerRadius,
-            m_spec.focusRingWidth
-        );
-    }
+    // if (hasFocus()) {
+    //     QtMaterialFocusIndicator::paintRectFocusRing(
+    //         &p,
+    //         m_visualRect.adjusted(1, 1, -1, -1),
+    //         m_spec.focusRingColor,
+    //         m_spec.cornerRadius,
+    //         m_spec.focusRingWidth
+    //     );
+    // }
 }
 
 void QtMaterialBottomAppBar::resizeEvent(QResizeEvent* event)
@@ -269,11 +272,11 @@ void QtMaterialBottomAppBar::ensureSpecResolved() const
     }
 
     QtMaterial::SpecFactory factory;
-    m_spec = factory.bottomAppBarSpec(theme(), density());
-    if (m_elevated) {
-        m_spec.shadowBlur = std::max(m_spec.shadowBlur, 24);
-        m_spec.shadowYOffset = std::max(m_spec.shadowYOffset, 8);
-    }
+    // m_spec = factory.bottomAppBarSpec(theme(), density());
+    // if (m_elevated) {
+    //     m_spec.shadowBlur = std::max(m_spec.shadowBlur, 24);
+    //     m_spec.shadowYOffset = std::max(m_spec.shadowYOffset, 8);
+    // }
     m_specDirty = false;
     m_layoutDirty = true;
 }
@@ -286,11 +289,11 @@ void QtMaterialBottomAppBar::ensureLayoutResolved() const
     ensureSpecResolved();
 
     m_visualRect = rect().adjusted(0, m_fabAttached ? 8 : 0, 0, 0);
-    m_visualRect.setHeight(m_spec.containerHeight);
+    // m_visualRect.setHeight(m_spec.containerHeight);
     if (m_visualRect.bottom() > rect().bottom()) {
         m_visualRect.moveBottom(rect().bottom());
     }
-    m_containerPath = QtMaterialSurfaceRenderHelper::roundedRectPath(m_visualRect, m_spec.cornerRadius);
+    // m_containerPath = QtMaterialSurfaceRenderHelper::roundedRectPath(m_visualRect, m_spec.cornerRadius);
 
     const QRect content = availableContentRect();
 

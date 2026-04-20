@@ -20,10 +20,11 @@ namespace {
 
 static QColor effectiveContainerColor(const IconButtonSpec& spec, bool enabled, bool selected)
 {
-    // if (!enabled) {
+    // if (!enabled) { TODO
     //     return selected ? spec.disabledSelectedContainerColor : spec.disabledContainerColor;
     // }
     // return selected ? spec.selectedContainerColor : spec.containerColor;
+    return spec.containerColor;
 }
 
 static QColor effectiveIconColor(const IconButtonSpec& spec, bool enabled, bool selected)
@@ -151,12 +152,12 @@ void QtMaterialIconButton::paintEvent(QPaintEvent* event)
     // }
 
     if (hasFocus()) {
-        QtMaterialFocusIndicator::paintPathFocusRing(
-            &painter,
-            m_cachedContainerPath,m_spec.,
-            // m_spec.focusRingColor,
-            // m_spec.focusRingWidth
-        );
+        // QtMaterialFocusIndicator::paintPathFocusRing( TODO
+        //     &painter,
+        //     m_cachedContainerPath,
+        //     // m_spec.focusRingColor,
+        //     // m_spec.focusRingWidth
+        // );
     }
 
     if (!icon().isNull()) {

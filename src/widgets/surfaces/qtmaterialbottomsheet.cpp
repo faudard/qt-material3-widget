@@ -1,5 +1,4 @@
-#include "qtmaterialbottomsheet.h"
-
+#include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
 #include <QFocusEvent>
 #include <QKeyEvent>
 #include <QPainter>
@@ -13,23 +12,26 @@
 #include "qtmaterial/specs/qtmaterialbottomsheetspec.h"
 #include "private/qtmaterialsurfacerenderhelper_p.h"
 
+
+namespace QtMaterial
+{
 QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     : QtMaterialOverlaySurface(parent)
 {
     setFocusPolicy(Qt::StrongFocus);
 
-    m_transition = new QtMaterial::TransitionController(this);
-    m_scrim = new QtMaterial::ScrimWidget(parent ? parent : this);
+    m_transition = new QtMaterialTransitionController(this);
+    m_scrim = new QtMaterialScrimWidget(parent ? parent : this);
     if (m_scrim) {
         m_scrim->hide();
     }
 
-    connect(m_transition, &QtMaterial::TransitionController::progressChanged,
+    connect(m_transition, &QtMaterialTransitionController::progressChanged,
             this, [this](qreal) {
                 syncScrim();
                 update();
             });
-    connect(m_transition, &QtMaterial::TransitionController::finished,
+    connect(m_transition, &QtMaterialTransitionController::finished,
             this, [this]() {
                 if (m_state == SheetState::Closing) {
                     m_state = SheetState::Closed;
@@ -137,16 +139,16 @@ void QtMaterialBottomSheet::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    QtMaterialSurfaceRenderHelper::paintSurface(
-        &painter,
-        m_cachedVisualRect,
-        m_cachedContainerPath,
-        m_specPtr->containerColor,
-        m_specPtr->shadowColor,
-        m_specPtr->elevationBlur,
-        m_specPtr->elevationYOffset,
-        m_transition ? m_transition->progress() : 1.0
-    );
+    // QtMaterialSurfaceRenderHelper::paintFrame( TODO
+    //     &painter,
+    //     m_cachedVisualRect,
+    //     m_cachedContainerPath,
+    //     m_specPtr->containerColor,
+    //     m_specPtr->shadowColor,
+    //     m_specPtr->elevationBlur,
+    //     m_specPtr->elevationYOffset,
+    //     m_transition ? m_transition->progress() : 1.0
+    // );
 }
 
 void QtMaterialBottomSheet::resizeEvent(QResizeEvent *event)
@@ -202,7 +204,7 @@ void QtMaterialBottomSheet::ensureSpecResolved() const
 
     static QtMaterial::SpecFactory factory;
     static QtMaterial::BottomSheetSpec spec;
-    spec = factory.bottomSheetSpec(theme(), density());
+    // spec = factory.bottomSheetSpec(theme(), density()); // TODO
     m_specPtr = &spec;
     m_specDirty = false;
 }
@@ -218,25 +220,25 @@ void QtMaterialBottomSheet::ensureGeometryResolved() const
         return;
     }
 
-    const QRect hostRect = rect();
-    const int height = qMin(qMax(m_expandedHeight, m_specPtr->minHeight), hostRect.height());
-    const int width = qMin(hostRect.width(), m_specPtr->maxWidth > 0 ? m_specPtr->maxWidth : hostRect.width());
+    // const QRect hostRect = rect(); // TODO
+    // const int height = qMin(qMax(m_expandedHeight, m_specPtr->minHeight), hostRect.height());
+    // const int width = qMin(hostRect.width(), m_specPtr->maxWidth > 0 ? m_specPtr->maxWidth : hostRect.width());
 
-    m_cachedVisualRect = QRect(
-        (hostRect.width() - width) / 2,
-        hostRect.height() - height,
-        width,
-        height
-    );
-    m_cachedContentRect = m_cachedVisualRect.adjusted(
-        m_specPtr->horizontalPadding,
-        m_specPtr->topPadding,
-        -m_specPtr->horizontalPadding,
-        -m_specPtr->bottomPadding
-    );
-    m_cachedCornerRadius = m_specPtr->cornerRadius;
-    m_cachedContainerPath = QtMaterialSurfaceRenderHelper::roundedTopPath(m_cachedVisualRect, m_cachedCornerRadius);
-    m_geometryDirty = false;
+    // m_cachedVisualRect = QRect(
+    //     (hostRect.width() - width) / 2,
+    //     hostRect.height() - height,
+    //     width,
+    //     height
+    // );
+    // m_cachedContentRect = m_cachedVisualRect.adjusted(
+    //     m_specPtr->horizontalPadding,
+    //     m_specPtr->topPadding,
+    //     -m_specPtr->horizontalPadding,
+    //     -m_specPtr->bottomPadding
+    // );
+    // m_cachedCornerRadius = m_specPtr->cornerRadius;
+    // m_cachedContainerPath = QtMaterialSurfaceRenderHelper::roundedTopPath(m_cachedVisualRect, m_cachedCornerRadius);
+    // m_geometryDirty = false;
 }
 
 void QtMaterialBottomSheet::invalidateCachedGeometry()
@@ -278,7 +280,7 @@ void QtMaterialBottomSheet::syncScrim()
     QColor scrim = m_specPtr->scrimColor;
     const qreal progress = m_transition ? m_transition->progress() : 1.0;
     scrim.setAlphaF(scrim.alphaF() * progress);
-    m_scrim->setColor(scrim);
+    // m_scrim->setColor(scrim); // TODO
     if (!m_scrim->isVisible()) {
         m_scrim->show();
     }
@@ -315,4 +317,6 @@ qreal QtMaterialBottomSheet::cornerRadius() const
 {
     ensureGeometryResolved();
     return m_cachedCornerRadius;
+}
+
 }

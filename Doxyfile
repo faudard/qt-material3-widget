@@ -1,20 +1,32 @@
-PROJECT_NAME           = qt-material3-widget
-PROJECT_BRIEF          = Material 3 widgets for Qt Widgets
+PROJECT_NAME           = "qt-material3-widget"
+PROJECT_BRIEF          = "Material 3 widgets for Qt Widgets"
 PROJECT_NUMBER         = 0.4.0
 OUTPUT_DIRECTORY       = build/doxygen
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 USE_MDFILE_AS_MAINPAGE = README.md
-MARKDOWN_SUPPORT       = YES
-TOC_INCLUDE_HEADINGS   = 2
+FULL_PATH_NAMES        = NO
+STRIP_FROM_PATH        = .
+STRIP_FROM_INC_PATH    = include
 
-INPUT                  = include/qtmaterial README.md docs/public-api docs/architecture docs/migration
+# Doxygen should document the C++ public API and README only.
+# Sphinx owns the narrative docs under ./docs.
+INPUT                  = include/qtmaterial README.md
 FILE_PATTERNS          = *.h *.hpp *.md
 RECURSIVE              = YES
-EXCLUDE_PATTERNS       = */build/* */tests/* */benchmarks/* */examples/* */src/*
+EXCLUDE_PATTERNS       = */build/* */tests/* */benchmarks/* */examples/* */src/* */docs/*
 
-# Bootstrap mode: expose the current public headers even before they are fully annotated.
-# Once header comments are in place, consider switching EXTRACT_ALL back to NO.
+MARKDOWN_SUPPORT       = YES
+TOC_INCLUDE_HEADINGS   = 2
+AUTOLINK_SUPPORT       = YES
+BUILTIN_STL_SUPPORT    = YES
+CASE_SENSE_NAMES       = YES
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
+
+# Bootstrap mode: expose the current public headers even before they are
+# fully annotated. Once header comments are in place, consider switching
+# EXTRACT_ALL back to NO.
 EXTRACT_ALL            = YES
 EXTRACT_PRIVATE        = NO
 EXTRACT_STATIC         = NO
@@ -38,16 +50,42 @@ GENERATE_XML           = YES
 XML_OUTPUT             = xml
 XML_PROGRAMLISTING     = NO
 
+SOURCE_BROWSER         = NO
+REFERENCES_RELATION    = NO
+REFERENCED_BY_RELATION = NO
+SHOW_INCLUDE_FILES     = YES
+SHOW_FILES             = YES
+SHOW_NAMESPACES        = YES
+
 ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 SEARCH_INCLUDES        = NO
 SKIP_FUNCTION_MACROS   = YES
+
+# Minimal Qt/exports preprocessing so public headers parse cleanly.
 PREDEFINED             += Q_OBJECT=
-PREDEFINED             += signals=public
-PREDEFINED             += slots=
+PREDEFINED             += Q_GADGET=
+PREDEFINED             += Q_NAMESPACE=
+PREDEFINED             += Q_PROPERTY(x)=
+PREDEFINED             += Q_ENUM(x)=
+PREDEFINED             += Q_ENUM_NS(x)=
+PREDEFINED             += Q_FLAG(x)=
+PREDEFINED             += Q_FLAGS(x)=
+PREDEFINED             += Q_DECLARE_FLAGS(Name,Enum)=typedef QFlags<Enum> Name
+PREDEFINED             += Q_DECLARE_OPERATORS_FOR_FLAGS(x)=
 PREDEFINED             += Q_SIGNALS=public
+PREDEFINED             += signals=public
 PREDEFINED             += Q_SLOTS=
+PREDEFINED             += slots=
+PREDEFINED             += Q_SIGNAL=
+PREDEFINED             += Q_SLOT=
+PREDEFINED             += Q_INVOKABLE=
+PREDEFINED             += emit=
+PREDEFINED             += Q_DECL_OVERRIDE=override
+PREDEFINED             += Q_DECL_FINAL=final
+PREDEFINED             += Q_DISABLE_COPY(x)=
+PREDEFINED             += Q_DISABLE_MOVE(x)=
 PREDEFINED             += QTMATERIAL3_THEME_EXPORT=
 PREDEFINED             += QTMATERIAL3_LEGACY_EXPORT=
 PREDEFINED             += QTMATERIAL3_CORE_EXPORT=

@@ -8,7 +8,7 @@
 namespace QtMaterial {
 struct DividerSpec;
 class Theme;
-}
+
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDivider : public QWidget
 {
@@ -47,3 +47,5 @@ private:
     int m_leadingInset = 0;
     int m_trailingInset = 0;
 };
+
+}

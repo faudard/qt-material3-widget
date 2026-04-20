@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <qicon.h>
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
 #include "qtmaterial/qtmaterialglobal.h"
@@ -13,7 +14,7 @@ class QResizeEvent;
 
 namespace QtMaterial {
 
-class QTMATERIAL3_WIDGETS_EXPORT ListItem : public QtMaterialControl
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialListItem : public QtMaterialControl
 {
     Q_OBJECT
 public:
@@ -23,9 +24,9 @@ public:
         Large
     };
 
-    explicit ListItem(QWidget* parent = nullptr);
-    explicit ListItem(const QString& headline, QWidget* parent = nullptr);
-    ~ListItem() override;
+    explicit QtMaterialListItem(QWidget* parent = nullptr);
+    explicit QtMaterialListItem(const QString& headline, QWidget* parent = nullptr);
+    ~QtMaterialListItem() override;
 
     QString headlineText() const;
     void setHeadlineText(const QString& text);

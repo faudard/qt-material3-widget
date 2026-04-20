@@ -10,6 +10,7 @@
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 
 namespace QtMaterial {
 
@@ -147,7 +148,7 @@ void QtMaterialRadioButton::changeEvent(QEvent* event)
 void QtMaterialRadioButton::mousePressEvent(QMouseEvent* event)
 {
     if (m_ripple) {
-        m_ripple->addRipple(event->position());
+        m_ripple->addRipple(QtMaterial::mousePosition(event));
     }
     QtMaterialSelectionControl::mousePressEvent(event);
 }

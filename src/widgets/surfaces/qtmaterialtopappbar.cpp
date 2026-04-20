@@ -12,8 +12,8 @@
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
-#include "qtmaterial/specs/qtmaterialtopappbarspec.h"
-#include "qtmaterial/widgets/surfaces/private/qtmaterialsurfacerenderhelper_p.h"
+// #include "qtmaterial/specs/qtmaterialtopappbarspec.h"
+#include "private/qtmaterialsurfacerenderhelper_p.h"
 
 namespace {
 constexpr int kDefaultHeight = 64;
@@ -145,13 +145,15 @@ void QtMaterialTopAppBar::clearActionButtons()
 QSize QtMaterialTopAppBar::sizeHint() const
 {
     ensureSpecResolved();
-    return QSize(320, std::max(kDefaultHeight, m_spec.containerHeight));
+    return QSize();
+    // return QSize(320, std::max(kDefaultHeight, m_spec.containerHeight));
 }
 
 QSize QtMaterialTopAppBar::minimumSizeHint() const
 {
     ensureSpecResolved();
-    return QSize(200, std::max(kDefaultHeight, m_spec.containerHeight));
+    return QSize();
+    // return QSize(200, std::max(kDefaultHeight, m_spec.containerHeight));
 }
 
 void QtMaterialTopAppBar::paintEvent(QPaintEvent* event)
@@ -163,34 +165,34 @@ void QtMaterialTopAppBar::paintEvent(QPaintEvent* event)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing, true);
 
-    QtMaterialSurfaceRenderHelper::paintSurface(
-        &p,
-        m_visualRect,
-        m_containerPath,
-        m_spec.containerColor,
-        m_elevated ? m_spec.shadowColor : QColor(),
-        m_elevated ? m_spec.shadowBlurRadius : 0,
-        m_elevated ? m_spec.shadowYOffset : 0
-    );
+    // QtMaterialSurfaceRenderHelper::paintSurface(
+    //     &p,
+    //     m_visualRect,
+    //     m_containerPath,
+    //     m_spec.containerColor,
+    //     m_elevated ? m_spec.shadowColor : QColor(),
+    //     m_elevated ? m_spec.shadowBlurRadius : 0,
+    //     m_elevated ? m_spec.shadowYOffset : 0
+    // );
 
-    p.setPen(m_spec.titleColor);
-    p.setFont(m_spec.titleFont);
-    const QString elided = QFontMetrics(m_spec.titleFont).elidedText(
-        m_title,
-        Qt::ElideRight,
-        m_titleRect.width()
-    );
-    p.drawText(m_titleRect, Qt::AlignVCenter | (m_centeredTitle ? Qt::AlignHCenter : Qt::AlignLeft), elided);
+    // p.setPen(m_spec.titleColor);
+    // p.setFont(m_spec.titleFont);
+    // const QString elided = QFontMetrics(m_spec.titleFont).elidedText(
+    //     m_title,
+    //     Qt::ElideRight,
+    //     m_titleRect.width()
+    // );
+    // p.drawText(m_titleRect, Qt::AlignVCenter | (m_centeredTitle ? Qt::AlignHCenter : Qt::AlignLeft), elided);
 
-    if (hasFocus()) {
-        QtMaterialFocusIndicator::paintRectFocusRing(
-            &p,
-            QRectF(m_visualRect).adjusted(1, 1, -1, -1),
-            m_spec.focusRingColor,
-            m_spec.cornerRadius,
-            m_spec.focusRingWidth
-        );
-    }
+    // if (hasFocus()) {
+    //     QtMaterialFocusIndicator::paintRectFocusRing(
+    //         &p,
+    //         QRectF(m_visualRect).adjusted(1, 1, -1, -1),
+    //         m_spec.focusRingColor,
+    //         m_spec.cornerRadius,
+    //         m_spec.focusRingWidth
+    //     );
+    // }
 }
 
 void QtMaterialTopAppBar::resizeEvent(QResizeEvent* event)
@@ -253,9 +255,9 @@ void QtMaterialTopAppBar::ensureSpecResolved() const
     }
 
     QtMaterial::SpecFactory factory;
-    m_spec = factory.topAppBarSpec(theme(), density());
+    // m_spec = factory.topAppBarSpec(theme(), density());
     if (m_elevated) {
-        m_spec.elevationRole = QtMaterial::ElevationRole::Level2;
+        // m_spec.elevationRole = QtMaterial::ElevationRole::Level2;
     }
     m_specDirty = false;
 }
@@ -270,7 +272,7 @@ void QtMaterialTopAppBar::ensureLayoutResolved() const
 
     m_visualRect = rect();
     m_containerPath = QPainterPath();
-    m_containerPath.addRoundedRect(QRectF(m_visualRect), m_spec.cornerRadius, m_spec.cornerRadius);
+    // m_containerPath.addRoundedRect(QRectF(m_visualRect), m_spec.cornerRadius, m_spec.cornerRadius);
 
     QRect content = m_visualRect.adjusted(kHorizontalPadding, 0, -kHorizontalPadding, 0);
     const int top = (m_visualRect.height() - kActionSlot) / 2;
@@ -344,7 +346,7 @@ void QtMaterialTopAppBar::syncButtons()
     auto syncButton = [this](QToolButton* b) {
         if (!b) return;
         b->setEnabled(isEnabled());
-        b->setIconSize(QSize(m_spec.actionIconSize, m_spec.actionIconSize));
+        // b->setIconSize(QSize(m_spec.actionIconSize, m_spec.actionIconSize));
         b->setStyleSheet(QStringLiteral("QToolButton { border: none; background: transparent; }"));
     };
 
