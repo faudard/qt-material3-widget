@@ -19,9 +19,11 @@ struct QTMATERIAL3_SPECS_EXPORT TextFieldSpec {
     QColor disabledLabelColor;
     QColor supportingTextColor;
     QColor disabledSupportingTextColor;
+    QColor errorTextColor;
     QColor cursorColor;
     QColor errorColor;
     QColor stateLayerColor;
+    QColor disabledErrorTextColor;
     QColor focusRingColor;
 
     ShapeRole shapeRole = ShapeRole::ExtraSmall;
@@ -39,6 +41,8 @@ struct QTMATERIAL3_SPECS_EXPORT TextFieldSpec {
     int outlineWidth = 1;
     int focusedOutlineWidth = 2;
     qreal focusRingWidth = 1.25;
+    int supportingLineHeight = 16;
+    bool reserveSupportingLine = true;
 };
 
 } // namespace QtMaterial
