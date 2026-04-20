@@ -4,6 +4,7 @@
 
 #include "private/qtmaterialbuttonrenderhelper_p.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
+#include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 

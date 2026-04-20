@@ -1,6 +1,7 @@
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
 #include <QMouseEvent>
 #include <QPainter>
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
@@ -19,7 +20,7 @@ void QtMaterialCheckbox::resolveSpecIfNeeded() const
 }
 void QtMaterialCheckbox::mousePressEvent(QMouseEvent* event)
 {
-    if (m_ripple) m_ripple->addRipple(event->position());
+    if (m_ripple) m_ripple->addRipple(QtMaterial::mousePosition(event));
     QtMaterialSelectionControl::mousePressEvent(event);
 }
 void QtMaterialCheckbox::paintEvent(QPaintEvent*)

@@ -5,6 +5,8 @@
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/core/qtmaterialeventcompat.h"
+
 namespace QtMaterial {
 QtMaterialIconButton::QtMaterialIconButton(QWidget* parent) : QtMaterialAbstractButton(parent), m_ripple(new QtMaterialRippleController(this))
 {
@@ -29,8 +31,8 @@ QSize QtMaterialIconButton::sizeHint() const
 }
 void QtMaterialIconButton::mousePressEvent(QMouseEvent* event)
 {
-    if (m_ripple) m_ripple->addRipple(event->position());
-    QtMaterialAbstractButton::mousePressEvent(event);
+    if (m_ripple) m_ripple->addRipple(QtMaterial::mousePosition(event));
+        QtMaterialAbstractButton::mousePressEvent(event);
 }
 void QtMaterialIconButton::paintEvent(QPaintEvent*)
 {

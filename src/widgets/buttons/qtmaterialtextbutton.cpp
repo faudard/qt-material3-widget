@@ -8,7 +8,7 @@
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
-
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 namespace QtMaterial {
 
 QtMaterialTextButton::QtMaterialTextButton(QWidget* parent)
@@ -69,9 +69,7 @@ QSize QtMaterialTextButton::minimumSizeHint() const
 
 void QtMaterialTextButton::mousePressEvent(QMouseEvent* event)
 {
-    if (m_ripple) {
-        m_ripple->addRipple(event->position());
-    }
+    if (m_ripple) m_ripple->addRipple(QtMaterial::mousePosition(event));
     QtMaterialAbstractButton::mousePressEvent(event);
 }
 
