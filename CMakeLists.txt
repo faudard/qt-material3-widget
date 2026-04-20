@@ -289,6 +289,7 @@ set_target_properties(qtmaterial3_effects PROPERTIES
 )
 
 set(QTMATERIAL3_WIDGETS_SOURCES
+    src/widgets/buttons/private/qtmaterialbuttonrenderhelper.cpp
     src/widgets/buttons/qtmaterialtextbutton.cpp
     src/widgets/buttons/qtmaterialfilledbutton.cpp
     src/widgets/buttons/qtmaterialiconbutton.cpp

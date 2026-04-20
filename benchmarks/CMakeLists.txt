@@ -20,5 +20,3 @@ qt_add_executable(benchmark_widget_creation
 target_link_libraries(benchmark_widget_creation
     PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Test qtmaterial3_theme qtmaterial3_core qtmaterial3_specs qtmaterial3_effects qtmaterial3_widgets
 )
-
-# Phase 6 placeholders for advanced widget tests/examples/benchmarks.

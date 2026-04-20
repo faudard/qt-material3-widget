@@ -50,11 +50,6 @@ ButtonSpec SpecFactory::outlinedButtonSpec(const Theme& theme, Density density) 
 {
     ButtonSpec spec = textButtonSpec(theme, density);
     spec.containerColor = Qt::transparent;
-    spec.labelColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.iconColor = spec.labelColor;
-    spec.disabledContainerColor = Qt::transparent;
-    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
     spec.outlineColor = theme.colorScheme().color(ColorRole::Outline);
     spec.disabledOutlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
     return spec;
@@ -63,6 +58,8 @@ ButtonSpec SpecFactory::elevatedButtonSpec(const Theme& theme, Density density) 
 {
     ButtonSpec spec = textButtonSpec(theme, density);
     spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
+    spec.outlineColor = Qt::transparent;
+    spec.disabledOutlineColor = Qt::transparent;
     spec.labelColor = theme.colorScheme().color(ColorRole::Primary);
     spec.iconColor = spec.labelColor;
     spec.elevationRole = ElevationRole::Level1;
@@ -95,7 +92,7 @@ IconButtonSpec SpecFactory::iconButtonSpec(const Theme& theme, Density) const
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     return spec;
 }
-CheckboxSpec SpecFactory::checkboxSpec(const Theme& theme, Density density) const
+CheckboxSpec SpecFactory::checkboxSpec(const Theme& theme, Density) const
 {
     CheckboxSpec spec;
     spec.selectedContainerColor = theme.colorScheme().color(ColorRole::Primary);
@@ -104,26 +101,10 @@ CheckboxSpec SpecFactory::checkboxSpec(const Theme& theme, Density density) cons
     spec.disabledSelectedContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
     spec.disabledUnselectedOutlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
     spec.labelColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
+    spec.outlineColor = Qt::transparent;
+    spec.disabledOutlineColor = Qt::transparent;
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.cornerRadius = theme.shapes().radius(ShapeRole::ExtraSmall);
-    spec.checkmarkStrokeWidth = 2;
-    spec.stateLayerSize = 40;
-    switch (density) {
-    case Density::Compact:
-        spec.spacing = 10;
-        spec.stateLayerSize = 36;
-        break;
-    case Density::Comfortable:
-        spec.spacing = 14;
-        spec.stateLayerSize = 44;
-        break;
-    case Density::Default:
-    default:
-        break;
-    }
     return spec;
 }
 RadioButtonSpec SpecFactory::radioButtonSpec(const Theme& theme, Density) const
@@ -134,6 +115,8 @@ RadioButtonSpec SpecFactory::radioButtonSpec(const Theme& theme, Density) const
     spec.disabledColor = theme.colorScheme().color(ColorRole::OutlineVariant);
     spec.labelColor = theme.colorScheme().color(ColorRole::OnSurface);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
+    spec.outlineColor = Qt::transparent;
+    spec.disabledOutlineColor = Qt::transparent;
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     return spec;
 }
@@ -146,6 +129,8 @@ SwitchSpec SpecFactory::switchSpec(const Theme& theme, Density) const
     spec.unselectedHandleColor = theme.colorScheme().color(ColorRole::Outline);
     spec.iconColor = theme.colorScheme().color(ColorRole::OnPrimary);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
+    spec.outlineColor = Qt::transparent;
+    spec.disabledOutlineColor = Qt::transparent;
     return spec;
 }
 DialogSpec SpecFactory::dialogSpec(const Theme& theme) const
@@ -161,6 +146,8 @@ NavigationDrawerSpec SpecFactory::navigationDrawerSpec(const Theme& theme) const
 {
     NavigationDrawerSpec spec;
     spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
+    spec.outlineColor = Qt::transparent;
+    spec.disabledOutlineColor = Qt::transparent;
     spec.contentColor = theme.colorScheme().color(ColorRole::OnSurface);
     spec.scrimColor = theme.colorScheme().color(ColorRole::Scrim);
     return spec;
@@ -177,6 +164,8 @@ BannerSpec SpecFactory::bannerSpec(const Theme& theme) const
 {
     BannerSpec spec;
     spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
+    spec.outlineColor = Qt::transparent;
+    spec.disabledOutlineColor = Qt::transparent;
     spec.headlineColor = theme.colorScheme().color(ColorRole::OnSurface);
     spec.supportingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.actionColor = theme.colorScheme().color(ColorRole::Primary);
@@ -186,6 +175,8 @@ CardSpec SpecFactory::cardSpec(const Theme& theme) const
 {
     CardSpec spec;
     spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
+    spec.outlineColor = Qt::transparent;
+    spec.disabledOutlineColor = Qt::transparent;
     spec.outlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
     spec.contentColor = theme.colorScheme().color(ColorRole::OnSurface);
     return spec;
@@ -205,44 +196,19 @@ AppBarSpec SpecFactory::bottomAppBarSpec(const Theme& theme) const
     spec.elevationRole = ElevationRole::Level2;
     return spec;
 }
-TextFieldSpec SpecFactory::outlinedTextFieldSpec(const Theme& theme, Density density) const
+TextFieldSpec SpecFactory::outlinedTextFieldSpec(const Theme& theme, Density) const
 {
     TextFieldSpec spec;
     spec.containerColor = Qt::transparent;
     spec.activeIndicatorColor = theme.colorScheme().color(ColorRole::Primary);
     spec.outlineColor = theme.colorScheme().color(ColorRole::Outline);
     spec.focusedOutlineColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.disabledOutlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
     spec.inputTextColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.disabledInputTextColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.labelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.focusedLabelColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.supportingTextColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.cursorColor = theme.colorScheme().color(ColorRole::Primary);
     spec.errorColor = theme.colorScheme().color(ColorRole::Error);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.cornerRadius = theme.shapes().radius(spec.shapeRole);
-
-    switch (density) {
-    case Density::Compact:
-        spec.minHeight = 52;
-        spec.horizontalPadding = 12;
-        spec.labelRestingTop = 16;
-        spec.labelFloatingTop = 7;
-        spec.editorTopPadding = 22;
-        break;
-    case Density::Comfortable:
-        spec.minHeight = 60;
-        spec.horizontalPadding = 18;
-        spec.labelRestingTop = 20;
-        spec.labelFloatingTop = 9;
-        spec.editorTopPadding = 26;
-        break;
-    case Density::Default:
-    default:
-        break;
-    }
     return spec;
 }
 TextFieldSpec SpecFactory::filledTextFieldSpec(const Theme& theme, Density density) const

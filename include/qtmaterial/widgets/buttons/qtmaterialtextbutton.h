@@ -17,9 +17,12 @@ protected:
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
     void invalidateResolvedSpec() override;
     void mousePressEvent(QMouseEvent* event) override;
+    QSize minimumSizeHint() const override;
+    virtual ButtonSpec resolveButtonSpec() const;
 
-private:
-    void resolveSpecIfNeeded() const;
+protected:
+    void ensureSpecResolved() const;
+
     mutable bool m_specDirty = true;
     mutable ButtonSpec m_spec;
     QtMaterialRippleController* m_ripple = nullptr;
