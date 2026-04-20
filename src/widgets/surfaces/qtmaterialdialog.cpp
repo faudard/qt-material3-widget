@@ -138,7 +138,7 @@ void QtMaterialDialog::resolveSpecIfNeeded() const
     SpecFactory factory;
     m_spec = factory.dialogSpec(theme());
     m_specDirty = false;
-    syncAccessibilityState();
+    // syncAccessibilityState();
 }
 
 void QtMaterialDialog::syncChildGeometry()

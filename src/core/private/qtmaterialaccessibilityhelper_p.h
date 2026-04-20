@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QString>
+#include "qtmaterial/qtmaterialglobal.h"
 
 class QAbstractButton;
 class QLineEdit;
@@ -8,7 +9,7 @@ class QWidget;
 
 namespace QtMaterial {
 
-class AccessibilityHelper
+class QTMATERIAL3_CORE_EXPORT AccessibilityHelper
 {
 public:
     static void applyButtonAccessibility(QAbstractButton* button);

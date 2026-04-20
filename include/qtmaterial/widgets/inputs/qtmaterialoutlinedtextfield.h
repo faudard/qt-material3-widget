@@ -33,6 +33,7 @@ protected:
         Filled,
     };
 
+    void syncAccessibilityState() override;
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
