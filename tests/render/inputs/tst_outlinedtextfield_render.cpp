@@ -12,6 +12,7 @@ class tst_OutlinedTextFieldRender : public QObject
     Q_OBJECT
 private slots:
     void rendersDefaultState();
+    void rendersFocusedState();
     void rendersErrorState();
 
 private:
@@ -63,6 +64,22 @@ void tst_OutlinedTextFieldRender::rendersDefaultState()
     const QImage image = widget.grab().toImage();
     QVERIFY(!image.isNull());
     verifyOrUpdateBaseline(image, QStringLiteral("outlinedtextfield_default_light.png"));
+}
+
+void tst_OutlinedTextFieldRender::rendersFocusedState()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
+    widget.setLabelText(QStringLiteral("Email"));
+    widget.setSupportingText(QStringLiteral("We will not spam you"));
+    widget.resize(widget.sizeHint());
+    widget.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&widget));
+    widget.setFocus(Qt::TabFocusReason);
+    QVERIFY(QTest::qWaitFor([&widget]() { return widget.lineEdit() && widget.lineEdit()->hasFocus(); }));
+
+    const QImage image = widget.grab().toImage();
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("outlinedtextfield_focused_light.png"));
 }
 
 void tst_OutlinedTextFieldRender::rendersErrorState()

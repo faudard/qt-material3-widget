@@ -1,6 +1,5 @@
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 
-#include <algorithm>
 #include <QEvent>
 #include <QLineEdit>
 #include <QPainter>
@@ -20,12 +19,17 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
     , m_transition(new QtMaterialTransitionController(this))
 {
     setMinimumHeight(64);
+
     if (m_lineEdit) {
         m_lineEdit->setFrame(false);
         m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
         m_lineEdit->setClearButtonEnabled(false);
         m_lineEdit->installEventFilter(this);
         QObject::connect(m_lineEdit, &QLineEdit::textChanged, this, [this]() {
+            syncAccessibilityState();
+            update();
+        });
+        QObject::connect(m_lineEdit, &QLineEdit::editingFinished, this, [this]() {
             syncAccessibilityState();
             update();
         });
@@ -60,14 +64,8 @@ QLineEdit* QtMaterialOutlinedTextField::lineEdit() const
 QSize QtMaterialOutlinedTextField::sizeHint() const
 {
     ensureSpecResolved();
-    const QFontMetrics metrics(font());
-    const int textWidth = std::max({
-        metrics.horizontalAdvance(labelText()),
-        metrics.horizontalAdvance(supportingText()),
-        metrics.horizontalAdvance(errorText()),
-        120
-    });
-    const int width = textWidth + (2 * spec().horizontalPadding) + 24;
+    ensureLayoutResolved();
+    const int width = qMax(120, m_cachedEditorRect.width() + (2 * spec().horizontalPadding) + 24);
     const int height = spec().topLabelHeight + spec().minHeight + spec().supportingTopSpacing + spec().supportingHeight + 2;
     return QSize(width, height);
 }
@@ -107,6 +105,12 @@ void QtMaterialOutlinedTextField::invalidateResolvedSpec()
 {
     m_specDirty = true;
     invalidateLayoutCache();
+}
+
+void QtMaterialOutlinedTextField::contentChangedEvent()
+{
+    invalidateLayoutCache();
+    syncLineEditGeometry();
 }
 
 void QtMaterialOutlinedTextField::ensureSpecResolved() const
@@ -159,6 +163,8 @@ void QtMaterialOutlinedTextField::ensureLayoutResolved() const
     m_cachedSupportingText = text.supportingText;
     m_cachedErrorText = text.errorText;
     m_cachedDisplaySupportingText = hasErrorState() ? text.errorText : text.supportingText;
+    m_cachedLabelFont = font();
+    m_cachedSupportingFont = font();
 
     m_cachedContainerPath = QPainterPath();
     m_cachedContainerPath.addRoundedRect(m_cachedContainerRect, m_cachedRadius, m_cachedRadius);
@@ -205,6 +211,7 @@ void QtMaterialOutlinedTextField::changeEvent(QEvent* event)
     case QEvent::EnabledChange:
     case QEvent::FontChange:
     case QEvent::StyleChange:
+    case QEvent::LayoutDirectionChange:
         invalidateLayoutCache();
         syncLineEditPalette();
         syncLineEditGeometry();
@@ -234,6 +241,8 @@ bool QtMaterialOutlinedTextField::eventFilter(QObject* watched, QEvent* event)
             break;
         case QEvent::EnabledChange:
         case QEvent::FontChange:
+        case QEvent::PaletteChange:
+        case QEvent::StyleChange:
             invalidateLayoutCache();
             syncLineEditPalette();
             updateGeometry();
@@ -258,34 +267,30 @@ void QtMaterialOutlinedTextField::paintEvent(QPaintEvent*)
     state.setFocused(currentFocusState());
     state.setEnabled(isEnabled());
 
-    const auto variant = shellVariant() == ShellVariant::Filled
-        ? QtMaterialTextFieldShellHelper::Variant::Filled
-        : QtMaterialTextFieldShellHelper::Variant::Outlined;
-
-    QtMaterialTextFieldShellHelper::Layout layout;
-    layout.containerRect = m_cachedContainerRect;
-    layout.labelRect = m_cachedLabelRect;
-    layout.editorRect = m_cachedEditorRect;
-    layout.supportingRect = m_cachedSupportingRect;
-    layout.focusRect = m_cachedFocusRect;
-    layout.radius = m_cachedRadius;
-
-    QtMaterialTextFieldShellHelper::ElidedText text;
-    text.labelText = m_cachedLabelText;
-    text.supportingText = m_cachedSupportingText;
-    text.errorText = m_cachedErrorText;
-
     QPainter painter(this);
     QtMaterialTextFieldShellHelper::paintShell(
         &painter,
-        layout,
+        {
+            m_cachedContainerRect,
+            m_cachedLabelRect,
+            m_cachedEditorRect,
+            m_cachedSupportingRect,
+            m_cachedFocusRect,
+            m_cachedRadius
+        },
         theme(),
         spec(),
         state,
-        variant,
-        text,
+        shellVariant() == ShellVariant::Filled
+            ? QtMaterialTextFieldShellHelper::Variant::Filled
+            : QtMaterialTextFieldShellHelper::Variant::Outlined,
+        {
+            m_cachedLabelText,
+            m_cachedSupportingText,
+            m_cachedErrorText
+        },
         hasErrorState(),
-        font());
+        m_cachedLabelFont);
 }
 
 } // namespace QtMaterial

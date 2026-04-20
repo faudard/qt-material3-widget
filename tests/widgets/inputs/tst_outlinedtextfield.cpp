@@ -1,10 +1,9 @@
 #include <QtTest/QtTest>
-#include <QKeyEvent>
 #include <QLineEdit>
 
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 
-class tst_Outlinedtextfield : public QObject
+class tst_OutlinedTextField : public QObject
 {
     Q_OBJECT
 private slots:
@@ -12,9 +11,10 @@ private slots:
     void accessibilityState();
     void forwardsFocusToLineEdit();
     void sizeHintRespectsShellHeight();
+    void contentChangeInvalidatesShellText();
 };
 
-void tst_Outlinedtextfield::basicConstruction()
+void tst_OutlinedTextField::basicConstruction()
 {
     QtMaterial::QtMaterialOutlinedTextField widget;
     widget.setLabelText(QStringLiteral("Label"));
@@ -22,7 +22,7 @@ void tst_Outlinedtextfield::basicConstruction()
     QCOMPARE(widget.focusProxy(), widget.lineEdit());
 }
 
-void tst_Outlinedtextfield::accessibilityState()
+void tst_OutlinedTextField::accessibilityState()
 {
     QtMaterial::QtMaterialOutlinedTextField widget;
     widget.setLabelText(QStringLiteral("Email"));
@@ -36,7 +36,7 @@ void tst_Outlinedtextfield::accessibilityState()
     QCOMPARE(widget.lineEdit()->accessibleDescription(), QStringLiteral("Invalid email"));
 }
 
-void tst_Outlinedtextfield::forwardsFocusToLineEdit()
+void tst_OutlinedTextField::forwardsFocusToLineEdit()
 {
     QtMaterial::QtMaterialOutlinedTextField widget;
     widget.setLabelText(QStringLiteral("Email"));
@@ -50,7 +50,7 @@ void tst_Outlinedtextfield::forwardsFocusToLineEdit()
     }));
 }
 
-void tst_Outlinedtextfield::sizeHintRespectsShellHeight()
+void tst_OutlinedTextField::sizeHintRespectsShellHeight()
 {
     QtMaterial::QtMaterialOutlinedTextField widget;
     widget.setLabelText(QStringLiteral("Email"));
@@ -59,5 +59,18 @@ void tst_Outlinedtextfield::sizeHintRespectsShellHeight()
     QVERIFY(hint.width() >= 120);
 }
 
-QTEST_MAIN(tst_Outlinedtextfield)
+void tst_OutlinedTextField::contentChangeInvalidatesShellText()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
+    widget.setLabelText(QStringLiteral("Email"));
+    widget.resize(widget.sizeHint());
+    const QSize first = widget.sizeHint();
+
+    widget.setLabelText(QStringLiteral("Very long email address label that should change width"));
+    const QSize second = widget.sizeHint();
+
+    QVERIFY(second.width() >= first.width());
+}
+
+QTEST_MAIN(tst_OutlinedTextField)
 #include "tst_outlinedtextfield.moc"

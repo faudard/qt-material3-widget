@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QFont>
 #include <QPainterPath>
 #include <QPointer>
 #include <QRect>
@@ -43,6 +44,7 @@ protected:
     bool eventFilter(QObject* watched, QEvent* event) override;
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
     void invalidateResolvedSpec() override;
+    void contentChangedEvent() override;
 
     virtual ShellVariant shellVariant() const;
     void syncAccessibilityState() override;
@@ -70,6 +72,8 @@ private:
     mutable QString m_cachedSupportingText;
     mutable QString m_cachedErrorText;
     mutable QString m_cachedDisplaySupportingText;
+    mutable QFont m_cachedLabelFont;
+    mutable QFont m_cachedSupportingFont;
     mutable QPainterPath m_cachedContainerPath;
     QPointer<QLineEdit> m_lineEdit;
     QtMaterialTransitionController* m_transition = nullptr;
