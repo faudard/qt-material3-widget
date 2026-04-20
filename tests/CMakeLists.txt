@@ -62,3 +62,4 @@ qtm3_add_test(tst_divider widgets/data/tst_divider.cpp qtmaterial3_widgets)
 # Phase 5 note: add accessibility, keyboard, and installed-package consumer checks here.
 
 qtm3_add_test(tst_filledbutton_render render/buttons/tst_filledbutton_render.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_outlinedbutton_render render/buttons/tst_outlinedbutton_render.cpp qtmaterial3_widgets)
