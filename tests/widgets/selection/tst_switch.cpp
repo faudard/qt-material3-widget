@@ -2,45 +2,57 @@
 
 #include "qtmaterial/widgets/selection/qtmaterialswitch.h"
 
-class tst_Switch : public QObject
+class tst_QtMaterialSwitch : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void basicConstruction();
+    void construction();
     void keyboardToggle();
+    void arrowKeysSetState();
     void sizeHintRespectsTouchTarget();
 };
 
-void tst_Switch::basicConstruction()
+void tst_QtMaterialSwitch::construction()
 {
-    QtMaterial::QtMaterialSwitch widget;
-    QVERIFY(widget.isCheckable());
+    QtMaterial::QtMaterialSwitch w;
+    QVERIFY(w.isCheckable());
 }
 
-void tst_Switch::keyboardToggle()
+void tst_QtMaterialSwitch::keyboardToggle()
 {
-    QtMaterial::QtMaterialSwitch widget;
-    widget.resize(120, 48);
-    widget.show();
-    QVERIFY(QTest::qWaitForWindowExposed(&widget));
-    widget.setFocus();
-    QVERIFY(widget.hasFocus());
+    QtMaterial::QtMaterialSwitch w;
+    w.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&w));
+    w.setFocus();
 
-    QCOMPARE(widget.isChecked(), false);
-    QTest::keyClick(&widget, Qt::Key_Space);
-    QCOMPARE(widget.isChecked(), true);
-    QTest::keyClick(&widget, Qt::Key_Space);
-    QCOMPARE(widget.isChecked(), false);
+    QCOMPARE(w.isChecked(), false);
+    QTest::keyClick(&w, Qt::Key_Space);
+    QCOMPARE(w.isChecked(), true);
 }
 
-void tst_Switch::sizeHintRespectsTouchTarget()
+void tst_QtMaterialSwitch::arrowKeysSetState()
 {
-    QtMaterial::QtMaterialSwitch widget;
-    const QSize hint = widget.sizeHint();
+    QtMaterial::QtMaterialSwitch w(QStringLiteral("Wi‑Fi"));
+    w.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&w));
+    w.setFocus();
+
+    w.setChecked(false);
+    QTest::keyClick(&w, Qt::Key_Right);
+    QCOMPARE(w.isChecked(), true);
+
+    QTest::keyClick(&w, Qt::Key_Left);
+    QCOMPARE(w.isChecked(), false);
+}
+
+void tst_QtMaterialSwitch::sizeHintRespectsTouchTarget()
+{
+    QtMaterial::QtMaterialSwitch w(QStringLiteral("Airplane mode"));
+    const QSize hint = w.sizeHint();
     QVERIFY(hint.height() >= 32);
     QVERIFY(hint.width() >= 52);
 }
 
-QTEST_MAIN(tst_Switch)
+QTEST_MAIN(tst_QtMaterialSwitch)
 #include "tst_switch.moc"

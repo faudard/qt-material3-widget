@@ -2,9 +2,11 @@
 
 #include <QChangeEvent>
 #include <QFontMetrics>
+#include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QResizeEvent>
+#include <QStyle>
 
 #include "private/qtmaterialselectionrenderhelper_p.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
@@ -21,6 +23,7 @@ QtMaterialSwitch::QtMaterialSwitch(QWidget* parent)
 {
     setCheckable(true);
     setFocusPolicy(Qt::StrongFocus);
+    setAccessibleDescription(QStringLiteral("Material 3 switch"));
 
     QObject::connect(m_transition, &QtMaterialTransitionController::progressChanged, this, [this](qreal) {
         m_layoutDirty = true;
@@ -28,9 +31,17 @@ QtMaterialSwitch::QtMaterialSwitch(QWidget* parent)
     });
     QObject::connect(this, &QAbstractButton::toggled, this, [this](bool) {
         syncTransitionState(true);
+        syncAccessibleState();
     });
 
     syncTransitionState(false);
+    syncAccessibleState();
+}
+
+QtMaterialSwitch::QtMaterialSwitch(const QString& text, QWidget* parent)
+    : QtMaterialSwitch(parent)
+{
+    setText(text);
 }
 
 QtMaterialSwitch::~QtMaterialSwitch() = default;
@@ -53,6 +64,16 @@ void QtMaterialSwitch::invalidateResolvedSpec()
 void QtMaterialSwitch::stateChangedEvent()
 {
     QtMaterialSelectionControl::stateChangedEvent();
+    syncAccessibleState();
+    update();
+}
+
+void QtMaterialSwitch::contentChangedEvent()
+{
+    QtMaterialSelectionControl::contentChangedEvent();
+    invalidateLayoutCache();
+    syncAccessibleState();
+    updateGeometry();
     update();
 }
 
@@ -90,8 +111,17 @@ void QtMaterialSwitch::resolveLayoutIfNeeded() const
     m_cachedFocusRingRect = m_cachedTrackRect.adjusted(-3.0, -3.0, 3.0, 3.0);
     m_cachedLabelRect = labelRect();
 
-    const QFont labelFont = SelectionRenderHelper::labelFont(theme(), m_spec.labelTypeRole, font());
-    const QFontMetrics metrics(labelFont);
+    const qreal trackRadius = m_cachedTrackRect.height() / 2.0;
+    m_cachedRippleClipPath = QPainterPath();
+    m_cachedRippleClipPath.addRoundedRect(m_cachedTrackRect, trackRadius, trackRadius);
+
+    m_cachedFocusRingPath = QPainterPath();
+    m_cachedFocusRingPath.addRoundedRect(m_cachedFocusRingRect,
+                                         m_cachedFocusRingRect.height() / 2.0,
+                                         m_cachedFocusRingRect.height() / 2.0);
+
+    m_cachedLabelFont = SelectionRenderHelper::labelFont(theme(), m_spec.labelTypeRole, font());
+    const QFontMetrics metrics(m_cachedLabelFont);
     m_cachedElidedText = metrics.elidedText(text(), Qt::ElideRight, m_cachedLabelRect.width());
 
     m_layoutDirty = false;
@@ -112,6 +142,17 @@ void QtMaterialSwitch::syncTransitionState(bool animated)
     } else {
         m_transition->setProgress(isChecked() ? 1.0 : 0.0);
     }
+}
+
+void QtMaterialSwitch::syncAccessibleState()
+{
+    if (accessibleName().isEmpty() && !text().isEmpty()) {
+        setAccessibleName(text());
+    }
+
+    setAccessibleDescription(isChecked()
+                                 ? QStringLiteral("On")
+                                 : QStringLiteral("Off"));
 }
 
 QSize QtMaterialSwitch::sizeHint() const
@@ -154,6 +195,24 @@ void QtMaterialSwitch::mousePressEvent(QMouseEvent* event)
     QtMaterialSelectionControl::mousePressEvent(event);
 }
 
+void QtMaterialSwitch::keyPressEvent(QKeyEvent* event)
+{
+    const bool rtl = layoutDirection() == Qt::RightToLeft;
+
+    if (event->key() == Qt::Key_Left) {
+        setChecked(rtl ? true : false);
+        event->accept();
+        return;
+    }
+    if (event->key() == Qt::Key_Right) {
+        setChecked(rtl ? false : true);
+        event->accept();
+        return;
+    }
+
+    QtMaterialSelectionControl::keyPressEvent(event);
+}
+
 void QtMaterialSwitch::paintEvent(QPaintEvent*)
 {
     resolveLayoutIfNeeded();
@@ -184,24 +243,27 @@ void QtMaterialSwitch::paintEvent(QPaintEvent*)
     painter.restore();
 
     if (m_ripple) {
-        QPainterPath clip;
-        clip.addRoundedRect(m_cachedTrackRect, m_cachedTrackRect.height() / 2.0, m_cachedTrackRect.height() / 2.0);
-        m_ripple->setClipPath(clip);
+        m_ripple->setClipPath(m_cachedRippleClipPath);
         m_ripple->paint(&painter, m_spec.stateLayerColor);
     }
 
     if (!m_cachedElidedText.isEmpty()) {
-        const QFont labelFont = SelectionRenderHelper::labelFont(theme(), m_spec.labelTypeRole, font());
         const QColor labelColor = enabled ? m_spec.labelColor : m_spec.disabledLabelColor;
-        SelectionRenderHelper::paintLabel(&painter, m_cachedLabelRect, labelAlignment(), m_cachedElidedText, labelColor, labelFont);
+        SelectionRenderHelper::paintLabel(&painter,
+                                          m_cachedLabelRect,
+                                          labelAlignment(),
+                                          m_cachedElidedText,
+                                          labelColor,
+                                          m_cachedLabelFont);
     }
 
     if (interactionState().isFocused()) {
-        QtMaterialFocusIndicator::paintRectFocusRing(&painter,
-                                                     m_cachedFocusRingRect,
+        painter.save();
+        QtMaterialFocusIndicator::paintPathFocusRing(&painter,
+                                                     m_cachedFocusRingPath,
                                                      m_spec.focusRingColor,
-                                                     m_cachedFocusRingRect.height() / 2.0,
                                                      2.0);
+        painter.restore();
     }
 }
 
