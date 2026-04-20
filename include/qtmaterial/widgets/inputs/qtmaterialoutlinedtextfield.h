@@ -1,12 +1,16 @@
 #pragma once
 
+#include <QPainterPath>
 #include <QPointer>
+#include <QRect>
 
 #include "qtmaterial/core/qtmaterialinputcontrol.h"
 #include "qtmaterial/specs/qtmaterialtextfieldspec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 class QLineEdit;
+class QEvent;
+class QResizeEvent;
 
 namespace QtMaterial {
 
@@ -35,6 +39,8 @@ protected:
 
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
+    void changeEvent(QEvent* event) override;
+    bool eventFilter(QObject* watched, QEvent* event) override;
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
     void invalidateResolvedSpec() override;
 
@@ -45,8 +51,26 @@ protected:
     const TextFieldSpec& spec() const;
 
 private:
+    void invalidateLayoutCache();
+    void ensureLayoutResolved() const;
+    void syncLineEditGeometry();
+    void syncLineEditPalette();
+    bool currentFocusState() const;
+
     mutable bool m_specDirty = true;
+    mutable bool m_layoutDirty = true;
     mutable TextFieldSpec m_spec;
+    mutable QRect m_cachedContainerRect;
+    mutable QRect m_cachedLabelRect;
+    mutable QRect m_cachedEditorRect;
+    mutable QRect m_cachedSupportingRect;
+    mutable QRect m_cachedFocusRect;
+    mutable qreal m_cachedRadius = 0.0;
+    mutable QString m_cachedLabelText;
+    mutable QString m_cachedSupportingText;
+    mutable QString m_cachedErrorText;
+    mutable QString m_cachedDisplaySupportingText;
+    mutable QPainterPath m_cachedContainerPath;
     QPointer<QLineEdit> m_lineEdit;
     QtMaterialTransitionController* m_transition = nullptr;
 };

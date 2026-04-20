@@ -63,3 +63,5 @@ qtm3_add_test(tst_divider widgets/data/tst_divider.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_filledbutton_render render/buttons/tst_filledbutton_render.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_outlinedbutton_render render/buttons/tst_outlinedbutton_render.cpp qtmaterial3_widgets)
+
+qtm3_add_test(tst_outlinedtextfield_render render/inputs/tst_outlinedtextfield_render.cpp qtmaterial3_widgets)

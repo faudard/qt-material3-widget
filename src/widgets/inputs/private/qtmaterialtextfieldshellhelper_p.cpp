@@ -15,23 +15,21 @@ QtMaterialTextFieldShellHelper::Layout QtMaterialTextFieldShellHelper::layoutFor
     Variant variant)
 {
     Layout layout;
-    const int supportingHeight = 20;
-    const int topLabelHeight = 20;
-    const int containerBottomInset = supportingHeight + spec.supportingTopSpacing;
+    const int containerBottomInset = spec.supportingHeight + spec.supportingTopSpacing;
 
-    layout.containerRect = bounds.adjusted(1, topLabelHeight, -1, -containerBottomInset);
+    layout.containerRect = bounds.adjusted(1, spec.topLabelHeight, -1, -containerBottomInset);
     layout.labelRect = QRect(bounds.left() + spec.horizontalPadding,
                              0,
                              qMax(0, bounds.width() - (2 * spec.horizontalPadding)),
-                             topLabelHeight);
+                             spec.topLabelHeight);
     layout.editorRect = layout.containerRect.adjusted(spec.horizontalPadding,
                                                       spec.verticalPadding,
                                                       -spec.horizontalPadding,
                                                       -spec.verticalPadding);
     layout.supportingRect = QRect(bounds.left() + spec.horizontalPadding,
-                                  bounds.bottom() - supportingHeight + 1,
+                                  bounds.bottom() - spec.supportingHeight + 1,
                                   qMax(0, bounds.width() - (2 * spec.horizontalPadding)),
-                                  supportingHeight - 2);
+                                  spec.supportingHeight - 2);
     layout.focusRect = layout.containerRect.adjusted(-2, -2, 2, 2);
     layout.radius = theme.shapes().radius(spec.shapeRole);
 
@@ -42,20 +40,50 @@ QtMaterialTextFieldShellHelper::Layout QtMaterialTextFieldShellHelper::layoutFor
     return layout;
 }
 
-QColor QtMaterialTextFieldShellHelper::effectiveLabelColor(const TextFieldSpec& spec, bool focused, bool hasError)
+QtMaterialTextFieldShellHelper::ElidedText QtMaterialTextFieldShellHelper::elidedTextFor(
+    const Layout& layout,
+    const TextFieldSpec&,
+    const QString& label,
+    const QString& supportingText,
+    const QString& errorText,
+    const QFont& font)
 {
+    const QFontMetrics metrics(font);
+    ElidedText text;
+    text.labelText = metrics.elidedText(label, Qt::ElideRight, qMax(0, layout.labelRect.width()));
+    text.supportingText = metrics.elidedText(supportingText, Qt::ElideRight, qMax(0, layout.supportingRect.width()));
+    text.errorText = metrics.elidedText(errorText, Qt::ElideRight, qMax(0, layout.supportingRect.width()));
+    return text;
+}
+
+QColor QtMaterialTextFieldShellHelper::effectiveLabelColor(const TextFieldSpec& spec, bool focused, bool hasError, bool enabled)
+{
+    if (!enabled) {
+        return spec.disabledLabelColor;
+    }
     if (hasError) {
         return spec.errorColor;
     }
     return focused ? spec.focusedOutlineColor : spec.labelColor;
 }
 
-QColor QtMaterialTextFieldShellHelper::effectiveOutlineColor(const TextFieldSpec& spec, bool focused, bool hasError)
+QColor QtMaterialTextFieldShellHelper::effectiveOutlineColor(const TextFieldSpec& spec, bool focused, bool hasError, bool enabled)
 {
+    if (!enabled) {
+        return spec.disabledOutlineColor;
+    }
     if (hasError) {
         return spec.errorColor;
     }
     return focused ? spec.focusedOutlineColor : spec.outlineColor;
+}
+
+QColor QtMaterialTextFieldShellHelper::effectiveSupportingColor(const TextFieldSpec& spec, bool hasError, bool enabled)
+{
+    if (!enabled) {
+        return spec.disabledSupportingTextColor;
+    }
+    return hasError ? spec.errorColor : spec.supportingTextColor;
 }
 
 void QtMaterialTextFieldShellHelper::paintShell(
@@ -65,9 +93,7 @@ void QtMaterialTextFieldShellHelper::paintShell(
     const TextFieldSpec& spec,
     const QtMaterialInteractionState& state,
     Variant variant,
-    const QString& label,
-    const QString& supportingText,
-    const QString& errorText,
+    const ElidedText& text,
     bool hasError,
     const QFont& font)
 {
@@ -78,42 +104,53 @@ void QtMaterialTextFieldShellHelper::paintShell(
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing, true);
 
-    const bool focused = state.isFocused();
-    const QColor outline = effectiveOutlineColor(spec, focused, hasError);
-    const QColor labelColor = effectiveLabelColor(spec, focused, hasError);
+    const bool enabled = state.isEnabled();
+    const bool focused = enabled && state.isFocused();
+    const QColor outline = effectiveOutlineColor(spec, focused, hasError, enabled);
+    const QColor labelColor = effectiveLabelColor(spec, focused, hasError, enabled);
+    const QColor supportingColor = effectiveSupportingColor(spec, hasError, enabled);
 
     if (variant == Variant::Filled) {
         painter->setPen(Qt::NoPen);
         painter->setBrush(spec.containerColor);
         painter->drawRoundedRect(layout.containerRect, layout.radius, layout.radius);
 
-        if (state.isHovered() || focused || state.isPressed()) {
-            qreal opacity = state.isPressed() ? theme.stateLayer().pressOpacity : (focused ? theme.stateLayer().focusOpacity : theme.stateLayer().hoverOpacity);
+        if (enabled && (state.isHovered() || focused || state.isPressed())) {
+            qreal opacity = state.isPressed() ? theme.stateLayer().pressOpacity
+                                              : (focused ? theme.stateLayer().focusOpacity : theme.stateLayer().hoverOpacity);
             QtMaterialStateLayerPainter::paintRect(painter, layout.containerRect, spec.stateLayerColor, opacity, layout.radius);
         }
 
-        painter->setPen(QPen(outline, focused ? 2.0 : 1.0));
+        painter->setPen(QPen(outline, focused ? spec.focusedOutlineWidth : spec.outlineWidth));
         painter->drawLine(layout.containerRect.bottomLeft(), layout.containerRect.bottomRight());
     } else {
-        painter->setPen(QPen(outline, focused ? 2.0 : 1.0));
+        painter->setPen(QPen(outline, focused ? spec.focusedOutlineWidth : spec.outlineWidth));
         painter->setBrush(Qt::NoBrush);
         painter->drawRoundedRect(layout.containerRect, layout.radius, layout.radius);
 
-        if (state.isHovered() || focused || state.isPressed()) {
-            qreal opacity = state.isPressed() ? theme.stateLayer().pressOpacity : (focused ? theme.stateLayer().focusOpacity : theme.stateLayer().hoverOpacity);
+        if (enabled && (state.isHovered() || focused || state.isPressed())) {
+            qreal opacity = state.isPressed() ? theme.stateLayer().pressOpacity
+                                              : (focused ? theme.stateLayer().focusOpacity : theme.stateLayer().hoverOpacity);
             QtMaterialStateLayerPainter::paintRect(painter, layout.containerRect, spec.stateLayerColor, opacity * 0.35, layout.radius);
         }
     }
 
     painter->setFont(font);
     painter->setPen(labelColor);
-    painter->drawText(layout.labelRect, Qt::AlignLeft | Qt::AlignVCenter, label);
+    painter->drawText(layout.labelRect, Qt::AlignLeft | Qt::AlignVCenter, text.labelText);
 
-    painter->setPen(hasError ? spec.errorColor : spec.supportingTextColor);
-    painter->drawText(layout.supportingRect, Qt::AlignLeft | Qt::AlignVCenter, hasError ? errorText : supportingText);
+    painter->setPen(supportingColor);
+    painter->drawText(layout.supportingRect,
+                      Qt::AlignLeft | Qt::AlignVCenter,
+                      hasError ? text.errorText : text.supportingText);
 
     if (focused) {
-        QtMaterialFocusIndicator::paintRectFocusRing(painter, layout.focusRect, outline, layout.radius + 2.0, 1.25);
+        QtMaterialFocusIndicator::paintRectFocusRing(
+            painter,
+            layout.focusRect,
+            spec.focusRingColor,
+            layout.radius + 2.0,
+            spec.focusRingWidth);
     }
 
     painter->restore();
