@@ -1,11 +1,15 @@
-# Surface Render Baselines
+# Surface render baselines
 
-This directory is reserved for surface-family baseline captures.
+Add golden images for surface-family widgets here.
 
-Planned baselines:
-- dialog default light
-- dialog focused light
-- dialog default dark
-- card default light
-- navigation drawer default light
-- bottom sheet default light
+Suggested first baselines:
+- dialog default
+- dialog dark
+- card default
+- card disabled
+- card focused
+
+Keep:
+- fixed size
+- fixed seed theme
+- fixed font/DPI in CI where possible

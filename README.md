@@ -1,20 +1,26 @@
-# qt-material3-widgets
+# QtMaterialCard hardening pass 21
 
-Material 3 widget toolkit for Qt Widgets.
+This archive is a focused patch-style scaffold for `QtMaterialCard`.
 
-## Layered modules
+It assumes the existing Phase 5 refactored architecture:
+- `QtMaterialSurface`
+- `QtMaterial::CardSpec`
+- `QtMaterial::SpecFactory`
+- shared surface paint helper in `src/widgets/surfaces/private/qtmaterialsurfacerenderhelper_p.*`
 
-- `qtmaterial3_theme` — tokens, schemes, builder, manager
-- `qtmaterial3_legacy` — temporary migration bridge
-- `qtmaterial3_core` — widget bases and interaction state
-- `qtmaterial3_specs` — immutable component specs and factory
-- `qtmaterial3_effects` — ripple, focus, shadow, transitions, scrim
-- `qtmaterial3_widgets` — public widget implementations
+## Intent
 
-## Phase 5 focus
+`QtMaterialCard` should become a real spec-driven surface widget, not a placeholder paint stub.
 
-- packaging and install/export
-- accessibility and keyboard correctness
-- performance and memory review
-- public API stabilization
-- documentation and release readiness
+This pass includes:
+- a real public header / implementation sketch for `QtMaterialCard`
+- cached surface geometry
+- spec-driven `sizeHint()` / `minimumSizeHint()`
+- focus and accessibility basics
+- widget and render test scaffolding
+- a hardening checklist
+
+## Notes
+
+This archive is **not** a compiled validation result.
+It is a focused best-effort patch scaffold designed to be merged into your integrated branch and then reconciled with local build/test feedback.

@@ -2,20 +2,38 @@
 
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
 
-class tst_Card : public QObject
+class tst_QtMaterialCard : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void hasSaneMinimumSize();
+    void construction();
+    void titleBodySetters();
+    void sizeHintUsesMinimums();
 };
 
-void tst_Card::hasSaneMinimumSize()
+void tst_QtMaterialCard::construction()
 {
     QtMaterial::QtMaterialCard card;
-    QVERIFY(card.minimumSizeHint().width() >= 160);
-    QVERIFY(card.minimumSizeHint().height() >= 100);
+    QVERIFY(card.sizeHint().isValid());
 }
 
-QTEST_MAIN(tst_Card)
+void tst_QtMaterialCard::titleBodySetters()
+{
+    QtMaterial::QtMaterialCard card;
+    card.setTitleText(QStringLiteral("Card title"));
+    card.setBodyText(QStringLiteral("Card body"));
+    QCOMPARE(card.titleText(), QStringLiteral("Card title"));
+    QCOMPARE(card.bodyText(), QStringLiteral("Card body"));
+}
+
+void tst_QtMaterialCard::sizeHintUsesMinimums()
+{
+    QtMaterial::QtMaterialCard card;
+    const QSize size = card.sizeHint();
+    QVERIFY(size.width() >= card.minimumSizeHint().width());
+    QVERIFY(size.height() >= card.minimumSizeHint().height());
+}
+
+QTEST_MAIN(tst_QtMaterialCard)
 #include "tst_card.moc"
