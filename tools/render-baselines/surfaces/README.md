@@ -1,15 +1,8 @@
-# Surface render baselines
+# Surface Render Baselines
 
-Add golden images for surface-family widgets here.
-
-Suggested first baselines:
-- dialog default
-- dialog dark
-- card default
-- card disabled
-- card focused
-
-Keep:
-- fixed size
-- fixed seed theme
-- fixed font/DPI in CI where possible
+Suggested baseline states for `QtMaterialNavigationDrawer`:
+- default left-edge light theme
+- default right-edge light theme
+- focused state
+- disabled state
+- dark theme
