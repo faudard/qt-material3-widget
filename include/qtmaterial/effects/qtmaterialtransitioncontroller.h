@@ -30,12 +30,12 @@ public:
     void startForward();
     void startBackward();
 
+    void startTo(qreal target);
 signals:
     void progressChanged(qreal value);
     void finished();
 
 private:
-    void startTo(qreal target);
 
     qreal m_progress = 0.0;
     int m_durationMs = 180;

@@ -106,7 +106,7 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
     painter.drawPath(m_cachedContainerPath);
     painter.restore();
 
-    const qreal layerOpacity = ButtonRenderHelper::stateLayerOpacity(theme(), interactionState());
+    const qreal layerOpacity = animatedStateLayerOpacity();
     if (layerOpacity > 0.0) {
         QtMaterialStateLayerPainter::paintPath(&painter, m_cachedContainerPath, m_spec.stateLayerColor, layerOpacity);
     }
