@@ -22,6 +22,7 @@ QString tintedIconCacheKey(const QPixmap& base, const QColor& color)
         .arg(quint32(color.rgba()), 0, 16);
 }
 
+
 QPixmap tintPixmap(const QPixmap& source, const QColor& color)
 {
     if (source.isNull()) {
@@ -35,6 +36,7 @@ QPixmap tintPixmap(const QPixmap& source, const QColor& color)
     painter.drawPixmap(0, 0, source);
     painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
     painter.fillRect(tinted.rect(), color);
+
     return tinted;
 }
 } // namespace
@@ -143,19 +145,23 @@ QPixmap tintedIconPixmap(
         return {};
     }
 
-    const QPixmap base = button->icon().pixmap(QSize(spec.iconSize, spec.iconSize), QIcon::Normal, QIcon::Off);
+    const QPixmap base =
+        button->icon().pixmap(QSize(spec.iconSize, spec.iconSize), QIcon::Normal, QIcon::Off);
+
     if (base.isNull()) {
         return {};
     }
 
     const QString cacheKey = tintedIconCacheKey(base, iconColor);
+
     QPixmap cached;
-    if (QPixmapCache::find(cacheKey, &cached)) {
+    if (!cacheKey.isEmpty() && QPixmapCache::find(cacheKey, &cached)) {
         return cached;
     }
 
     QPixmap tinted = tintPixmap(base, iconColor);
-    if (!tinted.isNull()) {
+
+    if (!cacheKey.isEmpty() && !tinted.isNull()) {
         QPixmapCache::insert(cacheKey, tinted);
     }
 
