@@ -8,8 +8,8 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
-
 class QtMaterialRippleController;
+class QtMaterialTransitionController;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialRadioButton : public QtMaterialSelectionControl
 {
@@ -42,6 +42,7 @@ private:
     mutable RadioButtonSpec m_spec;
 
     QtMaterialRippleController* m_ripple = nullptr;
+    QtMaterialTransitionController* m_transition = nullptr;
 
     mutable QRectF m_cachedIndicatorRect;
     mutable QRectF m_cachedDotRect;

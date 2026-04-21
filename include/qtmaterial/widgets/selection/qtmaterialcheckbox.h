@@ -4,6 +4,7 @@
 #include "qtmaterial/qtmaterialglobal.h"
 namespace QtMaterial {
 class QtMaterialRippleController;
+class QtMaterialTransitionController;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialCheckbox : public QtMaterialSelectionControl
 {
     Q_OBJECT
@@ -20,5 +21,7 @@ private:
     mutable bool m_specDirty = true;
     mutable CheckboxSpec m_spec;
     QtMaterialRippleController* m_ripple = nullptr;
+    QtMaterialTransitionController* m_transition = nullptr;
+
 };
 } // namespace QtMaterial

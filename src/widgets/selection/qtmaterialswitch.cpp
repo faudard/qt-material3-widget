@@ -17,6 +17,25 @@
 
 namespace QtMaterial {
 
+namespace {
+
+qreal lerp(qreal a, qreal b, qreal t)
+{
+    return a + (b - a) * t;
+}
+
+QColor blendColor(const QColor& a, const QColor& b, qreal t)
+{
+    QColor out;
+    out.setRedF(lerp(a.redF(), b.redF(), t));
+    out.setGreenF(lerp(a.greenF(), b.greenF(), t));
+    out.setBlueF(lerp(a.blueF(), b.blueF(), t));
+    out.setAlphaF(lerp(a.alphaF(), b.alphaF(), t));
+    return out;
+}
+
+} // namespace
+
 QtMaterialSwitch::QtMaterialSwitch(QWidget* parent)
     : QtMaterialSelectionControl(parent)
     , m_transition(new QtMaterialTransitionController(this))
@@ -86,7 +105,13 @@ void QtMaterialSwitch::resolveSpecIfNeeded() const
 
     SpecFactory factory;
     m_spec = factory.switchSpec(theme(), density());
-    const_cast<QtMaterialSwitch*>(this)->setSpacing(m_spec.spacing);
+    if (m_transition && theme().motion().contains(m_spec.motionToken)) {
+        const MotionStyle motion = theme().motion().style(m_spec.motionToken);
+        if (motion.durationMs > 0) {
+            m_transition->setDuration(motion.durationMs);
+        }
+        m_transition->setEasingCurve(motion.easing);
+    }
     m_specDirty = false;
     m_layoutDirty = true;
 }
@@ -225,13 +250,22 @@ void QtMaterialSwitch::paintEvent(QPaintEvent*)
     const qreal progress = m_transition ? m_transition->progress() : (isChecked() ? 1.0 : 0.0);
     const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(theme(), interactionState());
 
-    const QColor trackColor = enabled
-        ? (isChecked() ? m_spec.selectedTrackColor : m_spec.unselectedTrackColor)
-        : (isChecked() ? m_spec.disabledSelectedTrackColor : m_spec.disabledUnselectedTrackColor);
+    const QColor offTrack = enabled
+                                ? m_spec.unselectedTrackColor
+                                : m_spec.disabledUnselectedTrackColor;
+    const QColor onTrack = enabled
+                               ? m_spec.selectedTrackColor
+                               : m_spec.disabledSelectedTrackColor;
 
-    const QColor handleColor = enabled
-        ? (isChecked() ? m_spec.selectedHandleColor : m_spec.unselectedHandleColor)
-        : (isChecked() ? m_spec.disabledSelectedHandleColor : m_spec.disabledUnselectedHandleColor);
+    const QColor offHandle = enabled
+                                 ? m_spec.unselectedHandleColor
+                                 : m_spec.disabledUnselectedHandleColor;
+    const QColor onHandle = enabled
+                                ? m_spec.selectedHandleColor
+                                : m_spec.disabledSelectedHandleColor;
+
+    const QColor trackColor = blendColor(offTrack, onTrack, progress);
+    const QColor handleColor = blendColor(offHandle, onHandle, progress);
 
     SelectionRenderHelper::paintCircularStateLayer(&painter, m_cachedStateLayerRect, m_spec.stateLayerColor, stateOpacity);
 

@@ -4,11 +4,24 @@
 #include <QFontMetrics>
 #include <QIcon>
 #include <QPainter>
+#include <QPixmapCache>
 #include <QtMath>
 
 namespace QtMaterial::ButtonRenderHelper {
 
 namespace {
+
+QString tintedIconCacheKey(const QPixmap& base, const QColor& color)
+{
+    if (base.isNull()) {
+        return {};
+    }
+
+    return QStringLiteral("QtMaterial::ButtonTint:%1:%2")
+        .arg(qulonglong(base.cacheKey()))
+        .arg(quint32(color.rgba()), 0, 16);
+}
+
 QPixmap tintPixmap(const QPixmap& source, const QColor& color)
 {
     if (source.isNull()) {
@@ -126,8 +139,27 @@ QPixmap tintedIconPixmap(
     const ButtonSpec& spec,
     const QColor& iconColor)
 {
+    if (!button || button->icon().isNull() || spec.iconSize <= 0) {
+        return {};
+    }
+
     const QPixmap base = button->icon().pixmap(QSize(spec.iconSize, spec.iconSize), QIcon::Normal, QIcon::Off);
-    return tintPixmap(base, iconColor);
+    if (base.isNull()) {
+        return {};
+    }
+
+    const QString cacheKey = tintedIconCacheKey(base, iconColor);
+    QPixmap cached;
+    if (QPixmapCache::find(cacheKey, &cached)) {
+        return cached;
+    }
+
+    QPixmap tinted = tintPixmap(base, iconColor);
+    if (!tinted.isNull()) {
+        QPixmapCache::insert(cacheKey, tinted);
+    }
+
+    return tinted;
 }
 
 void paintContent(
