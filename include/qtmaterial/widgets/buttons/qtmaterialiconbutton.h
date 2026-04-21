@@ -9,9 +9,12 @@
 
 namespace QtMaterial {
 
+class QtMaterialRippleController;
+class QtMaterialTransitionController;
+
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialIconButton : public QtMaterialAbstractButton
 {
-    Q_OBJECT
+
 public:
     explicit QtMaterialIconButton(QWidget* parent = nullptr);
     explicit QtMaterialIconButton(const QIcon& icon, QWidget* parent = nullptr);
@@ -27,6 +30,8 @@ protected:
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void changeEvent(QEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+
     void themeChangedEvent(const Theme& theme) override;
     void stateChangedEvent() override;
     void contentChangedEvent() override;
@@ -36,6 +41,7 @@ protected:
 private:
     void invalidateLayoutCache();
     void invalidateResolvedSpec();
+
     void ensureSpecResolved() const;
     void ensureLayoutResolved() const;
 
@@ -45,12 +51,15 @@ private:
 
     mutable bool m_specDirty = true;
     mutable bool m_layoutDirty = true;
+
     mutable IconButtonSpec m_spec;
     mutable QRect m_cachedVisualRect;
     mutable QRect m_cachedIconRect;
     mutable qreal m_cachedCornerRadius = 0.0;
     mutable QPainterPath m_cachedContainerPath;
 
+    QtMaterialRippleController* m_ripple = nullptr;
+    QtMaterialTransitionController* m_transition = nullptr;
     bool m_selected = false;
 };
 

@@ -1,40 +1,67 @@
 #pragma once
 
-#include <QString>
-#include "qtmaterial/core/qtmaterialcontrol.h"
+#include <QPainterPath>
+#include <QRect>
+
+#include "qtmaterial/qtmaterialglobal.h"
+#include "qtmaterial/core/qtmaterialabstractbutton.h"
+#include "qtmaterial/specs/qtmaterialiconbuttonspec.h"
 
 namespace QtMaterial {
 
-class QTMATERIAL3_CORE_EXPORT QtMaterialInputControl : public QtMaterialControl
+class QtMaterialRippleController;
+class QtMaterialTransitionController;
+
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialIconButton : public QtMaterialAbstractButton
 {
     Q_OBJECT
+
 public:
-    explicit QtMaterialInputControl(QWidget* parent = nullptr);
-    ~QtMaterialInputControl() override;
+    explicit QtMaterialIconButton(QWidget* parent = nullptr);
+    explicit QtMaterialIconButton(const QIcon& icon, QWidget* parent = nullptr);
+    ~QtMaterialIconButton() override;
 
-    QString labelText() const;
-    void setLabelText(const QString& text);
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
 
-    QString supportingText() const;
-    void setSupportingText(const QString& text);
-
-    QString errorText() const;
-    void setErrorText(const QString& text);
-
-    bool hasErrorState() const noexcept;
-    void setHasErrorState(bool value);
+    bool isSelected() const noexcept;
+    void setSelected(bool selected);
 
 protected:
-    virtual void syncAccessibilityState();
-    virtual void contentChangedEvent();
-    QRect contentRect() const;
-    QRect supportingTextRect() const;
+    void paintEvent(QPaintEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
+    void changeEvent(QEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+
+    void themeChangedEvent(const Theme& theme) override;
+    void stateChangedEvent() override;
+    void contentChangedEvent() override;
+
+    virtual IconButtonSpec resolveIconButtonSpec() const;
 
 private:
-    QString m_labelText;
-    QString m_supportingText;
-    QString m_errorText;
-    bool m_hasErrorState = false;
+    void invalidateLayoutCache();
+    void invalidateResolvedSpec() override;
+
+    void ensureSpecResolved() const;
+    void ensureLayoutResolved() const;
+
+    QRect visualContainerRect() const;
+    QPainterPath containerPath() const;
+    QRect iconRect() const;
+
+    mutable bool m_specDirty = true;
+    mutable bool m_layoutDirty = true;
+
+    mutable IconButtonSpec m_spec;
+    mutable QRect m_cachedVisualRect;
+    mutable QRect m_cachedIconRect;
+    mutable qreal m_cachedCornerRadius = 0.0;
+    mutable QPainterPath m_cachedContainerPath;
+
+    QtMaterialRippleController* m_ripple = nullptr;
+    QtMaterialTransitionController* m_transition = nullptr;
+    bool m_selected = false;
 };
 
 } // namespace QtMaterial

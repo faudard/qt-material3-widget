@@ -83,9 +83,9 @@ QtMaterialIconButton::QtMaterialIconButton(QWidget* parent)
 {
     setFocusPolicy(Qt::StrongFocus);
     setCheckable(false);
-    // setAutoDefault(false);
-    // setDefault(false);
-    invalidateResolvedSpec();
+
+    m_specDirty = true;
+    m_layoutDirty = true;
 }
 
 QtMaterialIconButton::QtMaterialIconButton(const QIcon& icon, QWidget* parent)
@@ -250,8 +250,6 @@ void QtMaterialIconButton::ensureLayoutResolved() const
         return;
     }
 
-    const QSize widgetSize = size();
-    const int targetSide = std::max(std::min(widgetSize.width(), widgetSize.height()), m_spec.containerSize);
     const QRect outer = rect();
     const QSize visualSize(m_spec.containerSize, m_spec.containerSize);
 
