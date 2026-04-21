@@ -4,6 +4,8 @@
 #include "qtmaterial/theme/qtmaterialcolorscheme.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
+class QColor;
+
 namespace QtMaterial {
 
 class QTMATERIAL3_THEME_EXPORT ThemeBuilder
@@ -22,9 +24,8 @@ public:
 
 private:
     Theme buildFallbackTheme(const ThemeOptions& options) const;
-
-    void applyFallbackLightScheme(Theme& theme, const QColor& seed) const;
-    void applyFallbackDarkScheme(Theme& theme, const QColor& seed) const;
+    ColorScheme buildFallbackLightScheme(const QColor& seed) const;
+    ColorScheme buildFallbackDarkScheme(const QColor& seed) const;
 
     void applyDefaultTypography(Theme& theme) const;
     void applyDefaultShapes(Theme& theme) const;

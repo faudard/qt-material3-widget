@@ -1,4 +1,4 @@
-#include <QtTest>
+#include <QtTest/QtTest>
 
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
@@ -9,8 +9,8 @@ class tst_ThemeBuilder : public QObject
 private slots:
     void buildsLightTheme();
     void buildsDarkTheme();
-    void buildsLightSchemeOnly();
-    void buildsDarkSchemeOnly();
+    void buildsLightScheme();
+    void buildsDarkScheme();
 };
 
 void tst_ThemeBuilder::buildsLightTheme()
@@ -32,22 +32,34 @@ void tst_ThemeBuilder::buildsDarkTheme()
     QVERIFY(theme.colorScheme().contains(QtMaterial::ColorRole::Surface));
 }
 
-void tst_ThemeBuilder::buildsLightSchemeOnly()
+void tst_ThemeBuilder::buildsLightScheme()
 {
     QtMaterial::ThemeBuilder builder;
-    const QtMaterial::ColorScheme scheme = builder.buildLightSchemeFromSeed(QColor("#6750A4"));
+    const QColor seed("#6750A4");
+
+    const QtMaterial::ColorScheme scheme = builder.buildLightSchemeFromSeed(seed);
+    const QtMaterial::Theme theme = builder.buildLightFromSeed(seed);
 
     QVERIFY(scheme.contains(QtMaterial::ColorRole::Primary));
-    QCOMPARE(scheme.color(QtMaterial::ColorRole::Primary), QColor("#6750A4"));
+    QVERIFY(scheme.contains(QtMaterial::ColorRole::Surface));
+    QCOMPARE(scheme.color(QtMaterial::ColorRole::Primary), seed);
+    QCOMPARE(scheme.color(QtMaterial::ColorRole::Primary), theme.colorScheme().color(QtMaterial::ColorRole::Primary));
+    QCOMPARE(scheme.color(QtMaterial::ColorRole::Surface), theme.colorScheme().color(QtMaterial::ColorRole::Surface));
 }
 
-void tst_ThemeBuilder::buildsDarkSchemeOnly()
+void tst_ThemeBuilder::buildsDarkScheme()
 {
     QtMaterial::ThemeBuilder builder;
-    const QtMaterial::ColorScheme scheme = builder.buildDarkSchemeFromSeed(QColor("#6750A4"));
+    const QColor seed("#6750A4");
 
-    QVERIFY(scheme.contains(QtMaterial::ColorRole::Surface));
-    QVERIFY(scheme.contains(QtMaterial::ColorRole::OnSurface));
+    const QtMaterial::ColorScheme scheme = builder.buildDarkSchemeFromSeed(seed);
+    const QtMaterial::Theme theme = builder.buildDarkFromSeed(seed);
+
+    QVERIFY(scheme.contains(QtMaterial::ColorRole::Primary));
+    QVERIFY(scheme.contains(QtMaterial::ColorRole::InversePrimary));
+    QCOMPARE(scheme.color(QtMaterial::ColorRole::InversePrimary), seed);
+    QCOMPARE(scheme.color(QtMaterial::ColorRole::Primary), theme.colorScheme().color(QtMaterial::ColorRole::Primary));
+    QCOMPARE(scheme.color(QtMaterial::ColorRole::Surface), theme.colorScheme().color(QtMaterial::ColorRole::Surface));
 }
 
 QTEST_MAIN(tst_ThemeBuilder)

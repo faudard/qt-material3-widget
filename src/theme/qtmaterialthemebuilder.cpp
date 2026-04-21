@@ -1,9 +1,9 @@
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
-#include <QtGui/QFont>
+#include <QEasingCurve>
+#include <QFont>
 
 namespace QtMaterial {
-
 namespace {
 
 QColor tone(const QColor& base, qreal factorTowardWhite)
@@ -60,23 +60,22 @@ Theme ThemeBuilder::buildDarkFromSeed(const QColor& seed) const
 
 ColorScheme ThemeBuilder::buildLightSchemeFromSeed(const QColor& seed) const
 {
-    return buildLightFromSeed(seed).colorScheme();
+    return buildFallbackLightScheme(seed);
 }
 
 ColorScheme ThemeBuilder::buildDarkSchemeFromSeed(const QColor& seed) const
 {
-    return buildDarkFromSeed(seed).colorScheme();
+    return buildFallbackDarkScheme(seed);
 }
 
 Theme ThemeBuilder::buildFallbackTheme(const ThemeOptions& options) const
 {
     Theme theme(options);
 
-    if (options.mode == ThemeMode::Dark) {
-        applyFallbackDarkScheme(theme, options.sourceColor);
-    } else {
-        applyFallbackLightScheme(theme, options.sourceColor);
-    }
+    if (options.mode == ThemeMode::Dark)
+        theme.colorScheme() = buildFallbackDarkScheme(options.sourceColor);
+    else
+        theme.colorScheme() = buildFallbackLightScheme(options.sourceColor);
 
     applyDefaultTypography(theme);
     applyDefaultShapes(theme);
@@ -87,19 +86,20 @@ Theme ThemeBuilder::buildFallbackTheme(const ThemeOptions& options) const
     return theme;
 }
 
-void ThemeBuilder::applyFallbackLightScheme(Theme& theme, const QColor& seed) const
+ColorScheme ThemeBuilder::buildFallbackLightScheme(const QColor& seed) const
 {
-    auto& scheme = theme.colorScheme();
+    ColorScheme scheme;
 
     scheme.setColor(ColorRole::Primary, seed);
     scheme.setColor(ColorRole::OnPrimary, QColor(Qt::white));
     scheme.setColor(ColorRole::PrimaryContainer, tone(seed, 0.78));
     scheme.setColor(ColorRole::OnPrimaryContainer, shade(seed, 0.78));
 
-    scheme.setColor(ColorRole::Secondary, shade(seed, 0.22));
+    const QColor secondary = shade(seed, 0.22);
+    scheme.setColor(ColorRole::Secondary, secondary);
     scheme.setColor(ColorRole::OnSecondary, QColor(Qt::white));
-    scheme.setColor(ColorRole::SecondaryContainer, tone(shade(seed, 0.22), 0.74));
-    scheme.setColor(ColorRole::OnSecondaryContainer, shade(shade(seed, 0.22), 0.78));
+    scheme.setColor(ColorRole::SecondaryContainer, tone(secondary, 0.74));
+    scheme.setColor(ColorRole::OnSecondaryContainer, shade(secondary, 0.78));
 
     scheme.setColor(ColorRole::Tertiary, QColor("#7D5260"));
     scheme.setColor(ColorRole::OnTertiary, QColor(Qt::white));
@@ -115,7 +115,6 @@ void ThemeBuilder::applyFallbackLightScheme(Theme& theme, const QColor& seed) co
     scheme.setColor(ColorRole::OnBackground, QColor("#1C1B1F"));
     scheme.setColor(ColorRole::Surface, QColor("#FFFBFE"));
     scheme.setColor(ColorRole::OnSurface, QColor("#1C1B1F"));
-
     scheme.setColor(ColorRole::SurfaceDim, QColor("#DED8E1"));
     scheme.setColor(ColorRole::SurfaceBright, QColor("#FFFBFE"));
     scheme.setColor(ColorRole::SurfaceContainerLowest, QColor("#FFFFFF"));
@@ -123,23 +122,22 @@ void ThemeBuilder::applyFallbackLightScheme(Theme& theme, const QColor& seed) co
     scheme.setColor(ColorRole::SurfaceContainer, QColor("#F3EDF7"));
     scheme.setColor(ColorRole::SurfaceContainerHigh, QColor("#ECE6F0"));
     scheme.setColor(ColorRole::SurfaceContainerHighest, QColor("#E6E0E9"));
-
     scheme.setColor(ColorRole::SurfaceVariant, QColor("#E7E0EC"));
     scheme.setColor(ColorRole::OnSurfaceVariant, QColor("#49454F"));
     scheme.setColor(ColorRole::Outline, QColor("#79747E"));
     scheme.setColor(ColorRole::OutlineVariant, QColor("#CAC4D0"));
-
     scheme.setColor(ColorRole::InverseSurface, QColor("#313033"));
     scheme.setColor(ColorRole::InverseOnSurface, QColor("#F4EFF4"));
     scheme.setColor(ColorRole::InversePrimary, tone(seed, 0.50));
-
     scheme.setColor(ColorRole::Shadow, QColor(0, 0, 0, 255));
     scheme.setColor(ColorRole::Scrim, QColor(0, 0, 0, 255));
+
+    return scheme;
 }
 
-void ThemeBuilder::applyFallbackDarkScheme(Theme& theme, const QColor& seed) const
+ColorScheme ThemeBuilder::buildFallbackDarkScheme(const QColor& seed) const
 {
-    auto& scheme = theme.colorScheme();
+    ColorScheme scheme;
 
     scheme.setColor(ColorRole::Primary, tone(seed, 0.35));
     scheme.setColor(ColorRole::OnPrimary, shade(seed, 0.70));
@@ -166,7 +164,6 @@ void ThemeBuilder::applyFallbackDarkScheme(Theme& theme, const QColor& seed) con
     scheme.setColor(ColorRole::OnBackground, QColor("#E6E1E5"));
     scheme.setColor(ColorRole::Surface, QColor("#141218"));
     scheme.setColor(ColorRole::OnSurface, QColor("#E6E1E5"));
-
     scheme.setColor(ColorRole::SurfaceDim, QColor("#141218"));
     scheme.setColor(ColorRole::SurfaceBright, QColor("#3B383E"));
     scheme.setColor(ColorRole::SurfaceContainerLowest, QColor("#0F0D13"));
@@ -174,40 +171,34 @@ void ThemeBuilder::applyFallbackDarkScheme(Theme& theme, const QColor& seed) con
     scheme.setColor(ColorRole::SurfaceContainer, QColor("#211F26"));
     scheme.setColor(ColorRole::SurfaceContainerHigh, QColor("#2B2930"));
     scheme.setColor(ColorRole::SurfaceContainerHighest, QColor("#36343B"));
-
     scheme.setColor(ColorRole::SurfaceVariant, QColor("#49454F"));
     scheme.setColor(ColorRole::OnSurfaceVariant, QColor("#CAC4D0"));
     scheme.setColor(ColorRole::Outline, QColor("#938F99"));
     scheme.setColor(ColorRole::OutlineVariant, QColor("#49454F"));
-
     scheme.setColor(ColorRole::InverseSurface, QColor("#E6E1E5"));
     scheme.setColor(ColorRole::InverseOnSurface, QColor("#313033"));
     scheme.setColor(ColorRole::InversePrimary, seed);
-
     scheme.setColor(ColorRole::Shadow, QColor(0, 0, 0, 255));
     scheme.setColor(ColorRole::Scrim, QColor(0, 0, 0, 255));
+
+    return scheme;
 }
 
 void ThemeBuilder::applyDefaultTypography(Theme& theme) const
 {
     auto& t = theme.typography();
-
     t.setStyle(TypeRole::DisplayLarge, { defaultFont(36, QFont::Medium), 44.0, 0.0 });
     t.setStyle(TypeRole::DisplayMedium, { defaultFont(32, QFont::Medium), 40.0, 0.0 });
     t.setStyle(TypeRole::DisplaySmall, { defaultFont(28, QFont::Medium), 36.0, 0.0 });
-
     t.setStyle(TypeRole::HeadlineLarge, { defaultFont(26, QFont::Medium), 32.0, 0.0 });
     t.setStyle(TypeRole::HeadlineMedium, { defaultFont(24, QFont::Medium), 30.0, 0.0 });
     t.setStyle(TypeRole::HeadlineSmall, { defaultFont(22, QFont::Medium), 28.0, 0.0 });
-
     t.setStyle(TypeRole::TitleLarge, { defaultFont(20, QFont::Medium), 26.0, 0.0 });
     t.setStyle(TypeRole::TitleMedium, { defaultFont(16, QFont::DemiBold), 24.0, 0.1 });
     t.setStyle(TypeRole::TitleSmall, { defaultFont(14, QFont::DemiBold), 20.0, 0.1 });
-
     t.setStyle(TypeRole::BodyLarge, { defaultFont(16, QFont::Normal), 24.0, 0.2 });
     t.setStyle(TypeRole::BodyMedium, { defaultFont(14, QFont::Normal), 20.0, 0.2 });
     t.setStyle(TypeRole::BodySmall, { defaultFont(12, QFont::Normal), 16.0, 0.4 });
-
     t.setStyle(TypeRole::LabelLarge, { defaultFont(14, QFont::DemiBold), 20.0, 0.1 });
     t.setStyle(TypeRole::LabelMedium, { defaultFont(12, QFont::DemiBold), 16.0, 0.4 });
     t.setStyle(TypeRole::LabelSmall, { defaultFont(11, QFont::DemiBold), 16.0, 0.5 });
