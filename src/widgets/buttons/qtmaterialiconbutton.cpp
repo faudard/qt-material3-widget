@@ -195,6 +195,11 @@ void QtMaterialIconButton::changeEvent(QEvent* event)
     QtMaterialAbstractButton::changeEvent(event);
 }
 
+void QtMaterialIconButton::mousePressEvent(QMouseEvent *event)
+{
+
+}
+
 void QtMaterialIconButton::themeChangedEvent(const Theme& theme)
 {
     Q_UNUSED(theme)
