@@ -1,80 +1,102 @@
+#include <QTemporaryDir>
 #include <QtTest>
 
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
 
-class tst_ThemeSerializer : public QObject
-{
+class tst_ThemeSerializer : public QObject {
     Q_OBJECT
 
 private slots:
-    void roundTripsCompleteTheme();
-    void supportsPartialOverlayJson();
+    void roundTripsThemeJson();
+    void writesAndReadsFile();
+    void rejectsInvalidJson();
 };
 
-void tst_ThemeSerializer::roundTripsCompleteTheme()
+void tst_ThemeSerializer::roundTripsThemeJson()
 {
     QtMaterial::ThemeBuilder builder;
-    QtMaterial::Theme theme = builder.buildDarkFromSeed(QColor("#6750A4"));
+    QtMaterial::Theme theme = builder.buildDarkFromSeed(QColor("#00639B"));
 
-    theme.shapes().setRadius(QtMaterial::ShapeRole::Large, 24);
-
-    QtMaterial::TypographyStyle bodyLarge = theme.typography().style(QtMaterial::TypeRole::BodyLarge);
-    bodyLarge.lineHeight = 28.0;
-    theme.typography().setStyle(QtMaterial::TypeRole::BodyLarge, bodyLarge);
-
-    QtMaterial::MotionStyle medium2 = theme.motion().style(QtMaterial::MotionToken::Medium2);
-    medium2.durationMs = 333;
-    medium2.easing = QEasingCurve(QEasingCurve::InOutQuad);
-    theme.motion().setStyle(QtMaterial::MotionToken::Medium2, medium2);
-
-    theme.stateLayer().hoverOpacity = 0.23;
+    theme.shapes().setRadius(QtMaterial::ShapeRole::Medium, 14);
+    theme.stateLayer().hoverOpacity = 0.11;
+    theme.stateLayer().focusOpacity = 0.13;
+    theme.stateLayer().pressOpacity = 0.15;
 
     const QByteArray json = QtMaterial::ThemeSerializer::toJson(theme);
 
     bool ok = false;
     QString error;
-    const QtMaterial::Theme roundTripped = QtMaterial::ThemeSerializer::fromJson(json, &ok, &error);
+    const QtMaterial::Theme restored = QtMaterial::ThemeSerializer::fromJson(json, &ok, &error);
 
     QVERIFY2(ok, qPrintable(error));
-    QCOMPARE(roundTripped.mode(), QtMaterial::ThemeMode::Dark);
-    QCOMPARE(roundTripped.options().sourceColor, QColor("#6750A4"));
-    QCOMPARE(roundTripped.shapes().radius(QtMaterial::ShapeRole::Large), 24);
-    QCOMPARE(roundTripped.typography().style(QtMaterial::TypeRole::BodyLarge).lineHeight, 28.0);
-    QCOMPARE(roundTripped.motion().style(QtMaterial::MotionToken::Medium2).durationMs, 333);
-    QCOMPARE(roundTripped.motion().style(QtMaterial::MotionToken::Medium2).easing.type(),
-             QEasingCurve(QEasingCurve::InOutQuad).type());
-    QCOMPARE(roundTripped.stateLayer().hoverOpacity, 0.23);
+    QCOMPARE(restored.mode(), theme.mode());
+    QCOMPARE(restored.contrastMode(), theme.contrastMode());
+    QCOMPARE(restored.options().sourceColor, theme.options().sourceColor);
+    QCOMPARE(restored.options().useMaterialColorUtilities, theme.options().useMaterialColorUtilities);
+
+    QCOMPARE(restored.colorScheme().color(QtMaterial::ColorRole::Primary),
+             theme.colorScheme().color(QtMaterial::ColorRole::Primary));
+    QCOMPARE(restored.colorScheme().color(QtMaterial::ColorRole::Surface),
+             theme.colorScheme().color(QtMaterial::ColorRole::Surface));
+
+    QVERIFY(restored.typography().contains(QtMaterial::TypeRole::BodyLarge));
+    QVERIFY(theme.typography().contains(QtMaterial::TypeRole::BodyLarge));
+    QCOMPARE(restored.typography().style(QtMaterial::TypeRole::BodyLarge).font.pointSize(),
+             theme.typography().style(QtMaterial::TypeRole::BodyLarge).font.pointSize());
+    QCOMPARE(restored.typography().style(QtMaterial::TypeRole::BodyLarge).font.weight(),
+             theme.typography().style(QtMaterial::TypeRole::BodyLarge).font.weight());
+    QCOMPARE(restored.typography().style(QtMaterial::TypeRole::BodyLarge).lineHeight,
+             theme.typography().style(QtMaterial::TypeRole::BodyLarge).lineHeight);
+
+    QCOMPARE(restored.shapes().radius(QtMaterial::ShapeRole::Medium),
+             theme.shapes().radius(QtMaterial::ShapeRole::Medium));
+
+    QCOMPARE(restored.elevations().style(QtMaterial::ElevationRole::Level3).shadowBlur,
+             theme.elevations().style(QtMaterial::ElevationRole::Level3).shadowBlur);
+    QCOMPARE(restored.elevations().style(QtMaterial::ElevationRole::Level3).tonalOverlayOpacity,
+             theme.elevations().style(QtMaterial::ElevationRole::Level3).tonalOverlayOpacity);
+
+    QCOMPARE(restored.motion().style(QtMaterial::MotionToken::Medium2).durationMs,
+             theme.motion().style(QtMaterial::MotionToken::Medium2).durationMs);
+    QCOMPARE(restored.motion().style(QtMaterial::MotionToken::Medium2).easing.type(),
+             theme.motion().style(QtMaterial::MotionToken::Medium2).easing.type());
+
+    QCOMPARE(restored.stateLayer().color, theme.stateLayer().color);
+    QCOMPARE(restored.stateLayer().hoverOpacity, theme.stateLayer().hoverOpacity);
+    QCOMPARE(restored.stateLayer().focusOpacity, theme.stateLayer().focusOpacity);
+    QCOMPARE(restored.stateLayer().pressOpacity, theme.stateLayer().pressOpacity);
 }
 
-void tst_ThemeSerializer::supportsPartialOverlayJson()
+void tst_ThemeSerializer::writesAndReadsFile()
 {
-    const QByteArray json = R"json(
-{
-  "formatVersion": 1,
-  "options": {
-    "sourceColor": "#ff6750a4",
-    "mode": "light",
-    "contrast": "standard"
-  },
-  "colorScheme": {
-    "Primary": "#ff112233"
-  },
-  "shapes": {
-    "Medium": 20
-  }
-}
-)json";
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
 
-    bool ok = false;
+    QtMaterial::ThemeBuilder builder;
+    const QtMaterial::Theme theme = builder.buildLightFromSeed(QColor("#6750A4"));
+
+    const QString path = dir.filePath(QStringLiteral("theme.json"));
     QString error;
-    const QtMaterial::Theme theme = QtMaterial::ThemeSerializer::fromJson(json, &ok, &error);
+    QVERIFY2(QtMaterial::ThemeSerializer::writeToFile(theme, path, &error), qPrintable(error));
 
-    QVERIFY2(ok, qPrintable(error));
-    QCOMPARE(theme.mode(), QtMaterial::ThemeMode::Light);
-    QCOMPARE(theme.colorScheme().color(QtMaterial::ColorRole::Primary), QColor("#ff112233"));
-    QCOMPARE(theme.shapes().radius(QtMaterial::ShapeRole::Medium), 20);
-    QVERIFY(theme.colorScheme().contains(QtMaterial::ColorRole::Surface));
+    QtMaterial::Theme restored;
+    QVERIFY2(QtMaterial::ThemeSerializer::readFromFile(path, &restored, &error), qPrintable(error));
+
+    QCOMPARE(restored.mode(), theme.mode());
+    QCOMPARE(restored.colorScheme().color(QtMaterial::ColorRole::Primary),
+             theme.colorScheme().color(QtMaterial::ColorRole::Primary));
+}
+
+void tst_ThemeSerializer::rejectsInvalidJson()
+{
+    bool ok = true;
+    QString error;
+    const QtMaterial::Theme theme = QtMaterial::ThemeSerializer::fromJson(QByteArray("{not valid json}"), &ok, &error);
+
+    Q_UNUSED(theme);
+    QVERIFY(!ok);
+    QVERIFY(!error.isEmpty());
 }
 
 QTEST_MAIN(tst_ThemeSerializer)

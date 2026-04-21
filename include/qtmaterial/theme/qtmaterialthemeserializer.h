@@ -1,17 +1,16 @@
 #pragma once
 
-#include <QtCore/QByteArray>
-#include <QtCore/QJsonDocument>
-#include <QtCore/QJsonObject>
-#include <QtCore/QString>
+#include <QByteArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QString>
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
 namespace QtMaterial {
 
-class QTMATERIAL3_THEME_EXPORT ThemeSerializer
-{
+class QTMATERIAL3_THEME_EXPORT ThemeSerializer {
 public:
     static constexpr int kCurrentFormatVersion = 1;
 
