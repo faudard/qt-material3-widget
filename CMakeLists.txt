@@ -43,6 +43,7 @@ set(QTMATERIAL3_THEME_SOURCES
     src/theme/qtmaterialtheme.cpp
     src/theme/qtmaterialthemebuilder.cpp
     src/theme/qtmaterialthememanager.cpp
+    src/theme/qtmaterialthemeserializer.cpp
     src/theme/qtmaterialthemeobserver.cpp
     src/theme/qtmaterialtypographyscale.cpp
     src/theme/qtmaterialshapescale.cpp
@@ -59,6 +60,7 @@ set(QTMATERIAL3_THEME_HEADERS
     include/qtmaterial/theme/qtmaterialtheme.h
     include/qtmaterial/theme/qtmaterialthemebuilder.h
     include/qtmaterial/theme/qtmaterialthememanager.h
+    include/qtmaterial/theme/qtmaterialthemeserializer.h
     include/qtmaterial/theme/qtmaterialthemeobserver.h
     include/qtmaterial/theme/qtmateriallegacyaliasmap.h
     include/qtmaterial/theme/qtmaterialtypographyscale.h
