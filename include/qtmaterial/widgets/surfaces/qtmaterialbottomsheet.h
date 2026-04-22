@@ -1,15 +1,18 @@
 #pragma once
 
+#include <QPainterPath>
+#include <QPointer>
+#include <QRect>
+
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
 
+class QEvent;
 class QKeyEvent;
+class QMouseEvent;
 class QResizeEvent;
 class QShowEvent;
 class QWidget;
-class QMouseEvent;
-class QObject;
-class QEvent;
 
 namespace QtMaterial {
 
@@ -51,24 +54,24 @@ signals:
     void stateChanged(QtMaterial::QtMaterialBottomSheet::SheetState state);
 
 protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     void showEvent(QShowEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void themeChangedEvent(const QtMaterial::Theme &theme) override;
-    bool eventFilter(QObject *watched, QEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     void ensureSpecResolved() const;
     void ensureGeometryResolved() const;
     void invalidateCachedGeometry();
+
     void syncToHost();
     void syncScrim();
     void syncContainerGeometry();
     void applyContainerClip();
-    void focusFirstChild();
     void applySheetMask();
+    void focusFirstChild();
 
     QRect sheetVisualRect() const;
     QRect contentRect() const;

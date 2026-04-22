@@ -69,4 +69,7 @@ qtm3_add_test(tst_outlinedtextfield_render render/inputs/tst_outlinedtextfield_r
 qtm3_add_test(tst_themeserializer theme/tst_themeserializer.cpp qtmaterial3_theme)
 
 qtm3_add_test(tst_abstractbutton_state core/tst_abstractbutton_state.cpp qtmaterial3_core)
+# qtm3_add_test(tst_overlaysurface core/tst_overlaysurface.cpp qtmaterial3_core)
+#qtm3_add_test(tst_selectioncontrol_layout core/tst_selectioncontrol_layout.cpp qtmaterial3_core)
+qtm3_add_test(tst_inputcontrol core/tst_inputcontrol.cpp qtmaterial3_core)
 # qtm3_add_test(tst_filledtonalbutton_render tests/render/buttons/tst_filledtonalbutton_render.cpp qtmaterial3_widgets)

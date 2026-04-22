@@ -81,7 +81,7 @@ void TestControlWidget::buildUi()
 
     QWidget* sheetContent = m_sheet->contentWidget();
 
-    auto* sheetLayout = new QVBoxLayout(sheetContent);
+    auto* sheetLayout = new QVBoxLayout(m_sheet->contentWidget());
     sheetLayout->setContentsMargins(24, 24, 24, 24);
     sheetLayout->setSpacing(12);
 

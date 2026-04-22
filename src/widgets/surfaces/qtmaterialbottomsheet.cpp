@@ -1,20 +1,19 @@
 #include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
 
+#include <QEvent>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QRegion>
 #include <QResizeEvent>
 #include <QShowEvent>
-#include <QRegion>
 #include <QWidget>
-#include <QEvent>
-#include <QMouseEvent>
 
 #include "qtmaterial/effects/qtmaterialscrimwidget.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/specs/qtmaterialbottomsheetspec.h"
-#include "private/qtmaterialsurfacerenderhelper_p.h"
+#include "qtmaterial/specs/qtmaterialspecfactory.h"
 
 namespace QtMaterial {
 
@@ -35,6 +34,7 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     m_scrim = new QtMaterialScrimWidget(parent ? parent : this);
     if (m_scrim) {
         m_scrim->hide();
+        m_scrim->installEventFilter(this);
     }
 
     if (QWidget *host = parentWidget()) {
@@ -44,6 +44,7 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     connect(m_transition, &QtMaterialTransitionController::progressChanged,
             this, [this](qreal value) {
                 invalidateCachedGeometry();
+                syncContainerGeometry();
                 applySheetMask();
                 emit progressChanged(value);
                 syncScrim();
@@ -57,6 +58,7 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
                     clearMask();
                     emit stateChanged(m_state);
                     hide();
+
                     if (m_container) {
                         m_container->hide();
                     }
@@ -75,6 +77,9 @@ QtMaterialBottomSheet::~QtMaterialBottomSheet()
 {
     if (QWidget *host = parentWidget()) {
         host->removeEventFilter(this);
+    }
+    if (m_scrim) {
+        m_scrim->removeEventFilter(this);
     }
 }
 
@@ -104,6 +109,7 @@ void QtMaterialBottomSheet::open()
     }
 
     syncContainerGeometry();
+    applySheetMask();
 
     raise();
     m_state = SheetState::Opening;
@@ -137,8 +143,10 @@ void QtMaterialBottomSheet::setModal(bool modal)
     if (m_modal == modal) {
         return;
     }
+
     m_modal = modal;
     syncScrim();
+    applySheetMask();
 }
 
 bool QtMaterialBottomSheet::isModal() const noexcept
@@ -156,6 +164,7 @@ void QtMaterialBottomSheet::setExpandedHeight(int px)
     m_expandedHeight = clamped;
     invalidateCachedGeometry();
     syncContainerGeometry();
+    applySheetMask();
     updateGeometry();
     update();
 }
@@ -167,19 +176,58 @@ int QtMaterialBottomSheet::expandedHeight() const noexcept
 
 QSize QtMaterialBottomSheet::sizeHint() const
 {
-    ensureSpecResolved();
     return QSize(640, qMax(m_expandedHeight, 240));
 }
 
 QSize QtMaterialBottomSheet::minimumSizeHint() const
 {
-    ensureSpecResolved();
     return QSize(280, 120);
 }
 
 QWidget* QtMaterialBottomSheet::contentWidget() const noexcept
 {
     return m_container;
+}
+
+bool QtMaterialBottomSheet::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == parentWidget()) {
+        switch (event->type()) {
+        case QEvent::Resize:
+        case QEvent::Move:
+        case QEvent::Show:
+        case QEvent::WindowStateChange:
+            syncToHost();
+            syncScrim();
+            update();
+            break;
+
+        case QEvent::MouseButtonPress:
+            if (!isOpen() || m_modal) {
+                break;
+            }
+
+            ensureGeometryResolved();
+            if (const auto *mouseEvent = static_cast<QMouseEvent *>(event)) {
+                if (!m_cachedVisualRect.contains(mouseEvent->pos())) {
+                    close();
+                }
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    if (watched == m_scrim && event->type() == QEvent::MouseButtonPress) {
+        if (isOpen()) {
+            close();
+            return true;
+        }
+    }
+
+    return QtMaterialOverlaySurface::eventFilter(watched, event);
 }
 
 void QtMaterialBottomSheet::paintEvent(QPaintEvent *)
@@ -222,6 +270,7 @@ void QtMaterialBottomSheet::keyPressEvent(QKeyEvent *event)
         close();
         event->accept();
         return;
+
     case Qt::Key_Down:
         if (event->modifiers() & Qt::ControlModifier) {
             close();
@@ -229,6 +278,7 @@ void QtMaterialBottomSheet::keyPressEvent(QKeyEvent *event)
             return;
         }
         break;
+
     default:
         break;
     }
@@ -249,6 +299,7 @@ void QtMaterialBottomSheet::themeChangedEvent(const QtMaterial::Theme &theme)
     }
 
     syncContainerGeometry();
+    applySheetMask();
     syncScrim();
     update();
 }
@@ -287,10 +338,10 @@ void QtMaterialBottomSheet::ensureGeometryResolved() const
     const int sheetHeight = qMin(qMax(m_expandedHeight, minHeight), hostRect.height());
 
     const qreal progressValue = m_transition ? m_transition->progress() : 1.0;
-    const qreal progress = qBound<qreal>(0.0, progressValue, 1.0);
+    const qreal p = qBound<qreal>(0.0, progressValue, 1.0);
 
     const int hiddenY = hostRect.height();
-    const int y = hiddenY - qRound(sheetHeight * progress);
+    const int y = hiddenY - qRound(sheetHeight * p);
 
     m_cachedVisualRect = QRect(0, y, hostRect.width(), sheetHeight);
     m_cachedContentRect = m_cachedVisualRect.adjusted(0, m_specPtr->topPadding, 0, 0);
@@ -317,6 +368,7 @@ void QtMaterialBottomSheet::syncToHost()
 {
     if (QWidget *host = parentWidget()) {
         setGeometry(host->rect());
+
         if (m_scrim) {
             m_scrim->setGeometry(host->rect());
         }
@@ -344,8 +396,8 @@ void QtMaterialBottomSheet::syncScrim()
 
     QColor scrim = m_specPtr->scrimColor;
     const qreal progressValue = m_transition ? m_transition->progress() : 1.0;
-    const qreal progress = qBound<qreal>(0.0, progressValue, 1.0);
-    scrim.setAlphaF(qBound<qreal>(0.0, scrim.alphaF() * progress, 1.0));
+    const qreal p = qBound<qreal>(0.0, progressValue, 1.0);
+    scrim.setAlphaF(qBound<qreal>(0.0, scrim.alphaF() * p, 1.0));
 
     m_scrim->setGeometry(rect());
     m_scrim->setScrimColor(scrim);
@@ -398,14 +450,33 @@ void QtMaterialBottomSheet::applyContainerClip()
     m_container->setMask(maskRegion);
 }
 
+void QtMaterialBottomSheet::applySheetMask()
+{
+    ensureGeometryResolved();
+
+    if (m_cachedVisualRect.isEmpty()) {
+        clearMask();
+        return;
+    }
+
+    if (m_modal) {
+        clearMask();
+        return;
+    }
+
+    const QRegion panelRegion(m_cachedContainerPath.toFillPolygon().toPolygon());
+    setMask(panelRegion);
+}
+
 void QtMaterialBottomSheet::focusFirstChild()
 {
     if (m_container) {
-        const auto children = m_container->findChildren<QWidget*>();
+        const auto children = m_container->findChildren<QWidget *>();
         for (QWidget *child : children) {
             if (!child || !child->isVisible() || !child->isEnabled()) {
                 continue;
             }
+
             if (child->focusPolicy() != Qt::NoFocus) {
                 child->setFocus(Qt::OtherFocusReason);
                 return;
@@ -442,53 +513,6 @@ qreal QtMaterialBottomSheet::progress() const noexcept
 QtMaterialBottomSheet::SheetState QtMaterialBottomSheet::state() const noexcept
 {
     return m_state;
-}
-
-void QtMaterialBottomSheet::applySheetMask()
-{
-    ensureGeometryResolved();
-
-    if (m_cachedVisualRect.isEmpty()) {
-        clearMask();
-        return;
-    }
-
-    const QRegion panelRegion(m_cachedContainerPath.toFillPolygon().toPolygon());
-    setMask(panelRegion);
-}
-
-void QtMaterialBottomSheet::mousePressEvent(QMouseEvent *event)
-{
-    ensureGeometryResolved();
-
-    if (m_cachedVisualRect.contains(event->pos())) {
-        event->ignore();
-        QtMaterialOverlaySurface::mousePressEvent(event);
-        return;
-    }
-
-    close();
-    event->accept();
-}
-
-bool QtMaterialBottomSheet::eventFilter(QObject *watched, QEvent *event)
-{
-    if (watched == parentWidget()) {
-        switch (event->type()) {
-        case QEvent::Resize:
-        case QEvent::Move:
-        case QEvent::Show:
-        case QEvent::WindowStateChange:
-            syncToHost();
-            syncScrim();
-            update();
-            break;
-        default:
-            break;
-        }
-    }
-
-    return QtMaterialOverlaySurface::eventFilter(watched, event);
 }
 
 } // namespace QtMaterial

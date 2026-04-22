@@ -1,6 +1,18 @@
 #include "qtmaterial/core/qtmaterialinputcontrol.h"
 
+#include <QtGlobal>
+
 #include "private/qtmaterialaccessibilityhelper_p.h"
+
+namespace {
+
+constexpr int kHorizontalPadding = 16;
+constexpr int kContentTopPadding = 8;
+constexpr int kSupportingTextHeight = 16;
+constexpr int kSupportingBottomInset = 4;
+constexpr int kContentToSupportingGap = 4;
+
+} // namespace
 
 namespace QtMaterial {
 
@@ -23,6 +35,7 @@ void QtMaterialInputControl::setLabelText(const QString& text)
     if (m_labelText == text) {
         return;
     }
+
     m_labelText = text;
     syncAccessibilityState();
     contentChangedEvent();
@@ -40,6 +53,7 @@ void QtMaterialInputControl::setSupportingText(const QString& text)
     if (m_supportingText == text) {
         return;
     }
+
     m_supportingText = text;
     syncAccessibilityState();
     contentChangedEvent();
@@ -57,9 +71,11 @@ void QtMaterialInputControl::setErrorText(const QString& text)
     if (m_errorText == text) {
         return;
     }
+
     m_errorText = text;
     syncAccessibilityState();
     contentChangedEvent();
+    updateGeometry();
     update();
 }
 
@@ -73,6 +89,7 @@ void QtMaterialInputControl::setHasErrorState(bool value)
     if (m_hasErrorState == value) {
         return;
     }
+
     m_hasErrorState = value;
     interactionState().setError(value);
     syncAccessibilityState();
@@ -82,21 +99,34 @@ void QtMaterialInputControl::setHasErrorState(bool value)
 
 void QtMaterialInputControl::syncAccessibilityState()
 {
-    AccessibilityHelper::applyInputAccessibility(this, nullptr, m_labelText, m_supportingText, m_errorText, m_hasErrorState);
+    AccessibilityHelper::applyInputAccessibility(
+        this, nullptr, m_labelText, m_supportingText, m_errorText, m_hasErrorState);
 }
 
 void QtMaterialInputControl::contentChangedEvent()
 {
 }
 
-QRect QtMaterialInputControl::contentRect() const
-{
-    return rect().adjusted(16, 8, -16, -24);
-}
-
 QRect QtMaterialInputControl::supportingTextRect() const
 {
-    return QRect(16, height() - 20, width() - 32, 16);
+    const int x = kHorizontalPadding;
+    const int widthValue = qMax(0, width() - (2 * kHorizontalPadding));
+    const int y = qMax(kContentTopPadding,
+                       height() - kSupportingTextHeight - kSupportingBottomInset);
+
+    return QRect(x, y, widthValue, kSupportingTextHeight);
+}
+
+QRect QtMaterialInputControl::contentRect() const
+{
+    const QRect supporting = supportingTextRect();
+    const int x = kHorizontalPadding;
+    const int y = kContentTopPadding;
+    const int widthValue = qMax(0, width() - (2 * kHorizontalPadding));
+    const int bottom = qMax(y, supporting.top() - kContentToSupportingGap);
+    const int heightValue = qMax(0, bottom - y);
+
+    return QRect(x, y, widthValue, heightValue);
 }
 
 } // namespace QtMaterial
