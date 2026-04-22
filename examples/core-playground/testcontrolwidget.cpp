@@ -79,13 +79,23 @@ void TestControlWidget::buildUi()
     m_sheet->setModal(true);
     m_sheet->setExpandedHeight(320);
 
-    auto* sheetLayout = new QVBoxLayout(m_sheet);
-    sheetLayout->setContentsMargins(24, 24, 24, 24);
+    QWidget* sheetContent = m_sheet->contentWidget();
 
-    auto* title = new QLabel(QStringLiteral("Debug bottom sheet"), m_sheet);
-    auto* closeInside = new QPushButton(QStringLiteral("Dismiss"), m_sheet);
+    auto* sheetLayout = new QVBoxLayout(sheetContent);
+    sheetLayout->setContentsMargins(24, 24, 24, 24);
+    sheetLayout->setSpacing(12);
+
+    auto* title = new QLabel(QStringLiteral("Debug bottom sheet"), sheetContent);
+    auto* body = new QLabel(
+        QStringLiteral("This content should stay inside the bottom panel, "
+                       "not at the top of the fullscreen overlay."),
+        sheetContent);
+    body->setWordWrap(true);
+
+    auto* closeInside = new QPushButton(QStringLiteral("Dismiss"), sheetContent);
 
     sheetLayout->addWidget(title);
+    sheetLayout->addWidget(body);
     sheetLayout->addStretch(1);
     sheetLayout->addWidget(closeInside);
 

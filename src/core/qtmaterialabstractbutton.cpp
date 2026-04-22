@@ -10,6 +10,47 @@
 
 namespace QtMaterial {
 
+struct Snapshot {
+    bool hovered;
+    bool focused;
+    bool pressed;
+    bool checked;
+    bool checkable;
+    bool enabled;
+};
+
+static Snapshot capture(const QtMaterial::QtMaterialInteractionState& s) noexcept {
+    return {
+        s.isHovered(), s.isFocused(), s.isPressed(),
+        s.isChecked(), s.isCheckable(), s.isEnabled()
+    };
+}
+
+void QtMaterialAbstractButton::syncFromButtonState() noexcept
+{
+    m_state.setEnabled(isEnabled());
+    m_state.setCheckable(isCheckable());
+    m_state.setChecked(isChecked());
+    m_state.setPressed(isEnabled() && isDown());
+
+    if (!isEnabled()) {
+        m_state.setHovered(false);
+        m_state.setFocused(false);
+    }
+}
+
+void QtMaterialAbstractButton::syncAndNotifyIfChanged() noexcept
+{
+    const auto before = capture(m_state);
+    syncFromButtonState();
+    const auto after = capture(m_state);
+
+    if (std::memcmp(&before, &after, sizeof(Snapshot)) != 0) {
+        stateChangedEvent();
+    }
+}
+
+
 QtMaterialAbstractButton::QtMaterialAbstractButton(QWidget* parent)
     : QAbstractButton(parent)
     , m_state()
@@ -105,62 +146,61 @@ void QtMaterialAbstractButton::focusOutEvent(QFocusEvent* event)
     QAbstractButton::focusOutEvent(event);
 }
 
-void QtMaterialAbstractButton::changeEvent(QEvent* event)
+void QtMaterialAbstractButton::mousePressEvent(QMouseEvent* event)
 {
-    if (event->type() == QEvent::EnabledChange) {
-        m_state.setEnabled(isEnabled());
-        stateChangedEvent();
+    if (!isEnabled() || event->button() != Qt::LeftButton) {
+        QAbstractButton::mousePressEvent(event);
+        syncAndNotifyIfChanged();
+        return;
     }
-    syncAccessibilityState();
-    QAbstractButton::changeEvent(event);
+
+    QAbstractButton::mousePressEvent(event);
+    syncAndNotifyIfChanged();
+}
+
+void QtMaterialAbstractButton::mouseReleaseEvent(QMouseEvent* event)
+{
+    QAbstractButton::mouseReleaseEvent(event);
+    syncAndNotifyIfChanged();
+}
+
+void QtMaterialAbstractButton::keyPressEvent(QKeyEvent* event)
+{
+    QAbstractButton::keyPressEvent(event);
+    syncAndNotifyIfChanged();
+}
+
+void QtMaterialAbstractButton::keyReleaseEvent(QKeyEvent* event)
+{
+    QAbstractButton::keyReleaseEvent(event);
+    syncAndNotifyIfChanged();
 }
 
 void QtMaterialAbstractButton::checkStateSet()
 {
-    m_state.setChecked(isChecked());
     QAbstractButton::checkStateSet();
-    stateChangedEvent();
+    syncAndNotifyIfChanged();
 }
 
 void QtMaterialAbstractButton::nextCheckState()
 {
     QAbstractButton::nextCheckState();
-    m_state.setChecked(isChecked());
-    m_state.setCheckable(isCheckable());
-    stateChangedEvent();
+    syncAndNotifyIfChanged();
 }
 
-void QtMaterialAbstractButton::mousePressEvent(QMouseEvent* event)
+void QtMaterialAbstractButton::changeEvent(QEvent* event)
 {
-    m_state.setPressed(true);
-    stateChangedEvent();
-    QAbstractButton::mousePressEvent(event);
-}
+    QAbstractButton::changeEvent(event);
 
-void QtMaterialAbstractButton::mouseReleaseEvent(QMouseEvent* event)
-{
-    m_state.setPressed(false);
-    m_state.setChecked(isChecked());
-    stateChangedEvent();
-    QAbstractButton::mouseReleaseEvent(event);
-}
-
-void QtMaterialAbstractButton::keyPressEvent(QKeyEvent* event)
-{
-    if (!isEnabled()) {
-        QAbstractButton::keyPressEvent(event);
-        return;
+    if (event->type() == QEvent::EnabledChange) {
+        syncAndNotifyIfChanged();
     }
 
-    if ((event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter || event->key() == Qt::Key_Select) && !event->isAutoRepeat()) {
-        click();
-        event->accept();
-        return;
-    }
-
-    QAbstractButton::keyPressEvent(event);
+    syncAccessibilityState();
 }
+
 
 void QtMaterialAbstractButton::handleThemeChanged(const Theme& theme) { themeChangedEvent(theme); }
+
 
 } // namespace QtMaterial

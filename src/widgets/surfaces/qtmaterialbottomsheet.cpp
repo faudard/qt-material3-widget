@@ -1,9 +1,11 @@
 #include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
-#include <QFocusEvent>
+
 #include <QKeyEvent>
 #include <QPainter>
+#include <QPainterPath>
 #include <QResizeEvent>
 #include <QShowEvent>
+#include <QRegion>
 #include <QWidget>
 
 #include "qtmaterial/effects/qtmaterialscrimwidget.h"
@@ -12,9 +14,8 @@
 #include "qtmaterial/specs/qtmaterialbottomsheetspec.h"
 #include "private/qtmaterialsurfacerenderhelper_p.h"
 
+namespace QtMaterial {
 
-namespace QtMaterial
-{
 QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     : QtMaterialOverlaySurface(parent)
 {
@@ -49,6 +50,9 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
                     m_state = SheetState::Closed;
                     emit stateChanged(m_state);
                     hide();
+                    if (m_container) {
+                        m_container->hide();
+                    }
                     if (m_scrim) {
                         m_scrim->hide();
                     }
@@ -58,11 +62,6 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
                     focusFirstChild();
                 }
             });
-}
-
-QWidget* QtMaterialBottomSheet::contentWidget() const noexcept
-{
-    return m_container;
 }
 
 QtMaterialBottomSheet::~QtMaterialBottomSheet() = default;
@@ -141,8 +140,10 @@ void QtMaterialBottomSheet::setExpandedHeight(int px)
     if (m_expandedHeight == clamped) {
         return;
     }
+
     m_expandedHeight = clamped;
     invalidateCachedGeometry();
+    syncContainerGeometry();
     updateGeometry();
     update();
 }
@@ -162,6 +163,11 @@ QSize QtMaterialBottomSheet::minimumSizeHint() const
 {
     ensureSpecResolved();
     return QSize(280, 120);
+}
+
+QWidget* QtMaterialBottomSheet::contentWidget() const noexcept
+{
+    return m_container;
 }
 
 void QtMaterialBottomSheet::paintEvent(QPaintEvent *)
@@ -214,6 +220,7 @@ void QtMaterialBottomSheet::keyPressEvent(QKeyEvent *event)
     default:
         break;
     }
+
     QtMaterialOverlaySurface::keyPressEvent(event);
 }
 
@@ -267,15 +274,16 @@ void QtMaterialBottomSheet::ensureGeometryResolved() const
     const int minHeight = qMax(120, minimumSizeHint().height());
     const int sheetHeight = qMin(qMax(m_expandedHeight, minHeight), hostRect.height());
 
-    const qreal progress = m_transition ? m_transition->progress() : 1.0;
-    const int visibleY = hostRect.height() - sheetHeight;
+    const qreal progressValue = m_transition ? m_transition->progress() : 1.0;
+    const qreal progress = qBound<qreal>(0.0, progressValue, 1.0);
+
     const int hiddenY = hostRect.height();
-    const int y = hiddenY - qRound(sheetHeight * qBound<qreal>(0.0, progress, 1.0));
+    const int y = hiddenY - qRound(sheetHeight * progress);
 
     m_cachedVisualRect = QRect(0, y, hostRect.width(), sheetHeight);
     m_cachedContentRect = m_cachedVisualRect.adjusted(0, m_specPtr->topPadding, 0, 0);
-
     m_cachedCornerRadius = 28.0; // TODO: dériver depuis shapeRole
+
     m_cachedContainerPath = QPainterPath();
     m_cachedContainerPath.addRoundedRect(m_cachedVisualRect,
                                          m_cachedCornerRadius,
@@ -323,7 +331,8 @@ void QtMaterialBottomSheet::syncScrim()
     }
 
     QColor scrim = m_specPtr->scrimColor;
-    const qreal progress = m_transition ? m_transition->progress() : 1.0;
+    const qreal progressValue = m_transition ? m_transition->progress() : 1.0;
+    const qreal progress = qBound<qreal>(0.0, progressValue, 1.0);
     scrim.setAlphaF(qBound<qreal>(0.0, scrim.alphaF() * progress, 1.0));
 
     m_scrim->setGeometry(rect());
@@ -334,6 +343,47 @@ void QtMaterialBottomSheet::syncScrim()
     }
 
     m_scrim->raise();
+}
+
+void QtMaterialBottomSheet::syncContainerGeometry()
+{
+    if (!m_container) {
+        return;
+    }
+
+    ensureGeometryResolved();
+    if (m_cachedVisualRect.isEmpty()) {
+        m_container->hide();
+        return;
+    }
+
+    m_container->setGeometry(m_cachedVisualRect);
+    applyContainerClip();
+
+    if (isVisible() && !m_container->isVisible()) {
+        m_container->show();
+    }
+
+    m_container->raise();
+}
+
+void QtMaterialBottomSheet::applyContainerClip()
+{
+    if (!m_container) {
+        return;
+    }
+
+    ensureGeometryResolved();
+    if (m_cachedVisualRect.isEmpty()) {
+        m_container->clearMask();
+        return;
+    }
+
+    const QPainterPath localPath =
+        m_cachedContainerPath.translated(-m_cachedVisualRect.topLeft());
+
+    const QRegion maskRegion(localPath.toFillPolygon().toPolygon());
+    m_container->setMask(maskRegion);
 }
 
 void QtMaterialBottomSheet::focusFirstChild()
@@ -382,25 +432,4 @@ QtMaterialBottomSheet::SheetState QtMaterialBottomSheet::state() const noexcept
     return m_state;
 }
 
-void QtMaterialBottomSheet::syncContainerGeometry()
-{
-    if (!m_container) {
-        return;
-    }
-
-    ensureGeometryResolved();
-    if (m_cachedContentRect.isEmpty()) {
-        m_container->hide();
-        return;
-    }
-
-    m_container->setGeometry(m_cachedContentRect);
-
-    if (isVisible() && !m_container->isVisible()) {
-        m_container->show();
-    }
-
-    m_container->raise();
-}
-
-}
+} // namespace QtMaterial

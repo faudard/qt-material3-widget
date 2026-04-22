@@ -41,10 +41,13 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
 private slots:
     void handleThemeChanged(const QtMaterial::Theme& theme);
 private:
     QtMaterialInteractionState m_state;
     Density m_density;
+    void syncFromButtonState() noexcept;
+    void syncAndNotifyIfChanged() noexcept;
 };
 } // namespace QtMaterial
