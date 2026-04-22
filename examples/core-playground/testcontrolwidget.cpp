@@ -76,7 +76,7 @@ void TestControlWidget::buildUi()
     root->addWidget(m_progressBar);
 
     m_sheet = new QtMaterial::QtMaterialBottomSheet(this);
-    m_sheet->setModal(true);
+    m_sheet->setModal(false);
     m_sheet->setExpandedHeight(320);
 
     QWidget* sheetContent = m_sheet->contentWidget();

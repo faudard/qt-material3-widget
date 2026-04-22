@@ -38,7 +38,7 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     connect(m_transition, &QtMaterialTransitionController::progressChanged,
             this, [this](qreal value) {
                 invalidateCachedGeometry();
-                syncContainerGeometry();
+                applySheetMask();
                 emit progressChanged(value);
                 syncScrim();
                 update();
@@ -48,6 +48,7 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
             this, [this]() {
                 if (m_state == SheetState::Closing) {
                     m_state = SheetState::Closed;
+                    clearMask();
                     emit stateChanged(m_state);
                     hide();
                     if (m_container) {
@@ -191,14 +192,14 @@ void QtMaterialBottomSheet::resizeEvent(QResizeEvent *event)
     QtMaterialOverlaySurface::resizeEvent(event);
     invalidateCachedGeometry();
     syncToHost();
-    syncContainerGeometry();
+    applySheetMask();
 }
 
 void QtMaterialBottomSheet::showEvent(QShowEvent *event)
 {
     QtMaterialOverlaySurface::showEvent(event);
     syncToHost();
-    syncContainerGeometry();
+    applySheetMask();
     syncScrim();
 }
 
@@ -430,6 +431,19 @@ qreal QtMaterialBottomSheet::progress() const noexcept
 QtMaterialBottomSheet::SheetState QtMaterialBottomSheet::state() const noexcept
 {
     return m_state;
+}
+
+void QtMaterialBottomSheet::applySheetMask()
+{
+    ensureGeometryResolved();
+
+    if (m_cachedVisualRect.isEmpty()) {
+        clearMask();
+        return;
+    }
+
+    const QRegion panelRegion(m_cachedContainerPath.toFillPolygon().toPolygon());
+    setMask(panelRegion);
 }
 
 } // namespace QtMaterial

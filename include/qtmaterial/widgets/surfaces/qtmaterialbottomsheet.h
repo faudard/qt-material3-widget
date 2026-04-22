@@ -63,6 +63,7 @@ private:
     void syncContainerGeometry();
     void applyContainerClip();
     void focusFirstChild();
+    void applySheetMask();
 
     QRect sheetVisualRect() const;
     QRect contentRect() const;
