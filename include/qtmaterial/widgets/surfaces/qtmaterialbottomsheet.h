@@ -16,6 +16,7 @@ class BottomSheetSpec;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialBottomSheet : public QtMaterialOverlaySurface
 {
     Q_OBJECT
+    Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
 
 public:
     enum class SheetState { Closed, Opening, Open, Closing };
@@ -27,6 +28,8 @@ public:
     void close();
 
     bool isOpen() const noexcept;
+    qreal progress() const noexcept;
+    SheetState state() const noexcept;
 
     void setModal(bool modal);
     bool isModal() const noexcept;
@@ -36,6 +39,10 @@ public:
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
+
+signals:
+    void progressChanged(qreal value);
+    void stateChanged(QtMaterial::QtMaterialBottomSheet::SheetState state);
 
 protected:
     void paintEvent(QPaintEvent *event) override;

@@ -28,24 +28,25 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     }
 
     connect(m_transition, &QtMaterialTransitionController::progressChanged,
-            this, [this](qreal) {
-                invalidateCachedGeometry();
+            this, [this](qreal value) {
+                emit progressChanged(value);
                 syncScrim();
                 update();
             });
-    connect(m_transition, &QtMaterialTransitionController::finished,
-            this, [this]() {
-                if (m_state == SheetState::Closing) {
-                    m_state = SheetState::Closed;
-                    hide();
-                    if (m_scrim) {
-                        m_scrim->hide();
-                    }
-                } else if (m_state == SheetState::Opening) {
-                    m_state = SheetState::Open;
-                    focusFirstChild();
-                }
-            });
+    connect(m_transition, &QtMaterialTransitionController::finished, this, [this]() {
+        if (m_state == SheetState::Closing) {
+            m_state = SheetState::Closed;
+            emit stateChanged(m_state);
+            hide();
+            if (m_scrim) {
+                m_scrim->hide();
+            }
+        } else if (m_state == SheetState::Opening) {
+            m_state = SheetState::Open;
+            emit stateChanged(m_state);
+            focusFirstChild();
+        }
+    });
 }
 
 QtMaterialBottomSheet::~QtMaterialBottomSheet() = default;
@@ -72,8 +73,8 @@ void QtMaterialBottomSheet::open()
 
     raise();
     m_state = SheetState::Opening;
+    emit stateChanged(m_state);
     m_transition->startForward();
-    syncScrim();
 }
 
 void QtMaterialBottomSheet::close()
@@ -88,8 +89,8 @@ void QtMaterialBottomSheet::close()
     }
 
     m_state = SheetState::Closing;
+    emit stateChanged(m_state);
     m_transition->startBackward();
-    syncScrim();
 }
 
 bool QtMaterialBottomSheet::isOpen() const noexcept
@@ -338,6 +339,16 @@ qreal QtMaterialBottomSheet::cornerRadius() const
 {
     ensureGeometryResolved();
     return m_cachedCornerRadius;
+}
+
+qreal QtMaterialBottomSheet::progress() const noexcept
+{
+    return m_transition ? m_transition->progress() : 0.0;
+}
+
+QtMaterialBottomSheet::SheetState QtMaterialBottomSheet::state() const noexcept
+{
+    return m_state;
 }
 
 }

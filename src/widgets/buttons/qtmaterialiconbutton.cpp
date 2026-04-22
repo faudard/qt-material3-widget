@@ -1,41 +1,33 @@
 #include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
 
-// #include <QChangeEvent>
-#include <QEnterEvent>
 #include <QEvent>
-#include <QFontMetrics>
+#include <QMouseEvent>
 #include <QPainter>
-#include <QPaintEvent>
 #include <QResizeEvent>
-#include <QStyleOptionButton>
 
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
+#include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
-#include "qtmaterial/theme/qtmaterialthememanager.h"
+#include "private/qtmaterialbuttonmotionhelper_p.h"
 
 namespace QtMaterial {
+
 namespace {
 
-static QColor effectiveContainerColor(const IconButtonSpec& spec, bool enabled, bool selected)
+QColor blendColor(const QColor& a, const QColor& b, qreal t)
 {
-    // if (!enabled) { TODO
-    //     return selected ? spec.disabledSelectedContainerColor : spec.disabledContainerColor;
-    // }
-    // return selected ? spec.selectedContainerColor : spec.containerColor;
-    return spec.containerColor;
+    QColor out;
+    out.setRedF(a.redF() + (b.redF() - a.redF()) * t);
+    out.setGreenF(a.greenF() + (b.greenF() - a.greenF()) * t);
+    out.setBlueF(a.blueF() + (b.blueF() - a.blueF()) * t);
+    out.setAlphaF(a.alphaF() + (b.alphaF() - a.alphaF()) * t);
+    return out;
 }
 
-static QColor effectiveIconColor(const IconButtonSpec& spec, bool enabled, bool selected)
-{
-    if (!enabled) {
-        return spec.disabledIconColor;
-    }
-    return selected ? spec.selectedIconColor : spec.iconColor;
-}
-
-static qreal radiusForSpec(const IconButtonSpec& spec)
+qreal radiusForSpec(const IconButtonSpec& spec)
 {
     switch (spec.shapeRole) {
     case ShapeRole::Full:
@@ -56,23 +48,24 @@ static qreal radiusForSpec(const IconButtonSpec& spec)
     }
 }
 
-static qreal stateLayerOpacity(const QtMaterialIconButton* button, const Theme& theme)
+qreal stateLayerOpacityFor(const QtMaterialInteractionState& state, const Theme& theme, bool enabled)
 {
-    // const auto& state = button->interactionState();
-    const auto& layer = theme.stateLayer();
-
-    if (!button->isEnabled()) {
+    if (!enabled) {
         return 0.0;
     }
-    // if (state.isPressed()) {
-    //     return layer.pressOpacity;
-    // }
-    // if (state.isFocused()) {
-    //     return layer.focusOpacity;
-    // }
-    // if (state.isHovered()) {
-    //     return layer.hoverOpacity;
-    // }
+
+    const auto& layer = theme.stateLayer();
+
+    if (state.isPressed()) {
+        return layer.pressOpacity;
+    }
+    if (state.isFocused()) {
+        return layer.focusOpacity;
+    }
+    if (state.isHovered()) {
+        return layer.hoverOpacity;
+    }
+
     return 0.0;
 }
 
@@ -80,9 +73,23 @@ static qreal stateLayerOpacity(const QtMaterialIconButton* button, const Theme& 
 
 QtMaterialIconButton::QtMaterialIconButton(QWidget* parent)
     : QtMaterialAbstractButton(parent)
+    , m_ripple(new QtMaterialRippleController(this))
+    , m_transition(new QtMaterialTransitionController(this))
 {
     setFocusPolicy(Qt::StrongFocus);
     setCheckable(false);
+
+    m_transition->setProgress(m_selected ? 1.0 : 0.0);
+
+    QObject::connect(
+        m_transition,
+        &QtMaterialTransitionController::progressChanged,
+        this,
+        [this](qreal) { update(); });
+
+    QObject::connect(this, &QAbstractButton::toggled, this, [this](bool checked) {
+        setSelected(checked);
+    });
 
     m_specDirty = true;
     m_layoutDirty = true;
@@ -118,56 +125,84 @@ void QtMaterialIconButton::setSelected(bool selected)
     if (m_selected == selected) {
         return;
     }
+
     m_selected = selected;
-    update();
+
+    if (m_transition) {
+        selected ? m_transition->startForward() : m_transition->startBackward();
+    } else {
+        update();
+    }
+}
+
+void QtMaterialIconButton::mousePressEvent(QMouseEvent* event)
+{
+    if (m_ripple) {
+        m_ripple->addRipple(QtMaterial::mousePosition(event));
+    }
+
+    QtMaterialAbstractButton::mousePressEvent(event);
 }
 
 void QtMaterialIconButton::paintEvent(QPaintEvent* event)
 {
     Q_UNUSED(event)
+
     ensureSpecResolved();
     ensureLayoutResolved();
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const QColor containerColor = effectiveContainerColor(m_spec, isEnabled(), m_selected);
-    const QColor iconColor = effectiveIconColor(m_spec, isEnabled(), m_selected);
+    const qreal progress = m_transition ? m_transition->progress() : (m_selected ? 1.0 : 0.0);
+
+    const QColor containerColor = isEnabled()
+                                      ? ButtonMotionHelper::blendColor(m_spec.containerColor, m_spec.selectedContainerColor, progress)
+                                      : m_spec.containerColor;
+
+    const QColor iconColor = isEnabled()
+                                 ? ButtonMotionHelper::blendColor(m_spec.iconColor, m_spec.selectedIconColor, progress)
+                                 : m_spec.disabledIconColor;
+
+    const qreal overlayOpacity =
+        ButtonMotionHelper::targetStateLayerOpacity(theme(), interactionState());
 
     painter.fillPath(m_cachedContainerPath, containerColor);
 
-    const qreal overlayOpacity = stateLayerOpacity(this, theme());
     if (overlayOpacity > 0.0) {
         QtMaterialStateLayerPainter::paintPath(
             &painter,
             m_cachedContainerPath,
             m_spec.stateLayerColor,
-            overlayOpacity
-        );
+            overlayOpacity);
     }
 
-    // if (rippleController()) {
-    //     rippleController()->setClipPath(m_cachedContainerPath);
-    //     rippleController()->paint(&painter, m_spec.stateLayerColor);
-    // }
+    if (m_ripple) {
+        m_ripple->setClipPath(m_cachedContainerPath);
+        m_ripple->paint(&painter, m_spec.stateLayerColor);
+    }
 
-    if (hasFocus()) {
-        // QtMaterialFocusIndicator::paintPathFocusRing( TODO
-        //     &painter,
-        //     m_cachedContainerPath,
-        //     // m_spec.focusRingColor,
-        //     // m_spec.focusRingWidth
-        // );
+    if (interactionState().isFocused()) {
+        QtMaterialFocusIndicator::paintPathFocusRing(
+            &painter,
+            m_cachedContainerPath,
+            m_spec.stateLayerColor,
+            2.0);
     }
 
     if (!icon().isNull()) {
-        const QPixmap pixmap = icon().pixmap(QSize(m_spec.iconSize, m_spec.iconSize), isEnabled() ? QIcon::Normal : QIcon::Disabled);
+        const QPixmap pixmap = icon().pixmap(
+            QSize(m_spec.iconSize, m_spec.iconSize),
+            isEnabled() ? QIcon::Normal : QIcon::Disabled);
+
         if (!pixmap.isNull()) {
             QImage image = pixmap.toImage().convertToFormat(QImage::Format_ARGB32_Premultiplied);
+
             QPainter ip(&image);
             ip.setCompositionMode(QPainter::CompositionMode_SourceIn);
             ip.fillRect(image.rect(), iconColor);
             ip.end();
+
             painter.drawImage(m_cachedIconRect, image);
         }
     }
@@ -193,11 +228,6 @@ void QtMaterialIconButton::changeEvent(QEvent* event)
     }
 
     QtMaterialAbstractButton::changeEvent(event);
-}
-
-void QtMaterialIconButton::mousePressEvent(QMouseEvent *event)
-{
-
 }
 
 void QtMaterialIconButton::themeChangedEvent(const Theme& theme)
@@ -244,6 +274,13 @@ void QtMaterialIconButton::ensureSpecResolved() const
     }
 
     m_spec = resolveIconButtonSpec();
+
+    ButtonMotionHelper::configureMotion(
+        theme(),
+        m_spec,
+        m_transition,
+        m_ripple);
+
     m_specDirty = false;
     m_layoutDirty = true;
 }
@@ -251,6 +288,7 @@ void QtMaterialIconButton::ensureSpecResolved() const
 void QtMaterialIconButton::ensureLayoutResolved() const
 {
     ensureSpecResolved();
+
     if (!m_layoutDirty) {
         return;
     }
@@ -262,8 +300,7 @@ void QtMaterialIconButton::ensureLayoutResolved() const
         outer.center().x() - visualSize.width() / 2,
         outer.center().y() - visualSize.height() / 2,
         visualSize.width(),
-        visualSize.height()
-    );
+        visualSize.height());
 
     m_cachedCornerRadius = radiusForSpec(m_spec);
 
@@ -275,8 +312,7 @@ void QtMaterialIconButton::ensureLayoutResolved() const
         m_cachedVisualRect.center().x() - m_spec.iconSize / 2,
         m_cachedVisualRect.center().y() - m_spec.iconSize / 2,
         m_spec.iconSize,
-        m_spec.iconSize
-    );
+        m_spec.iconSize);
 
     m_layoutDirty = false;
 }

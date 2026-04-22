@@ -13,6 +13,7 @@
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "private/qtmaterialbuttonmotionhelper_p.h"
 
 namespace QtMaterial {
 
@@ -85,13 +86,11 @@ void QtMaterialTextButton::ensureSpecResolved() const
 
     m_spec = resolveButtonSpec();
 
-    if (m_stateLayerTransition && theme().motion().contains(m_spec.motionToken)) {
-        const MotionStyle motion = theme().motion().style(m_spec.motionToken);
-        if (motion.durationMs > 0) {
-            m_stateLayerTransition->setDuration(motion.durationMs);
-        }
-        m_stateLayerTransition->setEasingCurve(motion.easing);
-    }
+    ButtonMotionHelper::configureMotion(
+        theme(),
+        m_spec,
+        m_stateLayerTransition,
+        m_ripple);
 
     m_specDirty = false;
 }
@@ -145,15 +144,10 @@ void QtMaterialTextButton::stateChangedEvent()
 void QtMaterialTextButton::syncStateLayerAnimation()
 {
     ensureSpecResolved();
-
-    const qreal target = targetStateLayerOpacity(theme(), interactionState());
-
-    if (!m_stateLayerTransition) {
-        update();
-        return;
-    }
-
-    m_stateLayerTransition->startTo(target);
+    ButtonMotionHelper::syncStateLayerTransition(
+        theme(),
+        interactionState(),
+        m_stateLayerTransition);
 }
 
 qreal QtMaterialTextButton::animatedStateLayerOpacity() const noexcept

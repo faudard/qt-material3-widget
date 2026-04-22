@@ -14,7 +14,6 @@ class QtMaterialTransitionController;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialIconButton : public QtMaterialAbstractButton
 {
-    Q_OBJECT
 public:
     explicit QtMaterialIconButton(QWidget* parent = nullptr);
     explicit QtMaterialIconButton(const QIcon& icon, QWidget* parent = nullptr);
