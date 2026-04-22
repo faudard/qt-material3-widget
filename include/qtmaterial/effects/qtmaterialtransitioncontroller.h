@@ -4,10 +4,12 @@
 #include <QEasingCurve>
 
 #include "qtmaterial/qtmaterialglobal.h"
+#include "qtmaterial/theme/qtmaterialmotiontokens.h"
 
 class QVariantAnimation;
 
 namespace QtMaterial {
+class Theme;
 
 class QTMATERIAL3_EFFECTS_EXPORT QtMaterialTransitionController : public QObject
 {
@@ -31,6 +33,9 @@ public:
     void startBackward();
 
     void startTo(qreal target);
+
+    void applyMotionStyle(const MotionStyle& style);
+    void applyMotionToken(const Theme& theme, MotionToken token);
 signals:
     void progressChanged(qreal value);
     void finished();

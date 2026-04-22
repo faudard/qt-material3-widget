@@ -1,5 +1,6 @@
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 
+#include "qtmaterial/theme/qtmaterialtheme.h"
 #include <QVariantAnimation>
 #include <QtGlobal>
 
@@ -107,6 +108,17 @@ void QtMaterialTransitionController::startTo(qreal target)
     m_animation->setStartValue(m_progress);
     m_animation->setEndValue(clampedTarget);
     m_animation->start();
+}
+
+void QtMaterialTransitionController::applyMotionStyle(const MotionStyle& style)
+{
+    setDuration(style.durationMs);
+    setEasingCurve(style.easing);
+}
+
+void QtMaterialTransitionController::applyMotionToken(const Theme& theme, MotionToken token)
+{
+    applyMotionStyle(theme.motion().style(token));
 }
 
 } // namespace QtMaterial

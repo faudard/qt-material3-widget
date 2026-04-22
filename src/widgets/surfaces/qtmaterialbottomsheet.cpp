@@ -21,6 +21,7 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     setFocusPolicy(Qt::StrongFocus);
 
     m_transition = new QtMaterialTransitionController(this);
+    m_transition->applyMotionToken(theme(), MotionToken::Medium2);
     m_scrim = new QtMaterialScrimWidget(parent ? parent : this);
     if (m_scrim) {
         m_scrim->hide();
@@ -55,15 +56,21 @@ void QtMaterialBottomSheet::open()
         return;
     }
 
+    ensureSpecResolved();
+    if (m_specPtr) {
+        m_transition->applyMotionToken(theme(), m_specPtr->motionToken);
+    }
+
     syncToHost();
     show();
     raise();
+
     if (m_scrim && m_modal) {
         m_scrim->show();
         m_scrim->raise();
     }
-    raise();
 
+    raise();
     m_state = SheetState::Opening;
     m_transition->startForward();
     syncScrim();
@@ -73,6 +80,11 @@ void QtMaterialBottomSheet::close()
 {
     if (m_state == SheetState::Closing || m_state == SheetState::Closed) {
         return;
+    }
+
+    ensureSpecResolved();
+    if (m_specPtr) {
+        m_transition->applyMotionToken(theme(), m_specPtr->motionToken);
     }
 
     m_state = SheetState::Closing;
@@ -182,9 +194,15 @@ void QtMaterialBottomSheet::keyPressEvent(QKeyEvent *event)
 void QtMaterialBottomSheet::themeChangedEvent(const QtMaterial::Theme &theme)
 {
     QtMaterialOverlaySurface::themeChangedEvent(theme);
-    Q_UNUSED(theme)
+
     m_specDirty = true;
     invalidateCachedGeometry();
+
+    ensureSpecResolved();
+    if (m_specPtr) {
+        m_transition->applyMotionToken(this->theme(), m_specPtr->motionToken);
+    }
+
     syncScrim();
     update();
 }
