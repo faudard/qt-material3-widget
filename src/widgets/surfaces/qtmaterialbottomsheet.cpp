@@ -28,6 +28,7 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
 
     connect(m_transition, &QtMaterialTransitionController::progressChanged,
             this, [this](qreal) {
+                invalidateCachedGeometry();
                 syncScrim();
                 update();
             });
@@ -132,23 +133,15 @@ void QtMaterialBottomSheet::paintEvent(QPaintEvent *)
     ensureSpecResolved();
     ensureGeometryResolved();
 
-    if (!m_specPtr) {
+    if (!m_specPtr || m_cachedVisualRect.isEmpty()) {
         return;
     }
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-
-    // QtMaterialSurfaceRenderHelper::paintFrame( TODO
-    //     &painter,
-    //     m_cachedVisualRect,
-    //     m_cachedContainerPath,
-    //     m_specPtr->containerColor,
-    //     m_specPtr->shadowColor,
-    //     m_specPtr->elevationBlur,
-    //     m_specPtr->elevationYOffset,
-    //     m_transition ? m_transition->progress() : 1.0
-    // );
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(m_specPtr->containerColor);
+    painter.drawPath(m_cachedContainerPath);
 }
 
 void QtMaterialBottomSheet::resizeEvent(QResizeEvent *event)
@@ -204,7 +197,8 @@ void QtMaterialBottomSheet::ensureSpecResolved() const
 
     static QtMaterial::SpecFactory factory;
     static QtMaterial::BottomSheetSpec spec;
-    // spec = factory.bottomSheetSpec(theme(), density()); // TODO
+    spec = factory.bottomSheetSpec(theme());
+
     m_specPtr = &spec;
     m_specDirty = false;
 }
@@ -220,25 +214,29 @@ void QtMaterialBottomSheet::ensureGeometryResolved() const
         return;
     }
 
-    // const QRect hostRect = rect(); // TODO
-    // const int height = qMin(qMax(m_expandedHeight, m_specPtr->minHeight), hostRect.height());
-    // const int width = qMin(hostRect.width(), m_specPtr->maxWidth > 0 ? m_specPtr->maxWidth : hostRect.width());
+    const QRect hostRect = rect();
+    if (!hostRect.isValid()) {
+        return;
+    }
 
-    // m_cachedVisualRect = QRect(
-    //     (hostRect.width() - width) / 2,
-    //     hostRect.height() - height,
-    //     width,
-    //     height
-    // );
-    // m_cachedContentRect = m_cachedVisualRect.adjusted(
-    //     m_specPtr->horizontalPadding,
-    //     m_specPtr->topPadding,
-    //     -m_specPtr->horizontalPadding,
-    //     -m_specPtr->bottomPadding
-    // );
-    // m_cachedCornerRadius = m_specPtr->cornerRadius;
-    // m_cachedContainerPath = QtMaterialSurfaceRenderHelper::roundedTopPath(m_cachedVisualRect, m_cachedCornerRadius);
-    // m_geometryDirty = false;
+    const int minHeight = qMax(120, minimumSizeHint().height());
+    const int sheetHeight = qMin(qMax(m_expandedHeight, minHeight), hostRect.height());
+
+    const qreal progress = m_transition ? m_transition->progress() : 1.0;
+    const int visibleY = hostRect.height() - sheetHeight;
+    const int hiddenY = hostRect.height();
+    const int y = hiddenY - qRound(sheetHeight * qBound<qreal>(0.0, progress, 1.0));
+
+    m_cachedVisualRect = QRect(0, y, hostRect.width(), sheetHeight);
+    m_cachedContentRect = m_cachedVisualRect.adjusted(0, m_specPtr->topPadding, 0, 0);
+
+    m_cachedCornerRadius = 28.0; // TODO: dériver depuis shapeRole
+    m_cachedContainerPath = QPainterPath();
+    m_cachedContainerPath.addRoundedRect(m_cachedVisualRect,
+                                         m_cachedCornerRadius,
+                                         m_cachedCornerRadius);
+
+    m_geometryDirty = false;
 }
 
 void QtMaterialBottomSheet::invalidateCachedGeometry()
@@ -279,11 +277,16 @@ void QtMaterialBottomSheet::syncScrim()
 
     QColor scrim = m_specPtr->scrimColor;
     const qreal progress = m_transition ? m_transition->progress() : 1.0;
-    scrim.setAlphaF(scrim.alphaF() * progress);
-    // m_scrim->setColor(scrim); // TODO
+    scrim.setAlphaF(qBound<qreal>(0.0, scrim.alphaF() * progress, 1.0));
+
+    m_scrim->setGeometry(rect());
+    m_scrim->setScrimColor(scrim);
+
     if (!m_scrim->isVisible()) {
         m_scrim->show();
     }
+
+    m_scrim->raise();
 }
 
 void QtMaterialBottomSheet::focusFirstChild()

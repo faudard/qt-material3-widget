@@ -80,23 +80,32 @@ void QtMaterialTransitionController::startBackward()
 
 void QtMaterialTransitionController::startTo(qreal target)
 {
+    const qreal clampedTarget = qBound<qreal>(0.0, target, 1.0);
+
     if (!m_animation) {
-        setProgress(target);
+        setProgress(clampedTarget);
         emit finished();
         return;
     }
 
-    if (qAbs(m_progress - target) < kEpsilon) {
-        setProgress(target);
+    if (qAbs(m_progress - clampedTarget) < kEpsilon) {
+        setProgress(clampedTarget);
+        emit finished();
+        return;
+    }
+
+    if (m_durationMs <= 0) {
+        m_animation->stop();
+        setProgress(clampedTarget);
         emit finished();
         return;
     }
 
     m_animation->stop();
-    m_animation->setDuration(m_durationMs > 0 ? m_durationMs : kFallbackDurationMs);
+    m_animation->setDuration(m_durationMs);
     m_animation->setEasingCurve(m_easing);
     m_animation->setStartValue(m_progress);
-    m_animation->setEndValue(target);
+    m_animation->setEndValue(clampedTarget);
     m_animation->start();
 }
 
