@@ -6,6 +6,7 @@
 class QKeyEvent;
 class QResizeEvent;
 class QShowEvent;
+class QWidget;
 
 namespace QtMaterial {
 
@@ -40,6 +41,8 @@ public:
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
+    QWidget* contentWidget() const noexcept;
+
 signals:
     void progressChanged(qreal value);
     void stateChanged(QtMaterial::QtMaterialBottomSheet::SheetState state);
@@ -57,15 +60,18 @@ private:
     void invalidateCachedGeometry();
     void syncToHost();
     void syncScrim();
+    void syncContainerGeometry();
     void focusFirstChild();
 
     QRect sheetVisualRect() const;
     QRect contentRect() const;
     qreal cornerRadius() const;
 
+private:
     mutable bool m_specDirty = true;
     mutable bool m_geometryDirty = true;
     mutable QtMaterial::BottomSheetSpec *m_specPtr = nullptr;
+
     mutable QRect m_cachedVisualRect;
     mutable QRect m_cachedContentRect;
     mutable QPainterPath m_cachedContainerPath;
@@ -73,6 +79,7 @@ private:
 
     QPointer<QtMaterialScrimWidget> m_scrim;
     QPointer<QtMaterialTransitionController> m_transition;
+    QPointer<QWidget> m_container;
 
     SheetState m_state = SheetState::Closed;
     bool m_modal = true;

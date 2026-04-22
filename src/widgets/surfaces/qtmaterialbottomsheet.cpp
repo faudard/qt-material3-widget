@@ -20,8 +20,15 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
 {
     setFocusPolicy(Qt::StrongFocus);
 
+    m_container = new QWidget(this);
+    m_container->setObjectName(QStringLiteral("qtmaterial_bottomsheet_container"));
+    m_container->setAttribute(Qt::WA_StyledBackground, false);
+    m_container->setAutoFillBackground(false);
+    m_container->hide();
+
     m_transition = new QtMaterialTransitionController(this);
     m_transition->applyMotionToken(theme(), MotionToken::Medium2);
+
     m_scrim = new QtMaterialScrimWidget(parent ? parent : this);
     if (m_scrim) {
         m_scrim->hide();
@@ -29,24 +36,33 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
 
     connect(m_transition, &QtMaterialTransitionController::progressChanged,
             this, [this](qreal value) {
+                invalidateCachedGeometry();
+                syncContainerGeometry();
                 emit progressChanged(value);
                 syncScrim();
                 update();
             });
-    connect(m_transition, &QtMaterialTransitionController::finished, this, [this]() {
-        if (m_state == SheetState::Closing) {
-            m_state = SheetState::Closed;
-            emit stateChanged(m_state);
-            hide();
-            if (m_scrim) {
-                m_scrim->hide();
-            }
-        } else if (m_state == SheetState::Opening) {
-            m_state = SheetState::Open;
-            emit stateChanged(m_state);
-            focusFirstChild();
-        }
-    });
+
+    connect(m_transition, &QtMaterialTransitionController::finished,
+            this, [this]() {
+                if (m_state == SheetState::Closing) {
+                    m_state = SheetState::Closed;
+                    emit stateChanged(m_state);
+                    hide();
+                    if (m_scrim) {
+                        m_scrim->hide();
+                    }
+                } else if (m_state == SheetState::Opening) {
+                    m_state = SheetState::Open;
+                    emit stateChanged(m_state);
+                    focusFirstChild();
+                }
+            });
+}
+
+QWidget* QtMaterialBottomSheet::contentWidget() const noexcept
+{
+    return m_container;
 }
 
 QtMaterialBottomSheet::~QtMaterialBottomSheet() = default;
@@ -66,10 +82,17 @@ void QtMaterialBottomSheet::open()
     show();
     raise();
 
+    if (m_container) {
+        m_container->show();
+        m_container->raise();
+    }
+
     if (m_scrim && m_modal) {
         m_scrim->show();
         m_scrim->raise();
     }
+
+    syncContainerGeometry();
 
     raise();
     m_state = SheetState::Opening;
@@ -162,12 +185,14 @@ void QtMaterialBottomSheet::resizeEvent(QResizeEvent *event)
     QtMaterialOverlaySurface::resizeEvent(event);
     invalidateCachedGeometry();
     syncToHost();
+    syncContainerGeometry();
 }
 
 void QtMaterialBottomSheet::showEvent(QShowEvent *event)
 {
     QtMaterialOverlaySurface::showEvent(event);
     syncToHost();
+    syncContainerGeometry();
     syncScrim();
 }
 
@@ -204,6 +229,7 @@ void QtMaterialBottomSheet::themeChangedEvent(const QtMaterial::Theme &theme)
         m_transition->applyMotionToken(this->theme(), m_specPtr->motionToken);
     }
 
+    syncContainerGeometry();
     syncScrim();
     update();
 }
@@ -275,7 +301,9 @@ void QtMaterialBottomSheet::syncToHost()
             m_scrim->setGeometry(host->rect());
         }
     }
+
     invalidateCachedGeometry();
+    syncContainerGeometry();
 }
 
 void QtMaterialBottomSheet::syncScrim()
@@ -310,16 +338,19 @@ void QtMaterialBottomSheet::syncScrim()
 
 void QtMaterialBottomSheet::focusFirstChild()
 {
-    const auto children = findChildren<QWidget*>();
-    for (QWidget *child : children) {
-        if (!child || !child->isVisible() || !child->isEnabled()) {
-            continue;
-        }
-        if (child->focusPolicy() != Qt::NoFocus) {
-            child->setFocus(Qt::OtherFocusReason);
-            return;
+    if (m_container) {
+        const auto children = m_container->findChildren<QWidget*>();
+        for (QWidget *child : children) {
+            if (!child || !child->isVisible() || !child->isEnabled()) {
+                continue;
+            }
+            if (child->focusPolicy() != Qt::NoFocus) {
+                child->setFocus(Qt::OtherFocusReason);
+                return;
+            }
         }
     }
+
     setFocus(Qt::OtherFocusReason);
 }
 
@@ -349,6 +380,27 @@ qreal QtMaterialBottomSheet::progress() const noexcept
 QtMaterialBottomSheet::SheetState QtMaterialBottomSheet::state() const noexcept
 {
     return m_state;
+}
+
+void QtMaterialBottomSheet::syncContainerGeometry()
+{
+    if (!m_container) {
+        return;
+    }
+
+    ensureGeometryResolved();
+    if (m_cachedContentRect.isEmpty()) {
+        m_container->hide();
+        return;
+    }
+
+    m_container->setGeometry(m_cachedContentRect);
+
+    if (isVisible() && !m_container->isVisible()) {
+        m_container->show();
+    }
+
+    m_container->raise();
 }
 
 }
