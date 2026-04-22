@@ -68,5 +68,5 @@ qtm3_add_test(tst_outlinedbutton_render render/buttons/tst_outlinedbutton_render
 qtm3_add_test(tst_outlinedtextfield_render render/inputs/tst_outlinedtextfield_render.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_themeserializer theme/tst_themeserializer.cpp qtmaterial3_theme)
 
-
+qtm3_add_test(tst_abstractbutton_state core/tst_abstractbutton_state.cpp qtmaterial3_core)
 # qtm3_add_test(tst_filledtonalbutton_render tests/render/buttons/tst_filledtonalbutton_render.cpp qtmaterial3_widgets)

@@ -7,6 +7,9 @@ class QKeyEvent;
 class QResizeEvent;
 class QShowEvent;
 class QWidget;
+class QMouseEvent;
+class QObject;
+class QEvent;
 
 namespace QtMaterial {
 
@@ -53,6 +56,8 @@ protected:
     void showEvent(QShowEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void themeChangedEvent(const QtMaterial::Theme &theme) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     void ensureSpecResolved() const;
