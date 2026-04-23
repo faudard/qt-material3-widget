@@ -1,8 +1,10 @@
 #include "buttonspage.h"
 
-#include <QApplication>
+#include <QFrame>
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <QLabel>
+#include <QSizePolicy>
 #include <QStyle>
 #include <QVBoxLayout>
 
@@ -17,37 +19,51 @@
 
 namespace {
 
-QLabel* makeTitle(const QString& text, QWidget* parent)
+QLabel* sectionTitle(const QString& text, QWidget* parent)
 {
     auto* label = new QLabel(text, parent);
-    QFont f = label->font();
-    f.setBold(true);
-    f.setPointSizeF(f.pointSizeF() + 1.5);
-    label->setFont(f);
+    QFont titleFont = label->font();
+    titleFont.setBold(true);
+    titleFont.setPointSize(titleFont.pointSize() + 1);
+    label->setFont(titleFont);
     return label;
 }
 
-QLabel* makeRowLabel(const QString& text, QWidget* parent)
+QLabel* helperText(const QString& text, QWidget* parent)
 {
     auto* label = new QLabel(text, parent);
-    label->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    label->setWordWrap(true);
+    label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     return label;
 }
 
-QIcon demoIcon()
+QFrame* separator(QWidget* parent)
 {
-    if (qApp && qApp->style()) {
-        return qApp->style()->standardIcon(QStyle::SP_DialogApplyButton);
-    }
-    return QIcon();
+    auto* line = new QFrame(parent);
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+    return line;
 }
 
-template <typename T>
-T* makeButton(QWidget* parent)
+QIcon standardIcon(QWidget* widget, QStyle::StandardPixmap pixmap)
 {
-    auto* b = new T(parent);
-    b->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-    return b;
+    return widget->style()->standardIcon(pixmap, nullptr, widget);
+}
+
+void addLabeledWidget(QGridLayout* layout, int row, int column, const QString& labelText, QWidget* widget, QWidget* parent)
+{
+    auto* cell = new QWidget(parent);
+    auto* cellLayout = new QVBoxLayout(cell);
+    cellLayout->setContentsMargins(0, 0, 0, 0);
+    cellLayout->setSpacing(8);
+
+    auto* label = new QLabel(labelText, cell);
+    label->setAlignment(Qt::AlignHCenter);
+    label->setWordWrap(true);
+
+    cellLayout->addWidget(label);
+    cellLayout->addWidget(widget, 0, Qt::AlignHCenter);
+    layout->addWidget(cell, row, column);
 }
 
 } // namespace
@@ -56,61 +72,94 @@ ButtonsPage::ButtonsPage(QWidget* parent)
     : QWidget(parent)
 {
     auto* root = new QVBoxLayout(this);
-    root->setContentsMargins(12, 12, 12, 12);
-    root->setSpacing(10);
+    root->setContentsMargins(24, 24, 24, 24);
+    root->setSpacing(20);
 
-    root->addWidget(makeTitle(QStringLiteral("Buttons"), this));
+    root->addWidget(sectionTitle(QStringLiteral("Buttons"), this));
+    root->addWidget(helperText(
+        QStringLiteral("Standard Material button variants plus FAB / Extended FAB examples. "
+                       "Use this page to visually check theme, density, disabled state and sizing behavior."),
+        this));
 
-    auto* grid = new QGridLayout();
-    grid->setContentsMargins(0, 0, 0, 0);
-    grid->setHorizontalSpacing(10);
-    grid->setVerticalSpacing(8);
+    auto* buttonGrid = new QGridLayout();
+    buttonGrid->setHorizontalSpacing(16);
+    buttonGrid->setVerticalSpacing(16);
 
-    int row = 0;
-
-    auto* text = makeButton<QtMaterial::QtMaterialTextButton>(this);
+    auto* text = new QtMaterial::QtMaterialTextButton(this);
     text->setText(QStringLiteral("Text"));
-    grid->addWidget(makeRowLabel(QStringLiteral("Text"), this), row, 0);
-    grid->addWidget(text, row++, 1, Qt::AlignLeft);
 
-    auto* filled = makeButton<QtMaterial::QtMaterialFilledButton>(this);
+    auto* filled = new QtMaterial::QtMaterialFilledButton(this);
     filled->setText(QStringLiteral("Filled"));
-    grid->addWidget(makeRowLabel(QStringLiteral("Filled"), this), row, 0);
-    grid->addWidget(filled, row++, 1, Qt::AlignLeft);
 
-    auto* tonal = makeButton<QtMaterial::QtMaterialFilledTonalButton>(this);
+    auto* tonal = new QtMaterial::QtMaterialFilledTonalButton(this);
     tonal->setText(QStringLiteral("Tonal"));
-    grid->addWidget(makeRowLabel(QStringLiteral("Tonal"), this), row, 0);
-    grid->addWidget(tonal, row++, 1, Qt::AlignLeft);
 
-    auto* outlined = makeButton<QtMaterial::QtMaterialOutlinedButton>(this);
+    auto* outlined = new QtMaterial::QtMaterialOutlinedButton(this);
     outlined->setText(QStringLiteral("Outlined"));
-    grid->addWidget(makeRowLabel(QStringLiteral("Outlined"), this), row, 0);
-    grid->addWidget(outlined, row++, 1, Qt::AlignLeft);
 
-    auto* elevated = makeButton<QtMaterial::QtMaterialElevatedButton>(this);
+    auto* elevated = new QtMaterial::QtMaterialElevatedButton(this);
     elevated->setText(QStringLiteral("Elevated"));
-    grid->addWidget(makeRowLabel(QStringLiteral("Elevated"), this), row, 0);
-    grid->addWidget(elevated, row++, 1, Qt::AlignLeft);
 
-    auto* icon = makeButton<QtMaterial::QtMaterialIconButton>(this);
-    icon->setIcon(demoIcon());
-    grid->addWidget(makeRowLabel(QStringLiteral("Icon"), this), row, 0);
-    grid->addWidget(icon, row++, 1, Qt::AlignLeft);
+    auto* icon = new QtMaterial::QtMaterialIconButton(this);
+    icon->setIcon(standardIcon(this, QStyle::SP_DialogOpenButton));
+    icon->setAccessibleName(QStringLiteral("Open"));
+    icon->setToolTip(QStringLiteral("Icon button"));
 
-    auto* fab = makeButton<QtMaterial::QtMaterialFab>(this);
-    fab->setIcon(demoIcon());
-    grid->addWidget(makeRowLabel(QStringLiteral("FAB"), this), row, 0);
-    grid->addWidget(fab, row++, 1, Qt::AlignLeft);
+    addLabeledWidget(buttonGrid, 0, 0, QStringLiteral("Text"), text, this);
+    addLabeledWidget(buttonGrid, 0, 1, QStringLiteral("Filled"), filled, this);
+    addLabeledWidget(buttonGrid, 0, 2, QStringLiteral("Tonal"), tonal, this);
+    addLabeledWidget(buttonGrid, 1, 0, QStringLiteral("Outlined"), outlined, this);
+    addLabeledWidget(buttonGrid, 1, 1, QStringLiteral("Elevated"), elevated, this);
+    addLabeledWidget(buttonGrid, 1, 2, QStringLiteral("Icon"), icon, this);
+    root->addLayout(buttonGrid);
 
-    auto* extFab = makeButton<QtMaterial::QtMaterialExtendedFab>(this);
-    extFab->setIcon(demoIcon());
-    extFab->setText(QStringLiteral("Extended FAB"));
-    grid->addWidget(makeRowLabel(QStringLiteral("Extended FAB"), this), row, 0);
-    grid->addWidget(extFab, row++, 1, Qt::AlignLeft);
+    root->addWidget(separator(this));
+    root->addWidget(sectionTitle(QStringLiteral("Floating action buttons"), this));
+    root->addWidget(helperText(
+        QStringLiteral("FAB is icon-only and intended for one promoted action. Extended FAB can be text-only "
+                       "or icon + text, and should expand horizontally according to its label."),
+        this));
 
-    grid->setColumnStretch(2, 1);
+    auto* fabGrid = new QGridLayout();
+    fabGrid->setHorizontalSpacing(20);
+    fabGrid->setVerticalSpacing(20);
 
-    root->addLayout(grid);
+    const QIcon composeIcon = standardIcon(this, QStyle::SP_FileDialogNewFolder);
+    const QIcon addIcon = standardIcon(this, QStyle::SP_DialogApplyButton);
+
+    auto* fab = new QtMaterial::QtMaterialFab(composeIcon, this);
+    fab->setAccessibleName(QStringLiteral("Create"));
+    fab->setToolTip(QStringLiteral("FAB: icon-only promoted action"));
+
+    auto* disabledFab = new QtMaterial::QtMaterialFab(addIcon, this);
+    disabledFab->setAccessibleName(QStringLiteral("Disabled create"));
+    disabledFab->setToolTip(QStringLiteral("Disabled FAB"));
+    disabledFab->setEnabled(false);
+
+    auto* extendedText = new QtMaterial::QtMaterialExtendedFab(QStringLiteral("Compose"), this);
+    extendedText->setAccessibleName(QStringLiteral("Compose"));
+    extendedText->setToolTip(QStringLiteral("Extended FAB: text-only"));
+
+    auto* extendedIconText = new QtMaterial::QtMaterialExtendedFab(composeIcon, QStringLiteral("Compose"), this);
+    extendedIconText->setAccessibleName(QStringLiteral("Compose"));
+    extendedIconText->setToolTip(QStringLiteral("Extended FAB: icon and text"));
+
+    auto* extendedLong = new QtMaterial::QtMaterialExtendedFab(addIcon, QStringLiteral("Create document"), this);
+    extendedLong->setAccessibleName(QStringLiteral("Create document"));
+    extendedLong->setToolTip(QStringLiteral("Extended FAB: longer label"));
+
+    auto* disabledExtended = new QtMaterial::QtMaterialExtendedFab(composeIcon, QStringLiteral("Disabled"), this);
+    disabledExtended->setAccessibleName(QStringLiteral("Disabled compose"));
+    disabledExtended->setToolTip(QStringLiteral("Disabled Extended FAB"));
+    disabledExtended->setEnabled(false);
+
+    addLabeledWidget(fabGrid, 0, 0, QStringLiteral("FAB"), fab, this);
+    addLabeledWidget(fabGrid, 0, 1, QStringLiteral("Disabled FAB"), disabledFab, this);
+    addLabeledWidget(fabGrid, 0, 2, QStringLiteral("Extended text"), extendedText, this);
+    addLabeledWidget(fabGrid, 1, 0, QStringLiteral("Extended icon + text"), extendedIconText, this);
+    addLabeledWidget(fabGrid, 1, 1, QStringLiteral("Extended long label"), extendedLong, this);
+    addLabeledWidget(fabGrid, 1, 2, QStringLiteral("Disabled Extended"), disabledExtended, this);
+    root->addLayout(fabGrid);
+
     root->addStretch(1);
 }
