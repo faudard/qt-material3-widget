@@ -32,7 +32,7 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
     m_actionButton->setFlat(true);
     m_actionButton->hide();
 
-    m_dismissButton = new QPushButton(QStringLiteral("✕"), this);
+    m_dismissButton = new QPushButton(QString(QChar(0x2715)), this);
     m_dismissButton->setFlat(true);
     m_dismissButton->hide();
 
