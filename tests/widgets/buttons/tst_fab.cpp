@@ -1,12 +1,15 @@
-#include <QtTest/QtTest>
+#include <QSignalSpy>
+#include <QTest>
 
 #include "qtmaterial/widgets/buttons/qtmaterialfab.h"
 
-class tst_Fab : public QObject
-{
+class tst_Fab : public QObject {
     Q_OBJECT
+
 private slots:
     void constructs();
+    void constructsWithIcon();
+    void sizeHintIsStableForTextAndIconChanges();
     void keyboardActivation();
     void respectsTouchTargetSize();
 };
@@ -15,6 +18,35 @@ void tst_Fab::constructs()
 {
     QtMaterial::QtMaterialFab widget;
     QVERIFY(widget.text().isEmpty());
+    QVERIFY(!widget.isCheckable());
+}
+
+void tst_Fab::constructsWithIcon()
+{
+    QPixmap pixmap(24, 24);
+    pixmap.fill(Qt::black);
+    const QIcon icon(pixmap);
+
+    QtMaterial::QtMaterialFab widget(icon);
+
+    QVERIFY(!widget.icon().isNull());
+    QVERIFY(widget.text().isEmpty());
+    QVERIFY(!widget.isCheckable());
+}
+
+void tst_Fab::sizeHintIsStableForTextAndIconChanges()
+{
+    QtMaterial::QtMaterialFab widget;
+    const QSize initialSize = widget.sizeHint();
+
+    widget.setText(QStringLiteral("Ignored label"));
+    QCOMPARE(widget.sizeHint(), initialSize);
+
+    QPixmap pixmap(24, 24);
+    pixmap.fill(Qt::black);
+    widget.setIcon(QIcon(pixmap));
+    QCOMPARE(widget.sizeHint(), initialSize);
+    QCOMPARE(widget.minimumSizeHint(), widget.sizeHint());
 }
 
 void tst_Fab::keyboardActivation()
@@ -44,4 +76,5 @@ void tst_Fab::respectsTouchTargetSize()
 }
 
 QTEST_MAIN(tst_Fab)
+
 #include "tst_fab.moc"

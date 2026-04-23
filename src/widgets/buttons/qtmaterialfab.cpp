@@ -29,10 +29,8 @@ ButtonSpec fabToButtonSpec(const FabSpec& fab)
 } // namespace
 
 QtMaterialFab::QtMaterialFab(QWidget* parent)
-    : QtMaterialFilledButton(parent)
+    : QtMaterialFab(QIcon(), parent)
 {
-    setText(QString());
-    setCheckable(false);
 }
 
 QtMaterialFab::QtMaterialFab(const QIcon& icon, QWidget* parent)
