@@ -75,12 +75,13 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
         m_endActionButton->setCursor(Qt::PointingHandCursor);
 
         QObject::connect(m_endActionButton, &QToolButton::clicked, this, [this]() {
-            switch (currentEndActionMode()) {
+            switch (resolvedEndActionMode()) {
             case EndActionMode::ClearText:
                 if (m_lineEdit) {
                     m_lineEdit->clear();
                     m_lineEdit->setFocus();
                 }
+                emit clearTriggered();
                 break;
 
             case EndActionMode::TogglePasswordVisibility:
@@ -90,6 +91,14 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
                         m_passwordVisible ? QLineEdit::Normal : m_configuredEchoMode);
                     m_lineEdit->setFocus();
                 }
+                emit passwordVisibilityChanged(m_passwordVisible);
+                break;
+
+            case EndActionMode::CustomTrailingAction:
+                if (m_lineEdit) {
+                    m_lineEdit->setFocus();
+                }
+                emit trailingActionTriggered();
                 break;
 
             case EndActionMode::None:
@@ -137,7 +146,6 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
     }
 
     setFocusProxy(m_lineEdit);
-    syncAccessibilityState();
     syncLineEditPalette();
     syncAccessoryWidgets();
 }
@@ -396,6 +404,95 @@ void QtMaterialOutlinedTextField::setHasErrorState(bool value)
     syncEffectiveErrorState();
 }
 
+QtMaterialOutlinedTextField::EndActionMode
+QtMaterialOutlinedTextField::endActionMode() const noexcept
+{
+    return m_endActionMode;
+}
+
+void QtMaterialOutlinedTextField::setEndActionMode(EndActionMode mode)
+{
+    if (m_endActionMode == mode) {
+        return;
+    }
+
+    m_endActionMode = mode;
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    updateGeometry();
+    update();
+}
+
+QIcon QtMaterialOutlinedTextField::trailingActionIcon() const
+{
+    return m_trailingActionIcon;
+}
+
+void QtMaterialOutlinedTextField::setTrailingActionIcon(const QIcon& icon)
+{
+    if (m_trailingActionIcon.cacheKey() == icon.cacheKey()) {
+        return;
+    }
+
+    m_trailingActionIcon = icon;
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    updateGeometry();
+    update();
+}
+
+QString QtMaterialOutlinedTextField::trailingActionText() const
+{
+    return m_trailingActionText;
+}
+
+void QtMaterialOutlinedTextField::setTrailingActionText(const QString& text)
+{
+    if (m_trailingActionText == text) {
+        return;
+    }
+
+    m_trailingActionText = text;
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    updateGeometry();
+    update();
+}
+
+QString QtMaterialOutlinedTextField::trailingActionToolTip() const
+{
+    return m_trailingActionToolTip;
+}
+
+void QtMaterialOutlinedTextField::setTrailingActionToolTip(const QString& text)
+{
+    if (m_trailingActionToolTip == text) {
+        return;
+    }
+
+    m_trailingActionToolTip = text;
+    syncAccessoryWidgets();
+    update();
+}
+
+bool QtMaterialOutlinedTextField::isTrailingActionVisibleWhenEmpty() const noexcept
+{
+    return m_trailingActionVisibleWhenEmpty;
+}
+
+void QtMaterialOutlinedTextField::setTrailingActionVisibleWhenEmpty(bool value)
+{
+    if (m_trailingActionVisibleWhenEmpty == value) {
+        return;
+    }
+
+    m_trailingActionVisibleWhenEmpty = value;
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    updateGeometry();
+    update();
+}
+
 QSize QtMaterialOutlinedTextField::sizeHint() const
 {
     ensureSpecResolved();
@@ -491,17 +588,38 @@ bool QtMaterialOutlinedTextField::currentFocusState() const
 }
 
 QtMaterialOutlinedTextField::EndActionMode
-QtMaterialOutlinedTextField::currentEndActionMode() const noexcept
+QtMaterialOutlinedTextField::resolvedEndActionMode() const noexcept
 {
-    if (m_configuredEchoMode == QLineEdit::Password) {
+    if (m_endActionMode == EndActionMode::TogglePasswordVisibility
+        && m_configuredEchoMode == QLineEdit::Password) {
         return EndActionMode::TogglePasswordVisibility;
     }
 
-    if (m_clearButtonEnabled && m_lineEdit && !m_lineEdit->text().isEmpty() && isEnabled()) {
+    if (m_endActionMode == EndActionMode::ClearText && shouldShowClearAction()) {
         return EndActionMode::ClearText;
     }
 
+    if (m_endActionMode == EndActionMode::CustomTrailingAction
+        && shouldShowCustomTrailingAction()) {
+        return EndActionMode::CustomTrailingAction;
+    }
+
     return EndActionMode::None;
+}
+
+bool QtMaterialOutlinedTextField::shouldShowClearAction() const noexcept
+{
+    return m_clearButtonEnabled
+        && m_lineEdit
+        && isEnabled()
+        && (m_trailingActionVisibleWhenEmpty || !m_lineEdit->text().isEmpty());
+}
+
+bool QtMaterialOutlinedTextField::shouldShowCustomTrailingAction() const noexcept
+{
+    return isEnabled()
+        && (!m_trailingActionIcon.isNull() || !m_trailingActionText.isEmpty())
+        && (m_trailingActionVisibleWhenEmpty || (m_lineEdit && !m_lineEdit->text().isEmpty()));
 }
 
 int QtMaterialOutlinedTextField::iconExtent() const
@@ -555,12 +673,20 @@ int QtMaterialOutlinedTextField::effectiveTrailingReserve() const
     }
 
     int endSlotWidth = 0;
+    const EndActionMode resolvedMode = resolvedEndActionMode();
 
-    if (currentEndActionMode() != EndActionMode::None) {
-        if (currentEndActionMode() == EndActionMode::ClearText) {
+    if (resolvedMode == EndActionMode::ClearText) {
+        endSlotWidth = iconExtent() + 6;
+    } else if (resolvedMode == EndActionMode::TogglePasswordVisibility) {
+        endSlotWidth = fm.horizontalAdvance(m_passwordVisible ? tr("Hide") : tr("Show")) + 16;
+    } else if (resolvedMode == EndActionMode::CustomTrailingAction) {
+        if (!m_trailingActionIcon.isNull() && !m_trailingActionText.isEmpty()) {
+            endSlotWidth = qMax(iconExtent(),
+                                fm.horizontalAdvance(m_trailingActionText) + 16);
+        } else if (!m_trailingActionIcon.isNull()) {
             endSlotWidth = iconExtent() + 6;
         } else {
-            endSlotWidth = fm.horizontalAdvance(m_passwordVisible ? tr("Hide") : tr("Show")) + 16;
+            endSlotWidth = fm.horizontalAdvance(m_trailingActionText) + 16;
         }
     } else if (!m_trailingIcon.isNull()) {
         endSlotWidth = iconExtent();
@@ -640,8 +766,10 @@ void QtMaterialOutlinedTextField::ensureLayoutResolved() const
     QtMaterialTextFieldShellHelper::Accessories accessories;
     accessories.prefixText = m_prefixText;
     accessories.suffixText = m_suffixText;
+    accessories.customEndActionText = m_trailingActionText;
     accessories.hasLeadingIcon = !m_leadingIcon.isNull();
     accessories.hasTrailingIcon = !m_trailingIcon.isNull();
+    accessories.hasCustomEndActionIcon = !m_trailingActionIcon.isNull();
     accessories.passwordVisible = m_passwordVisible;
     accessories.layoutDirection = layoutDirection();
     accessories.iconExtent = iconExtent();
@@ -649,7 +777,7 @@ void QtMaterialOutlinedTextField::ensureLayoutResolved() const
     accessories.accessoryTextPadding = kAccessoryTextPadding;
     accessories.minimumAccessoryTextWidth = kMinimumAccessoryTextWidth;
 
-    switch (currentEndActionMode()) {
+    switch (resolvedEndActionMode()) {
     case EndActionMode::ClearText:
         accessories.endActionMode = QtMaterialTextFieldShellHelper::EndActionMode::ClearText;
         break;
@@ -657,6 +785,11 @@ void QtMaterialOutlinedTextField::ensureLayoutResolved() const
     case EndActionMode::TogglePasswordVisibility:
         accessories.endActionMode =
             QtMaterialTextFieldShellHelper::EndActionMode::TogglePasswordVisibility;
+        break;
+
+    case EndActionMode::CustomTrailingAction:
+        accessories.endActionMode =
+            QtMaterialTextFieldShellHelper::EndActionMode::CustomTrailingAction;
         break;
 
     case EndActionMode::None:
@@ -807,7 +940,7 @@ void QtMaterialOutlinedTextField::syncAccessoryWidgets()
         m_endActionButton->setEnabled(isEnabled());
         m_endActionButton->setFont(font());
 
-        const EndActionMode mode = currentEndActionMode();
+        const EndActionMode mode = resolvedEndActionMode();
 
         if (m_cachedEndActionRect.isEmpty() || mode == EndActionMode::None) {
             m_endActionButton->hide();
@@ -830,6 +963,15 @@ void QtMaterialOutlinedTextField::syncAccessoryWidgets()
                 m_endActionButton->setText(m_cachedEndActionText);
                 m_endActionButton->setToolTip(
                     m_passwordVisible ? tr("Hide password") : tr("Show password"));
+            } else if (mode == EndActionMode::CustomTrailingAction) {
+                if (!m_trailingActionIcon.isNull()) {
+                    m_endActionButton->setIcon(m_trailingActionIcon);
+                    m_endActionButton->setIconSize(QSize(iconSize, iconSize));
+                }
+                if (!m_cachedEndActionText.isEmpty()) {
+                    m_endActionButton->setText(m_cachedEndActionText);
+                }
+                m_endActionButton->setToolTip(m_trailingActionToolTip);
             }
 
             m_endActionButton->show();

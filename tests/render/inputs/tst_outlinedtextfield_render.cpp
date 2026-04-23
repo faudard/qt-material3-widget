@@ -5,9 +5,10 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QImage>
+#include <QPushButton>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
-#include <QPushButton>
+#include <QStyle>
 
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 
@@ -21,6 +22,12 @@ private slots:
     void rendersErrorState();
     void rendersValidatorOnEditInvalidState();
     void rendersValidatorOnCommitInvalidState();
+
+    void rendersPrefixSuffixState();
+    void rendersLeadingTrailingIconsState();
+    void rendersPasswordToggleState();
+    void rendersCustomTrailingActionState();
+    void rendersRtlAccessoriesState();
 
 private:
     static QByteArray imageHash(const QImage& image)
@@ -87,9 +94,9 @@ void tst_OutlinedTextFieldRender::rendersDefaultState()
     widget.setLabelText(QStringLiteral("Email"));
     widget.setSupportingText(QStringLiteral("We will not spam you"));
 
-    verifyOrUpdateBaseline(
-        captureWidget(widget),
-        QStringLiteral("outlinedtextfield_default_light.png"));
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("outlinedtextfield_default_light.png"));
 }
 
 void tst_OutlinedTextFieldRender::rendersFocusedState()
@@ -102,7 +109,9 @@ void tst_OutlinedTextFieldRender::rendersFocusedState()
 
     QVERIFY(QTest::qWaitForWindowExposed(&widget));
     widget.setFocus(Qt::TabFocusReason);
-    QVERIFY(QTest::qWaitFor([&widget]() { return widget.lineEdit() && widget.lineEdit()->hasFocus(); }));
+    QVERIFY(QTest::qWaitFor([&widget]() {
+        return widget.lineEdit() && widget.lineEdit()->hasFocus();
+    }));
 
     const QImage image = widget.grab().toImage();
     QVERIFY(!image.isNull());
@@ -117,9 +126,9 @@ void tst_OutlinedTextFieldRender::rendersErrorState()
     widget.setErrorText(QStringLiteral("Invalid email"));
     widget.setHasErrorState(true);
 
-    verifyOrUpdateBaseline(
-        captureWidget(widget),
-        QStringLiteral("outlinedtextfield_error_light.png"));
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("outlinedtextfield_error_light.png"));
 }
 
 void tst_OutlinedTextFieldRender::rendersValidatorOnEditInvalidState()
@@ -139,9 +148,9 @@ void tst_OutlinedTextFieldRender::rendersValidatorOnEditInvalidState()
     QVERIFY(widget.hasAutomaticValidationError());
     QVERIFY(widget.hasErrorState());
 
-    verifyOrUpdateBaseline(
-        captureWidget(widget),
-        QStringLiteral("outlinedtextfield_validator_on_edit_invalid_light.png"));
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("outlinedtextfield_validator_on_edit_invalid_light.png"));
 }
 
 void tst_OutlinedTextFieldRender::rendersValidatorOnCommitInvalidState()
@@ -170,7 +179,9 @@ void tst_OutlinedTextFieldRender::rendersValidatorOnCommitInvalidState()
     QVERIFY(QTest::qWaitForWindowExposed(&host));
 
     field->lineEdit()->setFocus();
-    QVERIFY(QTest::qWaitFor([field]() { return field->lineEdit() && field->lineEdit()->hasFocus(); }));
+    QVERIFY(QTest::qWaitFor([field]() {
+        return field->lineEdit() && field->lineEdit()->hasFocus();
+    }));
 
     other->setFocus();
     QVERIFY(QTest::qWaitFor([other]() { return other->hasFocus(); }));
@@ -181,9 +192,81 @@ void tst_OutlinedTextFieldRender::rendersValidatorOnCommitInvalidState()
 
     const QImage image = field->grab().toImage();
     QVERIFY(!image.isNull());
-    verifyOrUpdateBaseline(
-        image,
-        QStringLiteral("outlinedtextfield_validator_on_commit_invalid_light.png"));
+    verifyOrUpdateBaseline(image, QStringLiteral("outlinedtextfield_validator_on_commit_invalid_light.png"));
+}
+
+void tst_OutlinedTextFieldRender::rendersPrefixSuffixState()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
+    widget.setLabelText(QStringLiteral("Website"));
+    widget.setPrefixText(QStringLiteral("https://"));
+    widget.setSuffixText(QStringLiteral(".com"));
+    widget.setText(QStringLiteral("example"));
+    widget.setSupportingText(QStringLiteral("Enter your public URL"));
+
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("outlinedtextfield_prefix_suffix_light.png"));
+}
+
+void tst_OutlinedTextFieldRender::rendersLeadingTrailingIconsState()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
+    widget.setLabelText(QStringLiteral("Search"));
+    widget.setText(QStringLiteral("material"));
+    widget.setLeadingIcon(widget.style()->standardIcon(QStyle::SP_FileDialogContentsView));
+    widget.setTrailingIcon(widget.style()->standardIcon(QStyle::SP_ArrowForward));
+    widget.setSupportingText(QStringLiteral("Keyword lookup"));
+
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("outlinedtextfield_icons_light.png"));
+}
+
+void tst_OutlinedTextFieldRender::rendersPasswordToggleState()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
+    widget.setLabelText(QStringLiteral("Password"));
+    widget.setText(QStringLiteral("secret123"));
+    widget.setEchoMode(QLineEdit::Password);
+    widget.setEndActionMode(
+        QtMaterial::QtMaterialOutlinedTextField::EndActionMode::TogglePasswordVisibility);
+    widget.setSupportingText(QStringLiteral("At least 8 characters"));
+
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("outlinedtextfield_password_light.png"));
+}
+
+void tst_OutlinedTextFieldRender::rendersCustomTrailingActionState()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
+    widget.setLabelText(QStringLiteral("Search"));
+    widget.setText(QStringLiteral("material"));
+    widget.setSupportingText(QStringLiteral("Run a query"));
+    widget.setEndActionMode(
+        QtMaterial::QtMaterialOutlinedTextField::EndActionMode::CustomTrailingAction);
+    widget.setTrailingActionText(QStringLiteral("Go"));
+    widget.setTrailingActionToolTip(QStringLiteral("Run search"));
+
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("outlinedtextfield_custom_trailing_action_light.png"));
+}
+
+void tst_OutlinedTextFieldRender::rendersRtlAccessoriesState()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
+    widget.setLayoutDirection(Qt::RightToLeft);
+    widget.setLabelText(QStringLiteral("Montant"));
+    widget.setPrefixText(QStringLiteral("EUR"));
+    widget.setSuffixText(QStringLiteral("TTC"));
+    widget.setLeadingIcon(widget.style()->standardIcon(QStyle::SP_DriveHDIcon));
+    widget.setText(QStringLiteral("125"));
+
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("outlinedtextfield_rtl_accessories_light.png"));
 }
 
 QTEST_MAIN(tst_OutlinedTextFieldRender)

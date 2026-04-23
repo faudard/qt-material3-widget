@@ -37,6 +37,16 @@ static int endActionSlotWidth(const QtMaterialTextFieldShellHelper::Accessories&
                                                : QObject::tr("Show"))
                + 16;
 
+    case QtMaterialTextFieldShellHelper::EndActionMode::CustomTrailingAction:
+        if (accessories.hasCustomEndActionIcon && !accessories.customEndActionText.isEmpty()) {
+            return qMax(accessories.iconExtent,
+                        metrics.horizontalAdvance(accessories.customEndActionText) + 16);
+        }
+        if (accessories.hasCustomEndActionIcon) {
+            return accessories.iconExtent + 6;
+        }
+        return metrics.horizontalAdvance(accessories.customEndActionText) + 16;
+
     case QtMaterialTextFieldShellHelper::EndActionMode::None:
     default:
         return 0;
@@ -162,7 +172,7 @@ QtMaterialTextFieldShellHelper::Layout QtMaterialTextFieldShellHelper::layoutFor
     }
 
     int endActionWidth = endActionSlotWidth(accessories, metrics);
-    if (accessories.hasTrailingIcon) {
+    if (accessories.endActionMode == EndActionMode::None && accessories.hasTrailingIcon) {
         endActionWidth = qMax(endActionWidth, accessories.iconExtent);
     }
 
@@ -229,6 +239,13 @@ QtMaterialTextFieldShellHelper::ElidedText QtMaterialTextFieldShellHelper::elide
     case EndActionMode::TogglePasswordVisibility:
         text.endActionText = metrics.elidedText(
             accessories.passwordVisible ? QObject::tr("Hide") : QObject::tr("Show"),
+            Qt::ElideRight,
+            qMax(0, layout.endActionRect.width()));
+        break;
+
+    case EndActionMode::CustomTrailingAction:
+        text.endActionText = metrics.elidedText(
+            accessories.customEndActionText,
             Qt::ElideRight,
             qMax(0, layout.endActionRect.width()));
         break;
@@ -322,13 +339,15 @@ void QtMaterialTextFieldShellHelper::paintShell(QPainter* painter,
                                                    layout.radius);
         }
 
-        painter->setPen(QPen(outline, focused ? spec.focusedOutlineWidth
-                                              : spec.outlineWidth));
+        painter->setPen(QPen(outline,
+                             focused ? spec.focusedOutlineWidth
+                                     : spec.outlineWidth));
         painter->drawLine(layout.containerRect.bottomLeft(),
                           layout.containerRect.bottomRight());
     } else {
-        painter->setPen(QPen(outline, focused ? spec.focusedOutlineWidth
-                                              : spec.outlineWidth));
+        painter->setPen(QPen(outline,
+                             focused ? spec.focusedOutlineWidth
+                                     : spec.outlineWidth));
         painter->setBrush(Qt::NoBrush);
         painter->drawRoundedRect(layout.containerRect, layout.radius, layout.radius);
 
@@ -349,7 +368,9 @@ void QtMaterialTextFieldShellHelper::paintShell(QPainter* painter,
     painter->setFont(font);
 
     painter->setPen(labelColor);
-    painter->drawText(layout.labelRect, Qt::AlignLeft | Qt::AlignVCenter, text.labelText);
+    painter->drawText(layout.labelRect,
+                      Qt::AlignLeft | Qt::AlignVCenter,
+                      text.labelText);
 
     painter->setPen(supportingColor);
     painter->drawText(layout.supportingRect,

@@ -196,6 +196,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     src/specs/qtmaterialdividerspec.cpp
     src/specs/qtmaterialautocompletepopupspec.cpp
     src/specs/qtmaterialdatefieldspec.cpp
+    src/specs/qtmaterialsnackbarspec.cpp
 )
 
 set(QTMATERIAL3_SPECS_HEADERS
@@ -217,6 +218,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     include/qtmaterial/specs/qtmaterialautocompletepopupspec.h
     include/qtmaterial/specs/qtmaterialdatefieldspec.h
     include/qtmaterial/specs/qtmaterialspecfactory.h
+    include/qtmaterial/specs/qtmaterialsnackbarspec.h
 )
 
 qtm3_add_library(qtmaterial3_specs SHARED
@@ -322,6 +324,8 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     src/widgets/data/qtmateriallistitem.cpp
     src/widgets/data/qtmateriallist.cpp
     src/widgets/data/qtmaterialdivider.cpp
+    src/widgets/surfaces/qtmaterialsnackbar.cpp
+    src/widgets/surfaces/qtmaterialsnackbarhost.cpp
 )
 
 set(QTMATERIAL3_WIDGETS_HEADERS
@@ -350,6 +354,8 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     include/qtmaterial/widgets/data/qtmateriallistitem.h
     include/qtmaterial/widgets/data/qtmateriallist.h
     include/qtmaterial/widgets/data/qtmaterialdivider.h
+    include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h
+    include/qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h
 )
 
 qtm3_add_library(qtmaterial3_widgets SHARED

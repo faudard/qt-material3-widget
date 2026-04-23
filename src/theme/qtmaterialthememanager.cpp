@@ -1,5 +1,4 @@
 #include "qtmaterial/theme/qtmaterialthememanager.h"
-
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
 
 namespace QtMaterial {
@@ -38,6 +37,10 @@ void ThemeManager::setTheme(const Theme& theme)
 
 void ThemeManager::setThemeOptions(const ThemeOptions& options)
 {
+    if (m_options == options) {
+        return;
+    }
+
     m_options = options;
     rebuildTheme();
 }
@@ -50,12 +53,20 @@ void ThemeManager::rebuildTheme()
 
 void ThemeManager::applySeedColor(const QColor& seed)
 {
+    if (m_options.sourceColor == seed) {
+        return;
+    }
+
     m_options.sourceColor = seed;
     rebuildTheme();
 }
 
 void ThemeManager::applySeedColor(const QColor& seed, ThemeMode mode)
 {
+    if (m_options.sourceColor == seed && m_options.mode == mode) {
+        return;
+    }
+
     m_options.sourceColor = seed;
     m_options.mode = mode;
     rebuildTheme();
@@ -66,9 +77,10 @@ QByteArray ThemeManager::exportThemeJson(QJsonDocument::JsonFormat format) const
     return ThemeSerializer::toJson(m_theme, format);
 }
 
-bool ThemeManager::exportThemeToFile(const QString& filePath,
-                                     QString* errorString,
-                                     QJsonDocument::JsonFormat format) const
+bool ThemeManager::exportThemeToFile(
+    const QString& filePath,
+    QString* errorString,
+    QJsonDocument::JsonFormat format) const
 {
     return ThemeSerializer::writeToFile(m_theme, filePath, errorString, format);
 }

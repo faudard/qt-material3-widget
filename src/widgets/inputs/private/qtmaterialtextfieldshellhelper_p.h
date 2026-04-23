@@ -8,8 +8,8 @@
 #include "qtmaterial/specs/qtmaterialtextfieldspec.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
-class QPainter;
 class QFont;
+class QPainter;
 
 namespace QtMaterial {
 
@@ -25,16 +25,23 @@ public:
         None,
         ClearText,
         TogglePasswordVisibility,
+        CustomTrailingAction,
     };
 
     struct Accessories {
         QString prefixText;
         QString suffixText;
+        QString customEndActionText;
+
         bool hasLeadingIcon = false;
         bool hasTrailingIcon = false;
+        bool hasCustomEndActionIcon = false;
+
         EndActionMode endActionMode = EndActionMode::None;
         bool passwordVisible = false;
+
         Qt::LayoutDirection layoutDirection = Qt::LeftToRight;
+
         int iconExtent = 18;
         int accessorySpacing = 8;
         int accessoryTextPadding = 4;

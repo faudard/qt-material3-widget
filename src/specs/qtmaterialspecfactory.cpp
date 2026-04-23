@@ -303,6 +303,23 @@ ListItemSpec SpecFactory::listItemSpec(const Theme& theme) const
     return spec;
 }
 
+SnackbarSpec SpecFactory::snackbarSpec(const Theme& theme) const
+{
+    SnackbarSpec spec;
+
+    spec.containerColor   = theme.colorScheme().color(ColorRole::InverseSurface);
+    spec.textColor        = theme.colorScheme().color(ColorRole::InverseOnSurface);
+    spec.actionColor      = theme.colorScheme().color(ColorRole::InversePrimary);
+    spec.dismissIconColor = theme.colorScheme().color(ColorRole::InverseOnSurface);
+
+    spec.shapeRole = ShapeRole::Small;
+    spec.elevationRole = ElevationRole::Level3;
+    spec.enterMotion = MotionToken::Medium2;
+    spec.exitMotion = MotionToken::Short4;
+
+    return spec;
+}
+
 // DividerSpec SpecFactory::dividerSpec(const Theme& theme) const
 // {
 //     DividerSpec spec;

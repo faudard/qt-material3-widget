@@ -8,7 +8,7 @@
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
-#include <QPushButton>
+#include <QStyle>
 
 #include "qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
@@ -23,6 +23,11 @@ private slots:
     void rendersErrorState();
     void rendersValidatorOnEditInvalidState();
     void rendersValidatorOnCommitInvalidState();
+
+    void rendersPrefixSuffixState();
+    void rendersLeadingTrailingIconsState();
+    void rendersPasswordToggleState();
+    void rendersCustomTrailingActionState();
 
 private:
     static QByteArray imageHash(const QImage& image)
@@ -89,9 +94,9 @@ void tst_FilledTextFieldRender::rendersDefaultState()
     widget.setLabelText(QStringLiteral("Name"));
     widget.setSupportingText(QStringLiteral("Shown on your profile"));
 
-    verifyOrUpdateBaseline(
-        captureWidget(widget),
-        QStringLiteral("filledtextfield_default_light.png"));
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("filledtextfield_default_light.png"));
 }
 
 void tst_FilledTextFieldRender::rendersFocusedState()
@@ -120,9 +125,9 @@ void tst_FilledTextFieldRender::rendersErrorState()
     widget.setErrorText(QStringLiteral("Required"));
     widget.setHasErrorState(true);
 
-    verifyOrUpdateBaseline(
-        captureWidget(widget),
-        QStringLiteral("filledtextfield_error_light.png"));
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("filledtextfield_error_light.png"));
 }
 
 void tst_FilledTextFieldRender::rendersValidatorOnEditInvalidState()
@@ -142,9 +147,9 @@ void tst_FilledTextFieldRender::rendersValidatorOnEditInvalidState()
     QVERIFY(widget.hasAutomaticValidationError());
     QVERIFY(widget.hasErrorState());
 
-    verifyOrUpdateBaseline(
-        captureWidget(widget),
-        QStringLiteral("filledtextfield_validator_on_edit_invalid_light.png"));
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("filledtextfield_validator_on_edit_invalid_light.png"));
 }
 
 void tst_FilledTextFieldRender::rendersValidatorOnCommitInvalidState()
@@ -186,9 +191,65 @@ void tst_FilledTextFieldRender::rendersValidatorOnCommitInvalidState()
 
     const QImage image = field->grab().toImage();
     QVERIFY(!image.isNull());
-    verifyOrUpdateBaseline(
-        image,
-        QStringLiteral("filledtextfield_validator_on_commit_invalid_light.png"));
+    verifyOrUpdateBaseline(image, QStringLiteral("filledtextfield_validator_on_commit_invalid_light.png"));
+}
+
+void tst_FilledTextFieldRender::rendersPrefixSuffixState()
+{
+    QtMaterial::QtMaterialFilledTextField widget;
+    widget.setLabelText(QStringLiteral("Price"));
+    widget.setPrefixText(QStringLiteral("$"));
+    widget.setSuffixText(QStringLiteral("USD"));
+    widget.setText(QStringLiteral("149"));
+    widget.setSupportingText(QStringLiteral("Taxes excluded"));
+
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("filledtextfield_prefix_suffix_light.png"));
+}
+
+void tst_FilledTextFieldRender::rendersLeadingTrailingIconsState()
+{
+    QtMaterial::QtMaterialFilledTextField widget;
+    widget.setLabelText(QStringLiteral("Search"));
+    widget.setText(QStringLiteral("dashboard"));
+    widget.setLeadingIcon(widget.style()->standardIcon(QStyle::SP_FileDialogContentsView));
+    widget.setTrailingIcon(widget.style()->standardIcon(QStyle::SP_ArrowForward));
+
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("filledtextfield_icons_light.png"));
+}
+
+void tst_FilledTextFieldRender::rendersPasswordToggleState()
+{
+    QtMaterial::QtMaterialFilledTextField widget;
+    widget.setLabelText(QStringLiteral("Password"));
+    widget.setEchoMode(QLineEdit::Password);
+    widget.setEndActionMode(
+        QtMaterial::QtMaterialOutlinedTextField::EndActionMode::TogglePasswordVisibility);
+    widget.setText(QStringLiteral("secret123"));
+    widget.setSupportingText(QStringLiteral("Use a strong password"));
+
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("filledtextfield_password_light.png"));
+}
+
+void tst_FilledTextFieldRender::rendersCustomTrailingActionState()
+{
+    QtMaterial::QtMaterialFilledTextField widget;
+    widget.setLabelText(QStringLiteral("Search"));
+    widget.setText(QStringLiteral("material"));
+    widget.setSupportingText(QStringLiteral("Run a query"));
+    widget.setEndActionMode(
+        QtMaterial::QtMaterialOutlinedTextField::EndActionMode::CustomTrailingAction);
+    widget.setTrailingActionText(QStringLiteral("Go"));
+    widget.setTrailingActionToolTip(QStringLiteral("Run search"));
+
+    const QImage image = captureWidget(widget);
+    QVERIFY(!image.isNull());
+    verifyOrUpdateBaseline(image, QStringLiteral("filledtextfield_custom_trailing_action_light.png"));
 }
 
 QTEST_MAIN(tst_FilledTextFieldRender)

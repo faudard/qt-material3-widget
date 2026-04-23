@@ -19,6 +19,7 @@
 #include "qtmaterial/specs/qtmaterialtextfieldspec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
+#include "qtmaterial/specs/qtmaterialsnackbarspec.h"
 namespace QtMaterial {
 class QTMATERIAL3_SPECS_EXPORT SpecFactory
 {
@@ -48,6 +49,7 @@ public:
     AutocompletePopupSpec autocompletePopupSpec(const Theme& theme) const;
     DateFieldSpec dateFieldSpec(const Theme& theme) const;
     ListItemSpec listItemSpec(const Theme& theme) const;
+    SnackbarSpec snackbarSpec(const Theme& theme) const;
     // DividerSpec dividerSpec(const Theme& theme) const;
 private:
     int buttonHeightForDensity(Density density) const;

@@ -32,6 +32,13 @@ public:
         ValidatorOnCommit,
     };
 
+    enum class EndActionMode {
+        None,
+        ClearText,
+        TogglePasswordVisibility,
+        CustomTrailingAction,
+    };
+
     explicit QtMaterialOutlinedTextField(QWidget* parent = nullptr);
     ~QtMaterialOutlinedTextField() override;
 
@@ -75,19 +82,32 @@ public:
     bool hasErrorState() const noexcept;
     void setHasErrorState(bool value);
 
+    EndActionMode endActionMode() const noexcept;
+    void setEndActionMode(EndActionMode mode);
+
+    QIcon trailingActionIcon() const;
+    void setTrailingActionIcon(const QIcon& icon);
+
+    QString trailingActionText() const;
+    void setTrailingActionText(const QString& text);
+
+    QString trailingActionToolTip() const;
+    void setTrailingActionToolTip(const QString& text);
+
+    bool isTrailingActionVisibleWhenEmpty() const noexcept;
+    void setTrailingActionVisibleWhenEmpty(bool value);
+
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
+signals:
+    void trailingActionTriggered();
+    void clearTriggered();
+    void passwordVisibilityChanged(bool visible);
 
 protected:
     enum class ShellVariant {
         Outlined,
         Filled,
-    };
-
-    enum class EndActionMode {
-        None,
-        ClearText,
-        TogglePasswordVisibility,
     };
 
     void paintEvent(QPaintEvent* event) override;
@@ -113,7 +133,10 @@ private:
     void syncLineEditPalette();
     bool currentFocusState() const;
 
-    EndActionMode currentEndActionMode() const noexcept;
+    EndActionMode resolvedEndActionMode() const noexcept;
+    bool shouldShowClearAction() const noexcept;
+    bool shouldShowCustomTrailingAction() const noexcept;
+
     int iconExtent() const;
     int effectiveLeadingReserve() const;
     int effectiveTrailingReserve() const;
@@ -171,6 +194,12 @@ private:
     bool m_manualErrorState = false;
     bool m_automaticValidationError = false;
     bool m_validationCommitted = false;
+
+    EndActionMode m_endActionMode = EndActionMode::None;
+    QIcon m_trailingActionIcon;
+    QString m_trailingActionText;
+    QString m_trailingActionToolTip;
+    bool m_trailingActionVisibleWhenEmpty = false;
 
     QtMaterialTransitionController* m_transition = nullptr;
 };
