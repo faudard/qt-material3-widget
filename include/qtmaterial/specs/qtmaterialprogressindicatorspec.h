@@ -12,13 +12,14 @@ namespace QtMaterial {
 struct QTMATERIAL3_SPECS_EXPORT ProgressIndicatorSpec {
     ProgressIndicatorSpec();
     ProgressIndicatorSpec(const ProgressIndicatorSpec& other);
-    ProgressIndicatorSpec(ProgressIndicatorSpec&& other);
+    ProgressIndicatorSpec(ProgressIndicatorSpec&& other) noexcept;
     ProgressIndicatorSpec& operator=(const ProgressIndicatorSpec& other);
-    ProgressIndicatorSpec& operator=(ProgressIndicatorSpec&& other);
+    ProgressIndicatorSpec& operator=(ProgressIndicatorSpec&& other) noexcept;
     ~ProgressIndicatorSpec();
 
     QColor activeColor;
     QColor trackColor;
+    QColor stopIndicatorColor;
 
     ColorRole activeColorRole = ColorRole::Primary;
     ColorRole trackColorRole = ColorRole::SurfaceVariant;
@@ -29,7 +30,8 @@ struct QTMATERIAL3_SPECS_EXPORT ProgressIndicatorSpec {
 
     int linearHeight = 4;
     int circularStrokeWidth = 4;
-    int trackGap = 0;
+    int trackGap = 4;
+    int stopIndicatorSize = 4;
     int animationDurationMs = 1400;
 };
 

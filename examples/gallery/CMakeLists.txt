@@ -13,6 +13,7 @@ qtmaterial3_add_example_executable(qtmaterial3_gallery
     gallerywindow.cpp
     gallerywindow.h
     pages/buttonspage.cpp
+    pages/progressindicatorspage.cpp
     pages/buttonspage.h
     pages/datapage.cpp
     pages/datapage.h

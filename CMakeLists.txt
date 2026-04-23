@@ -358,7 +358,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     include/qtmaterial/widgets/data/qtmateriallist.h
     include/qtmaterial/widgets/data/qtmaterialdivider.h
     include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h
-    include/qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h
+    include/qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h
     include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h 
     include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h
 )

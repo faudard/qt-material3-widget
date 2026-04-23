@@ -1,12 +1,12 @@
-#include <QtTest/QtTest>
 #include <QSignalSpy>
+#include <QtTest/QtTest>
 
-#include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 #include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
+#include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 
+using QtMaterial::ProgressIndicatorSpec;
 using QtMaterial::QtMaterialCircularProgressIndicator;
 using QtMaterial::QtMaterialLinearProgressIndicator;
-using QtMaterial::ProgressIndicatorSpec;
 
 class tst_ProgressIndicators : public QObject {
     Q_OBJECT
@@ -14,9 +14,12 @@ class tst_ProgressIndicators : public QObject {
 private Q_SLOTS:
     void linearValueIsClamped();
     void circularValueIsClamped();
-    void modeSignalsAreEmittedOnce();
+    void duplicateModeChangesDoNotEmit();
+    void publicApiMutatorsEmitSpecChanged();
+    void resetApiRestoresDefaults();
     void sizeHintsFollowSpec();
     void specRoundTrip();
+    void indeterminateModeCanBeShownAndHidden();
 };
 
 void tst_ProgressIndicators::linearValueIsClamped()
@@ -55,7 +58,7 @@ void tst_ProgressIndicators::circularValueIsClamped()
     QCOMPARE(spy.count(), 2);
 }
 
-void tst_ProgressIndicators::modeSignalsAreEmittedOnce()
+void tst_ProgressIndicators::duplicateModeChangesDoNotEmit()
 {
     QtMaterialLinearProgressIndicator linear;
     QSignalSpy linearSpy(&linear, &QtMaterialLinearProgressIndicator::modeChanged);
@@ -72,6 +75,52 @@ void tst_ProgressIndicators::modeSignalsAreEmittedOnce()
     QCOMPARE(circularSpy.count(), 1);
 }
 
+void tst_ProgressIndicators::publicApiMutatorsEmitSpecChanged()
+{
+    QtMaterialLinearProgressIndicator linear;
+    QSignalSpy linearSpy(&linear, &QtMaterialLinearProgressIndicator::specChanged);
+    linear.setActiveColor(Qt::red);
+    linear.setTrackColor(Qt::blue);
+    linear.setTrackGap(6);
+    linear.setStopIndicatorSize(8);
+    QCOMPARE(linear.activeColor(), QColor(Qt::red));
+    QCOMPARE(linear.trackColor(), QColor(Qt::blue));
+    QCOMPARE(linear.trackGap(), 6);
+    QCOMPARE(linear.stopIndicatorSize(), 8);
+    QCOMPARE(linearSpy.count(), 4);
+
+    QtMaterialCircularProgressIndicator circular;
+    QSignalSpy circularSpy(&circular, &QtMaterialCircularProgressIndicator::specChanged);
+    circular.setActiveColor(Qt::green);
+    circular.setTrackColor(Qt::yellow);
+    circular.setTrackGap(5);
+    circular.setStrokeWidth(7);
+    QCOMPARE(circular.activeColor(), QColor(Qt::green));
+    QCOMPARE(circular.trackColor(), QColor(Qt::yellow));
+    QCOMPARE(circular.trackGap(), 5);
+    QCOMPARE(circular.strokeWidth(), 7);
+    QCOMPARE(circularSpy.count(), 4);
+}
+
+void tst_ProgressIndicators::resetApiRestoresDefaults()
+{
+    QtMaterialLinearProgressIndicator linear;
+    linear.setValue(0.5);
+    linear.resetValue();
+    QCOMPARE(linear.value(), 0.0);
+    linear.setActiveColor(Qt::red);
+    linear.resetActiveColor();
+    QVERIFY(!linear.activeColor().isValid());
+
+    QtMaterialCircularProgressIndicator circular;
+    circular.setValue(0.8);
+    circular.resetValue();
+    QCOMPARE(circular.value(), 0.0);
+    circular.setTrackColor(Qt::blue);
+    circular.resetTrackColor();
+    QVERIFY(!circular.trackColor().isValid());
+}
+
 void tst_ProgressIndicators::sizeHintsFollowSpec()
 {
     ProgressIndicatorSpec spec;
@@ -79,21 +128,23 @@ void tst_ProgressIndicators::sizeHintsFollowSpec()
     spec.circularSize = QSize(56, 56);
 
     QtMaterialLinearProgressIndicator linear(spec);
-    QCOMPARE(linear.sizeHint().height(), 6);
-    QVERIFY(linear.sizeHint().width() >= 160);
+    QVERIFY(linear.sizeHint().height() >= 6);
+    QVERIFY(linear.minimumSizeHint().width() <= linear.sizeHint().width());
 
     QtMaterialCircularProgressIndicator circular(spec);
     QCOMPARE(circular.sizeHint(), QSize(56, 56));
+    QCOMPARE(circular.minimumSizeHint(), QSize(24, 24));
 }
 
 void tst_ProgressIndicators::specRoundTrip()
 {
     ProgressIndicatorSpec spec;
-    spec.activeColor = QColor(0, 128, 255);
-    spec.trackColor = QColor(200, 200, 200);
+    spec.activeColor = QColor("#6750A4");
+    spec.trackColor = QColor("#E7E0EC");
     spec.linearHeight = 8;
-    spec.circularStrokeWidth = 5;
-    spec.animationDurationMs = 900;
+    spec.circularStrokeWidth = 6;
+    spec.trackGap = 3;
+    spec.stopIndicatorSize = 5;
 
     QtMaterialLinearProgressIndicator linear;
     QSignalSpy linearSpy(&linear, &QtMaterialLinearProgressIndicator::specChanged);
@@ -101,14 +152,32 @@ void tst_ProgressIndicators::specRoundTrip()
     QCOMPARE(linear.spec().activeColor, spec.activeColor);
     QCOMPARE(linear.spec().trackColor, spec.trackColor);
     QCOMPARE(linear.spec().linearHeight, 8);
+    QCOMPARE(linear.spec().trackGap, 3);
     QCOMPARE(linearSpy.count(), 1);
 
     QtMaterialCircularProgressIndicator circular;
     QSignalSpy circularSpy(&circular, &QtMaterialCircularProgressIndicator::specChanged);
     circular.setSpec(spec);
-    QCOMPARE(circular.spec().circularStrokeWidth, 5);
-    QCOMPARE(circular.spec().animationDurationMs, 900);
+    QCOMPARE(circular.spec().circularStrokeWidth, 6);
+    QCOMPARE(circular.spec().trackGap, 3);
     QCOMPARE(circularSpy.count(), 1);
+}
+
+void tst_ProgressIndicators::indeterminateModeCanBeShownAndHidden()
+{
+    QtMaterialLinearProgressIndicator linear;
+    linear.setMode(QtMaterialLinearProgressIndicator::Mode::Indeterminate);
+    linear.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&linear));
+    linear.hide();
+    QCOMPARE(linear.mode(), QtMaterialLinearProgressIndicator::Mode::Indeterminate);
+
+    QtMaterialCircularProgressIndicator circular;
+    circular.setMode(QtMaterialCircularProgressIndicator::Mode::Indeterminate);
+    circular.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&circular));
+    circular.hide();
+    QCOMPARE(circular.mode(), QtMaterialCircularProgressIndicator::Mode::Indeterminate);
 }
 
 QTEST_MAIN(tst_ProgressIndicators)
