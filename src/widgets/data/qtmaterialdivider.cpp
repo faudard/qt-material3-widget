@@ -1,20 +1,20 @@
 #include "qtmaterial/widgets/data/qtmaterialdivider.h"
 
 #include <QEvent>
-#include <QPaintEvent>
 #include <QPainter>
+#include <QPaintEvent>
 #include <QPalette>
 
 namespace QtMaterial {
 
-QtMaterialDivider::QtMaterialDivider(QWidget* parent)
+QtMaterialDivider::QtMaterialDivider(QWidget *parent)
     : QWidget(parent)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents);
     setOrientation(Qt::Horizontal);
 }
 
-QtMaterialDivider::QtMaterialDivider(Qt::Orientation orientation, QWidget* parent)
+QtMaterialDivider::QtMaterialDivider(Qt::Orientation orientation, QWidget *parent)
     : QWidget(parent)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -22,6 +22,16 @@ QtMaterialDivider::QtMaterialDivider(Qt::Orientation orientation, QWidget* paren
 }
 
 QtMaterialDivider::~QtMaterialDivider() = default;
+
+QtMaterialDivider *QtMaterialDivider::horizontal(QWidget *parent)
+{
+    return new QtMaterialDivider(Qt::Horizontal, parent);
+}
+
+QtMaterialDivider *QtMaterialDivider::vertical(QWidget *parent)
+{
+    return new QtMaterialDivider(Qt::Vertical, parent);
+}
 
 Qt::Orientation QtMaterialDivider::orientation() const noexcept
 {
@@ -83,6 +93,52 @@ void QtMaterialDivider::setTrailingInset(int value)
     update();
 }
 
+int QtMaterialDivider::thickness() const noexcept
+{
+    return m_thickness;
+}
+
+void QtMaterialDivider::setThickness(int value)
+{
+    const int normalized = qMax(1, value);
+    if (m_thickness == normalized) {
+        return;
+    }
+
+    m_thickness = normalized;
+
+    if (m_orientation == Qt::Horizontal) {
+        setMinimumSize(0, m_thickness);
+    } else {
+        setMinimumSize(m_thickness, 0);
+    }
+
+    emit thicknessChanged(m_thickness);
+    updateGeometry();
+    update();
+}
+
+QColor QtMaterialDivider::color() const noexcept
+{
+    return m_color;
+}
+
+void QtMaterialDivider::setColor(const QColor &color)
+{
+    if (m_color == color) {
+        return;
+    }
+
+    m_color = color;
+    emit colorChanged(m_color);
+    update();
+}
+
+void QtMaterialDivider::resetColor()
+{
+    setColor(QColor());
+}
+
 QSize QtMaterialDivider::sizeHint() const
 {
     return (m_orientation == Qt::Horizontal)
@@ -97,23 +153,22 @@ QSize QtMaterialDivider::minimumSizeHint() const
         : QSize(m_thickness, 0);
 }
 
-QColor QtMaterialDivider::dividerColor() const
+QColor QtMaterialDivider::resolvedColor() const
 {
-    const QColor mid = palette().color(QPalette::Mid);
-    if (mid.isValid()) {
-        return mid;
+    if (m_color.isValid()) {
+        return m_color;
     }
 
-    return QColor(0, 0, 0, 31);
+    return palette().color(QPalette::Mid);
 }
 
-void QtMaterialDivider::paintEvent(QPaintEvent*)
+void QtMaterialDivider::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, false);
 
     const int thickness = qMax(1, m_thickness);
-    const QColor color = dividerColor();
+    const QColor color = resolvedColor();
 
     if (m_orientation == Qt::Horizontal) {
         const int x = qMax(0, m_leadingInset);
@@ -132,7 +187,7 @@ void QtMaterialDivider::paintEvent(QPaintEvent*)
     }
 }
 
-void QtMaterialDivider::changeEvent(QEvent* event)
+void QtMaterialDivider::changeEvent(QEvent *event)
 {
     QWidget::changeEvent(event);
 
