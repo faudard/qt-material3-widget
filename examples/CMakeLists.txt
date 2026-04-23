@@ -6,6 +6,7 @@ option(QTMATERIAL3_BUILD_CONSUMER_EXAMPLES
 add_subdirectory(theme-playground)
 add_subdirectory(core-playground)
 add_subdirectory(gallery)
+add_subdirectory(theme-studio)
 
 if(QTMATERIAL3_BUILD_CONSUMER_EXAMPLES)
     add_subdirectory(minimal-consumer)

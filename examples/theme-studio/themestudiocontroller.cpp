@@ -1,7 +1,9 @@
 #include "themestudiocontroller.h"
 
 #include <QColor>
+#include <QJsonDocument>
 
+#include "themepresetcatalog.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 
 using namespace QtMaterial;
@@ -18,6 +20,7 @@ ThemeStudioController::ThemeStudioController(QObject* parent)
                 m_pendingOptions = ThemeManager::instance().options();
                 emit pendingOptionsChanged(m_pendingOptions);
                 emit themeApplied(theme);
+                emitThemeJson();
             });
 }
 
@@ -41,6 +44,11 @@ QString ThemeStudioController::currentFilePath() const noexcept
     return m_currentFilePath;
 }
 
+QString ThemeStudioController::currentPresetId() const noexcept
+{
+    return m_currentPresetId;
+}
+
 void ThemeStudioController::setSeedColor(const QColor& color)
 {
     if (!color.isValid() || m_pendingOptions.sourceColor == color) {
@@ -48,6 +56,8 @@ void ThemeStudioController::setSeedColor(const QColor& color)
     }
 
     m_pendingOptions.sourceColor = color;
+    m_currentPresetId.clear();
+    emit currentPresetChanged(m_currentPresetId);
     setDirty(true);
     emit pendingOptionsChanged(m_pendingOptions);
 }
@@ -59,6 +69,8 @@ void ThemeStudioController::setMode(ThemeMode mode)
     }
 
     m_pendingOptions.mode = mode;
+    m_currentPresetId.clear();
+    emit currentPresetChanged(m_currentPresetId);
     setDirty(true);
     emit pendingOptionsChanged(m_pendingOptions);
 }
@@ -70,6 +82,8 @@ void ThemeStudioController::setContrast(ContrastMode contrast)
     }
 
     m_pendingOptions.contrast = contrast;
+    m_currentPresetId.clear();
+    emit currentPresetChanged(m_currentPresetId);
     setDirty(true);
     emit pendingOptionsChanged(m_pendingOptions);
 }
@@ -81,8 +95,32 @@ void ThemeStudioController::setExpressive(bool enabled)
     }
 
     m_pendingOptions.expressive = enabled;
+    m_currentPresetId.clear();
+    emit currentPresetChanged(m_currentPresetId);
     setDirty(true);
     emit pendingOptionsChanged(m_pendingOptions);
+}
+
+void ThemeStudioController::applyPreset(const QString& presetId)
+{
+    if (presetId.isEmpty()) {
+        return;
+    }
+
+    ThemePreset preset;
+    if (!ThemePresetCatalog::findPresetById(presetId, &preset)) {
+        return;
+    }
+
+    m_pendingOptions = preset.options;
+    m_currentPresetId = preset.id;
+    emit currentPresetChanged(m_currentPresetId);
+    emit pendingOptionsChanged(m_pendingOptions);
+
+    ThemeManager::instance().setThemeOptions(m_pendingOptions);
+    emit themeApplied(ThemeManager::instance().theme());
+    emitThemeJson();
+    setDirty(false);
 }
 
 void ThemeStudioController::applyPending()
@@ -90,17 +128,23 @@ void ThemeStudioController::applyPending()
     ThemeManager::instance().setThemeOptions(m_pendingOptions);
     setDirty(false);
     emit themeApplied(ThemeManager::instance().theme());
+    emitThemeJson();
 }
 
 void ThemeStudioController::resetToDefaults()
 {
-    m_pendingOptions = ThemeOptions {};
-    ThemeManager::instance().setThemeOptions(m_pendingOptions);
+    const ThemePreset preset = ThemePresetCatalog::defaultPreset();
+    m_pendingOptions = preset.options;
+    m_currentPresetId = preset.id;
     m_currentFilePath.clear();
 
+    ThemeManager::instance().setThemeOptions(m_pendingOptions);
+
+    emit currentPresetChanged(m_currentPresetId);
     emit pendingOptionsChanged(m_pendingOptions);
     emit currentFilePathChanged(m_currentFilePath);
     emit themeApplied(ThemeManager::instance().theme());
+    emitThemeJson();
     setDirty(false);
 }
 
@@ -112,10 +156,13 @@ bool ThemeStudioController::importJsonFile(const QString& path, QString* errorSt
     }
 
     m_currentFilePath = path;
+    m_currentPresetId.clear();
     syncFromThemeManager();
 
+    emit currentPresetChanged(m_currentPresetId);
     emit currentFilePathChanged(m_currentFilePath);
     emit themeApplied(ThemeManager::instance().theme());
+    emitThemeJson();
     setDirty(false);
     return true;
 }
@@ -139,4 +186,11 @@ void ThemeStudioController::syncFromThemeManager()
 {
     m_pendingOptions = ThemeManager::instance().options();
     emit pendingOptionsChanged(m_pendingOptions);
+    emitThemeJson();
+}
+
+void ThemeStudioController::emitThemeJson()
+{
+    emit themeJsonChanged(QString::fromUtf8(
+        ThemeManager::instance().exportThemeJson(QJsonDocument::Indented)));
 }

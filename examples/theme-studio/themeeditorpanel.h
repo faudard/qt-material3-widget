@@ -2,7 +2,11 @@
 
 #include <QWidget>
 
-#include "qtmaterial/theme/qtmaterialthemeoptions.h"
+namespace QtMaterial {
+enum class ThemeMode : int;
+enum class ContrastMode : int;
+class ThemeOptions;
+}
 
 class QPushButton;
 class QComboBox;
@@ -25,6 +29,7 @@ private slots:
 private:
     ThemeStudioController* m_controller {};
 
+    QComboBox* m_presetCombo {};
     QLabel* m_seedPreview {};
     QPushButton* m_seedButton {};
     QComboBox* m_modeCombo {};

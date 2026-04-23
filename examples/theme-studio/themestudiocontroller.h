@@ -17,12 +17,14 @@ public:
     const QtMaterial::Theme& currentTheme() const noexcept;
     bool isDirty() const noexcept;
     QString currentFilePath() const noexcept;
+    QString currentPresetId() const noexcept;
 
 public slots:
     void setSeedColor(const QColor& color);
     void setMode(QtMaterial::ThemeMode mode);
     void setContrast(QtMaterial::ContrastMode contrast);
     void setExpressive(bool enabled);
+    void applyPreset(const QString& presetId);
 
     void applyPending();
     void resetToDefaults();
@@ -33,15 +35,19 @@ public slots:
 signals:
     void pendingOptionsChanged(const QtMaterial::ThemeOptions& options);
     void themeApplied(const QtMaterial::Theme& theme);
+    void themeJsonChanged(const QString& json);
     void dirtyStateChanged(bool dirty);
     void currentFilePathChanged(const QString& path);
+    void currentPresetChanged(const QString& presetId);
     void errorOccurred(const QString& message);
 
 private:
     void setDirty(bool dirty);
     void syncFromThemeManager();
+    void emitThemeJson();
 
     QtMaterial::ThemeOptions m_pendingOptions;
     bool m_dirty {false};
     QString m_currentFilePath;
+    QString m_currentPresetId;
 };

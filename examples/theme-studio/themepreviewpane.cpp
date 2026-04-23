@@ -8,7 +8,12 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
 
+#include "themecolorrolesview.h"
+#include "themecompareview.h"
+#include "themejsonview.h"
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include "qtmaterial/theme/qtmaterialtheme.h"
+#include "qtmaterial/theme/qtmaterialthemeoptions.h"
 
 using namespace QtMaterial;
 
@@ -17,11 +22,23 @@ ThemePreviewPane::ThemePreviewPane(QWidget* parent)
     , m_tabs(new QTabWidget(this))
 {
     m_overviewPage = createOverviewPage();
+    m_colorsPage = createColorsPage();
+    m_jsonPage = createJsonPage();
+    m_comparePage = createComparePage();
+
     m_tabs->addTab(m_overviewPage, tr("Overview"));
+    m_tabs->addTab(m_colorsPage, tr("Colors"));
+    m_tabs->addTab(m_jsonPage, tr("JSON"));
+    m_tabs->addTab(m_comparePage, tr("Compare"));
 
     auto* root = new QVBoxLayout(this);
     root->setContentsMargins(0, 0, 0, 0);
     root->addWidget(m_tabs);
+}
+
+ThemeJsonView* ThemePreviewPane::jsonView() const noexcept
+{
+    return m_jsonView;
 }
 
 QWidget* ThemePreviewPane::createOverviewPage()
@@ -74,6 +91,42 @@ QWidget* ThemePreviewPane::createOverviewPage()
     return page;
 }
 
+QWidget* ThemePreviewPane::createColorsPage()
+{
+    auto* page = new QWidget(this);
+    auto* root = new QVBoxLayout(page);
+    root->setContentsMargins(0, 0, 0, 0);
+
+    m_colorRolesView = new ThemeColorRolesView(page);
+    root->addWidget(m_colorRolesView);
+
+    return page;
+}
+
+QWidget* ThemePreviewPane::createJsonPage()
+{
+    auto* page = new QWidget(this);
+    auto* root = new QVBoxLayout(page);
+    root->setContentsMargins(0, 0, 0, 0);
+
+    m_jsonView = new ThemeJsonView(page);
+    root->addWidget(m_jsonView);
+
+    return page;
+}
+
+QWidget* ThemePreviewPane::createComparePage()
+{
+    auto* page = new QWidget(this);
+    auto* root = new QVBoxLayout(page);
+    root->setContentsMargins(0, 0, 0, 0);
+
+    m_compareView = new ThemeCompareView(page);
+    root->addWidget(m_compareView);
+
+    return page;
+}
+
 void ThemePreviewPane::applyTheme(const Theme& theme)
 {
     const auto& scheme = theme.colorScheme();
@@ -102,25 +155,41 @@ void ThemePreviewPane::applyTheme(const Theme& theme)
         " border-radius: 20px;"
         " min-height: 40px;"
         " padding: 8px 16px;"
-        "}"
-    ).arg(surface.name(), onSurface.name()));
+        "}").arg(surface.name(), onSurface.name()));
 
     m_filledButton->setStyleSheet(QStringLiteral(
-        "QPushButton { background-color: %1; color: %2; border: none; }"
-    ).arg(primary.name(), onPrimary.name()));
+        "QPushButton { background-color: %1; color: %2; border: none; }")
+        .arg(primary.name(), onPrimary.name()));
 
     m_tonalButton->setStyleSheet(QStringLiteral(
-        "QPushButton { background-color: %1; color: %2; border: none; }"
-    ).arg(secondaryContainer.name(), onSecondaryContainer.name()));
+        "QPushButton { background-color: %1; color: %2; border: none; }")
+        .arg(secondaryContainer.name(), onSecondaryContainer.name()));
 
     m_textButton->setStyleSheet(QStringLiteral(
-        "QPushButton { background-color: transparent; color: %1; border: none; }"
-    ).arg(primary.name()));
+        "QPushButton { background-color: transparent; color: %1; border: none; }")
+        .arg(primary.name()));
+
+    if (m_colorRolesView) {
+        m_colorRolesView->applyTheme(theme);
+    }
+    if (m_jsonView) {
+        m_jsonView->applyTheme(theme);
+    }
+    if (m_compareView) {
+        m_compareView->applyTheme(theme);
+    }
+}
+
+void ThemePreviewPane::setCompareOptions(const ThemeOptions& options)
+{
+    if (m_compareView) {
+        m_compareView->setBaseOptions(options);
+    }
 }
 
 void ThemePreviewPane::setColorChip(QFrame* chip, const QColor& fill, const QColor& border)
 {
     chip->setStyleSheet(QStringLiteral(
-        "QFrame { background-color: %1; border: 1px solid %2; border-radius: 8px; }"
-    ).arg(fill.name(), border.name()));
+        "QFrame { background-color: %1; border: 1px solid %2; border-radius: 8px; }")
+        .arg(fill.name(), border.name()));
 }

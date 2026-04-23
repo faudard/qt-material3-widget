@@ -18,6 +18,14 @@ qtmaterial3_add_example_executable(qtmaterial3_theme_studio
     themeeditorpanel.h
     themepreviewpane.cpp
     themepreviewpane.h
+    themecolorrolesview.cpp
+    themecolorrolesview.h
+    themejsonview.cpp
+    themejsonview.h
+    themepresetcatalog.cpp
+    themepresetcatalog.h
+    themecompareview.cpp
+    themecompareview.h
 )
 
 target_link_libraries(qtmaterial3_theme_studio PRIVATE
