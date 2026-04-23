@@ -24,10 +24,6 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
     setAttribute(Qt::WA_TranslucentBackground, true);
     hide();
 
-    if (parentWidget()) {
-        setHostWidget(parentWidget());
-    }
-
     m_label = new QLabel(this);
     m_label->setWordWrap(true);
     m_label->setTextInteractionFlags(Qt::NoTextInteraction);
@@ -284,7 +280,7 @@ void QtMaterialSnackbar::syncGeometryToHost()
     QWidget* host = hostWidget();
     ensureSpecResolved();
 
-    if (!host || !m_specPtr) {
+    if (!host || !m_specPtr || !m_layout || !m_label || !m_actionButton || !m_dismissButton) {
         return;
     }
 
@@ -340,29 +336,26 @@ void QtMaterialSnackbar::invalidateResolvedSpec()
 void QtMaterialSnackbar::applyResolvedTheme()
 {
     ensureSpecResolved();
-    if (!m_specPtr) {
+    if (!m_specPtr || !m_layout || !m_label || !m_actionButton || !m_dismissButton) {
         return;
     }
 
     m_layout->setContentsMargins(m_specPtr->contentPadding);
     m_layout->setSpacing(m_specPtr->actionSpacing);
 
-    QColor textColor = m_specPtr->textColor;
-    textColor.setAlphaF(textColor.alphaF() * qMax(progress(), 1.0));
-
     m_label->setStyleSheet(QStringLiteral(
-        "background: transparent; color: %1;")
-        .arg(m_specPtr->textColor.name(QColor::HexArgb)));
+                               "background: transparent; color: %1;")
+                               .arg(m_specPtr->textColor.name(QColor::HexArgb)));
 
     m_actionButton->setMinimumWidth(m_specPtr->actionMinWidth);
     m_actionButton->setStyleSheet(QStringLiteral(
-        "QPushButton { background: transparent; border: none; color: %1; padding: 8px 12px; }")
-        .arg(m_specPtr->actionColor.name(QColor::HexArgb)));
+                                      "QPushButton { background: transparent; border: none; color: %1; padding: 8px 12px; }")
+                                      .arg(m_specPtr->actionColor.name(QColor::HexArgb)));
 
     m_dismissButton->setFixedSize(m_specPtr->dismissButtonSize, m_specPtr->dismissButtonSize);
     m_dismissButton->setStyleSheet(QStringLiteral(
-        "QPushButton { background: transparent; border: none; color: %1; }")
-        .arg(m_specPtr->dismissIconColor.name(QColor::HexArgb)));
+                                       "QPushButton { background: transparent; border: none; color: %1; }")
+                                       .arg(m_specPtr->dismissIconColor.name(QColor::HexArgb)));
 }
 
 void QtMaterialSnackbar::applyRequestToUi()
