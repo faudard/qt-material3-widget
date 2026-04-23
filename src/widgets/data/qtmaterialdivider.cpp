@@ -1,8 +1,9 @@
 #include "qtmaterial/widgets/data/qtmaterialdivider.h"
 
 #include <QEvent>
+#include <QPaintEvent>
 #include <QPainter>
-#include <QSizePolicy>
+#include <QPalette>
 
 namespace QtMaterial {
 
@@ -37,12 +38,13 @@ void QtMaterialDivider::setOrientation(Qt::Orientation orientation)
 
     if (m_orientation == Qt::Horizontal) {
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        setMinimumSize(0, 1);
+        setMinimumSize(0, m_thickness);
     } else {
         setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-        setMinimumSize(1, 0);
+        setMinimumSize(m_thickness, 0);
     }
 
+    emit orientationChanged(m_orientation);
     updateGeometry();
     update();
 }
@@ -54,11 +56,13 @@ int QtMaterialDivider::leadingInset() const noexcept
 
 void QtMaterialDivider::setLeadingInset(int value)
 {
-    if (m_leadingInset == value) {
+    const int normalized = qMax(0, value);
+    if (m_leadingInset == normalized) {
         return;
     }
 
-    m_leadingInset = qMax(0, value);
+    m_leadingInset = normalized;
+    emit leadingInsetChanged(m_leadingInset);
     update();
 }
 
@@ -69,22 +73,38 @@ int QtMaterialDivider::trailingInset() const noexcept
 
 void QtMaterialDivider::setTrailingInset(int value)
 {
-    if (m_trailingInset == value) {
+    const int normalized = qMax(0, value);
+    if (m_trailingInset == normalized) {
         return;
     }
 
-    m_trailingInset = qMax(0, value);
+    m_trailingInset = normalized;
+    emit trailingInsetChanged(m_trailingInset);
     update();
 }
 
 QSize QtMaterialDivider::sizeHint() const
 {
-    return (m_orientation == Qt::Horizontal) ? QSize(64, 1) : QSize(1, 64);
+    return (m_orientation == Qt::Horizontal)
+        ? QSize(64, m_thickness)
+        : QSize(m_thickness, 64);
 }
 
 QSize QtMaterialDivider::minimumSizeHint() const
 {
-    return QSize(1, 1);
+    return (m_orientation == Qt::Horizontal)
+        ? QSize(0, m_thickness)
+        : QSize(m_thickness, 0);
+}
+
+QColor QtMaterialDivider::dividerColor() const
+{
+    const QColor mid = palette().color(QPalette::Mid);
+    if (mid.isValid()) {
+        return mid;
+    }
+
+    return QColor(0, 0, 0, 31);
 }
 
 void QtMaterialDivider::paintEvent(QPaintEvent*)
@@ -92,26 +112,38 @@ void QtMaterialDivider::paintEvent(QPaintEvent*)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, false);
 
+    const int thickness = qMax(1, m_thickness);
+    const QColor color = dividerColor();
+
     if (m_orientation == Qt::Horizontal) {
-        const int x = m_leadingInset;
-        const int w = qMax(0, width() - m_leadingInset - m_trailingInset);
-        painter.fillRect(QRect(x, 0, w, 1), palette().mid());
+        const int x = qMax(0, m_leadingInset);
+        const int trailing = qMax(0, m_trailingInset);
+        const int w = qMax(0, width() - x - trailing);
+        const int y = qMax(0, (height() - thickness) / 2);
+
+        painter.fillRect(QRect(x, y, w, thickness), color);
     } else {
-        const int y = m_leadingInset;
-        const int h = qMax(0, height() - m_leadingInset - m_trailingInset);
-        painter.fillRect(QRect(0, y, 1, h), palette().mid());
+        const int y = qMax(0, m_leadingInset);
+        const int trailing = qMax(0, m_trailingInset);
+        const int h = qMax(0, height() - y - trailing);
+        const int x = qMax(0, (width() - thickness) / 2);
+
+        painter.fillRect(QRect(x, y, thickness, h), color);
     }
 }
 
 void QtMaterialDivider::changeEvent(QEvent* event)
 {
     QWidget::changeEvent(event);
-    update();
-}
 
-void QtMaterialDivider::ensureSpecResolved() const
-{
-    m_specDirty = false;
+    switch (event->type()) {
+    case QEvent::PaletteChange:
+    case QEvent::StyleChange:
+        update();
+        break;
+    default:
+        break;
+    }
 }
 
 } // namespace QtMaterial

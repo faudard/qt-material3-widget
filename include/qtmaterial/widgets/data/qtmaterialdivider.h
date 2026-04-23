@@ -1,21 +1,19 @@
 #pragma once
 
 #include <QWidget>
-#include <Qt>
+#include <QSize>
 
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
-struct DividerSpec;
-class Theme;
-
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDivider : public QWidget
 {
     Q_OBJECT
-    Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation)
-    Q_PROPERTY(int leadingInset READ leadingInset WRITE setLeadingInset)
-    Q_PROPERTY(int trailingInset READ trailingInset WRITE setTrailingInset)
+
+    Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
+    Q_PROPERTY(int leadingInset READ leadingInset WRITE setLeadingInset NOTIFY leadingInsetChanged)
+    Q_PROPERTY(int trailingInset READ trailingInset WRITE setTrailingInset NOTIFY trailingInsetChanged)
 
 public:
     explicit QtMaterialDivider(QWidget *parent = nullptr);
@@ -34,18 +32,22 @@ public:
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
+Q_SIGNALS:
+    void orientationChanged(Qt::Orientation orientation);
+    void leadingInsetChanged(int value);
+    void trailingInsetChanged(int value);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void changeEvent(QEvent *event) override;
 
 private:
-    void ensureSpecResolved() const;
+    QColor dividerColor() const;
 
-    mutable bool m_specDirty = true;
-    mutable QtMaterial::DividerSpec *m_cachedSpecPtr = nullptr; // patch-direction placeholder
     Qt::Orientation m_orientation = Qt::Horizontal;
     int m_leadingInset = 0;
     int m_trailingInset = 0;
+    int m_thickness = 1;
 };
 
-}
+} // namespace QtMaterial

@@ -50,7 +50,7 @@ public:
     DateFieldSpec dateFieldSpec(const Theme& theme) const;
     ListItemSpec listItemSpec(const Theme& theme) const;
     SnackbarSpec snackbarSpec(const Theme& theme) const;
-    // DividerSpec dividerSpec(const Theme& theme) const;
+    DividerSpec dividerSpec(const Theme& theme) const;
 private:
     int buttonHeightForDensity(Density density) const;
 };

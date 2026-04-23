@@ -320,10 +320,17 @@ SnackbarSpec SpecFactory::snackbarSpec(const Theme& theme) const
     return spec;
 }
 
-// DividerSpec SpecFactory::dividerSpec(const Theme& theme) const
-// {
-//     DividerSpec spec;
-//     spec.color = theme.colorScheme().color(ColorRole::OutlineVariant);
-//     return spec;
-// }
+DividerSpec SpecFactory::dividerSpec(const Theme& theme) const
+{
+    DividerSpec spec;
+    spec.color = theme.colorScheme().color(ColorRole::OutlineVariant);
+    spec.insetColor = spec.color;
+    spec.shapeRole = ShapeRole::None;
+    spec.orientation = Qt::Horizontal;
+    spec.margins = QMargins(0, 0, 0, 0);
+    spec.thickness = 1;
+    spec.leadingInset = 0;
+    spec.trailingInset = 0;
+    return spec;
+}
 } // namespace QtMaterial
