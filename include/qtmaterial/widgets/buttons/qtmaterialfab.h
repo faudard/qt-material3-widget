@@ -22,6 +22,9 @@ namespace QtMaterial {
  * Because this variant is icon-only, applications should provide an
  * accessibleName() and usually a tooltip that describes the promoted action.
  *
+ * Interaction feedback, including state-layer opacity, ripple clipping and elevated hover/press
+ * transitions, is inherited from QtMaterialFilledButton and remains spec-driven.
+ *
  * The color variant defaults to QtMaterialFabVariant::Primary. Variant changes
  * affect colors only; sizing, shape, elevation and motion remain spec-driven.
  */

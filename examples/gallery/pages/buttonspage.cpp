@@ -118,7 +118,8 @@ ButtonsPage::ButtonsPage(QWidget* parent)
     root->addWidget(sectionTitle(QStringLiteral("Floating action buttons"), this));
     root->addWidget(helperText(
         QStringLiteral("FAB is icon-only and intended for one promoted action. Extended FAB can be text-only "
-                       "or icon + text, and should expand horizontally according to its label."),
+                       "or icon + text, and should expand horizontally according to its label. "
+                       "Hover, keyboard-focus and press the examples to check motion and interaction elevation."),
         this));
 
     auto* fabGrid = new QGridLayout();

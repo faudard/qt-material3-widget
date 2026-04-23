@@ -29,6 +29,9 @@ namespace QtMaterial {
  * button semantics. Applications may still call setAccessibleName() when the
  * visible label is abbreviated or when a richer screen-reader label is needed.
  *
+ * Interaction feedback, including state-layer opacity, ripple clipping and elevated hover/press
+ * transitions, is inherited from QtMaterialFilledButton and remains spec-driven.
+ *
  * The color variant defaults to QtMaterialFabVariant::Primary. Variant changes
  * affect colors only; content-derived width and touch target remain spec-driven.
  */

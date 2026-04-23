@@ -185,6 +185,28 @@ Add Doxygen comments to each button header explaining:
 - size policy and density interaction
 - theming hooks and spec resolution behavior
 
+
+### FAB interaction and motion
+
+FAB and Extended FAB reuse the filled-button interaction pipeline:
+
+- state-layer opacity is animated through the existing button motion token
+- ripple clipping follows the resolved FAB or Extended FAB container path
+- focus ring is painted on the resolved visual container
+- elevated FAB specs receive an animated interaction shadow on hover, focus and press
+- disabled FABs suppress interaction elevation and keep the disabled container/content colors
+
+The interaction elevation is intentionally internal: applications should continue to use
+`setFabVariant(...)`, theme tokens and density settings rather than overriding paint behavior.
+
+Suggested manual checks in the gallery:
+
+- hover each FAB and verify the elevation transition is smooth
+- press and release each FAB and verify the pressed feedback is stronger than hover
+- keyboard-focus FABs and verify the focus ring remains visible
+- verify disabled FABs do not animate
+- verify Extended FAB labels remain readable while the state layer and ripple are active
+
 ### FAB color variants
 
 `QtMaterialFab` and `QtMaterialExtendedFab` expose a shared `QtMaterialFabVariant` enum for Material 3 color families:
