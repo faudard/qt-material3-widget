@@ -25,7 +25,9 @@ These classes live under:
 
 ### `QtMaterial::QtMaterialAbstractButton`
 
-The main reusable button base. It provides:
+The main reusable button base.
+
+It provides:
 
 - density handling
 - interaction-state tracking
@@ -37,7 +39,9 @@ The main reusable button base. It provides:
 
 ### `QtMaterial::QtMaterialTextButton`
 
-A higher-level base used by text-bearing button variants. It adds:
+A higher-level base used by text-bearing button variants.
+
+It adds:
 
 - spec resolution for button visuals
 - size hint computation
@@ -73,6 +77,45 @@ The current public header exposes:
 - spec invalidation
 - ripple integration
 
+### `QtMaterial::QtMaterialFab`
+
+The floating action button is the compact promoted-action variant.
+
+Expected behavior in this library:
+
+- icon-first content model
+- circular visual container sized from the FAB spec
+- touch target enforced independently from the visible diameter
+- inherits filled-button interaction, ripple, and theming behavior
+
+Example:
+
+```cpp
+QtMaterial::QtMaterialFab *fab = new QtMaterial::QtMaterialFab(this);
+fab->setIcon(QIcon(QStringLiteral(":/icons/add.svg")));
+```
+
+### `QtMaterial::QtMaterialExtendedFab`
+
+The extended floating action button is the promoted-action variant that carries a label,
+optionally paired with an icon.
+
+Expected behavior in this library:
+
+- accepts text-only or icon-plus-text content
+- derives height from the resolved extended FAB spec
+- derives width from padding, optional icon, optional spacing, and label width
+- keeps the Material touch target guarantees through the resolved button spec
+- inherits filled-button interaction, ripple, and theming behavior
+
+Example:
+
+```cpp
+QtMaterial::QtMaterialExtendedFab *fab =
+    new QtMaterial::QtMaterialExtendedFab(QIcon(QStringLiteral(":/icons/edit.svg")),
+                                          QStringLiteral("Compose"), this);
+```
+
 ## Recommended documentation conventions
 
 For each button class, the generated API page should eventually answer five questions clearly:
@@ -87,17 +130,17 @@ For each button class, the generated API page should eventually answer five ques
 
 ```cpp
 #include <qtmaterial/widgets/buttons/qtmaterialfilledbutton.h>
-#include <qtmaterial/widgets/buttons/qtmaterialiconbutton.h>
-#include <qtmaterial/widgets/buttons/qtmaterialtextbutton.h>
+#include <qtmaterial/widgets/buttons/qtmaterialfab.h>
+#include <qtmaterial/widgets/buttons/qtmaterialextendedfab.h>
 ```
 
 ## Material 3 references
 
 Use these upstream references for behavior and semantics:
 
-- buttons overview: <https://m3.material.io/components/buttons/overview>
-- shape guidance: <https://m3.material.io/styles/shape>
-- motion guidance: <https://m3.material.io/styles/motion/overview/how-it-works>
+- buttons overview:
+- shape guidance:
+- motion guidance:
 
 ## Next documentation step
 

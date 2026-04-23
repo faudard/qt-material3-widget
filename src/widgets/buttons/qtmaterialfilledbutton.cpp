@@ -2,6 +2,7 @@
 
 #include <QEvent>
 #include <QPainter>
+#include <QPaintEvent>
 #include <QResizeEvent>
 
 #include "private/qtmaterialbuttonrenderhelper_p.h"
@@ -47,6 +48,7 @@ void QtMaterialFilledButton::changeEvent(QEvent* event)
     if (event->type() == QEvent::FontChange || event->type() == QEvent::StyleChange) {
         invalidateLayoutCache();
     }
+
     QtMaterialTextButton::changeEvent(event);
 }
 
@@ -59,12 +61,13 @@ ButtonSpec QtMaterialFilledButton::resolveButtonSpec() const
 void QtMaterialFilledButton::invalidateLayoutCache()
 {
     m_layoutDirty = true;
+    updateGeometry();
+    update();
 }
 
 void QtMaterialFilledButton::ensureLayoutResolved() const
 {
     ensureSpecResolved();
-
     if (!m_layoutDirty) {
         return;
     }
@@ -108,7 +111,8 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
 
     const qreal layerOpacity = animatedStateLayerOpacity();
     if (layerOpacity > 0.0) {
-        QtMaterialStateLayerPainter::paintPath(&painter, m_cachedContainerPath, m_spec.stateLayerColor, layerOpacity);
+        QtMaterialStateLayerPainter::paintPath(&painter, m_cachedContainerPath,
+                                               m_spec.stateLayerColor, layerOpacity);
     }
 
     if (m_ripple) {
@@ -124,10 +128,13 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
 
     const QColor textColor = isEnabled() ? m_spec.labelColor : m_spec.disabledLabelColor;
     const QColor iconColor = isEnabled() ? m_spec.iconColor : m_spec.disabledLabelColor;
-    ButtonRenderHelper::paintContentLayout(&painter, this, m_spec, layout, textColor, iconColor, resolvedFont);
+    ButtonRenderHelper::paintContentLayout(&painter, this, m_spec, layout, textColor, iconColor,
+                                           resolvedFont);
 
     if (interactionState().isFocused()) {
-        QtMaterialFocusIndicator::paintRectFocusRing(&painter, m_cachedVisualRect, m_spec.focusRingColor, m_cachedCornerRadius, 2.0);
+        QtMaterialFocusIndicator::paintRectFocusRing(&painter, m_cachedVisualRect,
+                                                     m_spec.focusRingColor, m_cachedCornerRadius,
+                                                     2.0);
     }
 }
 

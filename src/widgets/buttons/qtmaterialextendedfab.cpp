@@ -3,9 +3,9 @@
 #include <QFontMetrics>
 
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
-#include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 
 namespace QtMaterial {
+namespace {
 
 ButtonSpec extendedFabToButtonSpec(const FabSpec& fab)
 {
@@ -28,23 +28,24 @@ ButtonSpec extendedFabToButtonSpec(const FabSpec& fab)
     return spec;
 }
 
+} // namespace
 
 QtMaterialExtendedFab::QtMaterialExtendedFab(QWidget* parent)
-    : QtMaterialFilledButton(parent)
+    : QtMaterialExtendedFab(QIcon(), QString(), parent)
 {
-    setCheckable(false);
 }
 
 QtMaterialExtendedFab::QtMaterialExtendedFab(const QString& text, QWidget* parent)
-    : QtMaterialFilledButton(parent)
+    : QtMaterialExtendedFab(QIcon(), text, parent)
 {
-    setCheckable(false);
 }
 
-QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& text, QWidget* parent)
+QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& text,
+                                             QWidget* parent)
     : QtMaterialFilledButton(parent)
 {
     setIcon(icon);
+    setText(text);
     setCheckable(false);
 }
 
@@ -59,7 +60,13 @@ ButtonSpec QtMaterialExtendedFab::resolveButtonSpec() const
 QSize QtMaterialExtendedFab::sizeHint() const
 {
     const ButtonSpec spec = resolveButtonSpec();
-    const QFontMetrics fm(font());
+
+    QFont resolvedFont = font();
+    if (theme().typography().contains(spec.labelTypeRole)) {
+        resolvedFont = theme().typography().style(spec.labelTypeRole).font;
+    }
+
+    const QFontMetrics fm(resolvedFont);
     const int textWidth = text().isEmpty() ? 0 : fm.horizontalAdvance(text());
     const int iconWidth = icon().isNull() ? 0 : spec.iconSize;
     const int spacing = (!icon().isNull() && !text().isEmpty()) ? spec.iconSpacing : 0;
