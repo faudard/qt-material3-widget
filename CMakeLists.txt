@@ -197,6 +197,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     src/specs/qtmaterialautocompletepopupspec.cpp
     src/specs/qtmaterialdatefieldspec.cpp
     src/specs/qtmaterialsnackbarspec.cpp
+    src/specs/qtmaterialprogressindicatorspec.cpp
 )
 
 set(QTMATERIAL3_SPECS_HEADERS
@@ -219,6 +220,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     include/qtmaterial/specs/qtmaterialdatefieldspec.h
     include/qtmaterial/specs/qtmaterialspecfactory.h
     include/qtmaterial/specs/qtmaterialsnackbarspec.h
+    include/qtmaterial/specs/qtmaterialprogressindicatorspec.h
 )
 
 qtm3_add_library(qtmaterial3_specs SHARED
@@ -326,6 +328,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     src/widgets/data/qtmaterialdivider.cpp
     src/widgets/surfaces/qtmaterialsnackbar.cpp
     src/widgets/surfaces/qtmaterialsnackbarhost.cpp
+    src/widgets/progress/qtmateriallinearprogressindicator.cpp src/widgets/progress/qtmaterialcircularprogressindicator.cpp
 )
 
 set(QTMATERIAL3_WIDGETS_HEADERS
@@ -356,6 +359,8 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     include/qtmaterial/widgets/data/qtmaterialdivider.h
     include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h
     include/qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h
+    include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h 
+    include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h
 )
 
 qtm3_add_library(qtmaterial3_widgets SHARED
