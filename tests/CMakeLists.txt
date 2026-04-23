@@ -72,4 +72,5 @@ qtm3_add_test(tst_abstractbutton_state core/tst_abstractbutton_state.cpp qtmater
 # qtm3_add_test(tst_overlaysurface core/tst_overlaysurface.cpp qtmaterial3_core)
 #qtm3_add_test(tst_selectioncontrol_layout core/tst_selectioncontrol_layout.cpp qtmaterial3_core)
 qtm3_add_test(tst_inputcontrol core/tst_inputcontrol.cpp qtmaterial3_core)
+qtm3_add_test(tst_scrimwidget effects/tst_scrimwidget.cpp qtmaterial3_effects)
 # qtm3_add_test(tst_filledtonalbutton_render tests/render/buttons/tst_filledtonalbutton_render.cpp qtmaterial3_widgets)

@@ -17,6 +17,37 @@
 
 namespace QtMaterial {
 
+namespace {
+
+QPainterPath topRoundedSheetPath(const QRectF& r, qreal radius)
+{
+    QPainterPath path;
+
+    if (!r.isValid()) {
+        return path;
+    }
+
+    const qreal rr = qMin<qreal>(radius, r.height() / 2.0);
+
+    const qreal left = r.left();
+    const qreal top = r.top();
+    const qreal right = r.right();
+    const qreal bottom = r.bottom();
+
+    path.moveTo(left, bottom);
+    path.lineTo(left, top + rr);
+    path.quadTo(left, top, left + rr, top);
+    path.lineTo(right - rr, top);
+    path.quadTo(right, top, right, top + rr);
+    path.lineTo(right, bottom);
+    path.lineTo(left, bottom);
+    path.closeSubpath();
+
+    return path;
+}
+
+} // namespace
+
 QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     : QtMaterialOverlaySurface(parent)
 {
@@ -78,6 +109,7 @@ QtMaterialBottomSheet::~QtMaterialBottomSheet()
     if (QWidget *host = parentWidget()) {
         host->removeEventFilter(this);
     }
+
     if (m_scrim) {
         m_scrim->removeEventFilter(this);
     }
@@ -211,6 +243,7 @@ bool QtMaterialBottomSheet::eventFilter(QObject *watched, QEvent *event)
             if (const auto *mouseEvent = static_cast<QMouseEvent *>(event)) {
                 if (!m_cachedVisualRect.contains(mouseEvent->pos())) {
                     close();
+                    return true;
                 }
             }
             break;
@@ -345,12 +378,13 @@ void QtMaterialBottomSheet::ensureGeometryResolved() const
 
     m_cachedVisualRect = QRect(0, y, hostRect.width(), sheetHeight);
     m_cachedContentRect = m_cachedVisualRect.adjusted(0, m_specPtr->topPadding, 0, 0);
-    m_cachedCornerRadius = 28.0; // TODO: dériver depuis shapeRole
 
-    m_cachedContainerPath = QPainterPath();
-    m_cachedContainerPath.addRoundedRect(m_cachedVisualRect,
-                                         m_cachedCornerRadius,
-                                         m_cachedCornerRadius);
+    const int specRadius = theme().shapes().radius(m_specPtr->shapeRole);
+    const qreal resolvedRadius = specRadius > 0 ? qreal(specRadius) : 28.0;
+    m_cachedCornerRadius = qMin<qreal>(resolvedRadius, sheetHeight / 2.0);
+
+    m_cachedContainerPath = topRoundedSheetPath(QRectF(m_cachedVisualRect),
+                                                m_cachedCornerRadius);
 
     m_geometryDirty = false;
 }

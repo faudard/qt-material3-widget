@@ -8,8 +8,8 @@
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
 
 class QEvent;
+class QObject;
 class QKeyEvent;
-class QMouseEvent;
 class QResizeEvent;
 class QShowEvent;
 class QWidget;
