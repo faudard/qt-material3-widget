@@ -1,5 +1,6 @@
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 
+#include <QAccessible>
 #include <QEvent>
 #include <QPainter>
 #include <QPalette>
@@ -36,6 +37,8 @@ QtMaterialLinearProgressIndicator::QtMaterialLinearProgressIndicator(QWidget* pa
     initAnimation();
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setAttribute(Qt::WA_TransparentForMouseEvents);
+    setFocusPolicy(Qt::NoFocus);
+    updateAccessibility();
 }
 
 QtMaterialLinearProgressIndicator::QtMaterialLinearProgressIndicator(const ProgressIndicatorSpec& spec, QWidget* parent)
@@ -45,6 +48,8 @@ QtMaterialLinearProgressIndicator::QtMaterialLinearProgressIndicator(const Progr
     initAnimation();
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setAttribute(Qt::WA_TransparentForMouseEvents);
+    setFocusPolicy(Qt::NoFocus);
+    updateAccessibility();
 }
 
 QtMaterialLinearProgressIndicator::~QtMaterialLinearProgressIndicator() = default;
@@ -58,6 +63,7 @@ void QtMaterialLinearProgressIndicator::setValue(qreal value)
         return;
     }
     m_value = normalized;
+    updateAccessibility();
     emit valueChanged(m_value);
     update();
 }
@@ -73,6 +79,7 @@ void QtMaterialLinearProgressIndicator::setMode(Mode mode)
     }
     m_mode = mode;
     updateAnimationState();
+    updateAccessibility();
     emit modeChanged(m_mode);
     update();
 }
@@ -135,6 +142,7 @@ void QtMaterialLinearProgressIndicator::setSpec(const ProgressIndicatorSpec& spe
 {
     m_spec = spec;
     initAnimation();
+    updateAccessibility();
     emit specChanged();
     updateGeometry();
     update();
@@ -162,11 +170,14 @@ void QtMaterialLinearProgressIndicator::paintEvent(QPaintEvent*)
     QRectF track(r.left(), r.center().y() - h / 2.0, r.width(), h);
     const qreal radius = h / 2.0;
 
+    const QColor trackColor = isEnabled() ? resolvedTrackColor() : disabledColor(resolvedTrackColor());
+    const QColor activeColor = isEnabled() ? resolvedActiveColor() : disabledColor(resolvedActiveColor());
+
     painter.setPen(Qt::NoPen);
-    painter.setBrush(resolvedTrackColor());
+    painter.setBrush(trackColor);
     painter.drawRoundedRect(track, radius, radius);
 
-    painter.setBrush(resolvedActiveColor());
+    painter.setBrush(activeColor);
     if (m_mode == Mode::Determinate) {
         const qreal gap = m_value > 0.0 && m_value < 1.0 ? qMin<qreal>(m_spec.trackGap, track.width()) : 0.0;
         const qreal w = qMax<qreal>(0.0, track.width() * m_value - gap);
@@ -179,7 +190,7 @@ void QtMaterialLinearProgressIndicator::paintEvent(QPaintEvent*)
             painter.drawRoundedRect(active, radius, radius);
         }
         if (m_spec.stopIndicatorSize > 0 && m_value > 0.0 && m_value < 1.0) {
-            painter.setBrush(resolvedStopColor());
+            painter.setBrush(isEnabled() ? resolvedStopColor() : disabledColor(resolvedStopColor()));
             const qreal s = qMin<qreal>(m_spec.stopIndicatorSize, h);
             const qreal x = (m_invertedAppearance || layoutDirection() == Qt::RightToLeft) ? active.left() - gap / 2.0 : active.right() + gap / 2.0;
             painter.drawEllipse(QPointF(x, track.center().y()), s / 2.0, s / 2.0);
@@ -205,6 +216,11 @@ void QtMaterialLinearProgressIndicator::hideEvent(QHideEvent* event) { QWidget::
 void QtMaterialLinearProgressIndicator::changeEvent(QEvent* event)
 {
     QWidget::changeEvent(event);
+    if (event->type() == QEvent::EnabledChange) {
+        updateAnimationState();
+        updateAccessibility();
+        update();
+    }
     if (event->type() == QEvent::PaletteChange || event->type() == QEvent::StyleChange) {
         update();
     }
@@ -228,7 +244,7 @@ void QtMaterialLinearProgressIndicator::initAnimation()
 void QtMaterialLinearProgressIndicator::updateAnimationState()
 {
     if (!m_animation) return;
-    if (m_mode == Mode::Indeterminate && isVisible()) {
+    if (m_mode == Mode::Indeterminate && isVisible() && isEnabled()) {
         if (m_animation->state() != QVariantAnimation::Running) m_animation->start();
     } else {
         if (m_animation->state() != QVariantAnimation::Stopped) m_animation->stop();
@@ -236,8 +252,34 @@ void QtMaterialLinearProgressIndicator::updateAnimationState()
     }
 }
 
+void QtMaterialLinearProgressIndicator::updateAccessibility()
+{
+    if (accessibleName().isEmpty()) {
+        setAccessibleName(tr("Progress indicator"));
+    }
+
+    const QString state = isEnabled() ? tr("enabled") : tr("disabled");
+    if (m_mode == Mode::Indeterminate) {
+        setAccessibleDescription(tr("Linear progress indicator, indeterminate, %1").arg(state));
+    } else {
+        setAccessibleDescription(tr("Linear progress indicator, %1 percent, %2").arg(qRound(m_value * 100.0)).arg(state));
+    }
+
+#if QT_CONFIG(accessibility)
+    QAccessibleEvent event(this, QAccessible::DescriptionChanged);
+    QAccessible::updateAccessibility(&event);
+#endif
+}
+
 QColor QtMaterialLinearProgressIndicator::resolvedActiveColor() const { return m_spec.activeColor.isValid() ? m_spec.activeColor : fallbackActive(this); }
 QColor QtMaterialLinearProgressIndicator::resolvedTrackColor() const { return m_spec.trackColor.isValid() ? m_spec.trackColor : fallbackTrack(this); }
 QColor QtMaterialLinearProgressIndicator::resolvedStopColor() const { return m_spec.stopIndicatorColor.isValid() ? m_spec.stopIndicatorColor : resolvedActiveColor(); }
+QColor QtMaterialLinearProgressIndicator::disabledColor(const QColor& source) const
+{
+    QColor color = palette().color(QPalette::Disabled, QPalette::Text);
+    if (!color.isValid()) color = source;
+    color.setAlpha(qBound(40, source.alpha() / 2, 140));
+    return color;
+}
 
 } // namespace QtMaterial

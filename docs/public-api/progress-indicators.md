@@ -74,3 +74,23 @@ If the local gallery uses a central navigation registry, run the patch script an
 - size hints driven by `ProgressIndicatorSpec`;
 - full spec round-trip behavior;
 - show/hide safety for indeterminate mode.
+
+## Accessibility and disabled state
+
+Both progress widgets set a default `accessibleName` and keep `accessibleDescription` synchronized with the current mode, value and enabled state.
+
+Recommended application-level usage:
+
+```cpp
+auto* progress = new QtMaterial::QtMaterialLinearProgressIndicator(parent);
+progress->setAccessibleName(tr("File import progress"));
+progress->setValue(0.45);
+```
+
+When disabled, the widgets keep their value and mode but stop indeterminate animation and render with disabled palette colors. This makes the component safe in forms, dialogs and paused task flows.
+
+```cpp
+progress->setEnabled(false);
+```
+
+For dialogs, prefer a determinate linear indicator for known progress and a circular indeterminate indicator for short activity context. The gallery includes a simulated import dialog using both variants.

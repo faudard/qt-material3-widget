@@ -20,6 +20,8 @@ private Q_SLOTS:
     void sizeHintsFollowSpec();
     void specRoundTrip();
     void indeterminateModeCanBeShownAndHidden();
+    void accessibilityDescriptionTracksState();
+    void disabledStateIsStable();
 };
 
 void tst_ProgressIndicators::linearValueIsClamped()
@@ -178,6 +180,38 @@ void tst_ProgressIndicators::indeterminateModeCanBeShownAndHidden()
     QVERIFY(QTest::qWaitForWindowExposed(&circular));
     circular.hide();
     QCOMPARE(circular.mode(), QtMaterialCircularProgressIndicator::Mode::Indeterminate);
+}
+
+void tst_ProgressIndicators::accessibilityDescriptionTracksState()
+{
+    QtMaterialLinearProgressIndicator linear;
+    QVERIFY(!linear.accessibleName().isEmpty());
+    linear.setValue(0.64);
+    QVERIFY(linear.accessibleDescription().contains(QStringLiteral("64")));
+    linear.setMode(QtMaterialLinearProgressIndicator::Mode::Indeterminate);
+    QVERIFY(linear.accessibleDescription().contains(QStringLiteral("indeterminate")));
+
+    QtMaterialCircularProgressIndicator circular;
+    QVERIFY(!circular.accessibleName().isEmpty());
+    circular.setValue(0.25);
+    QVERIFY(circular.accessibleDescription().contains(QStringLiteral("25")));
+    circular.setEnabled(false);
+    QVERIFY(circular.accessibleDescription().contains(QStringLiteral("disabled")));
+}
+
+void tst_ProgressIndicators::disabledStateIsStable()
+{
+    QtMaterialLinearProgressIndicator linear;
+    linear.setMode(QtMaterialLinearProgressIndicator::Mode::Indeterminate);
+    linear.setEnabled(false);
+    QCOMPARE(linear.mode(), QtMaterialLinearProgressIndicator::Mode::Indeterminate);
+    QVERIFY(linear.accessibleDescription().contains(QStringLiteral("disabled")));
+
+    QtMaterialCircularProgressIndicator circular;
+    circular.setValue(0.5);
+    circular.setEnabled(false);
+    QCOMPARE(circular.value(), 0.5);
+    QVERIFY(circular.accessibleDescription().contains(QStringLiteral("disabled")));
 }
 
 QTEST_MAIN(tst_ProgressIndicators)

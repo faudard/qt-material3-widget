@@ -71,12 +71,16 @@ protected:
     void hideEvent(QHideEvent* event) override;
     void changeEvent(QEvent* event) override;
 
+private Q_SLOTS:
+    void updateAccessibility();
+
 private:
     void initAnimation();
     void updateAnimationState();
     QColor resolvedActiveColor() const;
     QColor resolvedTrackColor() const;
     QColor resolvedStopColor() const;
+    QColor disabledColor(const QColor& source) const;
 
     ProgressIndicatorSpec m_spec;
     qreal m_value = 0.0;
