@@ -74,3 +74,29 @@ qtm3_add_test(tst_abstractbutton_state core/tst_abstractbutton_state.cpp qtmater
 qtm3_add_test(tst_inputcontrol core/tst_inputcontrol.cpp qtmaterial3_core)
 qtm3_add_test(tst_scrimwidget effects/tst_scrimwidget.cpp qtmaterial3_effects)
 # qtm3_add_test(tst_filledtonalbutton_render tests/render/buttons/tst_filledtonalbutton_render.cpp qtmaterial3_widgets)
+
+qtm3_add_test(tst_textfieldshellhelper widgets/inputs/tst_textfieldshellhelper.cpp qtmaterial3_widgets)
+
+target_include_directories(tst_textfieldshellhelper PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/widgets/inputs/private
+)
+
+
+set(QTM3_CONSUMER_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/_installed_package")
+set(QTM3_CONSUMER_BINARY_DIR  "${CMAKE_CURRENT_BINARY_DIR}/_consumer_build")
+
+add_test(
+    NAME tst_installed_package_consumer
+    COMMAND
+        ${CMAKE_COMMAND}
+        -DREPO_BINARY_DIR=${CMAKE_BINARY_DIR}
+        -DTEST_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/consumer
+        -DTEST_BINARY_DIR=${QTM3_CONSUMER_BINARY_DIR}
+        -DINSTALL_PREFIX=${QTM3_CONSUMER_INSTALL_DIR}
+        -DBUILD_CONFIG=$<CONFIG>
+        -DDEFAULT_BUILD_CONFIG=${CMAKE_BUILD_TYPE}
+        -DGENERATOR_NAME=${CMAKE_GENERATOR}
+        -DGENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}
+        -DGENERATOR_TOOLSET=${CMAKE_GENERATOR_TOOLSET}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/consumer/run_installed_package_test.cmake
+)

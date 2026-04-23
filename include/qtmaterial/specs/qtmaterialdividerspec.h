@@ -9,7 +9,7 @@
 
 namespace QtMaterial {
 
-struct QTMATERIAL3_WIDGETS_EXPORT DividerSpec
+struct QTMATERIAL3_SPECS_EXPORT DividerSpec
 {
     DividerSpec();
     DividerSpec(const DividerSpec& other);
