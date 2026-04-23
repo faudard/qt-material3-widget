@@ -103,7 +103,8 @@ ButtonsPage::ButtonsPage(QWidget* parent)
     auto* icon = new QtMaterial::QtMaterialIconButton(this);
     icon->setIcon(standardIcon(this, QStyle::SP_DialogOpenButton));
     icon->setAccessibleName(QStringLiteral("Open"));
-    icon->setToolTip(QStringLiteral("Icon button"));
+    icon->setAccessibleDescription(QStringLiteral("Opens a file using an icon-only Material button."));
+    icon->setToolTip(QStringLiteral("Open"));
 
     addLabeledWidget(buttonGrid, 0, 0, QStringLiteral("Text"), text, this);
     addLabeledWidget(buttonGrid, 0, 1, QStringLiteral("Filled"), filled, this);
@@ -129,29 +130,65 @@ ButtonsPage::ButtonsPage(QWidget* parent)
 
     auto* fab = new QtMaterial::QtMaterialFab(composeIcon, this);
     fab->setAccessibleName(QStringLiteral("Create"));
-    fab->setToolTip(QStringLiteral("FAB: icon-only promoted action"));
+    fab->setAccessibleDescription(QStringLiteral("Creates a new item. This icon-only FAB must expose its action through accessibility metadata."));
+    fab->setToolTip(QStringLiteral("Create"));
 
     auto* disabledFab = new QtMaterial::QtMaterialFab(addIcon, this);
-    disabledFab->setAccessibleName(QStringLiteral("Disabled create"));
-    disabledFab->setToolTip(QStringLiteral("Disabled FAB"));
+    disabledFab->setAccessibleName(QStringLiteral("Create unavailable"));
+    disabledFab->setAccessibleDescription(QStringLiteral("Disabled icon-only FAB example."));
+    disabledFab->setToolTip(QStringLiteral("Create unavailable"));
     disabledFab->setEnabled(false);
 
     auto* extendedText = new QtMaterial::QtMaterialExtendedFab(QStringLiteral("Compose"), this);
     extendedText->setAccessibleName(QStringLiteral("Compose"));
-    extendedText->setToolTip(QStringLiteral("Extended FAB: text-only"));
+    extendedText->setAccessibleDescription(QStringLiteral("Text-only extended FAB example."));
+    extendedText->setToolTip(QStringLiteral("Compose"));
 
     auto* extendedIconText = new QtMaterial::QtMaterialExtendedFab(composeIcon, QStringLiteral("Compose"), this);
     extendedIconText->setAccessibleName(QStringLiteral("Compose"));
-    extendedIconText->setToolTip(QStringLiteral("Extended FAB: icon and text"));
+    extendedIconText->setAccessibleDescription(QStringLiteral("Extended FAB example with leading icon and visible label."));
+    extendedIconText->setToolTip(QStringLiteral("Compose"));
 
     auto* extendedLong = new QtMaterial::QtMaterialExtendedFab(addIcon, QStringLiteral("Create document"), this);
     extendedLong->setAccessibleName(QStringLiteral("Create document"));
-    extendedLong->setToolTip(QStringLiteral("Extended FAB: longer label"));
+    extendedLong->setAccessibleDescription(QStringLiteral("Extended FAB example with a longer visible label."));
+    extendedLong->setToolTip(QStringLiteral("Create document"));
 
     auto* disabledExtended = new QtMaterial::QtMaterialExtendedFab(composeIcon, QStringLiteral("Disabled"), this);
-    disabledExtended->setAccessibleName(QStringLiteral("Disabled compose"));
-    disabledExtended->setToolTip(QStringLiteral("Disabled Extended FAB"));
+    disabledExtended->setAccessibleName(QStringLiteral("Compose unavailable"));
+    disabledExtended->setAccessibleDescription(QStringLiteral("Disabled extended FAB example."));
+    disabledExtended->setToolTip(QStringLiteral("Compose unavailable"));
     disabledExtended->setEnabled(false);
+
+    auto* secondaryFab = new QtMaterial::QtMaterialFab(composeIcon, this);
+    secondaryFab->setFabVariant(QtMaterial::QtMaterialFabVariant::Secondary);
+    secondaryFab->setAccessibleName(QStringLiteral("Create secondary"));
+    secondaryFab->setToolTip(QStringLiteral("Create secondary"));
+
+    auto* tertiaryFab = new QtMaterial::QtMaterialFab(composeIcon, this);
+    tertiaryFab->setFabVariant(QtMaterial::QtMaterialFabVariant::Tertiary);
+    tertiaryFab->setAccessibleName(QStringLiteral("Create tertiary"));
+    tertiaryFab->setToolTip(QStringLiteral("Create tertiary"));
+
+    auto* surfaceFab = new QtMaterial::QtMaterialFab(composeIcon, this);
+    surfaceFab->setFabVariant(QtMaterial::QtMaterialFabVariant::Surface);
+    surfaceFab->setAccessibleName(QStringLiteral("Create surface"));
+    surfaceFab->setToolTip(QStringLiteral("Create surface"));
+
+    auto* secondaryExtended = new QtMaterial::QtMaterialExtendedFab(composeIcon, QStringLiteral("Secondary"), this);
+    secondaryExtended->setFabVariant(QtMaterial::QtMaterialFabVariant::Secondary);
+    secondaryExtended->setAccessibleName(QStringLiteral("Secondary action"));
+    secondaryExtended->setToolTip(QStringLiteral("Secondary action"));
+
+    auto* tertiaryExtended = new QtMaterial::QtMaterialExtendedFab(composeIcon, QStringLiteral("Tertiary"), this);
+    tertiaryExtended->setFabVariant(QtMaterial::QtMaterialFabVariant::Tertiary);
+    tertiaryExtended->setAccessibleName(QStringLiteral("Tertiary action"));
+    tertiaryExtended->setToolTip(QStringLiteral("Tertiary action"));
+
+    auto* surfaceExtended = new QtMaterial::QtMaterialExtendedFab(composeIcon, QStringLiteral("Surface"), this);
+    surfaceExtended->setFabVariant(QtMaterial::QtMaterialFabVariant::Surface);
+    surfaceExtended->setAccessibleName(QStringLiteral("Surface action"));
+    surfaceExtended->setToolTip(QStringLiteral("Surface action"));
 
     addLabeledWidget(fabGrid, 0, 0, QStringLiteral("FAB"), fab, this);
     addLabeledWidget(fabGrid, 0, 1, QStringLiteral("Disabled FAB"), disabledFab, this);
@@ -159,6 +196,12 @@ ButtonsPage::ButtonsPage(QWidget* parent)
     addLabeledWidget(fabGrid, 1, 0, QStringLiteral("Extended icon + text"), extendedIconText, this);
     addLabeledWidget(fabGrid, 1, 1, QStringLiteral("Extended long label"), extendedLong, this);
     addLabeledWidget(fabGrid, 1, 2, QStringLiteral("Disabled Extended"), disabledExtended, this);
+    addLabeledWidget(fabGrid, 2, 0, QStringLiteral("Secondary FAB"), secondaryFab, this);
+    addLabeledWidget(fabGrid, 2, 1, QStringLiteral("Tertiary FAB"), tertiaryFab, this);
+    addLabeledWidget(fabGrid, 2, 2, QStringLiteral("Surface FAB"), surfaceFab, this);
+    addLabeledWidget(fabGrid, 3, 0, QStringLiteral("Secondary Extended"), secondaryExtended, this);
+    addLabeledWidget(fabGrid, 3, 1, QStringLiteral("Tertiary Extended"), tertiaryExtended, this);
+    addLabeledWidget(fabGrid, 3, 2, QStringLiteral("Surface Extended"), surfaceExtended, this);
     root->addLayout(fabGrid);
 
     root->addStretch(1);

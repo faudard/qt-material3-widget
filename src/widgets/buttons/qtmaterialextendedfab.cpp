@@ -3,9 +3,37 @@
 #include <QFontMetrics>
 
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/theme/qtmaterialtheme.h"
 
 namespace QtMaterial {
 namespace {
+
+void applyFabVariant(FabSpec& spec, const Theme& theme, QtMaterialFabVariant variant)
+{
+    const ColorScheme& colors = theme.colorScheme();
+
+    switch (variant) {
+    case QtMaterialFabVariant::Secondary:
+        spec.containerColor = colors.color(ColorRole::SecondaryContainer);
+        spec.iconColor = colors.color(ColorRole::OnSecondaryContainer);
+        break;
+    case QtMaterialFabVariant::Tertiary:
+        spec.containerColor = colors.color(ColorRole::TertiaryContainer);
+        spec.iconColor = colors.color(ColorRole::OnTertiaryContainer);
+        break;
+    case QtMaterialFabVariant::Surface:
+        spec.containerColor = colors.color(ColorRole::SurfaceContainerHigh);
+        spec.iconColor = colors.color(ColorRole::Primary);
+        break;
+    case QtMaterialFabVariant::Primary:
+    default:
+        spec.containerColor = colors.color(ColorRole::PrimaryContainer);
+        spec.iconColor = colors.color(ColorRole::OnPrimaryContainer);
+        break;
+    }
+
+    spec.stateLayerColor = spec.iconColor;
+}
 
 ButtonSpec extendedFabToButtonSpec(const FabSpec& fab)
 {
@@ -51,10 +79,28 @@ QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& t
 
 QtMaterialExtendedFab::~QtMaterialExtendedFab() = default;
 
+void QtMaterialExtendedFab::setFabVariant(QtMaterialFabVariant variant)
+{
+    if (m_variant == variant) {
+        return;
+    }
+
+    m_variant = variant;
+    invalidateResolvedSpec();
+    update();
+}
+
+QtMaterialFabVariant QtMaterialExtendedFab::fabVariant() const noexcept
+{
+    return m_variant;
+}
+
 ButtonSpec QtMaterialExtendedFab::resolveButtonSpec() const
 {
     SpecFactory factory;
-    return extendedFabToButtonSpec(factory.extendedFabSpec(theme(), density()));
+    FabSpec spec = factory.extendedFabSpec(theme(), density());
+    applyFabVariant(spec, theme(), m_variant);
+    return extendedFabToButtonSpec(spec);
 }
 
 QSize QtMaterialExtendedFab::sizeHint() const

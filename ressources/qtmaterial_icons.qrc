@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/icons/material">
+        <file alias="close.svg">icons/material/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="check_circle.svg">icons/material/check_circle_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="warning.svg">icons/material/warning_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="error.svg">icons/material/error_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="search.svg">icons/material/search_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="settings.svg">icons/material/settings_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="more_vert.svg">icons/material/more_vert_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="arrow_back_ios.svg">icons/material/arrow_back_ios_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="arrow_forward_ios.svg">icons/material/arrow_forward_ios_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="chevron_left.svg">icons/material/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="chevron_right.svg">icons/material/chevron_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="refresh.svg">icons/material/refresh_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="home.svg">icons/material/home_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="add.svg">icons/material/add_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file alias="add_circle.svg">icons/material/add_circle_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+    </qresource>
+</RCC>

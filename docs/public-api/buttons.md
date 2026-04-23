@@ -87,12 +87,21 @@ Expected behavior in this library:
 - circular visual container sized from the FAB spec
 - touch target enforced independently from the visible diameter
 - inherits filled-button interaction, ripple, and theming behavior
+- intentionally non-checkable
+
+Accessibility guidance:
+
+- because the compact FAB is icon-only, always set an accessible name
+- use a tooltip when the action is not already obvious from the surrounding UI
+- keep the accessible name action-oriented, for example `Create`, `Compose`, or `Add task`
 
 Example:
 
 ```cpp
 QtMaterial::QtMaterialFab *fab = new QtMaterial::QtMaterialFab(this);
 fab->setIcon(QIcon(QStringLiteral(":/icons/add.svg")));
+fab->setAccessibleName(QStringLiteral("Create"));
+fab->setToolTip(QStringLiteral("Create"));
 ```
 
 ### `QtMaterial::QtMaterialExtendedFab`
@@ -107,6 +116,13 @@ Expected behavior in this library:
 - derives width from padding, optional icon, optional spacing, and label width
 - keeps the Material touch target guarantees through the resolved button spec
 - inherits filled-button interaction, ripple, and theming behavior
+- intentionally non-checkable
+
+Accessibility guidance:
+
+- the visible label normally communicates the action to assistive technologies
+- set an explicit accessible name when the visible label is abbreviated or ambiguous
+- the leading icon should be treated as decorative unless the application needs a richer description
 
 Example:
 
@@ -114,7 +130,24 @@ Example:
 QtMaterial::QtMaterialExtendedFab *fab =
     new QtMaterial::QtMaterialExtendedFab(QIcon(QStringLiteral(":/icons/edit.svg")),
                                           QStringLiteral("Compose"), this);
+fab->setAccessibleName(QStringLiteral("Compose a new message"));
+fab->setToolTip(QStringLiteral("Compose"));
 ```
+
+## FAB accessibility checklist
+
+For every compact FAB used by an application:
+
+- provide an icon
+- provide `setAccessibleName(...)`
+- consider `setToolTip(...)` for discoverability
+- avoid relying on hidden text because `QtMaterialFab` intentionally clears text content
+
+For every extended FAB used by an application:
+
+- prefer a concise visible action label
+- add `setAccessibleName(...)` only when the visible text is not descriptive enough
+- keep disabled examples named so assistive technologies can still explain unavailable actions
 
 ## Recommended documentation conventions
 
@@ -151,3 +184,25 @@ Add Doxygen comments to each button header explaining:
 - state-layer and ripple behavior
 - size policy and density interaction
 - theming hooks and spec resolution behavior
+
+### FAB color variants
+
+`QtMaterialFab` and `QtMaterialExtendedFab` expose a shared `QtMaterialFabVariant` enum for Material 3 color families:
+
+| Variant | Container token | Content token | Intended use |
+| --- | --- | --- | --- |
+| `Primary` | `PrimaryContainer` | `OnPrimaryContainer` | Default promoted action. |
+| `Secondary` | `SecondaryContainer` | `OnSecondaryContainer` | Alternative promoted action when primary emphasis is too strong. |
+| `Tertiary` | `TertiaryContainer` | `OnTertiaryContainer` | Supporting promoted action with tertiary color emphasis. |
+| `Surface` | `SurfaceContainerHigh` | `Primary` | Lower-emphasis FAB placed on surface-heavy layouts. |
+
+Changing the variant affects colors only. Diameter, touch target, icon size, padding, spacing, shape, elevation and motion remain resolved from the same FAB or extended FAB spec.
+
+```cpp
+QtMaterial::QtMaterialFab* fab = new QtMaterial::QtMaterialFab(icon, parent);
+fab->setFabVariant(QtMaterial::QtMaterialFabVariant::Secondary);
+
+QtMaterial::QtMaterialExtendedFab* extended =
+    new QtMaterial::QtMaterialExtendedFab(icon, QStringLiteral("Compose"), parent);
+extended->setFabVariant(QtMaterial::QtMaterialFabVariant::Surface);
+```

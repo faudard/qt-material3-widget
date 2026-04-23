@@ -9,6 +9,10 @@ class tst_ExtendedFab : public QObject {
 private slots:
     void constructs();
     void constructsTextOnly();
+    void accessibleNameCanOverrideVisibleLabel();
+    void tooltipCanDescribePromotedAction();
+    void defaultVariantIsPrimary();
+    void canChangeVariantWithoutChangingSize();
     void sizeHintExpandsWithText();
     void sizeHintUpdatesAfterChangingText();
     void keyboardActivation();
@@ -25,6 +29,50 @@ void tst_ExtendedFab::constructsTextOnly()
 {
     QtMaterial::QtMaterialExtendedFab widget(QStringLiteral("Compose"));
     QCOMPARE(widget.text(), QStringLiteral("Compose"));
+}
+
+void tst_ExtendedFab::accessibleNameCanOverrideVisibleLabel()
+{
+    QtMaterial::QtMaterialExtendedFab widget(QStringLiteral("Compose"));
+
+    widget.setAccessibleName(QStringLiteral("Compose a new message"));
+
+    QCOMPARE(widget.text(), QStringLiteral("Compose"));
+    QCOMPARE(widget.accessibleName(), QStringLiteral("Compose a new message"));
+}
+
+void tst_ExtendedFab::tooltipCanDescribePromotedAction()
+{
+    QtMaterial::QtMaterialExtendedFab widget(QStringLiteral("Compose"));
+
+    widget.setToolTip(QStringLiteral("Compose a new message"));
+
+    QCOMPARE(widget.toolTip(), QStringLiteral("Compose a new message"));
+}
+
+void tst_ExtendedFab::defaultVariantIsPrimary()
+{
+    QtMaterial::QtMaterialExtendedFab widget(QStringLiteral("Compose"));
+
+    QCOMPARE(widget.fabVariant(), QtMaterial::QtMaterialFabVariant::Primary);
+}
+
+void tst_ExtendedFab::canChangeVariantWithoutChangingSize()
+{
+    QtMaterial::QtMaterialExtendedFab widget(QStringLiteral("Compose"));
+    const QSize initialSize = widget.sizeHint();
+
+    widget.setFabVariant(QtMaterial::QtMaterialFabVariant::Secondary);
+    QCOMPARE(widget.fabVariant(), QtMaterial::QtMaterialFabVariant::Secondary);
+    QCOMPARE(widget.sizeHint(), initialSize);
+
+    widget.setFabVariant(QtMaterial::QtMaterialFabVariant::Tertiary);
+    QCOMPARE(widget.fabVariant(), QtMaterial::QtMaterialFabVariant::Tertiary);
+    QCOMPARE(widget.sizeHint(), initialSize);
+
+    widget.setFabVariant(QtMaterial::QtMaterialFabVariant::Surface);
+    QCOMPARE(widget.fabVariant(), QtMaterial::QtMaterialFabVariant::Surface);
+    QCOMPARE(widget.sizeHint(), initialSize);
 }
 
 void tst_ExtendedFab::sizeHintExpandsWithText()

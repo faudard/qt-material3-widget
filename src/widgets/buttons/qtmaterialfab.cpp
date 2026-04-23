@@ -1,9 +1,37 @@
 #include "qtmaterial/widgets/buttons/qtmaterialfab.h"
 
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/theme/qtmaterialtheme.h"
 
 namespace QtMaterial {
 namespace {
+
+void applyFabVariant(FabSpec& spec, const Theme& theme, QtMaterialFabVariant variant)
+{
+    const ColorScheme& colors = theme.colorScheme();
+
+    switch (variant) {
+    case QtMaterialFabVariant::Secondary:
+        spec.containerColor = colors.color(ColorRole::SecondaryContainer);
+        spec.iconColor = colors.color(ColorRole::OnSecondaryContainer);
+        break;
+    case QtMaterialFabVariant::Tertiary:
+        spec.containerColor = colors.color(ColorRole::TertiaryContainer);
+        spec.iconColor = colors.color(ColorRole::OnTertiaryContainer);
+        break;
+    case QtMaterialFabVariant::Surface:
+        spec.containerColor = colors.color(ColorRole::SurfaceContainerHigh);
+        spec.iconColor = colors.color(ColorRole::Primary);
+        break;
+    case QtMaterialFabVariant::Primary:
+    default:
+        spec.containerColor = colors.color(ColorRole::PrimaryContainer);
+        spec.iconColor = colors.color(ColorRole::OnPrimaryContainer);
+        break;
+    }
+
+    spec.stateLayerColor = spec.iconColor;
+}
 
 ButtonSpec fabToButtonSpec(const FabSpec& fab)
 {
@@ -43,10 +71,28 @@ QtMaterialFab::QtMaterialFab(const QIcon& icon, QWidget* parent)
 
 QtMaterialFab::~QtMaterialFab() = default;
 
+void QtMaterialFab::setFabVariant(QtMaterialFabVariant variant)
+{
+    if (m_variant == variant) {
+        return;
+    }
+
+    m_variant = variant;
+    invalidateResolvedSpec();
+    update();
+}
+
+QtMaterialFabVariant QtMaterialFab::fabVariant() const noexcept
+{
+    return m_variant;
+}
+
 ButtonSpec QtMaterialFab::resolveButtonSpec() const
 {
     SpecFactory factory;
-    return fabToButtonSpec(factory.fabSpec(theme(), density()));
+    FabSpec spec = factory.fabSpec(theme(), density());
+    applyFabVariant(spec, theme(), m_variant);
+    return fabToButtonSpec(spec);
 }
 
 QSize QtMaterialFab::sizeHint() const

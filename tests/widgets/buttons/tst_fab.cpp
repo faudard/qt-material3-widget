@@ -9,6 +9,10 @@ class tst_Fab : public QObject {
 private slots:
     void constructs();
     void constructsWithIcon();
+    void accessibleNameCanDescribeIconOnlyAction();
+    void tooltipCanDescribeIconOnlyAction();
+    void defaultVariantIsPrimary();
+    void canChangeVariantWithoutChangingSize();
     void sizeHintIsStableForTextAndIconChanges();
     void keyboardActivation();
     void respectsTouchTargetSize();
@@ -32,6 +36,49 @@ void tst_Fab::constructsWithIcon()
     QVERIFY(!widget.icon().isNull());
     QVERIFY(widget.text().isEmpty());
     QVERIFY(!widget.isCheckable());
+}
+
+void tst_Fab::accessibleNameCanDescribeIconOnlyAction()
+{
+    QtMaterial::QtMaterialFab widget;
+
+    widget.setAccessibleName(QStringLiteral("Create"));
+
+    QCOMPARE(widget.accessibleName(), QStringLiteral("Create"));
+}
+
+void tst_Fab::tooltipCanDescribeIconOnlyAction()
+{
+    QtMaterial::QtMaterialFab widget;
+
+    widget.setToolTip(QStringLiteral("Create"));
+
+    QCOMPARE(widget.toolTip(), QStringLiteral("Create"));
+}
+
+void tst_Fab::defaultVariantIsPrimary()
+{
+    QtMaterial::QtMaterialFab widget;
+
+    QCOMPARE(widget.fabVariant(), QtMaterial::QtMaterialFabVariant::Primary);
+}
+
+void tst_Fab::canChangeVariantWithoutChangingSize()
+{
+    QtMaterial::QtMaterialFab widget;
+    const QSize initialSize = widget.sizeHint();
+
+    widget.setFabVariant(QtMaterial::QtMaterialFabVariant::Secondary);
+    QCOMPARE(widget.fabVariant(), QtMaterial::QtMaterialFabVariant::Secondary);
+    QCOMPARE(widget.sizeHint(), initialSize);
+
+    widget.setFabVariant(QtMaterial::QtMaterialFabVariant::Tertiary);
+    QCOMPARE(widget.fabVariant(), QtMaterial::QtMaterialFabVariant::Tertiary);
+    QCOMPARE(widget.sizeHint(), initialSize);
+
+    widget.setFabVariant(QtMaterial::QtMaterialFabVariant::Surface);
+    QCOMPARE(widget.fabVariant(), QtMaterial::QtMaterialFabVariant::Surface);
+    QCOMPARE(widget.sizeHint(), initialSize);
 }
 
 void tst_Fab::sizeHintIsStableForTextAndIconChanges()

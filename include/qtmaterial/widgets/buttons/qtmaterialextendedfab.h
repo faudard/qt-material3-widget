@@ -5,6 +5,7 @@
 #include <QString>
 
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialfabvariant.h"
 
 namespace QtMaterial {
 
@@ -23,6 +24,13 @@ namespace QtMaterial {
  * The widget is intentionally not checkable and uses the filled-button rendering
  * pipeline to keep state-layer, ripple and focus behavior consistent with the
  * rest of the button family.
+ *
+ * The visible text normally provides the accessible name through Qt's standard
+ * button semantics. Applications may still call setAccessibleName() when the
+ * visible label is abbreviated or when a richer screen-reader label is needed.
+ *
+ * The color variant defaults to QtMaterialFabVariant::Primary. Variant changes
+ * affect colors only; content-derived width and touch target remain spec-driven.
  */
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialExtendedFab : public QtMaterialFilledButton {
     Q_OBJECT
@@ -30,20 +38,39 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialExtendedFab : public QtMaterialFilled
 public:
     /**
      * @brief Creates an empty extended FAB.
+     *
+     * Provide text or an explicit accessible name before using an empty
+     * extended FAB in a real interface.
      */
     explicit QtMaterialExtendedFab(QWidget* parent = nullptr);
 
     /**
      * @brief Creates a text-only extended FAB initialized with @a text.
+     *
+     * The visible text also communicates the action to assistive technologies
+     * unless an explicit accessible name is set by the application.
      */
     explicit QtMaterialExtendedFab(const QString& text, QWidget* parent = nullptr);
 
     /**
      * @brief Creates an icon-plus-text extended FAB initialized with @a icon and @a text.
+     *
+     * The icon is decorative relative to the visible label unless the
+     * application assigns more specific accessibility metadata.
      */
     QtMaterialExtendedFab(const QIcon& icon, const QString& text, QWidget* parent = nullptr);
 
     ~QtMaterialExtendedFab() override;
+
+    /**
+     * @brief Sets the color variant used to resolve extended FAB color tokens.
+     */
+    void setFabVariant(QtMaterialFabVariant variant);
+
+    /**
+     * @brief Returns the current color variant.
+     */
+    QtMaterialFabVariant fabVariant() const noexcept;
 
     /**
      * @brief Returns the resolved extended FAB touch target expanded from content width.
@@ -60,6 +87,9 @@ protected:
      * @brief Resolves the Material extended FAB spec and adapts it to the filled-button renderer.
      */
     ButtonSpec resolveButtonSpec() const override;
+
+private:
+    QtMaterialFabVariant m_variant = QtMaterialFabVariant::Primary;
 };
 
 } // namespace QtMaterial
