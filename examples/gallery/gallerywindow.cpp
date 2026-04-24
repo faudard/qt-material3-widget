@@ -8,6 +8,7 @@
 #include "pages/navigationpage.h"
 #include "pages/selectionpage.h"
 #include "pages/surfacespage.h"
+#include "pages/progressindicatorspage.h"
 #include "themecontrols/themetoolbar.h"
 GalleryWindow::GalleryWindow(QWidget* parent) : QMainWindow(parent), m_tabs(new QTabWidget(this))
 {
@@ -22,6 +23,7 @@ GalleryWindow::GalleryWindow(QWidget* parent) : QMainWindow(parent), m_tabs(new 
     m_tabs->addTab(new InputsPage(central), QStringLiteral("Inputs"));
     m_tabs->addTab(new NavigationPage(central), QStringLiteral("Navigation"));
     m_tabs->addTab(new DataPage(central), QStringLiteral("Data"));
+    m_tabs->addTab(new QtMaterialGallery::ProgressIndicatorsPage(central), QStringLiteral("Progress"));
     setCentralWidget(central);
 }
 GalleryWindow::~GalleryWindow() = default;

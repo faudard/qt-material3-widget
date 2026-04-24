@@ -1,6 +1,5 @@
 #include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
 
-#include <QAccessible>
 #include <QEvent>
 #include <QPainter>
 #include <QPalette>
@@ -33,8 +32,6 @@ QtMaterialCircularProgressIndicator::QtMaterialCircularProgressIndicator(QWidget
     initAnimation();
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setAttribute(Qt::WA_TransparentForMouseEvents);
-    setFocusPolicy(Qt::NoFocus);
-    updateAccessibility();
 }
 
 QtMaterialCircularProgressIndicator::QtMaterialCircularProgressIndicator(const ProgressIndicatorSpec& spec, QWidget* parent)
@@ -44,8 +41,6 @@ QtMaterialCircularProgressIndicator::QtMaterialCircularProgressIndicator(const P
     initAnimation();
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setAttribute(Qt::WA_TransparentForMouseEvents);
-    setFocusPolicy(Qt::NoFocus);
-    updateAccessibility();
 }
 
 QtMaterialCircularProgressIndicator::~QtMaterialCircularProgressIndicator() = default;
@@ -56,7 +51,6 @@ void QtMaterialCircularProgressIndicator::setValue(qreal value)
     const qreal normalized = clampProgress(value);
     if (qFuzzyCompare(m_value + 1.0, normalized + 1.0)) return;
     m_value = normalized;
-    updateAccessibility();
     emit valueChanged(m_value);
     update();
 }
@@ -68,7 +62,6 @@ void QtMaterialCircularProgressIndicator::setMode(Mode mode)
     if (m_mode == mode) return;
     m_mode = mode;
     updateAnimationState();
-    updateAccessibility();
     emit modeChanged(m_mode);
     update();
 }
@@ -119,7 +112,6 @@ void QtMaterialCircularProgressIndicator::setSpec(const ProgressIndicatorSpec& s
 {
     m_spec = spec;
     initAnimation();
-    updateAccessibility();
     emit specChanged();
     updateGeometry();
     update();
@@ -137,11 +129,8 @@ void QtMaterialCircularProgressIndicator::paintEvent(QPaintEvent*)
     QRectF arcRect = rect().adjusted(stroke, stroke, -stroke, -stroke);
     if (arcRect.isEmpty()) return;
 
-    const QColor trackColor = isEnabled() ? resolvedTrackColor() : disabledColor(resolvedTrackColor());
-    const QColor activeColor = isEnabled() ? resolvedActiveColor() : disabledColor(resolvedActiveColor());
-
-    QPen trackPen(trackColor, stroke, Qt::SolidLine, Qt::RoundCap);
-    QPen activePen(activeColor, stroke, Qt::SolidLine, Qt::RoundCap);
+    QPen trackPen(resolvedTrackColor(), stroke, Qt::SolidLine, Qt::RoundCap);
+    QPen activePen(resolvedActiveColor(), stroke, Qt::SolidLine, Qt::RoundCap);
 
     painter.setPen(trackPen);
     const int gap16 = qMax(0, m_spec.trackGap) * 16;
@@ -164,11 +153,6 @@ void QtMaterialCircularProgressIndicator::hideEvent(QHideEvent* event) { QWidget
 void QtMaterialCircularProgressIndicator::changeEvent(QEvent* event)
 {
     QWidget::changeEvent(event);
-    if (event->type() == QEvent::EnabledChange) {
-        updateAnimationState();
-        updateAccessibility();
-        update();
-    }
     if (event->type() == QEvent::PaletteChange || event->type() == QEvent::StyleChange) update();
 }
 
@@ -190,7 +174,7 @@ void QtMaterialCircularProgressIndicator::initAnimation()
 void QtMaterialCircularProgressIndicator::updateAnimationState()
 {
     if (!m_animation) return;
-    if (m_mode == Mode::Indeterminate && isVisible() && isEnabled()) {
+    if (m_mode == Mode::Indeterminate && isVisible()) {
         if (m_animation->state() != QVariantAnimation::Running) m_animation->start();
     } else {
         if (m_animation->state() != QVariantAnimation::Stopped) m_animation->stop();
@@ -198,33 +182,7 @@ void QtMaterialCircularProgressIndicator::updateAnimationState()
     }
 }
 
-void QtMaterialCircularProgressIndicator::updateAccessibility()
-{
-    if (accessibleName().isEmpty()) {
-        setAccessibleName(tr("Progress indicator"));
-    }
-
-    const QString state = isEnabled() ? tr("enabled") : tr("disabled");
-    if (m_mode == Mode::Indeterminate) {
-        setAccessibleDescription(tr("Circular progress indicator, indeterminate, %1").arg(state));
-    } else {
-        setAccessibleDescription(tr("Circular progress indicator, %1 percent, %2").arg(qRound(m_value * 100.0)).arg(state));
-    }
-
-#if QT_CONFIG(accessibility)
-    QAccessibleEvent event(this, QAccessible::DescriptionChanged);
-    QAccessible::updateAccessibility(&event);
-#endif
-}
-
 QColor QtMaterialCircularProgressIndicator::resolvedActiveColor() const { return m_spec.activeColor.isValid() ? m_spec.activeColor : fallbackActive(this); }
 QColor QtMaterialCircularProgressIndicator::resolvedTrackColor() const { return m_spec.trackColor.isValid() ? m_spec.trackColor : fallbackTrack(this); }
-QColor QtMaterialCircularProgressIndicator::disabledColor(const QColor& source) const
-{
-    QColor color = palette().color(QPalette::Disabled, QPalette::Text);
-    if (!color.isValid()) color = source;
-    color.setAlpha(qBound(40, source.alpha() / 2, 140));
-    return color;
-}
 
 } // namespace QtMaterial
