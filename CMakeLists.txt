@@ -196,6 +196,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     src/specs/qtmaterialdividerspec.cpp
     src/specs/qtmaterialautocompletepopupspec.cpp
     src/specs/qtmaterialdatefieldspec.cpp
+    src/specs/qtmaterialtabsspec.cpp
     src/specs/qtmaterialsnackbarspec.cpp
     src/specs/qtmaterialprogressindicatorspec.cpp
 )
@@ -218,6 +219,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     include/qtmaterial/specs/qtmaterialdividerspec.h
     include/qtmaterial/specs/qtmaterialautocompletepopupspec.h
     include/qtmaterial/specs/qtmaterialdatefieldspec.h
+    include/qtmaterial/specs/qtmaterialtabsspec.h
     include/qtmaterial/specs/qtmaterialspecfactory.h
     include/qtmaterial/specs/qtmaterialsnackbarspec.h
     include/qtmaterial/specs/qtmaterialprogressindicatorspec.h
@@ -326,9 +328,11 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     src/widgets/data/qtmateriallistitem.cpp
     src/widgets/data/qtmateriallist.cpp
     src/widgets/data/qtmaterialdivider.cpp
+    src/widgets/navigation/qtmaterialtabs.cpp
     src/widgets/surfaces/qtmaterialsnackbar.cpp
     src/widgets/surfaces/qtmaterialsnackbarhost.cpp
-    src/widgets/progress/qtmateriallinearprogressindicator.cpp src/widgets/progress/qtmaterialcircularprogressindicator.cpp
+    src/widgets/progress/qtmateriallinearprogressindicator.cpp
+    src/widgets/progress/qtmaterialcircularprogressindicator.cpp
 )
 
 set(QTMATERIAL3_WIDGETS_HEADERS
@@ -356,10 +360,12 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     include/qtmaterial/widgets/inputs/qtmaterialdatefield.h
     include/qtmaterial/widgets/data/qtmateriallistitem.h
     include/qtmaterial/widgets/data/qtmateriallist.h
+    include/qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h
+    include/qtmaterial/widgets/navigation/qtmaterialtabs.h
     include/qtmaterial/widgets/data/qtmaterialdivider.h
     include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h
-    include/qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h
-    include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h 
+    include/qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h
+    include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h
     include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h
 )
 

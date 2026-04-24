@@ -75,7 +75,7 @@ qtm3_add_test(tst_inputcontrol core/tst_inputcontrol.cpp qtmaterial3_core)
 qtm3_add_test(tst_scrimwidget effects/tst_scrimwidget.cpp qtmaterial3_effects)
 # qtm3_add_test(tst_filledtonalbutton_render tests/render/buttons/tst_filledtonalbutton_render.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_progressindicators widgets/progress/tst_progressindicators.cpp qtmaterial3_widgets)
-
+qtm3_add_test(tst_tabs widgets/navigation/tst_tabs.cpp qtmaterial3_widgets)
 
 # qtm3_add_test(tst_textfieldshellhelper widgets/inputs/tst_textfieldshellhelper.cpp qtmaterial3_widgets)
 
