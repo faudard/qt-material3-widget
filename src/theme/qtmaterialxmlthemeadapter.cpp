@@ -44,17 +44,13 @@ Theme XmlThemeAdapter::fromQtMaterialXml(
     QHash<QString, QColor> colors;
 
     QXmlStreamReader reader(xml);
-    while (!reader.atEnd()) {
-        reader.readNext();
-
-        if (reader.isStartElement() && reader.name() == u"color") {
-            const auto attrs = reader.attributes();
-            const QString name = attrs.value(u"name").toString().trimmed();
-            const QString value = reader.readElementText().trimmed();
-            const QColor color(value);
-            if (!name.isEmpty() && color.isValid()) {
-                colors.insert(name, color);
-            }
+    if (reader.isStartElement() && reader.name() == QLatin1String("color")) {
+        const auto attrs = reader.attributes();
+        const QString name = attrs.value(QLatin1String("name")).toString().trimmed();
+        const QString value = reader.readElementText().trimmed();
+        const QColor color(value);
+        if (!name.isEmpty() && color.isValid()) {
+            colors.insert(name, color);
         }
     }
 

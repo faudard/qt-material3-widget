@@ -5,6 +5,7 @@
 
 #include "themepresetcatalog.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
+#include "qtmaterial/theme/qtmaterialxmlthemeadapter.h"
 
 using namespace QtMaterial;
 
@@ -197,4 +198,33 @@ void ThemeStudioController::emitThemeJson()
 {
     emit themeJsonChanged(QString::fromUtf8(
         ThemeManager::instance().exportThemeJson(QJsonDocument::Indented)));
+}
+
+bool ThemeStudioController::importQtMaterialXmlFile(const QString& path, QString* errorString)
+{
+    QtMaterial::Theme imported;
+    if (!QtMaterial::XmlThemeAdapter::readQtMaterialXmlFile(path, &imported, errorString)) {
+        emit errorOccurred(errorString ? *errorString : QStringLiteral("XML import failed."));
+        return false;
+    }
+
+    QtMaterial::ThemeManager::instance().setTheme(imported);
+    m_currentFilePath = path;
+    m_currentPresetId.clear();
+    syncFromThemeManager();
+
+    emit currentPresetChanged(m_currentPresetId);
+    emit currentFilePathChanged(m_currentFilePath);
+    emit themeApplied(QtMaterial::ThemeManager::instance().theme());
+    emitThemeJson();
+    setDirty(false);
+    return true;
+}
+
+bool ThemeStudioController::exportQtMaterialXmlFile(const QString& path, QString* errorString) const
+{
+    return QtMaterial::XmlThemeAdapter::writeQtMaterialXmlFile(
+        QtMaterial::ThemeManager::instance().theme(),
+        path,
+        errorString);
 }

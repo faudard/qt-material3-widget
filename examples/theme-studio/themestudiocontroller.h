@@ -31,7 +31,8 @@ public slots:
 
     bool importJsonFile(const QString& path, QString* errorString = nullptr);
     bool exportJsonFile(const QString& path, QString* errorString = nullptr) const;
-
+    bool importQtMaterialXmlFile(const QString& path, QString* errorString = nullptr);
+    bool exportQtMaterialXmlFile(const QString& path, QString* errorString = nullptr) const;
 signals:
     void pendingOptionsChanged(const QtMaterial::ThemeOptions& options);
     void themeApplied(const QtMaterial::Theme& theme);
