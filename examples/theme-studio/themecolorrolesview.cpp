@@ -1,8 +1,10 @@
 #include "themecolorrolesview.h"
 
-#include <QFrame>
+#include <QClipboard>
 #include <QGridLayout>
+#include <QGuiApplication>
 #include <QLabel>
+#include <QPushButton>
 #include <QVBoxLayout>
 
 #include "qtmaterial/theme/qtmaterialcolorscheme.h"
@@ -69,15 +71,36 @@ ThemeColorRolesView::ThemeColorRolesView(QWidget* parent)
         RowWidgets row;
         row.role = role;
         row.roleLabel = new QLabel(roleName(role), this);
-        row.swatchFrame = new QFrame(this);
+        row.swatchButton = new QPushButton(this);
         row.hexLabel = new QLabel(this);
 
-        row.swatchFrame->setFixedSize(72, 28);
+        row.swatchButton->setFixedSize(72, 28);
+        row.swatchButton->setFlat(true);
+        row.swatchButton->setCursor(Qt::PointingHandCursor);
+        row.swatchButton->setToolTip(tr("Copy hex value"));
         row.hexLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
         m_grid->addWidget(row.roleLabel, rowIndex, 0);
-        m_grid->addWidget(row.swatchFrame, rowIndex, 1);
+        m_grid->addWidget(row.swatchButton, rowIndex, 1);
         m_grid->addWidget(row.hexLabel, rowIndex, 2);
+
+        const int modelIndex = m_rows.size();
+        connect(row.swatchButton, &QPushButton::clicked, this, [this, modelIndex]() {
+            if (modelIndex < 0 || modelIndex >= m_rows.size()) {
+                return;
+            }
+
+            const RowWidgets& row = m_rows.at(modelIndex);
+            if (row.hexValue.isEmpty()) {
+                return;
+            }
+
+            if (auto* clipboard = QGuiApplication::clipboard()) {
+                clipboard->setText(row.hexValue);
+            }
+
+            emit colorCopied(roleName(row.role), row.hexValue);
+        });
 
         m_rows.push_back(row);
         ++rowIndex;
@@ -97,16 +120,17 @@ void ThemeColorRolesView::applyTheme(const Theme& theme)
             ? scheme.color(row.role)
             : QColor();
 
-        row.hexLabel->setText(color.isValid() ? color.name(QColor::HexRgb).toUpper()
-                                              : tr("N/A"));
+        row.hexValue = color.isValid() ? color.name(QColor::HexRgb).toUpper() : QString();
+        row.hexLabel->setText(row.hexValue.isEmpty() ? tr("N/A") : row.hexValue);
 
-        row.swatchFrame->setStyleSheet(
+        row.swatchButton->setStyleSheet(
             swatchStyle(color.isValid() ? color : QColor(Qt::transparent), border));
 
-        row.swatchFrame->setToolTip(
-            color.isValid()
-                ? QStringLiteral("%1 = %2").arg(roleName(row.role), color.name(QColor::HexRgb).toUpper())
-                : QStringLiteral("%1 = N/A").arg(roleName(row.role)));
+        row.swatchButton->setEnabled(!row.hexValue.isEmpty());
+        row.swatchButton->setToolTip(
+            row.hexValue.isEmpty()
+                ? QStringLiteral("%1 = N/A").arg(roleName(row.role))
+                : QStringLiteral("%1 = %2").arg(roleName(row.role), row.hexValue));
     }
 }
 
@@ -165,7 +189,7 @@ QString ThemeColorRolesView::swatchStyle(const QColor& fill, const QColor& borde
         : QStringLiteral("#808080");
 
     return QStringLiteral(
-               "QFrame {"
+               "QPushButton {"
                " background-color: %1;"
                " border: 1px solid %2;"
                " border-radius: 8px;"

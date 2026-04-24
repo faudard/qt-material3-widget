@@ -1,5 +1,6 @@
 #include "themestudiowindow.h"
 
+#include <QCloseEvent>
 #include <QDockWidget>
 #include <QFileDialog>
 #include <QLabel>
@@ -10,6 +11,7 @@
 
 #include "themeeditorpanel.h"
 #include "themejsonview.h"
+#include "themecolorrolesview.h"
 #include "themepreviewpane.h"
 #include "themestudiocontroller.h"
 #include "qtmaterial/theme/qtmaterialthemeoptions.h"
@@ -48,6 +50,21 @@ ThemeStudioWindow::ThemeStudioWindow(QWidget* parent)
                 m_modeLabel->setText(options.mode == ThemeMode::Dark ? tr("Mode: Dark")
                                                                     : tr("Mode: Light"));
                 m_seedLabel->setText(tr("Seed: %1").arg(options.sourceColor.name().toUpper()));
+
+                QString contrastText = tr("Standard");
+                switch (options.contrast) {
+                case ContrastMode::Standard:
+                    contrastText = tr("Standard");
+                    break;
+                case ContrastMode::Medium:
+                    contrastText = tr("Medium");
+                    break;
+                case ContrastMode::High:
+                    contrastText = tr("High");
+                    break;
+                }
+
+                m_contrastLabel->setText(tr("Contrast: %1").arg(contrastText));
             });
 
     connect(m_controller,
@@ -61,13 +78,11 @@ ThemeStudioWindow::ThemeStudioWindow(QWidget* parent)
             &ThemeStudioController::dirtyStateChanged,
             this,
             [this](bool dirty) {
+                updateApplyState(dirty);
                 m_dirtyLabel->setText(dirty ? tr("Modified") : tr("Saved"));
                 setWindowTitle(dirty
                     ? tr("Qt Material 3 - Theme Studio *")
                     : tr("Qt Material 3 - Theme Studio"));
-                if (m_applyAction) {
-                    m_applyAction->setEnabled(dirty);
-                }
                 statusBar()->showMessage(
                     dirty ? tr("Unsaved changes") : tr("Theme applied"),
                     2500);
@@ -91,8 +106,49 @@ ThemeStudioWindow::ThemeStudioWindow(QWidget* parent)
                     : tr("Preset: %1").arg(presetId));
             });
 
+    if (m_previewPane->colorRolesView()) {
+        connect(m_previewPane->colorRolesView(),
+                &ThemeColorRolesView::colorCopied,
+                this,
+                [this](const QString& roleName, const QString& hex) {
+                    statusBar()->showMessage(
+                        tr("%1 copied: %2").arg(roleName, hex),
+                        2500);
+                });
+    }
+
     m_previewPane->applyTheme(m_controller->currentTheme());
     m_previewPane->setCompareOptions(m_controller->pendingOptions());
+    updateApplyState(m_controller->isDirty());
+}
+
+void ThemeStudioWindow::closeEvent(QCloseEvent* event)
+{
+    if (!m_controller->isDirty()) {
+        event->accept();
+        return;
+    }
+
+    const auto result = QMessageBox::question(
+        this,
+        tr("Pending theme changes"),
+        tr("You have unapplied theme changes. Apply them before closing?"),
+        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+        QMessageBox::Yes);
+
+    switch (result) {
+    case QMessageBox::Yes:
+        m_controller->applyPending();
+        event->accept();
+        break;
+    case QMessageBox::No:
+        event->accept();
+        break;
+    case QMessageBox::Cancel:
+    default:
+        event->ignore();
+        break;
+    }
 }
 
 void ThemeStudioWindow::createDock()
@@ -110,6 +166,8 @@ void ThemeStudioWindow::createMenus()
 
     m_importAction = fileMenu->addAction(tr("Import JSON..."));
     m_exportAction = fileMenu->addAction(tr("Export JSON..."));
+    auto* importXmlAction = fileMenu->addAction(tr("Import qt-material XML..."));
+    auto* exportXmlAction = fileMenu->addAction(tr("Export qt-material XML..."));
     fileMenu->addSeparator();
     auto* quitAction = fileMenu->addAction(tr("Quit"));
 
@@ -139,6 +197,28 @@ void ThemeStudioWindow::createMenus()
         }
     });
 
+    connect(importXmlAction, &QAction::triggered, this, [this]() {
+        const QString path = QFileDialog::getOpenFileName(
+            this, tr("Import qt-material XML"), QString(), tr("XML files (*.xml)"));
+        if (path.isEmpty()) {
+            return;
+        }
+        m_controller->importQtMaterialXmlFile(path);
+    });
+
+    connect(exportXmlAction, &QAction::triggered, this, [this]() {
+        const QString path = QFileDialog::getSaveFileName(
+            this, tr("Export qt-material XML"), QStringLiteral("theme.xml"), tr("XML files (*.xml)"));
+        if (path.isEmpty()) {
+            return;
+        }
+
+        QString error;
+        if (!m_controller->exportQtMaterialXmlFile(path, &error) && !error.isEmpty()) {
+            QMessageBox::critical(this, tr("Export failed"), error);
+        }
+    });    
+
     connect(quitAction, &QAction::triggered, this, &QWidget::close);
 }
 
@@ -165,11 +245,13 @@ void ThemeStudioWindow::createStatusBar()
     m_presetLabel = new QLabel(tr("Preset: Custom"), this);
     m_modeLabel = new QLabel(tr("Mode: Light"), this);
     m_seedLabel = new QLabel(tr("Seed: --"), this);
+    m_contrastLabel = new QLabel(tr("Contrast: --"), this);
 
     statusBar()->addPermanentWidget(m_dirtyLabel);
     statusBar()->addPermanentWidget(m_presetLabel);
     statusBar()->addPermanentWidget(m_modeLabel);
     statusBar()->addPermanentWidget(m_seedLabel);
+    statusBar()->addPermanentWidget(m_contrastLabel);
     statusBar()->showMessage(tr("Ready"));
 }
 
@@ -188,4 +270,15 @@ void ThemeStudioWindow::wireJsonActions()
             &ThemeJsonView::exportRequested,
             m_exportAction,
             &QAction::trigger);
+}
+
+void ThemeStudioWindow::updateApplyState(bool dirty)
+{
+    if (m_applyAction) {
+        m_applyAction->setEnabled(dirty);
+    }
+
+    if (m_editorPanel) {
+        m_editorPanel->setApplyEnabled(dirty);
+    }
 }

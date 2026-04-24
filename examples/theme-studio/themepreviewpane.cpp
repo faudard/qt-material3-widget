@@ -41,6 +41,11 @@ ThemeJsonView* ThemePreviewPane::jsonView() const noexcept
     return m_jsonView;
 }
 
+ThemeColorRolesView* ThemePreviewPane::colorRolesView() const noexcept
+{
+    return m_colorRolesView;
+}
+
 QWidget* ThemePreviewPane::createOverviewPage()
 {
     auto* page = new QWidget(this);

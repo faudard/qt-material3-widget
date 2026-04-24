@@ -125,6 +125,10 @@ void ThemeStudioController::applyPreset(const QString& presetId)
 
 void ThemeStudioController::applyPending()
 {
+    if (m_currentPresetId.isEmpty()) {
+        emit currentPresetChanged(QString());
+    }
+
     ThemeManager::instance().setThemeOptions(m_pendingOptions);
     setDirty(false);
     emit themeApplied(ThemeManager::instance().theme());

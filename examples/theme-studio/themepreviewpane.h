@@ -23,6 +23,7 @@ public:
     explicit ThemePreviewPane(QWidget* parent = nullptr);
 
     ThemeJsonView* jsonView() const noexcept;
+    ThemeColorRolesView* colorRolesView() const noexcept;
 
 public slots:
     void applyTheme(const QtMaterial::Theme& theme);

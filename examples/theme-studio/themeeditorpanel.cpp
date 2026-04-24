@@ -48,6 +48,10 @@ ThemeEditorPanel::ThemeEditorPanel(ThemeStudioController* controller, QWidget* p
     , m_importButton(new QPushButton(tr("Import JSON"), this))
     , m_exportButton(new QPushButton(tr("Export JSON"), this))
 {
+    m_expressiveCheck->setEnabled(false);
+    m_expressiveCheck->setToolTip(
+    tr("Planned option. ThemeBuilder does not implement expressive generation yet."));
+
     m_seedPreview->setMinimumWidth(72);
 
     m_presetCombo->addItem(tr("Custom"), QString());
@@ -163,7 +167,29 @@ ThemeEditorPanel::ThemeEditorPanel(ThemeStudioController* controller, QWidget* p
             this,
             &ThemeEditorPanel::syncUiFromOptions);
 
+    connect(m_controller,
+            &ThemeStudioController::currentPresetChanged,
+            this,
+            [this](const QString& presetId) {
+                const QSignalBlocker blocker(m_presetCombo);
+                if (presetId.isEmpty()) {
+                    m_presetCombo->setCurrentIndex(0);
+                    return;
+                }
+
+                const int index = m_presetCombo->findData(presetId);
+                m_presetCombo->setCurrentIndex(index >= 0 ? index : 0);
+            });
+
     syncUiFromOptions(m_controller->pendingOptions());
+    setApplyEnabled(m_controller->isDirty());
+}
+
+void ThemeEditorPanel::setApplyEnabled(bool enabled)
+{
+    if (m_applyButton) {
+        m_applyButton->setEnabled(enabled);
+    }
 }
 
 void ThemeEditorPanel::chooseSeedColor()

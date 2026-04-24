@@ -23,9 +23,15 @@ public:
     ColorScheme buildDarkSchemeFromSeed(const QColor& seed) const;
 
 private:
+    static Theme buildBaseTheme();
+    static const Theme& baseTheme();
+
     Theme buildFallbackTheme(const ThemeOptions& options) const;
     ColorScheme buildFallbackLightScheme(const QColor& seed) const;
     ColorScheme buildFallbackDarkScheme(const QColor& seed) const;
+
+    void applyContrastAdjustments(Theme& theme, ContrastMode contrast) const;
+    QColor adjustColorTowards(const QColor& base, const QColor& target, qreal amount) const;
 
     void applyDefaultTypography(Theme& theme) const;
     void applyDefaultShapes(Theme& theme) const;

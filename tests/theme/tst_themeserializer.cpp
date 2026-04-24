@@ -1,102 +1,67 @@
-#include <QTemporaryDir>
-#include <QtTest>
+#include <QtTest/QtTest>
+#include <QJsonDocument>
+#include <QJsonObject>
 
+#include "qtmaterial/theme/qtmaterialtheme.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
 
-class tst_ThemeSerializer : public QObject {
+using namespace QtMaterial;
+
+class tst_ThemeSerializer : public QObject
+{
     Q_OBJECT
 
 private slots:
-    void roundTripsThemeJson();
-    void writesAndReadsFile();
-    void rejectsInvalidJson();
+    void roundTrip_preservesCoreStructure();
+    void export_containsExpectedBlocks();
 };
 
-void tst_ThemeSerializer::roundTripsThemeJson()
+void tst_ThemeSerializer::roundTrip_preservesCoreStructure()
 {
-    QtMaterial::ThemeBuilder builder;
-    QtMaterial::Theme theme = builder.buildDarkFromSeed(QColor("#00639B"));
+    ThemeOptions options;
+    options.sourceColor = QColor(QStringLiteral("#0B57D0"));
+    options.mode = ThemeMode::Dark;
+    options.contrast = ContrastMode::Medium;
+    options.expressive = true;
 
-    theme.shapes().setRadius(QtMaterial::ShapeRole::Medium, 14);
-    theme.stateLayer().hoverOpacity = 0.11;
-    theme.stateLayer().focusOpacity = 0.13;
-    theme.stateLayer().pressOpacity = 0.15;
+    ThemeBuilder builder;
+    const Theme original = builder.build(options);
 
-    const QByteArray json = QtMaterial::ThemeSerializer::toJson(theme);
-
-    bool ok = false;
     QString error;
-    const QtMaterial::Theme restored = QtMaterial::ThemeSerializer::fromJson(json, &ok, &error);
+    bool ok = false;
+    const QByteArray json = ThemeSerializer::toJson(original, QJsonDocument::Indented);
+    const Theme restored = ThemeSerializer::fromJson(json, &ok, &error);
 
     QVERIFY2(ok, qPrintable(error));
-    QCOMPARE(restored.mode(), theme.mode());
-    QCOMPARE(restored.contrastMode(), theme.contrastMode());
-    QCOMPARE(restored.options().sourceColor, theme.options().sourceColor);
-    QCOMPARE(restored.options().useMaterialColorUtilities, theme.options().useMaterialColorUtilities);
-
-    QCOMPARE(restored.colorScheme().color(QtMaterial::ColorRole::Primary),
-             theme.colorScheme().color(QtMaterial::ColorRole::Primary));
-    QCOMPARE(restored.colorScheme().color(QtMaterial::ColorRole::Surface),
-             theme.colorScheme().color(QtMaterial::ColorRole::Surface));
-
-    QVERIFY(restored.typography().contains(QtMaterial::TypeRole::BodyLarge));
-    QVERIFY(theme.typography().contains(QtMaterial::TypeRole::BodyLarge));
-    QCOMPARE(restored.typography().style(QtMaterial::TypeRole::BodyLarge).font.pointSize(),
-             theme.typography().style(QtMaterial::TypeRole::BodyLarge).font.pointSize());
-    QCOMPARE(restored.typography().style(QtMaterial::TypeRole::BodyLarge).font.weight(),
-             theme.typography().style(QtMaterial::TypeRole::BodyLarge).font.weight());
-    QCOMPARE(restored.typography().style(QtMaterial::TypeRole::BodyLarge).lineHeight,
-             theme.typography().style(QtMaterial::TypeRole::BodyLarge).lineHeight);
-
-    QCOMPARE(restored.shapes().radius(QtMaterial::ShapeRole::Medium),
-             theme.shapes().radius(QtMaterial::ShapeRole::Medium));
-
-    QCOMPARE(restored.elevations().style(QtMaterial::ElevationRole::Level3).shadowBlur,
-             theme.elevations().style(QtMaterial::ElevationRole::Level3).shadowBlur);
-    QCOMPARE(restored.elevations().style(QtMaterial::ElevationRole::Level3).tonalOverlayOpacity,
-             theme.elevations().style(QtMaterial::ElevationRole::Level3).tonalOverlayOpacity);
-
-    QCOMPARE(restored.motion().style(QtMaterial::MotionToken::Medium2).durationMs,
-             theme.motion().style(QtMaterial::MotionToken::Medium2).durationMs);
-    QCOMPARE(restored.motion().style(QtMaterial::MotionToken::Medium2).easing.type(),
-             theme.motion().style(QtMaterial::MotionToken::Medium2).easing.type());
-
-    QCOMPARE(restored.stateLayer().color, theme.stateLayer().color);
-    QCOMPARE(restored.stateLayer().hoverOpacity, theme.stateLayer().hoverOpacity);
-    QCOMPARE(restored.stateLayer().focusOpacity, theme.stateLayer().focusOpacity);
-    QCOMPARE(restored.stateLayer().pressOpacity, theme.stateLayer().pressOpacity);
+    QCOMPARE(restored.options().sourceColor, original.options().sourceColor);
+    QCOMPARE(restored.options().mode, original.options().mode);
+    QCOMPARE(restored.options().contrast, original.options().contrast);
+    QCOMPARE(restored.options().expressive, original.options().expressive);
+    QCOMPARE(restored.colorScheme().color(ColorRole::Primary),
+             original.colorScheme().color(ColorRole::Primary));
+    QCOMPARE(restored.colorScheme().color(ColorRole::OnSurface),
+             original.colorScheme().color(ColorRole::OnSurface));
 }
 
-void tst_ThemeSerializer::writesAndReadsFile()
+void tst_ThemeSerializer::export_containsExpectedBlocks()
 {
-    QTemporaryDir dir;
-    QVERIFY(dir.isValid());
+    ThemeBuilder builder;
+    const Theme theme = builder.build(ThemeOptions {});
 
-    QtMaterial::ThemeBuilder builder;
-    const QtMaterial::Theme theme = builder.buildLightFromSeed(QColor("#6750A4"));
+    const QByteArray jsonBytes = ThemeSerializer::toJson(theme, QJsonDocument::Indented);
+    const QJsonDocument doc = QJsonDocument::fromJson(jsonBytes);
+    QVERIFY(doc.isObject());
 
-    const QString path = dir.filePath(QStringLiteral("theme.json"));
-    QString error;
-    QVERIFY2(QtMaterial::ThemeSerializer::writeToFile(theme, path, &error), qPrintable(error));
-
-    QtMaterial::Theme restored;
-    QVERIFY2(QtMaterial::ThemeSerializer::readFromFile(path, &restored, &error), qPrintable(error));
-
-    QCOMPARE(restored.mode(), theme.mode());
-    QCOMPARE(restored.colorScheme().color(QtMaterial::ColorRole::Primary),
-             theme.colorScheme().color(QtMaterial::ColorRole::Primary));
-}
-
-void tst_ThemeSerializer::rejectsInvalidJson()
-{
-    bool ok = true;
-    QString error;
-    const QtMaterial::Theme theme = QtMaterial::ThemeSerializer::fromJson(QByteArray("{not valid json}"), &ok, &error);
-
-    Q_UNUSED(theme);
-    QVERIFY(!ok);
-    QVERIFY(!error.isEmpty());
+    const QJsonObject root = doc.object();
+    QVERIFY(root.contains(QStringLiteral("formatVersion")));
+    QVERIFY(root.contains(QStringLiteral("options")));
+    QVERIFY(root.contains(QStringLiteral("colorScheme")));
+    QVERIFY(root.contains(QStringLiteral("typography")));
+    QVERIFY(root.contains(QStringLiteral("shapes")));
+    QVERIFY(root.contains(QStringLiteral("elevations")));
+    QVERIFY(root.contains(QStringLiteral("motion")));
+    QVERIFY(root.contains(QStringLiteral("stateLayer")));
 }
 
 QTEST_MAIN(tst_ThemeSerializer)

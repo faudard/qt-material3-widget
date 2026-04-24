@@ -233,6 +233,8 @@ QJsonObject optionsToJson(const ThemeOptions& options)
     object.insert(QStringLiteral("sourceColor"), colorToString(options.sourceColor));
     object.insert(QStringLiteral("mode"), enumToString(options.mode, kThemeModes));
     object.insert(QStringLiteral("contrast"), enumToString(options.contrast, kContrastModes));
+    // Persisted even if not currently consumed by ThemeBuilder.
+    // This keeps the snapshot format forward-compatible with future theme-generation backends.    
     object.insert(QStringLiteral("expressive"), options.expressive);
     object.insert(QStringLiteral("useMaterialColorUtilities"), options.useMaterialColorUtilities);
     return object;

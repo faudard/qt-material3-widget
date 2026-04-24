@@ -10,7 +10,7 @@ class Theme;
 }
 
 class QLabel;
-class QFrame;
+class QPushButton;
 class QGridLayout;
 
 class ThemeColorRolesView : public QWidget
@@ -23,13 +23,17 @@ public:
 public slots:
     void applyTheme(const QtMaterial::Theme& theme);
 
+signals:
+    void colorCopied(const QString& roleName, const QString& hex);
+
 private:
     struct RowWidgets
     {
         QtMaterial::ColorRole role;
         QLabel* roleLabel {};
-        QFrame* swatchFrame {};
+        QPushButton* swatchButton {};
         QLabel* hexLabel {};
+        QString hexValue;
     };
 
     static QString roleName(QtMaterial::ColorRole role);

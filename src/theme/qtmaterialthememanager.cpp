@@ -12,10 +12,9 @@ ThemeManager& ThemeManager::instance()
 ThemeManager::ThemeManager(QObject* parent)
     : QObject(parent)
     , m_options()
-    , m_theme()
     , m_builder()
+    , m_theme(m_builder.build(m_options))
 {
-    m_theme = m_builder.build(m_options);
 }
 
 const Theme& ThemeManager::theme() const noexcept

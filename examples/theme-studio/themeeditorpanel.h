@@ -22,6 +22,8 @@ class ThemeEditorPanel : public QWidget
 public:
     explicit ThemeEditorPanel(ThemeStudioController* controller, QWidget* parent = nullptr);
 
+    void setApplyEnabled(bool enabled);
+
 private slots:
     void chooseSeedColor();
     void syncUiFromOptions(const QtMaterial::ThemeOptions& options);

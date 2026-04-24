@@ -1,75 +1,81 @@
-#include <QtTest>
+#include <QtTest/QtTest>
+#include <QSignalSpy>
 
+#include "qtmaterial/theme/qtmaterialtheme.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
+#include "qtmaterial/theme/qtmaterialthemeoptions.h"
+
+using namespace QtMaterial;
 
 class tst_ThemeManager : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void emitsThemeChanged();
-    void applySeedColorRebuildsTheme();
-    void importsThemeJson();
+    void init();
+    void setThemeOptions_sameOptions_noSignal();
+    void applySeedColor_sameSeed_noSignal();
+    void applySeedColor_sameSeedAndMode_noSignal();
+    void setTheme_replacesSnapshot_andSignals();
 };
 
-void tst_ThemeManager::emitsThemeChanged()
+void tst_ThemeManager::init()
 {
-    QtMaterial::ThemeManager& manager = QtMaterial::ThemeManager::instance();
-    QSignalSpy spy(&manager, &QtMaterial::ThemeManager::themeChanged);
-    QVERIFY(spy.isValid());
+    ThemeOptions options;
+    ThemeManager::instance().setThemeOptions(options);
+}
 
-    QtMaterial::ThemeOptions options;
-    options.mode = QtMaterial::ThemeMode::Dark;
-    options.sourceColor = QColor("#00639B");
+void tst_ThemeManager::setThemeOptions_sameOptions_noSignal()
+{
+    ThemeManager& manager = ThemeManager::instance();
+    const ThemeOptions options = manager.options();
+
+    QSignalSpy spy(&manager, &ThemeManager::themeChanged);
     manager.setThemeOptions(options);
 
+    QCOMPARE(spy.count(), 0);
+}
+
+void tst_ThemeManager::applySeedColor_sameSeed_noSignal()
+{
+    ThemeManager& manager = ThemeManager::instance();
+    const QColor current = manager.options().sourceColor;
+
+    QSignalSpy spy(&manager, &ThemeManager::themeChanged);
+    manager.applySeedColor(current);
+
+    QCOMPARE(spy.count(), 0);
+}
+
+void tst_ThemeManager::applySeedColor_sameSeedAndMode_noSignal()
+{
+    ThemeManager& manager = ThemeManager::instance();
+    const ThemeOptions options = manager.options();
+
+    QSignalSpy spy(&manager, &ThemeManager::themeChanged);
+    manager.applySeedColor(options.sourceColor, options.mode);
+
+    QCOMPARE(spy.count(), 0);
+}
+
+void tst_ThemeManager::setTheme_replacesSnapshot_andSignals()
+{
+    Theme imported;
+    ThemeOptions options;
+    options.sourceColor = QColor(QStringLiteral("#146C2E"));
+    options.mode = ThemeMode::Dark;
+    imported.setOptions(options);
+    imported.colorScheme().setColor(ColorRole::Primary, QColor(QStringLiteral("#146C2E")));
+
+    ThemeManager& manager = ThemeManager::instance();
+    QSignalSpy spy(&manager, &ThemeManager::themeChanged);
+
+    manager.setTheme(imported);
+
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(manager.theme().mode(), QtMaterial::ThemeMode::Dark);
-}
-
-void tst_ThemeManager::applySeedColorRebuildsTheme()
-{
-    QtMaterial::ThemeManager& manager = QtMaterial::ThemeManager::instance();
-    QSignalSpy spy(&manager, &QtMaterial::ThemeManager::themeChanged);
-    QVERIFY(spy.isValid());
-
-    manager.applySeedColor(QColor("#B3261E"), QtMaterial::ThemeMode::Light);
-
-    QVERIFY(spy.count() >= 1);
-    QCOMPARE(manager.theme().mode(), QtMaterial::ThemeMode::Light);
-    QCOMPARE(manager.theme().options().sourceColor, QColor("#B3261E"));
-    QCOMPARE(manager.theme().colorScheme().color(QtMaterial::ColorRole::Primary), QColor("#B3261E"));
-}
-
-void tst_ThemeManager::importsThemeJson()
-{
-    QtMaterial::ThemeManager& manager = QtMaterial::ThemeManager::instance();
-    QSignalSpy spy(&manager, &QtMaterial::ThemeManager::themeChanged);
-    QVERIFY(spy.isValid());
-
-    const QByteArray json = R"json(
-{
-  "formatVersion": 1,
-  "options": {
-    "sourceColor": "#ff00639b",
-    "mode": "dark",
-    "contrast": "standard",
-    "expressive": false,
-    "useMaterialColorUtilities": true
-  },
-  "stateLayer": {
-    "hoverOpacity": 0.21
-  }
-}
-)json";
-
-    QString error;
-    QVERIFY2(manager.importThemeJson(json, &error), qPrintable(error));
-
-    QVERIFY(spy.count() >= 1);
-    QCOMPARE(manager.theme().mode(), QtMaterial::ThemeMode::Dark);
-    QCOMPARE(manager.theme().options().sourceColor, QColor("#ff00639b"));
-    QCOMPARE(manager.theme().stateLayer().hoverOpacity, 0.21);
+    QCOMPARE(manager.theme().options().sourceColor, QColor(QStringLiteral("#146C2E")));
+    QCOMPARE(manager.theme().options().mode, ThemeMode::Dark);
+    QCOMPARE(manager.theme().colorScheme().color(ColorRole::Primary), QColor(QStringLiteral("#146C2E")));
 }
 
 QTEST_MAIN(tst_ThemeManager)

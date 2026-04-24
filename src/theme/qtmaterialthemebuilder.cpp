@@ -1,6 +1,7 @@
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
 #include <QEasingCurve>
+#include <QDebug>
 #include <QFont>
 
 namespace QtMaterial {
@@ -39,7 +40,33 @@ ThemeBuilder::~ThemeBuilder() = default;
 
 Theme ThemeBuilder::build(const ThemeOptions& options) const
 {
+#ifndef NDEBUG
+    if (options.expressive || options.useMaterialColorUtilities) {
+        qWarning() << "ThemeBuilder: expressive/useMaterialColorUtilities are not implemented yet."
+                   << "The theme will be generated with the fallback builder.";
+    }
+#endif    
     return buildFallbackTheme(options);
+}
+
+Theme ThemeBuilder::buildBaseTheme()
+{
+    Theme theme;
+
+    ThemeBuilder builder;
+    // builder. applyContrastAdjustments(theme, options.contrast);
+    builder.applyDefaultTypography(theme);
+    builder.applyDefaultShapes(theme);
+    builder.applyDefaultElevations(theme);
+    builder.applyDefaultMotion(theme);
+
+    return theme;
+}
+
+const Theme& ThemeBuilder::baseTheme()
+{
+    static const Theme base = buildBaseTheme();
+    return base;
 }
 
 Theme ThemeBuilder::buildLightFromSeed(const QColor& seed) const
@@ -70,17 +97,14 @@ ColorScheme ThemeBuilder::buildDarkSchemeFromSeed(const QColor& seed) const
 
 Theme ThemeBuilder::buildFallbackTheme(const ThemeOptions& options) const
 {
-    Theme theme(options);
+    Theme theme = baseTheme();
+    theme.setOptions(options);
 
     if (options.mode == ThemeMode::Dark)
         theme.colorScheme() = buildFallbackDarkScheme(options.sourceColor);
     else
         theme.colorScheme() = buildFallbackLightScheme(options.sourceColor);
 
-    applyDefaultTypography(theme);
-    applyDefaultShapes(theme);
-    applyDefaultElevations(theme);
-    applyDefaultMotion(theme);
     applyDefaultStateLayer(theme);
 
     return theme;
@@ -252,6 +276,59 @@ void ThemeBuilder::applyDefaultStateLayer(Theme& theme) const
     s.focusOpacity = 0.10;
     s.pressOpacity = 0.10;
     s.dragOpacity = 0.16;
+}
+
+
+QColor ThemeBuilder::adjustColorTowards(const QColor& base, const QColor& target, qreal amount) const
+{
+    const qreal t = qBound(0.0, amount, 1.0);
+    const int r = static_cast<int>(base.red()   + (target.red()   - base.red())   * t);
+    const int g = static_cast<int>(base.green() + (target.green() - base.green()) * t);
+    const int b = static_cast<int>(base.blue()  + (target.blue()  - base.blue())  * t);
+    return QColor(r, g, b, base.alpha());
+}
+
+void ThemeBuilder::applyContrastAdjustments(Theme& theme, ContrastMode contrast) const
+{
+    if (contrast == ContrastMode::Standard) {
+        return;
+    }
+
+    auto& scheme = theme.colorScheme();
+    const QColor white(Qt::white);
+    const QColor black(Qt::black);
+
+    const bool dark = theme.isDark();
+    const QColor towardForeground = dark ? white : black;
+    const QColor towardDivider = dark ? white : black;
+
+    const qreal textAmount = (contrast == ContrastMode::Medium) ? 0.12 : 0.24;
+    const qreal outlineAmount = (contrast == ContrastMode::Medium) ? 0.10 : 0.20;
+
+    if (scheme.contains(ColorRole::OnPrimary)) {
+        scheme.setColor(ColorRole::OnPrimary,
+            adjustColorTowards(scheme.color(ColorRole::OnPrimary), towardForeground, textAmount));
+    }
+    if (scheme.contains(ColorRole::OnSecondary)) {
+        scheme.setColor(ColorRole::OnSecondary,
+            adjustColorTowards(scheme.color(ColorRole::OnSecondary), towardForeground, textAmount));
+    }
+    if (scheme.contains(ColorRole::OnSurface)) {
+        scheme.setColor(ColorRole::OnSurface,
+            adjustColorTowards(scheme.color(ColorRole::OnSurface), towardForeground, textAmount));
+    }
+    if (scheme.contains(ColorRole::OnSurfaceVariant)) {
+        scheme.setColor(ColorRole::OnSurfaceVariant,
+            adjustColorTowards(scheme.color(ColorRole::OnSurfaceVariant), towardForeground, textAmount));
+    }
+    if (scheme.contains(ColorRole::Outline)) {
+        scheme.setColor(ColorRole::Outline,
+            adjustColorTowards(scheme.color(ColorRole::Outline), towardDivider, outlineAmount));
+    }
+    if (scheme.contains(ColorRole::OutlineVariant)) {
+        scheme.setColor(ColorRole::OutlineVariant,
+            adjustColorTowards(scheme.color(ColorRole::OutlineVariant), towardDivider, outlineAmount));
+    }
 }
 
 } // namespace QtMaterial
