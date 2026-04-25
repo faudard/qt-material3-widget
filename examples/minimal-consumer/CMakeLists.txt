@@ -4,6 +4,7 @@ project(qtmaterial3_minimal_consumer LANGUAGES CXX)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
 find_package(QtMaterial3Widgets REQUIRED)
+# target_link_libraries(my_app PRIVATE QtMaterial3::Widgets)
 
 if(COMMAND qt_standard_project_setup)
     qt_standard_project_setup()

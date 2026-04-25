@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
+option(BUILD_SHARED_LIBS "Build QtMaterial3 libraries as shared libraries" ON)
+
 project(qt-material3-widgets
     VERSION 0.4.0
     DESCRIPTION "Material 3 widgets for Qt Widgets"
@@ -29,13 +31,30 @@ endif()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
-macro(qtm3_add_library target)
-    if(COMMAND qt_add_library)
-        qt_add_library(${target} ${ARGN})
+function(qtm3_add_library target)
+    if(BUILD_SHARED_LIBS)
+        set(_qtm3_library_type SHARED)
     else()
-        add_library(${target} ${ARGN})
+        set(_qtm3_library_type STATIC)
     endif()
-endmacro()
+
+    if(COMMAND qt_add_library)
+        qt_add_library(${target} ${_qtm3_library_type} ${ARGN})
+    else()
+        add_library(${target} ${_qtm3_library_type} ${ARGN})
+    endif()
+
+    target_compile_features(${target} PUBLIC cxx_std_17)
+
+    if(NOT BUILD_SHARED_LIBS)
+        target_compile_definitions(${target} PUBLIC QTMATERIAL3_STATIC)
+    endif()
+
+    set_target_properties(${target} PROPERTIES
+        CXX_VISIBILITY_PRESET hidden
+        VISIBILITY_INLINES_HIDDEN ON
+    )
+endfunction()
 
 set(QTMATERIAL3_THEME_SOURCES
     src/theme/qtmaterialcolorscheme.cpp
@@ -72,7 +91,7 @@ set(QTMATERIAL3_THEME_HEADERS
     include/qtmaterial/theme/qtmaterialxmlthemeadapter.h
 )
 
-qtm3_add_library(qtmaterial3_theme SHARED
+qtm3_add_library(qtmaterial3_theme
     ${QTMATERIAL3_THEME_SOURCES}
     ${QTMATERIAL3_THEME_HEADERS}
 )
@@ -90,7 +109,9 @@ target_include_directories(qtmaterial3_theme
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+
 set_target_properties(qtmaterial3_theme PROPERTIES
+    EXPORT_NAME Theme
     OUTPUT_NAME QtMaterial3Theme
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
@@ -105,7 +126,7 @@ set(QTMATERIAL3_LEGACY_HEADERS
     include/qtmaterial/theme/qtmateriallegacyaliasmap.h
 )
 
-qtm3_add_library(qtmaterial3_legacy SHARED
+qtm3_add_library(qtmaterial3_legacy
     ${QTMATERIAL3_LEGACY_SOURCES}
     ${QTMATERIAL3_LEGACY_HEADERS}
 )
@@ -123,6 +144,7 @@ target_include_directories(qtmaterial3_legacy
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 set_target_properties(qtmaterial3_legacy PROPERTIES
+    EXPORT_NAME Legacy
     OUTPUT_NAME QtMaterial3Legacy
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
@@ -153,7 +175,7 @@ set(QTMATERIAL3_CORE_HEADERS
     include/qtmaterial/core/qtmaterialinputcontrol.h
 )
 
-qtm3_add_library(qtmaterial3_core SHARED
+qtm3_add_library(qtmaterial3_core
     ${QTMATERIAL3_CORE_SOURCES}
     ${QTMATERIAL3_CORE_HEADERS}
 )
@@ -227,7 +249,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     include/qtmaterial/specs/qtmaterialprogressindicatorspec.h
 )
 
-qtm3_add_library(qtmaterial3_specs SHARED
+qtm3_add_library(qtmaterial3_specs
     ${QTMATERIAL3_SPECS_SOURCES}
     ${QTMATERIAL3_SPECS_HEADERS}
 )
@@ -248,10 +270,12 @@ target_include_directories(qtmaterial3_specs
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 set_target_properties(qtmaterial3_specs PROPERTIES
+    EXPORT_NAME Specs
     OUTPUT_NAME QtMaterial3Specs
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
+
 
 set(QTMATERIAL3_EFFECTS_SOURCES
     src/effects/qtmaterialripplecontroller.cpp
@@ -273,7 +297,7 @@ set(QTMATERIAL3_EFFECTS_HEADERS
     include/qtmaterial/effects/qtmaterialscrimwidget.h
 )
 
-qtm3_add_library(qtmaterial3_effects SHARED
+qtm3_add_library(qtmaterial3_effects
     ${QTMATERIAL3_EFFECTS_SOURCES}
     ${QTMATERIAL3_EFFECTS_HEADERS}
 )
@@ -295,6 +319,7 @@ target_include_directories(qtmaterial3_effects
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 set_target_properties(qtmaterial3_effects PROPERTIES
+    EXPORT_NAME Effects
     OUTPUT_NAME QtMaterial3Effects
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
@@ -371,7 +396,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h
 )
 
-qtm3_add_library(qtmaterial3_widgets SHARED
+qtm3_add_library(qtmaterial3_widgets
     ${QTMATERIAL3_WIDGETS_SOURCES}
     ${QTMATERIAL3_WIDGETS_HEADERS}
 )
@@ -395,6 +420,7 @@ target_include_directories(qtmaterial3_widgets
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 set_target_properties(qtmaterial3_widgets PROPERTIES
+    EXPORT_NAME Widgets
     OUTPUT_NAME QtMaterial3Widgets
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
