@@ -196,6 +196,7 @@ target_include_directories(qtmaterial3_core
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 set_target_properties(qtmaterial3_core PROPERTIES
+    EXPORT_NAME Core
     OUTPUT_NAME QtMaterial3Core
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
