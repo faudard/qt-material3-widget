@@ -69,6 +69,9 @@ set(QTMATERIAL3_THEME_SOURCES
     src/theme/qtmaterialelevationscale.cpp
     src/theme/qtmaterialmotiontokens.cpp
     src/theme/qtmaterialstatelayer.cpp
+    src/theme/qtmaterialdensitytokens.cpp
+    src/theme/qtmaterialiconsizetokens.cpp
+    src/theme/qtmaterialcomponenttokens.cpp
     src/theme/qtmaterialxmlthemeadapter.cpp
 )
 
@@ -88,6 +91,9 @@ set(QTMATERIAL3_THEME_HEADERS
     include/qtmaterial/theme/qtmaterialelevationscale.h
     include/qtmaterial/theme/qtmaterialmotiontokens.h
     include/qtmaterial/theme/qtmaterialstatelayer.h
+    include/qtmaterial/theme/qtmaterialdensitytokens.h
+    include/qtmaterial/theme/qtmaterialiconsizetokens.h
+    include/qtmaterial/theme/qtmaterialcomponenttokens.h
     include/qtmaterial/theme/qtmaterialxmlthemeadapter.h
 )
 

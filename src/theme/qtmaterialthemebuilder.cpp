@@ -1,6 +1,6 @@
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
-#include <QEasingCurve>
+#include <QColor>
 #include <QDebug>
 #include <QFont>
 
@@ -33,6 +33,24 @@ QFont defaultFont(int pointSize, int weight = QFont::Normal)
     return font;
 }
 
+void applyFixedAccentRoles(ColorScheme& scheme, const QColor& seed, const QColor& secondary)
+{
+    scheme.setColor(ColorRole::PrimaryFixed, tone(seed, 0.80));
+    scheme.setColor(ColorRole::PrimaryFixedDim, tone(seed, 0.65));
+    scheme.setColor(ColorRole::OnPrimaryFixed, shade(seed, 0.82));
+    scheme.setColor(ColorRole::OnPrimaryFixedVariant, shade(seed, 0.55));
+
+    scheme.setColor(ColorRole::SecondaryFixed, tone(secondary, 0.80));
+    scheme.setColor(ColorRole::SecondaryFixedDim, tone(secondary, 0.65));
+    scheme.setColor(ColorRole::OnSecondaryFixed, shade(secondary, 0.82));
+    scheme.setColor(ColorRole::OnSecondaryFixedVariant, shade(secondary, 0.55));
+
+    scheme.setColor(ColorRole::TertiaryFixed, QColor("#FFD8E4"));
+    scheme.setColor(ColorRole::TertiaryFixedDim, QColor("#EFB8C8"));
+    scheme.setColor(ColorRole::OnTertiaryFixed, QColor("#31111D"));
+    scheme.setColor(ColorRole::OnTertiaryFixedVariant, QColor("#633B48"));
+}
+
 } // namespace
 
 ThemeBuilder::ThemeBuilder() = default;
@@ -43,23 +61,22 @@ Theme ThemeBuilder::build(const ThemeOptions& options) const
 #ifndef NDEBUG
     if (options.expressive || options.useMaterialColorUtilities) {
         qWarning() << "ThemeBuilder: expressive/useMaterialColorUtilities are not implemented yet."
-                   << "The theme will be generated with the fallback builder.";
+                   << "The theme will be generated with the deterministic fallback builder.";
     }
-#endif    
+#endif
     return buildFallbackTheme(options);
 }
 
 Theme ThemeBuilder::buildBaseTheme()
 {
     Theme theme;
-
     ThemeBuilder builder;
-    // builder. applyContrastAdjustments(theme, options.contrast);
     builder.applyDefaultTypography(theme);
     builder.applyDefaultShapes(theme);
     builder.applyDefaultElevations(theme);
     builder.applyDefaultMotion(theme);
-
+    builder.applyDefaultDensity(theme);
+    builder.applyDefaultIconSizes(theme);
     return theme;
 }
 
@@ -100,20 +117,20 @@ Theme ThemeBuilder::buildFallbackTheme(const ThemeOptions& options) const
     Theme theme = baseTheme();
     theme.setOptions(options);
 
-    if (options.mode == ThemeMode::Dark)
+    if (options.mode == ThemeMode::Dark) {
         theme.colorScheme() = buildFallbackDarkScheme(options.sourceColor);
-    else
+    } else {
         theme.colorScheme() = buildFallbackLightScheme(options.sourceColor);
+    }
 
+    applyContrastAdjustments(theme, options.contrast);
     applyDefaultStateLayer(theme);
-
     return theme;
 }
 
 ColorScheme ThemeBuilder::buildFallbackLightScheme(const QColor& seed) const
 {
     ColorScheme scheme;
-
     scheme.setColor(ColorRole::Primary, seed);
     scheme.setColor(ColorRole::OnPrimary, QColor(Qt::white));
     scheme.setColor(ColorRole::PrimaryContainer, tone(seed, 0.78));
@@ -148,6 +165,7 @@ ColorScheme ThemeBuilder::buildFallbackLightScheme(const QColor& seed) const
     scheme.setColor(ColorRole::SurfaceContainerHighest, QColor("#E6E0E9"));
     scheme.setColor(ColorRole::SurfaceVariant, QColor("#E7E0EC"));
     scheme.setColor(ColorRole::OnSurfaceVariant, QColor("#49454F"));
+    scheme.setColor(ColorRole::SurfaceTint, seed);
     scheme.setColor(ColorRole::Outline, QColor("#79747E"));
     scheme.setColor(ColorRole::OutlineVariant, QColor("#CAC4D0"));
     scheme.setColor(ColorRole::InverseSurface, QColor("#313033"));
@@ -156,13 +174,13 @@ ColorScheme ThemeBuilder::buildFallbackLightScheme(const QColor& seed) const
     scheme.setColor(ColorRole::Shadow, QColor(0, 0, 0, 255));
     scheme.setColor(ColorRole::Scrim, QColor(0, 0, 0, 255));
 
+    applyFixedAccentRoles(scheme, seed, secondary);
     return scheme;
 }
 
 ColorScheme ThemeBuilder::buildFallbackDarkScheme(const QColor& seed) const
 {
     ColorScheme scheme;
-
     scheme.setColor(ColorRole::Primary, tone(seed, 0.35));
     scheme.setColor(ColorRole::OnPrimary, shade(seed, 0.70));
     scheme.setColor(ColorRole::PrimaryContainer, shade(seed, 0.58));
@@ -197,6 +215,7 @@ ColorScheme ThemeBuilder::buildFallbackDarkScheme(const QColor& seed) const
     scheme.setColor(ColorRole::SurfaceContainerHighest, QColor("#36343B"));
     scheme.setColor(ColorRole::SurfaceVariant, QColor("#49454F"));
     scheme.setColor(ColorRole::OnSurfaceVariant, QColor("#CAC4D0"));
+    scheme.setColor(ColorRole::SurfaceTint, tone(seed, 0.35));
     scheme.setColor(ColorRole::Outline, QColor("#938F99"));
     scheme.setColor(ColorRole::OutlineVariant, QColor("#49454F"));
     scheme.setColor(ColorRole::InverseSurface, QColor("#E6E1E5"));
@@ -205,6 +224,7 @@ ColorScheme ThemeBuilder::buildFallbackDarkScheme(const QColor& seed) const
     scheme.setColor(ColorRole::Shadow, QColor(0, 0, 0, 255));
     scheme.setColor(ColorRole::Scrim, QColor(0, 0, 0, 255));
 
+    applyFixedAccentRoles(scheme, seed, shade(seed, 0.22));
     return scheme;
 }
 
@@ -278,13 +298,30 @@ void ThemeBuilder::applyDefaultStateLayer(Theme& theme) const
     s.dragOpacity = 0.16;
 }
 
+void ThemeBuilder::applyDefaultDensity(Theme& theme) const
+{
+    auto& density = theme.density();
+    density.setValue(DensityRole::Compact, -2);
+    density.setValue(DensityRole::Default, 0);
+    density.setValue(DensityRole::Comfortable, 2);
+}
+
+void ThemeBuilder::applyDefaultIconSizes(Theme& theme) const
+{
+    auto& icons = theme.iconSizes();
+    icons.setSize(IconSizeRole::ExtraSmall, 16);
+    icons.setSize(IconSizeRole::Small, 18);
+    icons.setSize(IconSizeRole::Medium, 24);
+    icons.setSize(IconSizeRole::Large, 32);
+    icons.setSize(IconSizeRole::ExtraLarge, 40);
+}
 
 QColor ThemeBuilder::adjustColorTowards(const QColor& base, const QColor& target, qreal amount) const
 {
     const qreal t = qBound(0.0, amount, 1.0);
-    const int r = static_cast<int>(base.red()   + (target.red()   - base.red())   * t);
+    const int r = static_cast<int>(base.red() + (target.red() - base.red()) * t);
     const int g = static_cast<int>(base.green() + (target.green() - base.green()) * t);
-    const int b = static_cast<int>(base.blue()  + (target.blue()  - base.blue())  * t);
+    const int b = static_cast<int>(base.blue() + (target.blue() - base.blue()) * t);
     return QColor(r, g, b, base.alpha());
 }
 
@@ -297,37 +334,37 @@ void ThemeBuilder::applyContrastAdjustments(Theme& theme, ContrastMode contrast)
     auto& scheme = theme.colorScheme();
     const QColor white(Qt::white);
     const QColor black(Qt::black);
-
     const bool dark = theme.isDark();
     const QColor towardForeground = dark ? white : black;
     const QColor towardDivider = dark ? white : black;
-
     const qreal textAmount = (contrast == ContrastMode::Medium) ? 0.12 : 0.24;
     const qreal outlineAmount = (contrast == ContrastMode::Medium) ? 0.10 : 0.20;
 
-    if (scheme.contains(ColorRole::OnPrimary)) {
-        scheme.setColor(ColorRole::OnPrimary,
-            adjustColorTowards(scheme.color(ColorRole::OnPrimary), towardForeground, textAmount));
+    const ColorRole foregroundRoles[] = {
+        ColorRole::OnPrimary,
+        ColorRole::OnSecondary,
+        ColorRole::OnTertiary,
+        ColorRole::OnSurface,
+        ColorRole::OnSurfaceVariant,
+        ColorRole::OnPrimaryFixed,
+        ColorRole::OnPrimaryFixedVariant,
+        ColorRole::OnSecondaryFixed,
+        ColorRole::OnSecondaryFixedVariant,
+        ColorRole::OnTertiaryFixed,
+        ColorRole::OnTertiaryFixedVariant
+    };
+
+    for (ColorRole role : foregroundRoles) {
+        if (scheme.contains(role)) {
+            scheme.setColor(role, adjustColorTowards(scheme.color(role), towardForeground, textAmount));
+        }
     }
-    if (scheme.contains(ColorRole::OnSecondary)) {
-        scheme.setColor(ColorRole::OnSecondary,
-            adjustColorTowards(scheme.color(ColorRole::OnSecondary), towardForeground, textAmount));
-    }
-    if (scheme.contains(ColorRole::OnSurface)) {
-        scheme.setColor(ColorRole::OnSurface,
-            adjustColorTowards(scheme.color(ColorRole::OnSurface), towardForeground, textAmount));
-    }
-    if (scheme.contains(ColorRole::OnSurfaceVariant)) {
-        scheme.setColor(ColorRole::OnSurfaceVariant,
-            adjustColorTowards(scheme.color(ColorRole::OnSurfaceVariant), towardForeground, textAmount));
-    }
+
     if (scheme.contains(ColorRole::Outline)) {
-        scheme.setColor(ColorRole::Outline,
-            adjustColorTowards(scheme.color(ColorRole::Outline), towardDivider, outlineAmount));
+        scheme.setColor(ColorRole::Outline, adjustColorTowards(scheme.color(ColorRole::Outline), towardDivider, outlineAmount));
     }
     if (scheme.contains(ColorRole::OutlineVariant)) {
-        scheme.setColor(ColorRole::OutlineVariant,
-            adjustColorTowards(scheme.color(ColorRole::OutlineVariant), towardDivider, outlineAmount));
+        scheme.setColor(ColorRole::OutlineVariant, adjustColorTowards(scheme.color(ColorRole::OutlineVariant), towardDivider, outlineAmount));
     }
 }
 

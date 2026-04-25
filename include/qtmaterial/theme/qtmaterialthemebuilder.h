@@ -8,8 +8,7 @@ class QColor;
 
 namespace QtMaterial {
 
-class QTMATERIAL3_THEME_EXPORT ThemeBuilder
-{
+class QTMATERIAL3_THEME_EXPORT ThemeBuilder {
 public:
     ThemeBuilder();
     ~ThemeBuilder();
@@ -38,6 +37,8 @@ private:
     void applyDefaultElevations(Theme& theme) const;
     void applyDefaultMotion(Theme& theme) const;
     void applyDefaultStateLayer(Theme& theme) const;
+    void applyDefaultDensity(Theme& theme) const;
+    void applyDefaultIconSizes(Theme& theme) const;
 };
 
 } // namespace QtMaterial

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://faudard.github.io/qt-material3-widget/schema/theme-v1.schema.json",
+  "title": "Qt Material 3 Theme JSON Schema v1",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["formatVersion"],
+  "properties": {
+    "formatVersion": { "const": 1 },
+    "mode": { "enum": ["Light", "Dark"] },
+    "contrast": { "enum": ["Standard", "Medium", "High"] },
+    "options": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "sourceColor": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$" },
+        "mode": { "enum": ["Light", "Dark"] },
+        "contrast": { "enum": ["Standard", "Medium", "High"] },
+        "expressive": { "type": "boolean" },
+        "useMaterialColorUtilities": { "type": "boolean" }
+      }
+    },
+    "colorScheme": { "$ref": "#/$defs/colorScheme" },
+    "typography": { "type": "object", "additionalProperties": true },
+    "shapes": { "type": "object", "additionalProperties": { "type": "integer" } },
+    "elevations": { "type": "object", "additionalProperties": true },
+    "motion": { "type": "object", "additionalProperties": true },
+    "stateLayer": { "$ref": "#/$defs/stateLayer" }
+  },
+  "$defs": {
+    "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$" },
+    "colorScheme": { "type": "object", "additionalProperties": { "$ref": "#/$defs/color" } },
+    "stateLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": { "$ref": "#/$defs/color" },
+        "hoverOpacity": { "type": "number" },
+        "focusOpacity": { "type": "number" },
+        "pressOpacity": { "type": "number" },
+        "dragOpacity": { "type": "number" }
+      }
+    }
+  }
+}

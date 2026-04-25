@@ -1,9 +1,12 @@
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
 
+#include <QColor>
 #include <QFile>
 #include <QFont>
 #include <QJsonArray>
 #include <QJsonParseError>
+#include <QSet>
+#include <QtGlobal>
 
 #include <array>
 #include <utility>
@@ -26,9 +29,7 @@ QString enumToString(Enum value, const std::array<EnumNamePair<Enum>, N>& map)
 }
 
 template <typename Enum, std::size_t N>
-bool stringToEnum(const QString& text,
-                  const std::array<EnumNamePair<Enum>, N>& map,
-                  Enum* outValue)
+bool stringToEnum(const QString& text, const std::array<EnumNamePair<Enum>, N>& map, Enum* outValue)
 {
     for (const auto& [candidate, name] : map) {
         if (text == QLatin1String(name)) {
@@ -84,6 +85,33 @@ bool jsonToColor(const QJsonValue& value, QColor* outColor)
     return true;
 }
 
+bool rejectUnknownKeys(const QJsonObject& object, const QSet<QString>& allowedKeys, const QString& path, QString* errorString)
+{
+    for (auto it = object.constBegin(); it != object.constEnd(); ++it) {
+        if (!allowedKeys.contains(it.key())) {
+            if (errorString) {
+                *errorString = QStringLiteral("Unknown key '%1' in %2.").arg(it.key(), path);
+            }
+            return false;
+        }
+    }
+    return true;
+}
+
+bool requireObjectMember(const QJsonObject& object, const QString& key, QJsonObject* outObject, QString* errorString)
+{
+    if (!object.contains(key) || !object.value(key).isObject()) {
+        if (errorString) {
+            *errorString = QStringLiteral("Missing or invalid object member '%1'.").arg(key);
+        }
+        return false;
+    }
+    if (outObject) {
+        *outObject = object.value(key).toObject();
+    }
+    return true;
+}
+
 const std::array kThemeModes = {
     EnumNamePair<ThemeMode>{ ThemeMode::Light, "Light" },
     EnumNamePair<ThemeMode>{ ThemeMode::Dark, "Dark" },
@@ -100,14 +128,26 @@ const std::array kColorRoles = {
     EnumNamePair<ColorRole>{ ColorRole::OnPrimary, "OnPrimary" },
     EnumNamePair<ColorRole>{ ColorRole::PrimaryContainer, "PrimaryContainer" },
     EnumNamePair<ColorRole>{ ColorRole::OnPrimaryContainer, "OnPrimaryContainer" },
+    EnumNamePair<ColorRole>{ ColorRole::PrimaryFixed, "PrimaryFixed" },
+    EnumNamePair<ColorRole>{ ColorRole::PrimaryFixedDim, "PrimaryFixedDim" },
+    EnumNamePair<ColorRole>{ ColorRole::OnPrimaryFixed, "OnPrimaryFixed" },
+    EnumNamePair<ColorRole>{ ColorRole::OnPrimaryFixedVariant, "OnPrimaryFixedVariant" },
     EnumNamePair<ColorRole>{ ColorRole::Secondary, "Secondary" },
     EnumNamePair<ColorRole>{ ColorRole::OnSecondary, "OnSecondary" },
     EnumNamePair<ColorRole>{ ColorRole::SecondaryContainer, "SecondaryContainer" },
     EnumNamePair<ColorRole>{ ColorRole::OnSecondaryContainer, "OnSecondaryContainer" },
+    EnumNamePair<ColorRole>{ ColorRole::SecondaryFixed, "SecondaryFixed" },
+    EnumNamePair<ColorRole>{ ColorRole::SecondaryFixedDim, "SecondaryFixedDim" },
+    EnumNamePair<ColorRole>{ ColorRole::OnSecondaryFixed, "OnSecondaryFixed" },
+    EnumNamePair<ColorRole>{ ColorRole::OnSecondaryFixedVariant, "OnSecondaryFixedVariant" },
     EnumNamePair<ColorRole>{ ColorRole::Tertiary, "Tertiary" },
     EnumNamePair<ColorRole>{ ColorRole::OnTertiary, "OnTertiary" },
     EnumNamePair<ColorRole>{ ColorRole::TertiaryContainer, "TertiaryContainer" },
     EnumNamePair<ColorRole>{ ColorRole::OnTertiaryContainer, "OnTertiaryContainer" },
+    EnumNamePair<ColorRole>{ ColorRole::TertiaryFixed, "TertiaryFixed" },
+    EnumNamePair<ColorRole>{ ColorRole::TertiaryFixedDim, "TertiaryFixedDim" },
+    EnumNamePair<ColorRole>{ ColorRole::OnTertiaryFixed, "OnTertiaryFixed" },
+    EnumNamePair<ColorRole>{ ColorRole::OnTertiaryFixedVariant, "OnTertiaryFixedVariant" },
     EnumNamePair<ColorRole>{ ColorRole::Error, "Error" },
     EnumNamePair<ColorRole>{ ColorRole::OnError, "OnError" },
     EnumNamePair<ColorRole>{ ColorRole::ErrorContainer, "ErrorContainer" },
@@ -125,6 +165,7 @@ const std::array kColorRoles = {
     EnumNamePair<ColorRole>{ ColorRole::SurfaceContainerHighest, "SurfaceContainerHighest" },
     EnumNamePair<ColorRole>{ ColorRole::SurfaceVariant, "SurfaceVariant" },
     EnumNamePair<ColorRole>{ ColorRole::OnSurfaceVariant, "OnSurfaceVariant" },
+    EnumNamePair<ColorRole>{ ColorRole::SurfaceTint, "SurfaceTint" },
     EnumNamePair<ColorRole>{ ColorRole::Outline, "Outline" },
     EnumNamePair<ColorRole>{ ColorRole::OutlineVariant, "OutlineVariant" },
     EnumNamePair<ColorRole>{ ColorRole::InverseSurface, "InverseSurface" },
@@ -186,6 +227,20 @@ const std::array kMotionTokens = {
     EnumNamePair<MotionToken>{ MotionToken::Long4, "Long4" },
 };
 
+const std::array kDensityRoles = {
+    EnumNamePair<DensityRole>{ DensityRole::Compact, "Compact" },
+    EnumNamePair<DensityRole>{ DensityRole::Default, "Default" },
+    EnumNamePair<DensityRole>{ DensityRole::Comfortable, "Comfortable" },
+};
+
+const std::array kIconSizeRoles = {
+    EnumNamePair<IconSizeRole>{ IconSizeRole::ExtraSmall, "ExtraSmall" },
+    EnumNamePair<IconSizeRole>{ IconSizeRole::Small, "Small" },
+    EnumNamePair<IconSizeRole>{ IconSizeRole::Medium, "Medium" },
+    EnumNamePair<IconSizeRole>{ IconSizeRole::Large, "Large" },
+    EnumNamePair<IconSizeRole>{ IconSizeRole::ExtraLarge, "ExtraLarge" },
+};
+
 QJsonObject fontToJson(const QFont& font)
 {
     QJsonObject object;
@@ -203,46 +258,37 @@ QJsonObject fontToJson(const QFont& font)
 QFont fontFromJson(const QJsonObject& object)
 {
     QFont font;
-
     if (object.contains(QStringLiteral("family"))) {
         font.setFamily(object.value(QStringLiteral("family")).toString());
     }
-
     const int pointSize = object.value(QStringLiteral("pointSize")).toInt(-1);
     if (pointSize > 0) {
         font.setPointSize(pointSize);
     }
-
     const int pixelSize = object.value(QStringLiteral("pixelSize")).toInt(-1);
     if (pixelSize > 0) {
         font.setPixelSize(pixelSize);
     }
-
     font.setWeight(object.value(QStringLiteral("weight")).toInt(QFont::Normal));
     font.setItalic(object.value(QStringLiteral("italic")).toBool(false));
     font.setUnderline(object.value(QStringLiteral("underline")).toBool(false));
     font.setStrikeOut(object.value(QStringLiteral("strikeOut")).toBool(false));
     font.setKerning(object.value(QStringLiteral("kerning")).toBool(true));
-
     return font;
 }
 
 QJsonObject optionsToJson(const ThemeOptions& options)
 {
     QJsonObject object;
-    object.insert(QStringLiteral("sourceColor"), colorToString(options.sourceColor));
+    object.insert(QStringLiteral("seedColor"), colorToString(options.sourceColor));
     object.insert(QStringLiteral("mode"), enumToString(options.mode, kThemeModes));
     object.insert(QStringLiteral("contrast"), enumToString(options.contrast, kContrastModes));
-    // Persisted even if not currently consumed by ThemeBuilder.
-    // This keeps the snapshot format forward-compatible with future theme-generation backends.    
     object.insert(QStringLiteral("expressive"), options.expressive);
     object.insert(QStringLiteral("useMaterialColorUtilities"), options.useMaterialColorUtilities);
     return object;
 }
 
-bool optionsFromJson(const QJsonObject& object,
-                     ThemeOptions* outOptions,
-                     QString* errorString)
+bool optionsFromJson(const QJsonObject& object, ThemeOptions* outOptions, QString* errorString)
 {
     if (!outOptions) {
         if (errorString) {
@@ -252,12 +298,15 @@ bool optionsFromJson(const QJsonObject& object,
     }
 
     ThemeOptions options;
+    const QString seedKey = object.contains(QStringLiteral("seedColor"))
+        ? QStringLiteral("seedColor")
+        : QStringLiteral("sourceColor");
 
-    if (object.contains(QStringLiteral("sourceColor"))) {
+    if (object.contains(seedKey)) {
         QColor sourceColor;
-        if (!jsonToColor(object.value(QStringLiteral("sourceColor")), &sourceColor)) {
+        if (!jsonToColor(object.value(seedKey), &sourceColor)) {
             if (errorString) {
-                *errorString = QStringLiteral("Invalid options.sourceColor value.");
+                *errorString = QStringLiteral("Invalid source seed color value.");
             }
             return false;
         }
@@ -268,7 +317,7 @@ bool optionsFromJson(const QJsonObject& object,
         ThemeMode mode = ThemeMode::Light;
         if (!stringToEnum(object.value(QStringLiteral("mode")).toString(), kThemeModes, &mode)) {
             if (errorString) {
-                *errorString = QStringLiteral("Invalid options.mode value.");
+                *errorString = QStringLiteral("Invalid source.mode value.");
             }
             return false;
         }
@@ -279,7 +328,7 @@ bool optionsFromJson(const QJsonObject& object,
         ContrastMode contrast = ContrastMode::Standard;
         if (!stringToEnum(object.value(QStringLiteral("contrast")).toString(), kContrastModes, &contrast)) {
             if (errorString) {
-                *errorString = QStringLiteral("Invalid options.contrast value.");
+                *errorString = QStringLiteral("Invalid source.contrast value.");
             }
             return false;
         }
@@ -289,7 +338,6 @@ bool optionsFromJson(const QJsonObject& object,
     if (object.contains(QStringLiteral("expressive"))) {
         options.expressive = object.value(QStringLiteral("expressive")).toBool(options.expressive);
     }
-
     if (object.contains(QStringLiteral("useMaterialColorUtilities"))) {
         options.useMaterialColorUtilities = object.value(QStringLiteral("useMaterialColorUtilities")).toBool(options.useMaterialColorUtilities);
     }
@@ -309,9 +357,7 @@ QJsonObject colorSchemeToJson(const ColorScheme& scheme)
     return object;
 }
 
-bool colorSchemeFromJson(const QJsonObject& object,
-                         ColorScheme* outScheme,
-                         QString* errorString)
+bool colorSchemeFromJson(const QJsonObject& object, ColorScheme* outScheme, QString* errorString)
 {
     if (!outScheme) {
         if (errorString) {
@@ -326,7 +372,6 @@ bool colorSchemeFromJson(const QJsonObject& object,
         if (!object.contains(key)) {
             continue;
         }
-
         QColor color;
         if (!jsonToColor(object.value(key), &color)) {
             if (errorString) {
@@ -348,7 +393,6 @@ QJsonObject typographyToJson(const TypographyScale& typography)
         if (!typography.contains(role)) {
             continue;
         }
-
         const TypographyStyle style = typography.style(role);
         QJsonObject styleObject;
         styleObject.insert(QStringLiteral("font"), fontToJson(style.font));
@@ -359,9 +403,7 @@ QJsonObject typographyToJson(const TypographyScale& typography)
     return object;
 }
 
-bool typographyFromJson(const QJsonObject& object,
-                        TypographyScale* outTypography,
-                        QString* errorString)
+bool typographyFromJson(const QJsonObject& object, TypographyScale* outTypography, QString* errorString)
 {
     if (!outTypography) {
         if (errorString) {
@@ -376,7 +418,6 @@ bool typographyFromJson(const QJsonObject& object,
         if (!object.contains(key)) {
             continue;
         }
-
         const QJsonValue value = object.value(key);
         if (!value.isObject()) {
             if (errorString) {
@@ -384,7 +425,6 @@ bool typographyFromJson(const QJsonObject& object,
             }
             return false;
         }
-
         const QJsonObject styleObject = value.toObject();
         TypographyStyle style;
         style.font = fontFromJson(styleObject.value(QStringLiteral("font")).toObject());
@@ -408,9 +448,7 @@ QJsonObject shapesToJson(const ShapeScale& shapes)
     return object;
 }
 
-bool shapesFromJson(const QJsonObject& object,
-                    ShapeScale* outShapes,
-                    QString* errorString)
+bool shapesFromJson(const QJsonObject& object, ShapeScale* outShapes, QString* errorString)
 {
     if (!outShapes) {
         if (errorString) {
@@ -439,7 +477,6 @@ QJsonObject elevationsToJson(const ElevationScale& elevations)
         if (!elevations.contains(role)) {
             continue;
         }
-
         const ElevationStyle style = elevations.style(role);
         QJsonObject styleObject;
         styleObject.insert(QStringLiteral("shadowBlur"), style.shadowBlur);
@@ -450,9 +487,7 @@ QJsonObject elevationsToJson(const ElevationScale& elevations)
     return object;
 }
 
-bool elevationsFromJson(const QJsonObject& object,
-                        ElevationScale* outElevations,
-                        QString* errorString)
+bool elevationsFromJson(const QJsonObject& object, ElevationScale* outElevations, QString* errorString)
 {
     if (!outElevations) {
         if (errorString) {
@@ -467,7 +502,6 @@ bool elevationsFromJson(const QJsonObject& object,
         if (!object.contains(key)) {
             continue;
         }
-
         const QJsonValue value = object.value(key);
         if (!value.isObject()) {
             if (errorString) {
@@ -475,7 +509,6 @@ bool elevationsFromJson(const QJsonObject& object,
             }
             return false;
         }
-
         const QJsonObject styleObject = value.toObject();
         ElevationStyle style;
         style.shadowBlur = styleObject.value(QStringLiteral("shadowBlur")).toInt();
@@ -495,7 +528,6 @@ QJsonObject motionToJson(const MotionTokens& motion)
         if (!motion.contains(token)) {
             continue;
         }
-
         const MotionStyle style = motion.style(token);
         QJsonObject styleObject;
         styleObject.insert(QStringLiteral("durationMs"), style.durationMs);
@@ -505,9 +537,7 @@ QJsonObject motionToJson(const MotionTokens& motion)
     return object;
 }
 
-bool motionFromJson(const QJsonObject& object,
-                    MotionTokens* outMotion,
-                    QString* errorString)
+bool motionFromJson(const QJsonObject& object, MotionTokens* outMotion, QString* errorString)
 {
     if (!outMotion) {
         if (errorString) {
@@ -522,7 +552,6 @@ bool motionFromJson(const QJsonObject& object,
         if (!object.contains(key)) {
             continue;
         }
-
         const QJsonValue value = object.value(key);
         if (!value.isObject()) {
             if (errorString) {
@@ -530,7 +559,6 @@ bool motionFromJson(const QJsonObject& object,
             }
             return false;
         }
-
         const QJsonObject styleObject = value.toObject();
         MotionStyle style;
         style.durationMs = styleObject.value(QStringLiteral("durationMs")).toInt();
@@ -554,9 +582,7 @@ QJsonObject stateLayerToJson(const StateLayer& stateLayer)
     return object;
 }
 
-bool stateLayerFromJson(const QJsonObject& object,
-                        StateLayer* outStateLayer,
-                        QString* errorString)
+bool stateLayerFromJson(const QJsonObject& object, StateLayer* outStateLayer, QString* errorString)
 {
     if (!outStateLayer) {
         if (errorString) {
@@ -566,7 +592,6 @@ bool stateLayerFromJson(const QJsonObject& object,
     }
 
     StateLayer stateLayer;
-
     if (object.contains(QStringLiteral("color"))) {
         QColor color;
         if (!jsonToColor(object.value(QStringLiteral("color")), &color)) {
@@ -577,7 +602,6 @@ bool stateLayerFromJson(const QJsonObject& object,
         }
         stateLayer.color = color;
     }
-
     stateLayer.hoverOpacity = object.value(QStringLiteral("hoverOpacity")).toDouble(stateLayer.hoverOpacity);
     stateLayer.focusOpacity = object.value(QStringLiteral("focusOpacity")).toDouble(stateLayer.focusOpacity);
     stateLayer.pressOpacity = object.value(QStringLiteral("pressOpacity")).toDouble(stateLayer.pressOpacity);
@@ -587,21 +611,552 @@ bool stateLayerFromJson(const QJsonObject& object,
     return true;
 }
 
+QJsonObject densityToJson(const DensityTokens& density)
+{
+    QJsonObject object;
+    for (const auto& [role, name] : kDensityRoles) {
+        if (density.contains(role)) {
+            object.insert(QString::fromLatin1(name), density.value(role));
+        }
+    }
+    return object;
+}
+
+bool densityFromJson(const QJsonObject& object, DensityTokens* outDensity, QString* errorString)
+{
+    if (!outDensity) {
+        if (errorString) {
+            *errorString = QStringLiteral("Output DensityTokens pointer is null.");
+        }
+        return false;
+    }
+
+    DensityTokens density;
+    for (const auto& [role, name] : kDensityRoles) {
+        const QString key = QString::fromLatin1(name);
+        if (object.contains(key)) {
+            density.setValue(role, object.value(key).toInt());
+        }
+    }
+    *outDensity = density;
+    return true;
+}
+
+QJsonObject iconSizesToJson(const IconSizeTokens& iconSizes)
+{
+    QJsonObject object;
+    for (const auto& [role, name] : kIconSizeRoles) {
+        if (iconSizes.contains(role)) {
+            object.insert(QString::fromLatin1(name), iconSizes.size(role));
+        }
+    }
+    return object;
+}
+
+bool iconSizesFromJson(const QJsonObject& object, IconSizeTokens* outIconSizes, QString* errorString)
+{
+    if (!outIconSizes) {
+        if (errorString) {
+            *errorString = QStringLiteral("Output IconSizeTokens pointer is null.");
+        }
+        return false;
+    }
+
+    IconSizeTokens iconSizes;
+    for (const auto& [role, name] : kIconSizeRoles) {
+        const QString key = QString::fromLatin1(name);
+        if (object.contains(key)) {
+            iconSizes.setSize(role, object.value(key).toInt());
+        }
+    }
+    *outIconSizes = iconSizes;
+    return true;
+}
+
+QJsonObject componentOverridesToJson(const ComponentTokenOverrides& overrides)
+{
+    QJsonObject root;
+    const QStringList names = overrides.componentNames();
+    for (const QString& componentName : names) {
+        const ComponentTokenOverride overrideTokens = overrides.overrideFor(componentName);
+        QJsonObject object;
+
+        ColorScheme colors;
+        for (auto it = overrideTokens.colors.constBegin(); it != overrideTokens.colors.constEnd(); ++it) {
+            colors.setColor(it.key(), it.value());
+        }
+        if (!overrideTokens.colors.isEmpty()) {
+            object.insert(QStringLiteral("colors"), colorSchemeToJson(colors));
+        }
+
+        TypographyScale typography;
+        for (auto it = overrideTokens.typography.constBegin(); it != overrideTokens.typography.constEnd(); ++it) {
+            typography.setStyle(it.key(), it.value());
+        }
+        if (!overrideTokens.typography.isEmpty()) {
+            object.insert(QStringLiteral("typography"), typographyToJson(typography));
+        }
+
+        ShapeScale shapes;
+        for (auto it = overrideTokens.shapes.constBegin(); it != overrideTokens.shapes.constEnd(); ++it) {
+            shapes.setRadius(it.key(), it.value());
+        }
+        if (!overrideTokens.shapes.isEmpty()) {
+            object.insert(QStringLiteral("shapes"), shapesToJson(shapes));
+        }
+
+        ElevationScale elevations;
+        for (auto it = overrideTokens.elevations.constBegin(); it != overrideTokens.elevations.constEnd(); ++it) {
+            elevations.setStyle(it.key(), it.value());
+        }
+        if (!overrideTokens.elevations.isEmpty()) {
+            object.insert(QStringLiteral("elevations"), elevationsToJson(elevations));
+        }
+
+        MotionTokens motion;
+        for (auto it = overrideTokens.motion.constBegin(); it != overrideTokens.motion.constEnd(); ++it) {
+            motion.setStyle(it.key(), it.value());
+        }
+        if (!overrideTokens.motion.isEmpty()) {
+            object.insert(QStringLiteral("motion"), motionToJson(motion));
+        }
+
+        DensityTokens density;
+        density.clear();
+        for (auto it = overrideTokens.density.constBegin(); it != overrideTokens.density.constEnd(); ++it) {
+            density.setValue(it.key(), it.value());
+        }
+        if (!overrideTokens.density.isEmpty()) {
+            object.insert(QStringLiteral("density"), densityToJson(density));
+        }
+
+        IconSizeTokens iconSizes;
+        iconSizes.clear();
+        for (auto it = overrideTokens.iconSizes.constBegin(); it != overrideTokens.iconSizes.constEnd(); ++it) {
+            iconSizes.setSize(it.key(), it.value());
+        }
+        if (!overrideTokens.iconSizes.isEmpty()) {
+            object.insert(QStringLiteral("iconSizes"), iconSizesToJson(iconSizes));
+        }
+
+        if (overrideTokens.hasStateLayer) {
+            object.insert(QStringLiteral("stateLayer"), stateLayerToJson(overrideTokens.stateLayer));
+        }
+        if (!overrideTokens.custom.isEmpty()) {
+            object.insert(QStringLiteral("custom"), QJsonObject::fromVariantMap(overrideTokens.custom));
+        }
+
+        root.insert(componentName, object);
+    }
+    return root;
+}
+
+bool componentOverridesFromJson(const QJsonObject& object, ComponentTokenOverrides* outOverrides, QString* errorString)
+{
+    if (!outOverrides) {
+        if (errorString) {
+            *errorString = QStringLiteral("Output ComponentTokenOverrides pointer is null.");
+        }
+        return false;
+    }
+
+    ComponentTokenOverrides overrides;
+    for (auto it = object.constBegin(); it != object.constEnd(); ++it) {
+        if (!it.value().isObject()) {
+            if (errorString) {
+                *errorString = QStringLiteral("Component override '%1' must be an object.").arg(it.key());
+            }
+            return false;
+        }
+
+        const QJsonObject componentObject = it.value().toObject();
+        ComponentTokenOverride overrideTokens;
+
+        if (componentObject.contains(QStringLiteral("colors"))) {
+            ColorScheme colors;
+            if (!colorSchemeFromJson(componentObject.value(QStringLiteral("colors")).toObject(), &colors, errorString)) {
+                return false;
+            }
+            for (const auto& [role, name] : kColorRoles) {
+                if (colors.contains(role)) {
+                    overrideTokens.colors.insert(role, colors.color(role));
+                }
+            }
+        }
+        if (componentObject.contains(QStringLiteral("typography"))) {
+            TypographyScale typography;
+            if (!typographyFromJson(componentObject.value(QStringLiteral("typography")).toObject(), &typography, errorString)) {
+                return false;
+            }
+            for (const auto& [role, name] : kTypeRoles) {
+                Q_UNUSED(name);
+                if (typography.contains(role)) {
+                    overrideTokens.typography.insert(role, typography.style(role));
+                }
+            }
+        }
+        if (componentObject.contains(QStringLiteral("shapes"))) {
+            ShapeScale shapes;
+            if (!shapesFromJson(componentObject.value(QStringLiteral("shapes")).toObject(), &shapes, errorString)) {
+                return false;
+            }
+            for (const auto& [role, name] : kShapeRoles) {
+                Q_UNUSED(name);
+                if (shapes.contains(role)) {
+                    overrideTokens.shapes.insert(role, shapes.radius(role));
+                }
+            }
+        }
+        if (componentObject.contains(QStringLiteral("elevations"))) {
+            ElevationScale elevations;
+            if (!elevationsFromJson(componentObject.value(QStringLiteral("elevations")).toObject(), &elevations, errorString)) {
+                return false;
+            }
+            for (const auto& [role, name] : kElevationRoles) {
+                Q_UNUSED(name);
+                if (elevations.contains(role)) {
+                    overrideTokens.elevations.insert(role, elevations.style(role));
+                }
+            }
+        }
+        if (componentObject.contains(QStringLiteral("motion"))) {
+            MotionTokens motion;
+            if (!motionFromJson(componentObject.value(QStringLiteral("motion")).toObject(), &motion, errorString)) {
+                return false;
+            }
+            for (const auto& [token, name] : kMotionTokens) {
+                Q_UNUSED(name);
+                if (motion.contains(token)) {
+                    overrideTokens.motion.insert(token, motion.style(token));
+                }
+            }
+        }
+        if (componentObject.contains(QStringLiteral("density"))) {
+            DensityTokens density;
+            if (!densityFromJson(componentObject.value(QStringLiteral("density")).toObject(), &density, errorString)) {
+                return false;
+            }
+            for (const auto& [role, name] : kDensityRoles) {
+                Q_UNUSED(name);
+                if (density.contains(role)) {
+                    overrideTokens.density.insert(role, density.value(role));
+                }
+            }
+        }
+        if (componentObject.contains(QStringLiteral("iconSizes"))) {
+            IconSizeTokens iconSizes;
+            if (!iconSizesFromJson(componentObject.value(QStringLiteral("iconSizes")).toObject(), &iconSizes, errorString)) {
+                return false;
+            }
+            for (const auto& [role, name] : kIconSizeRoles) {
+                Q_UNUSED(name);
+                if (iconSizes.contains(role)) {
+                    overrideTokens.iconSizes.insert(role, iconSizes.size(role));
+                }
+            }
+        }
+        if (componentObject.contains(QStringLiteral("stateLayer"))) {
+            if (!stateLayerFromJson(componentObject.value(QStringLiteral("stateLayer")).toObject(), &overrideTokens.stateLayer, errorString)) {
+                return false;
+            }
+            overrideTokens.hasStateLayer = true;
+        }
+        if (componentObject.contains(QStringLiteral("custom"))) {
+            overrideTokens.custom = componentObject.value(QStringLiteral("custom")).toObject().toVariantMap();
+        }
+
+        overrides.setOverride(it.key(), overrideTokens);
+    }
+
+    *outOverrides = overrides;
+    return true;
+}
+
+QJsonObject resolvedToJson(const Theme& theme)
+{
+    QJsonObject object;
+    object.insert(QStringLiteral("colorScheme"), colorSchemeToJson(theme.colorScheme()));
+    object.insert(QStringLiteral("typographyScale"), typographyToJson(theme.typography()));
+    object.insert(QStringLiteral("shapeScale"), shapesToJson(theme.shapes()));
+    object.insert(QStringLiteral("elevationScale"), elevationsToJson(theme.elevations()));
+    object.insert(QStringLiteral("motionTokens"), motionToJson(theme.motion()));
+    object.insert(QStringLiteral("stateLayer"), stateLayerToJson(theme.stateLayer()));
+    object.insert(QStringLiteral("density"), densityToJson(theme.density()));
+    object.insert(QStringLiteral("iconSizes"), iconSizesToJson(theme.iconSizes()));
+    object.insert(QStringLiteral("componentOverrides"), componentOverridesToJson(theme.componentOverrides()));
+    return object;
+}
+
+QJsonObject metadataToJson()
+{
+    QJsonObject object;
+    object.insert(QStringLiteral("generatorVersion"), QStringLiteral("qt-material3-widget ThemeSerializer v2"));
+    object.insert(QStringLiteral("libraryVersion"), QStringLiteral("0.4.0"));
+    object.insert(QStringLiteral("qtVersion"), QString::fromLatin1(QT_VERSION_STR));
+    return object;
+}
+
+bool applyResolvedToTheme(const QJsonObject& resolved, Theme* theme, QString* errorString)
+{
+    if (!theme) {
+        if (errorString) {
+            *errorString = QStringLiteral("Output Theme pointer is null.");
+        }
+        return false;
+    }
+
+    if (resolved.contains(QStringLiteral("colorScheme"))) {
+        ColorScheme scheme;
+        if (!colorSchemeFromJson(resolved.value(QStringLiteral("colorScheme")).toObject(), &scheme, errorString)) {
+            return false;
+        }
+        theme->colorScheme() = scheme;
+    }
+    if (resolved.contains(QStringLiteral("typographyScale")) || resolved.contains(QStringLiteral("typography"))) {
+        const QString key = resolved.contains(QStringLiteral("typographyScale")) ? QStringLiteral("typographyScale") : QStringLiteral("typography");
+        TypographyScale typography;
+        if (!typographyFromJson(resolved.value(key).toObject(), &typography, errorString)) {
+            return false;
+        }
+        theme->typography() = typography;
+    }
+    if (resolved.contains(QStringLiteral("shapeScale")) || resolved.contains(QStringLiteral("shapes"))) {
+        const QString key = resolved.contains(QStringLiteral("shapeScale")) ? QStringLiteral("shapeScale") : QStringLiteral("shapes");
+        ShapeScale shapes;
+        if (!shapesFromJson(resolved.value(key).toObject(), &shapes, errorString)) {
+            return false;
+        }
+        theme->shapes() = shapes;
+    }
+    if (resolved.contains(QStringLiteral("elevationScale")) || resolved.contains(QStringLiteral("elevations"))) {
+        const QString key = resolved.contains(QStringLiteral("elevationScale")) ? QStringLiteral("elevationScale") : QStringLiteral("elevations");
+        ElevationScale elevations;
+        if (!elevationsFromJson(resolved.value(key).toObject(), &elevations, errorString)) {
+            return false;
+        }
+        theme->elevations() = elevations;
+    }
+    if (resolved.contains(QStringLiteral("motionTokens")) || resolved.contains(QStringLiteral("motion"))) {
+        const QString key = resolved.contains(QStringLiteral("motionTokens")) ? QStringLiteral("motionTokens") : QStringLiteral("motion");
+        MotionTokens motion;
+        if (!motionFromJson(resolved.value(key).toObject(), &motion, errorString)) {
+            return false;
+        }
+        theme->motion() = motion;
+    }
+    if (resolved.contains(QStringLiteral("stateLayer"))) {
+        StateLayer stateLayer;
+        if (!stateLayerFromJson(resolved.value(QStringLiteral("stateLayer")).toObject(), &stateLayer, errorString)) {
+            return false;
+        }
+        theme->stateLayer() = stateLayer;
+    }
+    if (resolved.contains(QStringLiteral("density"))) {
+        DensityTokens density;
+        if (!densityFromJson(resolved.value(QStringLiteral("density")).toObject(), &density, errorString)) {
+            return false;
+        }
+        theme->density() = density;
+    }
+    if (resolved.contains(QStringLiteral("iconSizes"))) {
+        IconSizeTokens iconSizes;
+        if (!iconSizesFromJson(resolved.value(QStringLiteral("iconSizes")).toObject(), &iconSizes, errorString)) {
+            return false;
+        }
+        theme->iconSizes() = iconSizes;
+    }
+    if (resolved.contains(QStringLiteral("componentOverrides"))) {
+        ComponentTokenOverrides overrides;
+        if (!componentOverridesFromJson(resolved.value(QStringLiteral("componentOverrides")).toObject(), &overrides, errorString)) {
+            return false;
+        }
+        theme->componentOverrides() = overrides;
+    }
+
+    return true;
+}
+
+bool validateStrictV2(const QJsonObject& object, QString* errorString)
+{
+    const QSet<QString> rootKeys = {
+        QStringLiteral("formatVersion"),
+        QStringLiteral("source"),
+        QStringLiteral("resolved"),
+        QStringLiteral("metadata")
+    };
+    if (!rejectUnknownKeys(object, rootKeys, QStringLiteral("root"), errorString)) {
+        return false;
+    }
+
+    QJsonObject source;
+    QJsonObject resolved;
+    if (!requireObjectMember(object, QStringLiteral("source"), &source, errorString)) {
+        return false;
+    }
+    if (!requireObjectMember(object, QStringLiteral("resolved"), &resolved, errorString)) {
+        return false;
+    }
+
+    const QSet<QString> sourceKeys = {
+        QStringLiteral("seedColor"),
+        QStringLiteral("mode"),
+        QStringLiteral("contrast"),
+        QStringLiteral("expressive"),
+        QStringLiteral("useMaterialColorUtilities")
+    };
+    if (!rejectUnknownKeys(source, sourceKeys, QStringLiteral("source"), errorString)) {
+        return false;
+    }
+    for (const QString& requiredKey : sourceKeys) {
+        if (!source.contains(requiredKey)) {
+            if (errorString) {
+                *errorString = QStringLiteral("Strict theme is missing source.%1.").arg(requiredKey);
+            }
+            return false;
+        }
+    }
+
+    const QSet<QString> resolvedKeys = {
+        QStringLiteral("colorScheme"),
+        QStringLiteral("typographyScale"),
+        QStringLiteral("shapeScale"),
+        QStringLiteral("elevationScale"),
+        QStringLiteral("motionTokens"),
+        QStringLiteral("stateLayer"),
+        QStringLiteral("density"),
+        QStringLiteral("iconSizes"),
+        QStringLiteral("componentOverrides")
+    };
+    if (!rejectUnknownKeys(resolved, resolvedKeys, QStringLiteral("resolved"), errorString)) {
+        return false;
+    }
+
+    for (const QString& requiredKey : resolvedKeys) {
+        if (!resolved.contains(requiredKey)) {
+            if (errorString) {
+                *errorString = QStringLiteral("Strict theme is missing resolved.%1.").arg(requiredKey);
+            }
+            return false;
+        }
+    }
+
+    return true;
+}
+
+Theme parseV2Theme(const QJsonObject& object, ThemeReadMode mode, bool* ok, QString* errorString)
+{
+    if (mode == ThemeReadMode::Strict && !validateStrictV2(object, errorString)) {
+        if (ok) {
+            *ok = false;
+        }
+        return Theme();
+    }
+
+    ThemeOptions options;
+    const QJsonObject source = object.value(QStringLiteral("source")).toObject();
+    if (!optionsFromJson(source, &options, errorString)) {
+        if (ok) {
+            *ok = false;
+        }
+        return Theme();
+    }
+
+    Theme theme(options);
+    theme.setMode(options.mode);
+    theme.setContrastMode(options.contrast);
+    theme.setOptions(options);
+
+    const QJsonObject resolved = object.value(QStringLiteral("resolved")).toObject();
+    if (!resolved.isEmpty() && !applyResolvedToTheme(resolved, &theme, errorString)) {
+        if (ok) {
+            *ok = false;
+        }
+        return Theme();
+    }
+
+    succeed(ok, errorString);
+    return theme;
+}
+
+Theme parseV1Theme(const QJsonObject& object, ThemeReadMode mode, bool* ok, QString* errorString)
+{
+    if (mode == ThemeReadMode::Strict) {
+        fail(ok, errorString, QStringLiteral("Strict mode only accepts current theme formatVersion %1.").arg(ThemeSerializer::kCurrentFormatVersion));
+        return Theme();
+    }
+
+    ThemeOptions options;
+    if (object.contains(QStringLiteral("options"))) {
+        const QJsonValue optionsValue = object.value(QStringLiteral("options"));
+        if (!optionsValue.isObject()) {
+            fail(ok, errorString, QStringLiteral("Theme options entry must be an object."));
+            return Theme();
+        }
+        QString localError;
+        if (!optionsFromJson(optionsValue.toObject(), &options, &localError)) {
+            fail(ok, errorString, localError);
+            return Theme();
+        }
+    }
+
+    if (object.contains(QStringLiteral("mode"))) {
+        ThemeMode modeValue = ThemeMode::Light;
+        if (!stringToEnum(object.value(QStringLiteral("mode")).toString(), kThemeModes, &modeValue)) {
+            fail(ok, errorString, QStringLiteral("Invalid top-level mode value."));
+            return Theme();
+        }
+        options.mode = modeValue;
+    }
+
+    if (object.contains(QStringLiteral("contrast"))) {
+        ContrastMode contrast = ContrastMode::Standard;
+        if (!stringToEnum(object.value(QStringLiteral("contrast")).toString(), kContrastModes, &contrast)) {
+            fail(ok, errorString, QStringLiteral("Invalid top-level contrast value."));
+            return Theme();
+        }
+        options.contrast = contrast;
+    }
+
+    Theme theme(options);
+    theme.setMode(options.mode);
+    theme.setContrastMode(options.contrast);
+    theme.setOptions(options);
+
+    QJsonObject resolved;
+    const QStringList legacyResolvedKeys = {
+        QStringLiteral("colorScheme"),
+        QStringLiteral("typography"),
+        QStringLiteral("shapes"),
+        QStringLiteral("elevations"),
+        QStringLiteral("motion"),
+        QStringLiteral("stateLayer")
+    };
+    for (const QString& key : legacyResolvedKeys) {
+        if (object.contains(key)) {
+            resolved.insert(key, object.value(key));
+        }
+    }
+
+    if (!applyResolvedToTheme(resolved, &theme, errorString)) {
+        if (ok) {
+            *ok = false;
+        }
+        return Theme();
+    }
+
+    succeed(ok, errorString);
+    return theme;
+}
+
 } // namespace
 
 QJsonObject ThemeSerializer::toJsonObject(const Theme& theme)
 {
     QJsonObject object;
     object.insert(QStringLiteral("formatVersion"), kCurrentFormatVersion);
-    object.insert(QStringLiteral("mode"), enumToString(theme.mode(), kThemeModes));
-    object.insert(QStringLiteral("contrast"), enumToString(theme.contrastMode(), kContrastModes));
-    object.insert(QStringLiteral("options"), optionsToJson(theme.options()));
-    object.insert(QStringLiteral("colorScheme"), colorSchemeToJson(theme.colorScheme()));
-    object.insert(QStringLiteral("typography"), typographyToJson(theme.typography()));
-    object.insert(QStringLiteral("shapes"), shapesToJson(theme.shapes()));
-    object.insert(QStringLiteral("elevations"), elevationsToJson(theme.elevations()));
-    object.insert(QStringLiteral("motion"), motionToJson(theme.motion()));
-    object.insert(QStringLiteral("stateLayer"), stateLayerToJson(theme.stateLayer()));
+    object.insert(QStringLiteral("source"), optionsToJson(theme.options()));
+    object.insert(QStringLiteral("resolved"), resolvedToJson(theme));
+    object.insert(QStringLiteral("metadata"), metadataToJson());
     return object;
 }
 
@@ -642,163 +1197,43 @@ bool ThemeSerializer::writeToFile(const Theme& theme,
     return true;
 }
 
-Theme ThemeSerializer::fromJsonObject(const QJsonObject& object,
-                                      bool* ok,
-                                      QString* errorString)
+Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, bool* ok, QString* errorString)
+{
+    return fromJsonObject(object, ThemeReadMode::Lenient, ok, errorString);
+}
+
+Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, ThemeReadMode mode, bool* ok, QString* errorString)
 {
     if (object.isEmpty()) {
         fail(ok, errorString, QStringLiteral("Theme JSON object is empty."));
         return Theme();
     }
 
-    if (object.contains(QStringLiteral("formatVersion"))
-        && object.value(QStringLiteral("formatVersion")).toInt(-1) != kCurrentFormatVersion) {
-        fail(ok,
-             errorString,
-             QStringLiteral("Unsupported theme formatVersion. Expected %1.")
-                 .arg(kCurrentFormatVersion));
-        return Theme();
+    const int formatVersion = object.value(QStringLiteral("formatVersion")).toInt(ThemeSerializer::kMinimumReadableFormatVersion);
+    if (formatVersion == kCurrentFormatVersion) {
+        return parseV2Theme(object, mode, ok, errorString);
     }
 
-    ThemeOptions options;
-    if (object.contains(QStringLiteral("options"))) {
-        const QJsonValue optionsValue = object.value(QStringLiteral("options"));
-        if (!optionsValue.isObject()) {
-            fail(ok, errorString, QStringLiteral("Theme options entry must be an object."));
-            return Theme();
-        }
-
-        QString localError;
-        if (!optionsFromJson(optionsValue.toObject(), &options, &localError)) {
-            fail(ok, errorString, localError);
-            return Theme();
-        }
+    if (formatVersion == 1) {
+        return parseV1Theme(object, mode, ok, errorString);
     }
 
-    if (object.contains(QStringLiteral("mode"))) {
-        ThemeMode mode = ThemeMode::Light;
-        if (!stringToEnum(object.value(QStringLiteral("mode")).toString(), kThemeModes, &mode)) {
-            fail(ok, errorString, QStringLiteral("Invalid top-level mode value."));
-            return Theme();
-        }
-        options.mode = mode;
-    }
+    fail(ok,
+         errorString,
+         QStringLiteral("Unsupported theme formatVersion %1. Supported versions are %2-%3.")
+             .arg(formatVersion)
+             .arg(kMinimumReadableFormatVersion)
+             .arg(kCurrentFormatVersion));
+    return Theme();
+}
 
-    if (object.contains(QStringLiteral("contrast"))) {
-        ContrastMode contrast = ContrastMode::Standard;
-        if (!stringToEnum(object.value(QStringLiteral("contrast")).toString(), kContrastModes, &contrast)) {
-            fail(ok, errorString, QStringLiteral("Invalid top-level contrast value."));
-            return Theme();
-        }
-        options.contrast = contrast;
-    }
-
-    Theme theme(options);
-    theme.setMode(options.mode);
-    theme.setContrastMode(options.contrast);
-    theme.setOptions(options);
-
-    if (object.contains(QStringLiteral("colorScheme"))) {
-        const QJsonValue value = object.value(QStringLiteral("colorScheme"));
-        if (!value.isObject()) {
-            fail(ok, errorString, QStringLiteral("colorScheme entry must be an object."));
-            return Theme();
-        }
-
-        ColorScheme scheme;
-        QString localError;
-        if (!colorSchemeFromJson(value.toObject(), &scheme, &localError)) {
-            fail(ok, errorString, localError);
-            return Theme();
-        }
-        theme.colorScheme() = scheme;
-    }
-
-    if (object.contains(QStringLiteral("typography"))) {
-        const QJsonValue value = object.value(QStringLiteral("typography"));
-        if (!value.isObject()) {
-            fail(ok, errorString, QStringLiteral("typography entry must be an object."));
-            return Theme();
-        }
-
-        TypographyScale typography;
-        QString localError;
-        if (!typographyFromJson(value.toObject(), &typography, &localError)) {
-            fail(ok, errorString, localError);
-            return Theme();
-        }
-        theme.typography() = typography;
-    }
-
-    if (object.contains(QStringLiteral("shapes"))) {
-        const QJsonValue value = object.value(QStringLiteral("shapes"));
-        if (!value.isObject()) {
-            fail(ok, errorString, QStringLiteral("shapes entry must be an object."));
-            return Theme();
-        }
-
-        ShapeScale shapes;
-        QString localError;
-        if (!shapesFromJson(value.toObject(), &shapes, &localError)) {
-            fail(ok, errorString, localError);
-            return Theme();
-        }
-        theme.shapes() = shapes;
-    }
-
-    if (object.contains(QStringLiteral("elevations"))) {
-        const QJsonValue value = object.value(QStringLiteral("elevations"));
-        if (!value.isObject()) {
-            fail(ok, errorString, QStringLiteral("elevations entry must be an object."));
-            return Theme();
-        }
-
-        ElevationScale elevations;
-        QString localError;
-        if (!elevationsFromJson(value.toObject(), &elevations, &localError)) {
-            fail(ok, errorString, localError);
-            return Theme();
-        }
-        theme.elevations() = elevations;
-    }
-
-    if (object.contains(QStringLiteral("motion"))) {
-        const QJsonValue value = object.value(QStringLiteral("motion"));
-        if (!value.isObject()) {
-            fail(ok, errorString, QStringLiteral("motion entry must be an object."));
-            return Theme();
-        }
-
-        MotionTokens motion;
-        QString localError;
-        if (!motionFromJson(value.toObject(), &motion, &localError)) {
-            fail(ok, errorString, localError);
-            return Theme();
-        }
-        theme.motion() = motion;
-    }
-
-    if (object.contains(QStringLiteral("stateLayer"))) {
-        const QJsonValue value = object.value(QStringLiteral("stateLayer"));
-        if (!value.isObject()) {
-            fail(ok, errorString, QStringLiteral("stateLayer entry must be an object."));
-            return Theme();
-        }
-
-        StateLayer stateLayer;
-        QString localError;
-        if (!stateLayerFromJson(value.toObject(), &stateLayer, &localError)) {
-            fail(ok, errorString, localError);
-            return Theme();
-        }
-        theme.stateLayer() = stateLayer;
-    }
-
-    succeed(ok, errorString);
-    return theme;
+Theme ThemeSerializer::fromJsonDocument(const QJsonDocument& document, bool* ok, QString* errorString)
+{
+    return fromJsonDocument(document, ThemeReadMode::Lenient, ok, errorString);
 }
 
 Theme ThemeSerializer::fromJsonDocument(const QJsonDocument& document,
+                                        ThemeReadMode mode,
                                         bool* ok,
                                         QString* errorString)
 {
@@ -806,11 +1241,16 @@ Theme ThemeSerializer::fromJsonDocument(const QJsonDocument& document,
         fail(ok, errorString, QStringLiteral("Theme document root must be a JSON object."));
         return Theme();
     }
+    return fromJsonObject(document.object(), mode, ok, errorString);
+}
 
-    return fromJsonObject(document.object(), ok, errorString);
+Theme ThemeSerializer::fromJson(const QByteArray& json, bool* ok, QString* errorString)
+{
+    return fromJson(json, ThemeReadMode::Lenient, ok, errorString);
 }
 
 Theme ThemeSerializer::fromJson(const QByteArray& json,
+                                ThemeReadMode mode,
                                 bool* ok,
                                 QString* errorString)
 {
@@ -820,12 +1260,17 @@ Theme ThemeSerializer::fromJson(const QByteArray& json,
         fail(ok, errorString, parseError.errorString());
         return Theme();
     }
+    return fromJsonDocument(document, mode, ok, errorString);
+}
 
-    return fromJsonDocument(document, ok, errorString);
+bool ThemeSerializer::readFromFile(const QString& filePath, Theme* outTheme, QString* errorString)
+{
+    return readFromFile(filePath, outTheme, ThemeReadMode::Lenient, errorString);
 }
 
 bool ThemeSerializer::readFromFile(const QString& filePath,
                                    Theme* outTheme,
+                                   ThemeReadMode mode,
                                    QString* errorString)
 {
     if (!outTheme) {
@@ -845,7 +1290,7 @@ bool ThemeSerializer::readFromFile(const QString& filePath,
 
     bool ok = false;
     QString localError;
-    const Theme theme = fromJson(file.readAll(), &ok, &localError);
+    const Theme theme = fromJson(file.readAll(), mode, &ok, &localError);
     if (!ok) {
         if (errorString) {
             *errorString = localError;

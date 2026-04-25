@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://faudard.github.io/qt-material3-widget/schema/theme-v2.schema.json",
+  "title": "Qt Material 3 Theme JSON Schema v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["formatVersion", "source", "resolved", "metadata"],
+  "properties": {
+    "formatVersion": { "const": 2 },
+    "source": { "$ref": "#/$defs/source" },
+    "resolved": { "$ref": "#/$defs/resolved" },
+    "metadata": { "$ref": "#/$defs/metadata" }
+  },
+  "$defs": {
+    "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{8}$" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seedColor", "mode", "contrast", "expressive", "useMaterialColorUtilities"],
+      "properties": {
+        "seedColor": { "$ref": "#/$defs/color" },
+        "mode": { "enum": ["Light", "Dark"] },
+        "contrast": { "enum": ["Standard", "Medium", "High"] },
+        "expressive": { "type": "boolean" },
+        "useMaterialColorUtilities": { "type": "boolean" }
+      }
+    },
+    "resolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "colorScheme",
+        "typographyScale",
+        "shapeScale",
+        "elevationScale",
+        "motionTokens",
+        "stateLayer",
+        "density",
+        "iconSizes",
+        "componentOverrides"
+      ],
+      "properties": {
+        "colorScheme": { "type": "object", "additionalProperties": { "$ref": "#/$defs/color" } },
+        "typographyScale": { "type": "object", "additionalProperties": { "$ref": "#/$defs/typographyStyle" } },
+        "shapeScale": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+        "elevationScale": { "type": "object", "additionalProperties": { "$ref": "#/$defs/elevationStyle" } },
+        "motionTokens": { "type": "object", "additionalProperties": { "$ref": "#/$defs/motionStyle" } },
+        "stateLayer": { "$ref": "#/$defs/stateLayer" },
+        "density": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "iconSizes": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+        "componentOverrides": { "type": "object", "additionalProperties": { "$ref": "#/$defs/componentOverride" } }
+      }
+    },
+    "typographyStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["font", "lineHeight", "letterSpacing"],
+      "properties": {
+        "font": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "lineHeight": { "type": "number" },
+        "letterSpacing": { "type": "number" }
+      }
+    },
+    "elevationStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["shadowBlur", "shadowYOffset", "tonalOverlayOpacity"],
+      "properties": {
+        "shadowBlur": { "type": "integer", "minimum": 0 },
+        "shadowYOffset": { "type": "integer" },
+        "tonalOverlayOpacity": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "motionStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["durationMs", "easingType"],
+      "properties": {
+        "durationMs": { "type": "integer", "minimum": 0 },
+        "easingType": { "type": "integer" }
+      }
+    },
+    "stateLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["color", "hoverOpacity", "focusOpacity", "pressOpacity", "dragOpacity"],
+      "properties": {
+        "color": { "$ref": "#/$defs/color" },
+        "hoverOpacity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "focusOpacity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "pressOpacity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "dragOpacity": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "componentOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "colors": { "type": "object", "additionalProperties": { "$ref": "#/$defs/color" } },
+        "typography": { "type": "object", "additionalProperties": { "$ref": "#/$defs/typographyStyle" } },
+        "shapes": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "elevations": { "type": "object", "additionalProperties": { "$ref": "#/$defs/elevationStyle" } },
+        "motion": { "type": "object", "additionalProperties": { "$ref": "#/$defs/motionStyle" } },
+        "density": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "iconSizes": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "stateLayer": { "$ref": "#/$defs/stateLayer" },
+        "custom": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generatorVersion", "libraryVersion", "qtVersion"],
+      "properties": {
+        "generatorVersion": { "type": "string" },
+        "libraryVersion": { "type": "string" },
+        "qtVersion": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}
