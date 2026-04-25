@@ -16,6 +16,7 @@ extensions = [
     "breathe",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.githubpages",
+    "sphinxcontrib.mermaid",
 ]
 
 source_suffix = {
@@ -36,6 +37,8 @@ myst_enable_extensions = [
 ]
 
 myst_heading_anchors = 3
+myst_fence_as_directive = ["mermaid"]
+mermaid_output_format = "raw"
 autosectionlabel_prefix_document = True
 
 breathe_projects = {
