@@ -62,6 +62,7 @@ set(QTMATERIAL3_THEME_SOURCES
     src/theme/qtmaterialtheme.cpp
     src/theme/qtmaterialthemebuilder.cpp
     src/theme/qtmaterialcolorbackend.cpp
+    src/theme/qtmaterialmcuadapter.cpp
     src/theme/qtmaterialthememanager.cpp
     src/theme/qtmaterialthemeserializer.cpp
     src/theme/qtmaterialthemeobserver.cpp
@@ -107,15 +108,60 @@ add_library(QtMaterial3::Theme ALIAS qtmaterial3_theme)
 target_compile_features(qtmaterial3_theme PUBLIC cxx_std_17)
 target_compile_definitions(qtmaterial3_theme PRIVATE QTMATERIAL3_THEME_LIBRARY)
 # QTMATERIAL3_USE_MCU expresses the user request. QTMATERIAL3_HAS_MCU expresses
-# whether an actual MCU adapter is compiled into this target. The adapter is not
-# vendored in this tree yet, so this slice keeps HAS_MCU false and locks the
-# deterministic fallback behavior with tests.
+# whether an actual MCU adapter is compiled into this target.
+set(QTMATERIAL3_MCU_ROOT
+    "${CMAKE_CURRENT_SOURCE_DIR}/third_party/material-color-utilities"
+    CACHE PATH
+    "Path to the Material Color Utilities checkout containing the cpp/ directory"
+)
 set(QTMATERIAL3_HAS_MCU OFF)
+
+if(QTMATERIAL3_USE_MCU)
+    set(QTMATERIAL3_MCU_REQUIRED_HEADERS
+        "${QTMATERIAL3_MCU_ROOT}/cpp/cam/hct.h"
+        "${QTMATERIAL3_MCU_ROOT}/cpp/dynamiccolor/material_dynamic_colors.h"
+        "${QTMATERIAL3_MCU_ROOT}/cpp/scheme/scheme_tonal_spot.h"
+        "${QTMATERIAL3_MCU_ROOT}/cpp/scheme/scheme_expressive.h"
+        "${QTMATERIAL3_MCU_ROOT}/cpp/utils/utils.h"
+    )
+    set(QTMATERIAL3_MCU_HEADERS_PRESENT ON)
+    foreach(_qtm3_mcu_header IN LISTS QTMATERIAL3_MCU_REQUIRED_HEADERS)
+        if(NOT EXISTS "${_qtm3_mcu_header}")
+            set(QTMATERIAL3_MCU_HEADERS_PRESENT OFF)
+        endif()
+    endforeach()
+
+    if(QTMATERIAL3_MCU_HEADERS_PRESENT)
+        file(GLOB_RECURSE QTMATERIAL3_MCU_SOURCES CONFIGURE_DEPENDS
+            "${QTMATERIAL3_MCU_ROOT}/cpp/*.cc"
+            "${QTMATERIAL3_MCU_ROOT}/cpp/*.cpp"
+        )
+        list(FILTER QTMATERIAL3_MCU_SOURCES EXCLUDE REGEX ".*(_test|test)\.(cc|cpp)$")
+
+        if(QTMATERIAL3_MCU_SOURCES)
+            add_library(qtm3_material_color_utilities STATIC ${QTMATERIAL3_MCU_SOURCES})
+            target_compile_features(qtm3_material_color_utilities PUBLIC cxx_std_17)
+            target_include_directories(qtm3_material_color_utilities PUBLIC "${QTMATERIAL3_MCU_ROOT}")
+            set_target_properties(qtm3_material_color_utilities PROPERTIES POSITION_INDEPENDENT_CODE ON)
+            set(QTMATERIAL3_HAS_MCU ON)
+        else()
+            message(WARNING "QTMATERIAL3_USE_MCU=ON but no MCU C++ sources were found under ${QTMATERIAL3_MCU_ROOT}/cpp; using fallback backend.")
+        endif()
+    else()
+        message(WARNING "QTMATERIAL3_USE_MCU=ON but Material Color Utilities headers were not found at ${QTMATERIAL3_MCU_ROOT}; using fallback backend.")
+    endif()
+endif()
+
 target_compile_definitions(qtmaterial3_theme
     PUBLIC
         QTMATERIAL3_USE_MCU=$<BOOL:${QTMATERIAL3_USE_MCU}>
         QTMATERIAL3_HAS_MCU=$<BOOL:${QTMATERIAL3_HAS_MCU}>
 )
+
+if(TARGET qtm3_material_color_utilities)
+    target_link_libraries(qtmaterial3_theme PRIVATE qtm3_material_color_utilities)
+    target_include_directories(qtmaterial3_theme PRIVATE "${QTMATERIAL3_MCU_ROOT}")
+endif()
 target_link_libraries(qtmaterial3_theme
     PUBLIC
         Qt${QT_VERSION_MAJOR}::Core

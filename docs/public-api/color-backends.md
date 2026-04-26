@@ -17,16 +17,27 @@ Fallback behavior is intentionally deterministic:
 
 ### Material Color Utilities backend
 
-`QTMATERIAL3_USE_MCU` is the build-time request to use a Material Color Utilities adapter.
+`QTMATERIAL3_USE_MCU` is the build-time request to use the Material Color Utilities adapter.
 
-This development slice separates two concepts:
+`QTMATERIAL3_HAS_MCU` means the library was actually compiled with a valid MCU C++ checkout and the adapter is linked into `qtmaterial3_theme`.
 
-- `QTMATERIAL3_USE_MCU`: the user requested the MCU backend in CMake;
-- `QTMATERIAL3_HAS_MCU`: the library was actually compiled with an MCU adapter.
+By default the build looks for MCU here:
 
-The current tree does not vendor or link an MCU adapter yet, so `QTMATERIAL3_HAS_MCU` remains false and the deterministic fallback backend is selected. This is intentional: it makes the fallback contract explicit and prevents a CMake option from silently implying an unavailable implementation.
+```text
+third_party/material-color-utilities
+```
 
-When a real MCU adapter is added later, `QTMATERIAL3_HAS_MCU` should become true only when the adapter is linked and the seed-generation path calls that adapter.
+A different checkout can be provided with:
+
+```bash
+cmake -S . -B build \
+  -DQTMATERIAL3_USE_MCU=ON \
+  -DQTMATERIAL3_MCU_ROOT=/absolute/path/to/material-color-utilities
+```
+
+When MCU is found, the theme target compiles the upstream C++ sources, defines `QTMATERIAL3_HAS_MCU=1`, and `ThemeOptions::useMaterialColorUtilities=true` routes seed generation through the MCU adapter.
+
+When MCU is requested but not found, `QTMATERIAL3_HAS_MCU=0`; the builder reports fallback through `ThemeBuilder::colorBackendStatus(options)` and uses the deterministic fallback backend.
 
 ## Runtime resolution
 
@@ -41,7 +52,9 @@ When a real MCU adapter is added later, `QTMATERIAL3_HAS_MCU` should become true
 
 If `ThemeOptions::useMaterialColorUtilities` is true but `QTMATERIAL3_HAS_MCU` is false, the builder uses the fallback backend and reports that fallback was used.
 
-## Contrast mapping for MCU
+## MCU scheme mapping
+
+The adapter maps non-expressive themes to MCU `SchemeTonalSpot` and expressive themes to MCU `SchemeExpressive`.
 
 The public contrast modes map to Material Color Utilities contrast levels as follows:
 
@@ -52,3 +65,19 @@ The public contrast modes map to Material Color Utilities contrast levels as fol
 | `High` | `1.0` |
 
 The fallback backend uses its own deterministic post-generation adjustment pass but keeps the same public contrast-mode semantics.
+
+## Golden snapshots
+
+MCU snapshots live in:
+
+```text
+tests/theme/goldens/mcu
+```
+
+Generate or refresh them from an MCU-enabled build with:
+
+```bash
+QTMATERIAL3_UPDATE_GOLDENS=1 ctest --test-dir build --output-on-failure -R tst_theme_mcu_goldens
+```
+
+Golden changes should be reviewed as API-affecting changes because they represent resolved theme output.

@@ -69,6 +69,9 @@ qtm3_add_test(tst_themeserializer theme/tst_themeserializer.cpp qtmaterial3_them
 qtm3_add_test(tst_themeserializer_readmodes theme/tst_themeserializer_readmodes.cpp qtmaterial3_theme)
 qtm3_add_test(tst_theme_tokens theme/tst_theme_tokens.cpp qtmaterial3_theme)
 qtm3_add_test(tst_theme_color_backend theme/tst_theme_color_backend.cpp qtmaterial3_theme)
+qtm3_add_test(tst_theme_mcu_adapter theme/tst_theme_mcu_adapter.cpp qtmaterial3_theme)
+qtm3_add_test(tst_theme_mcu_goldens theme/tst_theme_mcu_goldens.cpp qtmaterial3_theme)
+target_compile_definitions(tst_theme_mcu_goldens PRIVATE QTMATERIAL3_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 qtm3_add_test(tst_theme_seed_goldens theme/tst_theme_seed_goldens.cpp qtmaterial3_theme)
 target_compile_definitions(tst_theme_seed_goldens PRIVATE QTMATERIAL3_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 

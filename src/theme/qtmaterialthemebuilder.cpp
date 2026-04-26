@@ -1,4 +1,5 @@
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
+#include "qtmaterialmcuadapter_p.h"
 
 #include <QColor>
 #include <QDebug>
@@ -79,15 +80,12 @@ Theme ThemeBuilder::build(const ThemeOptions& options) const
     if (backendStatus.fallbackUsed && options.useMaterialColorUtilities) {
         qWarning() << "ThemeBuilder:" << backendStatus.diagnostic;
     }
-    if (options.expressive) {
-        qWarning() << "ThemeBuilder: expressive theme generation is not implemented yet."
-                   << "The selected backend will generate the non-expressive scheme.";
-    }
 #endif
 
-    // The MCU adapter boundary is explicit now. Until an MCU adapter is compiled into
-    // the library, the deterministic fallback backend is the effective implementation.
-    // This keeps theme generation stable and makes fallback behavior observable/testable.
+    if (backendStatus.effectiveBackend == ThemeColorBackend::MaterialColorUtilities) {
+        return buildMaterialColorUtilitiesTheme(options);
+    }
+
     return buildFallbackTheme(options);
 }
 
@@ -128,12 +126,52 @@ Theme ThemeBuilder::buildDarkFromSeed(const QColor& seed) const
 
 ColorScheme ThemeBuilder::buildLightSchemeFromSeed(const QColor& seed) const
 {
+    if (ThemeBuilder::isMaterialColorUtilitiesAvailable()) {
+        return buildMaterialColorUtilitiesScheme(seed, ThemeMode::Light, ContrastMode::Standard, false);
+    }
+
     return buildFallbackLightScheme(seed);
 }
 
 ColorScheme ThemeBuilder::buildDarkSchemeFromSeed(const QColor& seed) const
 {
+    if (ThemeBuilder::isMaterialColorUtilitiesAvailable()) {
+        return buildMaterialColorUtilitiesScheme(seed, ThemeMode::Dark, ContrastMode::Standard, false);
+    }
+
     return buildFallbackDarkScheme(seed);
+}
+
+Theme ThemeBuilder::buildMaterialColorUtilitiesTheme(const ThemeOptions& options) const
+{
+    Theme theme = baseTheme();
+    theme.setOptions(options);
+
+    const auto result = detail::generateMcuColorScheme(options);
+    if (!result.ok) {
+#ifndef NDEBUG
+        qWarning() << "ThemeBuilder: MCU generation failed:" << result.diagnostic
+                   << "Using the deterministic fallback backend.";
+#endif
+        return buildFallbackTheme(options);
+    }
+
+    theme.colorScheme() = result.colorScheme;
+    applyDefaultStateLayer(theme);
+    return theme;
+}
+
+ColorScheme ThemeBuilder::buildMaterialColorUtilitiesScheme(const QColor& seed,
+                                                            ThemeMode mode,
+                                                            ContrastMode contrast,
+                                                            bool expressive) const
+{
+    const auto result = detail::generateMcuColorScheme(seed, mode, contrast, expressive);
+    if (result.ok) {
+        return result.colorScheme;
+    }
+
+    return mode == ThemeMode::Dark ? buildFallbackDarkScheme(seed) : buildFallbackLightScheme(seed);
 }
 
 Theme ThemeBuilder::buildFallbackTheme(const ThemeOptions& options) const

@@ -31,6 +31,8 @@ private:
     static const Theme& baseTheme();
 
     Theme buildFallbackTheme(const ThemeOptions& options) const;
+    Theme buildMaterialColorUtilitiesTheme(const ThemeOptions& options) const;
+    ColorScheme buildMaterialColorUtilitiesScheme(const QColor& seed, ThemeMode mode, ContrastMode contrast, bool expressive) const;
     ColorScheme buildFallbackLightScheme(const QColor& seed) const;
     ColorScheme buildFallbackDarkScheme(const QColor& seed) const;
 
