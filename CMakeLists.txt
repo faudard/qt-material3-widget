@@ -524,6 +524,8 @@ endif()
 if(TARGET qtmaterial3_theme)
     target_sources(qtmaterial3_theme PRIVATE
         src/theme/qtmaterialsystemtheme.cpp
+    src/theme/qtmaterialaccessibilitytokens.cpp
         include/qtmaterial/theme/qtmaterialsystemtheme.h
+    include/qtmaterial/theme/qtmaterialaccessibilitytokens.h
     )
 endif()

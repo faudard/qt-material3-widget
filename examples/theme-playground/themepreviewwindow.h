@@ -44,6 +44,7 @@ private:
     QWidget* buildShapePreview();
     QWidget* buildElevationPreview();
     QWidget* buildStateLayerPreview();
+    QWidget* buildAccessibilityPreview();
     QWidget* panel(const QString& title, QWidget* body) const;
 
     QString cppSnippet() const;

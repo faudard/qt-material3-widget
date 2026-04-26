@@ -4,25 +4,154 @@
   "title": "Qt Material 3 Theme JSON Schema v2",
   "type": "object",
   "additionalProperties": false,
-  "required": ["formatVersion", "source", "resolved", "metadata"],
+  "required": [
+    "formatVersion",
+    "source",
+    "resolved",
+    "metadata"
+  ],
   "properties": {
-    "formatVersion": { "const": 2 },
-    "source": { "$ref": "#/$defs/source" },
-    "resolved": { "$ref": "#/$defs/resolved" },
-    "metadata": { "$ref": "#/$defs/metadata" }
+    "formatVersion": {
+      "const": 2
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "resolved": {
+      "$ref": "#/$defs/resolved",
+      "properties": {
+        "accessibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "highContrast",
+            "reducedMotion",
+            "minimumTextContrastRatio",
+            "minimumUiContrastRatio",
+            "focusRing"
+          ],
+          "properties": {
+            "highContrast": {
+              "type": "boolean"
+            },
+            "reducedMotion": {
+              "type": "boolean"
+            },
+            "minimumTextContrastRatio": {
+              "type": "number"
+            },
+            "minimumUiContrastRatio": {
+              "type": "number"
+            },
+            "focusRing": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "width",
+                "offset",
+                "radiusAdjustment",
+                "color",
+                "opacity"
+              ],
+              "properties": {
+                "width": {
+                  "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "radiusAdjustment": {
+                  "type": "integer"
+                },
+                "color": {
+                  "type": "string",
+                  "pattern": "^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$"
+                },
+                "opacity": {
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0
+                }
+              }
+            }
+          }
+        },
+        "interactions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "keyboardFocusVisible",
+            "strongFocusIndicators",
+            "hoverFeedbackEnabled",
+            "pressFeedbackEnabled",
+            "dragFeedbackEnabled"
+          ],
+          "properties": {
+            "keyboardFocusVisible": {
+              "type": "boolean"
+            },
+            "strongFocusIndicators": {
+              "type": "boolean"
+            },
+            "hoverFeedbackEnabled": {
+              "type": "boolean"
+            },
+            "pressFeedbackEnabled": {
+              "type": "boolean"
+            },
+            "dragFeedbackEnabled": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "required": [
+        "accessibility",
+        "interactions"
+      ]
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    }
   },
   "$defs": {
-    "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{8}$" },
+    "color": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{8}$"
+    },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["seedColor", "mode", "contrast", "expressive", "useMaterialColorUtilities"],
+      "required": [
+        "seedColor",
+        "mode",
+        "contrast",
+        "expressive",
+        "useMaterialColorUtilities"
+      ],
       "properties": {
-        "seedColor": { "$ref": "#/$defs/color" },
-        "mode": { "enum": ["Light", "Dark"] },
-        "contrast": { "enum": ["Standard", "Medium", "High"] },
-        "expressive": { "type": "boolean" },
-        "useMaterialColorUtilities": { "type": "boolean" }
+        "seedColor": {
+          "$ref": "#/$defs/color"
+        },
+        "mode": {
+          "enum": [
+            "Light",
+            "Dark"
+          ]
+        },
+        "contrast": {
+          "enum": [
+            "Standard",
+            "Medium",
+            "High"
+          ]
+        },
+        "expressive": {
+          "type": "boolean"
+        },
+        "useMaterialColorUtilities": {
+          "type": "boolean"
+        }
       }
     },
     "resolved": {
@@ -40,85 +169,235 @@
         "componentOverrides"
       ],
       "properties": {
-        "colorScheme": { "type": "object", "additionalProperties": { "$ref": "#/$defs/color" } },
-        "typographyScale": { "type": "object", "additionalProperties": { "$ref": "#/$defs/typographyStyle" } },
-        "shapeScale": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
-        "elevationScale": { "type": "object", "additionalProperties": { "$ref": "#/$defs/elevationStyle" } },
-        "motionTokens": { "type": "object", "additionalProperties": { "$ref": "#/$defs/motionStyle" } },
-        "stateLayer": { "$ref": "#/$defs/stateLayer" },
-        "density": { "type": "object", "additionalProperties": { "type": "integer" } },
-        "iconSizes": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
-        "componentOverrides": { "type": "object", "additionalProperties": { "$ref": "#/$defs/componentOverride" } }
+        "colorScheme": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/color"
+          }
+        },
+        "typographyScale": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/typographyStyle"
+          }
+        },
+        "shapeScale": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "elevationScale": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/elevationStyle"
+          }
+        },
+        "motionTokens": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/motionStyle"
+          }
+        },
+        "stateLayer": {
+          "$ref": "#/$defs/stateLayer"
+        },
+        "density": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "iconSizes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "componentOverrides": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/componentOverride"
+          }
+        }
       }
     },
     "typographyStyle": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["font", "lineHeight", "letterSpacing"],
+      "required": [
+        "font",
+        "lineHeight",
+        "letterSpacing"
+      ],
       "properties": {
         "font": {
           "type": "object",
           "additionalProperties": true
         },
-        "lineHeight": { "type": "number" },
-        "letterSpacing": { "type": "number" }
+        "lineHeight": {
+          "type": "number"
+        },
+        "letterSpacing": {
+          "type": "number"
+        }
       }
     },
     "elevationStyle": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["shadowBlur", "shadowYOffset", "tonalOverlayOpacity"],
+      "required": [
+        "shadowBlur",
+        "shadowYOffset",
+        "tonalOverlayOpacity"
+      ],
       "properties": {
-        "shadowBlur": { "type": "integer", "minimum": 0 },
-        "shadowYOffset": { "type": "integer" },
-        "tonalOverlayOpacity": { "type": "number", "minimum": 0, "maximum": 1 }
+        "shadowBlur": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "shadowYOffset": {
+          "type": "integer"
+        },
+        "tonalOverlayOpacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
       }
     },
     "motionStyle": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["durationMs", "easingType"],
+      "required": [
+        "durationMs",
+        "easingType"
+      ],
       "properties": {
-        "durationMs": { "type": "integer", "minimum": 0 },
-        "easingType": { "type": "integer" }
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "easingType": {
+          "type": "integer"
+        }
       }
     },
     "stateLayer": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["color", "hoverOpacity", "focusOpacity", "pressOpacity", "dragOpacity"],
+      "required": [
+        "color",
+        "hoverOpacity",
+        "focusOpacity",
+        "pressOpacity",
+        "dragOpacity"
+      ],
       "properties": {
-        "color": { "$ref": "#/$defs/color" },
-        "hoverOpacity": { "type": "number", "minimum": 0, "maximum": 1 },
-        "focusOpacity": { "type": "number", "minimum": 0, "maximum": 1 },
-        "pressOpacity": { "type": "number", "minimum": 0, "maximum": 1 },
-        "dragOpacity": { "type": "number", "minimum": 0, "maximum": 1 }
+        "color": {
+          "$ref": "#/$defs/color"
+        },
+        "hoverOpacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "focusOpacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "pressOpacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "dragOpacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
       }
     },
     "componentOverride": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "colors": { "type": "object", "additionalProperties": { "$ref": "#/$defs/color" } },
-        "typography": { "type": "object", "additionalProperties": { "$ref": "#/$defs/typographyStyle" } },
-        "shapes": { "type": "object", "additionalProperties": { "type": "integer" } },
-        "elevations": { "type": "object", "additionalProperties": { "$ref": "#/$defs/elevationStyle" } },
-        "motion": { "type": "object", "additionalProperties": { "$ref": "#/$defs/motionStyle" } },
-        "density": { "type": "object", "additionalProperties": { "type": "integer" } },
-        "iconSizes": { "type": "object", "additionalProperties": { "type": "integer" } },
-        "stateLayer": { "$ref": "#/$defs/stateLayer" },
-        "custom": { "type": "object", "additionalProperties": true }
+        "colors": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/color"
+          }
+        },
+        "typography": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/typographyStyle"
+          }
+        },
+        "shapes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "elevations": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/elevationStyle"
+          }
+        },
+        "motion": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/motionStyle"
+          }
+        },
+        "density": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "iconSizes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "stateLayer": {
+          "$ref": "#/$defs/stateLayer"
+        },
+        "custom": {
+          "type": "object",
+          "additionalProperties": true
+        }
       }
     },
     "metadata": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["generatorVersion", "libraryVersion", "qtVersion"],
+      "required": [
+        "generatorVersion",
+        "libraryVersion",
+        "qtVersion"
+      ],
       "properties": {
-        "generatorVersion": { "type": "string" },
-        "libraryVersion": { "type": "string" },
-        "qtVersion": { "type": "string" },
-        "timestamp": { "type": "string", "format": "date-time" }
+        "generatorVersion": {
+          "type": "string"
+        },
+        "libraryVersion": {
+          "type": "string"
+        },
+        "qtVersion": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
       }
     }
   }

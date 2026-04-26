@@ -1,4 +1,5 @@
 #include "qtmaterial/theme/qtmaterialsystemtheme.h"
+#include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 
 #include "qtmaterial/theme/qtmaterialtheme.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
@@ -160,6 +161,35 @@ bool SystemTheme::hasNativeColorScheme() const {
     }
 #endif
     return false;
+}
+
+
+
+bool SystemTheme::isHighContrastAvailable() const {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    return QGuiApplication::styleHints() && QGuiApplication::styleHints()->accessibility();
+#else
+    return false;
+#endif
+}
+
+bool SystemTheme::isReducedMotionEnabled() const {
+    // Qt Widgets does not expose a universal reduced-motion platform setting.
+    // Keep this as an explicit policy hook for applications and future Qt APIs.
+    return false;
+}
+
+void SystemTheme::applyAccessibilityPreferencesToTheme(Theme& theme) const {
+    AccessibilityTokens& accessibility = theme.accessibility();
+    accessibility.highContrast = isHighContrastEnabled();
+    accessibility.reducedMotion = isReducedMotionEnabled();
+    if (accessibility.highContrast) {
+        accessibility.minimumTextContrastRatio = qMax<qreal>(accessibility.minimumTextContrastRatio, 7.0);
+        accessibility.minimumUiContrastRatio = qMax<qreal>(accessibility.minimumUiContrastRatio, 4.5);
+        accessibility.focusRing.width = qMax(accessibility.focusRing.width, 3);
+        accessibility.focusRing.offset = qMax(accessibility.focusRing.offset, 3);
+    }
+    applyReducedMotion(&theme.motion(), accessibility.reducedMotion);
 }
 
 QFont SystemTheme::platformFont() const {

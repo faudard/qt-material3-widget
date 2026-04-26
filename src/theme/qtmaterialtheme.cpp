@@ -12,6 +12,8 @@ Theme::Theme()
     , m_elevations()
     , m_motion()
     , m_stateLayer()
+    , m_accessibility()
+    , m_interactions()
     , m_density()
     , m_iconSizes()
     , m_componentOverrides()
@@ -28,6 +30,8 @@ Theme::Theme(const ThemeOptions& options)
     , m_elevations()
     , m_motion()
     , m_stateLayer()
+    , m_accessibility()
+    , m_interactions()
     , m_density()
     , m_iconSizes()
     , m_componentOverrides()
@@ -80,6 +84,13 @@ MotionTokens& Theme::motion() noexcept { return m_motion; }
 
 const StateLayer& Theme::stateLayer() const noexcept { return m_stateLayer; }
 StateLayer& Theme::stateLayer() noexcept { return m_stateLayer; }
+
+const AccessibilityTokens& Theme::accessibility() const noexcept { return m_accessibility; }
+AccessibilityTokens& Theme::accessibility() noexcept { return m_accessibility; }
+
+const InteractionStateTokens& Theme::interactions() const noexcept { return m_interactions; }
+InteractionStateTokens& Theme::interactions() noexcept { return m_interactions; }
+
 
 const DensityTokens& Theme::density() const noexcept { return m_density; }
 DensityTokens& Theme::density() noexcept { return m_density; }

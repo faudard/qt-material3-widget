@@ -57,10 +57,13 @@ public:
     ThemeMode effectiveMode() const;
     ContrastMode effectiveContrast() const;
     bool isHighContrastEnabled() const;
+    bool isHighContrastAvailable() const;
+    bool isReducedMotionEnabled() const;
     bool hasNativeColorScheme() const;
     QFont platformFont() const;
 
     void applyPlatformFontToTheme(Theme& theme) const;
+    void applyAccessibilityPreferencesToTheme(Theme& theme) const;
 
 public slots:
     void refresh();

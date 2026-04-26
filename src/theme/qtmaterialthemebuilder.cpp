@@ -1,4 +1,5 @@
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
+#include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 #include "qtmaterialmcuadapter_p.h"
 
 #include <QColor>
@@ -99,6 +100,7 @@ Theme ThemeBuilder::buildBaseTheme()
     builder.applyDefaultMotion(theme);
     builder.applyDefaultDensity(theme);
     builder.applyDefaultIconSizes(theme);
+    builder.applyDefaultAccessibility(theme);
     return theme;
 }
 
@@ -158,6 +160,7 @@ Theme ThemeBuilder::buildMaterialColorUtilitiesTheme(const ThemeOptions& options
 
     theme.colorScheme() = result.colorScheme;
     applyDefaultStateLayer(theme);
+    applyDefaultAccessibility(theme);
     return theme;
 }
 
@@ -376,6 +379,33 @@ void ThemeBuilder::applyDefaultIconSizes(Theme& theme) const
     icons.setSize(IconSizeRole::Medium, 24);
     icons.setSize(IconSizeRole::Large, 32);
     icons.setSize(IconSizeRole::ExtraLarge, 40);
+}
+
+
+
+void ThemeBuilder::applyDefaultAccessibility(Theme& theme) const
+{
+    auto& accessibility = theme.accessibility();
+    accessibility.highContrast = theme.contrastMode() == ContrastMode::High;
+    accessibility.reducedMotion = false;
+    accessibility.minimumTextContrastRatio = accessibility.highContrast ? 7.0 : 4.5;
+    accessibility.minimumUiContrastRatio = accessibility.highContrast ? 4.5 : 3.0;
+    accessibility.focusRing.width = accessibility.highContrast ? 3 : 2;
+    accessibility.focusRing.offset = accessibility.highContrast ? 3 : 2;
+    accessibility.focusRing.radiusAdjustment = 0;
+    accessibility.focusRing.opacity = 1.0;
+    accessibility.focusRing.color = theme.colorScheme().contains(ColorRole::Primary)
+        ? theme.colorScheme().color(ColorRole::Primary)
+        : QColor(QStringLiteral("#6750A4"));
+
+    auto& interactions = theme.interactions();
+    interactions.keyboardFocusVisible = true;
+    interactions.strongFocusIndicators = true;
+    interactions.hoverFeedbackEnabled = true;
+    interactions.pressFeedbackEnabled = true;
+    interactions.dragFeedbackEnabled = true;
+
+    applyReducedMotion(&theme.motion(), accessibility.reducedMotion);
 }
 
 QColor ThemeBuilder::adjustColorTowards(const QColor& base, const QColor& target, qreal amount) const

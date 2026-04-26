@@ -1,4 +1,5 @@
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
+#include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 
 #include <QColor>
 #include <QFile>
@@ -611,6 +612,109 @@ bool stateLayerFromJson(const QJsonObject& object, StateLayer* outStateLayer, QS
     return true;
 }
 
+
+
+QJsonObject focusRingToJson(const FocusRingTokens& focusRing)
+{
+    QJsonObject object;
+    object.insert(QStringLiteral("width"), focusRing.width);
+    object.insert(QStringLiteral("offset"), focusRing.offset);
+    object.insert(QStringLiteral("radiusAdjustment"), focusRing.radiusAdjustment);
+    object.insert(QStringLiteral("color"), colorToString(focusRing.color));
+    object.insert(QStringLiteral("opacity"), focusRing.opacity);
+    return object;
+}
+
+bool focusRingFromJson(const QJsonObject& object, FocusRingTokens* outFocusRing, QString* errorString)
+{
+    if (!outFocusRing) {
+        if (errorString) {
+            *errorString = QStringLiteral("Output FocusRingTokens pointer is null.");
+        }
+        return false;
+    }
+    FocusRingTokens focusRing;
+    focusRing.width = object.value(QStringLiteral("width")).toInt(focusRing.width);
+    focusRing.offset = object.value(QStringLiteral("offset")).toInt(focusRing.offset);
+    focusRing.radiusAdjustment = object.value(QStringLiteral("radiusAdjustment")).toInt(focusRing.radiusAdjustment);
+    focusRing.opacity = object.value(QStringLiteral("opacity")).toDouble(focusRing.opacity);
+    if (object.contains(QStringLiteral("color"))) {
+        QColor color;
+        if (!jsonToColor(object.value(QStringLiteral("color")), &color)) {
+            if (errorString) {
+                *errorString = QStringLiteral("Invalid accessibility.focusRing.color value.");
+            }
+            return false;
+        }
+        focusRing.color = color;
+    }
+    *outFocusRing = focusRing;
+    return true;
+}
+
+QJsonObject accessibilityToJson(const AccessibilityTokens& accessibility)
+{
+    QJsonObject object;
+    object.insert(QStringLiteral("highContrast"), accessibility.highContrast);
+    object.insert(QStringLiteral("reducedMotion"), accessibility.reducedMotion);
+    object.insert(QStringLiteral("minimumTextContrastRatio"), accessibility.minimumTextContrastRatio);
+    object.insert(QStringLiteral("minimumUiContrastRatio"), accessibility.minimumUiContrastRatio);
+    object.insert(QStringLiteral("focusRing"), focusRingToJson(accessibility.focusRing));
+    return object;
+}
+
+bool accessibilityFromJson(const QJsonObject& object, AccessibilityTokens* outAccessibility, QString* errorString)
+{
+    if (!outAccessibility) {
+        if (errorString) {
+            *errorString = QStringLiteral("Output AccessibilityTokens pointer is null.");
+        }
+        return false;
+    }
+    AccessibilityTokens accessibility;
+    accessibility.highContrast = object.value(QStringLiteral("highContrast")).toBool(accessibility.highContrast);
+    accessibility.reducedMotion = object.value(QStringLiteral("reducedMotion")).toBool(accessibility.reducedMotion);
+    accessibility.minimumTextContrastRatio = object.value(QStringLiteral("minimumTextContrastRatio")).toDouble(accessibility.minimumTextContrastRatio);
+    accessibility.minimumUiContrastRatio = object.value(QStringLiteral("minimumUiContrastRatio")).toDouble(accessibility.minimumUiContrastRatio);
+    if (object.contains(QStringLiteral("focusRing"))) {
+        if (!focusRingFromJson(object.value(QStringLiteral("focusRing")).toObject(), &accessibility.focusRing, errorString)) {
+            return false;
+        }
+    }
+    *outAccessibility = accessibility;
+    return true;
+}
+
+QJsonObject interactionsToJson(const InteractionStateTokens& interactions)
+{
+    QJsonObject object;
+    object.insert(QStringLiteral("keyboardFocusVisible"), interactions.keyboardFocusVisible);
+    object.insert(QStringLiteral("strongFocusIndicators"), interactions.strongFocusIndicators);
+    object.insert(QStringLiteral("hoverFeedbackEnabled"), interactions.hoverFeedbackEnabled);
+    object.insert(QStringLiteral("pressFeedbackEnabled"), interactions.pressFeedbackEnabled);
+    object.insert(QStringLiteral("dragFeedbackEnabled"), interactions.dragFeedbackEnabled);
+    return object;
+}
+
+bool interactionsFromJson(const QJsonObject& object, InteractionStateTokens* outInteractions, QString* errorString)
+{
+    if (!outInteractions) {
+        if (errorString) {
+            *errorString = QStringLiteral("Output InteractionStateTokens pointer is null.");
+        }
+        return false;
+    }
+    Q_UNUSED(errorString);
+    InteractionStateTokens interactions;
+    interactions.keyboardFocusVisible = object.value(QStringLiteral("keyboardFocusVisible")).toBool(interactions.keyboardFocusVisible);
+    interactions.strongFocusIndicators = object.value(QStringLiteral("strongFocusIndicators")).toBool(interactions.strongFocusIndicators);
+    interactions.hoverFeedbackEnabled = object.value(QStringLiteral("hoverFeedbackEnabled")).toBool(interactions.hoverFeedbackEnabled);
+    interactions.pressFeedbackEnabled = object.value(QStringLiteral("pressFeedbackEnabled")).toBool(interactions.pressFeedbackEnabled);
+    interactions.dragFeedbackEnabled = object.value(QStringLiteral("dragFeedbackEnabled")).toBool(interactions.dragFeedbackEnabled);
+    *outInteractions = interactions;
+    return true;
+}
+
 QJsonObject densityToJson(const DensityTokens& density)
 {
     QJsonObject object;
@@ -881,6 +985,8 @@ QJsonObject resolvedToJson(const Theme& theme)
     object.insert(QStringLiteral("elevationScale"), elevationsToJson(theme.elevations()));
     object.insert(QStringLiteral("motionTokens"), motionToJson(theme.motion()));
     object.insert(QStringLiteral("stateLayer"), stateLayerToJson(theme.stateLayer()));
+    object.insert(QStringLiteral("accessibility"), accessibilityToJson(theme.accessibility()));
+    object.insert(QStringLiteral("interactions"), interactionsToJson(theme.interactions()));
     object.insert(QStringLiteral("density"), densityToJson(theme.density()));
     object.insert(QStringLiteral("iconSizes"), iconSizesToJson(theme.iconSizes()));
     object.insert(QStringLiteral("componentOverrides"), componentOverridesToJson(theme.componentOverrides()));
@@ -950,6 +1056,20 @@ bool applyResolvedToTheme(const QJsonObject& resolved, Theme* theme, QString* er
             return false;
         }
         theme->stateLayer() = stateLayer;
+    }
+    if (resolved.contains(QStringLiteral("accessibility"))) {
+        AccessibilityTokens accessibility;
+        if (!accessibilityFromJson(resolved.value(QStringLiteral("accessibility")).toObject(), &accessibility, errorString)) {
+            return false;
+        }
+        theme->accessibility() = accessibility;
+    }
+    if (resolved.contains(QStringLiteral("interactions"))) {
+        InteractionStateTokens interactions;
+        if (!interactionsFromJson(resolved.value(QStringLiteral("interactions")).toObject(), &interactions, errorString)) {
+            return false;
+        }
+        theme->interactions() = interactions;
     }
     if (resolved.contains(QStringLiteral("density"))) {
         DensityTokens density;
@@ -1023,6 +1143,8 @@ bool validateStrictV2(const QJsonObject& object, QString* errorString)
         QStringLiteral("elevationScale"),
         QStringLiteral("motionTokens"),
         QStringLiteral("stateLayer"),
+        QStringLiteral("accessibility"),
+        QStringLiteral("interactions"),
         QStringLiteral("density"),
         QStringLiteral("iconSizes"),
         QStringLiteral("componentOverrides")

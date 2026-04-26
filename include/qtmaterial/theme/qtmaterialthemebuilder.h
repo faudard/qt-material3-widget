@@ -46,6 +46,7 @@ private:
     void applyDefaultStateLayer(Theme& theme) const;
     void applyDefaultDensity(Theme& theme) const;
     void applyDefaultIconSizes(Theme& theme) const;
+    void applyDefaultAccessibility(Theme& theme) const;
 };
 
 } // namespace QtMaterial

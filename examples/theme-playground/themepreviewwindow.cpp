@@ -1,6 +1,7 @@
 #include "themepreviewwindow.h"
 
 #include "qtmaterial/theme/qtmaterialtheme.h"
+#include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
@@ -230,6 +231,7 @@ void ThemePreviewWindow::buildPreviewTabs(QVBoxLayout* root) {
     m_tabs->addTab(buildShapePreview(), tr("Shape"));
     m_tabs->addTab(buildElevationPreview(), tr("Elevation"));
     m_tabs->addTab(buildStateLayerPreview(), tr("State layers"));
+    m_tabs->addTab(buildAccessibilityPreview(), tr("Accessibility"));
     root->addWidget(m_tabs, 2);
 }
 
@@ -591,6 +593,81 @@ void ThemePreviewWindow::exportScreenshot() {
         return;
     }
     QMessageBox::information(this, tr("Screenshot exported"), tr("Screenshot saved to %1").arg(filePath));
+}
+
+
+
+QWidget* ThemePreviewWindow::buildAccessibilityPreview() {
+    const Theme& theme = ThemeManager::instance().theme();
+    const ColorScheme& scheme = theme.colorScheme();
+    const AccessibilityTokens& accessibility = theme.accessibility();
+    const InteractionStateTokens& interactions = theme.interactions();
+
+    auto* body = new QWidget(this);
+    auto* layout = new QGridLayout(body);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(12);
+
+    const QColor surface = scheme.color(ColorRole::SurfaceContainer);
+    const QColor onSurface = scheme.color(ColorRole::OnSurface);
+    const QColor primary = scheme.color(ColorRole::Primary);
+    const QColor onPrimary = scheme.color(ColorRole::OnPrimary);
+    const QColor disabled = scheme.color(ColorRole::OnSurfaceVariant);
+
+    auto* summary = new QLabel(body);
+    summary->setWordWrap(true);
+    summary->setText(tr("High contrast: %1\nReduced motion: %2\nText contrast minimum: %3\nUI contrast minimum: %4\nKeyboard focus visible: %5")
+        .arg(accessibility.highContrast ? tr("enabled") : tr("disabled"))
+        .arg(accessibility.reducedMotion ? tr("enabled") : tr("disabled"))
+        .arg(accessibility.minimumTextContrastRatio, 0, 'f', 1)
+        .arg(accessibility.minimumUiContrastRatio, 0, 'f', 1)
+        .arg(interactions.keyboardFocusVisible ? tr("yes") : tr("no")));
+
+    auto* focusSample = new QPushButton(tr("Keyboard focus sample"), body);
+    focusSample->setFocusPolicy(Qt::StrongFocus);
+    focusSample->setObjectName(QStringLiteral("focusSample"));
+    focusSample->setAccessibleName(tr("Keyboard focus sample"));
+    focusSample->setAccessibleDescription(tr("Shows the resolved focus ring token width, offset, and color."));
+
+    auto* disabledSample = new QPushButton(tr("Disabled sample"), body);
+    disabledSample->setEnabled(false);
+    disabledSample->setAccessibleName(tr("Disabled sample"));
+
+    auto* contrast = new QLabel(body);
+    contrast->setWordWrap(true);
+    contrast->setText(tr("Primary/on-primary contrast: %1\nSurface/on-surface contrast: %2\nDisabled/on-surface-variant contrast: %3")
+        .arg(contrastRatio(onPrimary, primary), 0, 'f', 2)
+        .arg(contrastRatio(onSurface, surface), 0, 'f', 2)
+        .arg(contrastRatio(disabled, surface), 0, 'f', 2));
+
+    layout->addWidget(panel(tr("Accessibility policy"), summary), 0, 0);
+    layout->addWidget(panel(tr("Contrast checks"), contrast), 0, 1);
+
+    auto* samples = new QWidget(body);
+    auto* samplesLayout = new QHBoxLayout(samples);
+    samplesLayout->setContentsMargins(0, 0, 0, 0);
+    samplesLayout->setSpacing(12);
+    samplesLayout->addWidget(focusSample);
+    samplesLayout->addWidget(disabledSample);
+    samplesLayout->addStretch(1);
+    layout->addWidget(panel(tr("Keyboard and disabled states"), samples), 1, 0, 1, 2);
+
+    const QString focusColor = accessibility.focusRing.color.name(QColor::HexArgb);
+    body->setStyleSheet(QStringLiteral(
+        "QWidget { background: transparent; color: %1; }"
+        "QPushButton#focusSample { background-color: %2; color: %3; border: %4px solid %5; border-radius: 12px; padding: 10px 16px; }"
+        "QPushButton#focusSample:focus { outline: none; border: %6px solid %5; }"
+        "QPushButton:disabled { background-color: %7; color: %8; border: 1px solid %8; border-radius: 12px; padding: 10px 16px; }"
+    ).arg(onSurface.name(QColor::HexArgb),
+          primary.name(QColor::HexArgb),
+          onPrimary.name(QColor::HexArgb),
+          QString::number(qMax(1, accessibility.focusRing.width - 1)),
+          focusColor,
+          QString::number(accessibility.focusRing.width),
+          surface.name(QColor::HexArgb),
+          disabled.name(QColor::HexArgb)));
+
+    return body;
 }
 
 QString ThemePreviewWindow::cppSnippet() const {

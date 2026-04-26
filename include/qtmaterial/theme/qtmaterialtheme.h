@@ -1,5 +1,7 @@
 #pragma once
 
+#include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
+
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialcolorscheme.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
@@ -49,6 +51,12 @@ public:
     const StateLayer& stateLayer() const noexcept;
     StateLayer& stateLayer() noexcept;
 
+    const AccessibilityTokens& accessibility() const noexcept;
+    AccessibilityTokens& accessibility() noexcept;
+
+    const InteractionStateTokens& interactions() const noexcept;
+    InteractionStateTokens& interactions() noexcept;
+
     const DensityTokens& density() const noexcept;
     DensityTokens& density() noexcept;
 
@@ -68,6 +76,8 @@ private:
     ElevationScale m_elevations;
     MotionTokens m_motion;
     StateLayer m_stateLayer;
+    AccessibilityTokens m_accessibility;
+    InteractionStateTokens m_interactions;
     DensityTokens m_density;
     IconSizeTokens m_iconSizes;
     ComponentTokenOverrides m_componentOverrides;
