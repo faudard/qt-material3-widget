@@ -1,0 +1,26 @@
+{
+  "schema": "qtmaterial3-theme-seed-golden-v1",
+  "backend": "fallback",
+  "requestedMcu": false,
+  "mcuCompiledIn": false,
+  "source": { "seedColor": "#ff00639b", "mode": "Dark", "contrast": "Standard" },
+  "roles": {
+    "Primary": "#ff5999be",
+    "OnPrimary": "#ff001d2e",
+    "PrimaryContainer": "#ff002941",
+    "OnPrimaryContainer": "#ffb7d3e3",
+    "Secondary": "#ff598ba7",
+    "SecondaryContainer": "#ff253a46",
+    "Tertiary": "#ffefb8c8",
+    "Error": "#fff2b8b5",
+    "Surface": "#ff141218",
+    "OnSurface": "#ffe6e1e5",
+    "SurfaceTint": "#ff5999be",
+    "Outline": "#ff938f99",
+    "InversePrimary": "#ff00639b",
+    "PrimaryFixed": "#ffccdfeb",
+    "PrimaryFixedDim": "#ffa5c8dc",
+    "OnPrimaryFixed": "#ff00111b",
+    "OnPrimaryFixedVariant": "#ff002c45"
+  }
+}
