@@ -519,3 +519,11 @@ endif()
 if(QTMATERIAL3_BUILD_BENCHMARKS)
     add_subdirectory(benchmarks)
 endif()
+
+# Dev slice 7: optional system-theme integration helper.
+if(TARGET qtmaterial3_theme)
+    target_sources(qtmaterial3_theme PRIVATE
+        src/theme/qtmaterialsystemtheme.cpp
+        include/qtmaterial/theme/qtmaterialsystemtheme.h
+    )
+endif()

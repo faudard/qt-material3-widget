@@ -3,6 +3,7 @@
 #include <QtGlobal>
 #include <QHash>
 #include <type_traits>
+#include <QMetaType>
 
 namespace QtMaterial {
 
@@ -180,3 +181,7 @@ inline size_t qHash(QtMaterial::StateLayerRole value, size_t seed = 0) noexcept
 {
     return qtmaterialEnumHash(value, seed);
 }
+
+
+Q_DECLARE_METATYPE(QtMaterial::ThemeMode)
+Q_DECLARE_METATYPE(QtMaterial::ContrastMode)

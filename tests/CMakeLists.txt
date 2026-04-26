@@ -119,3 +119,4 @@ add_test(
         -DGENERATOR_TOOLSET=${CMAKE_GENERATOR_TOOLSET}
         -P ${CMAKE_CURRENT_SOURCE_DIR}/consumer/run_installed_package_test.cmake
 )
+qtm3_add_test(tst_systemtheme theme/tst_systemtheme.cpp qtmaterial3_theme Qt${QT_VERSION_MAJOR}::Widgets)
