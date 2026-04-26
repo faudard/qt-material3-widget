@@ -7,8 +7,6 @@
 #include "qtmaterial/theme/qtmaterialcolorbackend.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
-Q_DECLARE_METATYPE(QtMaterial::ThemeMode)
-Q_DECLARE_METATYPE(QtMaterial::ContrastMode)
 
 using namespace QtMaterial;
 
