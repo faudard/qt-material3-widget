@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "mode": "reported-by-default",
+  "enforcementEnvironmentVariable": "QTMATERIAL3_ENFORCE_PERF_BUDGETS",
+  "budgets": {
+    "themeBuildSeedMatrixBudgetMs": 5000,
+    "jsonRoundTripBudgetMs": 5000,
+    "specFactoryHotLoopBudgetMs": 5000
+  },
+  "notes": [
+    "Budgets are deliberately loose until the project has stable CI timing data.",
+    "Set QTMATERIAL3_ENFORCE_PERF_BUDGETS=1 to make tests fail on budget violations.",
+    "Tighten these numbers only after collecting baseline data on Linux, Windows, and macOS."
+  ]
+}
