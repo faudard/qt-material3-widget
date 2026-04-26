@@ -56,14 +56,38 @@ void applyFixedAccentRoles(ColorScheme& scheme, const QColor& seed, const QColor
 ThemeBuilder::ThemeBuilder() = default;
 ThemeBuilder::~ThemeBuilder() = default;
 
+ThemeColorBackendStatus ThemeBuilder::colorBackendStatus(const ThemeOptions& options) const
+{
+    return resolveThemeColorBackend(options);
+}
+
+ThemeColorBackend ThemeBuilder::compiledColorBackend() noexcept
+{
+    return compiledThemeColorBackend();
+}
+
+bool ThemeBuilder::isMaterialColorUtilitiesAvailable() noexcept
+{
+    return isMaterialColorUtilitiesCompiledIn();
+}
+
 Theme ThemeBuilder::build(const ThemeOptions& options) const
 {
+    const ThemeColorBackendStatus backendStatus = colorBackendStatus(options);
+
 #ifndef NDEBUG
-    if (options.expressive || options.useMaterialColorUtilities) {
-        qWarning() << "ThemeBuilder: expressive/useMaterialColorUtilities are not implemented yet."
-                   << "The theme will be generated with the deterministic fallback builder.";
+    if (backendStatus.fallbackUsed && options.useMaterialColorUtilities) {
+        qWarning() << "ThemeBuilder:" << backendStatus.diagnostic;
+    }
+    if (options.expressive) {
+        qWarning() << "ThemeBuilder: expressive theme generation is not implemented yet."
+                   << "The selected backend will generate the non-expressive scheme.";
     }
 #endif
+
+    // The MCU adapter boundary is explicit now. Until an MCU adapter is compiled into
+    // the library, the deterministic fallback backend is the effective implementation.
+    // This keeps theme generation stable and makes fallback behavior observable/testable.
     return buildFallbackTheme(options);
 }
 

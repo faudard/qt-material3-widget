@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qtmaterial/qtmaterialglobal.h"
+#include "qtmaterial/theme/qtmaterialcolorbackend.h"
 #include "qtmaterial/theme/qtmaterialcolorscheme.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
@@ -14,6 +15,10 @@ public:
     ~ThemeBuilder();
 
     Theme build(const ThemeOptions& options) const;
+    ThemeColorBackendStatus colorBackendStatus(const ThemeOptions& options) const;
+
+    static ThemeColorBackend compiledColorBackend() noexcept;
+    static bool isMaterialColorUtilitiesAvailable() noexcept;
 
     Theme buildLightFromSeed(const QColor& seed) const;
     Theme buildDarkFromSeed(const QColor& seed) const;

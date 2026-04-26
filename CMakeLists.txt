@@ -61,6 +61,7 @@ set(QTMATERIAL3_THEME_SOURCES
     src/theme/qtmaterialthemeoptions.cpp
     src/theme/qtmaterialtheme.cpp
     src/theme/qtmaterialthemebuilder.cpp
+    src/theme/qtmaterialcolorbackend.cpp
     src/theme/qtmaterialthememanager.cpp
     src/theme/qtmaterialthemeserializer.cpp
     src/theme/qtmaterialthemeobserver.cpp
@@ -78,6 +79,7 @@ set(QTMATERIAL3_THEME_SOURCES
 set(QTMATERIAL3_THEME_HEADERS
     include/qtmaterial/qtmaterialglobal.h
     include/qtmaterial/theme/qtmaterialcolortoken.h
+    include/qtmaterial/theme/qtmaterialcolorbackend.h
     include/qtmaterial/theme/qtmaterialcolorscheme.h
     include/qtmaterial/theme/qtmaterialthemeoptions.h
     include/qtmaterial/theme/qtmaterialtheme.h
@@ -104,6 +106,16 @@ add_library(QtMaterial3::Theme ALIAS qtmaterial3_theme)
 
 target_compile_features(qtmaterial3_theme PUBLIC cxx_std_17)
 target_compile_definitions(qtmaterial3_theme PRIVATE QTMATERIAL3_THEME_LIBRARY)
+# QTMATERIAL3_USE_MCU expresses the user request. QTMATERIAL3_HAS_MCU expresses
+# whether an actual MCU adapter is compiled into this target. The adapter is not
+# vendored in this tree yet, so this slice keeps HAS_MCU false and locks the
+# deterministic fallback behavior with tests.
+set(QTMATERIAL3_HAS_MCU OFF)
+target_compile_definitions(qtmaterial3_theme
+    PUBLIC
+        QTMATERIAL3_USE_MCU=$<BOOL:${QTMATERIAL3_USE_MCU}>
+        QTMATERIAL3_HAS_MCU=$<BOOL:${QTMATERIAL3_HAS_MCU}>
+)
 target_link_libraries(qtmaterial3_theme
     PUBLIC
         Qt${QT_VERSION_MAJOR}::Core
