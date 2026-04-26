@@ -127,6 +127,11 @@ Typical consumer scenarios:
 See the dedicated guide: [docs/public-api/theming.md](docs/public-api/theming.md)
 
 ## Examples
+  * `examples/theming-seed-workflow` — public seed color, light/dark, contrast, and JSON inspection workflow
+  * `examples/theming-runtime-switch` — runtime theme application and revision tracking
+  * `examples/theming-json-workflow` — strict JSON export/import workflow
+  * `examples/theming-component-overrides` — component-local override serialization workflow
+  * `examples/theming-backend-report` — MCU/fallback backend status workflow
 
 - `examples/gallery` â€” showcase / component gallery
 - `examples/minimal-consumer` â€” smallest integration example
