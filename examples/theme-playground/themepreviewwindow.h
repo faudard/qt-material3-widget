@@ -34,6 +34,7 @@ private slots:
     void copyCppSnippet();
     void copyTokenReport();
     void exportScreenshot();
+    bool saveScreenshotToFile(const QString& filePath, QString* errorString = nullptr);
     void refreshPreview();
 
 private:

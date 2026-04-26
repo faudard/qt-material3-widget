@@ -124,3 +124,10 @@ qtm3_add_test(tst_theme_accessibility_tokens theme/tst_theme_accessibility_token
 target_include_directories(tst_theme_accessibility_tokens PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/..")
 qtm3_add_test(tst_systemtheme_accessibility theme/tst_systemtheme_accessibility.cpp qtmaterial3_theme Qt${QT_VERSION_MAJOR}::Widgets)
 qtm3_add_test(tst_keyboard_accessibility accessibility/tst_keyboard_accessibility.cpp Qt${QT_VERSION_MAJOR}::Widgets)
+
+option(QTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS "Build Qt Material 3 visual regression tests" ON)
+if(QTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS)
+  qtm3_add_test(tst_theme_visual_regression visual/tst_theme_visual_regression.cpp qtmaterial3_theme qtmaterial3_widgets)
+  target_compile_definitions(tst_theme_visual_regression PRIVATE
+    QTMATERIAL3_VISUAL_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/visual")
+endif()

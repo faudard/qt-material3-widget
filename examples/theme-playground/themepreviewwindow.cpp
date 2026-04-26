@@ -576,6 +576,28 @@ void ThemePreviewWindow::copyTokenReport() {
     }
 }
 
+
+
+bool ThemePreviewWindow::saveScreenshotToFile(const QString& filePath, QString* errorString) {
+    if (filePath.isEmpty()) {
+        if (errorString) {
+            *errorString = tr("Screenshot path is empty.");
+        }
+        return false;
+    }
+
+    QPixmap pixmap(size());
+    pixmap.fill(Qt::transparent);
+    render(&pixmap);
+    if (!pixmap.save(filePath, "PNG")) {
+        if (errorString) {
+            *errorString = tr("Could not save %1").arg(filePath);
+        }
+        return false;
+    }
+    return true;
+}
+
 void ThemePreviewWindow::exportScreenshot() {
     const QString filePath = QFileDialog::getSaveFileName(
         this,
@@ -586,10 +608,9 @@ void ThemePreviewWindow::exportScreenshot() {
         return;
     }
 
-    QPixmap pixmap(size());
-    render(&pixmap);
-    if (!pixmap.save(filePath, "PNG")) {
-        QMessageBox::critical(this, tr("Screenshot failed"), tr("Could not save %1").arg(filePath));
+    QString error;
+    if (!saveScreenshotToFile(filePath, &error)) {
+        QMessageBox::critical(this, tr("Screenshot failed"), error);
         return;
     }
     QMessageBox::information(this, tr("Screenshot exported"), tr("Screenshot saved to %1").arg(filePath));
