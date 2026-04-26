@@ -131,3 +131,6 @@ if(QTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS)
   target_compile_definitions(tst_theme_visual_regression PRIVATE
     QTMATERIAL3_VISUAL_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/visual")
 endif()
+
+# Public API guardrail: every public theming header must compile as a standalone include.
+qtm3_add_test(tst_public_theming_headers public_headers/tst_public_theming_headers.cpp qtmaterial3_theme)

@@ -1,13 +1,92 @@
-name: ci
+name: CI
 
 on:
   push:
+    branches: [ main, master ]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu-qt6-fallback
+            os: ubuntu-latest
+            qt-version: '6.7.3'
+            use-mcu: 'OFF'
+            build-examples: 'ON'
+            extra-packages: 'xvfb libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0'
+          - name: ubuntu-qt6-mcu-requested
+            os: ubuntu-latest
+            qt-version: '6.7.3'
+            use-mcu: 'ON'
+            build-examples: 'ON'
+            extra-packages: 'xvfb libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0'
+          - name: windows-qt6-fallback
+            os: windows-latest
+            qt-version: '6.7.3'
+            use-mcu: 'OFF'
+            build-examples: 'ON'
+            extra-packages: ''
+          - name: macos-qt6-fallback
+            os: macos-latest
+            qt-version: '6.7.3'
+            use-mcu: 'OFF'
+            build-examples: 'ON'
+            extra-packages: ''
+
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+      QT_QPA_PLATFORM: offscreen
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Placeholder
-        run: echo "Phase 5 CI skeleton"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Linux runtime packages
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build ${{ matrix.extra-packages }}
+
+      - name: Install Ninja on Windows/macOS
+        if: runner.os != 'Linux'
+        shell: bash
+        run: |
+          cmake -E echo "Using CMake-provided build tooling where available"
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ matrix.qt-version }}
+          cache: true
+
+      - name: Configure
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DQTMATERIAL3_BUILD_TESTS=ON
+          -DQTMATERIAL3_BUILD_EXAMPLES=${{ matrix.build-examples }}
+          -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
+          -DQTMATERIAL3_USE_MCU=${{ matrix.use-mcu }}
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Test
+        shell: bash
+        run: |
+          if [[ "${RUNNER_OS}" == "Linux" ]]; then
+            xvfb-run -a ctest --test-dir build --build-config Release --output-on-failure
+          else
+            ctest --test-dir build --build-config Release --output-on-failure
+          fi
