@@ -85,7 +85,6 @@ set(QTMATERIAL3_THEME_HEADERS
     include/qtmaterial/theme/qtmaterialthememanager.h
     include/qtmaterial/theme/qtmaterialthemeserializer.h
     include/qtmaterial/theme/qtmaterialthemeobserver.h
-    include/qtmaterial/theme/qtmateriallegacyaliasmap.h
     include/qtmaterial/theme/qtmaterialtypographyscale.h
     include/qtmaterial/theme/qtmaterialshapescale.h
     include/qtmaterial/theme/qtmaterialelevationscale.h
@@ -119,39 +118,6 @@ target_include_directories(qtmaterial3_theme
 set_target_properties(qtmaterial3_theme PROPERTIES
     EXPORT_NAME Theme
     OUTPUT_NAME QtMaterial3Theme
-    VERSION ${PROJECT_VERSION}
-    SOVERSION ${PROJECT_VERSION_MAJOR}
-)
-
-set(QTMATERIAL3_LEGACY_SOURCES
-    src/legacy/qtmateriallegacyaliasmap.cpp
-    src/legacy/qtmateriallegacythemebridge.cpp
-)
-
-set(QTMATERIAL3_LEGACY_HEADERS
-    include/qtmaterial/theme/qtmateriallegacyaliasmap.h
-)
-
-qtm3_add_library(qtmaterial3_legacy
-    ${QTMATERIAL3_LEGACY_SOURCES}
-    ${QTMATERIAL3_LEGACY_HEADERS}
-)
-add_library(QtMaterial3::Legacy ALIAS qtmaterial3_legacy)
-
-target_compile_features(qtmaterial3_legacy PUBLIC cxx_std_17)
-target_compile_definitions(qtmaterial3_legacy PRIVATE QTMATERIAL3_LEGACY_LIBRARY)
-target_link_libraries(qtmaterial3_legacy
-    PUBLIC
-        qtmaterial3_theme
-)
-target_include_directories(qtmaterial3_legacy
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-)
-set_target_properties(qtmaterial3_legacy PROPERTIES
-    EXPORT_NAME Legacy
-    OUTPUT_NAME QtMaterial3Legacy
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
@@ -440,7 +406,7 @@ set(QTMATERIAL3_CMAKE_INSTALL_DIR
 install(
     TARGETS
         qtmaterial3_theme
-        qtmaterial3_legacy
+
         qtmaterial3_core
         qtmaterial3_specs
         qtmaterial3_effects

@@ -17,7 +17,7 @@ Below is a **proposed exhaustive future roadmap** for `faudard/qt-material3-widg
 
 The repository is already positioned as a **Material 3 widget toolkit for Qt Widgets**, with an explicit warning that it is still **experimental / design-in-progress**. Its core architectural rule is important: **widgets render from resolved specs, not ad hoc theme lookups**. That rule should stay the backbone of the whole roadmap.
 
-The current module layout is already strong: `qtmaterial3_theme`, `qtmaterial3_legacy`, `qtmaterial3_core`, `qtmaterial3_specs`, `qtmaterial3_effects`, and `qtmaterial3_widgets`. The README also names the current focus areas: packaging/install/export, accessibility and keyboard correctness, performance and memory review, public API stabilization, documentation, and release readiness.
+The current module layout is already strong: `qtmaterial3_theme`, `qtmaterial3_core`, `qtmaterial3_specs`, `qtmaterial3_effects`, and `qtmaterial3_widgets`. The README also names the current focus areas: packaging/install/export, accessibility and keyboard correctness, performance and memory review, public API stabilization, documentation, and release readiness.
 
 The CMake project is currently versioned as **0.4.0**, targets Qt 5.14+ or Qt 6, uses C++17, exposes CMake options for tests/examples/benchmarks, and already defines install/export rules for the library targets.
 
@@ -535,10 +535,6 @@ QtMaterialNavigationDrawer
 QtMaterialLinearProgressIndicator
 ```
 
-Avoid legacy names as primary public API.
-
-Use legacy aliases only in `qtmaterial3_legacy`.
-
 ## 5.2 Namespace policy
 
 Current docs use `QtMaterial::...`. Keep that stable.
@@ -636,7 +632,7 @@ N+2   = remove, only before 1.0
 
 # 6. Testing roadmap
 
-The repository already has test folders for consumer, core, effects, legacy, render, specs, theme, and widgets.
+The repository already has test folders for consumer, core, effects, render, specs, theme, and widgets.
 
 ## 6.1 Unit tests
 
@@ -783,24 +779,7 @@ Add detailed pages for:
 - Interaction state pipeline.
 - Accessibility integration.
 - Effects pipeline.
-- Legacy bridge.
 - Install/export architecture.
-
-## 7.4 Migration docs
-
-Migration from `qt-material-widgets` should include:
-
-| Old concept | New concept |
-|---|---|
-| legacy theme lookup | typed theme roles |
-| ad hoc widget painting | resolved specs |
-| old component names | Material 3 canonical names |
-| qmake project | CMake package |
-| manual copy source | installed package / `find_package` |
-
-The README already states that the project is moving toward typed Material 3 roles, layered architecture, spec-driven rendering, canonical Material 3 widget names, and a temporary legacy alias bridge.
-
----
 
 # 8. Component coverage roadmap
 
@@ -1135,7 +1114,6 @@ For a widget to be “complete”:
 [ ] tests added
 [ ] docs added
 [ ] gallery demo added
-[ ] migration notes added if replacing legacy widget
 ```
 
 ---
@@ -1149,7 +1127,6 @@ Do not release 1.0 until all of these are true:
 - Public API reviewed.
 - Namespaces final.
 - Header layout final.
-- Deprecated legacy aliases separated.
 - Source compatibility policy written.
 - Binary compatibility policy written.
 
@@ -1267,7 +1244,7 @@ Below is a **status table of the whole project**, based on the public repository
 | Current version | 🧪 0.4.0 | CMake project version is `0.4.0`. |
 | Qt support | ✅ Present | CMake requires Qt Core/Gui/Widgets and supports Qt 5 or Qt 6 discovery. |
 | C++ standard | ✅ Present | Targets use C++17. |
-| Main architecture | ✅ Present | README defines the layered architecture: theme, legacy, core, specs, effects, widgets. |
+| Main architecture | ✅ Present | README defines the layered architecture: theme, core, specs, effects, widgets. |
 | Core design rule | ✅ Present | README states widgets render from resolved specs, not ad hoc theme lookups. |
 | Public release | ❌ Missing | GitHub shows no releases published. |
 | License | ❌ Missing / urgent | README still says “Add the project license here.” |
@@ -1298,7 +1275,6 @@ Below is a **status table of the whole project**, based on the public repository
 | Module | Current status | Source/header evidence | Test/docs status |
 |---|---:|---|---|
 | `qtmaterial3_theme` | 🟡 Present, important but still stabilizing | Contains color scheme, theme options, theme, builder, manager, serializer, observer, typography, shape, elevation, motion, state layer. | Theme guide is relatively detailed; tests exist for builder, manager, serializer. |
-| `qtmaterial3_legacy` | 🟡 Present bridge | Contains legacy alias map and legacy theme bridge. | Migration doc says legacy bridge is transitional. |
 | `qtmaterial3_core` | 🟡 Present foundation | Contains widget base, interaction state, control, surface, overlay surface, abstract button, selection control, input control, accessibility helper. | Tests exist for interaction state, abstract button state, input control. |
 | `qtmaterial3_specs` | 🟡 Present foundation | Contains specs for buttons, icon button, checkbox, radio, switch, dialog, text field, FAB, card, navigation drawer, bottom sheet, banner, app bars, list item, divider, autocomplete, date field, tabs, snackbar, progress. | Spec factory and phase specs tests exist. |
 | `qtmaterial3_effects` | 🟡 Present foundation | Ripple controller, state layer painter, focus indicator, shadow renderer/cache, transition controller, scrim widget. | Tests exist for state layer, ripple, focus, shadow, transition, scrim. |
@@ -1513,7 +1489,7 @@ The visible spec list is taken from the CMake `QTMATERIAL3_SPECS_SOURCES` and `Q
 | Accessibility/keyboard rules | ✅ Present | Defines minimum keyboard and accessibility rules. |
 | Testing rules | 🟡 Present but brief | Lists unit, widget behavior, render snapshot, consumer build, benchmark layers. |
 | Release process | 🟡 Present but brief | Lists release ladder and release gates. |
-| Migration from old library | 🟡 Present but brief | Notes typed roles, layered architecture, specs, canonical names, legacy bridge. |
+| Migration from old library | 🟡 Present but brief | Notes typed roles, layered architecture, specs, canonical names. |
 
 ---
 

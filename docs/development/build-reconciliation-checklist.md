@@ -12,7 +12,6 @@ This checklist turns the scaffold into a real shared-library project.
 ## 2. Library compile pass
 Build libraries first with tests and examples off:
 - `qtmaterial3_theme`
-- `qtmaterial3_legacy`
 - `qtmaterial3_core`
 - `qtmaterial3_specs`
 - `qtmaterial3_effects`

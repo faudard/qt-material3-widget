@@ -50,7 +50,6 @@ The generated API reference in this repository documents the actual C++ API expo
 ## Module layout
 
 - `qtmaterial3_theme` — tokens, schemes, builder, serializer, manager
-- `qtmaterial3_legacy` — temporary migration bridge
 - `qtmaterial3_core` — widget bases and interaction state
 - `qtmaterial3_specs` — immutable component specs and factory
 - `qtmaterial3_effects` — ripple, focus, shadow, transitions, scrim
@@ -163,16 +162,6 @@ Start here for public usage guidance:
 - Compact controls
 - Data widgets
 - Theming
-
-## Migration from `qt-material-widgets`
-
-This project is moving toward:
-
-- typed Material 3 theme roles
-- layered architecture
-- spec-driven rendering
-- canonical Material 3 widget names
-- a legacy alias bridge only as a transition tool
 
 ## Contributing
 

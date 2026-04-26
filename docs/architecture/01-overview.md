@@ -15,8 +15,6 @@ flowchart TB
     inputs["Theme Inputs<br/><small>Seed color<br/>ThemeOptions<br/>JSON import / export</small>"]
     m3["Material 3 Guidance<br/><small>Color roles<br/>Typography<br/>Shape<br/>Motion</small>"]
 
-    legacy["qtmaterial3_legacy<br/><small>Temporary migration bridge<br/>Legacy alias map<br/>Legacy theme bridge</small>"]
-
     theme["qtmaterial3_theme<br/><small>Tokens, schemes, builder, manager<br/>ColorScheme · TypographyScale · ShapeScale<br/>Shape · ElevationScale · MotionTokens<br/>ThemeBuilder · ThemeManager</small>"]
 
     rule["Core rule:<br/>Widgets render from resolved specs,<br/>not from ad hoc theme lookups."]
@@ -33,7 +31,6 @@ flowchart TB
 
     inputs --> theme
     m3 --> theme
-    legacy --> theme
 
     theme --> app
     widgets --> app
@@ -71,7 +68,7 @@ flowchart TB
     classDef note fill:#fff7ed,stroke:#f59e0b,stroke-width:1.5px,color:#431407;
 
     class app consumer;
-    class inputs,m3,legacy,qt support;
+    class inputs,m3,qt support;
     class theme theme;
     class core core;
     class specs specs;
