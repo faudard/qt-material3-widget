@@ -20,6 +20,7 @@ qtm3_add_test(tst_themebuilder theme/tst_themebuilder.cpp qtmaterial3_theme)
 qtm3_add_test(tst_thememanager theme/tst_thememanager.cpp qtmaterial3_theme)
 qtm3_add_test(tst_interactionstate core/tst_interactionstate.cpp qtmaterial3_core)
 qtm3_add_test(tst_specfactory specs/tst_specfactory.cpp qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
+qtm3_add_test(tst_componenttokenoverrides specs/tst_componenttokenoverrides.cpp qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
 qtm3_add_test(tst_phase4specs specs/tst_phase4specs.cpp qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
 
 qtm3_add_test(tst_statelayerpainter effects/tst_statelayerpainter.cpp qtmaterial3_effects)

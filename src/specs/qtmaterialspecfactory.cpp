@@ -1,4 +1,5 @@
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterialcomponenttokenapplier_p.h"
 
 namespace QtMaterial {
 SpecFactory::SpecFactory() = default;
@@ -27,7 +28,8 @@ ButtonSpec SpecFactory::textButtonSpec(const Theme& theme, Density density) cons
     spec.outlineColor = Qt::transparent;
     spec.disabledOutlineColor = Qt::transparent;
     spec.containerHeight = buttonHeightForDensity(density);
-    return spec;
+    applyButtonComponentTokens(theme, QStringList{QStringLiteral("button"), QStringLiteral("button.text"), QStringLiteral("TextButton")}, &spec);
+  return spec;
 }
 
 ButtonSpec SpecFactory::filledButtonSpec(const Theme& theme, Density density) const
@@ -41,7 +43,8 @@ ButtonSpec SpecFactory::filledButtonSpec(const Theme& theme, Density density) co
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnPrimary);
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.elevationRole = ElevationRole::Level1;
-    return spec;
+    applyButtonComponentTokens(theme, QStringList{QStringLiteral("button"), QStringLiteral("button.filled"), QStringLiteral("FilledButton")}, &spec);
+  return spec;
 }
 
 ButtonSpec SpecFactory::filledTonalButtonSpec(const Theme& theme, Density density) const
@@ -54,7 +57,8 @@ ButtonSpec SpecFactory::filledTonalButtonSpec(const Theme& theme, Density densit
     spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = spec.labelColor;
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Secondary);
-    return spec;
+    applyButtonComponentTokens(theme, QStringList{QStringLiteral("button"), QStringLiteral("button.filledTonal"), QStringLiteral("FilledTonalButton")}, &spec);
+  return spec;
 }
 
 ButtonSpec SpecFactory::outlinedButtonSpec(const Theme& theme, Density density) const
@@ -64,7 +68,8 @@ ButtonSpec SpecFactory::outlinedButtonSpec(const Theme& theme, Density density) 
     spec.outlineColor = theme.colorScheme().color(ColorRole::Outline);
     spec.disabledOutlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    return spec;
+    applyButtonComponentTokens(theme, QStringList{QStringLiteral("button"), QStringLiteral("button.outlined"), QStringLiteral("OutlinedButton")}, &spec);
+  return spec;
 }
 
 ButtonSpec SpecFactory::elevatedButtonSpec(const Theme& theme, Density density) const
@@ -80,7 +85,8 @@ ButtonSpec SpecFactory::elevatedButtonSpec(const Theme& theme, Density density) 
     spec.stateLayerColor = spec.labelColor;
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.elevationRole = ElevationRole::Level1;
-    return spec;
+    applyButtonComponentTokens(theme, QStringList{QStringLiteral("button"), QStringLiteral("button.elevated"), QStringLiteral("ElevatedButton")}, &spec);
+  return spec;
 }
 
 FabSpec SpecFactory::fabSpec(const Theme& theme, Density) const
@@ -91,14 +97,16 @@ FabSpec SpecFactory::fabSpec(const Theme& theme, Density) const
     spec.disabledContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
     spec.disabledIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = spec.iconColor;
-    return spec;
+    applyFabComponentTokens(theme, QStringList{QStringLiteral("fab"), QStringLiteral("Fab")}, &spec);
+  return spec;
 }
 
 FabSpec SpecFactory::extendedFabSpec(const Theme& theme, Density density) const
 {
     FabSpec spec = fabSpec(theme, density);
     spec.touchTarget = QSize(80, 56);
-    return spec;
+    applyFabComponentTokens(theme, QStringList{QStringLiteral("fab"), QStringLiteral("fab.extended"), QStringLiteral("ExtendedFab")}, &spec);
+  return spec;
 }
 
 IconButtonSpec SpecFactory::iconButtonSpec(const Theme& theme, Density) const
@@ -110,7 +118,8 @@ IconButtonSpec SpecFactory::iconButtonSpec(const Theme& theme, Density) const
     spec.selectedIconColor = theme.colorScheme().color(ColorRole::OnPrimaryContainer);
     spec.disabledIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    return spec;
+    applyIconButtonComponentTokens(theme, QStringList{QStringLiteral("iconButton"), QStringLiteral("IconButton")}, &spec);
+  return spec;
 }
 
 CheckboxSpec SpecFactory::checkboxSpec(const Theme& theme, Density density) const
@@ -127,7 +136,8 @@ CheckboxSpec SpecFactory::checkboxSpec(const Theme& theme, Density density) cons
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     if (density == Density::Compact) spec.spacing = 8;
     if (density == Density::Comfortable) spec.spacing = 14;
-    return spec;
+    applyCheckboxComponentTokens(theme, QStringList{QStringLiteral("selection"), QStringLiteral("checkbox"), QStringLiteral("Checkbox")}, &spec);
+  return spec;
 }
 
 RadioButtonSpec SpecFactory::radioButtonSpec(const Theme& theme, Density density) const
@@ -142,7 +152,8 @@ RadioButtonSpec SpecFactory::radioButtonSpec(const Theme& theme, Density density
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     if (density == Density::Compact) spec.spacing = 8;
     if (density == Density::Comfortable) spec.spacing = 14;
-    return spec;
+    applyRadioButtonComponentTokens(theme, QStringList{QStringLiteral("selection"), QStringLiteral("radioButton"), QStringLiteral("RadioButton")}, &spec);
+  return spec;
 }
 
 SwitchSpec SpecFactory::switchSpec(const Theme& theme, Density density) const
@@ -163,7 +174,8 @@ SwitchSpec SpecFactory::switchSpec(const Theme& theme, Density density) const
     spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     if (density == Density::Compact) spec.spacing = 8;
     if (density == Density::Comfortable) spec.spacing = 14;
-    return spec;
+    applySwitchComponentTokens(theme, QStringList{QStringLiteral("selection"), QStringLiteral("switch"), QStringLiteral("Switch")}, &spec);
+  return spec;
 }
 
 DialogSpec SpecFactory::dialogSpec(const Theme& theme) const
@@ -173,7 +185,8 @@ DialogSpec SpecFactory::dialogSpec(const Theme& theme) const
     spec.headlineColor = theme.colorScheme().color(ColorRole::OnSurface);
     spec.bodyColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.scrimColor = theme.colorScheme().color(ColorRole::Scrim);
-    return spec;
+    applyDialogComponentTokens(theme, QStringList{QStringLiteral("surface"), QStringLiteral("dialog"), QStringLiteral("Dialog")}, &spec);
+  return spec;
 }
 
 NavigationDrawerSpec SpecFactory::navigationDrawerSpec(const Theme& theme) const
@@ -210,7 +223,8 @@ CardSpec SpecFactory::cardSpec(const Theme& theme) const
     spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
     spec.outlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
     spec.contentColor = theme.colorScheme().color(ColorRole::OnSurface);
-    return spec;
+    applyCardComponentTokens(theme, QStringList{QStringLiteral("surface"), QStringLiteral("card"), QStringLiteral("Card")}, &spec);
+  return spec;
 }
 
 AppBarSpec SpecFactory::topAppBarSpec(const Theme& theme) const
@@ -263,14 +277,16 @@ TextFieldSpec SpecFactory::outlinedTextFieldSpec(const Theme& theme, Density den
     default:
         break;
     }
-    return spec;
+    applyTextFieldComponentTokens(theme, QStringList{QStringLiteral("input"), QStringLiteral("textField"), QStringLiteral("textField.outlined"), QStringLiteral("OutlinedTextField")}, &spec);
+  return spec;
 }
 
 TextFieldSpec SpecFactory::filledTextFieldSpec(const Theme& theme, Density density) const
 {
     TextFieldSpec spec = outlinedTextFieldSpec(theme, density);
     spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHighest);
-    return spec;
+    applyTextFieldComponentTokens(theme, QStringList{QStringLiteral("input"), QStringLiteral("textField"), QStringLiteral("textField.filled"), QStringLiteral("FilledTextField")}, &spec);
+  return spec;
 }
 
 AutocompletePopupSpec SpecFactory::autocompletePopupSpec(const Theme& theme) const

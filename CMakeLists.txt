@@ -234,6 +234,7 @@ set_target_properties(qtmaterial3_core PROPERTIES
 
 set(QTMATERIAL3_SPECS_SOURCES
     src/specs/qtmaterialspecfactory.cpp
+    src/specs/qtmaterialcomponenttokenapplier.cpp
     src/specs/qtmaterialbuttonspec.cpp
     src/specs/qtmaterialiconbuttonspec.cpp
     src/specs/qtmaterialcheckboxspec.cpp
