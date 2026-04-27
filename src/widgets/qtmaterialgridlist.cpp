@@ -125,7 +125,7 @@ void QtMaterialGridList::applySpec()
     setGridSize(m_spec.itemSize + QSize(m_spec.spacing, m_spec.spacing));
     setFont(m_spec.titleFont);
 
-    if (auto* delegate = qobject_cast<MaterialGridListDelegate*>(itemDelegate())) {
+    if (auto* delegate = dynamic_cast<MaterialGridListDelegate*>(itemDelegate())) {
         delegate->setSpec(m_spec);
     }
 

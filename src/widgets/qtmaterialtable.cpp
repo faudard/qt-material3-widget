@@ -127,7 +127,7 @@ void QtMaterialTable::applySpec()
     setPalette(palette);
     viewport()->setPalette(palette);
 
-    if (auto* delegate = qobject_cast<MaterialTableDelegate*>(itemDelegate())) {
+    if (auto* delegate = dynamic_cast<MaterialTableDelegate*>(itemDelegate())) {
         delegate->setSpec(m_spec);
     }
 

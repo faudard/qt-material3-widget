@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
+set(PROJECT_LICENSE "LGPL-3.0-only")
+
 option(BUILD_SHARED_LIBS "Build QtMaterial3 libraries as shared libraries" ON)
 
 project(qt-material3-widgets
@@ -407,6 +409,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     src/widgets/surfaces/qtmaterialmenu.cpp
     src/widgets/inputs/qtmaterialautocomplete.cpp
     src/widgets/qtmaterialdatepicker.cpp
+    src/widgets/qtmaterialwidget_datacomponent_spec_defaults.cpp
     src/widgets/qtmaterialtable.cpp
     src/widgets/qtmaterialgridlist.cpp
     src/widgets/qtmaterialcarousel.cpp    

@@ -14,5 +14,28 @@ public:
     void setStyle(TypeRole role, const TypographyStyle& style);
 private:
     QHash<TypeRole, TypographyStyle> m_styles;
+
+public:
+// Compatibility aliases/roles for Material 3 component specs.
+    // Added by fix-patch12-13-colorscheme-typography-compat-v2.sh.
+    QFont displayLarge;
+    QFont displayMedium;
+    QFont displaySmall;
+
+    QFont headlineLarge;
+    QFont headlineMedium;
+    QFont headlineSmall;
+
+    QFont titleLarge;
+    QFont titleMedium;
+    QFont titleSmall;
+
+    QFont bodyLarge;
+    QFont bodyMedium;
+    QFont bodySmall;
+
+    QFont labelLarge;
+    QFont labelMedium;
+    QFont labelSmall;
 };
 } // namespace QtMaterial

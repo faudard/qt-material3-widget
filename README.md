@@ -180,8 +180,6 @@ Contributions are especially useful in:
 
 ## License
 
-## License
-
 This project is licensed under the GNU Lesser General Public License v3.0 only.
 
 See [LICENSE](LICENSE) for the LGPLv3 text and [COPYING](COPYING) for the GPLv3 text incorporated by the LGPLv3.

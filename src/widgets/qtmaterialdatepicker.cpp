@@ -11,6 +11,7 @@
 #include <QTextCharFormat>
 #include <QToolButton>
 #include <QVBoxLayout>
+#include <qlocale.h>
 
 namespace QtMaterial {
 
