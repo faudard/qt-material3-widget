@@ -4,6 +4,7 @@
 #include <QFrame>
 
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
+#include "qtmaterial/qtmaterialglobal.h"
 
 class QCalendarWidget;
 class QLabel;
@@ -11,7 +12,7 @@ class QToolButton;
 
 namespace QtMaterial {
 
-class QtMaterialDatePicker : public QFrame {
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDatePicker : public QFrame {
     Q_OBJECT
     Q_PROPERTY(QDate selectedDate READ selectedDate WRITE setSelectedDate NOTIFY selectedDateChanged)
     Q_PROPERTY(QDate minimumDate READ minimumDate WRITE setMinimumDate)

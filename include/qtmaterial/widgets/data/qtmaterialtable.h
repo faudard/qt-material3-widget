@@ -3,10 +3,11 @@
 #include <QTableView>
 
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
+#include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
 
-class QtMaterialTable : public QTableView {
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTable : public QTableView {
     Q_OBJECT
 
 public:

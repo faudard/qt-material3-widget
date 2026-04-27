@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QWidget>
-
+#include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
 
 class QHBoxLayout;
@@ -10,7 +10,7 @@ class QStackedWidget;
 
 namespace QtMaterial {
 
-class QtMaterialCarousel : public QWidget {
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialCarousel : public QWidget {
     Q_OBJECT
     Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
     Q_PROPERTY(bool wrap READ wrap WRITE setWrap)

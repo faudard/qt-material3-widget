@@ -3,10 +3,11 @@
 #include <QListView>
 
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
+#include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
 
-class QtMaterialGridList : public QListView {
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialGridList : public QListView {
     Q_OBJECT
 
 public:
