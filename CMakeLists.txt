@@ -410,9 +410,9 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     src/widgets/inputs/qtmaterialautocomplete.cpp
     src/widgets/qtmaterialdatepicker.cpp
     src/widgets/qtmaterialwidget_datacomponent_spec_defaults.cpp
-    src/widgets/qtmaterialtable.cpp
-    src/widgets/qtmaterialgridlist.cpp
-    src/widgets/qtmaterialcarousel.cpp    
+    src/widgets/data/qtmaterialtable.cpp
+    src/widgets/data/qtmaterialgridlist.cpp
+    src/widgets/data/qtmaterialcarousel.cpp    
 )
 
 set(QTMATERIAL3_WIDGETS_HEADERS
@@ -453,9 +453,9 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     include/qtmaterial/widgets/surfaces/qtmaterialmenu.h
     include/qtmaterial/widgets/inputs/qtmaterialautocomplete.h
     include/qtmaterial/widgets/qtmaterialdatepicker.h
-    include/qtmaterial/widgets/qtmaterialtable.h
-    include/qtmaterial/widgets/qtmaterialgridlist.h
-    include/qtmaterial/widgets/qtmaterialcarousel.h
+    include/qtmaterial/widgets/data/qtmaterialtable.h
+    include/qtmaterial/widgets/data/qtmaterialgridlist.h
+    include/qtmaterial/widgets/data/qtmaterialcarousel.h
 )
 
 qtm3_add_library(qtmaterial3_widgets

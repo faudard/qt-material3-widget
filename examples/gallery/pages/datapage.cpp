@@ -25,15 +25,15 @@ DataPage::DataPage(QWidget* parent)
 
     layout->addWidget(new QtMaterial::QtMaterialDivider(this));
 
-    auto* table = new QtMaterialTable(this);
+    auto* table = new QtMaterial::QtMaterialTable(this);
     table->setMinimumHeight(72);
     layout->addWidget(table);
 
-    auto* gridList = new QtMaterialGridList(this);
+    auto* gridList = new QtMaterial::QtMaterialGridList(this);
     gridList->setMinimumHeight(72);
     layout->addWidget(gridList);
 
-    auto* carousel = new QtMaterialCarousel(this);
+    auto* carousel = new QtMaterial::QtMaterialCarousel(this);
     carousel->setMinimumHeight(72);
     layout->addWidget(carousel);
 
