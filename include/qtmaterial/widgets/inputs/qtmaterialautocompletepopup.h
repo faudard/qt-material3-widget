@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QPointer>
+#include <QStringList>
 #include <QWidget>
 
 #include "qtmaterial/qtmaterialglobal.h"
@@ -8,6 +9,7 @@
 
 class QListView;
 class QStringListModel;
+class QSortFilterProxyModel;
 class QModelIndex;
 class QAbstractItemModel;
 class QLineEdit;
@@ -15,12 +17,9 @@ class QKeyEvent;
 class QPaintEvent;
 class QResizeEvent;
 
-namespace QtMaterial {
-class Theme;
-}
+namespace QtMaterial { class Theme; }
 
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialAutocompletePopup : public QWidget
-{
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialAutocompletePopup : public QWidget {
     Q_OBJECT
 public:
     explicit QtMaterialAutocompletePopup(QWidget* parent = nullptr);
@@ -69,10 +68,10 @@ private:
 
     mutable bool m_specDirty = true;
     mutable QtMaterial::AutocompletePopupSpec m_spec;
-
     QPointer<QLineEdit> m_anchorLineEdit;
-    QPointer<QAbstractItemModel> m_model;
+    QPointer<QAbstractItemModel> m_sourceModel;
     QStringListModel* m_ownedStringModel = nullptr;
+    QSortFilterProxyModel* m_filterModel = nullptr;
     QListView* m_view = nullptr;
     QString m_filterText;
     bool m_popupVisible = false;

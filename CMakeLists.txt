@@ -255,6 +255,9 @@ set(QTMATERIAL3_SPECS_SOURCES
     src/specs/qtmaterialtabsspec.cpp
     src/specs/qtmaterialsnackbarspec.cpp
     src/specs/qtmaterialprogressindicatorspec.cpp
+    src/specs/qtmaterialcomponentfamilyspecs.cpp
+    src/specs/qtmaterialdatacomponentspecs.cpp
+    src/specs/qtmaterialspecfactory_data_components.cpp
 )
 
 set(QTMATERIAL3_SPECS_HEADERS
@@ -279,6 +282,12 @@ set(QTMATERIAL3_SPECS_HEADERS
     include/qtmaterial/specs/qtmaterialspecfactory.h
     include/qtmaterial/specs/qtmaterialsnackbarspec.h
     include/qtmaterial/specs/qtmaterialprogressindicatorspec.h
+    include/qtmaterial/specs/qtmaterialchipspec.h
+    include/qtmaterial/specs/qtmaterialsegmentedbuttonspec.h
+    include/qtmaterial/specs/qtmaterialnavigationrailspec.h
+    include/qtmaterial/specs/qtmaterialmenuspec.h
+    include/qtmaterial/specs/qtmaterialautocompletespec.h
+    include/qtmaterial/specs/qtmaterialdatacomponentspecs.h
 )
 
 qtm3_add_library(qtmaterial3_specs
@@ -392,6 +401,15 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     src/widgets/surfaces/qtmaterialsnackbarhost.cpp
     src/widgets/progress/qtmateriallinearprogressindicator.cpp
     src/widgets/progress/qtmaterialcircularprogressindicator.cpp
+    src/widgets/selection/qtmaterialchip.cpp
+    src/widgets/selection/qtmaterialsegmentedbutton.cpp
+    src/widgets/navigation/qtmaterialnavigationrail.cpp
+    src/widgets/surfaces/qtmaterialmenu.cpp
+    src/widgets/inputs/qtmaterialautocomplete.cpp
+    src/widgets/qtmaterialdatepicker.cpp
+    src/widgets/qtmaterialtable.cpp
+    src/widgets/qtmaterialgridlist.cpp
+    src/widgets/qtmaterialcarousel.cpp    
 )
 
 set(QTMATERIAL3_WIDGETS_HEADERS
@@ -426,6 +444,15 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     include/qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h
     include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h
     include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h
+    include/qtmaterial/widgets/selection/qtmaterialchip.h
+    include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h
+    include/qtmaterial/widgets/navigation/qtmaterialnavigationrail.h
+    include/qtmaterial/widgets/surfaces/qtmaterialmenu.h
+    include/qtmaterial/widgets/inputs/qtmaterialautocomplete.h
+    include/qtmaterial/widgets/qtmaterialdatepicker.h
+    include/qtmaterial/widgets/qtmaterialtable.h
+    include/qtmaterial/widgets/qtmaterialgridlist.h
+    include/qtmaterial/widgets/qtmaterialcarousel.h
 )
 
 qtm3_add_library(qtmaterial3_widgets

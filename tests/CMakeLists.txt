@@ -86,6 +86,9 @@ qtm3_add_test(tst_scrimwidget effects/tst_scrimwidget.cpp qtmaterial3_effects)
 qtm3_add_test(tst_progressindicators widgets/progress/tst_progressindicators.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_tabs widgets/navigation/tst_tabs.cpp qtmaterial3_widgets)
 
+#qtm3_add_test(tst_data_component_specs specs/tst_data_component_specs.cpp qtmaterial3_specs)
+#qtm3_add_test(tst_data_components widgets/tst_data_components.cpp qtmaterial3_widgets)
+
 # qtm3_add_test(tst_textfieldshellhelper widgets/inputs/tst_textfieldshellhelper.cpp qtmaterial3_widgets)
 
 # comment don t compile TODO
