@@ -33,7 +33,7 @@ NavigationPage::NavigationPage(QWidget* parent)
     auto* banner = new QtMaterialBanner(this);
     surfaces->addWidget(banner);
 
-    auto* menu = new QtMaterialMenu(this);
+    auto* menu = new QtMaterial::QtMaterialMenu(this);
     menu->setMinimumHeight(72);
     surfaces->addWidget(menu);
 

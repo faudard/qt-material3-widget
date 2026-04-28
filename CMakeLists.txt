@@ -406,7 +406,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     src/widgets/selection/qtmaterialchip.cpp
     src/widgets/selection/qtmaterialsegmentedbutton.cpp
     src/widgets/navigation/qtmaterialnavigationrail.cpp
-    src/widgets/surfaces/qtmaterialmenu.cpp
+    src/widgets/navigation/qtmaterialmenu.cpp
     src/widgets/inputs/qtmaterialautocomplete.cpp
     src/widgets/qtmaterialdatepicker.cpp
     src/widgets/qtmaterialwidget_datacomponent_spec_defaults.cpp
@@ -450,7 +450,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     include/qtmaterial/widgets/selection/qtmaterialchip.h
     include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h
     include/qtmaterial/widgets/navigation/qtmaterialnavigationrail.h
-    include/qtmaterial/widgets/surfaces/qtmaterialmenu.h
+    include/qtmaterial/widgets/navigation/qtmaterialmenu.h
     include/qtmaterial/widgets/inputs/qtmaterialautocomplete.h
     include/qtmaterial/widgets/qtmaterialdatepicker.h
     include/qtmaterial/widgets/data/qtmaterialtable.h
