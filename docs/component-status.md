@@ -8,7 +8,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| button.filled | Filled Button | `usable` | `qtmaterial/widgets/qtmaterialfilledbutton.h` | `ButtonSpec` | `tst_filledbutton` | `docs/public-api/buttons.md` | `/buttons/filled` |
+| button.filled | Filled Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialfilledbutton.h` | `ButtonSpec` | `tst_filledbutton` | `docs/public-api/buttons.md` | `/buttons/filled` |
 | button.text | Text Button | `usable` | `qtmaterial/widgets/qtmaterialtextbutton.h` | `ButtonSpec` | `tst_textbutton` | `docs/public-api/buttons.md` | `/buttons/text` |
 | button.icon | Icon Button | `partial` | `qtmaterial/widgets/qtmaterialiconbutton.h` | `IconButtonSpec` | `tst_iconbutton` | `docs/public-api/buttons.md` | `/buttons/icon` |
 
@@ -34,14 +34,14 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| navigation.tabs | Tabs | `partial` | `qtmaterial/widgets/qtmaterialtabs.h` | `TabsSpec` | `tst_tabs` | `docs/public-api/navigation.md` | `/navigation/tabs` |
+| navigation.tabs | Tabs | `partial` | `qtmaterial/widgets/navigation/qtmaterialtabs.h` | `TabsSpec` | `tst_tabs` | `docs/public-api/navigation.md` | `/navigation/tabs` |
 | navigation.rail | Navigation Rail | `planned` | `qtmaterial/widgets/qtmaterialnavigationrail.h` | `NavigationRailSpec` | `` | `docs/public-api/navigation.md` | `/navigation/rail` |
 
 ## Progress
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| progress.linear | Linear Progress Indicator | `partial` | `qtmaterial/widgets/qtmaterialprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress.md` | `/progress/linear` |
+| progress.linear | Linear Progress Indicator | `partial` | `qtmaterial/widgets/progress/qtmaterialprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress.md` | `/progress/linear` |
 
 ## Selection
 
