@@ -18,8 +18,12 @@ set(_config "${BUILD_CONFIG}")
 if(_config STREQUAL "")
     set(_config "${DEFAULT_BUILD_CONFIG}")
 endif()
-if(_config STREQUAL "")
-    set(_config "Release")
+# Do not invent a config for single-config generators.
+# Use BUILD_CONFIG / DEFAULT_BUILD_CONFIG only when provided by the parent build.
+set(_config "${BUILD_CONFIG}")
+
+if(_config STREQUAL "" AND NOT DEFAULT_BUILD_CONFIG STREQUAL "")
+    set(_config "${DEFAULT_BUILD_CONFIG}")
 endif()
 
 file(REMOVE_RECURSE "${INSTALL_PREFIX}")

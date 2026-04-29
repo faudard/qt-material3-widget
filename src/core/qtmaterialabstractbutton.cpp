@@ -67,6 +67,7 @@ QtMaterialAbstractButton::QtMaterialAbstractButton(QWidget* parent)
                      &QtMaterialAbstractButton::handleThemeChanged);
 
     syncFromButtonState();
+    syncAutomationState();
     syncAccessibilityState();
 }
 
@@ -218,6 +219,7 @@ void QtMaterialAbstractButton::syncAndNotifyIfChanged() noexcept
     syncFromButtonState();
 
     if (!sameSnapshot(before, snapshotOf(m_state))) {
+        syncAutomationState();
         stateChangedEvent();
     }
 }
@@ -253,6 +255,7 @@ void QtMaterialAbstractButton::enterEvent(EnterEvent* event)
     syncFromButtonState();
 
     if (!sameSnapshot(before, snapshotOf(m_state))) {
+        syncAutomationState();
         stateChangedEvent();
     }
 }
@@ -267,6 +270,7 @@ void QtMaterialAbstractButton::leaveEvent(QEvent* event)
     syncFromButtonState();
 
     if (!sameSnapshot(before, snapshotOf(m_state))) {
+        syncAutomationState();
         stateChangedEvent();
     }
 }
@@ -281,6 +285,7 @@ void QtMaterialAbstractButton::focusInEvent(QFocusEvent* event)
     syncFromButtonState();
 
     if (!sameSnapshot(before, snapshotOf(m_state))) {
+        syncAutomationState();
         stateChangedEvent();
     }
 }
@@ -295,6 +300,7 @@ void QtMaterialAbstractButton::focusOutEvent(QFocusEvent* event)
     syncFromButtonState();
 
     if (!sameSnapshot(before, snapshotOf(m_state))) {
+        syncAutomationState();
         stateChangedEvent();
     }
 }
