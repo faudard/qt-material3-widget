@@ -69,7 +69,8 @@ jobs:
         shell: bash
         run: |
           if [[ "${RUNNER_OS}" == "Linux" ]]; then
-            xvfb-run -a ctest --test-dir build --build-config Release --output-on-failure
+              xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+                bash -c 'openbox >/tmp/openbox.log 2>&1 & ctest --test-dir build --output-on-failure'
           else
             ctest --test-dir build --build-config Release --output-on-failure
           fi

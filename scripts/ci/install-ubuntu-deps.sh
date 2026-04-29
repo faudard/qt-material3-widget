@@ -19,4 +19,5 @@ sudo apt-get install -y \
   libxcb-render-util0 \
   libxcb-shape0 \
   libxcb-xfixes0 \
-  libxcb-xinerama0
+  libxcb-xinerama0 \
+  openbox
