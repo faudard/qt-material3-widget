@@ -9,13 +9,13 @@ namespace {
 ThemeOptions makeOptions(const QString& hex,
                          ThemeMode mode,
                          ContrastMode contrast = ContrastMode::Standard,
-                         bool expressive = false)
+                         ThemeVariant variant = ThemeVariant::TonalSpot)
 {
     ThemeOptions options;
     options.sourceColor = QColor(hex);
     options.mode = mode;
     options.contrast = contrast;
-    options.variant = expressive;
+    options.variant = variant;
     return options;
 }
 
@@ -46,7 +46,11 @@ QVector<ThemePreset> ThemePresetCatalog::builtInPresets()
 
         {QStringLiteral("rose-expressive"),
          QStringLiteral("Rose Expressive"),
-         makeOptions(QStringLiteral("#A73E8C"), ThemeMode::Light, ContrastMode::Medium, true)}
+         makeOptions(QStringLiteral("#A73E8C"),
+                     ThemeMode::Light,
+                     ContrastMode::Medium,
+                     ThemeVariant::Expressive)
+        }
     };
 }
 

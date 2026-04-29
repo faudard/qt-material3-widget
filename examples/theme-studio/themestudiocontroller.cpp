@@ -91,11 +91,14 @@ void ThemeStudioController::setContrast(ContrastMode contrast)
 
 void ThemeStudioController::setExpressive(bool enabled)
 {
-    if (m_pendingOptions.variant == enabled) {
+    const ThemeVariant variant =
+        enabled ? ThemeVariant::Expressive : ThemeVariant::TonalSpot;
+
+    if (m_pendingOptions.variant == variant) {
         return;
     }
 
-    m_pendingOptions.variant = enabled;
+    m_pendingOptions.variant = variant;
     m_currentPresetId.clear();
     emit currentPresetChanged(m_currentPresetId);
     setDirty(true);
