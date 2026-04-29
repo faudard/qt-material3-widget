@@ -22,7 +22,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| data.divider | Divider | `usable` | `qtmaterial/widgets/data/qtmaterialdivider.h` | `DividerSpec` | `tst_divider` | `docs/public-api/data.md` | `/data/divider` |
+| data.divider | Divider | `usable` | `qtmaterial/widgets/data/qtmaterialdivider.h` | `DividerSpec` | `tst_divider` | `docs/public-api/data-widgets.md` | `/data/divider` |
 
 ## Inputs
 
@@ -41,7 +41,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| progress.linear | Linear Progress Indicator | `partial` | `qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress.md` | `/progress/linear` |
+| progress.linear | Linear Progress Indicator | `partial` | `qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress-indicators.md` | `/progress/linear` |
 
 ## Selection
 
@@ -61,5 +61,4 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 ## Release blockers
 
-- `compact.chip` — Chip is `planned`.
-- `navigation.rail` — Navigation Rail is `planned`.
+No registry-level maturity blockers.

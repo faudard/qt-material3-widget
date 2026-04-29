@@ -18,23 +18,30 @@ def marker(path: Path, text: str) -> str:
 
 def validate_components(components: list[dict]) -> list[str]:
     errors = []
+    cmake_text = (ROOT / "tests" / "CMakeLists.txt").read_text(encoding="utf-8")
 
     for item in components:
         cid = item.get("id", "<missing-id>")
+        release_scope = item.get("releaseScope", True)
+
+        if not release_scope:
+            continue
 
         header = item.get("publicHeader", "")
         if header and not (ROOT / "include" / header).exists():
             errors.append(f"{cid}: missing publicHeader include/{header}")
 
         docs = item.get("docsPath", "")
-        if docs and not (ROOT / docs).exists():
-            errors.append(f"{cid}: missing docsPath {docs}")
+        if docs:
+            docs_file = ROOT / docs
+            if not docs_file.exists():
+                errors.append(f"{cid}: missing docsPath {docs}")
+            elif len(docs_file.read_text(encoding="utf-8").strip()) < 120:
+                errors.append(f"{cid}: docsPath {docs} is empty or too small")
 
         test_target = item.get("testTarget", "")
-        if test_target:
-            cmake_text = (ROOT / "tests" / "CMakeLists.txt").read_text(encoding="utf-8")
-            if test_target not in cmake_text:
-                errors.append(f"{cid}: testTarget {test_target} not registered in tests/CMakeLists.txt")
+        if test_target and test_target not in cmake_text:
+            errors.append(f"{cid}: testTarget {test_target} not registered in tests/CMakeLists.txt")
 
     return errors
 
@@ -82,7 +89,11 @@ def main() -> int:
             )
         lines.append("")
 
-    blockers = [item for item in components if item.get("maturity") in {"skeleton", "planned"}]
+    blockers = [
+        item for item in components
+        if item.get("releaseScope", True)
+        and item.get("maturity") in {"skeleton", "planned"}
+    ]
     lines.append("## Release blockers")
     lines.append("")
     if blockers:

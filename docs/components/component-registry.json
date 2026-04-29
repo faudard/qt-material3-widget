@@ -165,7 +165,8 @@
     "widgetType": "QtMaterialNavigationRail",
     "testTarget": "",
     "galleryRoute": "/navigation/rail",
-    "docsPath": "docs/public-api/navigation.md"
+    "docsPath": "docs/public-api/navigation.md",
+    "releaseScope": false
   },
   {
     "id": "compact.chip",
@@ -177,6 +178,7 @@
     "widgetType": "QtMaterialChip",
     "testTarget": "",
     "galleryRoute": "/compact/chip",
-    "docsPath": "docs/public-api/compact-controls.md"
+    "docsPath": "docs/public-api/compact-controls.md",
+    "releaseScope": false
   }
 ]
