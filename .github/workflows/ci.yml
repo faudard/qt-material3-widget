@@ -10,6 +10,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   build-test:
     name: ${{ matrix.name }}
@@ -22,59 +25,115 @@ jobs:
           - name: ubuntu-qt6
             os: ubuntu-latest
             qt-version: "6.7.3"
+            qt-arch: gcc_64
             use-mcu: "OFF"
+            build-extra-examples: "ON"
 
           - name: windows-qt6
             os: windows-latest
             qt-version: "6.7.3"
+            qt-arch: win64_msvc2019_64
             use-mcu: "OFF"
+            build-extra-examples: "OFF"
 
           - name: macos-qt6
             os: macos-latest
             qt-version: "6.7.3"
+            qt-arch: clang_64
             use-mcu: "OFF"
+            build-extra-examples: "OFF"
 
     env:
       CMAKE_BUILD_PARALLEL_LEVEL: 2
-      QT_QPA_PLATFORM: offscreen
+      CTEST_OUTPUT_ON_FAILURE: 1
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Install Linux runtime packages
         if: runner.os == 'Linux'
         run: bash scripts/ci/install-ubuntu-deps.sh
 
+      - name: Install macOS build tools
+        if: runner.os == 'macOS'
+        run: |
+          brew install ninja || true
+
+      - name: Install Windows build tools
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install ninja --no-progress -y
+
+      - name: Set up MSVC environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ matrix.qt-version }}
+          host: ${{ runner.os == 'Windows' && 'windows' || runner.os == 'macOS' && 'mac' || 'linux' }}
+          target: desktop
+          arch: ${{ matrix.qt-arch }}
           cache: true
 
-      - name: Configure
+      - name: Configure Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: >
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_C_COMPILER=cl
+          -DCMAKE_CXX_COMPILER=cl
+          -DQTMATERIAL3_BUILD_TESTS=ON
+          -DQTMATERIAL3_BUILD_EXAMPLES=ON
+          -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=${{ matrix.build-extra-examples }}
+          -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=${{ matrix.build-extra-examples }}
+          -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
+          -DQTMATERIAL3_USE_MCU=${{ matrix.use-mcu }}
+
+      - name: Configure Unix
+        if: runner.os != 'Windows'
+        shell: bash
         run: >
           cmake -S . -B build -G Ninja
           -DCMAKE_BUILD_TYPE=Release
           -DQTMATERIAL3_BUILD_TESTS=ON
           -DQTMATERIAL3_BUILD_EXAMPLES=ON
-          -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=${{ matrix.name == 'ubuntu-qt6' && 'ON' || 'OFF' }}
-          -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=${{ matrix.name == 'ubuntu-qt6' && 'ON' || 'OFF' }}
+          -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=${{ matrix.build-extra-examples }}
+          -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=${{ matrix.build-extra-examples }}
           -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
           -DQTMATERIAL3_USE_MCU=${{ matrix.use-mcu }}
 
       - name: Build
-        run: cmake --build build --config Release
+        run: cmake --build build --config Release --parallel
 
-      - name: Test
+      - name: Test Linux
+        if: runner.os == 'Linux'
         shell: bash
         run: |
-          if [[ "${RUNNER_OS}" == "Linux" ]]; then
-              xvfb-run -a --server-args="-screen 0 1920x1080x24" \
-                bash -c 'openbox >/tmp/openbox.log 2>&1 & ctest --test-dir build --output-on-failure'
-          else
-            ctest --test-dir build --build-config Release --output-on-failure
-          fi
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            bash -c 'openbox >/tmp/openbox.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure'
+
+      - name: Test Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          ctest --test-dir build --build-config Release --output-on-failure
+
+      - name: Test macOS
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          ctest --test-dir build --build-config Release --output-on-failure
 
       - name: Validate install/export consumer
         if: matrix.name == 'ubuntu-qt6'
+        shell: bash
         run: bash scripts/validate-install-consumer.sh
