@@ -57,8 +57,8 @@ int main(int argc, char** argv)
     options.sourceColor = QColor("#6750A4");
     options.mode = QtMaterial::ThemeMode::Light;
     options.contrast = QtMaterial::ContrastMode::Standard;
-    options.expressive = false;
-    options.useMaterialColorUtilities = true;
+    options.variant = QtMaterial::ThemeVariant::TonalSpot;
+    options.colorBackendPolicy = true;
 
     const QtMaterial::Theme theme = QtMaterial::ThemeBuilder{}.build(options);
     QtMaterial::ThemeManager::instance().setTheme(theme);
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 }
 ```
 
-Use this path when your app stores user-facing theme settings such as mode, seed color, contrast, or expressive mode.
+Use this path when your app stores user-facing theme settings such as mode, seed color, contrast, or variant mode.
 
 ## 2. Build directly from a seed color
 

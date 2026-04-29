@@ -2,8 +2,8 @@
 
 ## API honesty
 - `ThemeOptions` documents which fields are consumed today.
-- `expressive` and `useMaterialColorUtilities` are no longer presented as fully implemented.
-- The studio UI does not imply that `expressive` already changes generation.
+- `variant` and `colorBackendPolicy` are no longer presented as fully implemented.
+- The studio UI does not imply that `variant` already changes generation.
 
 ## Functional behavior
 - `ContrastMode::Standard` should preserve current visual output.
@@ -21,6 +21,6 @@
 - Ensure `ThemeSerializer` still round-trips all option fields.
 
 ## Non-goals
-- No full expressive theme generation
+- No full variant theme generation
 - No full Material Color Utilities backend
 - No change to JSON structure beyond comments/documentation

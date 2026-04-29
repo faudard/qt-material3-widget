@@ -26,7 +26,7 @@ platform appearance changes:
 
 ```cpp
 QtMaterial::SystemTheme::instance().setPreference(
-    QtMaterial::ThemeModePreference::FollowSystem);
+    QtMaterial::ThemePreference::FollowSystem);
 QtMaterial::SystemTheme::instance().setUsePlatformFont(true);
 QtMaterial::SystemTheme::instance().setAutoApplyToThemeManager(true);
 ```

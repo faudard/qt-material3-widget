@@ -143,7 +143,7 @@ void tst_ThemeSeedGoldens::seedGoldens()
     options.sourceColor = QColor(seed);
     options.mode = mode;
     options.contrast = contrast;
-    options.useMaterialColorUtilities = false;
+    options.backendPolicy = QtMaterial::ColorBackendPolicy::ForceFallback;
 
     const ThemeBuilder builder;
     const Theme theme = builder.build(options);
@@ -159,7 +159,7 @@ void tst_ThemeSeedGoldens::sameOptionsProduceByteIdenticalSnapshot()
     options.sourceColor = QColor(QStringLiteral("#6750A4"));
     options.mode = ThemeMode::Light;
     options.contrast = ContrastMode::Standard;
-    options.useMaterialColorUtilities = false;
+    options.backendPolicy = QtMaterial::ColorBackendPolicy::ForceFallback;
 
     const ThemeBuilder builder;
     const QJsonObject first = snapshotFor(builder.build(options), builder.colorBackendStatus(options));
@@ -174,7 +174,7 @@ void tst_ThemeSeedGoldens::contrastModesAreDistinctAndOrdered()
     standard.sourceColor = QColor(QStringLiteral("#FF0000"));
     standard.mode = ThemeMode::Light;
     standard.contrast = ContrastMode::Standard;
-    standard.useMaterialColorUtilities = false;
+    standard.backendPolicy = ColorBackendPolicy::Auto;
 
     ThemeOptions high = standard;
     high.contrast = ContrastMode::High;
@@ -196,7 +196,7 @@ void tst_ThemeSeedGoldens::lightDarkParityUsesSameRoleSet()
     ThemeOptions light;
     light.sourceColor = QColor(QStringLiteral("#00639B"));
     light.mode = ThemeMode::Light;
-    light.useMaterialColorUtilities = false;
+    light.backendPolicy = ColorBackendPolicy::Auto;
 
     ThemeOptions dark = light;
     dark.mode = ThemeMode::Dark;

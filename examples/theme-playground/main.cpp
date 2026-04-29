@@ -6,7 +6,7 @@
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
-    QtMaterial::SystemTheme::instance().setPreference(QtMaterial::ThemeModePreference::FollowSystem);
+    QtMaterial::SystemTheme::instance().setPreference(QtMaterial::ThemePreference::FollowSystem);
     QtMaterial::SystemTheme::instance().setAutoApplyToThemeManager(true);
 
     ThemePreviewWindow window;

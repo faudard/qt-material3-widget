@@ -86,7 +86,7 @@ static ThemeOptions mcuOptions(ThemeMode mode, ContrastMode contrast = ContrastM
     options.sourceColor = QColor("#6750A4");
     options.mode = mode;
     options.contrast = contrast;
-    options.useMaterialColorUtilities = true;
+    options.backendPolicy = QtMaterial::ColorBackendPolicy::PreferMaterialColorUtilities;
     return options;
 }
 

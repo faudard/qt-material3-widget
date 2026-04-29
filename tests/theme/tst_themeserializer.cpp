@@ -24,7 +24,7 @@ void tst_ThemeSerializer::roundTrip_preservesCoreStructure()
     options.sourceColor = QColor(QStringLiteral("#0B57D0"));
     options.mode = ThemeMode::Dark;
     options.contrast = ContrastMode::Medium;
-    options.expressive = true;
+    options.variant = QtMaterial::ThemeVariant::Expressive;
 
     ThemeBuilder builder;
     const Theme original = builder.build(options);
@@ -38,7 +38,7 @@ void tst_ThemeSerializer::roundTrip_preservesCoreStructure()
     QCOMPARE(restored.options().sourceColor, original.options().sourceColor);
     QCOMPARE(restored.options().mode, original.options().mode);
     QCOMPARE(restored.options().contrast, original.options().contrast);
-    QCOMPARE(restored.options().expressive, original.options().expressive);
+    QCOMPARE(restored.options().variant, original.options().variant);
     QCOMPARE(restored.colorScheme().color(ColorRole::Primary), original.colorScheme().color(ColorRole::Primary));
     QCOMPARE(restored.colorScheme().color(ColorRole::OnSurface), original.colorScheme().color(ColorRole::OnSurface));
 }

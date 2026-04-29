@@ -11,13 +11,13 @@ private slots:
     void manualPreferencesResolveToExplicitModes() {
         SystemTheme& system = SystemTheme::instance();
 
-        system.setPreference(ThemeModePreference::Light);
+        system.setPreference(ThemePreference::Light);
         QCOMPARE(system.effectiveMode(), ThemeMode::Light);
 
-        system.setPreference(ThemeModePreference::Dark);
+        system.setPreference(ThemePreference::Dark);
         QCOMPARE(system.effectiveMode(), ThemeMode::Dark);
 
-        system.setPreference(ThemeModePreference::FollowSystem);
+        system.setPreference(ThemePreference::FollowSystem);
         QVERIFY(system.effectiveMode() == ThemeMode::Light || system.effectiveMode() == ThemeMode::Dark);
     }
 

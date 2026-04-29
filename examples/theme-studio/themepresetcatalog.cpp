@@ -15,7 +15,7 @@ ThemeOptions makeOptions(const QString& hex,
     options.sourceColor = QColor(hex);
     options.mode = mode;
     options.contrast = contrast;
-    options.expressive = expressive;
+    options.variant = expressive;
     return options;
 }
 

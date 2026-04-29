@@ -78,7 +78,7 @@ Theme ThemeBuilder::build(const ThemeOptions& options) const
     const ThemeColorBackendStatus backendStatus = colorBackendStatus(options);
 
 #ifndef NDEBUG
-    if (backendStatus.fallbackUsed && options.useMaterialColorUtilities) {
+    if (backendStatus.fallbackUsed && colorBackendPolicyRequiresMaterialColorUtilities(options.backendPolicy)) {
         qWarning() << "ThemeBuilder:" << backendStatus.diagnostic;
     }
 #endif

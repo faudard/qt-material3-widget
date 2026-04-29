@@ -28,20 +28,31 @@ static void skipIfNoMcu()
     }
 }
 
-static ThemeOptions optionsFor(const QString& seed, ThemeMode mode, ContrastMode contrast, bool expressive)
+static ThemeOptions optionsFor(const QString& seed, ThemeMode mode, ContrastMode contrast, ThemeVariant expressive)
 {
     ThemeOptions options;
     options.sourceColor = QColor(seed);
     options.mode = mode;
     options.contrast = contrast;
-    options.expressive = expressive;
-    options.useMaterialColorUtilities = true;
+    options.variant = expressive;
+    options.backendPolicy = QtMaterial::ColorBackendPolicy::PreferMaterialColorUtilities;
     return options;
 }
 
 static QString modeName(ThemeMode mode)
 {
     return mode == ThemeMode::Dark ? QStringLiteral("dark") : QStringLiteral("light");
+}
+
+static QString variantName(ThemeVariant expression)
+{
+    switch (expression) {
+    case ThemeVariant::Expressive :
+        return QStringLiteral("standard");
+    case ThemeVariant::TonalSpot:
+        return QStringLiteral("medium");
+    }
+    return QStringLiteral("standard");
 }
 
 static QString contrastName(ContrastMode contrast)
@@ -57,11 +68,11 @@ static QString contrastName(ContrastMode contrast)
     return QStringLiteral("standard");
 }
 
-static QString goldenPath(const QString& seed, ThemeMode mode, ContrastMode contrast, bool expressive)
+static QString goldenPath(const QString& seed, ThemeMode mode, ContrastMode contrast, ThemeVariant expressive)
 {
     QString normalizedSeed = seed;
     normalizedSeed.remove(QLatin1Char('#'));
-    const QString variant = expressive ? QStringLiteral("expressive") : QStringLiteral("tonalspot");
+    const QString variant = variantName(expressive);
     const QString fileName = QStringLiteral("seed_%1_%2_%3_%4.json")
         .arg(normalizedSeed, modeName(mode), contrastName(contrast), variant);
     return QStringLiteral(QTMATERIAL3_TEST_SOURCE_DIR) + QStringLiteral("/theme/goldens/mcu/") + fileName;
@@ -105,7 +116,7 @@ void tst_ThemeMcuGoldens::mcuSeedGoldens()
     QFETCH(QString, seed);
     QFETCH(ThemeMode, mode);
     QFETCH(ContrastMode, contrast);
-    QFETCH(bool, expressive);
+    QFETCH(ThemeVariant, expressive);
 
     ThemeBuilder builder;
     const Theme theme = builder.build(optionsFor(seed, mode, contrast, expressive));

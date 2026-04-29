@@ -91,11 +91,11 @@ void ThemeStudioController::setContrast(ContrastMode contrast)
 
 void ThemeStudioController::setExpressive(bool enabled)
 {
-    if (m_pendingOptions.expressive == enabled) {
+    if (m_pendingOptions.variant == enabled) {
         return;
     }
 
-    m_pendingOptions.expressive = enabled;
+    m_pendingOptions.variant = enabled;
     m_currentPresetId.clear();
     emit currentPresetChanged(m_currentPresetId);
     setDirty(true);

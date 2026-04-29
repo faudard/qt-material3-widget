@@ -491,7 +491,7 @@ void ThemePreviewWindow::chooseSeedColor() {
 
 void ThemePreviewWindow::updateModePreferenceFromUi() {
     if (m_lightRadio->isChecked()) {
-        SystemTheme::instance().setPreference(ThemeModePreference::Light);
+        SystemTheme::instance().setPreference(ThemePreference::Light);
         SystemTheme::instance().setAutoApplyToThemeManager(false);
         ThemeOptions options = ThemeManager::instance().options();
         options.mode = ThemeMode::Light;
@@ -499,7 +499,7 @@ void ThemePreviewWindow::updateModePreferenceFromUi() {
         return;
     }
     if (m_darkRadio->isChecked()) {
-        SystemTheme::instance().setPreference(ThemeModePreference::Dark);
+        SystemTheme::instance().setPreference(ThemePreference::Dark);
         SystemTheme::instance().setAutoApplyToThemeManager(false);
         ThemeOptions options = ThemeManager::instance().options();
         options.mode = ThemeMode::Dark;
@@ -507,7 +507,7 @@ void ThemePreviewWindow::updateModePreferenceFromUi() {
         return;
     }
 
-    SystemTheme::instance().setPreference(ThemeModePreference::FollowSystem);
+    SystemTheme::instance().setPreference(ThemePreference::FollowSystem);
     SystemTheme::instance().setAutoApplyToThemeManager(true);
     SystemTheme::instance().applyToThemeManager();
 }
@@ -701,7 +701,7 @@ QString ThemePreviewWindow::cppSnippet() const {
     out << "options.contrast = QtMaterial::ContrastMode::" << contrastToString(options.contrast) << ";\n";
     out << "QtMaterial::ThemeManager::instance().setThemeOptions(options);\n";
     if (m_followSystemRadio && m_followSystemRadio->isChecked()) {
-        out << "QtMaterial::SystemTheme::instance().setPreference(QtMaterial::ThemeModePreference::FollowSystem);\n";
+        out << "QtMaterial::SystemTheme::instance().setPreference(QtMaterial::ThemePreference::FollowSystem);\n";
         out << "QtMaterial::SystemTheme::instance().setAutoApplyToThemeManager(true);\n";
     }
     return text;

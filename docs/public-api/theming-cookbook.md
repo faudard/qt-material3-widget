@@ -70,7 +70,7 @@ Recommended override key order:
 ```cpp
 QtMaterial::ThemeOptions options;
 options.sourceColor = QColor("#6750A4");
-options.useMaterialColorUtilities = true;
+options.colorBackendPolicy = true;
 
 QtMaterial::ThemeBuilder builder;
 const QtMaterial::ThemeColorBackendStatus status = builder.colorBackendStatus(options);

@@ -10,7 +10,10 @@
 
 namespace QtMaterial {
 
-enum class ThemeReadMode { Lenient, Strict };
+enum class ThemeReadMode {
+    Lenient,
+    Strict
+};
 
 class QTMATERIAL3_THEME_EXPORT ThemeSerializer {
 public:
@@ -19,43 +22,41 @@ public:
 
     static QJsonObject toJsonObject(const Theme& theme);
     static QJsonDocument toJsonDocument(const Theme& theme);
-    static QByteArray toJson(const Theme& theme, QJsonDocument::JsonFormat format = QJsonDocument::Indented);
+    static QByteArray toJson(const Theme& theme,
+        QJsonDocument::JsonFormat format = QJsonDocument::Indented);
     static bool writeToFile(const Theme& theme,
-                            const QString& filePath,
-                            QString* errorString = nullptr,
-                            QJsonDocument::JsonFormat format = QJsonDocument::Indented);
+        const QString& filePath,
+        QString* errorString = nullptr,
+        QJsonDocument::JsonFormat format = QJsonDocument::Indented);
 
     static Theme fromJsonObject(const QJsonObject& object,
-                                bool* ok = nullptr,
-                                QString* errorString = nullptr);
+        bool* ok = nullptr,
+        QString* errorString = nullptr);
     static Theme fromJsonObject(const QJsonObject& object,
-                                ThemeReadMode mode,
-                                bool* ok = nullptr,
-                                QString* errorString = nullptr);
-
+        ThemeReadMode mode,
+        bool* ok = nullptr,
+        QString* errorString = nullptr);
     static Theme fromJsonDocument(const QJsonDocument& document,
-                                  bool* ok = nullptr,
-                                  QString* errorString = nullptr);
+        bool* ok = nullptr,
+        QString* errorString = nullptr);
     static Theme fromJsonDocument(const QJsonDocument& document,
-                                  ThemeReadMode mode,
-                                  bool* ok = nullptr,
-                                  QString* errorString = nullptr);
-
+        ThemeReadMode mode,
+        bool* ok = nullptr,
+        QString* errorString = nullptr);
     static Theme fromJson(const QByteArray& json,
-                          bool* ok = nullptr,
-                          QString* errorString = nullptr);
+        bool* ok = nullptr,
+        QString* errorString = nullptr);
     static Theme fromJson(const QByteArray& json,
-                          ThemeReadMode mode,
-                          bool* ok = nullptr,
-                          QString* errorString = nullptr);
-
+        ThemeReadMode mode,
+        bool* ok = nullptr,
+        QString* errorString = nullptr);
     static bool readFromFile(const QString& filePath,
-                             Theme* outTheme,
-                             QString* errorString = nullptr);
+        Theme* outTheme,
+        QString* errorString = nullptr);
     static bool readFromFile(const QString& filePath,
-                             Theme* outTheme,
-                             ThemeReadMode mode,
-                             QString* errorString = nullptr);
+        Theme* outTheme,
+        ThemeReadMode mode,
+        QString* errorString = nullptr);
 };
 
 } // namespace QtMaterial

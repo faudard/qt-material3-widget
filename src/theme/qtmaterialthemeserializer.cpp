@@ -124,6 +124,26 @@ const std::array kContrastModes = {
     EnumNamePair<ContrastMode>{ ContrastMode::High, "High" },
 };
 
+
+
+const std::array kThemePreferences = {
+    EnumNamePair<ThemePreference>{ ThemePreference::Light, "Light" },
+    EnumNamePair<ThemePreference>{ ThemePreference::Dark, "Dark" },
+    EnumNamePair<ThemePreference>{ ThemePreference::FollowSystem, "FollowSystem" },
+};
+
+const std::array kThemeVariants = {
+    EnumNamePair<ThemeVariant>{ ThemeVariant::TonalSpot, "TonalSpot" },
+    EnumNamePair<ThemeVariant>{ ThemeVariant::Expressive, "Expressive" },
+};
+
+const std::array kColorBackendPolicies = {
+    EnumNamePair<ColorBackendPolicy>{ ColorBackendPolicy::Auto, "Auto" },
+    EnumNamePair<ColorBackendPolicy>{ ColorBackendPolicy::PreferMaterialColorUtilities, "PreferMaterialColorUtilities" },
+    EnumNamePair<ColorBackendPolicy>{ ColorBackendPolicy::ForceMaterialColorUtilities, "ForceMaterialColorUtilities" },
+    EnumNamePair<ColorBackendPolicy>{ ColorBackendPolicy::ForceFallback, "ForceFallback" },
+};
+
 const std::array kColorRoles = {
     EnumNamePair<ColorRole>{ ColorRole::Primary, "Primary" },
     EnumNamePair<ColorRole>{ ColorRole::OnPrimary, "OnPrimary" },
@@ -283,9 +303,10 @@ QJsonObject optionsToJson(const ThemeOptions& options)
     QJsonObject object;
     object.insert(QStringLiteral("seedColor"), colorToString(options.sourceColor));
     object.insert(QStringLiteral("mode"), enumToString(options.mode, kThemeModes));
+    object.insert(QStringLiteral("preference"), enumToString(options.preference, kThemePreferences));
     object.insert(QStringLiteral("contrast"), enumToString(options.contrast, kContrastModes));
-    object.insert(QStringLiteral("expressive"), options.expressive);
-    object.insert(QStringLiteral("useMaterialColorUtilities"), options.useMaterialColorUtilities);
+    object.insert(QStringLiteral("variant"), enumToString(options.variant, kThemeVariants));
+    object.insert(QStringLiteral("colorBackendPolicy"), enumToString(options.backendPolicy, kColorBackendPolicies));
     return object;
 }
 
@@ -299,6 +320,7 @@ bool optionsFromJson(const QJsonObject& object, ThemeOptions* outOptions, QStrin
     }
 
     ThemeOptions options;
+
     const QString seedKey = object.contains(QStringLiteral("seedColor"))
         ? QStringLiteral("seedColor")
         : QStringLiteral("sourceColor");
@@ -325,6 +347,19 @@ bool optionsFromJson(const QJsonObject& object, ThemeOptions* outOptions, QStrin
         options.mode = mode;
     }
 
+    if (object.contains(QStringLiteral("preference"))) {
+        ThemePreference preference = ThemePreference::Light;
+        if (!stringToEnum(object.value(QStringLiteral("preference")).toString(), kThemePreferences, &preference)) {
+            if (errorString) {
+                *errorString = QStringLiteral("Invalid source.preference value.");
+            }
+            return false;
+        }
+        options.preference = preference;
+    } else {
+        options.preference = options.mode == ThemeMode::Dark ? ThemePreference::Dark : ThemePreference::Light;
+    }
+
     if (object.contains(QStringLiteral("contrast"))) {
         ContrastMode contrast = ContrastMode::Standard;
         if (!stringToEnum(object.value(QStringLiteral("contrast")).toString(), kContrastModes, &contrast)) {
@@ -336,11 +371,26 @@ bool optionsFromJson(const QJsonObject& object, ThemeOptions* outOptions, QStrin
         options.contrast = contrast;
     }
 
-    if (object.contains(QStringLiteral("expressive"))) {
-        options.expressive = object.value(QStringLiteral("expressive")).toBool(options.expressive);
+    if (object.contains(QStringLiteral("variant"))) {
+        ThemeVariant variant = ThemeVariant::TonalSpot;
+        if (!stringToEnum(object.value(QStringLiteral("variant")).toString(), kThemeVariants, &variant)) {
+            if (errorString) {
+                *errorString = QStringLiteral("Invalid source.variant value.");
+            }
+            return false;
+        }
+        options.variant = variant;
     }
-    if (object.contains(QStringLiteral("useMaterialColorUtilities"))) {
-        options.useMaterialColorUtilities = object.value(QStringLiteral("useMaterialColorUtilities")).toBool(options.useMaterialColorUtilities);
+
+    if (object.contains(QStringLiteral("colorBackendPolicy"))) {
+        ColorBackendPolicy backendPolicy = ColorBackendPolicy::Auto;
+        if (!stringToEnum(object.value(QStringLiteral("colorBackendPolicy")).toString(), kColorBackendPolicies, &backendPolicy)) {
+            if (errorString) {
+                *errorString = QStringLiteral("Invalid source.colorBackendPolicy value.");
+            }
+            return false;
+        }
+        options.backendPolicy = backendPolicy;
     }
 
     *outOptions = options;
@@ -996,7 +1046,7 @@ QJsonObject resolvedToJson(const Theme& theme)
 QJsonObject metadataToJson()
 {
     QJsonObject object;
-    object.insert(QStringLiteral("generatorVersion"), QStringLiteral("qt-material3-widget ThemeSerializer v2"));
+    object.insert(QStringLiteral("generatorVersion"), QStringLiteral("qt-material3-widget ThemeSerializer v1"));
     object.insert(QStringLiteral("libraryVersion"), QStringLiteral("0.4.0"));
     object.insert(QStringLiteral("qtVersion"), QString::fromLatin1(QT_VERSION_STR));
     return object;

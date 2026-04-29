@@ -158,7 +158,7 @@ McuColorSchemeResult generateMcuColorScheme(const ThemeOptions& options)
     return generateMcuColorScheme(options.sourceColor,
                                   options.mode,
                                   options.contrast,
-                                  options.expressive);
+                                  isExpressiveThemeVariant(options.variant));
 }
 
 McuColorSchemeResult generateMcuColorScheme(const QColor& seed,

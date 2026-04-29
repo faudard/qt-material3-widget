@@ -29,7 +29,7 @@ void tst_ThemeColorBackend::compiledBackendIsObservable()
 void tst_ThemeColorBackend::fallbackIsSelectedWhenMcuIsNotCompiled()
 {
     ThemeOptions options;
-    options.useMaterialColorUtilities = true;
+    options.backendPolicy = QtMaterial::ColorBackendPolicy::PreferMaterialColorUtilities;
 
     const ThemeColorBackendStatus status = resolveThemeColorBackend(options);
 
@@ -47,7 +47,7 @@ void tst_ThemeColorBackend::fallbackIsSelectedWhenMcuIsNotCompiled()
 void tst_ThemeColorBackend::explicitFallbackRequestStaysFallback()
 {
     ThemeOptions options;
-    options.useMaterialColorUtilities = false;
+    options.backendPolicy = QtMaterial::ColorBackendPolicy::ForceFallback;
 
     const ThemeBuilder builder;
     const ThemeColorBackendStatus status = builder.colorBackendStatus(options);

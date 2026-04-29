@@ -67,6 +67,7 @@ set(QTMATERIAL3_THEME_SOURCES
     src/theme/qtmaterialmcuadapter.cpp
     src/theme/qtmaterialthememanager.cpp
     src/theme/qtmaterialthemeserializer.cpp
+    src/theme/qtmaterialthemevalidation.cpp
     src/theme/qtmaterialthemeobserver.cpp
     src/theme/qtmaterialtypographyscale.cpp
     src/theme/qtmaterialshapescale.cpp
@@ -89,6 +90,7 @@ set(QTMATERIAL3_THEME_HEADERS
     include/qtmaterial/theme/qtmaterialthemebuilder.h
     include/qtmaterial/theme/qtmaterialthememanager.h
     include/qtmaterial/theme/qtmaterialthemeserializer.h
+    include/qtmaterial/theme/qtmaterialthemevalidation.h
     include/qtmaterial/theme/qtmaterialthemeobserver.h
     include/qtmaterial/theme/qtmaterialtypographyscale.h
     include/qtmaterial/theme/qtmaterialshapescale.h
@@ -123,7 +125,7 @@ if(QTMATERIAL3_USE_MCU)
         "${QTMATERIAL3_MCU_ROOT}/cpp/cam/hct.h"
         "${QTMATERIAL3_MCU_ROOT}/cpp/dynamiccolor/material_dynamic_colors.h"
         "${QTMATERIAL3_MCU_ROOT}/cpp/scheme/scheme_tonal_spot.h"
-        "${QTMATERIAL3_MCU_ROOT}/cpp/scheme/scheme_expressive.h"
+        "${QTMATERIAL3_MCU_ROOT}/cpp/scheme/scheme_variant.h"
         "${QTMATERIAL3_MCU_ROOT}/cpp/utils/utils.h"
     )
     set(QTMATERIAL3_MCU_HEADERS_PRESENT ON)

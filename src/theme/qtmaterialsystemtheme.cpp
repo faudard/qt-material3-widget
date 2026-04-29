@@ -63,11 +63,11 @@ SystemTheme::SystemTheme(QObject* parent)
     connectPlatformSignals();
 }
 
-ThemeModePreference SystemTheme::preference() const noexcept {
+ThemePreference SystemTheme::preference() const noexcept {
     return m_preference;
 }
 
-void SystemTheme::setPreference(ThemeModePreference preference) {
+void SystemTheme::setPreference(ThemePreference preference) {
     if (m_preference == preference) {
         return;
     }
@@ -123,10 +123,10 @@ SystemThemeSnapshot SystemTheme::snapshot() const {
 }
 
 ThemeMode SystemTheme::effectiveMode() const {
-    if (m_preference == ThemeModePreference::Light) {
+    if (m_preference == ThemePreference::Light) {
         return ThemeMode::Light;
     }
-    if (m_preference == ThemeModePreference::Dark) {
+    if (m_preference == ThemePreference::Dark) {
         return ThemeMode::Dark;
     }
 
@@ -237,6 +237,7 @@ void SystemTheme::refresh() {
 
 void SystemTheme::applyToThemeManager() {
     ThemeOptions options = ThemeManager::instance().options();
+    options.preference = m_preference;
     options.mode = effectiveMode();
     options.contrast = effectiveContrast();
 
@@ -308,37 +309,37 @@ void SystemTheme::emitDelta(
     }
 }
 
-QString toString(ThemeModePreference preference) {
+QString toString(ThemePreference preference) {
     switch (preference) {
-    case ThemeModePreference::Light:
+    case ThemePreference::Light:
         return QStringLiteral("light");
-    case ThemeModePreference::Dark:
+    case ThemePreference::Dark:
         return QStringLiteral("dark");
-    case ThemeModePreference::FollowSystem:
+    case ThemePreference::FollowSystem:
         return QStringLiteral("followSystem");
     }
     return QStringLiteral("followSystem");
 }
 
-ThemeModePreference themeModePreferenceFromString(const QString& value, bool* ok) {
+ThemePreference themePreferenceFromString(const QString& value, bool* ok) {
     const QString normalized = value.trimmed().toLower();
     if (normalized == QLatin1String("light")) {
         if (ok) *ok = true;
-        return ThemeModePreference::Light;
+        return ThemePreference::Light;
     }
     if (normalized == QLatin1String("dark")) {
         if (ok) *ok = true;
-        return ThemeModePreference::Dark;
+        return ThemePreference::Dark;
     }
     if (normalized == QLatin1String("followsystem")
         || normalized == QLatin1String("system")
         || normalized == QLatin1String("auto")) {
         if (ok) *ok = true;
-        return ThemeModePreference::FollowSystem;
+        return ThemePreference::FollowSystem;
     }
 
     if (ok) *ok = false;
-    return ThemeModePreference::FollowSystem;
+    return ThemePreference::FollowSystem;
 }
 
 } // namespace QtMaterial

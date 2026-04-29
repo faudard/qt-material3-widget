@@ -4,27 +4,14 @@
 #include <QFont>
 
 #include "qtmaterial/qtmaterialglobal.h"
-#include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include "qtmaterial/theme/qtmaterialthemeoptions.h"
 
 namespace QtMaterial {
 
 class Theme;
 
-/**
- * User preference for how application theme mode is resolved.
- *
- * Light and Dark force an explicit mode. FollowSystem resolves through the
- * current platform appearance when Qt exposes it, and otherwise falls back to
- * a palette-luminance heuristic.
- */
-enum class ThemeModePreference {
-    Light,
-    Dark,
-    FollowSystem
-};
-
 struct QTMATERIAL3_THEME_EXPORT SystemThemeSnapshot {
-    ThemeModePreference preference = ThemeModePreference::FollowSystem;
+    ThemePreference preference = ThemePreference::FollowSystem;
     ThemeMode effectiveMode = ThemeMode::Light;
     ContrastMode effectiveContrast = ContrastMode::Standard;
     bool highContrast = false;
@@ -44,8 +31,8 @@ class QTMATERIAL3_THEME_EXPORT SystemTheme : public QObject {
 public:
     static SystemTheme& instance();
 
-    ThemeModePreference preference() const noexcept;
-    void setPreference(ThemeModePreference preference);
+    ThemePreference preference() const noexcept;
+    void setPreference(ThemePreference preference);
 
     bool autoApplyToThemeManager() const noexcept;
     void setAutoApplyToThemeManager(bool enabled);
@@ -82,14 +69,14 @@ private:
     void connectPlatformSignals();
     void emitDelta(const SystemThemeSnapshot& before, const SystemThemeSnapshot& after);
 
-    ThemeModePreference m_preference = ThemeModePreference::FollowSystem;
+    ThemePreference m_preference = ThemePreference::FollowSystem;
     bool m_autoApplyToThemeManager = false;
     bool m_usePlatformFont = true;
     SystemThemeSnapshot m_lastSnapshot;
 };
 
-QString QTMATERIAL3_THEME_EXPORT toString(ThemeModePreference preference);
-ThemeModePreference QTMATERIAL3_THEME_EXPORT themeModePreferenceFromString(
+QString QTMATERIAL3_THEME_EXPORT toString(ThemePreference preference);
+ThemePreference QTMATERIAL3_THEME_EXPORT themePreferenceFromString(
     const QString& value,
     bool* ok = nullptr);
 

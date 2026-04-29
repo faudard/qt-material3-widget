@@ -13,6 +13,21 @@ QString themeColorBackendToString(ThemeColorBackend backend)
     return QStringLiteral("unknown");
 }
 
+QString colorBackendPolicyToString(ColorBackendPolicy policy)
+{
+    switch (policy) {
+    case ColorBackendPolicy::Auto:
+        return QStringLiteral("auto");
+    case ColorBackendPolicy::PreferMaterialColorUtilities:
+        return QStringLiteral("preferMaterialColorUtilities");
+    case ColorBackendPolicy::ForceMaterialColorUtilities:
+        return QStringLiteral("forceMaterialColorUtilities");
+    case ColorBackendPolicy::ForceFallback:
+        return QStringLiteral("forceFallback");
+    }
+    return QStringLiteral("auto");
+}
+
 ThemeColorBackend compiledThemeColorBackend() noexcept
 {
 #if defined(QTMATERIAL3_HAS_MCU) && QTMATERIAL3_HAS_MCU
@@ -43,13 +58,21 @@ double contrastModeToMaterialColorUtilitiesLevel(ContrastMode contrast) noexcept
 ThemeColorBackendStatus resolveThemeColorBackend(const ThemeOptions& options)
 {
     ThemeColorBackendStatus status;
-    status.materialColorUtilitiesRequested = options.useMaterialColorUtilities;
+    status.requestedPolicy = options.backendPolicy;
     status.materialColorUtilitiesCompiledIn = isMaterialColorUtilitiesCompiledIn();
+    status.materialColorUtilitiesRequested = colorBackendPolicyAllowsMaterialColorUtilities(options.backendPolicy);
     status.requestedBackend = status.materialColorUtilitiesRequested
         ? ThemeColorBackend::MaterialColorUtilities
         : ThemeColorBackend::Fallback;
 
-    if (status.materialColorUtilitiesRequested && status.materialColorUtilitiesCompiledIn) {
+    if (options.backendPolicy == ColorBackendPolicy::ForceFallback) {
+        status.effectiveBackend = ThemeColorBackend::Fallback;
+        status.fallbackUsed = true;
+        status.diagnostic = QStringLiteral("Deterministic fallback backend forced by ThemeOptions.");
+        return status;
+    }
+
+    if (status.materialColorUtilitiesCompiledIn) {
         status.effectiveBackend = ThemeColorBackend::MaterialColorUtilities;
         status.fallbackUsed = false;
         status.diagnostic = QStringLiteral("Material Color Utilities backend selected.");
@@ -59,12 +82,17 @@ ThemeColorBackendStatus resolveThemeColorBackend(const ThemeOptions& options)
     status.effectiveBackend = ThemeColorBackend::Fallback;
     status.fallbackUsed = true;
 
-    if (status.materialColorUtilitiesRequested) {
+    if (options.backendPolicy == ColorBackendPolicy::ForceMaterialColorUtilities) {
         status.diagnostic = QStringLiteral(
-            "ThemeOptions requested Material Color Utilities, but this build does not include the MCU adapter; "
+            "ThemeOptions require Material Color Utilities, but this build does not include the MCU adapter; "
+            "using the deterministic fallback backend.");
+    } else if (options.backendPolicy == ColorBackendPolicy::PreferMaterialColorUtilities) {
+        status.diagnostic = QStringLiteral(
+            "ThemeOptions prefer Material Color Utilities, but this build does not include the MCU adapter; "
             "using the deterministic fallback backend.");
     } else {
-        status.diagnostic = QStringLiteral("Deterministic fallback backend selected by ThemeOptions.");
+        status.diagnostic = QStringLiteral(
+            "Material Color Utilities is not compiled into this build; Auto selected the deterministic fallback backend.");
     }
 
     return status;

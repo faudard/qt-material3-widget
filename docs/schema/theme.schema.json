@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://faudard.github.io/qt-material3-widget/schema/theme.schema.json",
-  "title": "Qt Material 3 Theme JSON Schema v2",
+  "title": "Qt Material 3 Theme JSON Schema",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -18,97 +18,7 @@
       "$ref": "#/$defs/source"
     },
     "resolved": {
-      "$ref": "#/$defs/resolved",
-      "properties": {
-        "accessibility": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "highContrast",
-            "reducedMotion",
-            "minimumTextContrastRatio",
-            "minimumUiContrastRatio",
-            "focusRing"
-          ],
-          "properties": {
-            "highContrast": {
-              "type": "boolean"
-            },
-            "reducedMotion": {
-              "type": "boolean"
-            },
-            "minimumTextContrastRatio": {
-              "type": "number"
-            },
-            "minimumUiContrastRatio": {
-              "type": "number"
-            },
-            "focusRing": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "width",
-                "offset",
-                "radiusAdjustment",
-                "color",
-                "opacity"
-              ],
-              "properties": {
-                "width": {
-                  "type": "integer"
-                },
-                "offset": {
-                  "type": "integer"
-                },
-                "radiusAdjustment": {
-                  "type": "integer"
-                },
-                "color": {
-                  "type": "string",
-                  "pattern": "^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$"
-                },
-                "opacity": {
-                  "type": "number",
-                  "minimum": 0.0,
-                  "maximum": 1.0
-                }
-              }
-            }
-          }
-        },
-        "interactions": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "keyboardFocusVisible",
-            "strongFocusIndicators",
-            "hoverFeedbackEnabled",
-            "pressFeedbackEnabled",
-            "dragFeedbackEnabled"
-          ],
-          "properties": {
-            "keyboardFocusVisible": {
-              "type": "boolean"
-            },
-            "strongFocusIndicators": {
-              "type": "boolean"
-            },
-            "hoverFeedbackEnabled": {
-              "type": "boolean"
-            },
-            "pressFeedbackEnabled": {
-              "type": "boolean"
-            },
-            "dragFeedbackEnabled": {
-              "type": "boolean"
-            }
-          }
-        }
-      },
-      "required": [
-        "accessibility",
-        "interactions"
-      ]
+      "$ref": "#/$defs/resolved"
     },
     "metadata": {
       "$ref": "#/$defs/metadata"
@@ -125,9 +35,10 @@
       "required": [
         "seedColor",
         "mode",
+        "preference",
         "contrast",
-        "expressive",
-        "useMaterialColorUtilities"
+        "variant",
+        "colorBackendPolicy"
       ],
       "properties": {
         "seedColor": {
@@ -139,6 +50,13 @@
             "Dark"
           ]
         },
+        "preference": {
+          "enum": [
+            "Light",
+            "Dark",
+            "FollowSystem"
+          ]
+        },
         "contrast": {
           "enum": [
             "Standard",
@@ -146,11 +64,19 @@
             "High"
           ]
         },
-        "expressive": {
-          "type": "boolean"
+        "variant": {
+          "enum": [
+            "TonalSpot",
+            "Expressive"
+          ]
         },
-        "useMaterialColorUtilities": {
-          "type": "boolean"
+        "colorBackendPolicy": {
+          "enum": [
+            "Auto",
+            "PreferMaterialColorUtilities",
+            "ForceMaterialColorUtilities",
+            "ForceFallback"
+          ]
         }
       }
     },
@@ -164,6 +90,8 @@
         "elevationScale",
         "motionTokens",
         "stateLayer",
+        "accessibility",
+        "interactions",
         "density",
         "iconSizes",
         "componentOverrides"
@@ -202,6 +130,12 @@
         },
         "stateLayer": {
           "$ref": "#/$defs/stateLayer"
+        },
+        "accessibility": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "interactions": {
+          "$ref": "#/$defs/interactions"
         },
         "density": {
           "type": "object",
@@ -318,6 +252,91 @@
           "type": "number",
           "minimum": 0,
           "maximum": 1
+        }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "highContrast",
+        "reducedMotion",
+        "minimumTextContrastRatio",
+        "minimumUiContrastRatio",
+        "focusRing"
+      ],
+      "properties": {
+        "highContrast": {
+          "type": "boolean"
+        },
+        "reducedMotion": {
+          "type": "boolean"
+        },
+        "minimumTextContrastRatio": {
+          "type": "number"
+        },
+        "minimumUiContrastRatio": {
+          "type": "number"
+        },
+        "focusRing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "width",
+            "offset",
+            "radiusAdjustment",
+            "color",
+            "opacity"
+          ],
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "offset": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "radiusAdjustment": {
+              "type": "integer"
+            },
+            "color": {
+              "$ref": "#/$defs/color"
+            },
+            "opacity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        }
+      }
+    },
+    "interactions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "keyboardFocusVisible",
+        "strongFocusIndicators",
+        "hoverFeedbackEnabled",
+        "pressFeedbackEnabled",
+        "dragFeedbackEnabled"
+      ],
+      "properties": {
+        "keyboardFocusVisible": {
+          "type": "boolean"
+        },
+        "strongFocusIndicators": {
+          "type": "boolean"
+        },
+        "hoverFeedbackEnabled": {
+          "type": "boolean"
+        },
+        "pressFeedbackEnabled": {
+          "type": "boolean"
+        },
+        "dragFeedbackEnabled": {
+          "type": "boolean"
         }
       }
     },

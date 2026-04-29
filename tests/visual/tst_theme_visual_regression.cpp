@@ -34,8 +34,8 @@ Theme makeTheme(ThemeMode mode, ContrastMode contrast, const QColor& seed = QCol
     options.sourceColor = seed;
     options.mode = mode;
     options.contrast = contrast;
-    options.expressive = false;
-    options.useMaterialColorUtilities = false;
+    options.variant = QtMaterial::ThemeVariant::TonalSpot;
+    options.backendPolicy = QtMaterial::ColorBackendPolicy::ForceFallback;
     return ThemeBuilder().build(options);
 }
 

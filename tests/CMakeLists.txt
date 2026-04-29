@@ -123,6 +123,7 @@ add_test(
         -P ${CMAKE_CURRENT_SOURCE_DIR}/consumer/run_installed_package_test.cmake
 )
 qtm3_add_test(tst_systemtheme theme/tst_systemtheme.cpp qtmaterial3_theme Qt${QT_VERSION_MAJOR}::Widgets)
+qtm3_add_test(tst_themevalidation theme/tst_themevalidation.cpp qtmaterial3_theme)
 qtm3_add_test(tst_theme_accessibility_tokens theme/tst_theme_accessibility_tokens.cpp qtmaterial3_theme)
 target_include_directories(tst_theme_accessibility_tokens PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/..")
 qtm3_add_test(tst_systemtheme_accessibility theme/tst_systemtheme_accessibility.cpp qtmaterial3_theme Qt${QT_VERSION_MAJOR}::Widgets)

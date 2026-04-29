@@ -4,7 +4,7 @@ The theme serializer now writes `formatVersion: 2` by default.
 
 Version 2 separates source inputs from resolved theme tokens:
 
-- `source`: seed color, light/dark mode, contrast mode, expressive flag, and Material Color Utilities request flag.
+- `source`: seed color, light/dark mode, contrast mode, variant flag, and Material Color Utilities request flag.
 - `resolved`: color scheme, typography scale, shape scale, elevation scale, motion tokens, state layer, density, icon sizes, and component-local overrides.
 - `metadata`: generator version, library version, Qt version, and an optional timestamp.
 

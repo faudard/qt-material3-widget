@@ -16,10 +16,10 @@ int main(int argc, char** argv)
 
     ThemeOptions fallbackOptions;
     fallbackOptions.sourceColor = QColor(QStringLiteral("#6750A4"));
-    fallbackOptions.useMaterialColorUtilities = false;
+    fallbackOptions.backendPolicy = ColorBackendPolicy::ForceFallback;
 
     ThemeOptions mcuOptions = fallbackOptions;
-    mcuOptions.useMaterialColorUtilities = true;
+    mcuOptions.backendPolicy = ColorBackendPolicy::ForceMaterialColorUtilities;
 
     ThemeBuilder builder;
     const ThemeColorBackendStatus fallbackStatus = builder.colorBackendStatus(fallbackOptions);

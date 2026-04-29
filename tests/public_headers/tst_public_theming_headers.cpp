@@ -20,6 +20,7 @@
 #  include <qtmaterial/theme/qtmaterialthemebuilder.h>
 #endif
 #if __has_include(<qtmaterial/theme/qtmaterialthemeserializer.h>)
+#include <qtmaterial/theme/qtmaterialthemevalidation.h>
 #  include <qtmaterial/theme/qtmaterialthemeserializer.h>
 #endif
 #if __has_include(<qtmaterial/theme/qtmaterialthememanager.h>)

@@ -235,5 +235,5 @@ void ThemeEditorPanel::syncUiFromOptions(const ThemeOptions& options)
         break;
     }
 
-    m_expressiveCheck->setChecked(options.expressive);
+    m_expressiveCheck->setChecked(options.variant);
 }
