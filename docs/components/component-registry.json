@@ -141,7 +141,7 @@
     "widgetType": "QtMaterialLinearProgressIndicator",
     "testTarget": "tst_progressindicators",
     "galleryRoute": "/progress/linear",
-    "docsPath": "docs/public-api/progress.md"
+    "docsPath": "docs/public-api/progress-indicators.md"
   },
   {
     "id": "data.divider",
@@ -153,7 +153,7 @@
     "widgetType": "QtMaterialDivider",
     "testTarget": "tst_divider",
     "galleryRoute": "/data/divider",
-    "docsPath": "docs/public-api/data.md"
+    "docsPath": "docs/public-api/data-widgets.md"
   },
   {
     "id": "navigation.rail",
