@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
   workflow_dispatch:
 
@@ -19,30 +19,25 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: ubuntu-qt6-fallback
+          - name: ubuntu-qt6
             os: ubuntu-latest
-            qt-version: '6.7.3'
-            use-mcu: 'OFF'
-            build-examples: 'ON'
-            extra-packages: 'xvfb libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0'
+            qt-version: "6.7.3"
+            use-mcu: "OFF"
+
           - name: ubuntu-qt6-mcu-requested
             os: ubuntu-latest
-            qt-version: '6.7.3'
-            use-mcu: 'ON'
-            build-examples: 'ON'
-            extra-packages: 'xvfb libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0'
-          - name: windows-qt6-fallback
+            qt-version: "6.7.3"
+            use-mcu: "ON"
+
+          - name: windows-qt6
             os: windows-latest
-            qt-version: '6.7.3'
-            use-mcu: 'OFF'
-            build-examples: 'ON'
-            extra-packages: ''
-          - name: macos-qt6-fallback
+            qt-version: "6.7.3"
+            use-mcu: "OFF"
+
+          - name: macos-qt6
             os: macos-latest
-            qt-version: '6.7.3'
-            use-mcu: 'OFF'
-            build-examples: 'ON'
-            extra-packages: ''
+            qt-version: "6.7.3"
+            use-mcu: "OFF"
 
     env:
       CMAKE_BUILD_PARALLEL_LEVEL: 2
@@ -54,15 +49,7 @@ jobs:
 
       - name: Install Linux runtime packages
         if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ninja-build ${{ matrix.extra-packages }}
-
-      - name: Install Ninja on Windows/macOS
-        if: runner.os != 'Linux'
-        shell: bash
-        run: |
-          cmake -E echo "Using CMake-provided build tooling where available"
+        run: ./scripts/ci/install-ubuntu-deps.sh
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
@@ -75,7 +62,7 @@ jobs:
           cmake -S . -B build -G Ninja
           -DCMAKE_BUILD_TYPE=Release
           -DQTMATERIAL3_BUILD_TESTS=ON
-          -DQTMATERIAL3_BUILD_EXAMPLES=${{ matrix.build-examples }}
+          -DQTMATERIAL3_BUILD_EXAMPLES=ON
           -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
           -DQTMATERIAL3_USE_MCU=${{ matrix.use-mcu }}
 
@@ -90,3 +77,17 @@ jobs:
           else
             ctest --test-dir build --build-config Release --output-on-failure
           fi
+
+      - name: Install package
+        run: cmake --install build --prefix "$PWD/install"
+
+      - name: Configure installed consumer
+        run: >
+          cmake -S examples/install-consumer
+          -B consumer-build
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_PREFIX_PATH="$PWD/install"
+
+      - name: Build installed consumer
+        run: cmake --build consumer-build --config Release

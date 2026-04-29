@@ -1,8 +1,8 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: qt-material3-widgets
-Upstream-Contact: dad
+Upstream-Contact: francois Audard
 Source: https://github.com/faudard/qt-material3-widget
 
 Files: *
-Copyright: 2026 dad
+Copyright: 2026 francois Audard
 License: LGPL-3.0-only
