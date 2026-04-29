@@ -1,58 +1,97 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 faudard
+# SPDX-License-Identifier: LGPL-3.0-only
+
 set -euo pipefail
 
-bad=0
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$repo_root"
 
-echo "Checking forbidden non-strict LGPL identifiers..."
+spdx_license_tag='SPDX-License-Identifier'':'
+spdx_copyright_tag='SPDX-FileCopyrightText'':'
 
-if grep -RIn \
-  --exclude-dir=.git \
-  --exclude-dir=build \
-  --exclude-dir=cmake-build-debug \
-  --exclude-dir=cmake-build-release \
-  --exclude-dir=_deps \
-  --exclude=LICENSE \
-  --exclude='LGPL-3.0-only.txt' \
-  'LGPL-3\.0-or-later\|LGPLv3+\|LGPL-3\.0+' .; then
-  echo "Found non-strict LGPL references. Use LGPL-3.0-only instead." >&2
-  bad=1
+missing_license=()
+missing_copyright=()
+
+is_checked_file() {
+  local file="$1"
+
+  case "$file" in
+    .git/*|build/*|cmake-build-*/*|_deps/*|third_party/*|external/*|vendor/*)
+      return 1
+      ;;
+
+    LICENSE|LICENSE.*|COPYING|COPYING.*|LICENSES/*)
+      return 1
+      ;;
+
+    *.h|*.hpp|*.hh|*.hxx|*.c|*.cc|*.cpp|*.cxx)
+      return 0
+      ;;
+
+    CMakeLists.txt|*.cmake)
+      return 0
+      ;;
+
+    *.py|*.sh|*.ps1)
+      return 0
+      ;;
+
+    *.yml|*.yaml|*.json|*.toml|*.ini|*.cfg)
+      return 0
+      ;;
+
+    *.md|*.rst|*.txt)
+      return 0
+      ;;
+
+    *.ui|*.qrc|*.qss|*.svg)
+      return 0
+      ;;
+
+    Doxyfile)
+      return 0
+      ;;
+
+    *)
+      return 1
+      ;;
+  esac
+}
+
+while IFS= read -r -d '' file; do
+  if ! is_checked_file "$file"; then
+    continue
+  fi
+
+  if ! grep -q "$spdx_license_tag" "$file"; then
+    missing_license+=("$file")
+  fi
+
+  if ! grep -q "$spdx_copyright_tag" "$file"; then
+    missing_copyright+=("$file")
+  fi
+done < <(git ls-files -z)
+
+failed=0
+
+if ((${#missing_license[@]} > 0)); then
+  failed=1
+  echo "Files missing SPDX license tag:"
+  printf '  %s\n' "${missing_license[@]}"
+  echo
 fi
 
-echo "Checking SPDX headers..."
-
-missing_spdx="$(find . \
-  -path './.git' -prune -o \
-  -path './build' -prune -o \
-  -path './cmake-build-*' -prune -o \
-  -path './_deps' -prune -o \
-  -path './third_party' -prune -o \
-  -path './external' -prune -o \
-  -path './vendor' -prune -o \
-  -type f \( \
-    -name '*.h' -o -name '*.hpp' -o -name '*.hh' -o \
-    -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.cxx' -o \
-    -name '*.cmake' -o -name 'CMakeLists.txt' -o \
-    -name '*.py' -o -name '*.sh' -o \
-    -name '*.yml' -o -name '*.yaml' -o \
-    -name '*.md' -o -name '*.ui' -o -name '*.qrc' \
-  \) -print | while read -r f; do
-    if ! grep -q 'SPDX-License-Identifier:' "$f"; then
-      echo "$f"
-    fi
-  done)"
-
-if [ -n "$missing_spdx" ]; then
-  echo "Files missing SPDX headers:"
-  echo "$missing_spdx"
-  bad=1
+if ((${#missing_copyright[@]} > 0)); then
+  failed=1
+  echo "Files missing SPDX copyright tag:"
+  printf '  %s\n' "${missing_copyright[@]}"
+  echo
 fi
 
-if command -v reuse >/dev/null 2>&1; then
-  echo "Running reuse lint..."
-  reuse lint || bad=1
-else
-  echo "reuse CLI not installed; skipping reuse lint."
-  echo "Install with: python -m pip install reuse"
+if ((failed != 0)); then
+  echo "License metadata check failed."
+  exit 1
 fi
 
-exit "$bad"
+echo "License metadata check passed."

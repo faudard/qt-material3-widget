@@ -84,6 +84,14 @@ void tst_WidgetMigrationContracts::progressIndicatorsExposeAsyncStateAndMaterial
     circular.setStatusText(QStringLiteral("Loading"));
     QCOMPARE(circular.statusText(), QStringLiteral("Loading"));
     QVERIFY(circular.materialState().contains(QStringLiteral("statusText")));
+
+    QCOMPARE(linear.property(QtMaterial::QtMaterialAutomation::componentPropertyName()).toString(),
+             QStringLiteral("LinearProgressIndicator"));
+
+    linear.setBusy(true);
+    QVERIFY(linear.property(QtMaterial::QtMaterialAutomation::statePropertyName())
+                .toString()
+                .contains(QStringLiteral("busy")));
 }
 
 void tst_WidgetMigrationContracts::tabsBindToNavigationModel() {
@@ -125,7 +133,7 @@ void tst_WidgetMigrationContracts::abstractButtonExposesAutomationMetadata() {
 
     button.setCheckable(true);
     button.setChecked(true);
-    QVERIFY(button.property(QtMaterial::QtMaterialAutomation::statePropertyName()).toString().contains(QStringLiteral("checked")));
+    QVERIFY(button.property(QtMaterial::QtMaterialAutomation::statePropertyName()).toString().contains(QStringLiteral("checked"))); 
 }
 
 QTEST_MAIN(tst_WidgetMigrationContracts)

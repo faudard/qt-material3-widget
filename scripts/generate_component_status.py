@@ -16,10 +16,38 @@ MATURITY_ORDER = {"complete": 0, "usable": 1, "partial": 2, "skeleton": 3, "plan
 def marker(path: Path, text: str) -> str:
     return "yes" if (ROOT / path).exists() and text else "missing"
 
+def validate_components(components: list[dict]) -> list[str]:
+    errors = []
+
+    for item in components:
+        cid = item.get("id", "<missing-id>")
+
+        header = item.get("publicHeader", "")
+        if header and not (ROOT / "include" / header).exists():
+            errors.append(f"{cid}: missing publicHeader include/{header}")
+
+        docs = item.get("docsPath", "")
+        if docs and not (ROOT / docs).exists():
+            errors.append(f"{cid}: missing docsPath {docs}")
+
+        test_target = item.get("testTarget", "")
+        if test_target:
+            cmake_text = (ROOT / "tests" / "CMakeLists.txt").read_text(encoding="utf-8")
+            if test_target not in cmake_text:
+                errors.append(f"{cid}: testTarget {test_target} not registered in tests/CMakeLists.txt")
+
+    return errors
 
 def main() -> int:
     components = json.loads(REGISTRY.read_text(encoding="utf-8"))
     components.sort(key=lambda item: (item.get("family", ""), MATURITY_ORDER.get(item.get("maturity", "planned"), 99), item.get("id", "")))
+
+    errors = validate_components(components)
+    if errors:
+        print("component registry validation failed:")
+        for error in errors:
+            print(f"  - {error}")
+        return 1
 
     by_family = defaultdict(list)
     for item in components:

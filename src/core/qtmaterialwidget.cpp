@@ -8,9 +8,12 @@ namespace QtMaterial {
 QtMaterialWidget::QtMaterialWidget(QWidget* parent)
     : QWidget(parent)
 {
-    QtMaterialAutomation::setComponent(this, QStringLiteral("Widget"));
-    QObject::connect(&ThemeManager::instance(), &ThemeManager::themeChanged,
-                     this, &QtMaterialWidget::handleThemeChanged);
+    setMaterialComponent(QStringLiteral("Widget"));
+
+    QObject::connect(&ThemeManager::instance(),
+                     &ThemeManager::themeChanged,
+                     this,
+                     &QtMaterialWidget::handleThemeChanged);
 }
 
 QtMaterialWidget::~QtMaterialWidget() = default;
@@ -21,11 +24,56 @@ QString QtMaterialWidget::materialRole() const { return m_materialRole; }
 QString QtMaterialWidget::materialTestId() const { return m_materialTestId; }
 QString QtMaterialWidget::materialState() const { return m_materialState; }
 
-void QtMaterialWidget::setMaterialComponent(const QString& value) { setMetadata(&m_materialComponent, value); }
-void QtMaterialWidget::setMaterialVariant(const QString& value) { setMetadata(&m_materialVariant, value); }
-void QtMaterialWidget::setMaterialRole(const QString& value) { setMetadata(&m_materialRole, value); }
-void QtMaterialWidget::setMaterialTestId(const QString& value) { setMetadata(&m_materialTestId, value); }
-void QtMaterialWidget::setMaterialState(const QString& value) { setMetadata(&m_materialState, value); }
+
+void QtMaterialWidget::setMaterialComponent(const QString& value)
+{
+    if (m_materialComponent == value)
+        return;
+
+    m_materialComponent = value;
+    QtMaterialAutomation::setComponent(this, value);
+    emit materialMetadataChanged();
+}
+
+void QtMaterialWidget::setMaterialVariant(const QString& value)
+{
+    if (m_materialVariant == value)
+        return;
+
+    m_materialVariant = value;
+    QtMaterialAutomation::setVariant(this, value);
+    emit materialMetadataChanged();
+}
+
+void QtMaterialWidget::setMaterialRole(const QString& value)
+{
+    if (m_materialRole == value)
+        return;
+
+    m_materialRole = value;
+    QtMaterialAutomation::setRole(this, value);
+    emit materialMetadataChanged();
+}
+
+void QtMaterialWidget::setMaterialTestId(const QString& value)
+{
+    if (m_materialTestId == value)
+        return;
+
+    m_materialTestId = value;
+    QtMaterialAutomation::setTestId(this, value);
+    emit materialMetadataChanged();
+}
+
+void QtMaterialWidget::setMaterialState(const QString& value)
+{
+    if (m_materialState == value)
+        return;
+
+    m_materialState = value;
+    QtMaterialAutomation::setState(this, value);
+    emit materialMetadataChanged();
+}
 
 const Theme& QtMaterialWidget::theme() const
 {
