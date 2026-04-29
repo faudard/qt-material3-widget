@@ -10,7 +10,11 @@ QFont appFont(int pointSizeDelta = 0, int weight = QFont::Normal)
     if (font.pointSize() > 0 && pointSizeDelta != 0) {
         font.setPointSize(qMax(1, font.pointSize() + pointSizeDelta));
     }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    font.setWeight(static_cast<QFont::Weight>(weight));
+#else
     font.setWeight(weight);
+#endif    
     return font;
 }
 } // namespace

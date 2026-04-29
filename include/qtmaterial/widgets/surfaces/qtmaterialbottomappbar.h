@@ -4,6 +4,7 @@
 #include <QPointer>
 #include <QString>
 #include <QVector>
+#include <QPainterPath>
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialsurface.h"
