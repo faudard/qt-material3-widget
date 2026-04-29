@@ -3,6 +3,7 @@
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialsurface.h"
 #include "qtmaterial/specs/qtmaterialcardspec.h"
+#include <QPainterPath>
 
 class QPaintEvent;
 class QResizeEvent;

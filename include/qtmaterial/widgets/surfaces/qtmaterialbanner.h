@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QPainterPath>
 #include <QAbstractButton>
 #include <QIcon>
 #include <QPointer>
