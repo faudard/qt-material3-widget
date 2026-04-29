@@ -194,8 +194,7 @@ Deliverables:
 Add:
 
 ```text
-docs/schema/theme-v1.schema.json
-docs/schema/theme-v2.schema.json
+docs/schema/theme.schema.json
 ```
 
 Support:
@@ -218,11 +217,7 @@ Support:
 Add strict read modes:
 
 ```cpp
-enum class ThemeReadMode {
-    Lenient,
-    Strict,
-    UpgradeIfPossible
-};
+enum class ThemeReadMode { Lenient, Strict };
 ```
 
 ### 2.4 Theme editor / playground maturity

@@ -12,8 +12,8 @@ The timestamp is intentionally optional so deterministic golden snapshots can om
 
 ## Read modes
 
-`ThemeReadMode::Lenient` accepts known v1/v2 structures and ignores forward-compatible extra fields.
+`ThemeReadMode::Lenient` accepts known current format structures and ignores forward-compatible extra fields.
 
 `ThemeReadMode::Strict` accepts only the current schema version and rejects unknown root/source/resolved keys or missing required resolved token groups.
 
-`ThemeReadMode::UpgradeIfPossible` accepts v1 documents and maps legacy top-level resolved blocks into the current in-memory `Theme` model.
+`ThemeReadMode::Strict` accepts v1 documents and maps legacy top-level resolved blocks into the current in-memory `Theme` model.

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://faudard.github.io/qt-material3-widget/schema/theme-v2.schema.json",
+  "$id": "https://faudard.github.io/qt-material3-widget/schema/theme.schema.json",
   "title": "Qt Material 3 Theme JSON Schema v2",
   "type": "object",
   "additionalProperties": false,
@@ -12,7 +12,7 @@
   ],
   "properties": {
     "formatVersion": {
-      "const": 2
+      "const": 1
     },
     "source": {
       "$ref": "#/$defs/source"

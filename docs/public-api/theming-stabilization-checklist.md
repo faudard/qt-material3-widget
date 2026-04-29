@@ -19,8 +19,8 @@ Use this checklist before marking the theming API stable.
 
 ## JSON schema
 
-- [ ] `theme-v1.schema.json` remains readable.
-- [ ] `theme-v2.schema.json` is the current write format.
+- [ ] `theme.schema.json` remains readable.
+- [ ] `theme.schema.json` is the current write format.
 - [ ] `Strict` mode rejects unknown root keys and incomplete resolved tokens.
 - [ ] `UpgradeIfPossible` migrates v1 inputs without lossy token behavior.
 - [ ] Timestamps stay optional so golden snapshots remain deterministic.

@@ -52,7 +52,7 @@ void tst_ThemeSerializerReadModes::upgradeIfPossible_acceptsV1Theme()
 
     bool ok = false;
     QString error;
-    const Theme theme = ThemeSerializer::fromJsonObject(v1, ThemeReadMode::UpgradeIfPossible, &ok, &error);
+    const Theme theme = ThemeSerializer::fromJsonObject(v1, ThemeReadMode::Strict, &ok, &error);
 
     QVERIFY2(ok, qPrintable(error));
     QCOMPARE(theme.mode(), ThemeMode::Dark);

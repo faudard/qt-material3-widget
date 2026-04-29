@@ -1342,7 +1342,7 @@ Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, ThemeReadMode m
 
     fail(ok,
          errorString,
-         QStringLiteral("Unsupported theme formatVersion %1. Supported versions are %2-%3.")
+         QStringLiteral("Unsupported theme formatVersion %1. Supported version is %2.")
              .arg(formatVersion)
              .arg(kMinimumReadableFormatVersion)
              .arg(kCurrentFormatVersion));

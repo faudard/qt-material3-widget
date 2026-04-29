@@ -18,7 +18,7 @@ public:
      * - sourceColor: consumed
      * - mode: consumed
      * - contrast: consumed (minimal post-generation adjustment pass)
-     * - expressive: persisted but currently not consumed by ThemeBuilder
+     * - expressive: consumed by the Material Color Utilities backend when it is compiled in; the fallback backend may ignore it
      * - useMaterialColorUtilities: persisted but currently not consumed by ThemeBuilder
      */    
     ThemeOptions();
@@ -27,15 +27,7 @@ public:
     QColor sourceColor;
     ThemeMode mode;
     ContrastMode contrast;
-    // Experimental: persisted for forward compatibility, but not currently consumed by ThemeBuilder.
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-    Q_DECL_DEPRECATED_X("ThemeBuilder does not yet implement expressive theme generation.")
-#endif
-    bool expressive;
-    // Experimental: persisted for forward compatibility, but not currently consumed by ThemeBuilder.
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-    Q_DECL_DEPRECATED_X("ThemeBuilder does not yet implement a Material Color Utilities backend.")
-#endif    
+    bool expressive;  
     bool useMaterialColorUtilities;
 
     bool operator==(const ThemeOptions& other) const noexcept

@@ -56,7 +56,7 @@ int main(int argc, char** argv)
     QtMaterial::ThemeOptions options;
     options.sourceColor = QColor("#6750A4");
     options.mode = QtMaterial::ThemeMode::Light;
-    options.contrast = QtMaterial::ContrastMode::DefaultContrast;
+    options.contrast = QtMaterial::ContrastMode::Standard;
     options.expressive = false;
     options.useMaterialColorUtilities = true;
 
@@ -92,7 +92,7 @@ This is a good fit for theme pickers, demos, onboarding flows, and apps that do 
 
 ## 3. Generate a `ColorScheme` directly from a seed
 
-If your branch includes the seed-scheme extension, `ThemeBuilder` can also produce a `ColorScheme` directly without first moving a full `Theme` through the manager.
+`ThemeBuilder` can also produce a `ColorScheme` directly without first moving a full `Theme` through the manager.
 
 ```cpp
 #include <QColor>
@@ -330,6 +330,16 @@ It is useful to keep the type boundaries explicit:
 
 That distinction matters because a resolved theme can carry concrete token values that are not recoverable from a reduced options-only payload.
 
+
+
+## JSON schema contract
+
+The repository ships versioned schemas for exported theme JSON:
+
+- `docs/schema/theme.schema.json` documents the legacy v1 shape.
+- `docs/schema/theme.schema.json` documents the current resolved-theme export shape used by `ThemeSerializer::kCurrentFormatVersion`.
+
+Consumers should prefer v2 for new files. Keep v1 readable for compatibility and use `ThemeReadMode::Strict` when accepting user-provided theme files that may have been exported by older builds.
 ## 12. See also
 
 - [Public API guide](index.md)
@@ -341,6 +351,6 @@ That distinction matters because a resolved theme can carry concrete token value
 
 The next most useful follow-ups would be:
 
-- add a short JSON schema note for theme export
+- keep the JSON schema note synchronized with `docs/schema/theme.schema.json` and `docs/schema/theme.schema.json`
 - add a migration note for apps moving from option-only persistence to full theme export
 - add a widget-author page explaining how widgets should consume resolved theme roles instead of inventing local theme keys

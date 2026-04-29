@@ -10,16 +10,12 @@
 
 namespace QtMaterial {
 
-enum class ThemeReadMode {
-    Lenient,
-    Strict,
-    UpgradeIfPossible
-};
+enum class ThemeReadMode { Lenient, Strict };
 
 class QTMATERIAL3_THEME_EXPORT ThemeSerializer {
 public:
-    static constexpr int kCurrentFormatVersion = 2;
-    static constexpr int kMinimumReadableFormatVersion = 1;
+    static constexpr int kCurrentFormatVersion = 1;
+    static constexpr int kMinimumReadableFormatVersion = kCurrentFormatVersion;
 
     static QJsonObject toJsonObject(const Theme& theme);
     static QJsonDocument toJsonDocument(const Theme& theme);
