@@ -1,9 +1,9 @@
 #pragma once
 
-#include <QtGlobal>
-#include <QHash>
-#include <type_traits>
 #include <QMetaType>
+#include <QtGlobal>
+
+#include <type_traits>
 
 namespace QtMaterial {
 
@@ -27,7 +27,6 @@ enum class ColorRole {
     PrimaryFixedDim,
     OnPrimaryFixed,
     OnPrimaryFixedVariant,
-
     Secondary,
     OnSecondary,
     SecondaryContainer,
@@ -36,7 +35,6 @@ enum class ColorRole {
     SecondaryFixedDim,
     OnSecondaryFixed,
     OnSecondaryFixedVariant,
-
     Tertiary,
     OnTertiary,
     TertiaryContainer,
@@ -45,12 +43,10 @@ enum class ColorRole {
     TertiaryFixedDim,
     OnTertiaryFixed,
     OnTertiaryFixedVariant,
-
     Error,
     OnError,
     ErrorContainer,
     OnErrorContainer,
-
     Background,
     OnBackground,
     Surface,
@@ -133,55 +129,115 @@ enum class StateLayerRole {
     Drag
 };
 
-} // namespace QtMaterial
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 
-template <typename Enum, typename = std::enable_if_t<std::is_enum<Enum>::value>>
+template <typename Enum,
+         typename = typename std::enable_if<std::is_enum<Enum>::value>::type>
 inline size_t qtmaterialEnumHash(Enum value, size_t seed = 0) noexcept
 {
-    using Underlying = std::underlying_type_t<Enum>;
-    return qHash(static_cast<Underlying>(value), seed);
+    using Underlying = typename std::underlying_type<Enum>::type;
+    return ::qHash(static_cast<Underlying>(value), seed);
 }
 
-inline size_t qHash(QtMaterial::ThemeMode value, size_t seed = 0) noexcept
+inline size_t qHash(ThemeMode value, size_t seed = 0) noexcept
 {
     return qtmaterialEnumHash(value, seed);
 }
 
-inline size_t qHash(QtMaterial::ContrastMode value, size_t seed = 0) noexcept
+inline size_t qHash(ContrastMode value, size_t seed = 0) noexcept
 {
     return qtmaterialEnumHash(value, seed);
 }
 
-inline size_t qHash(QtMaterial::ColorRole value, size_t seed = 0) noexcept
+inline size_t qHash(ColorRole value, size_t seed = 0) noexcept
 {
     return qtmaterialEnumHash(value, seed);
 }
 
-inline size_t qHash(QtMaterial::TypeRole value, size_t seed = 0) noexcept
+inline size_t qHash(TypeRole value, size_t seed = 0) noexcept
 {
     return qtmaterialEnumHash(value, seed);
 }
 
-inline size_t qHash(QtMaterial::ShapeRole value, size_t seed = 0) noexcept
+inline size_t qHash(ShapeRole value, size_t seed = 0) noexcept
 {
     return qtmaterialEnumHash(value, seed);
 }
 
-inline size_t qHash(QtMaterial::ElevationRole value, size_t seed = 0) noexcept
+inline size_t qHash(ElevationRole value, size_t seed = 0) noexcept
 {
     return qtmaterialEnumHash(value, seed);
 }
 
-inline size_t qHash(QtMaterial::MotionToken value, size_t seed = 0) noexcept
+inline size_t qHash(MotionToken value, size_t seed = 0) noexcept
 {
     return qtmaterialEnumHash(value, seed);
 }
 
-inline size_t qHash(QtMaterial::StateLayerRole value, size_t seed = 0) noexcept
+inline size_t qHash(StateLayerRole value, size_t seed = 0) noexcept
 {
     return qtmaterialEnumHash(value, seed);
 }
 
+#else
+
+template <typename Enum,
+         typename = typename std::enable_if<std::is_enum<Enum>::value>::type>
+inline uint qtmaterialEnumHash(Enum value, uint seed = 0) noexcept
+{
+    using Underlying = typename std::underlying_type<Enum>::type;
+    return ::qHash(static_cast<Underlying>(value), seed);
+}
+
+inline uint qHash(ThemeMode value, uint seed = 0) noexcept
+{
+    return qtmaterialEnumHash(value, seed);
+}
+
+inline uint qHash(ContrastMode value, uint seed = 0) noexcept
+{
+    return qtmaterialEnumHash(value, seed);
+}
+
+inline uint qHash(ColorRole value, uint seed = 0) noexcept
+{
+    return qtmaterialEnumHash(value, seed);
+}
+
+inline uint qHash(TypeRole value, uint seed = 0) noexcept
+{
+    return qtmaterialEnumHash(value, seed);
+}
+
+inline uint qHash(ShapeRole value, uint seed = 0) noexcept
+{
+    return qtmaterialEnumHash(value, seed);
+}
+
+inline uint qHash(ElevationRole value, uint seed = 0) noexcept
+{
+    return qtmaterialEnumHash(value, seed);
+}
+
+inline uint qHash(MotionToken value, uint seed = 0) noexcept
+{
+    return qtmaterialEnumHash(value, seed);
+}
+
+inline uint qHash(StateLayerRole value, uint seed = 0) noexcept
+{
+    return qtmaterialEnumHash(value, seed);
+}
+
+#endif
+
+} // namespace QtMaterial
 
 Q_DECLARE_METATYPE(QtMaterial::ThemeMode)
 Q_DECLARE_METATYPE(QtMaterial::ContrastMode)
+Q_DECLARE_METATYPE(QtMaterial::ColorRole)
+Q_DECLARE_METATYPE(QtMaterial::TypeRole)
+Q_DECLARE_METATYPE(QtMaterial::ShapeRole)
+Q_DECLARE_METATYPE(QtMaterial::ElevationRole)
+Q_DECLARE_METATYPE(QtMaterial::MotionToken)
+Q_DECLARE_METATYPE(QtMaterial::StateLayerRole)

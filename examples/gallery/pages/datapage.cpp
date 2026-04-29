@@ -26,6 +26,9 @@ DataPage::DataPage(QWidget* parent)
     layout->addWidget(new QtMaterial::QtMaterialDivider(this));
 
     auto* table = new QtMaterial::QtMaterialTable(this);
+    table->setMinimumHeight(160);
+    table->setMaximumHeight(280);
+    table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     table->setMinimumHeight(72);
     layout->addWidget(table);
 

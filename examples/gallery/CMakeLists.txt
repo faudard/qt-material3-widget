@@ -25,6 +25,12 @@ qtmaterial3_add_example_executable(qtmaterial3_gallery
     pages/selectionpage.h
     pages/surfacespage.cpp
     pages/surfacespage.h
+    pages/advanceddatapage.cpp
+    pages/advanceddatapage.h
+    pages/advancedinputspage.cpp
+    pages/advancedinputspage.h
+    pages/navigationadvancedpage.cpp
+    pages/navigationadvancedpage.h
     themecontrols/themetoolbar.cpp
     themecontrols/themetoolbar.h
 )

@@ -194,6 +194,13 @@ set(QTMATERIAL3_CORE_SOURCES
     src/core/qtmaterialselectioncontrol.cpp
     src/core/qtmaterialinputcontrol.cpp
     src/core/private/qtmaterialaccessibilityhelper.cpp
+    src/core/qtmaterialcomponentregistry.cpp
+    src/core/qtmaterialasyncstate.cpp
+    src/core/qtmaterialformfieldcontrol.cpp
+    src/core/qtmaterialnavigationmodel.cpp
+    src/core/qtmaterialpaletteadapter.cpp
+    src/core/qtmaterialproxystyle.cpp
+    src/core/qtmaterialpaintcache.cpp
 )
 
 set(QTMATERIAL3_CORE_HEADERS
@@ -207,6 +214,13 @@ set(QTMATERIAL3_CORE_HEADERS
     include/qtmaterial/core/qtmaterialabstractbutton.h
     include/qtmaterial/core/qtmaterialselectioncontrol.h
     include/qtmaterial/core/qtmaterialinputcontrol.h
+    include/qtmaterial/core/qtmaterialcomponentregistry.h
+    include/qtmaterial/core/qtmaterialasyncstate.h
+    include/qtmaterial/core/qtmaterialformfieldcontrol.h
+    include/qtmaterial/core/qtmaterialnavigationmodel.h
+    include/qtmaterial/core/qtmaterialpaletteadapter.h
+    include/qtmaterial/core/qtmaterialproxystyle.h
+    include/qtmaterial/core/qtmaterialpaintcache.h
 )
 
 qtm3_add_library(qtmaterial3_core

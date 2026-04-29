@@ -276,6 +276,15 @@ QJsonObject fontToJson(const QFont& font)
     return object;
 }
 
+void setFontWeightCompat(QFont& font, int weight)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    font.setWeight(static_cast<QFont::Weight>(weight));
+#else
+    font.setWeight(weight);
+#endif
+}
+
 QFont fontFromJson(const QJsonObject& object)
 {
     QFont font;
@@ -290,7 +299,7 @@ QFont fontFromJson(const QJsonObject& object)
     if (pixelSize > 0) {
         font.setPixelSize(pixelSize);
     }
-    font.setWeight(object.value(QStringLiteral("weight")).toInt(QFont::Normal));
+    setFontWeightCompat( font, object.value(QStringLiteral("weight")).toInt(QFont::Normal));
     font.setItalic(object.value(QStringLiteral("italic")).toBool(false));
     font.setUnderline(object.value(QStringLiteral("underline")).toBool(false));
     font.setStrikeOut(object.value(QStringLiteral("strikeOut")).toBool(false));

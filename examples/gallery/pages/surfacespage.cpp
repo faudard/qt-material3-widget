@@ -3,6 +3,14 @@
 #include "qtmaterial/widgets/surfaces/qtmaterialbanner.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialdialog.h"
+#include <QLabel>
+#include <QPushButton>
+
+#include "qtmaterial/widgets/surfaces/qtmaterialsnackbar.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialtopappbar.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
+
 SurfacesPage::SurfacesPage(QWidget* parent) : QWidget(parent)
 {
     auto* layout = new QVBoxLayout(this);
@@ -16,4 +24,21 @@ SurfacesPage::SurfacesPage(QWidget* parent) : QWidget(parent)
     layout->addWidget(banner);
     layout->addWidget(card);
     layout->addStretch(1);
+
+    auto* snackbarButton = new QPushButton(QStringLiteral("Show snackbar"), this);
+    auto* snackbar = new QtMaterial::QtMaterialSnackbar(this);
+
+    QtMaterial::SnackbarRequest request;
+    request.text = QStringLiteral("Snackbar message");
+    request.actionText = QStringLiteral("Undo");
+    request.duration = QtMaterial::SnackbarDuration::Short;
+    request.showDismissButton = true;
+
+    QObject::connect(snackbarButton, &QPushButton::clicked, this, [snackbar, request]() {
+        snackbar->setRequest(request);
+        snackbar->showSnackbar();
+    });
+
+    layout->addWidget(snackbarButton);
+
 }

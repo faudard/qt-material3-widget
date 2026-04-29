@@ -87,3 +87,15 @@ if(NOT TARGET benchmark_shadow_cache_pipeline)
   )
 endif()
 
+if(NOT TARGET benchmark_paintcache)
+ qtmaterial3_add_benchmark_executable(benchmark_paintcache
+  core/benchmark_paintcache.cpp
+ )
+ target_link_libraries(benchmark_paintcache PRIVATE
+  Qt${QT_VERSION_MAJOR}::Core
+  Qt${QT_VERSION_MAJOR}::Gui
+  Qt${QT_VERSION_MAJOR}::Widgets
+  Qt${QT_VERSION_MAJOR}::Test
+  qtmaterial3_core
+ )
+endif()
