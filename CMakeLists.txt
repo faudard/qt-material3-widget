@@ -561,3 +561,19 @@ if(TARGET qtmaterial3_theme)
     include/qtmaterial/theme/qtmaterialaccessibilitytokens.h
     )
 endif()
+
+# Release architecture cleanup: automation/spec validation sources.
+if(TARGET qtmaterial3_core)
+    target_sources(qtmaterial3_core PRIVATE
+        src/core/qtmaterialautomation.cpp
+        include/qtmaterial/core/qtmaterialautomation.h
+    )
+endif()
+
+if(TARGET qtmaterial3_specs)
+    target_sources(qtmaterial3_specs PRIVATE
+        src/specs/qtmaterialspecvalidation.cpp
+        include/qtmaterial/specs/qtmaterialspeccontext.h
+        include/qtmaterial/specs/qtmaterialspecvalidation.h
+    )
+endif()

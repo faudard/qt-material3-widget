@@ -1,0 +1,38 @@
+name: release-readiness
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  ubuntu-qt6:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Qt 6 dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build g++ qt6-base-dev qt6-base-dev-tools
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DQTMATERIAL3_BUILD_TESTS=ON -DQTMATERIAL3_BUILD_EXAMPLES=ON -DQTMATERIAL3_USE_MCU=OFF
+      - name: Build
+        run: cmake --build build --parallel
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+  ubuntu-qt5:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Qt 5 dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build g++ qtbase5-dev qtbase5-dev-tools
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DQTMATERIAL3_BUILD_TESTS=ON -DQTMATERIAL3_BUILD_EXAMPLES=ON -DQTMATERIAL3_USE_MCU=OFF
+      - name: Build
+        run: cmake --build build --parallel
+      - name: Test
+        run: ctest --test-dir build --output-on-failure

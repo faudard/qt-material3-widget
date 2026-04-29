@@ -1,5 +1,11 @@
 #pragma once
+
+#include <QString>
+#include <QStringList>
+
 #include "qtmaterial/qtmaterialglobal.h"
+
+class QWidget;
 
 namespace QtMaterial {
 
@@ -17,6 +23,12 @@ public:
     bool isEnabled() const noexcept;
     bool isSelected() const noexcept;
     bool hasError() const noexcept;
+    bool isReadOnly() const noexcept;
+    bool isIndeterminate() const noexcept;
+    bool isDragged() const noexcept;
+    bool isBusy() const noexcept;
+    bool isExpanded() const noexcept;
+    bool isInvalid() const noexcept;
 
     void setHovered(bool value) noexcept;
     void setFocused(bool value) noexcept;
@@ -26,6 +38,26 @@ public:
     void setEnabled(bool value) noexcept;
     void setSelected(bool value) noexcept;
     void setError(bool value) noexcept;
+    void setReadOnly(bool value) noexcept;
+    void setIndeterminate(bool value) noexcept;
+    void setDragged(bool value) noexcept;
+    void setBusy(bool value) noexcept;
+    void setExpanded(bool value) noexcept;
+    void setInvalid(bool value) noexcept;
+
+    void clearTransientState() noexcept;
+    void syncFromWidget(const QWidget* widget) noexcept;
+
+    QStringList stateNames() const;
+    QString toPropertyString() const;
+
+    friend bool operator==(const QtMaterialInteractionState& lhs,
+                           const QtMaterialInteractionState& rhs) noexcept;
+    friend bool operator!=(const QtMaterialInteractionState& lhs,
+                           const QtMaterialInteractionState& rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
 
 private:
     bool m_hovered;
@@ -36,6 +68,12 @@ private:
     bool m_enabled;
     bool m_selected;
     bool m_error;
+    bool m_readOnly;
+    bool m_indeterminate;
+    bool m_dragged;
+    bool m_busy;
+    bool m_expanded;
+    bool m_invalid;
 };
 
 } // namespace QtMaterial

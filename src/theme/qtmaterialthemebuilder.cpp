@@ -31,7 +31,11 @@ QFont defaultFont(int pointSize, int weight = QFont::Normal)
 {
     QFont font;
     font.setPointSize(pointSize);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     font.setWeight(weight);
+#else
+    font.setWeight(static_cast<int>(weight));
+#endif
     return font;
 }
 

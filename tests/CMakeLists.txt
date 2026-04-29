@@ -139,3 +139,8 @@ endif()
 # Public API guardrail: every public theming header must compile as a standalone include.
 qtm3_add_test(tst_public_theming_headers public_headers/tst_public_theming_headers.cpp qtmaterial3_theme)
 qtm3_add_test(tst_theme_performance_contracts performance/tst_theme_performance_contracts.cpp qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
+
+# Release architecture cleanup tests.
+qtm3_add_test(tst_interactionstate_contracts core/tst_interactionstate_contracts.cpp qtmaterial3_core)
+qtm3_add_test(tst_automationmetadata core/tst_automationmetadata.cpp qtmaterial3_core)
+qtm3_add_test(tst_specvalidation specs/tst_specvalidation.cpp qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
