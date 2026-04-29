@@ -16,6 +16,24 @@ enum class IconSizeRole {
     ExtraLarge
 };
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+
+inline size_t qHash(IconSizeRole value, size_t seed = 0) noexcept
+{
+    using Underlying = typename std::underlying_type<IconSizeRole>::type;
+    return ::qHash(static_cast<Underlying>(value), seed);
+}
+
+#else
+
+inline uint qHash(IconSizeRole value, uint seed = 0) noexcept
+{
+    using Underlying = typename std::underlying_type<IconSizeRole>::type;
+    return ::qHash(static_cast<Underlying>(value), seed);
+}
+
+#endif
+
 class QTMATERIAL3_THEME_EXPORT IconSizeTokens {
 public:
     IconSizeTokens();

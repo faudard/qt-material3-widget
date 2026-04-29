@@ -87,18 +87,24 @@ ButtonsPage::ButtonsPage(QWidget* parent)
 
     auto* text = new QtMaterial::QtMaterialTextButton(this);
     text->setText(QStringLiteral("Text"));
+    text->setDensity(QtMaterial::Density::Compact);
 
     auto* filled = new QtMaterial::QtMaterialFilledButton(this);
     filled->setText(QStringLiteral("Filled"));
+    filled->setDensity(QtMaterial::Density::Compact);
+
 
     auto* tonal = new QtMaterial::QtMaterialFilledTonalButton(this);
     tonal->setText(QStringLiteral("Tonal"));
+    tonal->setDensity(QtMaterial::Density::Compact);
 
     auto* outlined = new QtMaterial::QtMaterialOutlinedButton(this);
     outlined->setText(QStringLiteral("Outlined"));
+    outlined->setDensity(QtMaterial::Density::Compact);
 
     auto* elevated = new QtMaterial::QtMaterialElevatedButton(this);
     elevated->setText(QStringLiteral("Elevated"));
+    elevated->setDensity(QtMaterial::Density::Compact);
 
     auto* icon = new QtMaterial::QtMaterialIconButton(this);
     icon->setIcon(standardIcon(this, QStyle::SP_DialogOpenButton));

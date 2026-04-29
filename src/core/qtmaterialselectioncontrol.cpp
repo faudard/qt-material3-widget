@@ -65,6 +65,7 @@ QRect QtMaterialSelectionControl::indicatorRect() const
     const int y = qMax(0, (height() - kIndicatorSize) / 2);
 
     const bool rtl = layoutDirection() == Qt::RightToLeft;
+
     const int x = rtl
                       ? qMax(0, width() - touchWidth + xInsideTouchTarget)
                       : xInsideTouchTarget;
@@ -76,17 +77,33 @@ QRect QtMaterialSelectionControl::labelRect() const
 {
     const bool hasText = !text().isEmpty();
     const int gap = hasText ? m_spacing : 0;
-    const int labelWidth = qMax(0, width() - kTouchTargetSize - gap);
+    const int touchWidth = qMin(width(), kTouchTargetSize);
 
     const bool rtl = layoutDirection() == Qt::RightToLeft;
-    const int x = rtl ? 0 : kTouchTargetSize + gap;
 
-    return QRect(x, 0, labelWidth, height());
+    if (rtl) {
+        return QRect(
+            0,
+            0,
+            qMax(0, width() - touchWidth - gap),
+            height()
+            );
+    }
+
+    const int x = touchWidth + gap;
+
+    return QRect(
+        x,
+        0,
+        qMax(0, width() - x),
+        height()
+        );
 }
 
 QSize QtMaterialSelectionControl::sizeHint() const
 {
     const QFontMetrics fm(font());
+
     const bool hasText = !text().isEmpty();
     const int textWidth = hasText ? fm.horizontalAdvance(text()) : 0;
     const int gap = hasText ? m_spacing : 0;

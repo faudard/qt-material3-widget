@@ -145,8 +145,11 @@ void QtMaterialRadioButton::resolveLayoutIfNeeded() const
 
     const QRect controlRect(controlX, controlY, controlWidth, controlHeight);
 
-    const int indicatorX = controlRect.center().x() - m_spec.indicatorSize / 2;
-    const int indicatorY = controlRect.center().y() - m_spec.indicatorSize / 2;
+    const int indicatorX =
+        controlRect.center().x() - m_spec.indicatorSize / 2;
+
+    const int indicatorY =
+        controlRect.center().y() - m_spec.indicatorSize / 2;
 
     const QRect indicatorBounds(
         indicatorX,
@@ -158,10 +161,11 @@ void QtMaterialRadioButton::resolveLayoutIfNeeded() const
     m_cachedIndicatorRect = QRectF(indicatorBounds);
     m_cachedDotRect = centeredRect(m_cachedIndicatorRect, m_spec.dotSize);
 
-    m_cachedStateLayerRect = SelectionRenderHelper::centeredStateLayerRect(
-        indicatorBounds,
-        m_spec.stateLayerSize
-        );
+    m_cachedStateLayerRect =
+        SelectionRenderHelper::centeredStateLayerRect(
+            indicatorBounds,
+            m_spec.stateLayerSize
+            );
 
     m_cachedFocusRingRect = m_cachedStateLayerRect.adjusted(
         -3.0,
@@ -203,6 +207,7 @@ void QtMaterialRadioButton::resolveLayoutIfNeeded() const
         );
 
     const QFontMetrics metrics(labelFont);
+
     m_cachedElidedText = metrics.elidedText(
         text(),
         Qt::ElideRight,

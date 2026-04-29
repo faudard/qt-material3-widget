@@ -78,6 +78,7 @@ private slots:
 private:
     void syncFromButtonState() noexcept;
     void syncAndNotifyIfChanged() noexcept;
+    void syncAutomationState();
 
     QtMaterialInteractionState m_state;
     Density m_density;
