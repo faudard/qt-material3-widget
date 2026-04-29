@@ -1,4 +1,5 @@
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
+#include "qtmaterial/core/qtmaterialnavigationmodel.h"
 
 #include <QAction>
 #include <QApplication>
@@ -1193,6 +1194,102 @@ QString QtMaterialTabs::routePathFromUrl(const QUrl& url)
 QtMaterialTabsBar* QtMaterialTabs::materialTabBar() const
 {
     return qobject_cast<QtMaterialTabsBar*>(tabBar());
+}
+
+
+QtMaterialNavigationModel* QtMaterialTabs::navigationModel() const {
+    return m_navigationModel;
+}
+
+void QtMaterialTabs::setNavigationModel(QtMaterialNavigationModel* model) {
+    if (m_navigationModel == model) {
+        return;
+    }
+
+    if (m_navigationModel) {
+        disconnect(m_navigationModel, nullptr, this, nullptr);
+    }
+
+    m_navigationModel = model;
+
+    if (m_navigationModel) {
+        connect(m_navigationModel, &QtMaterialNavigationModel::selectedRouteChanged, this, [this](const QString& routePath) {
+            if (m_syncingNavigationModel || routePath.isEmpty()) {
+                return;
+            }
+            m_syncingNavigationModel = true;
+            navigateTo(routePath);
+            m_syncingNavigationModel = false;
+        });
+        connect(m_navigationModel, &QtMaterialNavigationModel::selectedIdChanged, this, [this](const QString& id) {
+            if (m_syncingNavigationModel || id.isEmpty()) {
+                return;
+            }
+            const int row = indexOfTabId(id);
+            if (row >= 0) {
+                m_syncingNavigationModel = true;
+                setCurrentIndex(row);
+                m_syncingNavigationModel = false;
+            }
+        });
+        syncNavigationModelFromTabs();
+    }
+
+    emit navigationModelChanged(m_navigationModel);
+}
+
+void QtMaterialTabs::syncNavigationModelFromTabs() {
+    if (!m_navigationModel || m_syncingNavigationModel) {
+        return;
+    }
+
+    QVector<QtMaterialNavigationItem> items;
+    items.reserve(count());
+    for (int i = 0; i < count(); ++i) {
+        QtMaterialNavigationItem item;
+        item.id = tabId(i);
+        if (item.id.isEmpty()) {
+            item.id = QString::number(i);
+        }
+        item.route = route(i).toString();
+        if (item.route.isEmpty()) {
+            item.route = item.id;
+        }
+        item.label = tabText(i);
+        item.icon = tabIcon(i);
+        item.testId = tabTestId(i);
+        item.enabled = isTabEnabled(i);
+        item.selected = (i == currentIndex());
+        items.push_back(item);
+    }
+
+    m_syncingNavigationModel = true;
+    m_navigationModel->setItems(items);
+    syncNavigationModelSelectionFromCurrentTab();
+    m_syncingNavigationModel = false;
+}
+
+void QtMaterialTabs::syncNavigationModelSelectionFromCurrentTab() {
+    if (!m_navigationModel || m_syncingNavigationModel) {
+        return;
+    }
+
+    const int index = currentIndex();
+    if (index < 0) {
+        return;
+    }
+
+    m_syncingNavigationModel = true;
+    const QString routePath = route(index).toString();
+    if (!routePath.isEmpty()) {
+        m_navigationModel->setSelectedRoute(routePath);
+    } else {
+        const QString id = tabId(index);
+        if (!id.isEmpty()) {
+            m_navigationModel->setSelectedId(id);
+        }
+    }
+    m_syncingNavigationModel = false;
 }
 
 } // namespace QtMaterial

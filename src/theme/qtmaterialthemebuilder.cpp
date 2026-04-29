@@ -2,6 +2,7 @@
 #include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 #include "qtmaterialmcuadapter_p.h"
 
+#include <QtGlobal>
 #include <QColor>
 #include <QDebug>
 #include <QFont>
@@ -31,14 +32,15 @@ QFont defaultFont(int pointSize, int weight = QFont::Normal)
 {
     QFont font;
     font.setPointSize(pointSize);
+
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    font.setWeight(weight);
+    font.setWeight(static_cast<QFont::Weight>(weight));
 #else
-    font.setWeight(static_cast<int>(weight));
+    font.setWeight(weight);
 #endif
+
     return font;
 }
-
 void applyFixedAccentRoles(ColorScheme& scheme, const QColor& seed, const QColor& secondary)
 {
     scheme.setColor(ColorRole::PrimaryFixed, tone(seed, 0.80));

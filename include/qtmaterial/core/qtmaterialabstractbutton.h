@@ -12,6 +12,7 @@ class QMouseEvent;
 #include "qtmaterial/core/qtmaterialeventcompat.h"
 #include "qtmaterial/core/qtmaterialdensity.h"
 #include "qtmaterial/core/qtmaterialinteractionstate.h"
+#include <QString>
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
@@ -25,6 +26,18 @@ public:
     explicit QtMaterialAbstractButton(QWidget* parent = nullptr);
     ~QtMaterialAbstractButton() override;
 
+    QString materialComponent() const;
+    QString materialVariant() const;
+    QString materialRole() const;
+    QString materialTestId() const;
+    QString materialState() const;
+
+    void setMaterialComponent(const QString& value);
+    void setMaterialVariant(const QString& value);
+    void setMaterialRole(const QString& value);
+    void setMaterialTestId(const QString& value);
+    void setMaterialState(const QString& value);
+
     Density density() const noexcept;
     void setDensity(Density density);
 
@@ -32,6 +45,9 @@ public:
     void setIcon(const QIcon& icon);
     void setCheckable(bool checkable);
     void setDown(bool down);
+
+signals:
+    void materialMetadataChanged();
 
 protected:
     const Theme& theme() const;

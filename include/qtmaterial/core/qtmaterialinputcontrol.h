@@ -1,17 +1,19 @@
 #pragma once
 
+#include <QRect>
 #include <QString>
-#include "qtmaterial/core/qtmaterialcontrol.h"
+
+#include "qtmaterial/core/qtmaterialformfieldcontrol.h"
 
 namespace QtMaterial {
 
-class QTMATERIAL3_CORE_EXPORT QtMaterialInputControl : public QtMaterialControl
-{
+class QTMATERIAL3_CORE_EXPORT QtMaterialInputControl : public QtMaterialFormFieldControl {
     Q_OBJECT
 public:
     explicit QtMaterialInputControl(QWidget* parent = nullptr);
     ~QtMaterialInputControl() override;
 
+    // Backward-compatible aliases kept for the existing input widgets API.
     QString labelText() const;
     void setLabelText(const QString& text);
 
@@ -25,16 +27,12 @@ public:
     void setHasErrorState(bool value);
 
 protected:
+    void formFieldChangedEvent() override;
     virtual void syncAccessibilityState();
     virtual void contentChangedEvent();
+
     QRect contentRect() const;
     QRect supportingTextRect() const;
-
-private:
-    QString m_labelText;
-    QString m_supportingText;
-    QString m_errorText;
-    bool m_hasErrorState = false;
 };
 
 } // namespace QtMaterial

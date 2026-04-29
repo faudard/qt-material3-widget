@@ -1,4 +1,5 @@
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
+#include "qtmaterial/core/qtmaterialautomation.h"
 
 #include <QFocusEvent>
 #include <QKeyEvent>
@@ -70,6 +71,61 @@ QtMaterialAbstractButton::QtMaterialAbstractButton(QWidget* parent)
 }
 
 QtMaterialAbstractButton::~QtMaterialAbstractButton() = default;
+
+
+QString QtMaterialAbstractButton::materialComponent() const {
+    return QtMaterialAutomation::component(this);
+}
+
+QString QtMaterialAbstractButton::materialVariant() const {
+    return QtMaterialAutomation::variant(this);
+}
+
+QString QtMaterialAbstractButton::materialRole() const {
+    return QtMaterialAutomation::role(this);
+}
+
+QString QtMaterialAbstractButton::materialTestId() const {
+    return QtMaterialAutomation::testId(this);
+}
+
+QString QtMaterialAbstractButton::materialState() const {
+    return QtMaterialAutomation::state(this);
+}
+
+void QtMaterialAbstractButton::setMaterialComponent(const QString& value) {
+    if (materialComponent() == value) return;
+    QtMaterialAutomation::setComponent(this, value);
+    emit materialMetadataChanged();
+}
+
+void QtMaterialAbstractButton::setMaterialVariant(const QString& value) {
+    if (materialVariant() == value) return;
+    QtMaterialAutomation::setVariant(this, value);
+    emit materialMetadataChanged();
+}
+
+void QtMaterialAbstractButton::setMaterialRole(const QString& value) {
+    if (materialRole() == value) return;
+    QtMaterialAutomation::setRole(this, value);
+    emit materialMetadataChanged();
+}
+
+void QtMaterialAbstractButton::setMaterialTestId(const QString& value) {
+    if (materialTestId() == value) return;
+    QtMaterialAutomation::setTestId(this, value);
+    emit materialMetadataChanged();
+}
+
+void QtMaterialAbstractButton::setMaterialState(const QString& value) {
+    if (materialState() == value) return;
+    QtMaterialAutomation::setState(this, value);
+    emit materialMetadataChanged();
+}
+
+void QtMaterialAbstractButton::syncAutomationState() {
+    QtMaterialAutomation::syncState(this, m_state);
+}
 
 Density QtMaterialAbstractButton::density() const noexcept
 {

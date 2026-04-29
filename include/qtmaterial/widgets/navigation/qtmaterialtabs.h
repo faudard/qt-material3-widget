@@ -10,6 +10,7 @@
 #include <QVector>
 
 #include "qtmaterial/qtmaterialglobal.h"
+#include "qtmaterial/core/qtmaterialnavigationmodel.h"
 #include "qtmaterial/specs/qtmaterialtabsspec.h"
 
 QT_BEGIN_NAMESPACE
@@ -52,6 +53,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTabs : public QTabWidget {
     Q_PROPERTY(bool useGlobalTheme READ usesGlobalTheme WRITE setUseGlobalTheme NOTIFY useGlobalThemeChanged)
     Q_PROPERTY(bool wrapNavigation READ wrapNavigation WRITE setWrapNavigation NOTIFY wrapNavigationChanged)
     Q_PROPERTY(bool lazyLoading READ lazyLoading WRITE setLazyLoading NOTIFY lazyLoadingChanged)
+    Q_PROPERTY(QtMaterial::QtMaterialNavigationModel* navigationModel READ navigationModel WRITE setNavigationModel NOTIFY navigationModelChanged)
 
 public:
     explicit QtMaterialTabs(QWidget* parent = nullptr);
@@ -119,6 +121,9 @@ public:
     QWidget* ensureTabLoaded(int index);
 
     void bindTo(QStackedWidget* stack);
+    QtMaterialNavigationModel* navigationModel() const;
+    void setNavigationModel(QtMaterialNavigationModel* model);
+
     void bindToController(QtMaterialNavigationController* controller);
     void unbindController(QtMaterialNavigationController* controller);
     void unbindAll();
@@ -147,6 +152,7 @@ signals:
 
     void stackBindingChanged(QStackedWidget* stack);
     void controllerBindingChanged(QtMaterialNavigationController* controller, bool bound);
+    void navigationModelChanged(QtMaterial::QtMaterialNavigationModel* model);
 
 protected:
     void changeEvent(QEvent* event) override;
@@ -175,6 +181,8 @@ private:
     void updateAutomationMetadata(int index);
     void updateAllAutomationMetadata();
     void syncControllersFromCurrentIndex(int index);
+    void syncNavigationModelFromTabs();
+    void syncNavigationModelSelectionFromCurrentTab();
     void syncCurrentIndexFromController(int index);
     static QString normalizeRoutePath(const QString& routePath);
     static QString routePathFromUrl(const QUrl& url);
@@ -185,8 +193,10 @@ private:
     QVector<TabDescriptor> m_descriptors;
     QVector<QPointer<QtMaterialNavigationController>> m_boundControllers;
     QPointer<QStackedWidget> m_boundStack;
+    QPointer<QtMaterialNavigationModel> m_navigationModel;
     bool m_lazyLoading = false;
     bool m_syncingExternal = false;
+    bool m_syncingNavigationModel = false;
 };
 
 } // namespace QtMaterial
