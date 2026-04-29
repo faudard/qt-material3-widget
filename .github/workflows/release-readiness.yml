@@ -1,46 +1,122 @@
 name: release-readiness
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ main, master ]
-  pull_request:
+    tags:
+      - "v*"
+  schedule:
+    # Nightly, 03:00 UTC every Monday.
+    - cron: "0 3 * * 1"
+
+concurrency:
+  group: release-readiness-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  ubuntu-qt6:
+  linux:
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu-qt6-release
+            qt_major: 6
+            cmake_extra_args: >-
+              -DQTMATERIAL3_USE_MCU=OFF
+
+          - name: ubuntu-qt5-compat
+            qt_major: 5
+            cmake_extra_args: >-
+              -DQTMATERIAL3_USE_MCU=OFF
+
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+      CTEST_OUTPUT_ON_FAILURE: 1
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install common dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            ninja-build \
+            g++ \
+            xvfb
+
       - name: Install Qt 6 dependencies
+        if: matrix.qt_major == 6
         run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake ninja-build g++ qt6-base-dev qt6-base-dev-tools xvfb
-      - name: Configure
-        run: cmake -S . -B build -G Ninja -DQTMATERIAL3_BUILD_TESTS=ON -DQTMATERIAL3_BUILD_EXAMPLES=ON -DQTMATERIAL3_USE_MCU=OFF  -DCMAKE_BUILD_TYPE=Release
-      - name: Build
-        run: cmake --build build --parallel
-      - name: Test
-        run: xvfb-run -a ctest --test-dir build --output-on-failure
+          sudo apt-get install -y \
+            qt6-base-dev \
+            qt6-base-dev-tools
 
-  ubuntu-qt5:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
       - name: Install Qt 5 dependencies
+        if: matrix.qt_major == 5
         run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake ninja-build g++ qtbase5-dev qtbase5-dev-tools xvfb
+          sudo apt-get install -y \
+            qtbase5-dev \
+            qtbase5-dev-tools
 
       - name: Configure
-        run: >
-          cmake -S . -B build -G Ninja  -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_BUILD_TYPE=Release
-          -DQTMATERIAL3_BUILD_TESTS=ON
-          -DQTMATERIAL3_BUILD_EXAMPLES=ON
-          -DQTMATERIAL3_USE_MCU=OFF
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQTMATERIAL3_BUILD_TESTS=ON \
+            -DQTMATERIAL3_BUILD_EXAMPLES=ON \
+            -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=ON \
+            -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=ON \
+            -DQTMATERIAL3_BUILD_BENCHMARKS=OFF \
+            ${{ matrix.cmake_extra_args }}
 
       - name: Build
-        run: cmake --build build --parallel
+        run: cmake --build build --config Release --parallel
 
       - name: Test
-        run: xvfb-run -a ctest --test-dir build --output-on-failure
+        run: |
+          xvfb-run -a ctest \
+            --test-dir build \
+            --build-config Release \
+            --output-on-failure
+
+      - name: Install package
+        run: |
+          cmake --install build --config Release --prefix "$PWD/install"
+
+      - name: Validate installed package consumer
+        run: |
+          if [ -x scripts/validate-install-consumer.sh ]; then
+            bash scripts/validate-install-consumer.sh
+          else
+            cmake -S examples/install-consumer -B consumer-build -G Ninja \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_PREFIX_PATH="$PWD/install"
+
+            cmake --build consumer-build --config Release --parallel
+          fi
+
+      - name: Upload install tree
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: install-tree-${{ matrix.name }}
+          path: install
+          if-no-files-found: ignore
+
+      - name: Upload CTest logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ctest-logs-${{ matrix.name }}
+          path: |
+            build/Testing/Temporary/LastTest.log
+            build/Testing/Temporary/LastTestsFailed.log
+          if-no-files-found: ignore

@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -24,11 +24,6 @@ jobs:
             qt-version: "6.7.3"
             use-mcu: "OFF"
 
-          - name: ubuntu-qt6-mcu-requested
-            os: ubuntu-latest
-            qt-version: "6.7.3"
-            use-mcu: "ON"
-
           - name: windows-qt6
             os: windows-latest
             qt-version: "6.7.3"
@@ -44,8 +39,7 @@ jobs:
       QT_QPA_PLATFORM: offscreen
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install Linux runtime packages
         if: runner.os == 'Linux'
@@ -63,6 +57,8 @@ jobs:
           -DCMAKE_BUILD_TYPE=Release
           -DQTMATERIAL3_BUILD_TESTS=ON
           -DQTMATERIAL3_BUILD_EXAMPLES=ON
+          -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=${{ matrix.name == 'ubuntu-qt6' && 'ON' || 'OFF' }}
+          -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=${{ matrix.name == 'ubuntu-qt6' && 'ON' || 'OFF' }}
           -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
           -DQTMATERIAL3_USE_MCU=${{ matrix.use-mcu }}
 
@@ -78,16 +74,6 @@ jobs:
             ctest --test-dir build --build-config Release --output-on-failure
           fi
 
-      - name: Install package
-        run: cmake --install build --prefix "$PWD/install"
-
-      - name: Configure installed consumer
-        run: >
-          cmake -S examples/install-consumer
-          -B consumer-build
-          -G Ninja
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_PREFIX_PATH="$PWD/install"
-
-      - name: Build installed consumer
-        run: cmake --build consumer-build --config Release
+      - name: Validate install/export consumer
+        if: matrix.name == 'ubuntu-qt6'
+        run: bash scripts/validate-install-consumer.sh
