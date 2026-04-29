@@ -24,8 +24,8 @@ jobs:
         include:
           - name: ubuntu-qt6
             os: ubuntu-latest
-            qt-version: "6.7.3"
-            qt-arch: gcc_64
+            qt-version: "system"
+            qt-arch: ""
             use-mcu: "OFF"
             build-extra-examples: "ON"
 
@@ -73,6 +73,7 @@ jobs:
           arch: x64
 
       - name: Install Qt
+        if: runner.os != 'Linux'
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ matrix.qt-version }}

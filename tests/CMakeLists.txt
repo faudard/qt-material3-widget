@@ -155,3 +155,10 @@ qtm3_add_test(tst_navigationmodel core/tst_navigationmodel.cpp qtmaterial3_core)
 qtm3_add_test(tst_formfieldcontrol core/tst_formfieldcontrol.cpp qtmaterial3_core)
 qtm3_add_test(tst_paletteadapter core/tst_paletteadapter.cpp qtmaterial3_core qtmaterial3_theme)
 qtm3_add_test(tst_widget_migration_contracts widgets/tst_widget_migration_contracts.cpp qtmaterial3_widgets qtmaterial3_core)
+
+qtm3_add_test(
+    tst_navigation_dialog_hidpi_contracts
+    accessibility/tst_navigation_dialog_hidpi_contracts.cpp
+    qtmaterial3_widgets
+    qtmaterial3_core
+)

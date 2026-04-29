@@ -10,9 +10,15 @@ private slots:
 void tst_TransitionController::emitsProgressChanged()
 {
     QtMaterial::QtMaterialTransitionController controller;
+    controller.setDuration(0);
+
     QSignalSpy spy(&controller, &QtMaterial::QtMaterialTransitionController::progressChanged);
+    QVERIFY(spy.isValid());
+
     controller.startForward();
-    QVERIFY(spy.count() >= 1);
+
+    QTRY_VERIFY_WITH_TIMEOUT(spy.count() >= 1, 1000);
+    QCOMPARE(controller.progress(), 1.0);
 }
 QTEST_MAIN(tst_TransitionController)
 #include "tst_transitioncontroller.moc"

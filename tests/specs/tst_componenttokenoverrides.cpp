@@ -95,6 +95,7 @@ void ComponentTokenOverridesTest::surfaceOverridesApplyToCardAndDialog()
 
     ComponentTokenOverride surface;
     surface.colors.insert(ColorRole::OnSurface, QColor(QStringLiteral("#111111")));
+    surface.colors.insert(ColorRole::OnSurfaceVariant, QColor(QStringLiteral("#222222")));
     theme.componentOverrides().setOverride(QStringLiteral("surface"), surface);
 
     ComponentTokenOverride card;
@@ -117,7 +118,7 @@ void ComponentTokenOverridesTest::surfaceOverridesApplyToCardAndDialog()
     theme.componentOverrides().setOverride(QStringLiteral("dialog"), dialog);
 
     const DialogSpec dialogSpec = SpecFactory().dialogSpec(theme);
-    QCOMPARE(dialogSpec.bodyColor, QColor(QStringLiteral("#111111")));
+    QCOMPARE(dialogSpec.bodyColor, QColor(QStringLiteral("#222222")));
     QCOMPARE(dialogSpec.maxWidth, 640);
     QCOMPARE(dialogSpec.padding, 32);
     QCOMPARE(dialogSpec.enterMotion, MotionToken::Medium3);

@@ -20,4 +20,6 @@ sudo apt-get install -y \
   libxcb-shape0 \
   libxcb-xfixes0 \
   libxcb-xinerama0 \
-  openbox
+  openbox \
+  qt6-base-dev \
+  qt6-base-dev-tools
