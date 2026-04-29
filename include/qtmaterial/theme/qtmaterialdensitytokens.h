@@ -2,6 +2,7 @@
 
 #include <QHash>
 #include <QtGlobal>
+
 #include <type_traits>
 
 #include "qtmaterial/qtmaterialglobal.h"
@@ -28,10 +29,22 @@ private:
     QHash<DensityRole, int> m_values;
 };
 
-} // namespace QtMaterial
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 
-inline size_t qHash(QtMaterial::DensityRole value, size_t seed = 0) noexcept
+inline size_t qHash(DensityRole value, size_t seed = 0) noexcept
 {
-    using Underlying = std::underlying_type_t<QtMaterial::DensityRole>;
-    return qHash(static_cast<Underlying>(value), seed);
+    using Underlying = typename std::underlying_type<DensityRole>::type;
+    return ::qHash(static_cast<Underlying>(value), seed);
 }
+
+#else
+
+inline uint qHash(DensityRole value, uint seed = 0) noexcept
+{
+    using Underlying = typename std::underlying_type<DensityRole>::type;
+    return ::qHash(static_cast<Underlying>(value), seed);
+}
+
+#endif
+
+} // namespace QtMaterial

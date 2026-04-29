@@ -4,11 +4,11 @@ This guide is for application developers consuming `qt-material3-widget`.
 
 Use this page when you need to:
 
-- generate a theme from a seed color
-- switch light and dark mode at runtime
-- serialize a theme to JSON
-- restore a theme from JSON or from a file
-- understand which type to use for each theming workflow
+- generate a theme from a seed color;
+- switch light and dark mode at runtime;
+- serialize a theme to JSON;
+- restore a theme from JSON or from a file;
+- understand which type to use for each theming workflow.
 
 For exact member signatures, continue to the generated [C++ API reference](../api/index.md).
 
@@ -16,29 +16,33 @@ For exact member signatures, continue to the generated [C++ API reference](../ap
 
 The theming layer is split into four roles:
 
-- `QtMaterial::ThemeOptions` describes **how a theme should be built**
-- `QtMaterial::ThemeBuilder` constructs a **resolved `Theme`** (and, in branches that include the seed-scheme extension, direct `ColorScheme` values from a seed)
-- `QtMaterial::ThemeSerializer` converts a resolved `Theme` to and from JSON
-- `QtMaterial::ThemeManager` owns the **active runtime theme** used by the application
+- `QtMaterial::ThemeOptions` describes the build inputs for a theme;
+- `QtMaterial::ThemeBuilder` constructs a resolved `QtMaterial::Theme`;
+- `QtMaterial::ThemeSerializer` converts a resolved theme to and from JSON;
+- `QtMaterial::ThemeManager` owns the active runtime theme used by the application.
 
 In practice:
 
-- use `ThemeBuilder` for deterministic construction
-- use `ThemeSerializer` for persistence and transport
-- use `ThemeManager` for app-wide runtime state
+- use `ThemeBuilder` for deterministic construction;
+- use `ThemeSerializer` for persistence and transport;
+- use `ThemeManager` for application-wide runtime state.
+
+`ThemeOptions::mode` is the resolved mode consumed by `ThemeBuilder`. It is always either `ThemeMode::Light` or `ThemeMode::Dark`.
+
+`ThemeOptions::preference` is the user-facing preference. It may be `ThemePreference::FollowSystem`, but that preference must be resolved to a concrete `ThemeMode` before the final theme is built.
 
 ## Include style
 
 Prefer installed public headers:
 
 ```cpp
-#include <qtmaterial/theme/qtmaterialtheme.h>
 #include <qtmaterial/theme/qtmaterialthemebuilder.h>
 #include <qtmaterial/theme/qtmaterialthememanager.h>
 #include <qtmaterial/theme/qtmaterialthemeserializer.h>
+#include <qtmaterial/theme/qtmaterialthemeoptions.h>
 ```
 
-## 1. Build a theme from options
+## Build a theme from options
 
 Use `ThemeOptions` when you want an explicit, reproducible build configuration.
 
@@ -48,6 +52,7 @@ Use `ThemeOptions` when you want an explicit, reproducible build configuration.
 
 #include <qtmaterial/theme/qtmaterialthemebuilder.h>
 #include <qtmaterial/theme/qtmaterialthememanager.h>
+#include <qtmaterial/theme/qtmaterialthemeoptions.h>
 
 int main(int argc, char** argv)
 {
@@ -56,9 +61,10 @@ int main(int argc, char** argv)
     QtMaterial::ThemeOptions options;
     options.sourceColor = QColor("#6750A4");
     options.mode = QtMaterial::ThemeMode::Light;
+    options.preference = QtMaterial::ThemePreference::Light;
     options.contrast = QtMaterial::ContrastMode::Standard;
     options.variant = QtMaterial::ThemeVariant::TonalSpot;
-    options.colorBackendPolicy = true;
+    options.backendPolicy = QtMaterial::ColorBackendPolicy::Auto;
 
     const QtMaterial::Theme theme = QtMaterial::ThemeBuilder{}.build(options);
     QtMaterial::ThemeManager::instance().setTheme(theme);
@@ -67,9 +73,38 @@ int main(int argc, char** argv)
 }
 ```
 
-Use this path when your app stores user-facing theme settings such as mode, seed color, contrast, or variant mode.
+Use this path when your application stores user-facing theme settings such as seed color, light/dark preference, contrast, variant, or backend policy.
 
-## 2. Build directly from a seed color
+## Theme variants
+
+`ThemeVariant` controls the dynamic color variant used when a seed color generates a scheme.
+
+```cpp
+options.variant = QtMaterial::ThemeVariant::TonalSpot;
+options.variant = QtMaterial::ThemeVariant::Expressive;
+```
+
+Use `TonalSpot` as the stable default. Use `Expressive` when the application intentionally wants a stronger Material dynamic-color personality.
+
+## Color backend policy
+
+`ColorBackendPolicy` controls how the color-generation backend is selected.
+
+```cpp
+options.backendPolicy = QtMaterial::ColorBackendPolicy::Auto;
+options.backendPolicy = QtMaterial::ColorBackendPolicy::PreferMaterialColorUtilities;
+options.backendPolicy = QtMaterial::ColorBackendPolicy::ForceMaterialColorUtilities;
+options.backendPolicy = QtMaterial::ColorBackendPolicy::ForceFallback;
+```
+
+Recommended defaults:
+
+- `Auto` for most applications;
+- `PreferMaterialColorUtilities` when you want the Material Color Utilities backend when available, but can accept the fallback backend;
+- `ForceMaterialColorUtilities` for tooling or tests that must fail if the backend is unavailable;
+- `ForceFallback` for deterministic fallback snapshots or for builds that intentionally avoid Material Color Utilities.
+
+## Build directly from a seed color
 
 When the application only needs a light or dark theme from a seed color, the convenience seed APIs are the shortest path.
 
@@ -88,9 +123,9 @@ const QtMaterial::Theme darkTheme = builder.buildDarkFromSeed(QColor("#6750A4"))
 QtMaterial::ThemeManager::instance().setTheme(darkTheme);
 ```
 
-This is a good fit for theme pickers, demos, onboarding flows, and apps that do not need to expose every theme option explicitly.
+This is a good fit for theme pickers, demos, onboarding flows, and applications that do not need to expose every theme option explicitly.
 
-## 3. Generate a `ColorScheme` directly from a seed
+## Generate a `ColorScheme` directly from a seed
 
 `ThemeBuilder` can also produce a `ColorScheme` directly without first moving a full `Theme` through the manager.
 
@@ -110,11 +145,9 @@ const QtMaterial::ColorScheme darkScheme =
 
 Use direct scheme generation when you need resolved Material color roles for custom painting, previews, screenshots, or offline processing.
 
-If your branch does not expose these methods yet, build a full theme and read the scheme from `theme.colorScheme` instead.
+## Apply a seed color at runtime
 
-## 4. Apply a seed color at runtime
-
-`ThemeManager` is the best entry point when the app has a single active theme and the user changes the seed at runtime.
+`ThemeManager` is the best entry point when the application has a single active theme and the user changes the seed color at runtime.
 
 ```cpp
 #include <QColor>
@@ -123,16 +156,16 @@ If your branch does not expose these methods yet, build a full theme and read th
 
 QtMaterial::ThemeManager& manager = QtMaterial::ThemeManager::instance();
 
-// Rebuild using the current mode from manager.options()
+// Rebuild using the current mode from manager.options().
 manager.applySeedColor(QColor("#00639B"));
 
-// Or force a specific mode
+// Or force a specific resolved mode.
 manager.applySeedColor(QColor("#00639B"), QtMaterial::ThemeMode::Dark);
 ```
 
-This is the recommended consumer-facing API for a settings screen or a live theme playground.
+This is the recommended consumer-facing API for a settings screen or live theme playground.
 
-## 5. Export the active theme to JSON
+## Export the active theme to JSON
 
 Use `ThemeManager` when you want to export the current runtime theme directly.
 
@@ -149,18 +182,22 @@ const QByteArray json = QtMaterial::ThemeManager::instance().exportThemeJson(
 Write to disk directly:
 
 ```cpp
+#include <QDebug>
+
 QString error;
 const bool ok = QtMaterial::ThemeManager::instance().exportThemeToFile(
-    "theme.json", &error, QJsonDocument::Indented);
+    "theme.json",
+    &error,
+    QJsonDocument::Indented);
 
 if (!ok) {
     qWarning() << "Failed to export theme:" << error;
 }
 ```
 
-Use the manager export functions when you want to persist the exact active runtime theme, not just the source options.
+Use the manager export functions when you want to persist the exact active runtime theme, not only the source options.
 
-## 6. Import a theme from JSON
+## Import a theme from JSON
 
 To restore a previously exported theme, import JSON through `ThemeManager`.
 
@@ -172,15 +209,68 @@ To restore a previously exported theme, import JSON through `ThemeManager`.
 
 const QByteArray json = R"json(
 {
-  "formatVersion": 1
+  "formatVersion": 1,
+  "source": {
+    "seedColor": "#6750A4FF",
+    "mode": "Light",
+    "preference": "Light",
+    "contrast": "Standard",
+    "variant": "TonalSpot",
+    "colorBackendPolicy": "Auto"
+  },
+  "resolved": {
+    "colorScheme": {},
+    "typographyScale": {},
+    "shapeScale": {},
+    "elevationScale": {},
+    "motionTokens": {},
+    "stateLayer": {
+      "color": "#000000FF",
+      "hoverOpacity": 0.08,
+      "focusOpacity": 0.12,
+      "pressOpacity": 0.12,
+      "dragOpacity": 0.16
+    },
+    "accessibility": {
+      "highContrast": false,
+      "reducedMotion": false,
+      "minimumTextContrastRatio": 4.5,
+      "minimumUiContrastRatio": 3.0,
+      "focusRing": {
+        "width": 2,
+        "offset": 2,
+        "radiusAdjustment": 0,
+        "color": "#6750A4FF",
+        "opacity": 1.0
+      }
+    },
+    "interactions": {
+      "keyboardFocusVisible": true,
+      "strongFocusIndicators": false,
+      "hoverFeedbackEnabled": true,
+      "pressFeedbackEnabled": true,
+      "dragFeedbackEnabled": true
+    },
+    "density": {},
+    "iconSizes": {},
+    "componentOverrides": {}
+  },
+  "metadata": {
+    "generatorVersion": "qt-material3-widget",
+    "libraryVersion": "0.1.0",
+    "qtVersion": "6.x"
+  }
 }
 )json";
 
 QString error;
-const bool ok = QtMaterial::ThemeManager::instance().importThemeJson(json, &error);
+const bool ok = QtMaterial::ThemeManager::instance().importThemeJson(
+    json,
+    &error,
+    QtMaterial::ThemeReadMode::Strict);
 
 if (!ok) {
-    qWarning() << "Failed to import theme:" << error;
+    qWarning() << "Failed to import theme JSON:" << error;
 }
 ```
 
@@ -189,7 +279,9 @@ Or from a file:
 ```cpp
 QString error;
 const bool ok = QtMaterial::ThemeManager::instance().importThemeFromFile(
-    "theme.json", &error);
+    "theme.json",
+    &error,
+    QtMaterial::ThemeReadMode::Lenient);
 
 if (!ok) {
     qWarning() << "Failed to import theme file:" << error;
@@ -198,13 +290,15 @@ if (!ok) {
 
 After a successful import, consumers should treat the imported `Theme` as the new active runtime theme.
 
-## 7. Use `ThemeSerializer` directly
+## Use `ThemeSerializer` directly
 
 Use `ThemeSerializer` when you need serialization outside the singleton manager, for example in tests, tooling, batch conversion, or custom storage flows.
 
 ### Serialize a resolved theme
 
 ```cpp
+#include <QByteArray>
+#include <QColor>
 #include <QJsonDocument>
 
 #include <qtmaterial/theme/qtmaterialthemebuilder.h>
@@ -214,13 +308,13 @@ QtMaterial::ThemeBuilder builder;
 const QtMaterial::Theme theme = builder.buildLightFromSeed(QColor("#6750A4"));
 
 const QByteArray json = QtMaterial::ThemeSerializer::toJson(
-    theme, QJsonDocument::Indented);
+    theme,
+    QJsonDocument::Indented);
 ```
 
 ### Deserialize a resolved theme
 
 ```cpp
-#include <QByteArray>
 #include <QDebug>
 
 #include <qtmaterial/theme/qtmaterialthemeserializer.h>
@@ -228,8 +322,11 @@ const QByteArray json = QtMaterial::ThemeSerializer::toJson(
 QString error;
 bool ok = false;
 
-const QtMaterial::Theme theme =
-    QtMaterial::ThemeSerializer::fromJson(json, &ok, &error);
+const QtMaterial::Theme theme = QtMaterial::ThemeSerializer::fromJson(
+    json,
+    QtMaterial::ThemeReadMode::Strict,
+    &ok,
+    &error);
 
 if (!ok) {
     qWarning() << "Failed to parse theme JSON:" << error;
@@ -244,9 +341,10 @@ if (!ok) {
 #include <qtmaterial/theme/qtmaterialthemeserializer.h>
 
 QString error;
-
 const bool writeOk = QtMaterial::ThemeSerializer::writeToFile(
-    theme, "theme.json", &error);
+    theme,
+    "theme.json",
+    &error);
 
 if (!writeOk) {
     qWarning() << "Failed to write theme:" << error;
@@ -254,23 +352,27 @@ if (!writeOk) {
 
 QtMaterial::Theme restoredTheme;
 const bool readOk = QtMaterial::ThemeSerializer::readFromFile(
-    "theme.json", &restoredTheme, &error);
+    "theme.json",
+    &restoredTheme,
+    QtMaterial::ThemeReadMode::Strict,
+    &error);
 
 if (!readOk) {
     qWarning() << "Failed to read theme:" << error;
 }
 ```
 
-## 8. Typical consumer workflows
+## Typical consumer workflows
 
 ### Settings screen with theme persistence
 
 A common application flow is:
 
-1. user chooses a seed color and mode
-2. app calls `ThemeManager::applySeedColor(...)`
-3. app exports the active theme to JSON on save
-4. app imports that JSON at the next launch
+1. the user chooses a seed color, light/dark preference, contrast, and variant;
+2. the application resolves `ThemePreference::FollowSystem` to `ThemeMode::Light` or `ThemeMode::Dark`;
+3. the application builds or rebuilds the theme through `ThemeBuilder` or `ThemeManager`;
+4. the application exports the active theme to JSON on save;
+5. the application imports that JSON at the next launch.
 
 This keeps the runtime path simple while preserving the full resolved theme.
 
@@ -278,41 +380,46 @@ This keeps the runtime path simple while preserving the full resolved theme.
 
 For previews and screenshots:
 
-1. use `ThemeBuilder` to generate several candidate themes from different seeds
-2. optionally extract only `ColorScheme` for custom preview widgets
-3. promote the selected theme into `ThemeManager` only when the user confirms
+1. use `ThemeBuilder` to generate candidate themes from different seeds;
+2. optionally extract only `ColorScheme` for custom preview widgets;
+3. promote the selected theme into `ThemeManager` only when the user confirms.
 
 ### Tooling or tests
 
 For tests and offline utilities:
 
-1. construct a `Theme` with `ThemeBuilder`
-2. serialize it with `ThemeSerializer`
-3. deserialize it back
-4. compare the token groups that matter to your workflow
+1. construct a `Theme` with `ThemeBuilder`;
+2. serialize it with `ThemeSerializer`;
+3. deserialize it back;
+4. compare the token groups that matter to your workflow.
 
-## 9. Recommended ownership rules
+## Recommended ownership rules
 
 Prefer these rules in application code:
 
-- UI code that needs the active theme should read from `ThemeManager`
-- code that builds themes should use `ThemeBuilder`
-- code that saves or loads themes should use `ThemeSerializer` or the corresponding `ThemeManager` helpers
-- avoid ad hoc JSON formats for theme persistence when the library already provides one
+- UI code that needs the active theme should read from `ThemeManager`;
+- code that builds themes should use `ThemeBuilder`;
+- code that saves or loads themes should use `ThemeSerializer` or the corresponding `ThemeManager` helpers;
+- avoid ad hoc JSON formats for theme persistence when the library already provides one.
 
 This keeps theme construction, runtime state, and persistence clearly separated.
 
-## 10. Error-handling guidance
+## Error-handling guidance
 
 When using file or JSON import APIs:
 
-- surface `errorString` in logs or UI
-- treat imported themes as untrusted input
-- keep a fallback path, such as rebuilding from `ThemeOptions` or from a default seed color
+- surface `errorString` in logs or UI;
+- treat imported themes as untrusted input;
+- prefer `ThemeReadMode::Strict` for user-provided files or tests;
+- use `ThemeReadMode::Lenient` only when forward-compatible extra data should be tolerated;
+- keep a fallback path, such as rebuilding from `ThemeOptions` or from a default seed color.
 
 Example fallback:
 
 ```cpp
+#include <QColor>
+#include <QDebug>
+
 QString error;
 if (!QtMaterial::ThemeManager::instance().importThemeFromFile("theme.json", &error)) {
     qWarning() << "Import failed, falling back to default theme:" << error;
@@ -320,37 +427,32 @@ if (!QtMaterial::ThemeManager::instance().importThemeFromFile("theme.json", &err
 }
 ```
 
-## 11. Relationship between options, theme, and JSON
+## Relationship between options, theme, and JSON
 
-It is useful to keep the type boundaries explicit:
+Keep the type boundaries explicit:
 
-- `ThemeOptions` are compact build inputs
-- `Theme` is the fully resolved output
-- exported JSON should represent the resolved theme, not only the original options
+- `ThemeOptions` are compact build inputs;
+- `Theme` is the fully resolved output;
+- exported JSON represents the resolved theme plus the source inputs and metadata.
 
-That distinction matters because a resolved theme can carry concrete token values that are not recoverable from a reduced options-only payload.
-
-
+That distinction matters because a resolved theme carries concrete token values that are not recoverable from a reduced options-only payload.
 
 ## JSON schema contract
 
-The repository ships versioned schemas for exported theme JSON:
+The repository ships one current pre-release theme schema:
 
-- `docs/schema/theme.schema.json` documents the legacy v1 shape.
-- `docs/schema/theme.schema.json` documents the current resolved-theme export shape used by `ThemeSerializer::kCurrentFormatVersion`.
+```text
+docs/schema/theme.schema.json
+```
 
-Consumers should prefer v2 for new files. Keep v1 readable for compatibility and use `ThemeReadMode::Strict` when accepting user-provided theme files that may have been exported by older builds.
-## 12. See also
+The schema documents the current `ThemeSerializer::kCurrentFormatVersion`, which is `1` for the first official theme JSON contract.
 
+There are no public legacy `v1`/`v2` migration promises yet. Until the first official release, breaking changes to this pre-release schema may still happen. After release, schema compatibility rules should be documented in the release notes.
+
+## See also
+
+- [Theme JSON schema](theme-json-schema.md)
 - [Public API guide](index.md)
 - [C++ API reference](../api/index.md)
 - `examples/theme-playground` for an interactive consumer example
 - Material 3 references in [the documentation root](../index.md)
-
-## Suggested next documentation improvements
-
-The next most useful follow-ups would be:
-
-- keep the JSON schema note synchronized with `docs/schema/theme.schema.json` and `docs/schema/theme.schema.json`
-- add a migration note for apps moving from option-only persistence to full theme export
-- add a widget-author page explaining how widgets should consume resolved theme roles instead of inventing local theme keys
