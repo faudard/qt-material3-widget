@@ -121,22 +121,74 @@ void QtMaterialRadioButton::invalidateLayoutCache()
 void QtMaterialRadioButton::resolveLayoutIfNeeded() const
 {
     const_cast<QtMaterialRadioButton*>(this)->resolveSpecIfNeeded();
+
     if (!m_layoutDirty) {
         return;
     }
 
     const QRect bounds = rect();
-    const QRect indicatorBounds(0,
-                                (bounds.height() - m_spec.indicatorSize) / 2,
-                                m_spec.indicatorSize,
-                                m_spec.indicatorSize);
+
+    const int controlWidth = qMin(
+        bounds.width(),
+        qMax(m_spec.touchTarget.width(), m_spec.indicatorSize)
+        );
+
+    const int controlHeight = qMin(
+        bounds.height(),
+        qMax(m_spec.touchTarget.height(), m_spec.indicatorSize)
+        );
+
+    const bool rtl = layoutDirection() == Qt::RightToLeft;
+
+    const int controlX = rtl ? qMax(0, bounds.width() - controlWidth) : 0;
+    const int controlY = qMax(0, (bounds.height() - controlHeight) / 2);
+
+    const QRect controlRect(controlX, controlY, controlWidth, controlHeight);
+
+    const int indicatorX = controlRect.center().x() - m_spec.indicatorSize / 2;
+    const int indicatorY = controlRect.center().y() - m_spec.indicatorSize / 2;
+
+    const QRect indicatorBounds(
+        indicatorX,
+        indicatorY,
+        m_spec.indicatorSize,
+        m_spec.indicatorSize
+        );
 
     m_cachedIndicatorRect = QRectF(indicatorBounds);
     m_cachedDotRect = centeredRect(m_cachedIndicatorRect, m_spec.dotSize);
-    m_cachedStateLayerRect = SelectionRenderHelper::centeredStateLayerRect(indicatorBounds, m_spec.touchTarget.height());
-    m_cachedFocusRingRect = m_cachedIndicatorRect.adjusted(-3.0, -3.0, 3.0, 3.0);
-    m_cachedLabelRect = QRect(indicatorBounds.right() + 1 + spacing(), 0,
-                              qMax(0, width() - indicatorBounds.width() - spacing() - 1), height());
+
+    m_cachedStateLayerRect = SelectionRenderHelper::centeredStateLayerRect(
+        indicatorBounds,
+        m_spec.stateLayerSize
+        );
+
+    m_cachedFocusRingRect = m_cachedStateLayerRect.adjusted(
+        -3.0,
+        -3.0,
+        3.0,
+        3.0
+        );
+
+    const int gap = text().isEmpty() ? 0 : spacing();
+
+    if (rtl) {
+        m_cachedLabelRect = QRect(
+            0,
+            0,
+            qMax(0, controlRect.left() - gap),
+            height()
+            );
+    } else {
+        const int labelX = controlRect.right() + 1 + gap;
+
+        m_cachedLabelRect = QRect(
+            labelX,
+            0,
+            qMax(0, width() - labelX),
+            height()
+            );
+    }
 
     m_cachedIndicatorPath = QPainterPath();
     m_cachedIndicatorPath.addEllipse(m_cachedIndicatorRect);
@@ -144,9 +196,18 @@ void QtMaterialRadioButton::resolveLayoutIfNeeded() const
     m_cachedRippleClipPath = QPainterPath();
     m_cachedRippleClipPath.addEllipse(m_cachedStateLayerRect);
 
-    const QFont labelFont = SelectionRenderHelper::labelFont(theme(), m_spec.labelTypeRole, font());
+    const QFont labelFont = SelectionRenderHelper::labelFont(
+        theme(),
+        m_spec.labelTypeRole,
+        font()
+        );
+
     const QFontMetrics metrics(labelFont);
-    m_cachedElidedText = metrics.elidedText(text(), Qt::ElideRight, m_cachedLabelRect.width());
+    m_cachedElidedText = metrics.elidedText(
+        text(),
+        Qt::ElideRight,
+        m_cachedLabelRect.width()
+        );
 
     m_layoutDirty = false;
 }

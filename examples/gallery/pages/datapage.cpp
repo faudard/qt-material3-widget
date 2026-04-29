@@ -33,7 +33,9 @@ DataPage::DataPage(QWidget* parent)
     layout->addWidget(table);
 
     auto* gridList = new QtMaterial::QtMaterialGridList(this);
-    gridList->setMinimumHeight(72);
+    gridList->setMinimumHeight(160);
+    gridList->setMaximumHeight(280);
+    gridList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     layout->addWidget(gridList);
 
     auto* carousel = new QtMaterial::QtMaterialCarousel(this);

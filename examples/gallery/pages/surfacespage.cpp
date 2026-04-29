@@ -23,7 +23,6 @@ SurfacesPage::SurfacesPage(QWidget* parent) : QWidget(parent)
     layout->addWidget(dialog);
     layout->addWidget(banner);
     layout->addWidget(card);
-    layout->addStretch(1);
 
     auto* snackbarButton = new QPushButton(QStringLiteral("Show snackbar"), this);
     auto* snackbar = new QtMaterial::QtMaterialSnackbar(this);
@@ -39,6 +38,8 @@ SurfacesPage::SurfacesPage(QWidget* parent) : QWidget(parent)
         snackbar->showSnackbar();
     });
 
+
     layout->addWidget(snackbarButton);
+    layout->addStretch(1);
 
 }

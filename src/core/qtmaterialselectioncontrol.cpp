@@ -6,6 +6,7 @@
 namespace {
 
 constexpr int kIndicatorSize = 18;
+constexpr int kTouchTargetSize = 48;
 constexpr int kHorizontalPadding = 16;
 constexpr int kMinimumControlHeight = 48;
 
@@ -59,18 +60,26 @@ void QtMaterialSelectionControl::setSpacing(int spacing)
 
 QRect QtMaterialSelectionControl::indicatorRect() const
 {
-    const int y = (height() - kIndicatorSize) / 2;
-    const bool rtl = (layoutDirection() == Qt::RightToLeft);
-    const int x = rtl ? qMax(0, width() - kIndicatorSize) : 0;
+    const int touchWidth = qMin(width(), kTouchTargetSize);
+    const int xInsideTouchTarget = qMax(0, (touchWidth - kIndicatorSize) / 2);
+    const int y = qMax(0, (height() - kIndicatorSize) / 2);
+
+    const bool rtl = layoutDirection() == Qt::RightToLeft;
+    const int x = rtl
+                      ? qMax(0, width() - touchWidth + xInsideTouchTarget)
+                      : xInsideTouchTarget;
 
     return QRect(x, y, kIndicatorSize, kIndicatorSize);
 }
 
 QRect QtMaterialSelectionControl::labelRect() const
 {
-    const int labelWidth = qMax(0, width() - kIndicatorSize - m_spacing);
-    const bool rtl = (layoutDirection() == Qt::RightToLeft);
-    const int x = rtl ? 0 : (kIndicatorSize + m_spacing);
+    const bool hasText = !text().isEmpty();
+    const int gap = hasText ? m_spacing : 0;
+    const int labelWidth = qMax(0, width() - kTouchTargetSize - gap);
+
+    const bool rtl = layoutDirection() == Qt::RightToLeft;
+    const int x = rtl ? 0 : kTouchTargetSize + gap;
 
     return QRect(x, 0, labelWidth, height());
 }
@@ -78,10 +87,14 @@ QRect QtMaterialSelectionControl::labelRect() const
 QSize QtMaterialSelectionControl::sizeHint() const
 {
     const QFontMetrics fm(font());
-    const int textWidth = fm.horizontalAdvance(text());
+    const bool hasText = !text().isEmpty();
+    const int textWidth = hasText ? fm.horizontalAdvance(text()) : 0;
+    const int gap = hasText ? m_spacing : 0;
 
-    return QSize(kIndicatorSize + m_spacing + textWidth + kHorizontalPadding,
-                 qMax(kMinimumControlHeight, fm.height() + kHorizontalPadding));
+    return QSize(
+        kTouchTargetSize + gap + textWidth + kHorizontalPadding,
+        qMax(kMinimumControlHeight, fm.height() + kHorizontalPadding)
+        );
 }
 
 } // namespace QtMaterial

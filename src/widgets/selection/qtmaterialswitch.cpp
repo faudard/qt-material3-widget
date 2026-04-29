@@ -124,31 +124,107 @@ void QtMaterialSwitch::invalidateLayoutCache()
 void QtMaterialSwitch::resolveLayoutIfNeeded() const
 {
     const_cast<QtMaterialSwitch*>(this)->resolveSpecIfNeeded();
+
     if (!m_layoutDirty) {
         return;
     }
 
-    const qreal progress = m_transition ? m_transition->progress() : (isChecked() ? 1.0 : 0.0);
+    const QRect bounds = rect();
 
-    m_cachedTrackRect = SelectionRenderHelper::switchTrackRect(indicatorRect(), m_spec);
-    m_cachedStateLayerRect = SelectionRenderHelper::centeredStateLayerRect(indicatorRect(), m_spec.stateLayerSize);
+    const int controlWidth = qMin(
+        bounds.width(),
+        qMax(m_spec.touchTarget.width(), m_spec.trackWidth)
+        );
+
+    const int controlHeight = qMin(
+        bounds.height(),
+        qMax(m_spec.touchTarget.height(), m_spec.trackHeight)
+        );
+
+    const bool rtl = layoutDirection() == Qt::RightToLeft;
+
+    const int controlX = rtl ? qMax(0, bounds.width() - controlWidth) : 0;
+    const int controlY = qMax(0, (bounds.height() - controlHeight) / 2);
+
+    const QRect controlRect(controlX, controlY, controlWidth, controlHeight);
+
+    QRectF localTrackRect = SelectionRenderHelper::switchTrackRect(
+        QRect(0, 0, controlRect.width(), controlRect.height()),
+        m_spec
+        );
+
+    localTrackRect.translate(controlRect.topLeft());
+
+    const qreal progress = m_transition
+                               ? m_transition->progress()
+                               : (isChecked() ? 1.0 : 0.0);
+
+    m_cachedTrackRect = localTrackRect;
     m_cachedTrackPath = SelectionRenderHelper::roundedTrackPath(m_cachedTrackRect);
-    m_cachedHandleRect = SelectionRenderHelper::switchHandleRect(m_cachedTrackRect, m_spec, progress);
-    m_cachedFocusRingRect = m_cachedTrackRect.adjusted(-3.0, -3.0, 3.0, 3.0);
-    m_cachedLabelRect = labelRect();
+    m_cachedHandleRect = SelectionRenderHelper::switchHandleRect(
+        m_cachedTrackRect,
+        m_spec,
+        progress
+        );
+
+    const QRect handleBounds = m_cachedHandleRect.toAlignedRect();
+
+    m_cachedStateLayerRect = SelectionRenderHelper::centeredStateLayerRect(
+        handleBounds,
+        m_spec.stateLayerSize
+        );
+
+    m_cachedFocusRingRect = m_cachedTrackRect.adjusted(
+        -3.0,
+        -3.0,
+        3.0,
+        3.0
+        );
+
+    const int gap = text().isEmpty() ? 0 : spacing();
+
+    if (rtl) {
+        m_cachedLabelRect = QRect(
+            0,
+            0,
+            qMax(0, controlRect.left() - gap),
+            height()
+            );
+    } else {
+        const int labelX = controlRect.right() + 1 + gap;
+
+        m_cachedLabelRect = QRect(
+            labelX,
+            0,
+            qMax(0, width() - labelX),
+            height()
+            );
+    }
 
     const qreal trackRadius = m_cachedTrackRect.height() / 2.0;
+
     m_cachedRippleClipPath = QPainterPath();
-    m_cachedRippleClipPath.addRoundedRect(m_cachedTrackRect, trackRadius, trackRadius);
+    m_cachedRippleClipPath.addEllipse(m_cachedStateLayerRect);
 
     m_cachedFocusRingPath = QPainterPath();
-    m_cachedFocusRingPath.addRoundedRect(m_cachedFocusRingRect,
-                                         m_cachedFocusRingRect.height() / 2.0,
-                                         m_cachedFocusRingRect.height() / 2.0);
+    m_cachedFocusRingPath.addRoundedRect(
+        m_cachedFocusRingRect,
+        m_cachedFocusRingRect.height() / 2.0,
+        m_cachedFocusRingRect.height() / 2.0
+        );
 
-    m_cachedLabelFont = SelectionRenderHelper::labelFont(theme(), m_spec.labelTypeRole, font());
+    m_cachedLabelFont = SelectionRenderHelper::labelFont(
+        theme(),
+        m_spec.labelTypeRole,
+        font()
+        );
+
     const QFontMetrics metrics(m_cachedLabelFont);
-    m_cachedElidedText = metrics.elidedText(text(), Qt::ElideRight, m_cachedLabelRect.width());
+    m_cachedElidedText = metrics.elidedText(
+        text(),
+        Qt::ElideRight,
+        m_cachedLabelRect.width()
+        );
 
     m_layoutDirty = false;
 }
