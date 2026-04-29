@@ -43,7 +43,7 @@ jobs:
 
       - name: Install Linux runtime packages
         if: runner.os == 'Linux'
-        run: ./scripts/ci/install-ubuntu-deps.sh
+        run: bash scripts/ci/install-ubuntu-deps.sh
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
