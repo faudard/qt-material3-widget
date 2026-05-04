@@ -60,7 +60,7 @@ public:
         QRect suffixRect;
         QRect trailingIconRect;
         QRect endActionRect;
-
+        Qt::LayoutDirection layoutDirection = Qt::LeftToRight;
         qreal radius = 0.0;
     };
 

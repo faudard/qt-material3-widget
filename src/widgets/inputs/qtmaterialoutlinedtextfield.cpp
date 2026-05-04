@@ -1111,6 +1111,7 @@ void QtMaterialOutlinedTextField::paintEvent(QPaintEvent*)
     layout.suffixRect = m_cachedSuffixRect;
     layout.trailingIconRect = m_cachedTrailingIconRect;
     layout.endActionRect = m_cachedEndActionRect;
+    layout.layoutDirection = layoutDirection();
     layout.radius = m_cachedRadius;
 
     QtMaterialTextFieldShellHelper::ElidedText text;

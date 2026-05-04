@@ -101,6 +101,7 @@ QtMaterialTextFieldShellHelper::Layout QtMaterialTextFieldShellHelper::layoutFor
     const QFont& font)
 {
     Layout layout;
+    layout.layoutDirection = accessories.layoutDirection;
 
     const int containerBottomInset = spec.supportingHeight + spec.supportingTopSpacing;
     layout.containerRect = bounds.adjusted(1, spec.topLabelHeight, -1, -containerBottomInset);
@@ -366,16 +367,15 @@ void QtMaterialTextFieldShellHelper::paintShell(QPainter* painter,
     }
 
     painter->setFont(font);
+    const int horizontalTextAlignment = layout.layoutDirection == Qt::RightToLeft
+        ? Qt::AlignRight
+        : Qt::AlignLeft;
 
     painter->setPen(labelColor);
-    painter->drawText(layout.labelRect,
-                      Qt::AlignLeft | Qt::AlignVCenter,
-                      text.labelText);
+    painter->drawText(layout.labelRect, horizontalTextAlignment | Qt::AlignVCenter, text.labelText);
 
     painter->setPen(supportingColor);
-    painter->drawText(layout.supportingRect,
-                      Qt::AlignLeft | Qt::AlignVCenter,
-                      hasError ? text.errorText : text.supportingText);
+    painter->drawText(layout.supportingRect, horizontalTextAlignment | Qt::AlignVCenter, hasError ? text.errorText : text.supportingText);
 
     if (focused) {
         QtMaterialFocusIndicator::paintRectFocusRing(painter,
