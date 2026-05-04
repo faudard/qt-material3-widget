@@ -53,6 +53,11 @@ qtm3_add_test(tst_bottomappbar widgets/surfaces/tst_bottomappbar.cpp qtmaterial3
 
 qtm3_add_test(tst_outlinedtextfield widgets/inputs/tst_outlinedtextfield.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_filledtextfield widgets/inputs/tst_filledtextfield.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_textfieldshellhelper widgets/inputs/tst_textfieldshellhelper.cpp qtmaterial3_widgets)
+target_include_directories(tst_textfieldshellhelper PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/widgets/inputs/private
+)
+
 qtm3_add_test(tst_autocompletepopup widgets/inputs/tst_autocompletepopup.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_datefield widgets/inputs/tst_datefield.cpp qtmaterial3_widgets)
 
@@ -169,4 +174,9 @@ qtm3_add_test(
     visual/tst_visual_smoke_contracts.cpp
     qtmaterial3_widgets
     qtmaterial3_core
+)
+
+qtm3_add_test(tst_textfieldshellhelper widgets/inputs/tst_textfieldshellhelper.cpp qtmaterial3_widgets)
+target_include_directories(tst_textfieldshellhelper PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/widgets/inputs/private
 )

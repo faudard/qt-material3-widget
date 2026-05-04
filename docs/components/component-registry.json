@@ -48,6 +48,18 @@
     "docsPath": "docs/public-api/inputs.md"
   },
   {
+    "id": "input.text.filled",
+    "name": "Filled Text Field",
+    "family": "Inputs",
+    "maturity": "partial",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h",
+    "specType": "TextFieldSpec",
+    "widgetType": "QtMaterialFilledTextField",
+    "testTarget": "tst_filledtextfield",
+    "galleryRoute": "/inputs/filled-text-field",
+    "docsPath": "docs/public-api/inputs.md"
+  },
+  {
     "id": "selection.checkbox",
     "name": "Checkbox",
     "family": "Selection",
