@@ -164,6 +164,7 @@ void QtMaterialOutlinedTextField::setText(const QString& text)
     }
 
     m_lineEdit->setText(text);
+    syncCharacterCounterWidget();
 
     if (m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnEdit
         || (m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnCommit
@@ -191,6 +192,7 @@ void QtMaterialOutlinedTextField::setPlaceholderText(const QString& text)
 
     m_lineEdit->setPlaceholderText(text);
     syncAccessibilityState();
+    syncCharacterCounterWidget();
     update();
 }
 
@@ -349,9 +351,111 @@ void QtMaterialOutlinedTextField::setInputMask(const QString& inputMask)
     }
 
     m_lineEdit->setInputMask(inputMask);
+    syncCharacterCounterWidget();
     refreshValidationState(false);
     syncAccessibilityState();
     update();
+}
+
+
+int QtMaterialOutlinedTextField::maxLength() const
+{
+    return m_lineEdit ? m_lineEdit->maxLength() : 32767;
+}
+
+void QtMaterialOutlinedTextField::setMaxLength(int maxLength)
+{
+    if (!m_lineEdit) {
+        return;
+    }
+
+    const int normalizedMaxLength = maxLength <= 0 ? 32767 : maxLength;
+    if (m_lineEdit->maxLength() == normalizedMaxLength) {
+        return;
+    }
+
+    m_lineEdit->setMaxLength(normalizedMaxLength);
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    syncCharacterCounterWidget();
+    syncAccessibilityState();
+    updateGeometry();
+    update();
+}
+
+bool QtMaterialOutlinedTextField::isCharacterCounterEnabled() const noexcept
+{
+    return m_characterCounterEnabled;
+}
+
+void QtMaterialOutlinedTextField::setCharacterCounterEnabled(bool enabled)
+{
+    if (m_characterCounterEnabled == enabled) {
+        return;
+    }
+
+    m_characterCounterEnabled = enabled;
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    syncCharacterCounterWidget();
+    syncAccessibilityState();
+    updateGeometry();
+    update();
+}
+
+QString QtMaterialOutlinedTextField::characterCounterText() const
+{
+    return effectiveCharacterCounterText();
+}
+
+QString QtMaterialOutlinedTextField::effectiveCharacterCounterText() const
+{
+    const int currentLength = m_lineEdit ? m_lineEdit->text().size() : 0;
+    const int maximumLength = m_lineEdit ? m_lineEdit->maxLength() : 32767;
+
+    if (maximumLength == 32767) {
+        return QString::number(currentLength);
+    }
+
+    return QStringLiteral("%1/%2").arg(currentLength).arg(maximumLength);
+}
+
+void QtMaterialOutlinedTextField::syncCharacterCounterWidget()
+{
+    if (!m_characterCounterEnabled) {
+        if (m_characterCounterLabel) {
+            m_characterCounterLabel->hide();
+        }
+        return;
+    }
+
+    if (!m_characterCounterLabel) {
+        m_characterCounterLabel = new QLabel(this);
+        m_characterCounterLabel->setObjectName(QStringLiteral("qtmaterial_textfield_characterCounter"));
+        m_characterCounterLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        m_characterCounterLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        m_characterCounterLabel->setAccessibleName(QStringLiteral("Character count"));
+    }
+
+    ensureSpecResolved();
+    ensureLayoutResolved();
+
+    QFont counterFont = font();
+    if (counterFont.pointSizeF() > 0.0) {
+        counterFont.setPointSizeF(qMax<qreal>(1.0, counterFont.pointSizeF() * 0.85));
+    }
+    m_characterCounterLabel->setFont(counterFont);
+    m_characterCounterLabel->setText(effectiveCharacterCounterText());
+    m_characterCounterLabel->setAccessibleDescription(m_characterCounterLabel->text());
+
+    QPalette palette = m_characterCounterLabel->palette();
+    palette.setColor(QPalette::WindowText,
+                     isEnabled() ? spec().supportingTextColor : spec().disabledLabelColor);
+    m_characterCounterLabel->setPalette(palette);
+
+    m_characterCounterLabel->setGeometry(m_cachedCharacterCounterRect);
+    m_characterCounterLabel->setVisible(isVisible() && m_characterCounterEnabled && !m_cachedCharacterCounterRect.isEmpty());
+    m_characterCounterLabel->raise();
 }
 
 QtMaterialOutlinedTextField::ValidationFeedbackMode
@@ -821,6 +925,32 @@ void QtMaterialOutlinedTextField::ensureLayoutResolved() const
     m_cachedLabelRect = layout.labelRect;
     m_cachedEditorRect = layout.editorRect;
     m_cachedSupportingRect = layout.supportingRect;
+    m_cachedCharacterCounterRect = QRect();
+    if (m_characterCounterEnabled) {
+        const QString counterText = effectiveCharacterCounterText();
+        QFont counterFont = font();
+        if (counterFont.pointSizeF() > 0.0) {
+            counterFont.setPointSizeF(qMax<qreal>(1.0, counterFont.pointSizeF() * 0.85));
+        }
+        const int counterWidth = QFontMetrics(counterFont).horizontalAdvance(counterText) + 6;
+        const int boundedCounterWidth = qMin(counterWidth, m_cachedSupportingRect.width());
+        if (boundedCounterWidth > 0 && m_cachedSupportingRect.isValid()) {
+            const bool rtl = layoutDirection() == Qt::RightToLeft;
+            if (rtl) {
+                m_cachedCharacterCounterRect = QRect(m_cachedSupportingRect.left(),
+                                                     m_cachedSupportingRect.top(),
+                                                     boundedCounterWidth,
+                                                     m_cachedSupportingRect.height());
+                m_cachedSupportingRect.setLeft(m_cachedCharacterCounterRect.right() + 4);
+            } else {
+                m_cachedCharacterCounterRect = QRect(m_cachedSupportingRect.right() - boundedCounterWidth + 1,
+                                                     m_cachedSupportingRect.top(),
+                                                     boundedCounterWidth,
+                                                     m_cachedSupportingRect.height());
+                m_cachedSupportingRect.setRight(m_cachedCharacterCounterRect.left() - 4);
+            }
+        }
+    }
     m_cachedFocusRect = layout.focusRect;
     m_cachedLeadingIconRect = layout.leadingIconRect;
     m_cachedPrefixRect = layout.prefixRect;
@@ -856,6 +986,7 @@ void QtMaterialOutlinedTextField::syncLineEditGeometry()
     if (m_lineEdit && m_lineEdit->geometry() != m_cachedEditorRect) {
         m_lineEdit->setGeometry(m_cachedEditorRect);
     }
+    syncCharacterCounterWidget();
 
     syncAccessoryWidgets();
 }

@@ -74,6 +74,14 @@ public:
     QString inputMask() const;
     void setInputMask(const QString& inputMask);
 
+    int maxLength() const;
+    void setMaxLength(int maxLength);
+
+    bool isCharacterCounterEnabled() const noexcept;
+    void setCharacterCounterEnabled(bool enabled);
+    QString characterCounterText() const;
+
+
     ValidationFeedbackMode validationFeedbackMode() const noexcept;
     void setValidationFeedbackMode(ValidationFeedbackMode mode);
 
@@ -130,6 +138,9 @@ private:
     void ensureLayoutResolved() const;
     void syncLineEditGeometry();
     void syncAccessoryWidgets();
+
+    void syncCharacterCounterWidget();
+    QString effectiveCharacterCounterText() const;
     void syncLineEditPalette();
     bool currentFocusState() const;
 
@@ -153,6 +164,7 @@ private:
     mutable QRect m_cachedLabelRect;
     mutable QRect m_cachedEditorRect;
     mutable QRect m_cachedSupportingRect;
+    mutable QRect m_cachedCharacterCounterRect;
     mutable QRect m_cachedFocusRect;
 
     mutable QRect m_cachedLeadingIconRect;
@@ -181,6 +193,7 @@ private:
     QPointer<QLabel> m_leadingIconLabel;
     QPointer<QLabel> m_trailingIconLabel;
     QPointer<QToolButton> m_endActionButton;
+    QPointer<QLabel> m_characterCounterLabel;
 
     QString m_prefixText;
     QString m_suffixText;
@@ -200,6 +213,8 @@ private:
     QString m_trailingActionText;
     QString m_trailingActionToolTip;
     bool m_trailingActionVisibleWhenEmpty = false;
+
+    bool m_characterCounterEnabled = false;
 
     QtMaterialTransitionController* m_transition = nullptr;
 };

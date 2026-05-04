@@ -195,3 +195,10 @@ qtm3_add_test(
 )
 
 
+
+
+qtm3_add_test(
+    tst_textfield_character_counter
+    widgets/inputs/tst_textfield_character_counter.cpp
+    qtmaterial3_widgets
+)
