@@ -162,3 +162,11 @@ qtm3_add_test(
     qtmaterial3_widgets
     qtmaterial3_core
 )
+
+
+qtm3_add_test(
+    tst_visual_smoke_contracts
+    visual/tst_visual_smoke_contracts.cpp
+    qtmaterial3_widgets
+    qtmaterial3_core
+)
