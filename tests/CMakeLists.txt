@@ -54,7 +54,18 @@ qtm3_add_test(tst_bottomappbar widgets/surfaces/tst_bottomappbar.cpp qtmaterial3
 qtm3_add_test(tst_outlinedtextfield widgets/inputs/tst_outlinedtextfield.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_filledtextfield widgets/inputs/tst_filledtextfield.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_textfield_accessibility widgets/inputs/tst_textfield_accessibility.cpp qtmaterial3_widgets)
-qtm3_add_test(tst_textfieldshellhelper widgets/inputs/tst_textfieldshellhelper.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_textfieldshellhelper
+    widgets/inputs/tst_textfieldshellhelper.cpp
+    qtmaterial3_theme
+    qtmaterial3_core
+    qtmaterial3_specs
+    qtmaterial3_effects
+)
+
+target_sources(tst_textfieldshellhelper PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/widgets/inputs/private/qtmaterialtextfieldshellhelper_p.cpp
+)
+
 target_include_directories(tst_textfieldshellhelper PRIVATE
     ${CMAKE_SOURCE_DIR}/src/widgets/inputs/private
 )

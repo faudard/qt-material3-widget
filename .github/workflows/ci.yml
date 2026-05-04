@@ -27,7 +27,7 @@ jobs:
             qt-version: "system"
             qt-arch: ""
             use-mcu: "OFF"
-            build-extra-examples: "ON"
+            build-extra-examples: "OFF"
 
           - name: windows-qt6
             os: windows-latest

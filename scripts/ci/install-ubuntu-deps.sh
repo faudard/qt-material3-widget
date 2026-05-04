@@ -22,4 +22,6 @@ sudo apt-get install -y \
   libxcb-xinerama0 \
   openbox \
   qt6-base-dev \
+  libxkbcommon-dev \
+  libxkbcommon-x11-dev \
   qt6-base-dev-tools
