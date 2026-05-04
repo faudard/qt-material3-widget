@@ -9,8 +9,12 @@ namespace QtMaterial {
 QString AccessibilityHelper::effectiveDescription(const QString& supportingText, const QString& errorText, const bool hasErrorState)
 {
     if (hasErrorState && !errorText.isEmpty()) {
+        if (!supportingText.isEmpty()) {
+            return supportingText + QStringLiteral("\\n") + errorText;
+        }
         return errorText;
     }
+
     return supportingText;
 }
 

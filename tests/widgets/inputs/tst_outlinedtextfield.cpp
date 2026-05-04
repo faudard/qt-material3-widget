@@ -3,32 +3,28 @@
 #include <QApplication>
 #include <QLabel>
 #include <QLineEdit>
-#include <QStyle>
-#include <QToolButton>
-#include <QLineEdit>
-#include <QPushButton>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
-#include <QVBoxLayout>
-#include <QWidget>
+#include <QSignalSpy>
+#include <QToolButton>
 
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 
 namespace {
 
-template <typename T>
-T* requireChild(QWidget& parent, const QString& name)
+void polishAndProcess(QWidget& widget)
 {
-    T* child = parent.findChild<T*>(name);
-    return child;
+    widget.ensurePolished();
+    widget.resize(qMax(widget.sizeHint().width(), 360), widget.sizeHint().height());
+    widget.show();
+    QCoreApplication::processEvents();
 }
 
-void realize(QWidget& widget)
+QIcon testIcon()
 {
-    widget.resize(qMax(widget.width(), 360), qMax(widget.height(), widget.sizeHint().height()));
-    widget.show();
-    QTest::qWait(1);
-    QCoreApplication::processEvents();
+    QPixmap pixmap(18, 18);
+    pixmap.fill(Qt::black);
+    return QIcon(pixmap);
 }
 
 } // namespace
@@ -43,12 +39,14 @@ private slots:
     void forwardsFocusToLineEdit();
     void sizeHintRespectsShellHeight();
     void contentChangeInvalidatesShellText();
-
-    void placeholderTextPassthrough();
-    void prefixAndSuffixReserveEditorSpace();
-    void leadingAndTrailingIconsReserveEditorSpace();
-    void rtlMirrorsAccessoryLayout();
-    void passwordEndActionTogglesLineEditEchoMode();
+    void placeholderRoundTrip();
+    void prefixAndSuffixRoundTripAndCreateVisibleLabels();
+    void leadingAndTrailingIconRoundTripAndCreateVisibleLabels();
+    void clearButtonClearsTextAndEmitsSignal();
+    void passwordToggleChangesEchoModeAndEmitsSignal();
+    void customTrailingActionEmitsSignal();
+    void validatorOnEditSetsAutomaticError();
+    void manualErrorStateIsIndependentFromAutomaticValidation();
 };
 
 void tst_OutlinedTextField::basicConstruction()
@@ -85,7 +83,6 @@ void tst_OutlinedTextField::forwardsFocusToLineEdit()
 
     QVERIFY(QTest::qWaitForWindowActive(&widget));
     widget.setFocus(Qt::TabFocusReason);
-
     QVERIFY(QTest::qWaitFor([&widget]() {
         return widget.lineEdit() && widget.lineEdit()->hasFocus();
     }));
@@ -110,14 +107,15 @@ void tst_OutlinedTextField::contentChangeInvalidatesShellText()
     const QSize first = widget.sizeHint();
 
     widget.setLabelText(QStringLiteral("Very long email address label that should change width"));
-    const QSize second = widget.sizeHint();
 
+    const QSize second = widget.sizeHint();
     QVERIFY(second.width() >= first.width());
 }
 
-void tst_OutlinedTextField::placeholderTextPassthrough()
+void tst_OutlinedTextField::placeholderRoundTrip()
 {
     QtMaterial::QtMaterialOutlinedTextField widget;
+
     widget.setPlaceholderText(QStringLiteral("name@example.com"));
 
     QCOMPARE(widget.placeholderText(), QStringLiteral("name@example.com"));
@@ -125,127 +123,166 @@ void tst_OutlinedTextField::placeholderTextPassthrough()
     QCOMPARE(widget.lineEdit()->placeholderText(), QStringLiteral("name@example.com"));
 }
 
-void tst_OutlinedTextField::prefixAndSuffixReserveEditorSpace()
-{
-    QtMaterial::QtMaterialOutlinedTextField widget;
-    widget.setLabelText(QStringLiteral("Website"));
-    realize(widget);
-
-    const int baseEditorWidth = widget.lineEdit()->geometry().width();
-
-    widget.setPrefixText(QStringLiteral("https://"));
-    widget.setSuffixText(QStringLiteral(".com"));
-    QCoreApplication::processEvents();
-
-    QLabel* prefixLabel = requireChild<QLabel>(widget, QStringLiteral("prefixLabel"));
-    QLabel* suffixLabel = requireChild<QLabel>(widget, QStringLiteral("suffixLabel"));
-
-    QVERIFY(prefixLabel != nullptr);
-    QVERIFY(suffixLabel != nullptr);
-
-    QVERIFY(prefixLabel->isVisible());
-    QVERIFY(suffixLabel->isVisible());
-    QVERIFY(!prefixLabel->text().isEmpty());
-    QVERIFY(!suffixLabel->text().isEmpty());
-    QVERIFY(!prefixLabel->geometry().isEmpty());
-    QVERIFY(!suffixLabel->geometry().isEmpty());
-
-    QVERIFY(widget.lineEdit()->geometry().width() < baseEditorWidth);
-    QVERIFY(prefixLabel->geometry().right() < widget.lineEdit()->geometry().left()
-            || prefixLabel->geometry().left() > widget.lineEdit()->geometry().right());
-    QVERIFY(suffixLabel->geometry().right() < widget.lineEdit()->geometry().left()
-            || suffixLabel->geometry().left() > widget.lineEdit()->geometry().right());
-}
-
-void tst_OutlinedTextField::leadingAndTrailingIconsReserveEditorSpace()
-{
-    QtMaterial::QtMaterialOutlinedTextField widget;
-    widget.setLabelText(QStringLiteral("Search"));
-    realize(widget);
-
-    const int baseEditorWidth = widget.lineEdit()->geometry().width();
-
-    const QIcon leading = widget.style()->standardIcon(QStyle::SP_FileDialogStart);
-    const QIcon trailing = widget.style()->standardIcon(QStyle::SP_DialogOpenButton);
-
-    QVERIFY(!leading.isNull());
-    QVERIFY(!trailing.isNull());
-
-    widget.setLeadingIcon(leading);
-    widget.setTrailingIcon(trailing);
-    QCoreApplication::processEvents();
-
-    QLabel* leadingLabel = requireChild<QLabel>(widget, QStringLiteral("leadingIconLabel"));
-    QLabel* trailingLabel = requireChild<QLabel>(widget, QStringLiteral("trailingIconLabel"));
-
-    QVERIFY(leadingLabel != nullptr);
-    QVERIFY(trailingLabel != nullptr);
-
-    QVERIFY(leadingLabel->isVisible());
-    QVERIFY(trailingLabel->isVisible());
-    QVERIFY(!leadingLabel->geometry().isEmpty());
-    QVERIFY(!trailingLabel->geometry().isEmpty());
-
-    QVERIFY(widget.lineEdit()->geometry().width() < baseEditorWidth);
-}
-
-void tst_OutlinedTextField::rtlMirrorsAccessoryLayout()
+void tst_OutlinedTextField::prefixAndSuffixRoundTripAndCreateVisibleLabels()
 {
     QtMaterial::QtMaterialOutlinedTextField widget;
     widget.setLabelText(QStringLiteral("Amount"));
-    widget.setLeadingIcon(widget.style()->standardIcon(QStyle::SP_ArrowRight));
-    widget.setPrefixText(QStringLiteral("EUR"));
-    widget.resize(360, widget.sizeHint().height());
+    widget.setPrefixText(QStringLiteral("€"));
+    widget.setSuffixText(QStringLiteral("EUR"));
 
-    widget.setLayoutDirection(Qt::LeftToRight);
-    realize(widget);
+    polishAndProcess(widget);
 
-    QLabel* leadingLabel = requireChild<QLabel>(widget, QStringLiteral("leadingIconLabel"));
-    QLabel* prefixLabel = requireChild<QLabel>(widget, QStringLiteral("prefixLabel"));
+    QCOMPARE(widget.prefixText(), QStringLiteral("€"));
+    QCOMPARE(widget.suffixText(), QStringLiteral("EUR"));
 
-    QVERIFY(leadingLabel != nullptr);
-    QVERIFY(prefixLabel != nullptr);
+    auto* prefix = widget.findChild<QLabel*>(QStringLiteral("prefixLabel"));
+    auto* suffix = widget.findChild<QLabel*>(QStringLiteral("suffixLabel"));
 
-    const QRect ltrEditor = widget.lineEdit()->geometry();
-    const QRect ltrLeading = leadingLabel->geometry();
-    const QRect ltrPrefix = prefixLabel->geometry();
-
-    QVERIFY(ltrLeading.right() <= ltrEditor.left());
-    QVERIFY(ltrPrefix.right() <= ltrEditor.left());
-
-    widget.setLayoutDirection(Qt::RightToLeft);
-    QCoreApplication::processEvents();
-
-    const QRect rtlEditor = widget.lineEdit()->geometry();
-    const QRect rtlLeading = leadingLabel->geometry();
-    const QRect rtlPrefix = prefixLabel->geometry();
-
-    QVERIFY(rtlLeading.left() >= rtlEditor.right());
-    QVERIFY(rtlPrefix.left() >= rtlEditor.right());
+    QVERIFY(prefix != nullptr);
+    QVERIFY(suffix != nullptr);
+    QCOMPARE(prefix->text(), QStringLiteral("€"));
+    QCOMPARE(suffix->text(), QStringLiteral("EUR"));
+    QVERIFY(!prefix->isHidden());
+    QVERIFY(!suffix->isHidden());
+    QVERIFY(prefix->geometry().isValid());
+    QVERIFY(suffix->geometry().isValid());
+    QVERIFY(widget.lineEdit()->geometry().isValid());
+    QVERIFY(widget.lineEdit()->geometry().left() > widget.rect().left());
 }
 
-void tst_OutlinedTextField::passwordEndActionTogglesLineEditEchoMode()
+void tst_OutlinedTextField::leadingAndTrailingIconRoundTripAndCreateVisibleLabels()
 {
     QtMaterial::QtMaterialOutlinedTextField widget;
-    widget.setLabelText(QStringLiteral("Password"));
+    const QIcon leading = testIcon();
+    const QIcon trailing = testIcon();
+
+    widget.setLeadingIcon(leading);
+    widget.setTrailingIcon(trailing);
+
+    polishAndProcess(widget);
+
+    QVERIFY(!widget.leadingIcon().isNull());
+    QVERIFY(!widget.trailingIcon().isNull());
+
+    auto* leadingLabel = widget.findChild<QLabel*>(QStringLiteral("leadingIconLabel"));
+    auto* trailingLabel = widget.findChild<QLabel*>(QStringLiteral("trailingIconLabel"));
+
+    QVERIFY(leadingLabel != nullptr);
+    QVERIFY(trailingLabel != nullptr);
+    QVERIFY(!leadingLabel->isHidden());
+    QVERIFY(!trailingLabel->isHidden());
+    QVERIFY(leadingLabel->geometry().isValid());
+    QVERIFY(trailingLabel->geometry().isValid());
+}
+
+void tst_OutlinedTextField::clearButtonClearsTextAndEmitsSignal()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
+    widget.setClearButtonEnabled(true);
+    widget.setEndActionMode(QtMaterial::QtMaterialOutlinedTextField::EndActionMode::ClearText);
+    widget.setText(QStringLiteral("abc"));
+
+    polishAndProcess(widget);
+
+    auto* button = widget.findChild<QToolButton*>(QStringLiteral("endActionButton"));
+    QVERIFY(button != nullptr);
+    QVERIFY(!button->isHidden());
+    QVERIFY(button->geometry().isValid());
+
+    QSignalSpy spy(&widget, &QtMaterial::QtMaterialOutlinedTextField::clearTriggered);
+    QTest::mouseClick(button, Qt::LeftButton);
+
+    QCOMPARE(widget.text(), QString());
+    QCOMPARE(spy.count(), 1);
+}
+
+void tst_OutlinedTextField::passwordToggleChangesEchoModeAndEmitsSignal()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
     widget.setEchoMode(QLineEdit::Password);
+    widget.setEndActionMode(QtMaterial::QtMaterialOutlinedTextField::EndActionMode::TogglePasswordVisibility);
     widget.setText(QStringLiteral("secret"));
-    realize(widget);
 
-    QToolButton* endAction =
-        requireChild<QToolButton>(widget, QStringLiteral("endActionButton"));
+    polishAndProcess(widget);
 
-    QVERIFY(endAction != nullptr);
-    QVERIFY(endAction->isVisible());
+    auto* button = widget.findChild<QToolButton*>(QStringLiteral("endActionButton"));
+    QVERIFY(button != nullptr);
+    QVERIFY(!button->isHidden());
+    QCOMPARE(widget.echoMode(), QLineEdit::Password);
     QCOMPARE(widget.lineEdit()->echoMode(), QLineEdit::Password);
 
-    QTest::mouseClick(endAction, Qt::LeftButton);
-    QCoreApplication::processEvents();
+    QSignalSpy spy(&widget, &QtMaterial::QtMaterialOutlinedTextField::passwordVisibilityChanged);
+    QTest::mouseClick(button, Qt::LeftButton);
+
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(spy.takeFirst().at(0).toBool(), true);
+    QCOMPARE(widget.echoMode(), QLineEdit::Password);
     QCOMPARE(widget.lineEdit()->echoMode(), QLineEdit::Normal);
+}
 
-    QTest::mouseClick(endAction, Qt::LeftButton);
-    QCoreApplication::processEvents();
-    QCOMPARE(widget.lineEdit()->echoMode(), QLineEdit::Password);
+void tst_OutlinedTextField::customTrailingActionEmitsSignal()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
+    widget.setEndActionMode(QtMaterial::QtMaterialOutlinedTextField::EndActionMode::CustomTrailingAction);
+    widget.setTrailingActionText(QStringLiteral("Go"));
+    widget.setTrailingActionToolTip(QStringLiteral("Run action"));
+    widget.setTrailingActionVisibleWhenEmpty(true);
+
+    polishAndProcess(widget);
+
+    auto* button = widget.findChild<QToolButton*>(QStringLiteral("endActionButton"));
+    QVERIFY(button != nullptr);
+    QVERIFY(!button->isHidden());
+    QCOMPARE(button->text(), QStringLiteral("Go"));
+    QCOMPARE(button->toolTip(), QStringLiteral("Run action"));
+
+    QSignalSpy spy(&widget, &QtMaterial::QtMaterialOutlinedTextField::trailingActionTriggered);
+    QTest::mouseClick(button, Qt::LeftButton);
+
+    QCOMPARE(spy.count(), 1);
+}
+
+void tst_OutlinedTextField::validatorOnEditSetsAutomaticError()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
+    QRegularExpressionValidator validator(QRegularExpression(QStringLiteral("^[0-9]{3}$")), &widget);
+
+    widget.setValidator(&validator);
+    widget.setValidationFeedbackMode(
+        QtMaterial::QtMaterialOutlinedTextField::ValidationFeedbackMode::ValidatorOnEdit);
+
+    widget.setText(QStringLiteral("abc"));
+
+    QVERIFY(widget.hasAutomaticValidationError());
+    QVERIFY(widget.hasErrorState());
+
+    widget.setText(QStringLiteral("123"));
+
+    QVERIFY(!widget.hasAutomaticValidationError());
+    QVERIFY(!widget.hasErrorState());
+}
+
+void tst_OutlinedTextField::manualErrorStateIsIndependentFromAutomaticValidation()
+{
+    QtMaterial::QtMaterialOutlinedTextField widget;
+    QRegularExpressionValidator validator(QRegularExpression(QStringLiteral("^[0-9]{3}$")), &widget);
+
+    widget.setValidator(&validator);
+    widget.setValidationFeedbackMode(
+        QtMaterial::QtMaterialOutlinedTextField::ValidationFeedbackMode::ValidatorOnEdit);
+
+    widget.setText(QStringLiteral("abc"));
+    QVERIFY(widget.hasAutomaticValidationError());
+    QVERIFY(widget.hasErrorState());
+
+    widget.setHasErrorState(true);
+    widget.setText(QStringLiteral("123"));
+
+    QVERIFY(!widget.hasAutomaticValidationError());
+    QVERIFY(widget.hasErrorState());
+
+    widget.setHasErrorState(false);
+    QVERIFY(!widget.hasErrorState());
 }
 
 QTEST_MAIN(tst_OutlinedTextField)

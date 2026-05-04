@@ -71,7 +71,7 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
         m_endActionButton->setObjectName(QStringLiteral("endActionButton"));
         m_endActionButton->hide();
         m_endActionButton->setAutoRaise(true);
-        m_endActionButton->setFocusPolicy(Qt::NoFocus);
+        m_endActionButton->setFocusPolicy(Qt::StrongFocus);
         m_endActionButton->setCursor(Qt::PointingHandCursor);
 
         QObject::connect(m_endActionButton, &QToolButton::clicked, this, [this]() {
@@ -943,6 +943,8 @@ void QtMaterialOutlinedTextField::syncAccessoryWidgets()
         const EndActionMode mode = resolvedEndActionMode();
 
         if (m_cachedEndActionRect.isEmpty() || mode == EndActionMode::None) {
+            m_endActionButton->setAccessibleName(QString());
+            m_endActionButton->setAccessibleDescription(QString());
             m_endActionButton->hide();
         } else {
             m_endActionButton->setGeometry(m_cachedEndActionRect);
@@ -959,10 +961,15 @@ void QtMaterialOutlinedTextField::syncAccessoryWidgets()
                     m_endActionButton->setIconSize(QSize(iconSize, iconSize));
                 }
                 m_endActionButton->setToolTip(tr("Clear text"));
+                m_endActionButton->setAccessibleName(tr("Clear text"));
+                m_endActionButton->setAccessibleDescription(tr("Clear text"));
             } else if (mode == EndActionMode::TogglePasswordVisibility) {
+                const QString passwordActionText =
+                    m_passwordVisible ? tr("Hide password") : tr("Show password");
                 m_endActionButton->setText(m_cachedEndActionText);
-                m_endActionButton->setToolTip(
-                    m_passwordVisible ? tr("Hide password") : tr("Show password"));
+                m_endActionButton->setToolTip(passwordActionText);
+                m_endActionButton->setAccessibleName(passwordActionText);
+                m_endActionButton->setAccessibleDescription(passwordActionText);
             } else if (mode == EndActionMode::CustomTrailingAction) {
                 if (!m_trailingActionIcon.isNull()) {
                     m_endActionButton->setIcon(m_trailingActionIcon);
@@ -972,6 +979,13 @@ void QtMaterialOutlinedTextField::syncAccessoryWidgets()
                     m_endActionButton->setText(m_cachedEndActionText);
                 }
                 m_endActionButton->setToolTip(m_trailingActionToolTip);
+                const QString customAccessibleName = !m_trailingActionText.isEmpty()
+                    ? m_trailingActionText
+                    : (!m_trailingActionToolTip.isEmpty()
+                           ? m_trailingActionToolTip
+                           : tr("Text field action"));
+                m_endActionButton->setAccessibleName(customAccessibleName);
+                m_endActionButton->setAccessibleDescription(m_trailingActionToolTip);
             }
 
             m_endActionButton->show();
