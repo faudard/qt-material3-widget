@@ -15,6 +15,10 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDateField : public QtMaterial::QtMate
     Q_PROPERTY(QDate date READ date WRITE setDate NOTIFY dateChanged)
     Q_PROPERTY(QString displayFormat READ displayFormat WRITE setDisplayFormat NOTIFY displayFormatChanged)
     Q_PROPERTY(bool clearable READ isClearable WRITE setClearable NOTIFY clearableChanged)
+  Q_PROPERTY(QDate minimumDate READ minimumDate WRITE setMinimumDate NOTIFY dateRangeChanged)
+  Q_PROPERTY(QDate maximumDate READ maximumDate WRITE setMaximumDate NOTIFY dateRangeChanged)
+  Q_PROPERTY(bool dateAcceptable READ isDateAcceptable NOTIFY dateAcceptableChanged)
+  Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
 
 public:
     explicit QtMaterialDateField(QWidget* parent = nullptr);
@@ -33,12 +37,34 @@ public:
     QString placeholderTextForDate() const;
     void setPlaceholderTextForDate(const QString& text);
 
+
+  QDate minimumDate() const noexcept;
+
+  void setMinimumDate(const QDate& date);
+
+  QDate maximumDate() const noexcept;
+
+  void setMaximumDate(const QDate& date);
+
+  bool isDateAcceptable() const noexcept;
+
+  bool hasParseError() const noexcept;
+
+  QString accessibilitySummary() const;
+
 signals:
     void dateChanged(const QDate& date);
     void displayFormatChanged(const QString& format);
     void clearableChanged(bool clearable);
     void calendarRequested();
     void parseErrorChanged(bool hasError);
+
+
+  void dateRangeChanged(const QDate& minimumDate, const QDate& maximumDate);
+
+  void dateAcceptableChanged(bool acceptable);
+
+  void accessibilitySummaryChanged(const QString& summary);
 
 protected:
     void contentChangedEvent() override;
@@ -55,7 +81,24 @@ private:
     void updateTrailingAffordances();
     void updateAccessibilityMetadata();
 
-    QDate m_date;
+  
+  bool isDateInRange(const QDate& date) const noexcept;
+
+  QString effectiveErrorTextForDate() const;
+
+  void setParseError(bool hasError);
+
+  void notifyDateAcceptabilityIfChanged(bool previousAcceptable);
+
+  QDate m_date;
+
+  QDate m_date;
+
+  QDate m_minimumDate;
+
+  QDate m_maximumDate;
+
+  mutable QString m_lastAccessibilitySummary;
     QString m_displayFormat;
     QString m_placeholderTextForDate;
     bool m_clearable = false;

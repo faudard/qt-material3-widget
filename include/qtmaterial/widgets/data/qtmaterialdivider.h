@@ -1,15 +1,17 @@
 #pragma once
 
 #include <QColor>
+#include <QEvent>
+#include <QRect>
 #include <QSize>
+#include <QString>
 #include <QWidget>
 
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
 
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDivider : public QWidget
-{
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDivider : public QWidget {
     Q_OBJECT
 
     Q_PROPERTY(Qt::Orientation orientation READ orientation WRITE setOrientation NOTIFY orientationChanged)
@@ -17,6 +19,8 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDivider : public QWidget
     Q_PROPERTY(int trailingInset READ trailingInset WRITE setTrailingInset NOTIFY trailingInsetChanged)
     Q_PROPERTY(int thickness READ thickness WRITE setThickness NOTIFY thicknessChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor RESET resetColor NOTIFY colorChanged)
+    Q_PROPERTY(bool decorative READ isDecorative WRITE setDecorative NOTIFY decorativeChanged)
+    Q_PROPERTY(QString accessibilityLabel READ accessibilityLabel WRITE setAccessibilityLabel NOTIFY accessibilityLabelChanged)
 
 public:
     explicit QtMaterialDivider(QWidget *parent = nullptr);
@@ -42,6 +46,15 @@ public:
     void setColor(const QColor &color);
     void resetColor();
 
+    bool isDecorative() const noexcept;
+    void setDecorative(bool decorative);
+
+    QString accessibilityLabel() const;
+    void setAccessibilityLabel(const QString &label);
+
+    QString accessibilitySummary() const;
+    QRect lineRect() const;
+
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
@@ -51,6 +64,9 @@ Q_SIGNALS:
     void trailingInsetChanged(int value);
     void thicknessChanged(int value);
     void colorChanged(const QColor &color);
+    void decorativeChanged(bool decorative);
+    void accessibilityLabelChanged(const QString &label);
+    void accessibilitySummaryChanged(const QString &summary);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -58,12 +74,16 @@ protected:
 
 private:
     QColor resolvedColor() const;
+    void syncAccessibility();
 
     Qt::Orientation m_orientation = Qt::Horizontal;
     int m_leadingInset = 0;
     int m_trailingInset = 0;
     int m_thickness = 1;
     QColor m_color;
+    bool m_decorative = true;
+    QString m_accessibilityLabel;
+    QString m_lastAccessibilitySummary;
 };
 
 } // namespace QtMaterial

@@ -14,19 +14,26 @@ class QVariantAnimation;
 
 namespace QtMaterial {
 
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialCircularProgressIndicator : public QtMaterialWidget {
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialCircularProgressIndicator : public QtMaterialWidget
+{
     Q_OBJECT
     Q_PROPERTY(qreal value READ value WRITE setValue RESET resetValue NOTIFY valueChanged)
     Q_PROPERTY(Mode mode READ mode WRITE setMode NOTIFY modeChanged)
     Q_PROPERTY(bool busy READ isBusy WRITE setBusy NOTIFY asyncStateChanged)
     Q_PROPERTY(bool indeterminate READ isIndeterminate WRITE setIndeterminate NOTIFY asyncStateChanged)
     Q_PROPERTY(QString statusText READ statusText WRITE setStatusText NOTIFY asyncStateChanged)
+    Q_PROPERTY(QString accessibleValueText READ accessibleValueText NOTIFY accessibilitySummaryChanged)
+    Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
     Q_PROPERTY(QColor activeColor READ activeColor WRITE setActiveColor RESET resetActiveColor NOTIFY specChanged)
     Q_PROPERTY(QColor trackColor READ trackColor WRITE setTrackColor RESET resetTrackColor NOTIFY specChanged)
     Q_PROPERTY(int trackGap READ trackGap WRITE setTrackGap NOTIFY specChanged)
     Q_PROPERTY(int strokeWidth READ strokeWidth WRITE setStrokeWidth NOTIFY specChanged)
+
 public:
-    enum class Mode { Determinate, Indeterminate };
+    enum class Mode {
+        Determinate,
+        Indeterminate
+    };
     Q_ENUM(Mode)
 
     explicit QtMaterialCircularProgressIndicator(QWidget* parent = nullptr);
@@ -48,6 +55,9 @@ public:
 
     QString statusText() const;
     void setStatusText(const QString& text);
+
+    QString accessibleValueText() const;
+    QString accessibilitySummary() const;
 
     QtMaterialAsyncState asyncState() const;
     void setAsyncState(const QtMaterialAsyncState& state);
@@ -76,6 +86,7 @@ Q_SIGNALS:
     void valueChanged(qreal value);
     void modeChanged(QtMaterial::QtMaterialCircularProgressIndicator::Mode mode);
     void asyncStateChanged();
+    void accessibilitySummaryChanged(const QString& summary);
     void specChanged();
 
 protected:
@@ -85,10 +96,12 @@ protected:
     void changeEvent(QEvent* event) override;
 
 private:
+    void init();
     void initAnimation();
     void updateAnimationState();
     void syncAsyncStateFromProgress();
     void syncMaterialStateFromAsyncState();
+    void syncAccessibleState();
     QColor resolvedActiveColor() const;
     QColor resolvedTrackColor() const;
 

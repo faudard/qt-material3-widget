@@ -1,24 +1,39 @@
 #include "qtmaterial/widgets/data/qtmaterialdivider.h"
 
-#include <QEvent>
 #include <QPainter>
-#include <QPaintEvent>
 #include <QPalette>
+#include <QSizePolicy>
+#include <QtGlobal>
 
 namespace QtMaterial {
+
+namespace {
+
+QString orientationText(Qt::Orientation orientation)
+{
+    return orientation == Qt::Horizontal
+        ? QStringLiteral("Horizontal separator")
+        : QStringLiteral("Vertical separator");
+}
+
+} // namespace
 
 QtMaterialDivider::QtMaterialDivider(QWidget *parent)
     : QWidget(parent)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents);
+    setFocusPolicy(Qt::NoFocus);
     setOrientation(Qt::Horizontal);
+    syncAccessibility();
 }
 
 QtMaterialDivider::QtMaterialDivider(Qt::Orientation orientation, QWidget *parent)
     : QWidget(parent)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents);
+    setFocusPolicy(Qt::NoFocus);
     setOrientation(orientation);
+    syncAccessibility();
 }
 
 QtMaterialDivider::~QtMaterialDivider() = default;
@@ -56,6 +71,7 @@ void QtMaterialDivider::setOrientation(Qt::Orientation orientation)
 
     emit orientationChanged(m_orientation);
     updateGeometry();
+    syncAccessibility();
     update();
 }
 
@@ -73,6 +89,7 @@ void QtMaterialDivider::setLeadingInset(int value)
 
     m_leadingInset = normalized;
     emit leadingInsetChanged(m_leadingInset);
+    syncAccessibility();
     update();
 }
 
@@ -90,6 +107,7 @@ void QtMaterialDivider::setTrailingInset(int value)
 
     m_trailingInset = normalized;
     emit trailingInsetChanged(m_trailingInset);
+    syncAccessibility();
     update();
 }
 
@@ -115,6 +133,7 @@ void QtMaterialDivider::setThickness(int value)
 
     emit thicknessChanged(m_thickness);
     updateGeometry();
+    syncAccessibility();
     update();
 }
 
@@ -139,18 +158,87 @@ void QtMaterialDivider::resetColor()
     setColor(QColor());
 }
 
+bool QtMaterialDivider::isDecorative() const noexcept
+{
+    return m_decorative;
+}
+
+void QtMaterialDivider::setDecorative(bool decorative)
+{
+    if (m_decorative == decorative) {
+        return;
+    }
+
+    m_decorative = decorative;
+    emit decorativeChanged(m_decorative);
+    syncAccessibility();
+}
+
+QString QtMaterialDivider::accessibilityLabel() const
+{
+    return m_accessibilityLabel;
+}
+
+void QtMaterialDivider::setAccessibilityLabel(const QString &label)
+{
+    if (m_accessibilityLabel == label) {
+        return;
+    }
+
+    m_accessibilityLabel = label;
+    emit accessibilityLabelChanged(m_accessibilityLabel);
+    syncAccessibility();
+}
+
+QString QtMaterialDivider::accessibilitySummary() const
+{
+    if (m_decorative) {
+        return QString();
+    }
+
+    if (!m_accessibilityLabel.trimmed().isEmpty()) {
+        return m_accessibilityLabel.trimmed();
+    }
+
+    QString summary = orientationText(m_orientation);
+    if (m_leadingInset > 0 || m_trailingInset > 0) {
+        summary += QStringLiteral(", inset");
+    }
+    if (m_thickness > 1) {
+        summary += QStringLiteral(", %1 px thick").arg(m_thickness);
+    }
+
+    return summary;
+}
+
+QRect QtMaterialDivider::lineRect() const
+{
+    const int lineThickness = qMax(1, m_thickness);
+
+    if (m_orientation == Qt::Horizontal) {
+        const int leading = qMax(0, m_leadingInset);
+        const int trailing = qMax(0, m_trailingInset);
+        const int x = layoutDirection() == Qt::RightToLeft ? trailing : leading;
+        const int w = qMax(0, width() - leading - trailing);
+        const int y = qMax(0, (height() - lineThickness) / 2);
+        return QRect(x, y, w, lineThickness);
+    }
+
+    const int y = qMax(0, m_leadingInset);
+    const int trailing = qMax(0, m_trailingInset);
+    const int h = qMax(0, height() - y - trailing);
+    const int x = qMax(0, (width() - lineThickness) / 2);
+    return QRect(x, y, lineThickness, h);
+}
+
 QSize QtMaterialDivider::sizeHint() const
 {
-    return (m_orientation == Qt::Horizontal)
-        ? QSize(64, m_thickness)
-        : QSize(m_thickness, 64);
+    return (m_orientation == Qt::Horizontal) ? QSize(64, m_thickness) : QSize(m_thickness, 64);
 }
 
 QSize QtMaterialDivider::minimumSizeHint() const
 {
-    return (m_orientation == Qt::Horizontal)
-        ? QSize(0, m_thickness)
-        : QSize(m_thickness, 0);
+    return (m_orientation == Qt::Horizontal) ? QSize(0, m_thickness) : QSize(m_thickness, 0);
 }
 
 QColor QtMaterialDivider::resolvedColor() const
@@ -166,25 +254,7 @@ void QtMaterialDivider::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, false);
-
-    const int thickness = qMax(1, m_thickness);
-    const QColor color = resolvedColor();
-
-    if (m_orientation == Qt::Horizontal) {
-        const int x = qMax(0, m_leadingInset);
-        const int trailing = qMax(0, m_trailingInset);
-        const int w = qMax(0, width() - x - trailing);
-        const int y = qMax(0, (height() - thickness) / 2);
-
-        painter.fillRect(QRect(x, y, w, thickness), color);
-    } else {
-        const int y = qMax(0, m_leadingInset);
-        const int trailing = qMax(0, m_trailingInset);
-        const int h = qMax(0, height() - y - trailing);
-        const int x = qMax(0, (width() - thickness) / 2);
-
-        painter.fillRect(QRect(x, y, thickness, h), color);
-    }
+    painter.fillRect(lineRect(), resolvedColor());
 }
 
 void QtMaterialDivider::changeEvent(QEvent *event)
@@ -196,8 +266,32 @@ void QtMaterialDivider::changeEvent(QEvent *event)
     case QEvent::StyleChange:
         update();
         break;
+    case QEvent::LayoutDirectionChange:
+        update();
+        break;
     default:
         break;
+    }
+}
+
+void QtMaterialDivider::syncAccessibility()
+{
+    const QString summary = accessibilitySummary();
+
+    if (m_decorative) {
+        setAccessibleName(QString());
+        setAccessibleDescription(QString());
+    } else {
+        const QString label = !m_accessibilityLabel.trimmed().isEmpty()
+            ? m_accessibilityLabel.trimmed()
+            : orientationText(m_orientation);
+        setAccessibleName(label);
+        setAccessibleDescription(summary);
+    }
+
+    if (m_lastAccessibilitySummary != summary) {
+        m_lastAccessibilitySummary = summary;
+        emit accessibilitySummaryChanged(summary);
     }
 }
 

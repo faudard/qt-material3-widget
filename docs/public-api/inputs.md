@@ -102,3 +102,10 @@ The usable contract covers:
 
 See `docs/public-api/textfield-release-readiness.md` for the checklist used to promote the components.
 <!-- textfield-release-readiness:end -->
+
+## Date field
+
+`QtMaterialDateField` extends the outlined text field with date parsing, date
+formatting, clear/calendar affordances, minimum/maximum date validation and an
+accessibility summary for the selected date and range.
+

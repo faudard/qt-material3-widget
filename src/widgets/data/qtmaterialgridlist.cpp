@@ -1,100 +1,291 @@
 #include "qtmaterial/widgets/data/qtmaterialgridlist.h"
 
-#include <QAbstractTextDocumentLayout>
-#include <QPainter>
+#include <QKeyEvent>
 #include <QResizeEvent>
-#include <QStyledItemDelegate>
-#include <QTextDocument>
+#include <QScrollBar>
 
 namespace QtMaterial {
 
-class MaterialGridListDelegate final : public QStyledItemDelegate {
-public:
-    explicit MaterialGridListDelegate(QObject* parent = nullptr) : QStyledItemDelegate(parent) {}
+namespace {
 
-    void setSpec(const GridListSpec& spec) { m_spec = spec; }
-
-    QSize sizeHint(const QStyleOptionViewItem&, const QModelIndex&) const override
-    {
-        return m_spec.itemSize;
+QString displayText(const QString& title, const QString& supportingText)
+{
+    if (supportingText.trimmed().isEmpty()) {
+        return title;
     }
+    return title + QLatin1Char('\n') + supportingText;
+}
 
-    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override
-    {
-        painter->save();
-        painter->setRenderHint(QPainter::Antialiasing);
-
-        const QRect card = option.rect.adjusted(4, 4, -4, -4);
-        QColor bg = m_spec.itemBackgroundColor;
-        QColor fg = m_spec.foregroundColor;
-        if (option.state & QStyle::State_Selected) {
-            bg = m_spec.itemSelectedColor;
-            fg = m_spec.itemSelectedTextColor;
-        } else if (option.state & QStyle::State_MouseOver) {
-            bg = m_spec.itemHoverColor;
-        }
-
-        painter->setPen(Qt::NoPen);
-        painter->setBrush(bg);
-        painter->drawRoundedRect(card, m_spec.itemRadius, m_spec.itemRadius);
-
-        const QRect imageRect = card.adjusted(12, 12, -12, -card.height() / 2);
-        painter->setBrush(m_spec.supportingTextColor.lighter(160));
-        painter->drawRoundedRect(imageRect, qMax(4, m_spec.itemRadius / 2), qMax(4, m_spec.itemRadius / 2));
-
-        const QString title = index.data(Qt::DisplayRole).toString();
-        const QString supporting = index.data(Qt::UserRole + 1).toString();
-
-        QRect textRect = card.adjusted(12, card.height() / 2 + 4, -12, -12);
-        painter->setPen(fg);
-        painter->setFont(m_spec.titleFont);
-        painter->drawText(textRect, Qt::AlignLeft | Qt::AlignTop | Qt::TextSingleLine, title);
-
-        painter->setPen(m_spec.supportingTextColor);
-        painter->setFont(m_spec.supportingFont);
-        textRect.translate(0, painter->fontMetrics().height() + 4);
-        painter->drawText(textRect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, supporting);
-
-        if (option.state & QStyle::State_HasFocus) {
-            painter->setPen(QPen(m_spec.focusRingColor, m_spec.focusRingWidth));
-            painter->setBrush(Qt::NoBrush);
-            painter->drawRoundedRect(card.adjusted(1, 1, -1, -1), m_spec.itemRadius, m_spec.itemRadius);
-        }
-
-        painter->restore();
+QAbstractItemView::SelectionMode toQtSelectionMode(QtMaterialGridList::SelectionMode mode)
+{
+    switch (mode) {
+    case QtMaterialGridList::SelectionMode::NoSelection:
+        return QAbstractItemView::NoSelection;
+    case QtMaterialGridList::SelectionMode::MultiSelection:
+        return QAbstractItemView::MultiSelection;
+    case QtMaterialGridList::SelectionMode::SingleSelection:
+    default:
+        return QAbstractItemView::SingleSelection;
     }
+}
 
-private:
-    GridListSpec m_spec = defaultGridListSpec();
-};
+} // namespace
 
 QtMaterialGridList::QtMaterialGridList(QWidget* parent)
-    : QListView(parent), m_spec(defaultGridListSpec())
+    : QListWidget(parent)
 {
     setObjectName(QStringLiteral("QtMaterialGridList"));
+    setAccessibleName(QStringLiteral("Grid list"));
+    setFocusPolicy(Qt::StrongFocus);
+    setMouseTracking(true);
+
     setViewMode(QListView::IconMode);
     setResizeMode(QListView::Adjust);
     setMovement(QListView::Static);
     setWrapping(true);
+    setFlow(QListView::LeftToRight);
     setUniformItemSizes(true);
-    setMouseTracking(true);
-    setSelectionMode(QAbstractItemView::SingleSelection);
-    setFocusPolicy(Qt::StrongFocus);
-    setItemDelegate(new MaterialGridListDelegate(this));
-    applySpec();
+    setSpacing(8);
+    QListWidget::setSelectionMode(toQtSelectionMode(m_selectionMode));
+
+    updateGridGeometry();
+    syncAccessibilitySummary();
+
+    connect(this, &QListWidget::currentRowChanged, this, [this](int row) {
+        syncAccessibilitySummary();
+        Q_EMIT currentIndexChanged(row);
+    });
+
+    connect(this, &QListWidget::itemClicked, this, [this](QListWidgetItem* item) {
+        const int row = this->row(item);
+        if (row >= 0 && isItemEnabled(row)) {
+            Q_EMIT gridItemClicked(row);
+        }
+    });
+
+    connect(this, &QListWidget::itemActivated, this, [this](QListWidgetItem* item) {
+        const int row = this->row(item);
+        if (row >= 0 && isItemEnabled(row)) {
+            Q_EMIT gridItemActivated(row);
+        }
+    });
+
+    connect(this, &QListWidget::itemSelectionChanged, this, [this]() {
+        syncAccessibilitySummary();
+        Q_EMIT gridSelectionChanged();
+    });
 }
 
 QtMaterialGridList::~QtMaterialGridList() = default;
 
-GridListSpec QtMaterialGridList::spec() const
+int QtMaterialGridList::addGridItem(const QString& title,
+                                    const QString& supportingText,
+                                    const QIcon& icon)
 {
-    return m_spec;
+    insertGridItem(count(), title, supportingText, icon);
+    return count() - 1;
 }
 
-void QtMaterialGridList::setSpec(const GridListSpec& spec)
+void QtMaterialGridList::insertGridItem(int index,
+                                        const QString& title,
+                                        const QString& supportingText,
+                                        const QIcon& icon)
 {
-    m_spec = spec;
-    applySpec();
+    index = qBound(0, index, count());
+
+    auto* item = new QListWidgetItem(icon, QString(), this);
+    item->setData(TitleRole, title);
+    item->setData(SupportingTextRole, supportingText);
+    item->setSizeHint(m_cellExtent);
+    item->setTextAlignment(Qt::AlignCenter);
+    updateItemText(item);
+    updateItemAccessibility(item);
+
+    QListWidget::takeItem(row(item));
+    QListWidget::insertItem(index, item);
+
+    if (currentRow() < 0 && isItemEnabled(index)) {
+        setCurrentRow(index);
+    }
+
+    syncAccessibilitySummary();
+}
+
+QString QtMaterialGridList::itemTitle(int index) const
+{
+    if (auto* item = gridItemAt(index)) {
+        return item->data(TitleRole).toString();
+    }
+    return QString();
+}
+
+void QtMaterialGridList::setItemTitle(int index, const QString& title)
+{
+    auto* item = gridItemAt(index);
+    if (!item || item->data(TitleRole).toString() == title) {
+        return;
+    }
+
+    item->setData(TitleRole, title);
+    updateItemText(item);
+    updateItemAccessibility(item);
+    syncAccessibilitySummary();
+}
+
+QString QtMaterialGridList::itemSupportingText(int index) const
+{
+    if (auto* item = gridItemAt(index)) {
+        return item->data(SupportingTextRole).toString();
+    }
+    return QString();
+}
+
+void QtMaterialGridList::setItemSupportingText(int index, const QString& supportingText)
+{
+    auto* item = gridItemAt(index);
+    if (!item || item->data(SupportingTextRole).toString() == supportingText) {
+        return;
+    }
+
+    item->setData(SupportingTextRole, supportingText);
+    updateItemText(item);
+    updateItemAccessibility(item);
+    syncAccessibilitySummary();
+}
+
+QIcon QtMaterialGridList::itemIcon(int index) const
+{
+    if (auto* item = gridItemAt(index)) {
+        return item->icon();
+    }
+    return QIcon();
+}
+
+void QtMaterialGridList::setItemIcon(int index, const QIcon& icon)
+{
+    if (auto* item = gridItemAt(index)) {
+        item->setIcon(icon);
+    }
+}
+
+bool QtMaterialGridList::isItemEnabled(int index) const
+{
+    if (auto* item = gridItemAt(index)) {
+        return item->flags().testFlag(Qt::ItemIsEnabled);
+    }
+    return false;
+}
+
+void QtMaterialGridList::setItemEnabled(int index, bool enabled)
+{
+    auto* item = gridItemAt(index);
+    if (!item || isItemEnabled(index) == enabled) {
+        return;
+    }
+
+    Qt::ItemFlags flags = item->flags();
+    if (enabled) {
+        flags |= Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    } else {
+        flags &= ~Qt::ItemIsEnabled;
+        flags &= ~Qt::ItemIsSelectable;
+        item->setSelected(false);
+        if (currentRow() == index) {
+            setCurrentRow(nextEnabledIndex(index, 1));
+        }
+    }
+
+    item->setFlags(flags);
+    updateItemAccessibility(item);
+    syncAccessibilitySummary();
+}
+
+int QtMaterialGridList::currentIndex() const
+{
+    return currentRow();
+}
+
+void QtMaterialGridList::setCurrentIndex(int index)
+{
+    if (index < 0) {
+        setCurrentRow(-1);
+        return;
+    }
+
+    if (!isItemEnabled(index)) {
+        return;
+    }
+
+    setCurrentRow(index);
+}
+
+QtMaterialGridList::SelectionMode QtMaterialGridList::gridSelectionMode() const
+{
+    return m_selectionMode;
+}
+
+void QtMaterialGridList::setGridSelectionMode(SelectionMode mode)
+{
+    if (m_selectionMode == mode) {
+        return;
+    }
+
+    m_selectionMode = mode;
+    QListWidget::setSelectionMode(toQtSelectionMode(mode));
+
+    if (mode == SelectionMode::NoSelection) {
+        clearSelection();
+    } else if (mode == SelectionMode::SingleSelection && selectedItems().size() > 1) {
+        const int keep = currentRow();
+        clearSelection();
+        if (keep >= 0) {
+            setItemSelected(keep, true);
+        }
+    }
+
+    syncAccessibilitySummary();
+    Q_EMIT gridSelectionChanged();
+}
+
+QStringList QtMaterialGridList::selectedIndexesAsStrings() const
+{
+    QStringList result;
+    const auto indexes = selectedIndexesList();
+    result.reserve(indexes.size());
+    for (const int index : indexes) {
+        result.push_back(QString::number(index));
+    }
+    return result;
+}
+
+QList<int> QtMaterialGridList::selectedIndexesList() const
+{
+    QList<int> result;
+    const auto items = selectedItems();
+    result.reserve(items.size());
+    for (QListWidgetItem* item : items) {
+        result.push_back(row(item));
+    }
+    std::sort(result.begin(), result.end());
+    return result;
+}
+
+void QtMaterialGridList::setItemSelected(int index, bool selected)
+{
+    if (m_selectionMode == SelectionMode::NoSelection || !isItemEnabled(index)) {
+        return;
+    }
+
+    if (auto* item = gridItemAt(index)) {
+        item->setSelected(selected);
+        syncAccessibilitySummary();
+    }
+}
+
+void QtMaterialGridList::clearGridSelection()
+{
+    clearSelection();
+    syncAccessibilitySummary();
 }
 
 int QtMaterialGridList::columns() const
@@ -104,53 +295,243 @@ int QtMaterialGridList::columns() const
 
 void QtMaterialGridList::setColumns(int columns)
 {
-    m_columns = qMax(0, columns);
-    updateGridSize();
+    columns = qMax(1, columns);
+    if (m_columns == columns) {
+        return;
+    }
+
+    m_columns = columns;
+    updateGridGeometry();
+    syncAccessibilitySummary();
+    Q_EMIT columnsChanged(m_columns);
+}
+
+QSize QtMaterialGridList::cellExtent() const
+{
+    return m_cellExtent;
+}
+
+void QtMaterialGridList::setCellExtent(const QSize& size)
+{
+    const QSize normalized(qMax(48, size.width()), qMax(48, size.height()));
+    if (m_cellExtent == normalized) {
+        return;
+    }
+
+    m_cellExtent = normalized;
+    for (int i = 0; i < count(); ++i) {
+        if (auto* item = gridItemAt(i)) {
+            item->setSizeHint(m_cellExtent);
+        }
+    }
+
+    updateGridGeometry();
+    Q_EMIT cellExtentChanged(m_cellExtent);
+}
+
+QString QtMaterialGridList::itemAccessibleText(int index) const
+{
+    const auto* item = gridItemAt(index);
+    if (!item) {
+        return QString();
+    }
+
+    QStringList parts;
+    parts << itemTitle(index);
+
+    const QString supporting = itemSupportingText(index).trimmed();
+    if (!supporting.isEmpty()) {
+        parts << supporting;
+    }
+
+    parts << tr("Item %1 of %2").arg(index + 1).arg(count());
+
+    if (!isItemEnabled(index)) {
+        parts << tr("Disabled");
+    }
+
+    if (item->isSelected()) {
+        parts << tr("Selected");
+    }
+
+    return parts.join(QStringLiteral(", "));
+}
+
+QString QtMaterialGridList::currentItemAccessibleText() const
+{
+    return itemAccessibleText(currentRow());
+}
+
+QString QtMaterialGridList::accessibilitySummary() const
+{
+    return m_accessibilitySummary;
+}
+
+void QtMaterialGridList::keyPressEvent(QKeyEvent* event)
+{
+    if (!event) {
+        return;
+    }
+
+    const int current = currentRow();
+    const bool rtl = layoutDirection() == Qt::RightToLeft;
+
+    int target = -1;
+    switch (event->key()) {
+    case Qt::Key_Left:
+        target = nextEnabledIndex(current, rtl ? 1 : -1);
+        break;
+    case Qt::Key_Right:
+        target = nextEnabledIndex(current, rtl ? -1 : 1);
+        break;
+    case Qt::Key_Up:
+        target = nextEnabledIndex(current, -m_columns);
+        break;
+    case Qt::Key_Down:
+        target = nextEnabledIndex(current, m_columns);
+        break;
+    case Qt::Key_Home:
+        target = firstEnabledIndex();
+        break;
+    case Qt::Key_End:
+        target = lastEnabledIndex();
+        break;
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+    case Qt::Key_Space:
+        if (current >= 0 && isItemEnabled(current)) {
+            Q_EMIT gridItemActivated(current);
+            event->accept();
+            return;
+        }
+        break;
+    default:
+        break;
+    }
+
+    if (target >= 0) {
+        setCurrentRow(target);
+        event->accept();
+        return;
+    }
+
+    QListWidget::keyPressEvent(event);
 }
 
 void QtMaterialGridList::resizeEvent(QResizeEvent* event)
 {
-    QListView::resizeEvent(event);
-    updateGridSize();
+    QListWidget::resizeEvent(event);
+    updateGridGeometry();
 }
 
-void QtMaterialGridList::paintEvent(QPaintEvent* event)
+QListWidgetItem* QtMaterialGridList::gridItemAt(int index) const
 {
-    QListView::paintEvent(event);
+    if (index < 0 || index >= count()) {
+        return nullptr;
+    }
+    return item(index);
 }
 
-void QtMaterialGridList::applySpec()
+int QtMaterialGridList::nextEnabledIndex(int from, int delta) const
 {
-    setSpacing(m_spec.spacing);
-    setGridSize(m_spec.itemSize + QSize(m_spec.spacing, m_spec.spacing));
-    setFont(m_spec.titleFont);
-
-    if (auto* delegate = dynamic_cast<MaterialGridListDelegate*>(itemDelegate())) {
-        delegate->setSpec(m_spec);
+    if (count() == 0 || delta == 0) {
+        return -1;
     }
 
-    QPalette palette = this->palette();
-    palette.setColor(QPalette::Base, m_spec.backgroundColor);
-    palette.setColor(QPalette::Window, m_spec.backgroundColor);
-    palette.setColor(QPalette::Text, m_spec.foregroundColor);
-    palette.setColor(QPalette::Highlight, m_spec.itemSelectedColor);
-    palette.setColor(QPalette::HighlightedText, m_spec.itemSelectedTextColor);
-    setPalette(palette);
-    viewport()->setPalette(palette);
-    setStyleSheet(QStringLiteral("QListView { background:%1; border:0; outline:0; }").arg(m_spec.backgroundColor.name()));
-    updateGridSize();
+    int candidate = from;
+    if (candidate < 0) {
+        candidate = delta > 0 ? -1 : count();
+    }
+
+    for (;;) {
+        candidate += delta;
+        if (candidate < 0 || candidate >= count()) {
+            return -1;
+        }
+        if (isItemEnabled(candidate)) {
+            return candidate;
+        }
+    }
 }
 
-void QtMaterialGridList::updateGridSize()
+int QtMaterialGridList::firstEnabledIndex() const
 {
-    if (m_columns <= 0) {
-        setGridSize(m_spec.itemSize + QSize(m_spec.spacing, m_spec.spacing));
+    for (int i = 0; i < count(); ++i) {
+        if (isItemEnabled(i)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int QtMaterialGridList::lastEnabledIndex() const
+{
+    for (int i = count() - 1; i >= 0; --i) {
+        if (isItemEnabled(i)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void QtMaterialGridList::updateItemText(QListWidgetItem* item)
+{
+    if (!item) {
         return;
     }
-    const int available = qMax(1, viewport()->width() - (m_columns + 1) * m_spec.spacing);
-    const int width = qMax(80, available / m_columns);
-    QSize size(width, m_spec.itemSize.height());
-    setGridSize(size + QSize(m_spec.spacing, m_spec.spacing));
+
+    const QString title = item->data(TitleRole).toString();
+    const QString supportingText = item->data(SupportingTextRole).toString();
+    item->setText(displayText(title, supportingText));
+    item->setToolTip(displayText(title, supportingText));
+}
+
+void QtMaterialGridList::updateItemAccessibility(QListWidgetItem* item)
+{
+    if (!item) {
+        return;
+    }
+
+    const int index = row(item);
+    item->setStatusTip(itemAccessibleText(index));
+    item->setWhatsThis(itemAccessibleText(index));
+}
+
+void QtMaterialGridList::updateGridGeometry()
+{
+    QSize gridSize = m_cellExtent;
+    if (m_columns > 0 && viewport()) {
+        const int available = qMax(0, viewport()->width() - verticalScrollBar()->sizeHint().width());
+        if (available > 0) {
+            const int horizontalSpacing = spacing() * qMax(0, m_columns - 1);
+            const int width = qMax(m_cellExtent.width(), (available - horizontalSpacing) / m_columns);
+            gridSize.setWidth(width);
+        }
+    }
+    setGridSize(gridSize);
+}
+
+void QtMaterialGridList::syncAccessibilitySummary()
+{
+    const int selectedCount = selectedItems().size();
+
+    QStringList parts;
+    parts << tr("%n item(s)", nullptr, count());
+    if (currentRow() >= 0) {
+        parts << tr("current %1").arg(currentRow() + 1);
+    }
+    if (selectedCount > 0) {
+        parts << tr("%n selected", nullptr, selectedCount);
+    }
+
+    const QString summary = parts.join(QStringLiteral(", "));
+    if (m_accessibilitySummary == summary) {
+        return;
+    }
+
+    m_accessibilitySummary = summary;
+    setAccessibleDescription(summary);
+    Q_EMIT accessibilitySummaryChanged(m_accessibilitySummary);
 }
 
 } // namespace QtMaterial

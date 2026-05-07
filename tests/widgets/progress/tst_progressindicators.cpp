@@ -8,7 +8,8 @@ using QtMaterial::ProgressIndicatorSpec;
 using QtMaterial::QtMaterialCircularProgressIndicator;
 using QtMaterial::QtMaterialLinearProgressIndicator;
 
-class tst_ProgressIndicators : public QObject {
+class tst_ProgressIndicators : public QObject
+{
     Q_OBJECT
 
 private Q_SLOTS:
@@ -20,21 +21,21 @@ private Q_SLOTS:
     void sizeHintsFollowSpec();
     void specRoundTrip();
     void indeterminateModeCanBeShownAndHidden();
+    void circularDeterminateAccessibilityIncludesPercent();
+    void circularIndeterminateAccessibilityUsesStatusText();
+    void circularAsyncStateUpdatesAccessibility();
 };
 
 void tst_ProgressIndicators::linearValueIsClamped()
 {
     QtMaterialLinearProgressIndicator indicator;
     QSignalSpy spy(&indicator, &QtMaterialLinearProgressIndicator::valueChanged);
-
     indicator.setValue(-1.0);
     QCOMPARE(indicator.value(), 0.0);
     QCOMPARE(spy.count(), 0);
-
     indicator.setValue(0.42);
     QCOMPARE(indicator.value(), 0.42);
     QCOMPARE(spy.count(), 1);
-
     indicator.setValue(2.0);
     QCOMPARE(indicator.value(), 1.0);
     QCOMPARE(spy.count(), 2);
@@ -44,15 +45,12 @@ void tst_ProgressIndicators::circularValueIsClamped()
 {
     QtMaterialCircularProgressIndicator indicator;
     QSignalSpy spy(&indicator, &QtMaterialCircularProgressIndicator::valueChanged);
-
     indicator.setValue(-1.0);
     QCOMPARE(indicator.value(), 0.0);
     QCOMPARE(spy.count(), 0);
-
     indicator.setValue(0.75);
     QCOMPARE(indicator.value(), 0.75);
     QCOMPARE(spy.count(), 1);
-
     indicator.setValue(9.0);
     QCOMPARE(indicator.value(), 1.0);
     QCOMPARE(spy.count(), 2);
@@ -178,6 +176,55 @@ void tst_ProgressIndicators::indeterminateModeCanBeShownAndHidden()
     QVERIFY(QTest::qWaitForWindowExposed(&circular));
     circular.hide();
     QCOMPARE(circular.mode(), QtMaterialCircularProgressIndicator::Mode::Indeterminate);
+}
+
+void tst_ProgressIndicators::circularDeterminateAccessibilityIncludesPercent()
+{
+    QtMaterialCircularProgressIndicator indicator;
+    QCOMPARE(indicator.accessibleName(), QStringLiteral("Progress indicator"));
+
+    QSignalSpy spy(&indicator, &QtMaterialCircularProgressIndicator::accessibilitySummaryChanged);
+    indicator.setStatusText(QStringLiteral("Uploading"));
+    indicator.setValue(0.25);
+
+    QCOMPARE(indicator.accessibleValueText(), QStringLiteral("Uploading, 25%"));
+    QCOMPARE(indicator.accessibilitySummary(), QStringLiteral("Uploading, 25%"));
+    QCOMPARE(indicator.accessibleDescription(), QStringLiteral("Uploading, 25%"));
+    QVERIFY(spy.count() >= 1);
+}
+
+void tst_ProgressIndicators::circularIndeterminateAccessibilityUsesStatusText()
+{
+    QtMaterialCircularProgressIndicator indicator;
+    indicator.setIndeterminate(true);
+    QCOMPARE(indicator.accessibleValueText(), QStringLiteral("In progress"));
+
+    indicator.setStatusText(QStringLiteral("Syncing"));
+    QCOMPARE(indicator.accessibleValueText(), QStringLiteral("Syncing"));
+    QCOMPARE(indicator.accessibleDescription(), QStringLiteral("Syncing"));
+}
+
+void tst_ProgressIndicators::circularAsyncStateUpdatesAccessibility()
+{
+    QtMaterialCircularProgressIndicator indicator;
+
+    QtMaterial::QtMaterialAsyncState state;
+    state.setStatusText(QStringLiteral("Downloading"));
+    state.setProgress(0.6);
+    indicator.setAsyncState(state);
+
+    QCOMPARE(indicator.mode(), QtMaterialCircularProgressIndicator::Mode::Determinate);
+    QCOMPARE(indicator.value(), 0.6);
+    QCOMPARE(indicator.accessibleValueText(), QStringLiteral("Downloading, 60%"));
+
+    state.clearProgress();
+    state.setIndeterminate(true);
+    state.setBusy(true);
+    state.setStatusText(QStringLiteral("Waiting"));
+    indicator.setAsyncState(state);
+
+    QCOMPARE(indicator.mode(), QtMaterialCircularProgressIndicator::Mode::Indeterminate);
+    QCOMPARE(indicator.accessibleValueText(), QStringLiteral("Waiting"));
 }
 
 QTEST_MAIN(tst_ProgressIndicators)

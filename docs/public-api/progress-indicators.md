@@ -74,3 +74,10 @@ If the local gallery uses a central navigation registry, run the patch script an
 - size hints driven by `ProgressIndicatorSpec`;
 - full spec round-trip behavior;
 - show/hide safety for indeterminate mode.
+
+## Circular progress indicator accessibility
+
+`QtMaterialCircularProgressIndicator` exposes `accessibleValueText()` and `accessibilitySummary()`.
+Determinate mode reports a rounded percentage, optionally prefixed by `statusText()`.
+Indeterminate mode reports `statusText()` or `In progress` when no status text is set.
+

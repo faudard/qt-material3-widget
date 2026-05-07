@@ -77,14 +77,15 @@
   {
     "id": "data.divider",
     "name": "Divider",
-    "family": "Data",
+    "family": "Data display",
     "maturity": "usable",
     "publicHeader": "qtmaterial/widgets/data/qtmaterialdivider.h",
     "specType": "DividerSpec",
     "widgetType": "QtMaterialDivider",
     "testTarget": "tst_divider",
     "galleryRoute": "/data/divider",
-    "docsPath": "docs/public-api/data-widgets.md"
+    "docsPath": "docs/public-api/divider-release-readiness.md",
+    "releaseScope": true
   },
   {
     "id": "data.table",
@@ -96,6 +97,19 @@
     "widgetType": "QtMaterialTable",
     "testTarget": "tst_table",
     "galleryRoute": "/data/table",
+    "docsPath": "docs/public-api/data-widgets.md",
+    "releaseScope": true
+  },
+  {
+    "id": "data.grid-list",
+    "name": "Grid List",
+    "family": "Data",
+    "maturity": "usable",
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialgridlist.h",
+    "specType": "DataComponentSpec",
+    "widgetType": "QtMaterialGridList",
+    "testTarget": "tst_gridlist",
+    "galleryRoute": "/data/grid-list",
     "docsPath": "docs/public-api/data-widgets.md",
     "releaseScope": true
   },
@@ -159,6 +173,19 @@
     "testTarget": "tst_progressindicators",
     "galleryRoute": "/progress/linear",
     "docsPath": "docs/public-api/progress-indicators.md"
+  },
+  {
+    "id": "progress.circular",
+    "name": "Circular Progress Indicator",
+    "family": "Progress",
+    "maturity": "usable",
+    "publicHeader": "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h",
+    "specType": "ProgressIndicatorSpec",
+    "widgetType": "QtMaterialCircularProgressIndicator",
+    "testTarget": "tst_progressindicators",
+    "galleryRoute": "/progress/circular",
+    "docsPath": "docs/public-api/progress-indicators.md",
+    "releaseScope": true
   },
   {
     "id": "selection.checkbox",
@@ -226,7 +253,7 @@
     "id": "surface.card",
     "name": "Card",
     "family": "Surfaces",
-    "maturity": "partial",
+    "maturity": "usable",
     "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialcard.h",
     "specType": "CardSpec",
     "widgetType": "QtMaterialCard",
@@ -269,6 +296,32 @@
     "testTarget": "tst_topappbar",
     "galleryRoute": "/surfaces/top-app-bar",
     "docsPath": "docs/public-api/appbars-release-readiness.md",
+    "releaseScope": true
+  },
+  {
+    "id": "input.date.field",
+    "name": "Date Field",
+    "family": "Inputs",
+    "maturity": "usable",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialdatefield.h",
+    "specType": "TextFieldSpec",
+    "widgetType": "QtMaterialDateField",
+    "testTarget": "tst_datefield",
+    "galleryRoute": "/inputs/date-field",
+    "docsPath": "docs/public-api/inputs.md",
+    "releaseScope": true
+  },
+  {
+    "id": "data.carousel",
+    "name": "Carousel",
+    "family": "Data",
+    "maturity": "usable",
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialcarousel.h",
+    "specType": "DataComponentSpec",
+    "widgetType": "QtMaterialCarousel",
+    "testTarget": "tst_carousel",
+    "galleryRoute": "/data/carousel",
+    "docsPath": "docs/public-api/data-widgets.md",
     "releaseScope": true
   }
 ]

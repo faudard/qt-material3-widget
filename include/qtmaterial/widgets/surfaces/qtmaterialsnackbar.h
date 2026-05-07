@@ -12,6 +12,7 @@ class QHBoxLayout;
 class QTimer;
 class QKeyEvent;
 class QResizeEvent;
+class QObject;
 
 namespace QtMaterial {
 
@@ -44,6 +45,8 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSnackbar : public QtMaterialOverlaySu
 {
     Q_OBJECT
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
+    Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
+    Q_PROPERTY(bool pauseAutoHideOnInteraction READ pauseAutoHideOnInteraction WRITE setPauseAutoHideOnInteraction)
 
 public:
     explicit QtMaterialSnackbar(QWidget* parent = nullptr);
@@ -69,11 +72,16 @@ public:
 
     qreal progress() const noexcept;
 
+    QString accessibilitySummary() const;
+    bool pauseAutoHideOnInteraction() const noexcept;
+    void setPauseAutoHideOnInteraction(bool enabled);
+
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
 signals:
     void progressChanged(qreal value);
+    void accessibilitySummaryChanged(const QString& summary);
     void shown();
     void actionTriggered();
     void dismissed(QtMaterial::SnackbarDismissReason reason);
@@ -81,6 +89,8 @@ signals:
 protected:
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
+    bool event(QEvent* event) override;
+    bool eventFilter(QObject* watched, QEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
     void syncGeometryToHost() override;
@@ -98,6 +108,8 @@ private:
     void applyResolvedTheme();
     void applyRequestToUi();
     void updateAutoHide();
+    void syncAccessibilityState();
+    void setAutoHidePaused(bool paused);
     int currentDurationMs() const;
     QRectF containerRect() const;
     qreal resolvedCornerRadius() const noexcept;
@@ -115,6 +127,9 @@ private:
     QPushButton* m_dismissButton = nullptr;
     QHBoxLayout* m_layout = nullptr;
     QTimer* m_timer = nullptr;
+    bool m_pauseAutoHideOnInteraction = true;
+    bool m_autoHidePaused = false;
+    QString m_lastAccessibilitySummary;
     QPointer<QtMaterialTransitionController> m_transition;
 };
 
