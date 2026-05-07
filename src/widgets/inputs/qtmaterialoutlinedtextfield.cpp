@@ -447,7 +447,6 @@ void QtMaterialOutlinedTextField::setRequiredText(const QString& text)
     }
 
     m_requiredText = text;
-
     syncAccessibilityState();
     invalidateLayoutCache();
     updateGeometry();
@@ -993,6 +992,60 @@ int QtMaterialOutlinedTextField::effectiveTrailingReserve() const
     return width;
 }
 
+QtMaterialOutlinedTextField::RequiredValidationMode QtMaterialOutlinedTextField::requiredValidationMode() const noexcept
+{
+    return m_requiredValidationMode;
+}
+
+void QtMaterialOutlinedTextField::setRequiredValidationMode(RequiredValidationMode mode)
+{
+    if (m_requiredValidationMode == mode) {
+        return;
+    }
+
+    m_requiredValidationMode = mode;
+    refreshValidationState(false);
+    syncAccessibilityState();
+    invalidateLayoutCache();
+    updateGeometry();
+    update();
+}
+
+QString QtMaterialOutlinedTextField::validatorErrorText() const
+{
+    return m_validatorErrorText;
+}
+
+void QtMaterialOutlinedTextField::setValidatorErrorText(const QString& text)
+{
+    if (m_validatorErrorText == text) {
+        return;
+    }
+
+    m_validatorErrorText = text;
+    syncAccessibilityState();
+    invalidateLayoutCache();
+    updateGeometry();
+    update();
+}
+
+QString QtMaterialOutlinedTextField::inputMaskErrorText() const
+{
+    return m_inputMaskErrorText;
+}
+
+void QtMaterialOutlinedTextField::setInputMaskErrorText(const QString& text)
+{
+    if (m_inputMaskErrorText == text) {
+        return;
+    }
+
+    m_inputMaskErrorText = text;
+    syncAccessibilityState();
+    invalidateLayoutCache();
+    updateGeometry();
+    update();
+}
 
 bool QtMaterialOutlinedTextField::isRequiredValidationError() const
 {
@@ -1004,7 +1057,33 @@ bool QtMaterialOutlinedTextField::isRequiredValidationError() const
 
 QString QtMaterialOutlinedTextField::effectiveErrorText() const
 {
-    return isRequiredValidationError() ? requiredText() : errorText();
+    if (m_manualErrorState && !errorText().isEmpty()) {
+        return errorText();
+    }
+
+    switch (m_automaticValidationErrorKind) {
+    case AutomaticValidationErrorKind::Required:
+        return m_requiredText.isEmpty() ? tr("Required") : m_requiredText;
+    case AutomaticValidationErrorKind::InputMask:
+        if (!m_inputMaskErrorText.isEmpty()) {
+            return m_inputMaskErrorText;
+        }
+        break;
+    case AutomaticValidationErrorKind::Validator:
+        if (!m_validatorErrorText.isEmpty()) {
+            return m_validatorErrorText;
+        }
+        break;
+    case AutomaticValidationErrorKind::None:
+    default:
+        break;
+    }
+
+    if (hasErrorState() && !errorText().isEmpty()) {
+        return errorText();
+    }
+
+    return hasErrorState() ? tr("Invalid value") : QString();
 }
 
 bool QtMaterialOutlinedTextField::currentValidationError() const

@@ -216,6 +216,10 @@ qtm3_add_test(tst_formfieldcontrol core/tst_formfieldcontrol.cpp qtmaterial3_cor
 qtm3_add_test(tst_paletteadapter core/tst_paletteadapter.cpp qtmaterial3_core qtmaterial3_theme)
 qtm3_add_test(tst_widget_migration_contracts widgets/tst_widget_migration_contracts.cpp qtmaterial3_widgets qtmaterial3_core)
 
+qtm3_add_test(tst_textfield_validation_hardening widgets/inputs/tst_textfield_validation_hardening.cpp qtmaterial3_widgets)
+
+qtm3_add_test(tst_textfield_error_visibility_accessibility widgets/inputs/tst_textfield_error_visibility_accessibility.cpp qtmaterial3_widgets)
+
 qtm3_add_test(
     tst_textfield_readonly
     widgets/inputs/tst_textfield_readonly.cpp
