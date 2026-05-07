@@ -1,39 +1,12 @@
 #include "qtmaterial/widgets/buttons/qtmaterialextendedfab.h"
 
 #include <QFontMetrics>
+#include <Qt>
 
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
-#include "qtmaterial/theme/qtmaterialtheme.h"
 
 namespace QtMaterial {
 namespace {
-
-void applyFabVariant(FabSpec& spec, const Theme& theme, QtMaterialFabVariant variant)
-{
-    const ColorScheme& colors = theme.colorScheme();
-
-    switch (variant) {
-    case QtMaterialFabVariant::Secondary:
-        spec.containerColor = colors.color(ColorRole::SecondaryContainer);
-        spec.iconColor = colors.color(ColorRole::OnSecondaryContainer);
-        break;
-    case QtMaterialFabVariant::Tertiary:
-        spec.containerColor = colors.color(ColorRole::TertiaryContainer);
-        spec.iconColor = colors.color(ColorRole::OnTertiaryContainer);
-        break;
-    case QtMaterialFabVariant::Surface:
-        spec.containerColor = colors.color(ColorRole::SurfaceContainerHigh);
-        spec.iconColor = colors.color(ColorRole::Primary);
-        break;
-    case QtMaterialFabVariant::Primary:
-    default:
-        spec.containerColor = colors.color(ColorRole::PrimaryContainer);
-        spec.iconColor = colors.color(ColorRole::OnPrimaryContainer);
-        break;
-    }
-
-    spec.stateLayerColor = spec.iconColor;
-}
 
 ButtonSpec extendedFabToButtonSpec(const FabSpec& fab)
 {
@@ -59,60 +32,93 @@ ButtonSpec extendedFabToButtonSpec(const FabSpec& fab)
 } // namespace
 
 QtMaterialExtendedFab::QtMaterialExtendedFab(QWidget* parent)
-    : QtMaterialExtendedFab(QIcon(), QString(), parent)
+    : QtMaterialFilledButton(parent)
 {
+    initializeExtendedFab();
 }
 
 QtMaterialExtendedFab::QtMaterialExtendedFab(const QString& text, QWidget* parent)
-    : QtMaterialExtendedFab(QIcon(), text, parent)
-{
-}
-
-QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& text,
-                                             QWidget* parent)
     : QtMaterialFilledButton(parent)
 {
+    initializeExtendedFab();
+    setText(text);
+    syncAccessibilityState();
+}
+
+QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& text, QWidget* parent)
+    : QtMaterialFilledButton(parent)
+{
+    initializeExtendedFab();
     setIcon(icon);
     setText(text);
-    setCheckable(false);
+    syncAccessibilityState();
 }
 
 QtMaterialExtendedFab::~QtMaterialExtendedFab() = default;
 
-void QtMaterialExtendedFab::setFabVariant(QtMaterialFabVariant variant)
+void QtMaterialExtendedFab::initializeExtendedFab()
 {
-    if (m_variant == variant) {
-        return;
-    }
-
-    m_variant = variant;
-    invalidateResolvedSpec();
-    update();
+    setCheckable(false);
+    setFocusPolicy(Qt::StrongFocus);
+    syncAccessibilityState();
 }
 
-QtMaterialFabVariant QtMaterialExtendedFab::fabVariant() const noexcept
+QString QtMaterialExtendedFab::effectiveAccessibleName() const
 {
-    return m_variant;
+    if (!accessibleName().trimmed().isEmpty()) {
+        return accessibleName().trimmed();
+    }
+
+    if (!text().trimmed().isEmpty()) {
+        return text().trimmed();
+    }
+
+    if (!toolTip().trimmed().isEmpty()) {
+        return toolTip().trimmed();
+    }
+
+    return QString();
+}
+
+bool QtMaterialExtendedFab::hasUsableAccessibleName() const
+{
+    return !effectiveAccessibleName().trimmed().isEmpty();
+}
+
+QString QtMaterialExtendedFab::accessibilitySummary() const
+{
+    const QString name = effectiveAccessibleName();
+    if (!name.isEmpty()) {
+        return name;
+    }
+
+    return QStringLiteral("Extended floating action button requires text or an accessible name");
+}
+
+void QtMaterialExtendedFab::syncAccessibilityState()
+{
+    if (accessibleName().trimmed().isEmpty() && !text().trimmed().isEmpty()) {
+        setAccessibleName(text().trimmed());
+    }
+
+    if (hasUsableAccessibleName()) {
+        setAccessibleDescription(QStringLiteral("Extended floating action button"));
+    } else {
+        setAccessibleDescription(QStringLiteral(
+            "Extended floating action button requires text or an accessible name for assistive technologies"));
+    }
 }
 
 ButtonSpec QtMaterialExtendedFab::resolveButtonSpec() const
 {
     SpecFactory factory;
-    FabSpec spec = factory.extendedFabSpec(theme(), density());
-    applyFabVariant(spec, theme(), m_variant);
-    return extendedFabToButtonSpec(spec);
+    return extendedFabToButtonSpec(factory.extendedFabSpec(theme(), density()));
 }
 
 QSize QtMaterialExtendedFab::sizeHint() const
 {
     const ButtonSpec spec = resolveButtonSpec();
-
-    QFont resolvedFont = font();
-    if (theme().typography().contains(spec.labelTypeRole)) {
-        resolvedFont = theme().typography().style(spec.labelTypeRole).font;
-    }
-
-    const QFontMetrics fm(resolvedFont);
+    const QFontMetrics fm(font());
     const int textWidth = text().isEmpty() ? 0 : fm.horizontalAdvance(text());
     const int iconWidth = icon().isNull() ? 0 : spec.iconSize;
     const int spacing = (!icon().isNull() && !text().isEmpty()) ? spec.iconSpacing : 0;

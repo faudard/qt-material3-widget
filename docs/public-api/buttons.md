@@ -228,3 +228,8 @@ QtMaterial::QtMaterialExtendedFab* extended =
     new QtMaterial::QtMaterialExtendedFab(icon, QStringLiteral("Compose"), parent);
 extended->setFabVariant(QtMaterial::QtMaterialFabVariant::Surface);
 ```
+
+## Floating Action Buttons
+
+See `docs/public-api/fab-release-readiness.md` for the FAB and Extended FAB release-readiness contract.
+

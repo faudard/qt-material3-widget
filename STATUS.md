@@ -1,65 +1,26 @@
-# Component status
+# Component Status
 
-Generated from `docs/components/component-registry.json`.
-
-Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
-
-## Buttons
-
-| ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
-|---|---|---:|---|---|---|---|---|
-| button.filled | Filled Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialfilledbutton.h` | `ButtonSpec` | `tst_filledbutton` | `docs/public-api/buttons.md` | `/buttons/filled` |
-| button.text | Text Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialtextbutton.h` | `ButtonSpec` | `tst_textbutton` | `docs/public-api/buttons.md` | `/buttons/text` |
-| button.icon | Icon Button | `partial` | `qtmaterial/widgets/buttons/qtmaterialiconbutton.h` | `IconButtonSpec` | `tst_iconbutton` | `docs/public-api/buttons.md` | `/buttons/icon` |
-
-## Compact controls
-
-| ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
-|---|---|---:|---|---|---|---|---|
-| compact.chip | Chip | `planned` | `qtmaterial/widgets/selection/qtmaterialchip.h` | `ChipSpec` | `` | `docs/public-api/compact-controls.md` | `/compact/chip` |
-
-## Data
-
-| ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
-|---|---|---:|---|---|---|---|---|
-| data.divider | Divider | `usable` | `qtmaterial/widgets/data/qtmaterialdivider.h` | `DividerSpec` | `tst_divider` | `docs/public-api/data-widgets.md` | `/data/divider` |
-
-## Inputs
-
-| ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
-|---|---|---:|---|---|---|---|---|
-| input.text.filled | Filled Text Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h` | `TextFieldSpec` | `tst_filledtextfield` | `docs/public-api/inputs.md` | `/inputs/filled-text-field` |
-| input.text.outlined | Outlined Text Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h` | `TextFieldSpec` | `tst_outlinedtextfield` | `docs/public-api/inputs.md` | `/inputs/outlined-text-field` |
-
-## Navigation
-
-| ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
-|---|---|---:|---|---|---|---|---|
-| navigation.tabs | Tabs | `partial` | `qtmaterial/widgets/navigation/qtmaterialtabs.h` | `TabsSpec` | `tst_tabs` | `docs/public-api/navigation.md` | `/navigation/tabs` |
-| navigation.rail | Navigation Rail | `planned` | `qtmaterial/widgets/navigation/qtmaterialnavigationrail.h` | `NavigationRailSpec` | `` | `docs/public-api/navigation.md` | `/navigation/rail` |
-
-## Progress
-
-| ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
-|---|---|---:|---|---|---|---|---|
-| progress.linear | Linear Progress Indicator | `partial` | `qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress-indicators.md` | `/progress/linear` |
-
-## Selection
-
-| ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
-|---|---|---:|---|---|---|---|---|
-| selection.checkbox | Checkbox | `usable` | `qtmaterial/widgets/selection/qtmaterialcheckbox.h` | `CheckboxSpec` | `tst_checkbox` | `docs/public-api/selection.md` | `/selection/checkbox` |
-| selection.radio | Radio Button | `usable` | `qtmaterial/widgets/selection/qtmaterialradiobutton.h` | `RadioButtonSpec` | `tst_radiobutton` | `docs/public-api/selection.md` | `/selection/radio` |
-| selection.switch | Switch | `usable` | `qtmaterial/widgets/selection/qtmaterialswitch.h` | `SwitchSpec` | `tst_switch` | `docs/public-api/selection.md` | `/selection/switch` |
-
-## Surfaces
-
-| ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
-|---|---|---:|---|---|---|---|---|
-| surface.dialog | Dialog | `usable` | `qtmaterial/widgets/surfaces/qtmaterialdialog.h` | `DialogSpec` | `tst_dialog` | `docs/public-api/surfaces.md` | `/surfaces/dialog` |
-| surface.card | Card | `partial` | `qtmaterial/widgets/surfaces/qtmaterialcard.h` | `CardSpec` | `tst_card` | `docs/public-api/surfaces.md` | `/surfaces/card` |
-| surface.snackbar | Snackbar | `partial` | `qtmaterial/widgets/surfaces/qtmaterialsnackbar.h` | `SnackbarSpec` | `tst_snackbar` | `docs/public-api/surfaces.md` | `/surfaces/snackbar` |
-
-## Release blockers
-
-No registry-level maturity blockers.
+| ID | Name | Family | Maturity | Test | Release scope |
+|---|---|---|---|---|---|
+| `button.extended-fab` | Extended Floating Action Button | Buttons | usable | `tst_extendedfab` | yes |
+| `button.fab` | Floating Action Button | Buttons | usable | `tst_fab` | yes |
+| `button.filled` | Filled Button | Buttons | usable | `tst_filledbutton` | yes |
+| `button.icon` | Icon Button | Buttons | partial | `tst_iconbutton` | yes |
+| `button.text` | Text Button | Buttons | usable | `tst_textbutton` | yes |
+| `compact.chip` | Chip | Compact controls | planned | `` | no |
+| `data.divider` | Divider | Data | usable | `tst_divider` | yes |
+| `data.table` | Table | Data | usable | `tst_table` | yes |
+| `input.text.filled` | Filled Text Field | Inputs | usable | `tst_filledtextfield` | yes |
+| `input.text.outlined` | Outlined Text Field | Inputs | usable | `tst_outlinedtextfield` | yes |
+| `navigation.rail` | Navigation Rail | Navigation | planned | `` | no |
+| `navigation.tabs` | Tabs | Navigation | partial | `tst_tabs` | yes |
+| `progress.linear` | Linear Progress Indicator | Progress | partial | `tst_progressindicators` | yes |
+| `selection.checkbox` | Checkbox | Selection | usable | `tst_checkbox` | yes |
+| `selection.radio` | Radio Button | Selection | usable | `tst_radiobutton` | yes |
+| `selection.segmented-button` | Segmented Button | Selection | usable | `tst_segmentedbutton` | yes |
+| `selection.switch` | Switch | Selection | usable | `tst_switch` | yes |
+| `surface.bottom-app-bar` | Bottom App Bar | Surfaces | usable | `tst_bottomappbar` | yes |
+| `surface.card` | Card | Surfaces | partial | `tst_card` | yes |
+| `surface.dialog` | Dialog | Surfaces | usable | `tst_dialog` | yes |
+| `surface.snackbar` | Snackbar | Surfaces | partial | `tst_snackbar` | yes |
+| `surface.top-app-bar` | Top App Bar | Surfaces | usable | `tst_topappbar` | yes |

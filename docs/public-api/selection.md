@@ -57,3 +57,8 @@ checkbox->setProperty("materialTestId", QStringLiteral("notifications-checkbox")
 ## Theming
 
 Selection controls resolve colors, state layers, focus indication, shape, density, and disabled state from the active Material theme. They should not hard-code palette values in application code.
+
+## Segmented Button release readiness
+
+See `docs/public-api/segmentedbutton-release-readiness.md`.
+

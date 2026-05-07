@@ -1,5 +1,8 @@
 #include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
 
+#include <QAccessible>
+#include <QStringList>
+
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
@@ -15,6 +18,8 @@ QtMaterialSegmentedButton::QtMaterialSegmentedButton(QWidget* parent)
     : QtMaterialControl(parent)
 {
     setFocusPolicy(Qt::StrongFocus);
+    setAccessibleName(tr("Segmented button"));
+    syncAccessibility();
 }
 
 QtMaterialSegmentedButton::~QtMaterialSegmentedButton() = default;
@@ -29,7 +34,7 @@ void QtMaterialSegmentedButton::addSegment(const QString& text, const QIcon& ico
 void QtMaterialSegmentedButton::insertSegment(int index, const QString& text, const QIcon& icon)
 {
     index = qBound(0, index, m_segments.size());
-    m_segments.insert(index, Segment{text, icon, false});
+    m_segments.insert(index, Segment{text, icon, false, true});
     if (m_currentIndex >= index) {
         ++m_currentIndex;
     }
@@ -99,7 +104,8 @@ int QtMaterialSegmentedButton::currentIndex() const noexcept { return m_currentI
 
 void QtMaterialSegmentedButton::setCurrentIndex(int index)
 {
-    if (index < -1 || index >= m_segments.size() || m_currentIndex == index) {
+    if (index < -1 || index >= m_segments.size() || m_currentIndex == index
+        || (index >= 0 && !m_segments.at(index).enabled)) {
         return;
     }
     if (!m_multiSelection) {
@@ -119,7 +125,8 @@ bool QtMaterialSegmentedButton::isSegmentChecked(int index) const
 
 void QtMaterialSegmentedButton::setSegmentChecked(int index, bool checked)
 {
-    if (index < 0 || index >= m_segments.size() || m_segments[index].checked == checked) {
+    if (index < 0 || index >= m_segments.size() || m_segments[index].checked == checked
+        || (checked && !m_segments.at(index).enabled)) {
         return;
     }
     if (!m_multiSelection && checked) {
@@ -143,6 +150,134 @@ void QtMaterialSegmentedButton::setMultiSelection(bool enabled)
     }
     m_multiSelection = enabled;
     emit multiSelectionChanged(enabled);
+}
+
+
+bool QtMaterialSegmentedButton::isSegmentEnabled(int index) const
+{
+    return index >= 0 && index < m_segments.size() && m_segments.at(index).enabled;
+}
+
+void QtMaterialSegmentedButton::setSegmentEnabled(int index, bool enabled)
+{
+    if (index < 0 || index >= m_segments.size() || m_segments[index].enabled == enabled) {
+        return;
+    }
+
+    m_segments[index].enabled = enabled;
+
+    if (!enabled) {
+        m_segments[index].checked = false;
+        if (m_currentIndex == index) {
+            const int replacement = firstEnabledIndex();
+            m_currentIndex = replacement;
+            if (replacement >= 0 && !m_multiSelection) {
+                m_segments[replacement].checked = true;
+            }
+            emit currentIndexChanged(m_currentIndex);
+        }
+    }
+
+    syncAccessibility();
+    update();
+    emit segmentEnabledChanged(index, enabled);
+}
+
+QString QtMaterialSegmentedButton::segmentAccessibleText(int index) const
+{
+    if (index < 0 || index >= m_segments.size()) {
+        return QString();
+    }
+
+    const Segment& segment = m_segments.at(index);
+    QStringList parts;
+    parts << (segment.text.isEmpty() ? tr("Segment %1").arg(index + 1) : segment.text);
+
+    if (segment.checked) {
+        parts << tr("selected");
+    }
+    if (!segment.enabled) {
+        parts << tr("disabled");
+    }
+
+    return parts.join(QStringLiteral(", "));
+}
+
+QString QtMaterialSegmentedButton::currentSegmentAccessibleText() const
+{
+    return segmentAccessibleText(m_currentIndex);
+}
+
+QString QtMaterialSegmentedButton::accessibilitySummary() const
+{
+    QStringList parts;
+    parts << tr("%n segment(s)", nullptr, m_segments.size());
+
+    if (m_currentIndex >= 0) {
+        parts << tr("Current: %1").arg(currentSegmentAccessibleText());
+    } else {
+        parts << tr("No segment selected");
+    }
+
+    if (m_multiSelection) {
+        QStringList selected;
+        for (int i = 0; i < m_segments.size(); ++i) {
+            if (m_segments.at(i).checked) {
+                selected << segmentAccessibleText(i);
+            }
+        }
+        if (!selected.isEmpty()) {
+            parts << tr("Selected: %1").arg(selected.join(QStringLiteral("; ")));
+        }
+    }
+
+    return parts.join(QStringLiteral(". "));
+}
+
+void QtMaterialSegmentedButton::syncAccessibility()
+{
+    const QString summary = accessibilitySummary();
+    setAccessibleDescription(summary);
+    QAccessibleEvent event(this, QAccessible::DescriptionChanged);
+    QAccessible::updateAccessibility(&event);
+    emit accessibilitySummaryChanged(summary);
+}
+
+int QtMaterialSegmentedButton::firstEnabledIndex() const noexcept
+{
+    for (int i = 0; i < m_segments.size(); ++i) {
+        if (m_segments.at(i).enabled) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int QtMaterialSegmentedButton::lastEnabledIndex() const noexcept
+{
+    for (int i = m_segments.size() - 1; i >= 0; --i) {
+        if (m_segments.at(i).enabled) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int QtMaterialSegmentedButton::nextEnabledIndex(int start, int delta) const noexcept
+{
+    if (m_segments.isEmpty() || delta == 0) {
+        return -1;
+    }
+
+    int index = start;
+    for (int step = 0; step < m_segments.size(); ++step) {
+        index = (index + delta + m_segments.size()) % m_segments.size();
+        if (m_segments.at(index).enabled) {
+            return index;
+        }
+    }
+
+    return -1;
 }
 
 void QtMaterialSegmentedButton::themeChangedEvent(const Theme& theme)
@@ -191,7 +326,7 @@ int QtMaterialSegmentedButton::indexAt(const QPoint& pos) const
 
 void QtMaterialSegmentedButton::toggleIndex(int index)
 {
-    if (index < 0 || index >= m_segments.size()) {
+    if (index < 0 || index >= m_segments.size() || !m_segments.at(index).enabled) {
         return;
     }
     if (m_multiSelection) {
@@ -200,6 +335,7 @@ void QtMaterialSegmentedButton::toggleIndex(int index)
         setCurrentIndex(index);
         emit segmentToggled(index, true);
     }
+    syncAccessibility();
 }
 
 QSize QtMaterialSegmentedButton::sizeHint() const
@@ -235,20 +371,46 @@ void QtMaterialSegmentedButton::mousePressEvent(QMouseEvent* event)
 
 void QtMaterialSegmentedButton::keyPressEvent(QKeyEvent* event)
 {
+    if (m_segments.isEmpty()) {
+        QtMaterialControl::keyPressEvent(event);
+        return;
+    }
+
+    if (event->key() == Qt::Key_Home) {
+        setCurrentIndex(firstEnabledIndex());
+        syncAccessibility();
+        event->accept();
+        return;
+    }
+
+    if (event->key() == Qt::Key_End) {
+        setCurrentIndex(lastEnabledIndex());
+        syncAccessibility();
+        event->accept();
+        return;
+    }
+
     if (event->key() == Qt::Key_Left || event->key() == Qt::Key_Right) {
-        if (!m_segments.isEmpty()) {
-            const int delta = event->key() == Qt::Key_Right ? 1 : -1;
-            const int base = m_currentIndex < 0 ? 0 : m_currentIndex;
-            setCurrentIndex((base + delta + m_segments.size()) % m_segments.size());
+        const bool rtl = layoutDirection() == Qt::RightToLeft;
+        const bool forwardKey = event->key() == Qt::Key_Right;
+        const int delta = (forwardKey ^ rtl) ? 1 : -1;
+        const int base = m_currentIndex < 0 ? firstEnabledIndex() : m_currentIndex;
+        const int next = nextEnabledIndex(base, delta);
+        if (next >= 0) {
+            setCurrentIndex(next);
+            syncAccessibility();
         }
         event->accept();
         return;
     }
+
     if (event->key() == Qt::Key_Space || event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
-        toggleIndex(m_currentIndex < 0 ? 0 : m_currentIndex);
+        const int target = m_currentIndex < 0 ? firstEnabledIndex() : m_currentIndex;
+        toggleIndex(target);
         event->accept();
         return;
     }
+
     QtMaterialControl::keyPressEvent(event);
 }
 

@@ -13,6 +13,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSegmentedButton : public QtMaterialCo
     Q_OBJECT
     Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
     Q_PROPERTY(bool multiSelection READ isMultiSelection WRITE setMultiSelection NOTIFY multiSelectionChanged)
+    Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
 
 public:
     explicit QtMaterialSegmentedButton(QWidget* parent = nullptr);
@@ -38,13 +39,21 @@ public:
     bool isMultiSelection() const noexcept;
     void setMultiSelection(bool enabled);
 
+    bool isSegmentEnabled(int index) const;
+    void setSegmentEnabled(int index, bool enabled);
+    QString segmentAccessibleText(int index) const;
+    QString currentSegmentAccessibleText() const;
+    QString accessibilitySummary() const;
+
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
 signals:
     void currentIndexChanged(int index);
     void segmentToggled(int index, bool checked);
+    void segmentEnabledChanged(int index, bool enabled);
     void multiSelectionChanged(bool enabled);
+    void accessibilitySummaryChanged(const QString& summary);
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -58,12 +67,17 @@ private:
         QString text;
         QIcon icon;
         bool checked = false;
+        bool enabled = true;
     };
 
     void ensureSpecResolved() const;
     QRect segmentRect(int index) const;
     int indexAt(const QPoint& pos) const;
     void toggleIndex(int index);
+    int firstEnabledIndex() const noexcept;
+    int lastEnabledIndex() const noexcept;
+    int nextEnabledIndex(int start, int delta) const noexcept;
+    void syncAccessibility();
 
     QVector<Segment> m_segments;
     int m_currentIndex = -1;

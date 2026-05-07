@@ -1,19 +1,21 @@
 #pragma once
 
-#include <QPainterPath>
 #include <QIcon>
+#include <QPainterPath>
 #include <QPointer>
+#include <QRect>
+#include <QSize>
 #include <QString>
 #include <QVector>
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialsurface.h"
 
+class QEvent;
+class QKeyEvent;
+class QPaintEvent;
+class QResizeEvent;
 class QToolButton;
-
-namespace QtMaterial {
-struct TopAppBarSpec;
-}
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTopAppBar : public QtMaterial::QtMaterialSurface
 {
@@ -21,6 +23,8 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTopAppBar : public QtMaterial::QtMate
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(bool centeredTitle READ centeredTitle WRITE setCenteredTitle NOTIFY centeredTitleChanged)
     Q_PROPERTY(bool elevated READ elevated WRITE setElevated NOTIFY elevatedChanged)
+    Q_PROPERTY(QString navigationAccessibleName READ navigationAccessibleName WRITE setNavigationAccessibleName NOTIFY navigationAccessibleNameChanged)
+    Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
 
 public:
     explicit QtMaterialTopAppBar(QWidget* parent = nullptr);
@@ -40,9 +44,18 @@ public:
     void setNavigationIcon(const QIcon& icon);
     void clearNavigationIcon();
 
+    QString navigationAccessibleName() const;
+    void setNavigationAccessibleName(const QString& name);
+
     int actionCount() const noexcept;
     int addActionButton(const QIcon& icon, const QString& toolTip = QString());
     void clearActionButtons();
+
+    QString actionAccessibleName(int index) const;
+    void setActionAccessibleName(int index, const QString& name);
+    QString actionAccessibleText(int index) const;
+
+    QString accessibilitySummary() const;
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
@@ -51,6 +64,8 @@ signals:
     void titleChanged(const QString& title);
     void centeredTitleChanged(bool value);
     void elevatedChanged(bool value);
+    void navigationAccessibleNameChanged(const QString& name);
+    void accessibilitySummaryChanged(const QString& summary);
     void navigationTriggered();
     void actionTriggered(int index);
 
@@ -66,25 +81,24 @@ private:
     struct ActionButtonEntry {
         QPointer<QToolButton> button;
         int index = -1;
+        QString accessibleName;
     };
 
-    void ensureSpecResolved() const;
     void ensureLayoutResolved() const;
-    void invalidateSpecCache();
     void invalidateLayoutCache();
     void syncButtons();
     void syncAccessibility();
+    void emitAccessibilityIfChanged(const QString& previousSummary);
+    QString effectiveNavigationAccessibleName() const;
     QRect availableContentRect() const;
 
     QString m_title;
     QIcon m_navigationIcon;
+    QString m_navigationAccessibleName;
     bool m_centeredTitle = false;
     bool m_elevated = false;
 
-    mutable bool m_specDirty = true;
     mutable bool m_layoutDirty = true;
-    mutable QtMaterial::TopAppBarSpec* m_specCache = nullptr; // non-owning until copied below
-    // mutable QtMaterial::TopAppBarSpec m_spec;
     mutable QRect m_visualRect;
     mutable QRect m_navRect;
     mutable QRect m_titleRect;
@@ -93,4 +107,5 @@ private:
 
     QPointer<QToolButton> m_navigationButton;
     QVector<ActionButtonEntry> m_actionButtons;
+    QString m_lastAccessibilitySummary;
 };

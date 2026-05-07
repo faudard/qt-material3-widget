@@ -1,37 +1,11 @@
 #include "qtmaterial/widgets/buttons/qtmaterialfab.h"
 
+#include <Qt>
+
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
-#include "qtmaterial/theme/qtmaterialtheme.h"
 
 namespace QtMaterial {
 namespace {
-
-void applyFabVariant(FabSpec& spec, const Theme& theme, QtMaterialFabVariant variant)
-{
-    const ColorScheme& colors = theme.colorScheme();
-
-    switch (variant) {
-    case QtMaterialFabVariant::Secondary:
-        spec.containerColor = colors.color(ColorRole::SecondaryContainer);
-        spec.iconColor = colors.color(ColorRole::OnSecondaryContainer);
-        break;
-    case QtMaterialFabVariant::Tertiary:
-        spec.containerColor = colors.color(ColorRole::TertiaryContainer);
-        spec.iconColor = colors.color(ColorRole::OnTertiaryContainer);
-        break;
-    case QtMaterialFabVariant::Surface:
-        spec.containerColor = colors.color(ColorRole::SurfaceContainerHigh);
-        spec.iconColor = colors.color(ColorRole::Primary);
-        break;
-    case QtMaterialFabVariant::Primary:
-    default:
-        spec.containerColor = colors.color(ColorRole::PrimaryContainer);
-        spec.iconColor = colors.color(ColorRole::OnPrimaryContainer);
-        break;
-    }
-
-    spec.stateLayerColor = spec.iconColor;
-}
 
 ButtonSpec fabToButtonSpec(const FabSpec& fab)
 {
@@ -57,42 +31,118 @@ ButtonSpec fabToButtonSpec(const FabSpec& fab)
 } // namespace
 
 QtMaterialFab::QtMaterialFab(QWidget* parent)
-    : QtMaterialFab(QIcon(), parent)
+    : QtMaterialFilledButton(parent)
 {
+    initializeFab();
 }
 
 QtMaterialFab::QtMaterialFab(const QIcon& icon, QWidget* parent)
     : QtMaterialFilledButton(parent)
 {
-    setText(QString());
+    initializeFab();
     setIcon(icon);
-    setCheckable(false);
+    syncAccessibilityState();
 }
 
 QtMaterialFab::~QtMaterialFab() = default;
 
-void QtMaterialFab::setFabVariant(QtMaterialFabVariant variant)
+void QtMaterialFab::initializeFab()
 {
-    if (m_variant == variant) {
+    setText(QString());
+    setCheckable(false);
+    setFocusPolicy(Qt::StrongFocus);
+    syncAccessibilityState();
+}
+
+bool QtMaterialFab::requiresAccessibleName() const noexcept
+{
+    return m_requiresAccessibleName;
+}
+
+void QtMaterialFab::setRequiresAccessibleName(bool required)
+{
+    if (m_requiresAccessibleName == required) {
         return;
     }
 
-    m_variant = variant;
-    invalidateResolvedSpec();
+    m_requiresAccessibleName = required;
+    syncAccessibilityState();
     update();
 }
 
-QtMaterialFabVariant QtMaterialFab::fabVariant() const noexcept
+QString QtMaterialFab::iconAccessibleName() const
 {
-    return m_variant;
+    return m_iconAccessibleName;
+}
+
+void QtMaterialFab::setIconAccessibleName(const QString& name)
+{
+    if (m_iconAccessibleName == name) {
+        return;
+    }
+
+    m_iconAccessibleName = name;
+    syncAccessibilityState();
+    update();
+}
+
+QString QtMaterialFab::effectiveAccessibleName() const
+{
+    if (!accessibleName().trimmed().isEmpty()) {
+        return accessibleName().trimmed();
+    }
+
+    if (!m_iconAccessibleName.trimmed().isEmpty()) {
+        return m_iconAccessibleName.trimmed();
+    }
+
+    if (!toolTip().trimmed().isEmpty()) {
+        return toolTip().trimmed();
+    }
+
+    return m_requiresAccessibleName ? QString() : QStringLiteral("Floating action button");
+}
+
+bool QtMaterialFab::hasUsableAccessibleName() const
+{
+    return !effectiveAccessibleName().trimmed().isEmpty();
+}
+
+QString QtMaterialFab::accessibilitySummary() const
+{
+    const QString name = effectiveAccessibleName();
+    if (!name.isEmpty()) {
+        return name;
+    }
+
+    return QStringLiteral("Floating action button requires an accessible name");
+}
+
+void QtMaterialFab::syncAccessibilityState()
+{
+    const QString summary = accessibilitySummary();
+
+    if (accessibleName().trimmed().isEmpty() && !m_iconAccessibleName.trimmed().isEmpty()) {
+        setAccessibleName(m_iconAccessibleName.trimmed());
+    }
+
+    if (hasUsableAccessibleName()) {
+        setAccessibleDescription(QStringLiteral("Floating action button"));
+    } else {
+        setAccessibleDescription(QStringLiteral(
+            "Floating action button requires an accessible name for assistive technologies"));
+    }
+
+    if (m_lastAccessibilitySummary != summary) {
+        m_lastAccessibilitySummary = summary;
+        Q_EMIT accessibilitySummaryChanged(summary);
+    }
 }
 
 ButtonSpec QtMaterialFab::resolveButtonSpec() const
 {
     SpecFactory factory;
-    FabSpec spec = factory.fabSpec(theme(), density());
-    applyFabVariant(spec, theme(), m_variant);
-    return fabToButtonSpec(spec);
+    return fabToButtonSpec(factory.fabSpec(theme(), density()));
 }
 
 QSize QtMaterialFab::sizeHint() const
