@@ -1,61 +1,73 @@
-//#include "qtmaterial/widgets/surfaces/private/qtmaterialdialog_p.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialdialog.h"
-#include <algorithm>
 
-#include <QEvent>
-#include <QHideEvent>
+#include <QAbstractButton>
+#include <QAccessible>
+#include <QApplication>
 #include <QKeyEvent>
-#include <QPaintEvent>
 #include <QPainter>
-#include <QResizeEvent>
-#include <QShowEvent>
+#include <QVBoxLayout>
 #include <QWidget>
 
+#include <algorithm>
+
 #include "qtmaterial/effects/qtmaterialscrimwidget.h"
+#include "qtmaterial/effects/qtmaterialshadowrenderer.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 
 namespace QtMaterial {
-namespace {
-
-static qreal boundedProgress(qreal value)
-{
-    return qBound<qreal>(0.0, value, 1.0);
-}
-
-} // namespace
 
 QtMaterialDialog::QtMaterialDialog(QWidget* parent)
     : QtMaterialOverlaySurface(parent)
+    , m_layout(new QVBoxLayout(this))
+    , m_scrim(new QtMaterialScrimWidget(parent ? parent : this))
+    , m_transition(new QtMaterialTransitionController(this))
 {
+    setObjectName(QStringLiteral("qtmaterial_dialog"));
     setFocusPolicy(Qt::StrongFocus);
-    setAttribute(Qt::WA_StyledBackground, false);
-    setAttribute(Qt::WA_OpaquePaintEvent, false);
+    setAccessibleName(QStringLiteral("Dialog"));
 
-    m_transition = new QtMaterialTransitionController(this);
-    m_transition->setDuration(180);
+    m_layout->setContentsMargins(24, 24, 24, 24);
 
-    connect(m_transition, &QtMaterialTransitionController::progressChanged,
-            this, [this](qreal value) {
-                updateScrimForProgress(value);
-                update();
-            });
+    hide();
+    if (m_scrim) {
+        m_scrim->hide();
+    }
 
-    connect(m_transition, &QtMaterialTransitionController::finished,
-            this, [this]() {
-                if (m_closing) {
-                    QWidget::hide();
-                    if (m_scrim) {
-                        m_scrim->hide();
-                    }
-                    m_closing = false;
-                }
-            });
-
-    syncAccessibilityState();
+    updateAccessibilityMetadata();
 }
 
 QtMaterialDialog::~QtMaterialDialog() = default;
+
+QString QtMaterialDialog::titleText() const
+{
+    return m_titleText;
+}
+
+void QtMaterialDialog::setTitleText(const QString& title)
+{
+    if (m_titleText == title) {
+        return;
+    }
+
+    m_titleText = title;
+    updateAccessibilityMetadata();
+}
+
+QString QtMaterialDialog::supportingText() const
+{
+    return m_supportingText;
+}
+
+void QtMaterialDialog::setSupportingText(const QString& text)
+{
+    if (m_supportingText == text) {
+        return;
+    }
+
+    m_supportingText = text;
+    updateAccessibilityMetadata();
+}
 
 void QtMaterialDialog::setBodyWidget(QWidget* widget)
 {
@@ -64,7 +76,7 @@ void QtMaterialDialog::setBodyWidget(QWidget* widget)
     }
 
     if (m_bodyWidget) {
-        m_bodyWidget->hide();
+        m_layout->removeWidget(m_bodyWidget);
         m_bodyWidget->setParent(nullptr);
     }
 
@@ -72,176 +84,145 @@ void QtMaterialDialog::setBodyWidget(QWidget* widget)
 
     if (m_bodyWidget) {
         m_bodyWidget->setParent(this);
-        m_bodyWidget->show();
+        m_layout->addWidget(m_bodyWidget);
+
+        if (!m_initialFocusWidget) {
+            m_initialFocusWidget = m_bodyWidget;
+        }
     }
 
-    invalidateLayoutCache();
-    syncChildGeometry();
-    syncAccessibilityState();
-    updateGeometry();
-    update();
+    updateAccessibilityMetadata();
 }
 
 QWidget* QtMaterialDialog::bodyWidget() const
 {
-    return m_bodyWidget.data();
+    return m_bodyWidget;
+}
+
+QWidget* QtMaterialDialog::initialFocusWidget() const
+{
+    return m_initialFocusWidget;
+}
+
+void QtMaterialDialog::setInitialFocusWidget(QWidget* widget)
+{
+    if (m_initialFocusWidget == widget) {
+        return;
+    }
+
+    m_initialFocusWidget = widget;
+}
+
+QAbstractButton* QtMaterialDialog::defaultButton() const
+{
+    return m_defaultButton;
+}
+
+void QtMaterialDialog::setDefaultButton(QAbstractButton* button)
+{
+    if (m_defaultButton == button) {
+        return;
+    }
+
+    m_defaultButton = button;
+}
+
+bool QtMaterialDialog::dismissOnEscape() const noexcept
+{
+    return m_dismissOnEscape;
+}
+
+void QtMaterialDialog::setDismissOnEscape(bool enabled)
+{
+    m_dismissOnEscape = enabled;
+}
+
+bool QtMaterialDialog::restoreFocusOnClose() const noexcept
+{
+    return m_restoreFocusOnClose;
+}
+
+void QtMaterialDialog::setRestoreFocusOnClose(bool enabled)
+{
+    m_restoreFocusOnClose = enabled;
+}
+
+QString QtMaterialDialog::accessibilitySummary() const
+{
+    if (!m_titleText.isEmpty() && !m_supportingText.isEmpty()) {
+        return m_titleText + QStringLiteral(". ") + m_supportingText;
+    }
+
+    if (!m_titleText.isEmpty()) {
+        return m_titleText;
+    }
+
+    if (!m_supportingText.isEmpty()) {
+        return m_supportingText;
+    }
+
+    return QStringLiteral("Dialog");
 }
 
 void QtMaterialDialog::open()
 {
+    m_previousFocusWidget = QApplication::focusWidget();
+
     resolveSpecIfNeeded();
-    ensureLayoutResolved();
-
-    m_closing = false;
-    QWidget::show();
-    raise();
-
-    updateScrimForProgress(0.0);
+    syncChildGeometry();
 
     if (m_scrim) {
+        m_scrim->setGeometry(parentWidget() ? parentWidget()->rect() : rect());
         m_scrim->show();
         m_scrim->raise();
     }
 
+    show();
     raise();
-    m_transition->startForward();
-    focusInitialChild();
+    activateWindow();
+
+    if (m_transition) {
+        m_transition->startForward();
+    }
+
+    focusInitialWidget();
+    Q_EMIT opened();
 }
 
 void QtMaterialDialog::close()
 {
-    if (!isVisible()) {
-        return;
+    if (m_transition) {
+        m_transition->startBackward();
     }
 
-    m_closing = true;
-    m_transition->startBackward();
-}
+    hide();
 
-QSize QtMaterialDialog::sizeHint() const
-{
-    resolveSpecIfNeeded();
-
-    const QSize bodySize = m_bodyWidget ? m_bodyWidget->sizeHint() : QSize(320, 160);
-    const int width = std::min<int>(
-        m_spec.maxWidth,
-        bodySize.width() + (2 * (m_spec.padding + m_cachedShadowMargin)));
-    const int height =
-        bodySize.height() + (2 * (m_spec.padding + m_cachedShadowMargin));
-
-    return QSize(width, height);
-}
-
-QSize QtMaterialDialog::minimumSizeHint() const
-{
-    resolveSpecIfNeeded();
-
-    const QSize bodyMin = m_bodyWidget ? m_bodyWidget->minimumSizeHint() : QSize(240, 120);
-    return QSize(bodyMin.width() + (2 * m_spec.padding),
-                 bodyMin.height() + (2 * m_spec.padding));
-}
-
-void QtMaterialDialog::paintEvent(QPaintEvent* event)
-{
-    Q_UNUSED(event);
-
-    resolveSpecIfNeeded();
-    ensureLayoutResolved();
-
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-
-    // Simple shadow-like underlay. Kept intentionally cheap and self-contained.
-    QRect shadowRect = m_cachedVisualRect.adjusted(0, 4, 0, 4);
-    QColor shadowColor(0, 0, 0, 38);
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(shadowColor);
-    painter.drawRoundedRect(shadowRect, m_cachedCornerRadius, m_cachedCornerRadius);
-
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(m_spec.containerColor);
-    painter.drawPath(m_cachedContainerPath);
-
-    if (hasFocus()) {
-        QPen pen(theme().colorScheme().color(ColorRole::Primary), 2.0);
-        painter.setPen(pen);
-        painter.setBrush(Qt::NoBrush);
-        painter.drawPath(m_cachedContainerPath);
-    }
-}
-
-void QtMaterialDialog::keyPressEvent(QKeyEvent* event)
-{
-    if (!event) {
-        return;
-    }
-
-    if (event->key() == Qt::Key_Escape) {
-        close();
-        event->accept();
-        return;
-    }
-
-    QtMaterialOverlaySurface::keyPressEvent(event);
-}
-
-void QtMaterialDialog::resizeEvent(QResizeEvent* event)
-{
-    QtMaterialOverlaySurface::resizeEvent(event);
-    invalidateLayoutCache();
-    syncChildGeometry();
-}
-
-void QtMaterialDialog::showEvent(QShowEvent* event)
-{
-    QtMaterialOverlaySurface::showEvent(event);
-    updateScrimForProgress(m_transition ? m_transition->progress() : 1.0);
-    focusInitialChild();
-}
-
-void QtMaterialDialog::hideEvent(QHideEvent* event)
-{
-    QtMaterialOverlaySurface::hideEvent(event);
     if (m_scrim) {
         m_scrim->hide();
     }
+
+    if (m_restoreFocusOnClose && m_previousFocusWidget) {
+        m_previousFocusWidget->setFocus(Qt::OtherFocusReason);
+    }
+
+    Q_EMIT closed();
 }
 
-void QtMaterialDialog::changeEvent(QEvent* event)
+void QtMaterialDialog::reject()
 {
-    QtMaterialOverlaySurface::changeEvent(event);
-
-    if (!event) {
-        return;
-    }
-
-    switch (event->type()) {
-    case QEvent::EnabledChange:
-    case QEvent::FontChange:
-    case QEvent::StyleChange:
-    case QEvent::PaletteChange:
-        invalidateLayoutCache();
-        update();
-        break;
-    default:
-        break;
-    }
+    close();
+    Q_EMIT rejected();
 }
 
-void QtMaterialDialog::themeChangedEvent(const QtMaterial::Theme& theme)
+void QtMaterialDialog::themeChangedEvent(const Theme& theme)
 {
     QtMaterialOverlaySurface::themeChangedEvent(theme);
-    Q_UNUSED(theme);
-
-    invalidateResolvedSpec();
-    updateScrimForProgress(m_transition ? m_transition->progress() : 1.0);
-    update();
+    m_specDirty = true;
 }
 
 void QtMaterialDialog::invalidateResolvedSpec()
 {
     m_specDirty = true;
-    invalidateLayoutCache();
 }
 
 void QtMaterialDialog::resolveSpecIfNeeded() const
@@ -253,157 +234,189 @@ void QtMaterialDialog::resolveSpecIfNeeded() const
     SpecFactory factory;
     m_spec = factory.dialogSpec(theme());
     m_specDirty = false;
-    m_layoutDirty = true;
 }
 
-void QtMaterialDialog::ensureLayoutResolved() const
+void QtMaterialDialog::syncChildGeometry()
 {
-    if (!m_layoutDirty) {
+    resolveSpecIfNeeded();
+
+    const int maximumWidth = qMax(1, m_spec.maxWidth);
+    const int dialogWidth = qMin(maximumWidth, parentWidget() ? parentWidget()->width() : width());
+
+    resize(dialogWidth, qMax(160, sizeHint().height()));
+
+    const QSize parentSize = parentWidget() ? parentWidget()->size() : size();
+    move(parentSize.width() / 2 - this->width() / 2,
+         parentSize.height() / 2 - this->height() / 2);
+}
+
+void QtMaterialDialog::resizeEvent(QResizeEvent* event)
+{
+    QWidget::resizeEvent(event);
+
+    if (m_scrim && parentWidget()) {
+        m_scrim->setGeometry(parentWidget()->rect());
+    }
+}
+
+void QtMaterialDialog::keyPressEvent(QKeyEvent* event)
+{
+    if (!event) {
         return;
     }
 
-    const QRect bounds = rect();
-    const int availableWidth = std::max<int>(0, bounds.width() - (2 * m_cachedShadowMargin));
-    const int targetWidth = std::min<int>(m_spec.maxWidth, availableWidth);
+    if (event->key() == Qt::Key_Escape && m_dismissOnEscape) {
+        event->accept();
+        reject();
+        return;
+    }
 
-    const QSize desiredBody = m_bodyWidget ? m_bodyWidget->sizeHint() : QSize(320, 160);
-    const int minHeight = std::max<int>(120, desiredBody.height() + (2 * m_spec.padding));
-    const int availableHeight = std::max<int>(0, bounds.height() - (2 * m_cachedShadowMargin));
-    const int targetHeight = std::min<int>(availableHeight, minHeight);
+    if ((event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
+        && m_defaultButton && m_defaultButton->isEnabled() && m_defaultButton->isVisible()) {
+        event->accept();
+        m_defaultButton->click();
+        return;
+    }
 
-    const int x = bounds.x() + ((bounds.width() - targetWidth) / 2);
-    const int y = bounds.y() + ((bounds.height() - targetHeight) / 2);
+    QtMaterialOverlaySurface::keyPressEvent(event);
+}
 
-    m_cachedVisualRect = QRect(x, y, targetWidth, targetHeight);
-    m_cachedContentRect = m_cachedVisualRect.adjusted(
-        m_spec.padding,
-        m_spec.padding,
-        -m_spec.padding,
-        -m_spec.padding);
+bool QtMaterialDialog::focusNextPrevChild(bool next)
+{
+    if (!isVisible()) {
+        return QtMaterialOverlaySurface::focusNextPrevChild(next);
+    }
 
-    m_cachedCornerRadius = cornerRadiusForShape(m_spec.shapeRole);
+    return moveFocusInsideDialog(next);
+}
 
-    m_cachedContainerPath = QPainterPath();
-    m_cachedContainerPath.addRoundedRect(
-        QRectF(m_cachedVisualRect),
-        m_cachedCornerRadius,
-        m_cachedCornerRadius);
-
-    m_layoutDirty = false;
+void QtMaterialDialog::paintEvent(QPaintEvent*)
+{
+    resolveSpecIfNeeded();
     syncChildGeometry();
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    QRectF panel = rect().adjusted(2, 2, -2, -2);
+
+    QtMaterialShadowRenderer::paintRoundedShadow(&painter,
+                                                 panel,
+                                                 28.0,
+                                                 QColor(0, 0, 0, 80),
+                                                 12,
+                                                 4);
+
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(m_spec.containerColor);
+    painter.drawRoundedRect(panel, 28.0, 28.0);
 }
 
-void QtMaterialDialog::invalidateLayoutCache()
+void QtMaterialDialog::updateAccessibilityMetadata()
 {
-    m_layoutDirty = true;
+    setAccessibleName(m_titleText.isEmpty() ? QStringLiteral("Dialog") : m_titleText);
+    setAccessibleDescription(m_supportingText);
+
+#if QT_CONFIG(accessibility)
+    QAccessibleEvent event(this, QAccessible::NameChanged);
+    QAccessible::updateAccessibility(&event);
+
+    QAccessibleEvent descriptionEvent(this, QAccessible::DescriptionChanged);
+    QAccessible::updateAccessibility(&descriptionEvent);
+#endif
 }
 
-void QtMaterialDialog::syncChildGeometry() const
+QList<QWidget*> QtMaterialDialog::focusableDialogChildren() const
 {
-    if (m_layoutDirty) {
-        return;
-    }
+    QList<QWidget*> result;
 
-    if (m_bodyWidget) {
-        m_bodyWidget->setGeometry(m_cachedContentRect);
-    }
-}
-
-void QtMaterialDialog::syncAccessibilityState()
-{
-    if (accessibleName().isEmpty()) {
-        if (!windowTitle().isEmpty()) {
-            setAccessibleName(windowTitle());
-        } else {
-            setAccessibleName(QStringLiteral("Dialog"));
-        }
-    }
-}
-
-void QtMaterialDialog::updateScrimForProgress(qreal progress)
-{
-    QWidget* host = parentWidget();
-    if (!host) {
-        host = hostWidget();
-    }
-
-    if (!host) {
-        return;
-    }
-
-    if (!m_scrim || m_scrim->parentWidget() != host) {
-        if (m_scrim) {
-            m_scrim->deleteLater();
-        }
-
-        m_scrim = new QtMaterialScrimWidget(host);
-        m_scrim->hide();
-    }
-
-    m_scrim->setGeometry(host->rect());
-
-    QColor scrimColor = m_spec.scrimColor;
-    scrimColor.setAlphaF(scrimColor.alphaF() * boundedProgress(progress));
-    m_scrim->setScrimColor(scrimColor);
-
-    if (isVisible() || progress > 0.001) {
-        m_scrim->show();
-        m_scrim->raise();
-    } else {
-        m_scrim->hide();
-    }
-}
-
-void QtMaterialDialog::focusInitialChild()
-{
-    QWidget* child = firstFocusableChild();
-    if (child) {
-        child->setFocus(Qt::OtherFocusReason);
-    } else {
-        setFocus(Qt::OtherFocusReason);
-    }
-}
-
-QWidget* QtMaterialDialog::firstFocusableChild() const
-{
     const auto children = findChildren<QWidget*>(QString(), Qt::FindChildrenRecursively);
+    result.reserve(children.size());
+
     for (QWidget* child : children) {
-        if (!child || child == this) {
+        if (!child || child == m_scrim) {
             continue;
         }
-        if (!child->isVisibleTo(const_cast<QtMaterialDialog*>(this))) {
+
+        if (!child->isEnabled() || !child->isVisibleTo(const_cast<QtMaterialDialog*>(this))) {
             continue;
         }
-        if (!child->isEnabled()) {
-            continue;
-        }
+
         if (child->focusPolicy() == Qt::NoFocus) {
             continue;
         }
-        return child;
+
+        result.append(child);
     }
-    return nullptr;
+
+    if (result.isEmpty() && const_cast<QtMaterialDialog*>(this)->focusPolicy() != Qt::NoFocus) {
+        result.append(const_cast<QtMaterialDialog*>(this));
+    }
+
+    std::sort(result.begin(), result.end(), [](QWidget* lhs, QWidget* rhs) {
+        if (!lhs || !rhs || lhs->parentWidget() != rhs->parentWidget()) {
+            return lhs < rhs;
+        }
+
+        const QPoint left = lhs->mapTo(lhs->window(), QPoint(0, 0));
+        const QPoint right = rhs->mapTo(rhs->window(), QPoint(0, 0));
+
+        if (left.y() == right.y()) {
+            return left.x() < right.x();
+        }
+
+        return left.y() < right.y();
+    });
+
+    return result;
 }
 
-qreal QtMaterialDialog::cornerRadiusForShape(ShapeRole role)
+void QtMaterialDialog::focusInitialWidget()
 {
-    switch (role) {
-    case ShapeRole::ExtraSmall:
-        return 4.0;
-    case ShapeRole::Small:
-        return 8.0;
-    case ShapeRole::Medium:
-        return 12.0;
-    case ShapeRole::Large:
-        return 16.0;
-    case ShapeRole::ExtraLarge:
-        return 28.0;
-    case ShapeRole::Full:
-        return 999.0;
-    case ShapeRole::None:
-    default:
-        return 0.0;
+    QWidget* target = nullptr;
+
+    if (m_initialFocusWidget && m_initialFocusWidget->isEnabled()
+        && m_initialFocusWidget->isVisibleTo(this)
+        && m_initialFocusWidget->focusPolicy() != Qt::NoFocus) {
+        target = m_initialFocusWidget;
+    } else {
+        const auto focusable = focusableDialogChildren();
+        if (!focusable.isEmpty()) {
+            target = focusable.first();
+        }
     }
+
+    if (!target) {
+        target = this;
+    }
+
+    target->setFocus(Qt::OtherFocusReason);
+}
+
+bool QtMaterialDialog::moveFocusInsideDialog(bool next)
+{
+    const auto focusable = focusableDialogChildren();
+    if (focusable.isEmpty()) {
+        setFocus(next ? Qt::TabFocusReason : Qt::BacktabFocusReason);
+        return true;
+    }
+
+    QWidget* current = QApplication::focusWidget();
+    int currentIndex = focusable.indexOf(current);
+
+    if (currentIndex < 0) {
+        currentIndex = next ? -1 : 0;
+    }
+
+    const int direction = next ? 1 : -1;
+    const int nextIndex = (currentIndex + direction + focusable.size()) % focusable.size();
+    QWidget* target = focusable.at(nextIndex);
+
+    if (target) {
+        target->setFocus(next ? Qt::TabFocusReason : Qt::BacktabFocusReason);
+    }
+
+    return true;
 }
 
 } // namespace QtMaterial

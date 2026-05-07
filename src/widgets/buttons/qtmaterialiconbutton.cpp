@@ -1,5 +1,7 @@
 #include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
 
+#include <QAbstractButton>
+
 #include <QEvent>
 #include <QMouseEvent>
 #include <QPainter>
@@ -78,6 +80,10 @@ QtMaterialIconButton::QtMaterialIconButton(QWidget* parent)
 {
     setFocusPolicy(Qt::StrongFocus);
     setCheckable(false);
+    setMaterialComponent(QStringLiteral("button"));
+    setMaterialVariant(QStringLiteral("icon"));
+    setMaterialRole(QStringLiteral("action"));
+    syncAccessibilityState();
 
     m_transition->setProgress(m_selected ? 1.0 : 0.0);
 
@@ -127,11 +133,68 @@ void QtMaterialIconButton::setSelected(bool selected)
     }
 
     m_selected = selected;
+    interactionState().setSelected(selected);
+    syncAccessibilityState();
 
     if (m_transition) {
         selected ? m_transition->startForward() : m_transition->startBackward();
     } else {
         update();
+    }
+}
+
+
+
+bool QtMaterialIconButton::requiresAccessibleName() const noexcept
+{
+    return m_requiresAccessibleName;
+}
+
+void QtMaterialIconButton::setRequiresAccessibleName(bool required)
+{
+    if (m_requiresAccessibleName == required) {
+        return;
+    }
+
+    m_requiresAccessibleName = required;
+    syncAccessibilityState();
+}
+
+QString QtMaterialIconButton::effectiveAccessibleName() const
+{
+    const QString explicitName = accessibleName().trimmed();
+    if (!explicitName.isEmpty()) {
+        return explicitName;
+    }
+
+    const QString tooltipName = toolTip().trimmed();
+    if (!tooltipName.isEmpty()) {
+        return tooltipName;
+    }
+
+    return QAbstractButton::text().trimmed();
+}
+
+bool QtMaterialIconButton::hasUsableAccessibleName() const
+{
+    return !effectiveAccessibleName().isEmpty();
+}
+
+void QtMaterialIconButton::syncAccessibilityState()
+{
+    QtMaterialAbstractButton::syncAccessibilityState();
+    syncIconButtonAccessibility();
+}
+
+void QtMaterialIconButton::syncIconButtonAccessibility()
+{
+    if (!accessibleName().trimmed().isEmpty()) {
+        return;
+    }
+
+    const QString fallback = effectiveAccessibleName();
+    if (!fallback.isEmpty()) {
+        QWidget::setAccessibleName(fallback);
     }
 }
 
@@ -217,6 +280,9 @@ void QtMaterialIconButton::resizeEvent(QResizeEvent* event)
 void QtMaterialIconButton::changeEvent(QEvent* event)
 {
     switch (event->type()) {
+    case QEvent::ToolTipChange:
+        syncAccessibilityState();
+        break;
     case QEvent::EnabledChange:
     case QEvent::FontChange:
     case QEvent::StyleChange:
@@ -243,6 +309,7 @@ void QtMaterialIconButton::stateChangedEvent()
 
 void QtMaterialIconButton::contentChangedEvent()
 {
+    syncAccessibilityState();
     invalidateLayoutCache();
 }
 

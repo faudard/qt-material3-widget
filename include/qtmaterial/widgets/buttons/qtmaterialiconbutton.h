@@ -1,4 +1,5 @@
 #pragma once
+#include <QString>
 
 #include <QPainterPath>
 #include <QRect>
@@ -25,6 +26,11 @@ public:
     bool isSelected() const noexcept;
     void setSelected(bool selected);
 
+    bool requiresAccessibleName() const noexcept;
+    void setRequiresAccessibleName(bool required);
+    bool hasUsableAccessibleName() const;
+    QString effectiveAccessibleName() const;
+
 protected:
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
@@ -34,10 +40,12 @@ protected:
     void themeChangedEvent(const Theme& theme) override;
     void stateChangedEvent() override;
     void contentChangedEvent() override;
+    void syncAccessibilityState() override;
 
     virtual IconButtonSpec resolveIconButtonSpec() const;
 
 private:
+    void syncIconButtonAccessibility();
     void invalidateLayoutCache();
     void invalidateResolvedSpec();
 
@@ -60,6 +68,7 @@ private:
     QtMaterialRippleController* m_ripple = nullptr;
     QtMaterialTransitionController* m_transition = nullptr;
     bool m_selected = false;
+    bool m_requiresAccessibleName = true;
 };
 
 } // namespace QtMaterial

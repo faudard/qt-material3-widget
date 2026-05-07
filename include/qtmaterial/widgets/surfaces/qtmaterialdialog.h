@@ -1,19 +1,16 @@
 #pragma once
 
-#include <QPainterPath>
 #include <QPointer>
-#include <QRect>
+#include <QString>
 
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
 #include "qtmaterial/specs/qtmaterialdialogspec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
-class QEvent;
-class QHideEvent;
+class QAbstractButton;
 class QKeyEvent;
-class QPaintEvent;
-class QResizeEvent;
-class QShowEvent;
+class QVBoxLayout;
+class QWidget;
 
 namespace QtMaterial {
 
@@ -28,55 +25,72 @@ public:
     explicit QtMaterialDialog(QWidget* parent = nullptr);
     ~QtMaterialDialog() override;
 
+    QString titleText() const;
+    void setTitleText(const QString& title);
+
+    QString supportingText() const;
+    void setSupportingText(const QString& text);
+
     void setBodyWidget(QWidget* widget);
     QWidget* bodyWidget() const;
 
+    QWidget* initialFocusWidget() const;
+    void setInitialFocusWidget(QWidget* widget);
+
+    QAbstractButton* defaultButton() const;
+    void setDefaultButton(QAbstractButton* button);
+
+    bool dismissOnEscape() const noexcept;
+    void setDismissOnEscape(bool enabled);
+
+    bool restoreFocusOnClose() const noexcept;
+    void setRestoreFocusOnClose(bool enabled);
+
+    QString accessibilitySummary() const;
+
+public Q_SLOTS:
     void open();
     void close();
+    void reject();
 
-    QSize sizeHint() const override;
-    QSize minimumSizeHint() const override;
+Q_SIGNALS:
+    void opened();
+    void closed();
+    void rejected();
 
 protected:
     void paintEvent(QPaintEvent* event) override;
-    void keyPressEvent(QKeyEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
-    void showEvent(QShowEvent* event) override;
-    void hideEvent(QHideEvent* event) override;
-    void changeEvent(QEvent* event) override;
-
+    void keyPressEvent(QKeyEvent* event) override;
+    bool focusNextPrevChild(bool next) override;
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
     void invalidateResolvedSpec() override;
 
 private:
     void resolveSpecIfNeeded() const;
-    void ensureLayoutResolved() const;
-    void invalidateLayoutCache();
+    void syncChildGeometry();
+    void updateAccessibilityMetadata();
+    QList<QWidget*> focusableDialogChildren() const;
+    void focusInitialWidget();
+    bool moveFocusInsideDialog(bool next);
 
-    void syncChildGeometry() const;
-    void syncAccessibilityState();
-    void updateScrimForProgress(qreal progress);
-    void focusInitialChild();
-    QWidget* firstFocusableChild() const;
-
-    static qreal cornerRadiusForShape(ShapeRole role);
-
-private:
     mutable bool m_specDirty = true;
-    mutable bool m_layoutDirty = true;
     mutable DialogSpec m_spec;
 
-    bool m_closing = false;
+    QString m_titleText;
+    QString m_supportingText;
 
     QPointer<QWidget> m_bodyWidget;
+    QPointer<QWidget> m_initialFocusWidget;
+    QPointer<QWidget> m_previousFocusWidget;
+    QPointer<QAbstractButton> m_defaultButton;
+
+    QVBoxLayout* m_layout = nullptr;
     QtMaterialScrimWidget* m_scrim = nullptr;
     QtMaterialTransitionController* m_transition = nullptr;
 
-    mutable QRect m_cachedVisualRect;
-    mutable QRect m_cachedContentRect;
-    mutable QPainterPath m_cachedContainerPath;
-    mutable qreal m_cachedCornerRadius = 0.0;
-    mutable int m_cachedShadowMargin = 12;
+    bool m_dismissOnEscape = true;
+    bool m_restoreFocusOnClose = true;
 };
 
 } // namespace QtMaterial

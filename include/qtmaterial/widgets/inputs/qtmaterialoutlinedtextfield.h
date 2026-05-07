@@ -32,6 +32,18 @@ public:
         ValidatorOnCommit,
     };
 
+    enum class RequiredValidationMode {
+        NonEmpty,
+        NonBlank,
+    };
+
+    enum class ErrorDisplayMode {
+        Always,
+        WhenTouched,
+        WhenModified,
+        AfterCommit,
+    };
+
     enum class EndActionMode {
         None,
         ClearText,
@@ -68,6 +80,14 @@ public:
 
     QLineEdit* lineEdit() const;
 
+    bool isModified() const;
+    void setModified(bool modified);
+    void resetModified();
+
+    bool isTouched() const noexcept;
+    void setTouched(bool touched);
+    void resetTouched();
+
     const QValidator* validator() const;
     void setValidator(const QValidator* validator);
 
@@ -92,8 +112,23 @@ public:
 
     ValidationFeedbackMode validationFeedbackMode() const noexcept;
     void setValidationFeedbackMode(ValidationFeedbackMode mode);
+    RequiredValidationMode requiredValidationMode() const noexcept;
+    void setRequiredValidationMode(RequiredValidationMode mode);
+    QString validatorErrorText() const;
+    void setValidatorErrorText(const QString& text);
+    QString inputMaskErrorText() const;
+    void setInputMaskErrorText(const QString& text);
+
+    ErrorDisplayMode errorDisplayMode() const noexcept;
+    void setErrorDisplayMode(ErrorDisplayMode mode);
+    void showValidationError();
+    void resetValidationErrorVisibility();
+    bool isEffectiveErrorVisible() const noexcept;
+    bool validateInput();
+    void resetValidationFeedback();
 
     bool hasAutomaticValidationError() const noexcept;
+    bool isAcceptableInput() const;
 
     bool hasErrorState() const noexcept;
     void setHasErrorState(bool value);
@@ -119,11 +154,29 @@ signals:
     void trailingActionTriggered();
     void clearTriggered();
     void passwordVisibilityChanged(bool visible);
+    void automaticValidationErrorChanged(bool hasError);
+    void effectiveErrorStateChanged(bool hasError);
+    void acceptableInputChanged(bool acceptable);    
+
+Q_SIGNALS:
+    void modifiedChanged(bool modified);
+    void touchedChanged(bool touched);
+
+    void effectiveErrorVisibleChanged(bool visible);
+    void validationRequested(bool acceptable);
+    void validationFeedbackReset();
 
 protected:
     enum class ShellVariant {
         Outlined,
         Filled,
+    };
+
+    enum class AutomaticValidationErrorKind {
+        None,
+        Required,
+        Validator,
+        InputMask,
     };
 
     void paintEvent(QPaintEvent* event) override;
@@ -143,6 +196,8 @@ protected:
 
 private:
     void invalidateLayoutCache();
+    void updateModifiedStateFromLineEdit();
+    void updateTouchedState(bool touched);
     void ensureLayoutResolved() const;
     void syncLineEditGeometry();
     void syncAccessoryWidgets();
@@ -160,11 +215,15 @@ private:
     int effectiveLeadingReserve() const;
     int effectiveTrailingReserve() const;
 
+    AutomaticValidationErrorKind currentValidationErrorKind() const;
     bool currentValidationError() const;
     bool isRequiredValidationError() const;
     QString effectiveErrorText() const;
     void refreshValidationState(bool commit);
     void syncEffectiveErrorState();
+    bool shouldShowEffectiveError() const noexcept;
+    void syncEffectiveErrorVisibility();
+    void emitValidationStateSignalsIfChanged();
 
     mutable bool m_specDirty = true;
     mutable bool m_layoutDirty = true;
@@ -212,11 +271,21 @@ private:
     bool m_clearButtonEnabled = false;
     QLineEdit::EchoMode m_configuredEchoMode = QLineEdit::Normal;
     bool m_passwordVisible = false;
+    RequiredValidationMode m_requiredValidationMode = RequiredValidationMode::NonBlank;
+    QString m_validatorErrorText;
+    QString m_inputMaskErrorText;
+    AutomaticValidationErrorKind m_automaticValidationErrorKind = AutomaticValidationErrorKind::None;
 
     ValidationFeedbackMode m_validationFeedbackMode = ValidationFeedbackMode::ManualOnly;
+    ErrorDisplayMode m_errorDisplayMode = ErrorDisplayMode::Always;
+    bool m_errorVisibilityForced = false;
+    bool m_effectiveErrorVisible = false;
     bool m_manualErrorState = false;
     bool m_automaticValidationError = false;
     bool m_validationCommitted = false;
+    bool m_lastEmittedAutomaticValidationError = false;
+    bool m_lastEmittedEffectiveErrorState = false;
+    bool m_lastEmittedAcceptableInput = true;    
     bool m_required = false;
     QString m_requiredText;
 
@@ -229,6 +298,8 @@ private:
     bool m_characterCounterEnabled = false;
 
     QtMaterialTransitionController* m_transition = nullptr;
+    bool m_lastKnownModified = false;
+    bool m_touched = false;
 };
 
 } // namespace QtMaterial

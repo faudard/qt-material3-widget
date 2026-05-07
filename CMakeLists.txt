@@ -409,6 +409,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     src/widgets/surfaces/qtmaterialbottomappbar.cpp
     src/widgets/inputs/qtmaterialoutlinedtextfield.cpp
     src/widgets/inputs/qtmaterialfilledtextfield.cpp
+    src/widgets/inputs/qtmaterialtextfieldvalidationgroup.cpp
     src/widgets/inputs/qtmaterialautocompletepopup.cpp
     src/widgets/inputs/qtmaterialdatefield.cpp
     src/widgets/data/qtmateriallistitem.cpp
@@ -452,6 +453,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     include/qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h
     include/qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h
     include/qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h
+    include/qtmaterial/widgets/inputs/qtmaterialtextfieldvalidationgroup.h
     include/qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h
     include/qtmaterial/widgets/inputs/qtmaterialdatefield.h
     include/qtmaterial/widgets/data/qtmateriallistitem.h

@@ -135,6 +135,9 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
             update();
         });
 
+        QObject::connect(m_lineEdit, &QLineEdit::textEdited, this, [this](const QString&) {
+            updateTouchedState(true);
+        });
         QObject::connect(m_lineEdit, &QLineEdit::editingFinished, this, [this]() {
             refreshValidationState(true);
             syncAccessibilityState();
@@ -144,8 +147,13 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
             update();
         });
     }
-
-    setFocusProxy(m_lineEdit);
+    QObject::connect(this, &QtMaterialOutlinedTextField::touchedChanged, this, [this](bool) {
+        syncEffectiveErrorVisibility();
+    });
+    QObject::connect(this, &QtMaterialOutlinedTextField::modifiedChanged, this, [this](bool) {
+        syncEffectiveErrorVisibility();
+    });
+
     syncLineEditPalette();
     syncAccessoryWidgets();
 }
@@ -322,6 +330,33 @@ QLineEdit* QtMaterialOutlinedTextField::lineEdit() const
     return m_lineEdit;
 }
 
+bool QtMaterialOutlinedTextField::isTouched() const noexcept
+{
+    return m_touched;
+}
+
+void QtMaterialOutlinedTextField::setTouched(bool touched)
+{
+    updateTouchedState(touched);
+}
+
+void QtMaterialOutlinedTextField::resetTouched()
+{
+    setTouched(false);
+}
+
+void QtMaterialOutlinedTextField::updateTouchedState(bool touched)
+{
+    if (m_touched == touched) {
+        return;
+    }
+
+    m_touched = touched;
+    Q_EMIT touchedChanged(touched);
+}
+
+
+
 const QValidator* QtMaterialOutlinedTextField::validator() const
 {
     return m_lineEdit ? m_lineEdit->validator() : nullptr;
@@ -335,6 +370,7 @@ void QtMaterialOutlinedTextField::setValidator(const QValidator* validator)
 
     m_lineEdit->setValidator(validator);
     refreshValidationState(false);
+    emitValidationStateSignalsIfChanged();
     syncAccessibilityState();
     update();
 }
@@ -537,10 +573,12 @@ void QtMaterialOutlinedTextField::setValidationFeedbackMode(ValidationFeedbackMo
         m_validationCommitted = false;
         m_automaticValidationError = false;
         syncEffectiveErrorState();
+    syncEffectiveErrorVisibility();
     } else if (m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnCommit) {
         m_validationCommitted = false;
         m_automaticValidationError = false;
         syncEffectiveErrorState();
+    syncEffectiveErrorVisibility();
     } else {
         refreshValidationState(false);
     }
@@ -549,9 +587,92 @@ void QtMaterialOutlinedTextField::setValidationFeedbackMode(ValidationFeedbackMo
     update();
 }
 
+
+QtMaterialOutlinedTextField::ErrorDisplayMode QtMaterialOutlinedTextField::errorDisplayMode() const noexcept
+{
+    return m_errorDisplayMode;
+}
+
+void QtMaterialOutlinedTextField::setErrorDisplayMode(ErrorDisplayMode mode)
+{
+    if (m_errorDisplayMode == mode) {
+        return;
+    }
+
+    m_errorDisplayMode = mode;
+    syncEffectiveErrorVisibility();
+}
+
+void QtMaterialOutlinedTextField::showValidationError()
+{
+    m_errorVisibilityForced = true;
+    refreshValidationState(true);
+    syncEffectiveErrorVisibility();
+}
+
+void QtMaterialOutlinedTextField::resetValidationErrorVisibility()
+{
+    if (!m_errorVisibilityForced) {
+        return;
+    }
+
+    m_errorVisibilityForced = false;
+    syncEffectiveErrorVisibility();
+}
+
+
+bool QtMaterialOutlinedTextField::validateInput()
+{
+    refreshValidationState(true);
+    showValidationError();
+
+    syncAccessibilityState();
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    updateGeometry();
+    update();
+
+    const bool acceptable = !hasErrorState();
+    emit validationRequested(acceptable);
+    return acceptable;
+}
+
+void QtMaterialOutlinedTextField::resetValidationFeedback()
+{
+    const bool hadAutomaticValidationError = m_automaticValidationError;
+    const bool wasCommitted = m_validationCommitted;
+
+    m_validationCommitted = false;
+    if (m_validationFeedbackMode != ValidationFeedbackMode::ManualOnly) {
+        m_automaticValidationError = false;
+    }
+
+    resetValidationErrorVisibility();
+    syncEffectiveErrorState();
+    syncAccessibilityState();
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    updateGeometry();
+    update();
+
+    if (hadAutomaticValidationError || wasCommitted) {
+        emit validationFeedbackReset();
+    }
+}
+
+bool QtMaterialOutlinedTextField::isEffectiveErrorVisible() const noexcept
+{
+    return m_effectiveErrorVisible;
+}
+
 bool QtMaterialOutlinedTextField::hasAutomaticValidationError() const noexcept
 {
     return m_automaticValidationError;
+}
+
+bool QtMaterialOutlinedTextField::isAcceptableInput() const
+{
+    return !currentValidationError();
 }
 
 bool QtMaterialOutlinedTextField::hasErrorState() const noexcept
@@ -567,6 +688,7 @@ void QtMaterialOutlinedTextField::setHasErrorState(bool value)
 
     m_manualErrorState = value;
     syncEffectiveErrorState();
+    syncEffectiveErrorVisibility();
 }
 
 QtMaterialOutlinedTextField::EndActionMode
@@ -752,7 +874,6 @@ bool QtMaterialOutlinedTextField::currentFocusState() const
     return (m_lineEdit && m_lineEdit->hasFocus()) || hasFocus();
 }
 
-QtMaterialOutlinedTextField::EndActionMode
 QtMaterialOutlinedTextField::resolvedEndActionMode() const noexcept
 {
     if (m_endActionMode == EndActionMode::TogglePasswordVisibility
@@ -932,11 +1053,82 @@ void QtMaterialOutlinedTextField::refreshValidationState(bool commit)
     }
 
     syncEffectiveErrorState();
+    syncEffectiveErrorVisibility();
 }
 
 void QtMaterialOutlinedTextField::syncEffectiveErrorState()
 {
     QtMaterialInputControl::setHasErrorState(m_manualErrorState || m_automaticValidationError);
+    emitValidationStateSignalsIfChanged();
+}
+
+void QtMaterialOutlinedTextField::emitValidationStateSignalsIfChanged()
+{
+    const bool automaticError = m_automaticValidationError;
+    const bool effectiveError = m_manualErrorState || m_automaticValidationError;
+    const bool acceptableInput = isAcceptableInput();
+
+    if (m_lastEmittedAutomaticValidationError != automaticError) {
+        m_lastEmittedAutomaticValidationError = automaticError;
+        emit automaticValidationErrorChanged(automaticError);
+    }
+    if (m_lastEmittedEffectiveErrorState != effectiveError) 
+        {        m_lastEmittedEffectiveErrorState = effectiveError;
+    emit effectiveErrorStateChanged(effectiveError);
+}
+
+if (m_lastEmittedAcceptableInput != acceptableInput) 
+    {        m_lastEmittedAcceptableInput = acceptableInput;
+emit acceptableInputChanged(acceptableInput);
+}
+}
+
+
+
+bool QtMaterialOutlinedTextField::shouldShowEffectiveError() const noexcept
+{
+    if (!hasErrorState()) {
+        return false;
+    }
+
+    // Manual errors are explicit application state, for example server-side
+    // validation. They should not be hidden by user-interaction policies.
+    if (m_manualErrorState) {
+        return true;
+    }
+
+    if (m_errorVisibilityForced) {
+        return true;
+    }
+
+    switch (m_errorDisplayMode) {
+    case ErrorDisplayMode::Always:
+        return true;
+    case ErrorDisplayMode::WhenTouched:
+        return isTouched();
+    case ErrorDisplayMode::WhenModified:
+        return isModified();
+    case ErrorDisplayMode::AfterCommit:
+        return m_validationCommitted;
+    }
+
+    return true;
+}
+
+void QtMaterialOutlinedTextField::syncEffectiveErrorVisibility()
+{
+    const bool visible = shouldShowEffectiveError();
+    if (m_effectiveErrorVisible == visible) {
+        return;
+    }
+
+    m_effectiveErrorVisible = visible;
+    syncAccessibilityState();
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    updateGeometry();
+    update();
+    emit effectiveErrorVisibleChanged(visible);
 }
 
 void QtMaterialOutlinedTextField::ensureLayoutResolved() const
@@ -1045,7 +1237,7 @@ void QtMaterialOutlinedTextField::ensureLayoutResolved() const
     m_cachedPrefixText = text.prefixText;
     m_cachedSuffixText = text.suffixText;
     m_cachedEndActionText = text.endActionText;
-    m_cachedDisplaySupportingText = hasErrorState() ? text.errorText : text.supportingText;
+    m_cachedDisplaySupportingText = isEffectiveErrorVisible() ? text.errorText : text.supportingText;
 
     m_cachedLabelFont = font();
     m_cachedSupportingFont = font();
@@ -1271,6 +1463,7 @@ bool QtMaterialOutlinedTextField::eventFilter(QObject* watched, QEvent* event)
             if (m_transition) {
                 m_transition->startBackward();
             }
+            updateTouchedState(true);
             if (m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnCommit) {
                 refreshValidationState(true);
             }
@@ -1307,7 +1500,7 @@ void QtMaterialOutlinedTextField::paintEvent(QPaintEvent*)
     QtMaterialInteractionState state = interactionState();
     state.setFocused(currentFocusState());
     state.setEnabled(isEnabled());
-    state.setError(hasErrorState());
+    state.setError(isEffectiveErrorVisible());
 
     QPainter painter(this);
 

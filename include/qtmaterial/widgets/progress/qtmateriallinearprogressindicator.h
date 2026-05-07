@@ -21,6 +21,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialLinearProgressIndicator : public QtMa
     Q_PROPERTY(bool busy READ isBusy WRITE setBusy NOTIFY asyncStateChanged)
     Q_PROPERTY(bool indeterminate READ isIndeterminate WRITE setIndeterminate NOTIFY asyncStateChanged)
     Q_PROPERTY(QString statusText READ statusText WRITE setStatusText NOTIFY asyncStateChanged)
+    Q_PROPERTY(QString accessibleValueText READ accessibleValueText NOTIFY asyncStateChanged)
     Q_PROPERTY(bool invertedAppearance READ invertedAppearance WRITE setInvertedAppearance NOTIFY invertedAppearanceChanged)
     Q_PROPERTY(QColor activeColor READ activeColor WRITE setActiveColor RESET resetActiveColor NOTIFY specChanged)
     Q_PROPERTY(QColor trackColor READ trackColor WRITE setTrackColor RESET resetTrackColor NOTIFY specChanged)
@@ -49,6 +50,7 @@ public:
 
     QString statusText() const;
     void setStatusText(const QString& text);
+    QString accessibleValueText() const;
 
     QtMaterialAsyncState asyncState() const;
     void setAsyncState(const QtMaterialAsyncState& state);
@@ -94,6 +96,7 @@ private:
     void updateAnimationState();
     void syncAsyncStateFromProgress();
     void syncMaterialStateFromAsyncState();
+    void updateAccessibleState();
     QColor resolvedActiveColor() const;
     QColor resolvedTrackColor() const;
     QColor resolvedStopColor() const;

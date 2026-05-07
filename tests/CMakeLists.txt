@@ -53,6 +53,8 @@ qtm3_add_test(tst_bottomappbar widgets/surfaces/tst_bottomappbar.cpp qtmaterial3
 
 qtm3_add_test(tst_outlinedtextfield widgets/inputs/tst_outlinedtextfield.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_filledtextfield widgets/inputs/tst_filledtextfield.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_textfield_validation_group widgets/inputs/tst_textfield_validation_group.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_textfield_validation_summary widgets/inputs/tst_textfield_validation_summary.cpp qtmaterial3_widgets)
 
 # qtm3_add_test(tst_textfieldshellhelper_rtl widgets/inputs/tst_textfieldshellhelper_rtl.cpp qtmaterial3_widgets)
 # target_include_directories(tst_textfieldshellhelper_rtl PRIVATE
@@ -114,6 +116,11 @@ qtm3_add_test(tst_theme_seed_goldens theme/tst_theme_seed_goldens.cpp qtmaterial
 target_compile_definitions(tst_theme_seed_goldens PRIVATE QTMATERIAL3_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 qtm3_add_test(tst_abstractbutton_state core/tst_abstractbutton_state.cpp qtmaterial3_core)
+
+target_sources(tst_abstractbutton_state
+  PRIVATE
+    widgets/inputs/tst_textfield_readonly.cpp
+)
 # qtm3_add_test(tst_overlaysurface core/tst_overlaysurface.cpp qtmaterial3_core)
 #qtm3_add_test(tst_selectioncontrol_layout core/tst_selectioncontrol_layout.cpp qtmaterial3_core)
 qtm3_add_test(tst_inputcontrol core/tst_inputcontrol.cpp qtmaterial3_core)
@@ -142,6 +149,24 @@ qtm3_add_test(
     accessibility/tst_keyboard_accessibility_contracts.cpp
     qtmaterial3_widgets
     qtmaterial3_core
+)
+qtm3_add_test(
+    tst_textfield_validation_signals
+    widgets/inputs/tst_textfield_validation_signals.cpp
+    qtmaterial3_widgets
+)
+
+
+qtm3_add_test(
+    tst_textfield_error_display_policy
+    widgets/inputs/tst_textfield_error_display_policy.cpp
+    qtmaterial3_widgets
+)
+
+qtm3_add_test(
+    tst_textfield_touched_state
+    widgets/inputs/tst_textfield_touched_state.cpp
+    qtmaterial3_widgets
 )
 
 
@@ -205,6 +230,7 @@ qtm3_add_test(
 )
 
 
+
 qtm3_add_test(
     tst_navigation_dialog_hidpi_contracts
     accessibility/tst_navigation_dialog_hidpi_contracts.cpp
@@ -228,3 +254,10 @@ qtm3_add_test(
     widgets/inputs/tst_textfield_character_counter.cpp
     qtmaterial3_widgets
 )
+
+qtm3_add_test(
+    tst_textfield_validation_commit
+    widgets/inputs/tst_textfield_validation_commit.cpp
+    qtmaterial3_widgets
+)
+

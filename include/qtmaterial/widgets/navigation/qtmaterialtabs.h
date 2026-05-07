@@ -52,6 +52,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTabs : public QTabWidget {
     Q_PROPERTY(TabsOverflowMode overflowMode READ overflowMode WRITE setOverflowMode NOTIFY overflowModeChanged)
     Q_PROPERTY(bool useGlobalTheme READ usesGlobalTheme WRITE setUseGlobalTheme NOTIFY useGlobalThemeChanged)
     Q_PROPERTY(bool wrapNavigation READ wrapNavigation WRITE setWrapNavigation NOTIFY wrapNavigationChanged)
+    Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
     Q_PROPERTY(bool lazyLoading READ lazyLoading WRITE setLazyLoading NOTIFY lazyLoadingChanged)
     Q_PROPERTY(QtMaterial::QtMaterialNavigationModel* navigationModel READ navigationModel WRITE setNavigationModel NOTIFY navigationModelChanged)
 
@@ -90,6 +91,9 @@ public:
     bool wrapNavigation() const;
     void setWrapNavigation(bool enabled);
 
+
+    QString currentTabAccessibleText() const;
+    QString accessibilitySummary() const;
     void setBadge(int index, const QString& text);
     QString badge(int index) const;
     void setBadgeVisible(int index, bool visible);
@@ -141,6 +145,7 @@ signals:
     void overflowModeChanged(QtMaterial::TabsOverflowMode mode);
     void useGlobalThemeChanged(bool enabled);
     void wrapNavigationChanged(bool enabled);
+    void accessibilitySummaryChanged(const QString& summary);
     void lazyLoadingChanged(bool enabled);
 
     void badgeChanged(int index);
@@ -180,6 +185,7 @@ private:
     void ensureDescriptorCount(int count);
     void updateAutomationMetadata(int index);
     void updateAllAutomationMetadata();
+    void syncAccessibilityState();
     void syncControllersFromCurrentIndex(int index);
     void syncNavigationModelFromTabs();
     void syncNavigationModelSelectionFromCurrentTab();
@@ -197,6 +203,7 @@ private:
     bool m_lazyLoading = false;
     bool m_syncingExternal = false;
     bool m_syncingNavigationModel = false;
+    QString m_lastAccessibilitySummary;
 };
 
 } // namespace QtMaterial
