@@ -14,6 +14,7 @@
 class QEvent;
 class QLabel;
 class QResizeEvent;
+class QShowEvent;
 class QToolButton;
 
 namespace QtMaterial {
@@ -183,6 +184,7 @@ protected:
     };
 
     void paintEvent(QPaintEvent* event) override;
+    void showEvent(QShowEvent *event) override;
     void resizeEvent(QResizeEvent* event) override;
     void changeEvent(QEvent* event) override;
     bool eventFilter(QObject* watched, QEvent* event) override;

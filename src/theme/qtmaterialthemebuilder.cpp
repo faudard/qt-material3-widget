@@ -196,6 +196,7 @@ Theme ThemeBuilder::buildFallbackTheme(const ThemeOptions& options) const
 
     applyContrastAdjustments(theme, options.contrast);
     applyDefaultStateLayer(theme);
+    applyDefaultAccessibility(theme);
     return theme;
 }
 

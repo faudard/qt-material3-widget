@@ -46,12 +46,14 @@ void tst_TextFieldReadOnly::readOnlyPreventsUserTextMutation()
     field.setReadOnly(true);
 
     QSignalSpy changedSpy(field.lineEdit(), &QLineEdit::textChanged);
+    QSignalSpy editedSpy(field.lineEdit(), &QLineEdit::textEdited);
 
     field.lineEdit()->setCursorPosition(field.text().size());
-    field.lineEdit()->insert(QStringLiteral("!"));
+    QTest::keyClicks(field.lineEdit(), "!");
 
     QCOMPARE(field.text(), QStringLiteral("locked"));
     QCOMPARE(changedSpy.count(), 0);
+    QCOMPARE(editedSpy.count(), 0);
 }
 
 void tst_TextFieldReadOnly::readOnlyHidesClearAction()

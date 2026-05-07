@@ -1246,15 +1246,18 @@ void QtMaterialTabs::syncNavigationModelFromTabs() {
     QVector<QtMaterialNavigationItem> items;
     items.reserve(count());
     for (int i = 0; i < count(); ++i) {
+        const TabDescriptor* tab = descriptor(i);
+
         QtMaterialNavigationItem item;
-        item.id = tabId(i);
-        if (item.id.isEmpty()) {
-            item.id = QString::number(i);
-        }
-        item.route = route(i).toString();
-        if (item.route.isEmpty()) {
-            item.route = item.id;
-        }
+        item.id = tab && !tab->id.isEmpty()
+                      ? tab->id
+                      : QString::number(i);
+
+        item.route = tab && tab->route.isValid()
+                         ? tab->route.path()
+                         : normalizeRoutePath(item.id);
+
+
         item.label = tabText(i);
         item.icon = tabIcon(i);
         item.testId = tabTestId(i);

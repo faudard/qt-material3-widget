@@ -61,7 +61,8 @@ constexpr ContrastPair kContrastPairs[] = {
     { ColorRole::OnSurfaceVariant, ColorRole::SurfaceVariant, "colorScheme.OnSurfaceVariant/SurfaceVariant", true },
     { ColorRole::InverseOnSurface, ColorRole::InverseSurface, "colorScheme.InverseOnSurface/InverseSurface", true },
     { ColorRole::Outline, ColorRole::Surface, "colorScheme.Outline/Surface", false },
-    { ColorRole::OutlineVariant, ColorRole::Surface, "colorScheme.OutlineVariant/Surface", false },
+    // OutlineVariant is intentionally lower-emphasis. Components that need
+    // guaranteed non-text UI contrast should use Outline, not OutlineVariant.
 };
 
 bool opacityInRange(qreal value)

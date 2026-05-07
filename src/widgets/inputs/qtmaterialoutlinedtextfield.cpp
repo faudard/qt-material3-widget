@@ -155,7 +155,6 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
         syncEffectiveErrorVisibility();
     });
 
-    syncLineEditPalette();
     syncAccessoryWidgets();
 }
 
@@ -475,7 +474,6 @@ void QtMaterialOutlinedTextField::setMaxLength(int maxLength)
     m_lineEdit->setMaxLength(normalizedMaxLength);
     invalidateLayoutCache();
     syncLineEditGeometry();
-    syncCharacterCounterWidget();
     syncAccessibilityState();
     updateGeometry();
     update();
@@ -495,7 +493,6 @@ void QtMaterialOutlinedTextField::setCharacterCounterEnabled(bool enabled)
     m_characterCounterEnabled = enabled;
     invalidateLayoutCache();
     syncLineEditGeometry();
-    syncCharacterCounterWidget();
     syncAccessibilityState();
     updateGeometry();
     update();
@@ -840,7 +837,7 @@ void QtMaterialOutlinedTextField::syncAccessibilityState()
         labelText(),
         supportingText(),
         effectiveErrorText(),
-        hasErrorState());
+        isEffectiveErrorVisible());
 }
 
 TextFieldSpec QtMaterialOutlinedTextField::resolveTextFieldSpec(const SpecFactory& factory) const
@@ -1458,6 +1455,15 @@ void QtMaterialOutlinedTextField::resizeEvent(QResizeEvent* event)
     syncAccessibilityState();
 }
 
+void QtMaterialOutlinedTextField::showEvent(QShowEvent *event)
+{
+  QWidget::showEvent(event);
+
+  invalidateLayoutCache();
+  syncLineEditGeometry();
+  syncAccessibilityState();
+}
+
 void QtMaterialOutlinedTextField::changeEvent(QEvent* event)
 {
     QtMaterialInputControl::changeEvent(event);
@@ -1526,8 +1532,6 @@ void QtMaterialOutlinedTextField::paintEvent(QPaintEvent*)
 {
     ensureSpecResolved();
     ensureLayoutResolved();
-    syncLineEditGeometry();
-    syncLineEditPalette();
 
     QtMaterialInteractionState state = interactionState();
     state.setFocused(currentFocusState());
@@ -1568,7 +1572,7 @@ void QtMaterialOutlinedTextField::paintEvent(QPaintEvent*)
             ? QtMaterialTextFieldShellHelper::Variant::Filled
             : QtMaterialTextFieldShellHelper::Variant::Outlined,
         text,
-        hasErrorState(),
+        isEffectiveErrorVisible(),
         m_cachedLabelFont);
 }
 
