@@ -150,6 +150,9 @@ public:
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
+
+    QString effectiveErrorText() const;
+
 signals:
     void trailingActionTriggered();
     void clearTriggered();
@@ -218,7 +221,6 @@ private:
     AutomaticValidationErrorKind currentValidationErrorKind() const;
     bool currentValidationError() const;
     bool isRequiredValidationError() const;
-    QString effectiveErrorText() const;
     void refreshValidationState(bool commit);
     void syncEffectiveErrorState();
     bool shouldShowEffectiveError() const noexcept;

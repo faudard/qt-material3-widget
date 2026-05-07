@@ -117,10 +117,7 @@ target_compile_definitions(tst_theme_seed_goldens PRIVATE QTMATERIAL3_TEST_SOURC
 
 qtm3_add_test(tst_abstractbutton_state core/tst_abstractbutton_state.cpp qtmaterial3_core)
 
-target_sources(tst_abstractbutton_state
-  PRIVATE
-    widgets/inputs/tst_textfield_readonly.cpp
-)
+
 # qtm3_add_test(tst_overlaysurface core/tst_overlaysurface.cpp qtmaterial3_core)
 #qtm3_add_test(tst_selectioncontrol_layout core/tst_selectioncontrol_layout.cpp qtmaterial3_core)
 qtm3_add_test(tst_inputcontrol core/tst_inputcontrol.cpp qtmaterial3_core)

@@ -322,4 +322,24 @@ QColor QtMaterialLinearProgressIndicator::resolvedStopColor() const {
     return m_spec.stopIndicatorColor.isValid() ? m_spec.stopIndicatorColor : resolvedActiveColor();
 }
 
+QString QtMaterial::QtMaterialLinearProgressIndicator::accessibleValueText() const
+{
+    const QString status = m_asyncState.statusText().trimmed();
+    if (m_mode == Mode::Indeterminate) {
+        return status.isEmpty() ? tr("In progress") : status;
+    }
+
+    const qreal clamped = std::isnan(m_value) ? 0.0 : qBound(0.0, m_value, 1.0);
+    const QString progress = tr("%1%").arg(qRound(clamped * 100.0));
+    return status.isEmpty() ? progress : tr("%1, %2").arg(status, progress);
+}
+
+void QtMaterial::QtMaterialLinearProgressIndicator::updateAccessibleState()
+{
+    if (accessibleName().trimmed().isEmpty()) {
+        setAccessibleName(tr("Progress indicator"));
+    }
+    setAccessibleDescription(accessibleValueText());
+}
+
 } // namespace QtMaterial

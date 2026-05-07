@@ -153,7 +153,7 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
     QObject::connect(this, &QtMaterialOutlinedTextField::modifiedChanged, this, [this](bool) {
         syncEffectiveErrorVisibility();
     });
-
+
     syncLineEditPalette();
     syncAccessoryWidgets();
 }
@@ -874,7 +874,7 @@ bool QtMaterialOutlinedTextField::currentFocusState() const
     return (m_lineEdit && m_lineEdit->hasFocus()) || hasFocus();
 }
 
-QtMaterialOutlinedTextField::resolvedEndActionMode() const noexcept
+QtMaterialOutlinedTextField::EndActionMode QtMaterialOutlinedTextField::resolvedEndActionMode() const noexcept
 {
     if (m_endActionMode == EndActionMode::TogglePasswordVisibility
         && m_configuredEchoMode == QLineEdit::Password) {
@@ -1129,6 +1129,37 @@ void QtMaterialOutlinedTextField::syncEffectiveErrorVisibility()
     updateGeometry();
     update();
     emit effectiveErrorVisibleChanged(visible);
+}
+
+bool QtMaterialOutlinedTextField::isModified() const
+{
+    return m_lineEdit ? m_lineEdit->isModified() : false;
+}
+
+void QtMaterialOutlinedTextField::setModified(bool modified)
+{
+    if (!m_lineEdit) {
+        return;
+    }
+
+    m_lineEdit->setModified(modified);
+    updateModifiedStateFromLineEdit();
+}
+
+void QtMaterialOutlinedTextField::resetModified()
+{
+    setModified(false);
+}
+
+void QtMaterialOutlinedTextField::updateModifiedStateFromLineEdit()
+{
+    const bool modified = isModified();
+    if (m_lastKnownModified == modified) {
+        return;
+    }
+
+    m_lastKnownModified = modified;
+    Q_EMIT modifiedChanged(modified);
 }
 
 void QtMaterialOutlinedTextField::ensureLayoutResolved() const

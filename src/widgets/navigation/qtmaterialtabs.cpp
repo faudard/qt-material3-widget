@@ -1292,6 +1292,74 @@ void QtMaterialTabs::syncNavigationModelSelectionFromCurrentTab() {
     m_syncingNavigationModel = false;
 }
 
+void QtMaterial::QtMaterialTabs::syncAccessibilityState()
+{
+    const QString summary = accessibilitySummary();
+
+    if (accessibleName().trimmed().isEmpty()) {
+        setAccessibleName(tr("Tabs"));
+    }
+    setAccessibleDescription(summary);
+
+    if (auto* bar = tabBar()) {
+        if (bar->accessibleName().trimmed().isEmpty()) {
+            bar->setAccessibleName(tr("Tabs"));
+        }
+        bar->setAccessibleDescription(summary);
+    }
+
+    if (m_lastAccessibilitySummary == summary) {
+        return;
+    }
+
+    m_lastAccessibilitySummary = summary;
+    emit accessibilitySummaryChanged(summary);
+}
+
+QString QtMaterial::QtMaterialTabs::accessibilitySummary() const
+{
+    if (count() <= 0) {
+        return tr("No tabs");
+    }
+
+    const int index = currentIndex();
+    if (index < 0 || index >= count()) {
+        return tr("%1 tabs").arg(count());
+    }
+
+    return tr("%1 of %2: %3").arg(index + 1).arg(count()).arg(currentTabAccessibleText());
+}
+
+QString QtMaterial::QtMaterialTabs::currentTabAccessibleText() const
+{
+    const int index = currentIndex();
+    if (index < 0 || index >= count()) {
+        return QString();
+    }
+
+    QString label = tabText(index).trimmed();
+    if (label.isEmpty()) {
+        if (const TabDescriptor* d = descriptor(index)) {
+            if (!d->id.trimmed().isEmpty()) {
+                label = d->id.trimmed();
+            } else if (d->route.isValid()) {
+                label = d->route.toString();
+            }
+        }
+    }
+
+    if (label.isEmpty()) {
+        label = tr("Tab %1").arg(index + 1);
+    }
+
+    if (isBadgeVisible(index)) {
+        const QString badgeText = badge(index).trimmed();
+        label += badgeText.isEmpty() ? tr(", has updates") : tr(", badge %1").arg(badgeText);
+    }
+
+    return label;
+}
+
 } // namespace QtMaterial
 
 #include "qtmaterialtabs.moc"

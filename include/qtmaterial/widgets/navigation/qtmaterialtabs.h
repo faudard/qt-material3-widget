@@ -5,6 +5,7 @@
 
 #include <QPointer>
 #include <QString>
+#include <QTabBar>
 #include <QTabWidget>
 #include <QUrl>
 #include <QVector>
@@ -91,9 +92,9 @@ public:
     bool wrapNavigation() const;
     void setWrapNavigation(bool enabled);
 
-
     QString currentTabAccessibleText() const;
     QString accessibilitySummary() const;
+
     void setBadge(int index, const QString& text);
     QString badge(int index) const;
     void setBadgeVisible(int index, bool visible);
@@ -113,6 +114,7 @@ public:
     QtMaterialRoute route(int index) const;
     int indexOfRoute(const QtMaterialRoute& route) const;
     int indexOfRoute(const QString& routePath) const;
+
     bool navigateTo(const QtMaterialRoute& route);
     bool navigateTo(const QString& routePath);
     bool navigateToUrl(const QUrl& url);
@@ -127,7 +129,6 @@ public:
     void bindTo(QStackedWidget* stack);
     QtMaterialNavigationModel* navigationModel() const;
     void setNavigationModel(QtMaterialNavigationModel* model);
-
     void bindToController(QtMaterialNavigationController* controller);
     void unbindController(QtMaterialNavigationController* controller);
     void unbindAll();
@@ -147,14 +148,12 @@ signals:
     void wrapNavigationChanged(bool enabled);
     void accessibilitySummaryChanged(const QString& summary);
     void lazyLoadingChanged(bool enabled);
-
     void badgeChanged(int index);
     void tabIdChanged(int index, const QString& id);
     void tabTestIdChanged(int index, const QString& testId);
     void routeChanged(int index, const QtMaterial::QtMaterialRoute& route);
     void currentRouteChanged(const QtMaterial::QtMaterialRoute& route);
     void tabLoaded(int index, QWidget* widget);
-
     void stackBindingChanged(QStackedWidget* stack);
     void controllerBindingChanged(QtMaterialNavigationController* controller, bool bound);
     void navigationModelChanged(QtMaterial::QtMaterialNavigationModel* model);
@@ -205,6 +204,8 @@ private:
     bool m_syncingNavigationModel = false;
     QString m_lastAccessibilitySummary;
 };
+
+
 
 } // namespace QtMaterial
 

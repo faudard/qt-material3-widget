@@ -1,9 +1,12 @@
 #pragma once
 
+#include <cmath>
+
 #include <QColor>
 #include <QPointer>
 #include <QSize>
 #include <QString>
+#include <QtGlobal>
 
 #include "qtmaterial/core/qtmaterialasyncstate.h"
 #include "qtmaterial/core/qtmaterialwidget.h"
@@ -27,6 +30,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialLinearProgressIndicator : public QtMa
     Q_PROPERTY(QColor trackColor READ trackColor WRITE setTrackColor RESET resetTrackColor NOTIFY specChanged)
     Q_PROPERTY(int trackGap READ trackGap WRITE setTrackGap NOTIFY specChanged)
     Q_PROPERTY(int stopIndicatorSize READ stopIndicatorSize WRITE setStopIndicatorSize NOTIFY specChanged)
+
 public:
     enum class Mode { Determinate, Indeterminate };
     Q_ENUM(Mode)
@@ -44,7 +48,6 @@ public:
 
     bool isBusy() const noexcept;
     void setBusy(bool busy);
-
     bool isIndeterminate() const noexcept;
     void setIndeterminate(bool indeterminate);
 
