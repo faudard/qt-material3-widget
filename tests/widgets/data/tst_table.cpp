@@ -2,6 +2,7 @@
 #include <QSignalSpy>
 #include <QStandardItemModel>
 #include <QTest>
+#include <qheaderview.h>
 
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
 
@@ -40,7 +41,7 @@ void tst_Table::constructsWithMaterialDefaults()
     QCOMPARE(table.objectName(), QStringLiteral("QtMaterialTable"));
     QCOMPARE(table.selectionBehavior(), QAbstractItemView::SelectRows);
     QCOMPARE(table.selectionMode(), QAbstractItemView::SingleSelection);
-    QVERIFY(table.sortingEnabled());
+    QVERIFY(table.isSortingEnabled());
     QVERIFY(table.focusPolicy() & Qt::StrongFocus);
     QVERIFY(!table.dense());
     QCOMPARE(table.accessibleName(), QStringLiteral("Table"));

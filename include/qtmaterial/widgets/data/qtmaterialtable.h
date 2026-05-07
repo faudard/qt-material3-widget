@@ -29,6 +29,7 @@ public:
     QString accessibilitySummary() const;
     QString currentCellAccessibleText() const;
     QString rowAccessibleText(int row) const;
+    void setModel(QAbstractItemModel* model) override;
 
 public Q_SLOTS:
     void activateCurrentRow();
@@ -43,7 +44,6 @@ protected:
     void focusInEvent(QFocusEvent* event) override;
     void focusOutEvent(QFocusEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
-    void setModel(QAbstractItemModel* model) override;
     void currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
 
 private:
