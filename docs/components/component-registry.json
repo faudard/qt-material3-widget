@@ -41,7 +41,7 @@
     "id": "button.icon",
     "name": "Icon Button",
     "family": "Buttons",
-    "maturity": "partial",
+    "maturity": "usable",
     "publicHeader": "qtmaterial/widgets/buttons/qtmaterialiconbutton.h",
     "specType": "IconButtonSpec",
     "widgetType": "QtMaterialIconButton",
@@ -141,14 +141,14 @@
     "id": "navigation.rail",
     "name": "Navigation Rail",
     "family": "Navigation",
-    "maturity": "planned",
+    "maturity": "usable",
     "publicHeader": "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h",
     "specType": "NavigationRailSpec",
     "widgetType": "QtMaterialNavigationRail",
-    "testTarget": "",
+    "testTarget": "tst_navigationrail",
     "galleryRoute": "/navigation/rail",
     "docsPath": "docs/public-api/navigation.md",
-    "releaseScope": false
+    "releaseScope": true
   },
   {
     "id": "navigation.tabs",
@@ -274,6 +274,19 @@
     "docsPath": "docs/public-api/surfaces.md"
   },
   {
+    "id": "surface.bottom-sheet",
+    "name": "Bottom Sheet",
+    "family": "Surfaces",
+    "maturity": "usable",
+    "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h",
+    "specType": "BottomSheetSpec",
+    "widgetType": "QtMaterialBottomSheet",
+    "testTarget": "tst_bottomsheet",
+    "galleryRoute": "/surfaces/bottom-sheet",
+    "docsPath": "docs/public-api/bottomsheet-release-readiness.md",
+    "releaseScope": true
+  },
+  {
     "id": "surface.snackbar",
     "name": "Snackbar",
     "family": "Surfaces",
@@ -323,5 +336,31 @@
     "galleryRoute": "/data/carousel",
     "docsPath": "docs/public-api/data-widgets.md",
     "releaseScope": true
+  },
+  {
+    "id": "surface.navigation-drawer",
+    "name": "Navigation Drawer",
+    "family": "Surfaces",
+    "maturity": "usable",
+    "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h",
+    "specType": "NavigationDrawerSpec",
+    "widgetType": "QtMaterialNavigationDrawer",
+    "testTarget": "tst_navigationdrawer",
+    "galleryRoute": "/surfaces/navigation-drawer",
+    "docsPath": "docs/public-api/navigationdrawer-release-readiness.md",
+    "releaseScope": true
+  },
+  {
+    "id": "surface.banner",
+    "name": "Banner",
+    "family": "Surfaces",
+    "maturity": "usable",
+    "releaseScope": true,
+    "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialbanner.h",
+    "specType": "BannerSpec",
+    "widgetType": "QtMaterialBanner",
+    "testTarget": "tst_banner",
+    "galleryRoute": "/surfaces/banner",
+    "docsPath": "docs/public-api/banner-release-readiness.md"
   }
 ]

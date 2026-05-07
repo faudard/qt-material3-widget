@@ -156,3 +156,8 @@ To integrate into the repository:
 3. add `tst_tabs` to `tests/CMakeLists.txt`
 
 The provided script patches those files automatically.
+
+
+## `QtMaterialNavigationRail`
+
+`QtMaterialNavigationRail` is covered by `docs/public-api/navigationrail-release-readiness.md`. The release contract covers destination selection, disabled destinations, keyboard navigation and accessibility summaries.

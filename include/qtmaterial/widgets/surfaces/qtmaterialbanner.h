@@ -1,22 +1,25 @@
 #pragma once
 
-#include <QPainterPath>
-#include <QAbstractButton>
 #include <QIcon>
+#include <QPainterPath>
 #include <QPointer>
+#include <QRect>
+#include <QSize>
 #include <QString>
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialsurface.h"
 #include "qtmaterial/specs/qtmaterialbannerspec.h"
 
+class QEvent;
+class QKeyEvent;
 class QPaintEvent;
 class QResizeEvent;
-class QKeyEvent;
+class QToolButton;
 
 namespace QtMaterial {
-struct BannerSpec;
 class Theme;
+struct BannerSpec;
 }
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialBanner : public QtMaterial::QtMaterialSurface
@@ -43,6 +46,20 @@ public:
     bool isDismissible() const;
     void setDismissible(bool dismissible);
 
+    bool dismissOnEscape() const noexcept;
+    void setDismissOnEscape(bool dismissOnEscape);
+
+    QString primaryActionText() const;
+    void setPrimaryActionText(const QString& text);
+
+    QString secondaryActionText() const;
+    void setSecondaryActionText(const QString& text);
+
+    QString dismissAccessibleName() const;
+    void setDismissAccessibleName(const QString& name);
+
+    QString accessibilitySummary() const;
+
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
@@ -51,6 +68,9 @@ public slots:
 
 signals:
     void dismissed();
+    void primaryActionTriggered();
+    void secondaryActionTriggered();
+    void accessibilitySummaryChanged(const QString& summary);
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -66,11 +86,19 @@ private:
     void ensureLayoutResolved() const;
     void invalidateLayoutCache();
     void syncDismissButton();
+    void syncActionButtons();
+    void syncAccessibility();
+    void emitAccessibilitySummaryIfChanged();
 
     QString m_titleText;
     QString m_bodyText;
     QIcon m_leadingIcon;
     bool m_dismissible = true;
+    bool m_dismissOnEscape = true;
+    QString m_primaryActionText;
+    QString m_secondaryActionText;
+    QString m_dismissAccessibleName;
+    QString m_lastAccessibilitySummary;
 
     mutable bool m_specDirty = true;
     mutable bool m_layoutDirty = true;
@@ -83,5 +111,8 @@ private:
     mutable QPainterPath m_containerPath;
     mutable QString m_elidedTitle;
     mutable QString m_elidedBody;
-    QPointer<QAbstractButton> m_dismissButton;
+
+    QPointer<QToolButton> m_dismissButton;
+    QPointer<QToolButton> m_primaryActionButton;
+    QPointer<QToolButton> m_secondaryActionButton;
 };

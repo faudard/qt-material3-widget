@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QIcon>
+#include <QSize>
+#include <QString>
 #include <QVector>
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
@@ -13,6 +15,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialNavigationRail : public QtMaterialCon
     Q_OBJECT
     Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
     Q_PROPERTY(bool labelsVisible READ labelsVisible WRITE setLabelsVisible NOTIFY labelsVisibleChanged)
+    Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
 
 public:
     explicit QtMaterialNavigationRail(QWidget* parent = nullptr);
@@ -27,6 +30,12 @@ public:
     QString destinationText(int index) const;
     QIcon destinationIcon(int index) const;
 
+    bool isDestinationEnabled(int index) const noexcept;
+    void setDestinationEnabled(int index, bool enabled);
+
+    QString destinationAccessibleText(int index) const;
+    QString accessibilitySummary() const;
+
     int currentIndex() const noexcept;
     void setCurrentIndex(int index);
 
@@ -40,6 +49,8 @@ signals:
     void currentIndexChanged(int index);
     void destinationActivated(int index);
     void labelsVisibleChanged(bool visible);
+    void destinationEnabledChanged(int index, bool enabled);
+    void accessibilitySummaryChanged(const QString& summary);
 
 protected:
     void paintEvent(QPaintEvent* event) override;
@@ -49,15 +60,27 @@ protected:
     void invalidateResolvedSpec() override;
 
 private:
-    struct Destination { QString text; QIcon icon; };
+    struct Destination {
+        QString text;
+        QIcon icon;
+        bool enabled = true;
+    };
+
     void ensureSpecResolved() const;
     QRect itemRect(int index) const;
     QRect indicatorRect(const QRect& itemRect) const;
     int indexAt(const QPoint& pos) const;
 
+    int firstEnabledIndex() const noexcept;
+    int lastEnabledIndex() const noexcept;
+    int nextEnabledIndex(int from, int step) const noexcept;
+    void syncAccessibility();
+
     QVector<Destination> m_destinations;
     int m_currentIndex = -1;
     bool m_labelsVisible = true;
+    QString m_lastAccessibilitySummary;
+
     mutable bool m_specDirty = true;
     mutable NavigationRailSpec m_spec;
 };

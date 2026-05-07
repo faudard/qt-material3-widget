@@ -1,266 +1,587 @@
 #include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 
+#include <QAccessible>
+#include <QFontMetrics>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QPalette>
+#include <QPaintEvent>
 
-#include "qtmaterial/effects/qtmaterialfocusindicator.h"
-#include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
+namespace {
+constexpr int kHorizontalPadding = 12;
+constexpr int kVerticalPadding = 8;
+constexpr int kItemHeight = 48;
+constexpr int kSeparatorHeight = 8;
+constexpr int kMinWidth = 112;
+constexpr int kIconSize = 24;
+constexpr int kIconGap = 12;
+constexpr int kCheckColumnWidth = 24;
+constexpr int kCornerRadius = 4;
 
-namespace QtMaterial {
+QColor withAlpha(QColor color, int alpha)
+{
+    color.setAlpha(alpha);
+    return color;
+}
+} // namespace
 
 QtMaterialMenu::QtMaterialMenu(QWidget* parent)
-    : QtMaterialControl(parent)
+    : QWidget(parent)
 {
-    setWindowFlag(Qt::Popup, true);
-    setFocusPolicy(Qt::StrongFocus);
+    setAttribute(Qt::WA_Hover, true);
     setMouseTracking(true);
+    setFocusPolicy(Qt::StrongFocus);
+    setAccessibleName(QStringLiteral("Menu"));
+    updateAccessibility();
 }
 
 QtMaterialMenu::~QtMaterialMenu() = default;
 
-int QtMaterialMenu::addItem(const QString& text, const QIcon& icon, const QString& shortcut)
+int QtMaterialMenu::addItem(const QString& text, const QIcon& icon)
 {
-    m_items.push_back(MenuItem{text, icon, shortcut, false, true});
+    Item item;
+    item.text = text;
+    item.icon = icon;
+    const int index = m_items.size();
+    m_items.append(item);
+    ensureCurrentIndex();
     updateGeometry();
+    updateAccessibility();
     update();
-    return m_items.size() - 1;
+    return index;
 }
 
-void QtMaterialMenu::addSeparator()
+int QtMaterialMenu::addSeparator()
 {
-    m_items.push_back(MenuItem{QString(), QIcon(), QString(), true, false});
+    Item item;
+    item.role = ItemRole::Separator;
+    item.enabled = false;
+    const int index = m_items.size();
+    m_items.append(item);
     updateGeometry();
+    updateAccessibility();
     update();
+    return index;
 }
 
 void QtMaterialMenu::clear()
 {
+    if (m_items.isEmpty()) {
+        return;
+    }
+
     m_items.clear();
+    m_pressedIndex = -1;
     setCurrentIndex(-1);
     updateGeometry();
+    updateAccessibility();
     update();
 }
 
-int QtMaterialMenu::count() const noexcept { return m_items.size(); }
+int QtMaterialMenu::count() const noexcept
+{
+    return m_items.size();
+}
+
+bool QtMaterialMenu::isEmpty() const noexcept
+{
+    return m_items.isEmpty();
+}
 
 QString QtMaterialMenu::itemText(int index) const
 {
-    return index >= 0 && index < m_items.size() ? m_items.at(index).text : QString();
+    return isValidIndex(index) ? m_items.at(index).text : QString();
 }
 
-void QtMaterialMenu::setItemEnabled(int index, bool enabled)
+void QtMaterialMenu::setItemText(int index, const QString& text)
 {
-    if (index < 0 || index >= m_items.size() || m_items[index].enabled == enabled) {
+    if (!isValidIndex(index) || m_items[index].text == text) {
         return;
     }
-    m_items[index].enabled = enabled;
+
+    m_items[index].text = text;
+    updateGeometry();
+    updateAccessibility();
     update();
+}
+
+QIcon QtMaterialMenu::itemIcon(int index) const
+{
+    return isValidIndex(index) ? m_items.at(index).icon : QIcon();
+}
+
+void QtMaterialMenu::setItemIcon(int index, const QIcon& icon)
+{
+    if (!isValidIndex(index)) {
+        return;
+    }
+
+    m_items[index].icon = icon;
+    updateGeometry();
+    updateAccessibility();
+    update();
+}
+
+bool QtMaterialMenu::isSeparator(int index) const
+{
+    return isValidIndex(index) && m_items.at(index).role == ItemRole::Separator;
 }
 
 bool QtMaterialMenu::isItemEnabled(int index) const
 {
-    return index >= 0 && index < m_items.size() && m_items.at(index).enabled;
+    return isActivatableIndex(index);
 }
 
-int QtMaterialMenu::currentIndex() const noexcept { return m_currentIndex; }
+void QtMaterialMenu::setItemEnabled(int index, bool enabled)
+{
+    if (!isValidIndex(index) || isSeparator(index) || m_items[index].enabled == enabled) {
+        return;
+    }
+
+    m_items[index].enabled = enabled;
+    if (!isActivatableIndex(m_currentIndex)) {
+        setCurrentIndex(nextActivatableIndex(index, enabled ? 0 : 1));
+    }
+    updateAccessibility();
+    update();
+}
+
+bool QtMaterialMenu::isItemCheckable(int index) const
+{
+    return isValidIndex(index) && m_items.at(index).checkable;
+}
+
+void QtMaterialMenu::setItemCheckable(int index, bool checkable)
+{
+    if (!isValidIndex(index) || isSeparator(index) || m_items[index].checkable == checkable) {
+        return;
+    }
+
+    m_items[index].checkable = checkable;
+    if (!checkable) {
+        m_items[index].checked = false;
+    }
+    updateAccessibility();
+    update();
+}
+
+bool QtMaterialMenu::isItemChecked(int index) const
+{
+    return isValidIndex(index) && m_items.at(index).checked;
+}
+
+void QtMaterialMenu::setItemChecked(int index, bool checked)
+{
+    if (!isValidIndex(index) || isSeparator(index) || !m_items[index].checkable || m_items[index].checked == checked) {
+        return;
+    }
+
+    m_items[index].checked = checked;
+    updateAccessibility();
+    update();
+}
+
+int QtMaterialMenu::currentIndex() const noexcept
+{
+    return m_currentIndex;
+}
 
 void QtMaterialMenu::setCurrentIndex(int index)
 {
-    if (index < -1 || index >= m_items.size() || m_currentIndex == index) {
+    if (index != -1 && !isActivatableIndex(index)) {
+        index = nextActivatableIndex(index, 1);
+    }
+
+    if (m_currentIndex == index) {
         return;
     }
-    if (index >= 0 && (m_items.at(index).separator || !m_items.at(index).enabled)) {
-        return;
-    }
+
     m_currentIndex = index;
+    Q_EMIT currentIndexChanged(m_currentIndex);
+    updateAccessibility();
     update();
-    emit currentIndexChanged(index);
 }
 
-void QtMaterialMenu::popup(const QPoint& globalPos)
-{
-    resize(sizeHint());
-    move(globalPos);
-    show();
-    raise();
-    setFocus(Qt::PopupFocusReason);
-}
-
-void QtMaterialMenu::themeChangedEvent(const Theme& theme)
-{
-    QtMaterialControl::themeChangedEvent(theme);
-    invalidateResolvedSpec();
-}
-
-void QtMaterialMenu::invalidateResolvedSpec()
-{
-    m_specDirty = true;
-}
-
-void QtMaterialMenu::ensureSpecResolved() const
-{
-    if (!m_specDirty) {
-        return;
-    }
-    SpecFactory factory;
-    m_spec = factory.menuSpec(theme(), density());
-    m_specDirty = false;
-}
-
-QRect QtMaterialMenu::itemRect(int index) const
-{
-    ensureSpecResolved();
-    return QRect(0, index * m_spec.minItemSize.height(), width(), m_spec.minItemSize.height());
-}
-
-int QtMaterialMenu::indexAt(const QPoint& pos) const
+int QtMaterialMenu::itemAt(const QPoint& position) const
 {
     for (int i = 0; i < m_items.size(); ++i) {
-        if (itemRect(i).contains(pos)) {
+        if (itemRect(i).contains(position)) {
             return i;
         }
     }
     return -1;
 }
 
-void QtMaterialMenu::triggerIndex(int index)
+QRect QtMaterialMenu::itemRect(int index) const
 {
-    if (index < 0 || index >= m_items.size() || m_items.at(index).separator || !m_items.at(index).enabled) {
-        return;
+    if (!isValidIndex(index)) {
+        return {};
     }
-    emit itemTriggered(index, m_items.at(index).text);
-    hide();
+
+    int y = kVerticalPadding;
+    for (int i = 0; i < index; ++i) {
+        y += isSeparator(i) ? kSeparatorHeight : kItemHeight;
+    }
+
+    const int height = isSeparator(index) ? kSeparatorHeight : kItemHeight;
+    return QRect(kHorizontalPadding / 2, y, width() - kHorizontalPadding, height);
+}
+
+QString QtMaterialMenu::itemAccessibleText(int index) const
+{
+    if (!isValidIndex(index)) {
+        return {};
+    }
+
+    const Item& item = m_items.at(index);
+    if (item.role == ItemRole::Separator) {
+        return QStringLiteral("Separator");
+    }
+
+    QStringList parts;
+    parts << item.text;
+    if (!item.enabled) {
+        parts << QStringLiteral("disabled");
+    }
+    if (item.checkable) {
+        parts << (item.checked ? QStringLiteral("checked") : QStringLiteral("not checked"));
+    }
+    if (index == m_currentIndex) {
+        parts << QStringLiteral("focused");
+    }
+    return parts.join(QStringLiteral(", "));
+}
+
+QString QtMaterialMenu::accessibilitySummary() const
+{
+    const int total = m_items.size();
+    int activatable = 0;
+    for (int i = 0; i < m_items.size(); ++i) {
+        if (isActivatableIndex(i)) {
+            ++activatable;
+        }
+    }
+
+    QString summary = tr("Menu, %n item(s)", nullptr, activatable);
+    if (m_currentIndex >= 0) {
+        summary += QStringLiteral(", ") + itemAccessibleText(m_currentIndex);
+    } else if (total == 0) {
+        summary += QStringLiteral(", empty");
+    }
+    return summary;
 }
 
 QSize QtMaterialMenu::sizeHint() const
 {
-    ensureSpecResolved();
-    int width = m_spec.minItemSize.width();
-    QFont labelFont = font();
-    if (theme().typography().contains(m_spec.labelTypeRole)) {
-        labelFont = theme().typography().style(m_spec.labelTypeRole).font;
-    }
-    const QFontMetrics fm(labelFont);
-    for (const MenuItem& item : m_items) {
-        if (item.separator) {
+    QFontMetrics fm(font());
+    int textWidth = 0;
+    bool hasIcon = false;
+    bool hasCheckable = false;
+    int height = kVerticalPadding * 2;
+
+    for (const Item& item : m_items) {
+        if (item.role == ItemRole::Separator) {
+            height += kSeparatorHeight;
             continue;
         }
-        int itemWidth = m_spec.itemPadding.left() + m_spec.itemPadding.right() + fm.horizontalAdvance(item.text);
-        if (!item.icon.isNull()) {
-            itemWidth += m_spec.iconSize + m_spec.iconSpacing;
-        }
-        if (!item.shortcut.isEmpty()) {
-            itemWidth += 32 + fm.horizontalAdvance(item.shortcut);
-        }
-        width = qMax(width, itemWidth);
+        textWidth = qMax(textWidth, fm.horizontalAdvance(item.text));
+        hasIcon = hasIcon || !item.icon.isNull();
+        hasCheckable = hasCheckable || item.checkable;
+        height += kItemHeight;
     }
-    const int height = qMin(m_spec.maxPopupSize.height(), m_items.size() * m_spec.minItemSize.height());
-    return QSize(qMin(width, m_spec.maxPopupSize.width()), height);
+
+    int width = kHorizontalPadding * 2 + textWidth;
+    if (hasIcon) {
+        width += kIconSize + kIconGap;
+    }
+    if (hasCheckable) {
+        width += kCheckColumnWidth;
+    }
+
+    return QSize(qMax(kMinWidth, width), qMax(kItemHeight + kVerticalPadding * 2, height));
 }
 
 QSize QtMaterialMenu::minimumSizeHint() const
 {
-    ensureSpecResolved();
-    return m_spec.minItemSize;
+    return QSize(kMinWidth, kItemHeight + kVerticalPadding * 2);
+}
+
+void QtMaterialMenu::paintEvent(QPaintEvent* event)
+{
+    Q_UNUSED(event)
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    QPainterPath background;
+    background.addRoundedRect(rect().adjusted(0, 0, -1, -1), kCornerRadius, kCornerRadius);
+    painter.fillPath(background, palette().window());
+
+    const bool rtl = layoutDirection() == Qt::RightToLeft;
+    const QColor textColor = palette().color(QPalette::WindowText);
+    const QColor disabledColor = palette().color(QPalette::Disabled, QPalette::WindowText);
+    const QColor stateColor = palette().color(QPalette::Highlight);
+
+    for (int i = 0; i < m_items.size(); ++i) {
+        const Item& item = m_items.at(i);
+        const QRect row = itemRect(i);
+
+        if (item.role == ItemRole::Separator) {
+            const int cy = row.center().y();
+            painter.setPen(withAlpha(textColor, 40));
+            painter.drawLine(row.left() + kHorizontalPadding, cy, row.right() - kHorizontalPadding, cy);
+            continue;
+        }
+
+        if (i == m_currentIndex || i == m_pressedIndex) {
+            const int alpha = (i == m_pressedIndex) ? 38 : 22;
+            painter.fillRect(row, withAlpha(stateColor, alpha));
+        }
+
+        int left = row.left() + kHorizontalPadding;
+        int right = row.right() - kHorizontalPadding;
+
+        const QColor foreground = item.enabled ? textColor : disabledColor;
+        painter.setPen(foreground);
+
+        if (item.checkable) {
+            const QRect checkRect(rtl ? right - kCheckColumnWidth : left, row.top(), kCheckColumnWidth, row.height());
+            if (item.checked) {
+                painter.drawText(checkRect, Qt::AlignCenter, QStringLiteral("✓"));
+            }
+            if (rtl) {
+                right -= kCheckColumnWidth;
+            } else {
+                left += kCheckColumnWidth;
+            }
+        }
+
+        if (!item.icon.isNull()) {
+            const QRect iconRect(rtl ? right - kIconSize : left,
+                                 row.center().y() - kIconSize / 2,
+                                 kIconSize,
+                                 kIconSize);
+            item.icon.paint(&painter, iconRect, Qt::AlignCenter, item.enabled ? QIcon::Normal : QIcon::Disabled);
+            if (rtl) {
+                right -= kIconSize + kIconGap;
+            } else {
+                left += kIconSize + kIconGap;
+            }
+        }
+
+        const QRect textRect(left, row.top(), qMax(0, right - left), row.height());
+        painter.drawText(textRect, Qt::AlignVCenter | (rtl ? Qt::AlignRight : Qt::AlignLeft), item.text);
+    }
+
+    if (hasFocus()) {
+        QPen pen(palette().color(QPalette::Highlight));
+        pen.setWidth(2);
+        painter.setPen(pen);
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRoundedRect(rect().adjusted(1, 1, -2, -2), kCornerRadius, kCornerRadius);
+    }
 }
 
 void QtMaterialMenu::mouseMoveEvent(QMouseEvent* event)
 {
-    setCurrentIndex(indexAt(event->pos()));
-    QtMaterialControl::mouseMoveEvent(event);
+    const int index = itemAt(event->pos());
+    if (isActivatableIndex(index)) {
+        setCurrentIndex(index);
+    }
+    QWidget::mouseMoveEvent(event);
+}
+
+void QtMaterialMenu::mousePressEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton) {
+        const int index = itemAt(event->pos());
+        if (isActivatableIndex(index)) {
+            m_pressedIndex = index;
+            setCurrentIndex(index);
+            update();
+        }
+    }
+    QWidget::mousePressEvent(event);
 }
 
 void QtMaterialMenu::mouseReleaseEvent(QMouseEvent* event)
 {
-    triggerIndex(indexAt(event->pos()));
-    QtMaterialControl::mouseReleaseEvent(event);
+    const int pressed = m_pressedIndex;
+    m_pressedIndex = -1;
+    if (event->button() == Qt::LeftButton && pressed >= 0 && pressed == itemAt(event->pos())) {
+        activateIndex(pressed);
+    }
+    update();
+    QWidget::mouseReleaseEvent(event);
+}
+
+void QtMaterialMenu::leaveEvent(QEvent* event)
+{
+    m_pressedIndex = -1;
+    update();
+    QWidget::leaveEvent(event);
 }
 
 void QtMaterialMenu::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Escape) {
+    switch (event->key()) {
+    case Qt::Key_Down:
+    case Qt::Key_Right:
+        setCurrentIndex(nextActivatableIndex(m_currentIndex, 1));
+        event->accept();
+        return;
+    case Qt::Key_Up:
+    case Qt::Key_Left:
+        setCurrentIndex(nextActivatableIndex(m_currentIndex, -1));
+        event->accept();
+        return;
+    case Qt::Key_Home:
+        setCurrentIndex(firstActivatableIndex());
+        event->accept();
+        return;
+    case Qt::Key_End:
+        setCurrentIndex(lastActivatableIndex());
+        event->accept();
+        return;
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+    case Qt::Key_Space:
+        activateIndex(m_currentIndex);
+        event->accept();
+        return;
+    case Qt::Key_Escape:
         hide();
+        Q_EMIT dismissed();
         event->accept();
         return;
+    default:
+        break;
     }
-    if (event->key() == Qt::Key_Down || event->key() == Qt::Key_Up) {
-        if (!m_items.isEmpty()) {
-            const int delta = event->key() == Qt::Key_Down ? 1 : -1;
-            int candidate = m_currentIndex;
-            for (int step = 0; step < m_items.size(); ++step) {
-                candidate = (candidate + delta + m_items.size()) % m_items.size();
-                if (!m_items.at(candidate).separator && m_items.at(candidate).enabled) {
-                    setCurrentIndex(candidate);
-                    break;
-                }
-            }
-        }
-        event->accept();
-        return;
-    }
-    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter || event->key() == Qt::Key_Space) {
-        triggerIndex(m_currentIndex);
-        event->accept();
-        return;
-    }
-    QtMaterialControl::keyPressEvent(event);
+
+    QWidget::keyPressEvent(event);
 }
 
-void QtMaterialMenu::paintEvent(QPaintEvent*)
+void QtMaterialMenu::focusInEvent(QFocusEvent* event)
 {
-    ensureSpecResolved();
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+    ensureCurrentIndex();
+    updateAccessibility();
+    update();
+    QWidget::focusInEvent(event);
+}
 
-    const qreal radius = theme().shapes().contains(m_spec.shapeRole)
-        ? theme().shapes().radius(m_spec.shapeRole)
-        : m_spec.cornerRadius;
-    QPainterPath containerPath;
-    containerPath.addRoundedRect(QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5), radius, radius);
-    painter.fillPath(containerPath, m_spec.containerColor);
+void QtMaterialMenu::focusOutEvent(QFocusEvent* event)
+{
+    updateAccessibility();
+    update();
+    QWidget::focusOutEvent(event);
+}
 
-    QFont labelFont = font();
-    if (theme().typography().contains(m_spec.labelTypeRole)) {
-        labelFont = theme().typography().style(m_spec.labelTypeRole).font;
-    }
-    painter.setFont(labelFont);
+bool QtMaterialMenu::isValidIndex(int index) const noexcept
+{
+    return index >= 0 && index < m_items.size();
+}
 
+bool QtMaterialMenu::isActivatableIndex(int index) const
+{
+    return isValidIndex(index) && m_items.at(index).role == ItemRole::Action && m_items.at(index).enabled;
+}
+
+int QtMaterialMenu::firstActivatableIndex() const
+{
     for (int i = 0; i < m_items.size(); ++i) {
-        const QRect r = itemRect(i);
-        const MenuItem& item = m_items.at(i);
-        if (item.separator) {
-            painter.setPen(QPen(m_spec.dividerColor, 1));
-            painter.drawLine(r.left() + 8, r.center().y(), r.right() - 8, r.center().y());
-            continue;
+        if (isActivatableIndex(i)) {
+            return i;
         }
-        if (i == m_currentIndex) {
-            QPainterPath layer;
-            layer.addRect(r);
-            QtMaterialStateLayerPainter::paintPath(&painter, layer, m_spec.stateLayerColor, theme().stateLayer().hoverOpacity);
+    }
+    return -1;
+}
+
+int QtMaterialMenu::lastActivatableIndex() const
+{
+    for (int i = m_items.size() - 1; i >= 0; --i) {
+        if (isActivatableIndex(i)) {
+            return i;
         }
-        const QColor textColor = item.enabled ? m_spec.itemLabelColor : m_spec.disabledItemLabelColor;
-        painter.setPen(textColor);
-        int x = m_spec.itemPadding.left();
-        if (!item.icon.isNull()) {
-            const QRect iconRect(x, r.center().y() - m_spec.iconSize / 2, m_spec.iconSize, m_spec.iconSize);
-            item.icon.paint(&painter, iconRect, Qt::AlignCenter, item.enabled ? QIcon::Normal : QIcon::Disabled);
-            x += m_spec.iconSize + m_spec.iconSpacing;
+    }
+    return -1;
+}
+
+int QtMaterialMenu::nextActivatableIndex(int start, int step) const
+{
+    if (m_items.isEmpty()) {
+        return -1;
+    }
+
+    if (step == 0) {
+        return isActivatableIndex(start) ? start : firstActivatableIndex();
+    }
+
+    int index = start;
+    if (!isValidIndex(index)) {
+        index = step > 0 ? -1 : m_items.size();
+    }
+
+    for (int scanned = 0; scanned < m_items.size(); ++scanned) {
+        index += step;
+        if (index < 0) {
+            index = m_items.size() - 1;
+        } else if (index >= m_items.size()) {
+            index = 0;
         }
-        painter.drawText(QRect(x, r.top(), r.width() - x - m_spec.itemPadding.right(), r.height()), Qt::AlignVCenter | Qt::AlignLeft, item.text);
-        if (!item.shortcut.isEmpty()) {
-            painter.setPen(item.enabled ? m_spec.shortcutColor : m_spec.disabledItemLabelColor);
-            painter.drawText(r.adjusted(0, 0, -m_spec.itemPadding.right(), 0), Qt::AlignVCenter | Qt::AlignRight, item.shortcut);
+
+        if (isActivatableIndex(index)) {
+            return index;
         }
     }
 
-    if (hasFocus() && m_currentIndex >= 0) {
-        QPainterPath focusPath;
-        focusPath.addRect(itemRect(m_currentIndex).adjusted(2, 2, -2, -2));
-        QtMaterialFocusIndicator::paintPathFocusRing(&painter, focusPath, m_spec.focusRingColor, 2.0);
+    return -1;
+}
+
+void QtMaterialMenu::activateIndex(int index)
+{
+    if (!isActivatableIndex(index)) {
+        return;
+    }
+
+    if (m_items[index].checkable) {
+        m_items[index].checked = !m_items[index].checked;
+        updateAccessibility();
+        update();
+    }
+
+    Q_EMIT activated(index);
+}
+
+void QtMaterialMenu::ensureCurrentIndex()
+{
+    if (!isActivatableIndex(m_currentIndex)) {
+        setCurrentIndex(firstActivatableIndex());
     }
 }
 
-} // namespace QtMaterial
+void QtMaterialMenu::updateAccessibility()
+{
+    if (accessibleName().isEmpty()) {
+        setAccessibleName(QStringLiteral("Menu"));
+    }
+    setAccessibleDescription(accessibilitySummary());
+    emitAccessibilitySummaryIfChanged();
+
+    if (QAccessible::isActive()) {
+        QAccessibleEvent event(this, QAccessible::DescriptionChanged);
+        QAccessible::updateAccessibility(&event);
+    }
+}
+
+void QtMaterialMenu::emitAccessibilitySummaryIfChanged()
+{
+    const QString summary = accessibilitySummary();
+    if (m_lastAccessibilitySummary == summary) {
+        return;
+    }
+
+    m_lastAccessibilitySummary = summary;
+    Q_EMIT accessibilitySummaryChanged(summary);
+}

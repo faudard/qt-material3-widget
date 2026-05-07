@@ -77,6 +77,10 @@ The current public header exposes:
 - spec invalidation
 - ripple integration
 
+
+### `QtMaterial::QtMaterialIconButton` accessibility contract
+Icon buttons are icon-only controls, so they should have a usable accessible name. Use `setAccessibleName(...)` for new code; tooltip/text fallback is kept as a compatibility guardrail. See `docs/public-api/iconbutton-accessibility.md` for the detailed contract.
+
 ### `QtMaterial::QtMaterialFab`
 
 The floating action button is the compact promoted-action variant.
