@@ -275,6 +275,145 @@ void QtMaterialSnackbar::themeChangedEvent(const QtMaterial::Theme& theme)
     update();
 }
 
+
+bool QtMaterialSnackbar::event(QEvent* event)
+{
+    switch (event->type()) {
+    case QEvent::Enter:
+    case QEvent::HoverEnter:
+    case QEvent::FocusIn:
+        setAutoHidePaused(true);
+        break;
+    case QEvent::Leave:
+    case QEvent::HoverLeave:
+    case QEvent::FocusOut:
+        setAutoHidePaused(false);
+        break;
+    default:
+        break;
+    }
+
+    return QtMaterialOverlaySurface::event(event);
+}
+
+bool QtMaterialSnackbar::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched == m_actionButton || watched == m_dismissButton) {
+        switch (event->type()) {
+        case QEvent::Enter:
+        case QEvent::HoverEnter:
+        case QEvent::FocusIn:
+            setAutoHidePaused(true);
+            break;
+        case QEvent::Leave:
+        case QEvent::HoverLeave:
+        case QEvent::FocusOut:
+            setAutoHidePaused(false);
+            break;
+        default:
+            break;
+        }
+    }
+
+    return QtMaterialOverlaySurface::eventFilter(watched, event);
+}
+
+
+QString QtMaterialSnackbar::accessibilitySummary() const
+{
+    QStringList parts;
+
+    const QString message = m_request.text.trimmed();
+    if (!message.isEmpty()) {
+        parts << message;
+    }
+
+    const QString action = m_request.actionText.trimmed();
+    if (!action.isEmpty()) {
+        parts << tr("Action: %1").arg(action);
+    }
+
+    if (m_request.showDismissButton) {
+        parts << tr("Dismissible");
+    }
+
+    return parts.join(QStringLiteral(". "));
+}
+
+bool QtMaterialSnackbar::pauseAutoHideOnInteraction() const noexcept
+{
+    return m_pauseAutoHideOnInteraction;
+}
+
+void QtMaterialSnackbar::setPauseAutoHideOnInteraction(bool enabled)
+{
+    if (m_pauseAutoHideOnInteraction == enabled) {
+        return;
+    }
+
+    m_pauseAutoHideOnInteraction = enabled;
+    if (!enabled && m_autoHidePaused) {
+        m_autoHidePaused = false;
+        updateAutoHide();
+    }
+}
+
+void QtMaterialSnackbar::syncAccessibilityState()
+{
+    const QString summary = accessibilitySummary();
+
+    if (accessibleName().isEmpty()) {
+        setAccessibleName(tr("Snackbar"));
+    }
+    setAccessibleDescription(summary);
+
+    if (m_label) {
+        m_label->setAccessibleName(tr("Snackbar message"));
+        m_label->setAccessibleDescription(m_request.text.trimmed());
+    }
+
+    const QString action = m_request.actionText.trimmed();
+    if (m_actionButton) {
+        if (!action.isEmpty()) {
+            m_actionButton->setAccessibleName(action);
+            m_actionButton->setAccessibleDescription(tr("Activates snackbar action"));
+        } else {
+            m_actionButton->setAccessibleName(tr("Snackbar action"));
+            m_actionButton->setAccessibleDescription(QString());
+        }
+    }
+
+    if (m_dismissButton) {
+        m_dismissButton->setAccessibleName(tr("Dismiss snackbar"));
+        m_dismissButton->setAccessibleDescription(tr("Dismisses the snackbar"));
+    }
+
+    if (summary != m_lastAccessibilitySummary) {
+        m_lastAccessibilitySummary = summary;
+        emit accessibilitySummaryChanged(summary);
+    }
+}
+
+void QtMaterialSnackbar::setAutoHidePaused(bool paused)
+{
+    if (!m_pauseAutoHideOnInteraction || currentDurationMs() <= 0) {
+        return;
+    }
+
+    if (m_autoHidePaused == paused) {
+        return;
+    }
+
+    m_autoHidePaused = paused;
+    if (m_autoHidePaused) {
+        m_timer->stop();
+        return;
+    }
+
+    updateAutoHide();
+}
+
+
 void QtMaterialSnackbar::syncGeometryToHost()
 {
     QWidget* host = hostWidget();
