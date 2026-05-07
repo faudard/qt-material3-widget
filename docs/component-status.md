@@ -28,7 +28,8 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| input.text.outlined | Outlined Text Field | `partial` | `qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h` | `TextFieldSpec` | `tst_outlinedtextfield` | `docs/public-api/inputs.md` | `/inputs/outlined-text-field` |
+| input.text.filled | Filled Text Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h` | `TextFieldSpec` | `tst_filledtextfield` | `docs/public-api/inputs.md` | `/inputs/filled-text-field` |
+| input.text.outlined | Outlined Text Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h` | `TextFieldSpec` | `tst_outlinedtextfield` | `docs/public-api/inputs.md` | `/inputs/outlined-text-field` |
 
 ## Navigation
 
@@ -55,8 +56,8 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
+| surface.dialog | Dialog | `usable` | `qtmaterial/widgets/surfaces/qtmaterialdialog.h` | `DialogSpec` | `tst_dialog` | `docs/public-api/surfaces.md` | `/surfaces/dialog` |
 | surface.card | Card | `partial` | `qtmaterial/widgets/surfaces/qtmaterialcard.h` | `CardSpec` | `tst_card` | `docs/public-api/surfaces.md` | `/surfaces/card` |
-| surface.dialog | Dialog | `partial` | `qtmaterial/widgets/surfaces/qtmaterialdialog.h` | `DialogSpec` | `tst_dialog` | `docs/public-api/surfaces.md` | `/surfaces/dialog` |
 | surface.snackbar | Snackbar | `partial` | `qtmaterial/widgets/surfaces/qtmaterialsnackbar.h` | `SnackbarSpec` | `tst_snackbar` | `docs/public-api/surfaces.md` | `/surfaces/snackbar` |
 
 ## Release blockers

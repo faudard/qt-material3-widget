@@ -166,6 +166,7 @@ qtm3_add_test(
     qtmaterial3_widgets
 )
 
+qtm3_add_test(tst_textfield_dirty_state widgets/inputs/tst_textfield_dirty_state.cpp qtmaterial3_widgets)
 
 set(QTM3_CONSUMER_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/_installed_package")
 set(QTM3_CONSUMER_BINARY_DIR  "${CMAKE_CURRENT_BINARY_DIR}/_consumer_build")

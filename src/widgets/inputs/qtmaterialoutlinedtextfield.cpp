@@ -136,6 +136,7 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
         });
 
         QObject::connect(m_lineEdit, &QLineEdit::textEdited, this, [this](const QString&) {
+            updateModifiedStateFromLineEdit();
             updateTouchedState(true);
         });
         QObject::connect(m_lineEdit, &QLineEdit::editingFinished, this, [this]() {
