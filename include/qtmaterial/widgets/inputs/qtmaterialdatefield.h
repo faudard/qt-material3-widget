@@ -92,11 +92,10 @@ private:
 
   QDate m_date;
 
-  QDate m_date;
 
   QDate m_minimumDate;
-
   QDate m_maximumDate;
+
 
   mutable QString m_lastAccessibilitySummary;
     QString m_displayFormat;

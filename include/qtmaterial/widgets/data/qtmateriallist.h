@@ -6,6 +6,8 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 
+class QVBoxLayout;
+
 namespace QtMaterial {
 
 class QtMaterialListItem;
@@ -81,7 +83,7 @@ private:
     bool isValidIndex(int index) const noexcept;
 
     QVector<QtMaterialListItem*> m_items;
-    class QVBoxLayout* m_layout = nullptr;
+    QVBoxLayout* m_layout = nullptr;
     SelectionMode m_selectionMode = SelectionMode::SingleSelection;
     int m_currentIndex = -1;
     QString m_lastAccessibilitySummary;

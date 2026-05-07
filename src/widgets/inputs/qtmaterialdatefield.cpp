@@ -85,12 +85,17 @@ QString QtMaterialDateField::placeholderTextForDate() const
 
 void QtMaterialDateField::setPlaceholderTextForDate(const QString& text)
 {
+    if (m_placeholderTextForDate == text) {
+        return;
+    }
+
     m_placeholderTextForDate = text;
-    if (lineEdit() && lineEdit()->text().isEmpty()) {
-        lineEdit()->setPlaceholderText(m_placeholderTextForDate);
+    if (!date().isValid()) {
+        setPlaceholderText(text);
     }
     contentChangedEvent();
 }
+
 
 void QtMaterialDateField::contentChangedEvent()
 {
@@ -181,25 +186,6 @@ void QtMaterialDateField::updateAccessibilityMetadata()
         m_lastAccessibilitySummary = summary;
         emit accessibilitySummaryChanged(summary);
     }
-}
-
-
-QString QtMaterialDateField::placeholderTextForDate() const
-{
-    return m_placeholderTextForDate;
-}
-
-void QtMaterialDateField::setPlaceholderTextForDate(const QString& text)
-{
-    if (m_placeholderTextForDate == text) {
-        return;
-    }
-
-    m_placeholderTextForDate = text;
-    if (!date().isValid()) {
-        setPlaceholderText(text);
-    }
-    updateAccessibilityMetadata();
 }
 
 QDate QtMaterialDateField::minimumDate() const noexcept

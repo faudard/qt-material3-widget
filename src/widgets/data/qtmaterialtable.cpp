@@ -278,7 +278,7 @@ void QtMaterialTable::applySpec()
     setPalette(palette);
     viewport()->setPalette(palette);
 
-    if (auto* delegate = qobject_cast<MaterialTableDelegate*>(itemDelegate())) {
+    if (auto* delegate = dynamic_cast<MaterialTableDelegate*>(itemDelegate())) {
         delegate->setSpec(m_spec);
     }
 
@@ -318,7 +318,10 @@ void QtMaterialTable::syncAccessibility()
     if (summary != m_accessibilitySummary) {
         m_accessibilitySummary = summary;
         Q_EMIT accessibilitySummaryChanged(m_accessibilitySummary);
-        QAccessible::updateAccessibility({this, 0, QAccessible::DescriptionChanged});
+        QAccessibleEvent event(this, QAccessible::DescriptionChanged);
+        event.setChild(0);
+        QAccessible::updateAccessibility(&event);
+        // QAccessible::updateAccessibility({this, 0, QAccessible::DescriptionChanged});
     }
 }
 

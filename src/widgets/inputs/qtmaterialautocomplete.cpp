@@ -204,4 +204,96 @@ void QtMaterialAutocomplete::paintEvent(QPaintEvent*)
     }
 }
 
+
+int QtMaterialAutocomplete::maxVisibleCompletions() const noexcept {
+    return m_maxVisibleCompletions;
+}
+
+void QtMaterialAutocomplete::setMaxVisibleCompletions(int count) {
+    const int sanitized = qMax(1, count);
+    if (m_maxVisibleCompletions == sanitized) {
+        return;
+    }
+    m_maxVisibleCompletions = sanitized;
+    if (m_popup) {
+        m_popup->setMaximumHeight(sizeHint().height() * m_maxVisibleCompletions);
+    }
+    updateAccessibilityState();
+}
+
+bool QtMaterialAutocomplete::completesOnReturn() const noexcept {
+    return m_completesOnReturn;
+}
+
+void QtMaterialAutocomplete::setCompletesOnReturn(bool enabled) {
+    m_completesOnReturn = enabled;
+}
+
+bool QtMaterialAutocomplete::opensOnFocus() const noexcept {
+    return m_opensOnFocus;
+}
+
+void QtMaterialAutocomplete::setOpensOnFocus(bool enabled) {
+    if (m_opensOnFocus == enabled) {
+        return;
+    }
+    m_opensOnFocus = enabled;
+    if (!m_opensOnFocus && !m_lineEdit->hasFocus()) {
+        setPopupVisible(false);
+    }
+}
+
+bool QtMaterialAutocomplete::hidePopupOnEscape() const noexcept {
+    return m_hidePopupOnEscape;
+}
+
+void QtMaterialAutocomplete::setHidePopupOnEscape(bool enabled) {
+    m_hidePopupOnEscape = enabled;
+}
+
+QString QtMaterialAutocomplete::currentCompletion() const {
+    return m_popup ? m_popup->currentCompletion() : QString();
+}
+
+QString QtMaterialAutocomplete::accessibilitySummary() const {
+    QStringList parts;
+    const QString name = accessibleName().trimmed();
+    if (!name.isEmpty()) {
+        parts << name;
+    } else if (!placeholderText().trimmed().isEmpty()) {
+        parts << placeholderText().trimmed();
+    } else {
+        parts << QStringLiteral("Autocomplete");
+    }
+    if (!text().isEmpty()) {
+        parts << tr("Current text: %1").arg(text());
+    }
+    if (isPopupVisible()) {
+        const QString completion = currentCompletion();
+        if (!completion.isEmpty()) {
+            parts << tr("Suggestion: %1").arg(completion);
+        } else {
+            parts << tr("Suggestions available");
+        }
+    }
+    return parts.join(QStringLiteral(". "));
+}
+
+void QtMaterialAutocomplete::updateAccessibilityState() {
+    if (accessibleName().isEmpty()) {
+        const QString fallback = placeholderText().isEmpty() ? tr("Autocomplete") : placeholderText();
+        setAccessibleName(fallback);
+    }
+    const QString summary = accessibilitySummary();
+    setAccessibleDescription(summary);
+    if (m_lineEdit) {
+        m_lineEdit->setAccessibleName(accessibleName());
+        m_lineEdit->setAccessibleDescription(summary);
+    }
+    if (summary != m_lastAccessibilitySummary) {
+        m_lastAccessibilitySummary = summary;
+        emit accessibilitySummaryChanged(summary);
+    }
+}
+
 } // namespace QtMaterial

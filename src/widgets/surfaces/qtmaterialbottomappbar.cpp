@@ -9,6 +9,7 @@
 #include <QResizeEvent>
 #include <QStyle>
 #include <QToolButton>
+#include <qstyleoption.h>
 
 namespace {
 constexpr int kDefaultHeight = 80;
