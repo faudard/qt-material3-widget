@@ -358,6 +358,67 @@ void QtMaterialOutlinedTextField::setInputMask(const QString& inputMask)
 }
 
 
+bool QtMaterialOutlinedTextField::isReadOnly() const
+{
+    return m_lineEdit ? m_lineEdit->isReadOnly() : false;
+}
+
+void QtMaterialOutlinedTextField::setReadOnly(bool readOnly)
+{
+    if (!m_lineEdit || m_lineEdit->isReadOnly() == readOnly) {
+        return;
+    }
+
+    m_lineEdit->setReadOnly(readOnly);
+
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    syncAccessibilityState();
+    updateGeometry();
+    update();
+}
+
+bool QtMaterialOutlinedTextField::isRequired() const noexcept
+{
+    return m_required;
+}
+
+void QtMaterialOutlinedTextField::setRequired(bool required)
+{
+    if (m_required == required) {
+        return;
+    }
+
+    m_required = required;
+
+    refreshValidationState(false);
+    syncAccessibilityState();
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    updateGeometry();
+    update();
+}
+
+QString QtMaterialOutlinedTextField::requiredText() const
+{
+    return m_requiredText.isEmpty() ? tr("Required") : m_requiredText;
+}
+
+void QtMaterialOutlinedTextField::setRequiredText(const QString& text)
+{
+    if (m_requiredText == text) {
+        return;
+    }
+
+    m_requiredText = text;
+
+    syncAccessibilityState();
+    invalidateLayoutCache();
+    updateGeometry();
+    update();
+}
+
+
 int QtMaterialOutlinedTextField::maxLength() const
 {
     return m_lineEdit ? m_lineEdit->maxLength() : 32767;
@@ -655,7 +716,7 @@ void QtMaterialOutlinedTextField::syncAccessibilityState()
         m_lineEdit,
         labelText(),
         supportingText(),
-        errorText(),
+        effectiveErrorText(),
         hasErrorState());
 }
 
@@ -716,6 +777,7 @@ bool QtMaterialOutlinedTextField::shouldShowClearAction() const noexcept
     return m_clearButtonEnabled
         && m_lineEdit
         && isEnabled()
+        && !m_lineEdit->isReadOnly()
         && (m_trailingActionVisibleWhenEmpty || !m_lineEdit->text().isEmpty());
 }
 
@@ -812,10 +874,28 @@ int QtMaterialOutlinedTextField::effectiveTrailingReserve() const
     return width;
 }
 
+
+bool QtMaterialOutlinedTextField::isRequiredValidationError() const
+{
+    return m_required
+        && m_lineEdit
+        && isEnabled()
+        && m_lineEdit->text().trimmed().isEmpty();
+}
+
+QString QtMaterialOutlinedTextField::effectiveErrorText() const
+{
+    return isRequiredValidationError() ? requiredText() : errorText();
+}
+
 bool QtMaterialOutlinedTextField::currentValidationError() const
 {
     if (!m_lineEdit || !isEnabled()) {
         return false;
+    }
+
+    if (isRequiredValidationError()) {
+        return true;
     }
 
     if (m_lineEdit->text().isEmpty()) {
@@ -918,7 +998,7 @@ void QtMaterialOutlinedTextField::ensureLayoutResolved() const
             accessories,
             labelText(),
             supportingText(),
-            errorText(),
+            effectiveErrorText(),
             font());
 
     m_cachedContainerRect = layout.containerRect;

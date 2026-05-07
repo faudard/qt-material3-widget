@@ -74,6 +74,14 @@ public:
     QString inputMask() const;
     void setInputMask(const QString& inputMask);
 
+    bool isRequired() const noexcept;
+    void setRequired(bool required);
+    QString requiredText() const;
+    void setRequiredText(const QString& text);
+
+    bool isReadOnly() const;
+    void setReadOnly(bool readOnly);
+
     int maxLength() const;
     void setMaxLength(int maxLength);
 
@@ -153,6 +161,8 @@ private:
     int effectiveTrailingReserve() const;
 
     bool currentValidationError() const;
+    bool isRequiredValidationError() const;
+    QString effectiveErrorText() const;
     void refreshValidationState(bool commit);
     void syncEffectiveErrorState();
 
@@ -207,6 +217,8 @@ private:
     bool m_manualErrorState = false;
     bool m_automaticValidationError = false;
     bool m_validationCommitted = false;
+    bool m_required = false;
+    QString m_requiredText;
 
     EndActionMode m_endActionMode = EndActionMode::None;
     QIcon m_trailingActionIcon;
