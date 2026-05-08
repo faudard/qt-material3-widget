@@ -9,6 +9,7 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+class QtMaterialChipPrivate;
 
 struct QtMaterialChipPrivate;
 

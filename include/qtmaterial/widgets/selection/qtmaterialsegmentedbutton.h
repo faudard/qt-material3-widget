@@ -8,6 +8,7 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+class QtMaterialSegmentedButtonPrivate;
 
 struct QtMaterialSegmentedButtonPrivate;
 
