@@ -14,14 +14,11 @@ namespace QtMaterial {
 
 QtMaterialOutlinedButton::QtMaterialOutlinedButton(QWidget* parent)
  : QtMaterialTextButton(parent)
- , d(new QtMaterialOutlinedButtonPrivate)
+ , d(std::make_unique<QtMaterialOutlinedButtonPrivate>())
 {
 }
 
-QtMaterialOutlinedButton::~QtMaterialOutlinedButton()
-{
- delete d;
-}
+QtMaterialOutlinedButton::~QtMaterialOutlinedButton() = default;
 
 void QtMaterialOutlinedButtonPrivate::invalidateLayout(QtMaterialOutlinedButton& button)
 {

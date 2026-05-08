@@ -5,6 +5,13 @@
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 
 namespace QtMaterial {
+
+struct QtMaterialFabPrivate {
+    bool m_requiresAccessibleName = true;
+    QString m_iconAccessibleName;
+    QString m_lastAccessibilitySummary;
+};
+
 namespace {
 
 ButtonSpec fabToButtonSpec(const FabSpec& fab)
@@ -32,12 +39,14 @@ ButtonSpec fabToButtonSpec(const FabSpec& fab)
 
 QtMaterialFab::QtMaterialFab(QWidget* parent)
     : QtMaterialFilledButton(parent)
+    , d_ptr(std::make_unique<QtMaterialFabPrivate>())
 {
     initializeFab();
 }
 
 QtMaterialFab::QtMaterialFab(const QIcon& icon, QWidget* parent)
     : QtMaterialFilledButton(parent)
+    , d_ptr(std::make_unique<QtMaterialFabPrivate>())
 {
     initializeFab();
     setIcon(icon);
@@ -56,32 +65,32 @@ void QtMaterialFab::initializeFab()
 
 bool QtMaterialFab::requiresAccessibleName() const noexcept
 {
-    return m_requiresAccessibleName;
+    return d_ptr->m_requiresAccessibleName;
 }
 
 void QtMaterialFab::setRequiresAccessibleName(bool required)
 {
-    if (m_requiresAccessibleName == required) {
+    if (d_ptr->m_requiresAccessibleName == required) {
         return;
     }
 
-    m_requiresAccessibleName = required;
+    d_ptr->m_requiresAccessibleName = required;
     syncAccessibilityState();
     update();
 }
 
 QString QtMaterialFab::iconAccessibleName() const
 {
-    return m_iconAccessibleName;
+    return d_ptr->m_iconAccessibleName;
 }
 
 void QtMaterialFab::setIconAccessibleName(const QString& name)
 {
-    if (m_iconAccessibleName == name) {
+    if (d_ptr->m_iconAccessibleName == name) {
         return;
     }
 
-    m_iconAccessibleName = name;
+    d_ptr->m_iconAccessibleName = name;
     syncAccessibilityState();
     update();
 }
@@ -92,15 +101,15 @@ QString QtMaterialFab::effectiveAccessibleName() const
         return accessibleName().trimmed();
     }
 
-    if (!m_iconAccessibleName.trimmed().isEmpty()) {
-        return m_iconAccessibleName.trimmed();
+    if (!d_ptr->m_iconAccessibleName.trimmed().isEmpty()) {
+        return d_ptr->m_iconAccessibleName.trimmed();
     }
 
     if (!toolTip().trimmed().isEmpty()) {
         return toolTip().trimmed();
     }
 
-    return m_requiresAccessibleName ? QString() : QStringLiteral("Floating action button");
+    return d_ptr->m_requiresAccessibleName ? QString() : QStringLiteral("Floating action button");
 }
 
 bool QtMaterialFab::hasUsableAccessibleName() const
@@ -122,8 +131,8 @@ void QtMaterialFab::syncAccessibilityState()
 {
     const QString summary = accessibilitySummary();
 
-    if (accessibleName().trimmed().isEmpty() && !m_iconAccessibleName.trimmed().isEmpty()) {
-        setAccessibleName(m_iconAccessibleName.trimmed());
+    if (accessibleName().trimmed().isEmpty() && !d_ptr->m_iconAccessibleName.trimmed().isEmpty()) {
+        setAccessibleName(d_ptr->m_iconAccessibleName.trimmed());
     }
 
     if (hasUsableAccessibleName()) {
@@ -133,8 +142,8 @@ void QtMaterialFab::syncAccessibilityState()
             "Floating action button requires an accessible name for assistive technologies"));
     }
 
-    if (m_lastAccessibilitySummary != summary) {
-        m_lastAccessibilitySummary = summary;
+    if (d_ptr->m_lastAccessibilitySummary != summary) {
+        d_ptr->m_lastAccessibilitySummary = summary;
         Q_EMIT accessibilitySummaryChanged(summary);
     }
 }

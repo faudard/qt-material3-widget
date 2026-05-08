@@ -33,28 +33,35 @@ public:
     {
     }
 
-    void setSpec(const TableSpec& spec) { d_ptr.m_spec = spec; }
+    void setSpec(const TableSpec& spec)
+    {
+        m_spec = spec;
+    }
 
-    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override
+    void paint(QPainter* painter,
+               const QStyleOptionViewItem& option,
+               const QModelIndex& index) const override
     {
         QStyleOptionViewItem opt(option);
         initStyleOption(&opt, index);
 
         painter->save();
+
         if (opt.state & QStyle::State_Selected) {
-            painter->fillRect(opt.rect, d_ptr.m_spec.rowSelectedColor);
-            opt.palette.setColor(QPalette::Text, d_ptr.m_spec.rowSelectedTextColor);
+            painter->fillRect(opt.rect, m_spec.rowSelectedColor);
+            opt.palette.setColor(QPalette::Text, m_spec.rowSelectedTextColor);
         } else if (opt.state & QStyle::State_MouseOver) {
-            painter->fillRect(opt.rect, d_ptr.m_spec.rowHoverColor);
+            painter->fillRect(opt.rect, m_spec.rowHoverColor);
         }
 
-        opt.font = d_ptr.m_spec.bodyFont;
+        opt.font = m_spec.bodyFont;
+
         QStyledItemDelegate::paint(painter, opt, index);
         painter->restore();
     }
 
 private:
-    TableSpec d_ptr.m_spec = defaultTableSpec();
+    TableSpec m_spec = defaultTableSpec();
 };
 
 QString pluralize(int value, QStringView singular, QStringView plural)

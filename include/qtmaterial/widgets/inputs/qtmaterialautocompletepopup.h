@@ -67,7 +67,4 @@ private:
     void syncToAnchorGeometry();
     void syncSelectionFromCurrentIndex();
     std::unique_ptr<QtMaterialAutocompletePopupPrivate> d_ptr;
-
-    QPointer<QAbstractItemModel> m_sourceModel;
-    QSortFilterProxyModel* m_filterModel = nullptr;
 };

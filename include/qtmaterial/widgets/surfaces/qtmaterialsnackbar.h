@@ -8,10 +8,6 @@
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
 
-class QLabel;
-class QPushButton;
-class QHBoxLayout;
-class QTimer;
 class QKeyEvent;
 class QResizeEvent;
 class QObject;
@@ -20,8 +16,6 @@ namespace QtMaterial {
 
 
 class QtMaterialSnackbarPrivate;
-class QtMaterialTransitionController;
-struct SnackbarSpec;
 
 enum class SnackbarDuration {
     Short,

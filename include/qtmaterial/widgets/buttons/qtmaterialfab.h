@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QIcon>
 #include <QSize>
 #include <QString>
@@ -8,6 +10,8 @@
 
 namespace QtMaterial {
 
+
+class QtMaterialFabPrivate;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialFab : public QtMaterialFilledButton {
     Q_OBJECT
     Q_PROPERTY(bool requiresAccessibleName READ requiresAccessibleName WRITE setRequiresAccessibleName)
@@ -41,9 +45,8 @@ private:
     void initializeFab();
     void syncAccessibilityState();
 
-    bool m_requiresAccessibleName = true;
-    QString m_iconAccessibleName;
-    QString m_lastAccessibilitySummary;
+
+    std::unique_ptr<QtMaterialFabPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

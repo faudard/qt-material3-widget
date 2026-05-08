@@ -24,7 +24,7 @@ struct QtMaterialAutocompletePopupPrivate {
     mutable bool m_specDirty = true;
     mutable QtMaterial::AutocompletePopupSpec m_spec;
     QPointer<QLineEdit> m_anchorLineEdit;
-    QPointer<QAbstractItemModel> m_model;
+    QPointer<QAbstractItemModel> d_ptr->m_sourceModel;
     QStringListModel* m_ownedStringModel = nullptr;
     QListView* m_view = nullptr;
     QString m_filterText;
@@ -45,9 +45,15 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
-    m_filterModel->setSourceModel(d_ptr->m_ownedStringModel);
-    m_filterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    m_filterModel->setFilterRole(Qt::DisplayRole);
+    d_ptr->m_ownedStringModel = new QStringListModel(this);
+
+
+    d_ptr->m_filterModel = new QSortFilterProxyModel(this);
+
+
+    d_ptr->m_filterModel->setSourceModel(d_ptr->m_ownedStringModel);
+    d_ptr->m_filterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    d_ptr->m_filterModel->setFilterRole(Qt::DisplayRole);
 
     d_ptr->m_view = new QListView(this);
     d_ptr->m_view->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -55,7 +61,7 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
     d_ptr->m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     d_ptr->m_view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     d_ptr->m_view->setUniformItemSizes(false);
-    d_ptr->m_view->setModel(m_filterModel);
+    d_ptr->m_view->setModel(d_ptr->m_filterModel);
     layout->addWidget(d_ptr->m_view);
 
     connect(d_ptr->m_view, &QListView::activated, this, [this](const QModelIndex& index) {
@@ -94,20 +100,20 @@ void QtMaterialAutocompletePopup::setModel(QAbstractItemModel* model)
     if (!model) {
         model = d_ptr->m_ownedStringModel;
     }
-    m_sourceModel = model;
-    m_filterModel->setSourceModel(model);
+    d_ptr->m_sourceModel = model;
+    d_ptr->m_filterModel->setSourceModel(model);
     invalidatePopupLayout();
 }
 
 QAbstractItemModel* QtMaterialAutocompletePopup::model() const noexcept
 {
-    return m_sourceModel ? m_sourceModel.data() : d_ptr->m_ownedStringModel;
+    return d_ptr->m_sourceModel ? d_ptr->m_sourceModel.data() : d_ptr->m_ownedStringModel;
 }
 
 void QtMaterialAutocompletePopup::setSuggestions(const QStringList& suggestions)
 {
     d_ptr->m_ownedStringModel->setStringList(suggestions);
-    if (!m_sourceModel || m_sourceModel == d_ptr->m_ownedStringModel) {
+    if (!d_ptr->m_sourceModel || d_ptr->m_sourceModel == d_ptr->m_ownedStringModel) {
         setModel(d_ptr->m_ownedStringModel);
     }
     invalidatePopupLayout();
@@ -125,7 +131,7 @@ void QtMaterialAutocompletePopup::setPopupVisible(bool visible)
         return;
     }
     d_ptr->m_popupVisible = visible;
-    if (visible && m_filterModel->rowCount() > 0) {
+    if (visible && d_ptr->m_filterModel->rowCount() > 0) {
         updatePopupGeometry();
         show();
         raise();
@@ -146,9 +152,9 @@ void QtMaterialAutocompletePopup::setFilterText(const QString& text)
         return;
     }
     d_ptr->m_filterText = text;
-    m_filterModel->setFilterFixedString(text);
-    if (m_filterModel->rowCount() > 0) {
-        d_ptr->m_view->setCurrentIndex(m_filterModel->index(0, 0));
+    d_ptr->m_filterModel->setFilterFixedString(text);
+    if (d_ptr->m_filterModel->rowCount() > 0) {
+        d_ptr->m_view->setCurrentIndex(d_ptr->m_filterModel->index(0, 0));
     }
     invalidatePopupLayout();
 }
@@ -168,7 +174,7 @@ void QtMaterialAutocompletePopup::selectNext()
 {
     QModelIndex current = d_ptr->m_view->currentIndex();
     const int row = current.isValid() ? current.row() + 1 : 0;
-    const QModelIndex next = m_filterModel->index(qMin(row, m_filterModel->rowCount() - 1), 0);
+    const QModelIndex next = d_ptr->m_filterModel->index(qMin(row, d_ptr->m_filterModel->rowCount() - 1), 0);
     if (next.isValid()) {
         d_ptr->m_view->setCurrentIndex(next);
         d_ptr->m_view->scrollTo(next);
@@ -179,7 +185,7 @@ void QtMaterialAutocompletePopup::selectPrevious()
 {
     QModelIndex current = d_ptr->m_view->currentIndex();
     const int row = current.isValid() ? current.row() - 1 : 0;
-    const QModelIndex prev = m_filterModel->index(qMax(0, row), 0);
+    const QModelIndex prev = d_ptr->m_filterModel->index(qMax(0, row), 0);
     if (prev.isValid()) {
         d_ptr->m_view->setCurrentIndex(prev);
         d_ptr->m_view->scrollTo(prev);
@@ -198,7 +204,7 @@ void QtMaterialAutocompletePopup::acceptCurrent()
 QSize QtMaterialAutocompletePopup::sizeHint() const
 {
     ensureSpecResolved();
-    const int visibleRows = qMin(d_ptr->m_spec.visibleItemCount, qMax(1, m_filterModel->rowCount()));
+    const int visibleRows = qMin(d_ptr->m_spec.visibleItemCount, qMax(1, d_ptr->m_filterModel->rowCount()));
     return d_ptr->m_spec.minPopupSize.expandedTo(QSize(width(), qMin(d_ptr->m_spec.maxPopupSize.height(), d_ptr->m_spec.itemMinSize.height() * visibleRows)));
 }
 
@@ -312,7 +318,7 @@ void QtMaterialAutocompletePopup::syncToAnchorGeometry()
     }
     ensureSpecResolved();
     const QPoint globalBottomLeft = d_ptr->m_anchorLineEdit->mapToGlobal(QPoint(0, d_ptr->m_anchorLineEdit->height()));
-    const int visibleRows = qMin(d_ptr->m_spec.visibleItemCount, qMax(1, m_filterModel->rowCount()));
+    const int visibleRows = qMin(d_ptr->m_spec.visibleItemCount, qMax(1, d_ptr->m_filterModel->rowCount()));
     const int height = qMin(d_ptr->m_spec.maxPopupSize.height(), d_ptr->m_spec.itemMinSize.height() * visibleRows);
     setGeometry(QRect(globalBottomLeft, QSize(qMax(d_ptr->m_anchorLineEdit->width(), d_ptr->m_spec.minPopupSize.width()), height)));
 }

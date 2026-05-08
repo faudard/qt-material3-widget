@@ -12,7 +12,6 @@ namespace QtMaterial {
 
 class QtMaterialSwitchPrivate;
 
-class QtMaterialRippleController;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSwitch : public QtMaterialSelectionControl
 {
     Q_OBJECT

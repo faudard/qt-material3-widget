@@ -17,7 +17,7 @@ namespace QtMaterial {
 
 QtMaterialFilledButton::QtMaterialFilledButton(QWidget* parent)
  : QtMaterialTextButton(parent)
- , d(new QtMaterialFilledButtonPrivate(this))
+ , d(std::make_unique<QtMaterialFilledButtonPrivate>(this))
 {
  d->elevationTransition->setProgress(0.0);
  QObject::connect(
@@ -27,10 +27,7 @@ QtMaterialFilledButton::QtMaterialFilledButton(QWidget* parent)
   [this](qreal) { update(); });
 }
 
-QtMaterialFilledButton::~QtMaterialFilledButton()
-{
- delete d;
-}
+QtMaterialFilledButton::~QtMaterialFilledButton() = default;
 
 qreal QtMaterialFilledButtonPrivate::targetElevationProgress(const QtMaterialFilledButton& button) const noexcept
 {

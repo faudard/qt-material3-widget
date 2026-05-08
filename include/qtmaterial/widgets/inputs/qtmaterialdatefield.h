@@ -8,7 +8,6 @@
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 
-class QToolButton;
 
 class QtMaterialDateFieldPrivate;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDateField : public QtMaterial::QtMaterialOutlinedTextField

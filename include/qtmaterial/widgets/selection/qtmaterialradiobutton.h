@@ -6,8 +6,6 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
-class QtMaterialRadioButtonPrivate;
-
 struct QtMaterialRadioButtonPrivate;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialRadioButton : public QtMaterialSelectionControl
 {

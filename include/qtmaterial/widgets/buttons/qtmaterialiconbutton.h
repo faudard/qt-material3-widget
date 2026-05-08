@@ -6,14 +6,11 @@
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
 #include "qtmaterial/specs/qtmaterialiconbuttonspec.h"
 
-class QPainterPath;
-class QRect;
 
 namespace QtMaterial {
 
 class QtMaterialIconButtonPrivate;
 
-class QtMaterialRippleController;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialIconButton : public QtMaterialAbstractButton
 {
 public:
@@ -53,9 +50,6 @@ private:
     void ensureSpecResolved() const;
     void ensureLayoutResolved() const;
 
-    QRect visualContainerRect() const;
-    QPainterPath containerPath() const;
-    QRect iconRect() const;
  std::unique_ptr<QtMaterialIconButtonPrivate> d;
 };
 

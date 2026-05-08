@@ -1,5 +1,7 @@
 #pragma once
 
+
+#include <memory>
 #include <QColor>
 #include <QPointF>
 
@@ -47,7 +49,7 @@ protected:
 
 private:
  friend class QtMaterialTextButtonPrivate;
- QtMaterialTextButtonPrivate* d = nullptr;
+ std::unique_ptr<QtMaterialTextButtonPrivate> d;
 };
 
 } // namespace QtMaterial

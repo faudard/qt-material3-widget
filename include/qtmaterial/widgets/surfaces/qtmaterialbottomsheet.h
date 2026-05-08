@@ -16,15 +16,11 @@ class QPaintEvent;
 class QResizeEvent;
 class QShowEvent;
 class QWidget;
-class QPainterPath;
 
 namespace QtMaterial {
 
 
 class QtMaterialBottomSheetPrivate;
-class BottomSheetSpec;
-class QtMaterialScrimWidget;
-class QtMaterialTransitionController;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialBottomSheet : public QtMaterialOverlaySurface
 {

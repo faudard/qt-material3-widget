@@ -15,7 +15,6 @@
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/specs/qtmaterialprogressindicatorspec.h"
 
-class QVariantAnimation;
 
 namespace QtMaterial {
 

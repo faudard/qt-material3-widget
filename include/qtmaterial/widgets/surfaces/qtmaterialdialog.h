@@ -10,14 +10,11 @@
 
 class QAbstractButton;
 class QKeyEvent;
-class QVBoxLayout;
 class QWidget;
 
 namespace QtMaterial {
 
 class QtMaterialDialogPrivate;
-class QtMaterialScrimWidget;
-class QtMaterialTransitionController;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDialog : public QtMaterialOverlaySurface
 {

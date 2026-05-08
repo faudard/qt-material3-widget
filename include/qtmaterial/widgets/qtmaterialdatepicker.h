@@ -7,9 +7,6 @@
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
-class QCalendarWidget;
-class QLabel;
-class QToolButton;
 
 namespace QtMaterial {
 

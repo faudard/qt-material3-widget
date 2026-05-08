@@ -9,12 +9,9 @@
 
 QT_BEGIN_NAMESPACE
 class QAbstractItemModel;
-class QCompleter;
 class QLineEdit;
-class QStringListModel;
 QT_END_NAMESPACE
 
-class QtMaterialAutocompletePopup;
 
 namespace QtMaterial {
 class QtMaterialAutocompletePrivate;

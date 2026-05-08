@@ -405,22 +405,4 @@ void QtMaterialIconButton::ensureLayoutResolved() const
     d->m_layoutDirty = false;
 }
 
-QRect QtMaterialIconButton::visualContainerRect() const
-{
-    ensureLayoutResolved();
-    return d->m_cachedVisualRect;
-}
-
-QPainterPath QtMaterialIconButton::containerPath() const
-{
-    ensureLayoutResolved();
-    return d->m_cachedContainerPath;
-}
-
-QRect QtMaterialIconButton::iconRect() const
-{
-    ensureLayoutResolved();
-    return d->m_cachedIconRect;
-}
-
 } // namespace QtMaterial

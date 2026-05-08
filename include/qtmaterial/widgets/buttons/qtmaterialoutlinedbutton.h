@@ -1,5 +1,7 @@
 #pragma once
 
+
+#include <memory>
 class QEvent;
 class QPaintEvent;
 class QResizeEvent;
@@ -28,7 +30,7 @@ protected:
 
 private:
  friend class QtMaterialOutlinedButtonPrivate;
- QtMaterialOutlinedButtonPrivate* d = nullptr;
+ std::unique_ptr<QtMaterialOutlinedButtonPrivate> d;
 };
 
 } // namespace QtMaterial

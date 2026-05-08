@@ -8,7 +8,6 @@ namespace QtMaterial {
 
 class QtMaterialCheckboxPrivate;
 
-class QtMaterialRippleController;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialCheckbox : public QtMaterialSelectionControl
 {
     Q_OBJECT

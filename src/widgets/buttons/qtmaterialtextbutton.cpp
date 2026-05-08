@@ -37,7 +37,7 @@ qreal targetStateLayerOpacity(const Theme& theme, const QtMaterialInteractionSta
 
 QtMaterialTextButton::QtMaterialTextButton(QWidget* parent)
  : QtMaterialAbstractButton(parent)
- , d(new QtMaterialTextButtonPrivate(this))
+ , d(std::make_unique<QtMaterialTextButtonPrivate>(this))
 {
  setMinimumHeight(40);
  d->stateLayerTransition->setProgress(0.0);
@@ -48,10 +48,7 @@ QtMaterialTextButton::QtMaterialTextButton(QWidget* parent)
   [this](qreal) { update(); });
 }
 
-QtMaterialTextButton::~QtMaterialTextButton()
-{
- delete d;
-}
+QtMaterialTextButton::~QtMaterialTextButton() = default;
 
 void QtMaterialTextButton::themeChangedEvent(const Theme& theme)
 {
