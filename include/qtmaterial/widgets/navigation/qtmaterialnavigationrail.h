@@ -8,7 +8,6 @@
 #include <QVector>
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
-#include "qtmaterial/specs/qtmaterialnavigationrailspec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
@@ -75,7 +74,6 @@ private:
     int lastEnabledIndex() const noexcept;
     int nextEnabledIndex(int from, int step) const noexcept;
     void syncAccessibility();
-
 
 };
 

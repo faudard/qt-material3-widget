@@ -4,7 +4,6 @@
 #include <QFont>
 #include <QIcon>
 #include <QLineEdit>
-#include <QPainterPath>
 #include <QPointer>
 #include <QValidator>
 

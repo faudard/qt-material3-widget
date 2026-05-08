@@ -6,7 +6,6 @@
 #include <QString>
 
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
-#include "qtmaterial/specs/qtmaterialdialogspec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 class QAbstractButton;
@@ -15,7 +14,6 @@ class QVBoxLayout;
 class QWidget;
 
 namespace QtMaterial {
-
 
 class QtMaterialDialogPrivate;
 class QtMaterialScrimWidget;

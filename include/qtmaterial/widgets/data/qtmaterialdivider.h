@@ -3,13 +3,14 @@
 #include <memory>
 
 #include <QColor>
-#include <QEvent>
 #include <QRect>
 #include <QSize>
 #include <QString>
 #include <QWidget>
 
 #include "qtmaterial/qtmaterialglobal.h"
+
+class QEvent;
 
 namespace QtMaterial {
 

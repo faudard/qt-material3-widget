@@ -6,7 +6,6 @@
 #include <QWidget>
 
 #include "qtmaterial/qtmaterialglobal.h"
-#include "qtmaterial/specs/qtmaterialautocompletepopupspec.h"
 
 class QListView;
 class QStringListModel;

@@ -5,7 +5,6 @@
 #include <QStringList>
 
 #include "qtmaterial/core/qtmaterialwidget.h"
-#include "qtmaterial/specs/qtmaterialautocompletespec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 QT_BEGIN_NAMESPACE

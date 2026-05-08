@@ -23,7 +23,6 @@ QT_END_NAMESPACE
 
 namespace QtMaterial {
 
-
 class QtMaterialTabsPrivate;
 class QtMaterialNavigationController;
 class QtMaterialTabsBar;
@@ -207,8 +206,6 @@ private:
  std::unique_ptr<QtMaterialTabsPrivate> d_ptr;
 
 };
-
-
 
 } // namespace QtMaterial
 

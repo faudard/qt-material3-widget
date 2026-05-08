@@ -3,19 +3,16 @@
 #include <memory>
 
 #include <QPointer>
-#include <QPainterPath>
 #include <QRect>
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
-#include "qtmaterial/specs/qtmaterialnavigationdrawerspec.h"
 
 class QKeyEvent;
 class QResizeEvent;
 class QShowEvent;
 class QHideEvent;
 namespace QtMaterial {
-
 
 class QtMaterialNavigationDrawerPrivate;
 class QtMaterialScrimWidget;

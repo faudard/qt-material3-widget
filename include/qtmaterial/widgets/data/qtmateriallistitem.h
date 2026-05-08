@@ -7,7 +7,6 @@
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
 #include "qtmaterial/qtmaterialglobal.h"
-#include "qtmaterial/specs/qtmateriallistitemspec.h"
 
 class QKeyEvent;
 class QMouseEvent;
@@ -77,7 +76,6 @@ private:
     void ensureSpecResolved() const;
     void ensureLayoutResolved() const;
     void invalidateLayoutCache();
-
 
 };
 
