@@ -76,19 +76,7 @@ private slots:
     void handleClearButtonClicked();
 
 private:
-    void syncEditorFromDate();
-    void syncDateFromEditor();
-    void updateTrailingAffordances();
-    void updateAccessibilityMetadata();
-
-  
-  bool isDateInRange(const QDate& date) const noexcept;
-
-  QString effectiveErrorTextForDate() const;
-
-  void setParseError(bool hasError);
-
-  void notifyDateAcceptabilityIfChanged(bool previousAcceptable);
+    friend class QtMaterialDateFieldPrivate;
     std::unique_ptr<QtMaterialDateFieldPrivate> d_ptr;
 
 };

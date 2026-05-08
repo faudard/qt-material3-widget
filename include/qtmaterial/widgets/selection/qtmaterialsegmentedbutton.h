@@ -8,8 +8,6 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
-class QtMaterialSegmentedButtonPrivate;
-
 struct QtMaterialSegmentedButtonPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSegmentedButton : public QtMaterialControl {
@@ -66,9 +64,6 @@ protected:
     void invalidateResolvedSpec() override;
 
 private:
-void ensureSpecResolved() const;
-    QRect segmentRect(int index) const;
-    int indexAt(const QPoint& pos) const;
     void toggleIndex(int index);
     int firstEnabledIndex() const noexcept;
     int lastEnabledIndex() const noexcept;

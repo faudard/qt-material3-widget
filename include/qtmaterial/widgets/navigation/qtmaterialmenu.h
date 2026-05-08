@@ -89,14 +89,5 @@ protected:
 
 private:
     std::unique_ptr<QtMaterialMenuPrivate> d_ptr;
-    bool isValidIndex(int index) const noexcept;
-    bool isActivatableIndex(int index) const;
-    int firstActivatableIndex() const;
-    int lastActivatableIndex() const;
-    int nextActivatableIndex(int start, int step) const;
-    void activateIndex(int index);
-    void ensureCurrentIndex();
-    void updateAccessibility();
-    void emitAccessibilitySummaryIfChanged();
 
 };

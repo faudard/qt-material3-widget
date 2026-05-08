@@ -76,20 +76,8 @@ protected:
     bool event(QEvent* event) override;
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
     void stateChangedEvent() override;
-
 private:
-    void ensureSpecResolved() const;
-    void ensureLayoutResolved() const;
-    void invalidateLayoutCache();
-    void syncAccessibility();
-
-    QRect visualRect() const;
-    QRect contentRectForPaint() const;
-    QColor resolvedContainerColor() const;
-    QColor resolvedContentColor() const;
-
-private:
-    std::unique_ptr<QtMaterialCardPrivate> d;
+std::unique_ptr<QtMaterialCardPrivate> d;
 
 };
 

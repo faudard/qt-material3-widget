@@ -117,8 +117,6 @@ private:
     void updateAutoHide();
     void syncAccessibilityState();
     void setAutoHidePaused(bool paused);
-    int currentDurationMs() const;
-    QRectF containerRect() const;
     qreal resolvedCornerRadius() const noexcept;
 
 private:

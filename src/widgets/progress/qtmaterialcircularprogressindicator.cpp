@@ -33,6 +33,17 @@ QColor fallbackTrack(const QWidget* widget)
     return color;
 }
 
+
+QColor resolvedCircularActiveColor(const ProgressIndicatorSpec& spec, const QWidget* widget)
+{
+    return spec.activeColor.isValid() ? spec.activeColor : fallbackActive(widget);
+}
+
+QColor resolvedCircularTrackColor(const ProgressIndicatorSpec& spec, const QWidget* widget)
+{
+    return spec.trackColor.isValid() ? spec.trackColor : fallbackTrack(widget);
+}
+
 } // namespace
 
 class QtMaterialCircularProgressIndicatorPrivate
@@ -316,8 +327,8 @@ void QtMaterialCircularProgressIndicator::paintEvent(QPaintEvent*)
         return;
     }
 
-    QPen trackPen(resolvedTrackColor(), stroke, Qt::SolidLine, Qt::RoundCap);
-    QPen activePen(resolvedActiveColor(), stroke, Qt::SolidLine, Qt::RoundCap);
+    QPen trackPen(resolvedCircularTrackColor(d->spec, this), stroke, Qt::SolidLine, Qt::RoundCap);
+    QPen activePen(resolvedCircularActiveColor(d->spec, this), stroke, Qt::SolidLine, Qt::RoundCap);
 
     painter.setPen(trackPen);
     const int gap16 = qMax(0, d->spec.trackGap) * 16;
@@ -424,12 +435,12 @@ void QtMaterialCircularProgressIndicator::syncAccessibleState()
     emit accessibilitySummaryChanged(summary);
 }
 
-QColor QtMaterialCircularProgressIndicator::resolvedActiveColor() const
+QColor QtMaterialCircularProgressIndicator::resolvedCircularActiveColor(d->spec, this) const
 {
     return d->spec.activeColor.isValid() ? d->spec.activeColor : fallbackActive(this);
 }
 
-QColor QtMaterialCircularProgressIndicator::resolvedTrackColor() const
+QColor QtMaterialCircularProgressIndicator::resolvedCircularTrackColor(d->spec, this) const
 {
     return d->spec.trackColor.isValid() ? d->spec.trackColor : fallbackTrack(this);
 }

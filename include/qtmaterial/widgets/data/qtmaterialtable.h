@@ -1,4 +1,5 @@
 #include <memory>
+#include <qtableview.h>
 
 #pragma once
 
@@ -53,8 +54,6 @@ private:
     std::unique_ptr<QtMaterialTablePrivate> d_ptr;
     void applySpec();
     void syncAccessibility();
-    QString headerText(int column) const;
-    QString cellText(const QModelIndex& index) const;
 
 };
 

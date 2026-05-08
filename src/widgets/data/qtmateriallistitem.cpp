@@ -1,5 +1,4 @@
 #include "qtmaterial/widgets/data/qtmateriallistitem.h"
-#include "qtmaterial/specs/qtmateriallistitemspec.h"
 
 #include <QEvent>
 #include <QKeyEvent>
@@ -12,9 +11,6 @@ namespace QtMaterial {
 
 struct QtMaterialListItemPrivate
 {
-    mutable bool m_specDirty = true;
-    mutable bool m_layoutDirty = true;
-    mutable QtMaterial::ListItemSpec m_spec;
     QString m_headlineText;
     QString m_supportingText;
     QIcon m_leadingIcon;
@@ -23,8 +19,6 @@ struct QtMaterialListItemPrivate
     bool m_dividerVisible = false;
     QtMaterialListItem::DensityVariant m_densityVariant = QtMaterialListItem::DensityVariant::Standard;
 };
-
-
 
 namespace {
 int heightForDensity(QtMaterialListItem::DensityVariant variant)
@@ -247,7 +241,6 @@ void QtMaterialListItem::keyPressEvent(QKeyEvent* event)
 void QtMaterialListItem::resizeEvent(QResizeEvent* event)
 {
     QtMaterialControl::resizeEvent(event);
-    d_ptr->m_layoutDirty = true;
 }
 
 void QtMaterialListItem::changeEvent(QEvent* event)
@@ -259,7 +252,6 @@ void QtMaterialListItem::changeEvent(QEvent* event)
 void QtMaterialListItem::themeChangedEvent(const QtMaterial::Theme& theme)
 {
     QtMaterialControl::themeChangedEvent(theme);
-    d_ptr->m_specDirty = true;
     update();
 }
 
@@ -271,24 +263,20 @@ void QtMaterialListItem::stateChangedEvent()
 
 void QtMaterialListItem::contentChangedEvent()
 {
-    d_ptr->m_layoutDirty = true;
     updateGeometry();
     update();
 }
 
 void QtMaterialListItem::ensureSpecResolved() const
 {
-    d_ptr->m_specDirty = false;
 }
 
 void QtMaterialListItem::ensureLayoutResolved() const
 {
-    d_ptr->m_layoutDirty = false;
 }
 
 void QtMaterialListItem::invalidateLayoutCache()
 {
-    d_ptr->m_layoutDirty = true;
 }
 
 } // namespace QtMaterial

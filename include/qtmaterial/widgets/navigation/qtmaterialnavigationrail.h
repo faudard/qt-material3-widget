@@ -65,16 +65,6 @@ protected:
 private:
     std::unique_ptr<QtMaterialNavigationRailPrivate> d_ptr;
 
-    void ensureSpecResolved() const;
-    QRect itemRect(int index) const;
-    QRect indicatorRect(const QRect& itemRect) const;
-    int indexAt(const QPoint& pos) const;
-
-    int firstEnabledIndex() const noexcept;
-    int lastEnabledIndex() const noexcept;
-    int nextEnabledIndex(int from, int step) const noexcept;
-    void syncAccessibility();
-
 };
 
 } // namespace QtMaterial

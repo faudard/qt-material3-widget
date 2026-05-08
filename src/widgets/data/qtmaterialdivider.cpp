@@ -32,6 +32,35 @@ QString orientationText(Qt::Orientation orientation)
         : QStringLiteral("Vertical separator");
 }
 
+QColor resolvedColor(const QtMaterialDivider* self, const QtMaterialDividerPrivate* d)
+{
+    if (d->m_color.isValid()) {
+        return d->m_color;
+    }
+    return self->palette().color(QPalette::Mid);
+}
+
+void syncAccessibility(QtMaterialDivider* self, QtMaterialDividerPrivate* d)
+{
+    const QString summary = self->accessibilitySummary();
+    if (d->m_decorative) {
+        self->setAccessibleName(QString());
+        self->setAccessibleDescription(QString());
+    } else {
+        const QString label = !d->m_accessibilityLabel.trimmed().isEmpty()
+            ? d->m_accessibilityLabel.trimmed()
+            : orientationText(d->m_orientation);
+        self->setAccessibleName(label);
+        self->setAccessibleDescription(summary);
+    }
+
+    if (d->m_lastAccessibilitySummary != summary) {
+        d->m_lastAccessibilitySummary = summary;
+        Q_EMIT self->accessibilitySummaryChanged(summary);
+    }
+}
+
+
 } // namespace
 
 QtMaterialDivider::QtMaterialDivider(QWidget *parent)
@@ -42,7 +71,7 @@ QtMaterialDivider::QtMaterialDivider(QWidget *parent)
     setAttribute(Qt::WA_TransparentForMouseEvents);
     setFocusPolicy(Qt::NoFocus);
     setOrientation(Qt::Horizontal);
-    syncAccessibility();
+    syncAccessibility(this, d_ptr.get());
 }
 
 QtMaterialDivider::QtMaterialDivider(Qt::Orientation orientation, QWidget *parent)
@@ -53,7 +82,7 @@ QtMaterialDivider::QtMaterialDivider(Qt::Orientation orientation, QWidget *paren
     setAttribute(Qt::WA_TransparentForMouseEvents);
     setFocusPolicy(Qt::NoFocus);
     setOrientation(orientation);
-    syncAccessibility();
+    syncAccessibility(this, d_ptr.get());
 }
 
 QtMaterialDivider::~QtMaterialDivider() = default;
@@ -91,7 +120,7 @@ void QtMaterialDivider::setOrientation(Qt::Orientation orientation)
 
     emit orientationChanged(d_ptr->m_orientation);
     updateGeometry();
-    syncAccessibility();
+    syncAccessibility(this, d_ptr.get());
     update();
 }
 
@@ -109,7 +138,7 @@ void QtMaterialDivider::setLeadingInset(int value)
 
     d_ptr->m_leadingInset = normalized;
     emit leadingInsetChanged(d_ptr->m_leadingInset);
-    syncAccessibility();
+    syncAccessibility(this, d_ptr.get());
     update();
 }
 
@@ -127,7 +156,7 @@ void QtMaterialDivider::setTrailingInset(int value)
 
     d_ptr->m_trailingInset = normalized;
     emit trailingInsetChanged(d_ptr->m_trailingInset);
-    syncAccessibility();
+    syncAccessibility(this, d_ptr.get());
     update();
 }
 
@@ -153,7 +182,7 @@ void QtMaterialDivider::setThickness(int value)
 
     emit thicknessChanged(d_ptr->m_thickness);
     updateGeometry();
-    syncAccessibility();
+    syncAccessibility(this, d_ptr.get());
     update();
 }
 
@@ -191,7 +220,7 @@ void QtMaterialDivider::setDecorative(bool decorative)
 
     d_ptr->m_decorative = decorative;
     emit decorativeChanged(d_ptr->m_decorative);
-    syncAccessibility();
+    syncAccessibility(this, d_ptr.get());
 }
 
 QString QtMaterialDivider::accessibilityLabel() const
@@ -207,7 +236,7 @@ void QtMaterialDivider::setAccessibilityLabel(const QString &label)
 
     d_ptr->m_accessibilityLabel = label;
     emit accessibilityLabelChanged(d_ptr->m_accessibilityLabel);
-    syncAccessibility();
+    syncAccessibility(this, d_ptr.get());
 }
 
 QString QtMaterialDivider::accessibilitySummary() const
@@ -261,20 +290,11 @@ QSize QtMaterialDivider::minimumSizeHint() const
     return (d_ptr->m_orientation == Qt::Horizontal) ? QSize(0, d_ptr->m_thickness) : QSize(d_ptr->m_thickness, 0);
 }
 
-QColor QtMaterialDivider::resolvedColor() const
-{
-    if (d_ptr->m_color.isValid()) {
-        return d_ptr->m_color;
-    }
-
-    return palette().color(QPalette::Mid);
-}
-
 void QtMaterialDivider::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, false);
-    painter.fillRect(lineRect(), resolvedColor());
+    painter.fillRect(lineRect(), resolvedColor(this, d_ptr.get()));
 }
 
 void QtMaterialDivider::changeEvent(QEvent *event)
@@ -291,27 +311,6 @@ void QtMaterialDivider::changeEvent(QEvent *event)
         break;
     default:
         break;
-    }
-}
-
-void QtMaterialDivider::syncAccessibility()
-{
-    const QString summary = accessibilitySummary();
-
-    if (d_ptr->m_decorative) {
-        setAccessibleName(QString());
-        setAccessibleDescription(QString());
-    } else {
-        const QString label = !d_ptr->m_accessibilityLabel.trimmed().isEmpty()
-            ? d_ptr->m_accessibilityLabel.trimmed()
-            : orientationText(d_ptr->m_orientation);
-        setAccessibleName(label);
-        setAccessibleDescription(summary);
-    }
-
-    if (d_ptr->m_lastAccessibilitySummary != summary) {
-        d_ptr->m_lastAccessibilitySummary = summary;
-        emit accessibilitySummaryChanged(summary);
     }
 }
 

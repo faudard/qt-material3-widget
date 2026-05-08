@@ -73,10 +73,6 @@ protected:
 
 private:
     std::unique_ptr<QtMaterialListItemPrivate> d_ptr;
-    void ensureSpecResolved() const;
-    void ensureLayoutResolved() const;
-    void invalidateLayoutCache();
-
 };
 
 } // namespace QtMaterial

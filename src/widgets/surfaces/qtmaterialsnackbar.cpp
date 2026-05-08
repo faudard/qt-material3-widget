@@ -8,6 +8,7 @@
 #include <QResizeEvent>
 #include <QTimer>
 
+#include <QRectF>
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialsnackbarspec.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
@@ -35,8 +36,31 @@ public:
  QPointer<QtMaterialTransitionController> transition;
 };
 
+
+namespace {
+
+int snackbarDurationMs(const SnackbarRequest& request)
+{
+    switch (request.duration) {
+    case SnackbarDuration::Short:
+        return 4000;
+    case SnackbarDuration::Long:
+        return 10000;
+    case SnackbarDuration::Indefinite:
+        return 0;
+    }
+    return 0;
+}
+
+QRectF snackbarContainerRect(const QtMaterialSnackbar& snackbar)
+{
+    return QRectF(snackbar.rect());
+}
+
+} // namespace
 QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
     : QtMaterialOverlaySurface(parent)
+    , d_ptr(std::make_unique<QtMaterialSnackbarPrivate>())
 {
     setFocusPolicy(Qt::StrongFocus);
     setAttribute(Qt::WA_Hover, true);
@@ -264,7 +288,7 @@ void QtMaterialSnackbar::paintEvent(QPaintEvent*)
 
     painter.setPen(Qt::NoPen);
     painter.setBrush(fill);
-    painter.drawRoundedRect(containerRect(), radius, radius);
+    painter.drawRoundedRect(snackbarContainerRect(*this), radius, radius);
 }
 
 void QtMaterialSnackbar::resizeEvent(QResizeEvent* event)
@@ -416,7 +440,7 @@ void QtMaterialSnackbar::syncAccessibilityState()
 
 void QtMaterialSnackbar::setAutoHidePaused(bool paused)
 {
-    if (!d_ptr->pauseAutoHideOnInteraction || currentDurationMs() <= 0) {
+    if (!d_ptr->pauseAutoHideOnInteraction || snackbarDurationMs(d_ptr->request) <= 0) {
         return;
     }
 
@@ -536,13 +560,13 @@ void QtMaterialSnackbar::updateAutoHide()
 {
     d_ptr->timer->stop();
 
-    const int durationMs = currentDurationMs();
+    const int durationMs = snackbarDurationMs(d_ptr->request);
     if (durationMs > 0 && (d_ptr->state == State::Entering || d_ptr->state == State::Visible)) {
         d_ptr->timer->start(durationMs);
     }
 }
 
-int QtMaterialSnackbar::currentDurationMs() const
+int QtMaterialSnackbar::snackbarDurationMs(d_ptr->request) const
 {
     switch (d_ptr->request.duration) {
     case SnackbarDuration::Short:
@@ -556,7 +580,7 @@ int QtMaterialSnackbar::currentDurationMs() const
     return 0;
 }
 
-QRectF QtMaterialSnackbar::containerRect() const
+QRectF QtMaterialSnackbar::snackbarContainerRect(*this) const
 {
     return QRectF(rect());
 }

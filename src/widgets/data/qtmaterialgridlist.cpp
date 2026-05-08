@@ -15,8 +15,6 @@ struct QtMaterialGridListPrivate
     QString m_accessibilitySummary;
 };
 
-
-
 namespace {
 
 QString displayText(const QString& title, const QString& supportingText)
@@ -40,6 +38,132 @@ QAbstractItemView::SelectionMode toQtSelectionMode(QtMaterialGridList::Selection
     }
 }
 
+constexpr int kTitleRole = Qt::UserRole + 120;
+constexpr int kSupportingTextRole = kTitleRole + 1;
+
+QListWidgetItem* gridItemAt(const QtMaterialGridList* self, int index)
+{
+    if (!self || index < 0 || index >= self->count()) {
+        return nullptr;
+    }
+    return self->item(index);
+}
+
+int nextEnabledIndex(const QtMaterialGridList* self, int from, int delta)
+{
+    if (!self || self->count() == 0 || delta == 0) {
+        return -1;
+    }
+
+    int candidate = from;
+    if (candidate < 0) {
+        candidate = delta > 0 ? -1 : self->count();
+    }
+
+    for (;;) {
+        candidate += delta;
+        if (candidate < 0 || candidate >= self->count()) {
+            return -1;
+        }
+        if (self->isItemEnabled(candidate)) {
+            return candidate;
+        }
+    }
+}
+
+int firstEnabledIndex(const QtMaterialGridList* self)
+{
+    if (!self) {
+        return -1;
+    }
+    for (int i = 0; i < self->count(); ++i) {
+        if (self->isItemEnabled(i)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int lastEnabledIndex(const QtMaterialGridList* self)
+{
+    if (!self) {
+        return -1;
+    }
+    for (int i = self->count() - 1; i >= 0; --i) {
+        if (self->isItemEnabled(i)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void updateItemText(QListWidgetItem* item)
+{
+    if (!item) {
+        return;
+    }
+
+    const QString title = item->data(kTitleRole).toString();
+    const QString supportingText = item->data(kSupportingTextRole).toString();
+    item->setText(displayText(title, supportingText));
+    item->setToolTip(displayText(title, supportingText));
+}
+
+void updateItemAccessibility(const QtMaterialGridList* self, QListWidgetItem* item)
+{
+    if (!self || !item) {
+        return;
+    }
+
+    const int index = self->row(item);
+    item->setStatusTip(self->itemAccessibleText(index));
+    item->setWhatsThis(self->itemAccessibleText(index));
+}
+
+void updateGridGeometry(QtMaterialGridList* self, QtMaterialGridListPrivate* d)
+{
+    if (!self || !d) {
+        return;
+    }
+
+    QSize gridSize = d->m_cellExtent;
+    if (d->m_columns > 0 && self->viewport()) {
+        const int available = qMax(0, self->viewport()->width() - self->verticalScrollBar()->sizeHint().width());
+        if (available > 0) {
+            const int horizontalSpacing = self->spacing() * qMax(0, d->m_columns - 1);
+            const int width = qMax(d->m_cellExtent.width(), (available - horizontalSpacing) / d->m_columns);
+            gridSize.setWidth(width);
+        }
+    }
+    self->setGridSize(gridSize);
+}
+
+void syncAccessibilitySummary(QtMaterialGridList* self, QtMaterialGridListPrivate* d)
+{
+    if (!self || !d) {
+        return;
+    }
+
+    const int selectedCount = self->selectedItems().size();
+    QStringList parts;
+    parts << self->tr("%n item(s)", nullptr, self->count());
+    if (self->currentRow() >= 0) {
+        parts << self->tr("current %1").arg(self->currentRow() + 1);
+    }
+    if (selectedCount > 0) {
+        parts << self->tr("%n selected", nullptr, selectedCount);
+    }
+
+    const QString summary = parts.join(QStringLiteral(", "));
+    if (d->m_accessibilitySummary == summary) {
+        return;
+    }
+
+    d->m_accessibilitySummary = summary;
+    self->setAccessibleDescription(summary);
+    Q_EMIT self->accessibilitySummaryChanged(d->m_accessibilitySummary);
+}
+
 } // namespace
 
 QtMaterialGridList::QtMaterialGridList(QWidget* parent)
@@ -61,11 +185,11 @@ QtMaterialGridList::QtMaterialGridList(QWidget* parent)
     setSpacing(8);
     QListWidget::setSelectionMode(toQtSelectionMode(d_ptr->m_selectionMode));
 
-    updateGridGeometry();
-    syncAccessibilitySummary();
+    updateGridGeometry(this, d_ptr.get());
+    syncAccessibilitySummary(this, d_ptr.get());
 
     connect(this, &QListWidget::currentRowChanged, this, [this](int row) {
-        syncAccessibilitySummary();
+        syncAccessibilitySummary(this, d_ptr.get());
         Q_EMIT currentIndexChanged(row);
     });
 
@@ -84,7 +208,7 @@ QtMaterialGridList::QtMaterialGridList(QWidget* parent)
     });
 
     connect(this, &QListWidget::itemSelectionChanged, this, [this]() {
-        syncAccessibilitySummary();
+        syncAccessibilitySummary(this, d_ptr.get());
         Q_EMIT gridSelectionChanged();
     });
 }
@@ -107,12 +231,12 @@ void QtMaterialGridList::insertGridItem(int index,
     index = qBound(0, index, count());
 
     auto* item = new QListWidgetItem(icon, QString(), this);
-    item->setData(TitleRole, title);
-    item->setData(SupportingTextRole, supportingText);
+    item->setData(kTitleRole, title);
+    item->setData(kSupportingTextRole, supportingText);
     item->setSizeHint(d_ptr->m_cellExtent);
     item->setTextAlignment(Qt::AlignCenter);
     updateItemText(item);
-    updateItemAccessibility(item);
+    updateItemAccessibility(this, item);
 
     QListWidget::takeItem(row(item));
     QListWidget::insertItem(index, item);
@@ -121,54 +245,54 @@ void QtMaterialGridList::insertGridItem(int index,
         setCurrentRow(index);
     }
 
-    syncAccessibilitySummary();
+    syncAccessibilitySummary(this, d_ptr.get());
 }
 
 QString QtMaterialGridList::itemTitle(int index) const
 {
-    if (auto* item = gridItemAt(index)) {
-        return item->data(TitleRole).toString();
+    if (auto* item = gridItemAt(this, index)) {
+        return item->data(kTitleRole).toString();
     }
     return QString();
 }
 
 void QtMaterialGridList::setItemTitle(int index, const QString& title)
 {
-    auto* item = gridItemAt(index);
-    if (!item || item->data(TitleRole).toString() == title) {
+    auto* item = gridItemAt(this, index);
+    if (!item || item->data(kTitleRole).toString() == title) {
         return;
     }
 
-    item->setData(TitleRole, title);
+    item->setData(kTitleRole, title);
     updateItemText(item);
-    updateItemAccessibility(item);
-    syncAccessibilitySummary();
+    updateItemAccessibility(this, item);
+    syncAccessibilitySummary(this, d_ptr.get());
 }
 
 QString QtMaterialGridList::itemSupportingText(int index) const
 {
-    if (auto* item = gridItemAt(index)) {
-        return item->data(SupportingTextRole).toString();
+    if (auto* item = gridItemAt(this, index)) {
+        return item->data(kSupportingTextRole).toString();
     }
     return QString();
 }
 
 void QtMaterialGridList::setItemSupportingText(int index, const QString& supportingText)
 {
-    auto* item = gridItemAt(index);
-    if (!item || item->data(SupportingTextRole).toString() == supportingText) {
+    auto* item = gridItemAt(this, index);
+    if (!item || item->data(kSupportingTextRole).toString() == supportingText) {
         return;
     }
 
-    item->setData(SupportingTextRole, supportingText);
+    item->setData(kSupportingTextRole, supportingText);
     updateItemText(item);
-    updateItemAccessibility(item);
-    syncAccessibilitySummary();
+    updateItemAccessibility(this, item);
+    syncAccessibilitySummary(this, d_ptr.get());
 }
 
 QIcon QtMaterialGridList::itemIcon(int index) const
 {
-    if (auto* item = gridItemAt(index)) {
+    if (auto* item = gridItemAt(this, index)) {
         return item->icon();
     }
     return QIcon();
@@ -176,14 +300,14 @@ QIcon QtMaterialGridList::itemIcon(int index) const
 
 void QtMaterialGridList::setItemIcon(int index, const QIcon& icon)
 {
-    if (auto* item = gridItemAt(index)) {
+    if (auto* item = gridItemAt(this, index)) {
         item->setIcon(icon);
     }
 }
 
 bool QtMaterialGridList::isItemEnabled(int index) const
 {
-    if (auto* item = gridItemAt(index)) {
+    if (auto* item = gridItemAt(this, index)) {
         return item->flags().testFlag(Qt::ItemIsEnabled);
     }
     return false;
@@ -191,7 +315,7 @@ bool QtMaterialGridList::isItemEnabled(int index) const
 
 void QtMaterialGridList::setItemEnabled(int index, bool enabled)
 {
-    auto* item = gridItemAt(index);
+    auto* item = gridItemAt(this, index);
     if (!item || isItemEnabled(index) == enabled) {
         return;
     }
@@ -204,13 +328,13 @@ void QtMaterialGridList::setItemEnabled(int index, bool enabled)
         flags &= ~Qt::ItemIsSelectable;
         item->setSelected(false);
         if (currentRow() == index) {
-            setCurrentRow(nextEnabledIndex(index, 1));
+            setCurrentRow(nextEnabledIndex(this, index, 1));
         }
     }
 
     item->setFlags(flags);
-    updateItemAccessibility(item);
-    syncAccessibilitySummary();
+    updateItemAccessibility(this, item);
+    syncAccessibilitySummary(this, d_ptr.get());
 }
 
 int QtMaterialGridList::currentIndex() const
@@ -256,7 +380,7 @@ void QtMaterialGridList::setGridSelectionMode(SelectionMode mode)
         }
     }
 
-    syncAccessibilitySummary();
+    syncAccessibilitySummary(this, d_ptr.get());
     Q_EMIT gridSelectionChanged();
 }
 
@@ -289,16 +413,16 @@ void QtMaterialGridList::setItemSelected(int index, bool selected)
         return;
     }
 
-    if (auto* item = gridItemAt(index)) {
+    if (auto* item = gridItemAt(this, index)) {
         item->setSelected(selected);
-        syncAccessibilitySummary();
+        syncAccessibilitySummary(this, d_ptr.get());
     }
 }
 
 void QtMaterialGridList::clearGridSelection()
 {
     clearSelection();
-    syncAccessibilitySummary();
+    syncAccessibilitySummary(this, d_ptr.get());
 }
 
 int QtMaterialGridList::columns() const
@@ -314,8 +438,8 @@ void QtMaterialGridList::setColumns(int columns)
     }
 
     d_ptr->m_columns = columns;
-    updateGridGeometry();
-    syncAccessibilitySummary();
+    updateGridGeometry(this, d_ptr.get());
+    syncAccessibilitySummary(this, d_ptr.get());
     Q_EMIT columnsChanged(d_ptr->m_columns);
 }
 
@@ -333,18 +457,18 @@ void QtMaterialGridList::setCellExtent(const QSize& size)
 
     d_ptr->m_cellExtent = normalized;
     for (int i = 0; i < count(); ++i) {
-        if (auto* item = gridItemAt(i)) {
+        if (auto* item = gridItemAt(this, i)) {
             item->setSizeHint(d_ptr->m_cellExtent);
         }
     }
 
-    updateGridGeometry();
+    updateGridGeometry(this, d_ptr.get());
     Q_EMIT cellExtentChanged(d_ptr->m_cellExtent);
 }
 
 QString QtMaterialGridList::itemAccessibleText(int index) const
 {
-    const auto* item = gridItemAt(index);
+    const auto* item = gridItemAt(this, index);
     if (!item) {
         return QString();
     }
@@ -392,22 +516,22 @@ void QtMaterialGridList::keyPressEvent(QKeyEvent* event)
     int target = -1;
     switch (event->key()) {
     case Qt::Key_Left:
-        target = nextEnabledIndex(current, rtl ? 1 : -1);
+        target = nextEnabledIndex(this, current, rtl ? 1 : -1);
         break;
     case Qt::Key_Right:
-        target = nextEnabledIndex(current, rtl ? -1 : 1);
+        target = nextEnabledIndex(this, current, rtl ? -1 : 1);
         break;
     case Qt::Key_Up:
-        target = nextEnabledIndex(current, -d_ptr->m_columns);
+        target = nextEnabledIndex(this, current, -d_ptr->m_columns);
         break;
     case Qt::Key_Down:
-        target = nextEnabledIndex(current, d_ptr->m_columns);
+        target = nextEnabledIndex(this, current, d_ptr->m_columns);
         break;
     case Qt::Key_Home:
-        target = firstEnabledIndex();
+        target = firstEnabledIndex(this);
         break;
     case Qt::Key_End:
-        target = lastEnabledIndex();
+        target = lastEnabledIndex(this);
         break;
     case Qt::Key_Return:
     case Qt::Key_Enter:
@@ -434,117 +558,7 @@ void QtMaterialGridList::keyPressEvent(QKeyEvent* event)
 void QtMaterialGridList::resizeEvent(QResizeEvent* event)
 {
     QListWidget::resizeEvent(event);
-    updateGridGeometry();
-}
-
-QListWidgetItem* QtMaterialGridList::gridItemAt(int index) const
-{
-    if (index < 0 || index >= count()) {
-        return nullptr;
-    }
-    return item(index);
-}
-
-int QtMaterialGridList::nextEnabledIndex(int from, int delta) const
-{
-    if (count() == 0 || delta == 0) {
-        return -1;
-    }
-
-    int candidate = from;
-    if (candidate < 0) {
-        candidate = delta > 0 ? -1 : count();
-    }
-
-    for (;;) {
-        candidate += delta;
-        if (candidate < 0 || candidate >= count()) {
-            return -1;
-        }
-        if (isItemEnabled(candidate)) {
-            return candidate;
-        }
-    }
-}
-
-int QtMaterialGridList::firstEnabledIndex() const
-{
-    for (int i = 0; i < count(); ++i) {
-        if (isItemEnabled(i)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-int QtMaterialGridList::lastEnabledIndex() const
-{
-    for (int i = count() - 1; i >= 0; --i) {
-        if (isItemEnabled(i)) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-void QtMaterialGridList::updateItemText(QListWidgetItem* item)
-{
-    if (!item) {
-        return;
-    }
-
-    const QString title = item->data(TitleRole).toString();
-    const QString supportingText = item->data(SupportingTextRole).toString();
-    item->setText(displayText(title, supportingText));
-    item->setToolTip(displayText(title, supportingText));
-}
-
-void QtMaterialGridList::updateItemAccessibility(QListWidgetItem* item)
-{
-    if (!item) {
-        return;
-    }
-
-    const int index = row(item);
-    item->setStatusTip(itemAccessibleText(index));
-    item->setWhatsThis(itemAccessibleText(index));
-}
-
-void QtMaterialGridList::updateGridGeometry()
-{
-    QSize gridSize = d_ptr->m_cellExtent;
-    if (d_ptr->m_columns > 0 && viewport()) {
-        const int available = qMax(0, viewport()->width() - verticalScrollBar()->sizeHint().width());
-        if (available > 0) {
-            const int horizontalSpacing = spacing() * qMax(0, d_ptr->m_columns - 1);
-            const int width = qMax(d_ptr->m_cellExtent.width(), (available - horizontalSpacing) / d_ptr->m_columns);
-            gridSize.setWidth(width);
-        }
-    }
-    setGridSize(gridSize);
-}
-
-void QtMaterialGridList::syncAccessibilitySummary()
-{
-    const int selectedCount = selectedItems().size();
-
-    QStringList parts;
-    parts << tr("%n item(s)", nullptr, count());
-    if (currentRow() >= 0) {
-        parts << tr("current %1").arg(currentRow() + 1);
-    }
-    if (selectedCount > 0) {
-        parts << tr("%n selected", nullptr, selectedCount);
-    }
-
-    const QString summary = parts.join(QStringLiteral(", "));
-    if (d_ptr->m_accessibilitySummary == summary) {
-        return;
-    }
-
-    d_ptr->m_accessibilitySummary = summary;
-    setAccessibleDescription(summary);
-    Q_EMIT accessibilitySummaryChanged(d_ptr->m_accessibilitySummary);
+    updateGridGeometry(this, d_ptr.get());
 }
 
 } // namespace QtMaterial

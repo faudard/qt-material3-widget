@@ -13,6 +13,17 @@ struct QtMaterialTextFieldValidationGroupPrivate {
     QHash<QtMaterialOutlinedTextField*, QString> m_fieldErrorMessages;
     QStringList m_validationSummary;
     bool m_acceptable = true;
+
+    int d_ptr->indexOf(QtMaterialOutlinedTextField* field) const noexcept;
+    void d_ptr->removeNullFields();
+    bool computeAcceptable() const noexcept;
+    void refreshAcceptable(QtMaterialTextFieldValidationGroup* q);
+    QString d_ptr->effectiveFieldLabel(this, const QtMaterialTextFieldValidationGroup* q,
+                                QtMaterialOutlinedTextField* field) const;
+    QString d_ptr->effectiveFieldErrorMessage(QtMaterialOutlinedTextField* field) const;
+    QStringList computeValidationSummary(const QtMaterialTextFieldValidationGroup* q) const;
+    void refreshValidationSummary(QtMaterialTextFieldValidationGroup* q);
+
 };
 
 
@@ -26,7 +37,7 @@ QtMaterialTextFieldValidationGroup::~QtMaterialTextFieldValidationGroup() = defa
 
 void QtMaterialTextFieldValidationGroup::addField(QtMaterialOutlinedTextField* field)
 {
-    if (!field || indexOf(field) >= 0) {
+    if (!field || d_ptr->indexOf(field) >= 0) {
         return;
     }
 
@@ -35,25 +46,25 @@ void QtMaterialTextFieldValidationGroup::addField(QtMaterialOutlinedTextField* f
     connect(field, &QObject::destroyed, this, [this, field]() {
         d_ptr->m_fieldLabels.remove(field);
         d_ptr->m_fieldErrorMessages.remove(field);
-        removeNullFields();
-        refreshAcceptable();
-        refreshValidationSummary();
+        d_ptr->removeNullFields();
+        d_ptr->refreshAcceptable(this);
+        d_ptr->refreshValidationSummary(this);
     });
 
     connect(field, &QtMaterialOutlinedTextField::acceptableInputChanged,
             this, [this](bool) {
-                refreshAcceptable();
-                refreshValidationSummary();
+                d_ptr->refreshAcceptable(this);
+                d_ptr->refreshValidationSummary(this);
             });
 
-    refreshAcceptable();
-    refreshValidationSummary();
+    d_ptr->refreshAcceptable(this);
+    d_ptr->refreshValidationSummary(this);
     emit fieldAdded(field);
 }
 
 void QtMaterialTextFieldValidationGroup::removeField(QtMaterialOutlinedTextField* field)
 {
-    const int idx = indexOf(field);
+    const int idx = d_ptr->indexOf(field);
     if (idx < 0) {
         return;
     }
@@ -65,8 +76,8 @@ void QtMaterialTextFieldValidationGroup::removeField(QtMaterialOutlinedTextField
     d_ptr->m_fieldLabels.remove(field);
     d_ptr->m_fieldErrorMessages.remove(field);
     d_ptr->m_fields.removeAt(idx);
-    refreshAcceptable();
-    refreshValidationSummary();
+    d_ptr->refreshAcceptable(this);
+    d_ptr->refreshValidationSummary(this);
     emit fieldRemoved(field);
 }
 
@@ -79,9 +90,9 @@ void QtMaterialTextFieldValidationGroup::clear()
 
     d_ptr->m_fieldLabels.clear();
     d_ptr->m_fieldErrorMessages.clear();
-    removeNullFields();
-    refreshAcceptable();
-    refreshValidationSummary();
+    d_ptr->removeNullFields();
+    d_ptr->refreshAcceptable(this);
+    d_ptr->refreshValidationSummary(this);
 }
 
 QList<QtMaterialOutlinedTextField*> QtMaterialTextFieldValidationGroup::fields() const
@@ -121,7 +132,7 @@ bool QtMaterialTextFieldValidationGroup::isAcceptable() const noexcept
 
 bool QtMaterialTextFieldValidationGroup::validateAll()
 {
-    removeNullFields();
+    d_ptr->removeNullFields();
 
     bool acceptable = true;
     for (const auto& field : d_ptr->m_fields) {
@@ -135,14 +146,14 @@ bool QtMaterialTextFieldValidationGroup::validateAll()
         emit acceptableChanged(d_ptr->m_acceptable);
     }
 
-    refreshValidationSummary();
+    d_ptr->refreshValidationSummary(this);
     emit validationRequested(acceptable);
     return acceptable;
 }
 
 void QtMaterialTextFieldValidationGroup::resetValidationFeedback()
 {
-    removeNullFields();
+    d_ptr->removeNullFields();
 
     for (const auto& field : d_ptr->m_fields) {
         if (field) {
@@ -150,8 +161,8 @@ void QtMaterialTextFieldValidationGroup::resetValidationFeedback()
         }
     }
 
-    refreshAcceptable();
-    refreshValidationSummary();
+    d_ptr->refreshAcceptable(this);
+    d_ptr->refreshValidationSummary(this);
 }
 
 QtMaterialOutlinedTextField* QtMaterialTextFieldValidationGroup::firstInvalidField() const
@@ -196,7 +207,7 @@ bool QtMaterialTextFieldValidationGroup::focusFirstInvalidField()
 
 void QtMaterialTextFieldValidationGroup::setFieldLabel(QtMaterialOutlinedTextField* field, const QString& label)
 {
-    if (!field || indexOf(field) < 0) {
+    if (!field || d_ptr->indexOf(field) < 0) {
         return;
     }
 
@@ -207,7 +218,7 @@ void QtMaterialTextFieldValidationGroup::setFieldLabel(QtMaterialOutlinedTextFie
         d_ptr->m_fieldLabels.insert(field, trimmed);
     }
 
-    refreshValidationSummary();
+    d_ptr->refreshValidationSummary(this);
 }
 
 QString QtMaterialTextFieldValidationGroup::fieldLabel(QtMaterialOutlinedTextField* field) const
@@ -221,7 +232,7 @@ QString QtMaterialTextFieldValidationGroup::fieldLabel(QtMaterialOutlinedTextFie
 
 void QtMaterialTextFieldValidationGroup::setFieldErrorMessage(QtMaterialOutlinedTextField* field, const QString& message)
 {
-    if (!field || indexOf(field) < 0) {
+    if (!field || d_ptr->indexOf(field) < 0) {
         return;
     }
 
@@ -232,7 +243,7 @@ void QtMaterialTextFieldValidationGroup::setFieldErrorMessage(QtMaterialOutlined
         d_ptr->m_fieldErrorMessages.insert(field, trimmed);
     }
 
-    refreshValidationSummary();
+    d_ptr->refreshValidationSummary(this);
 }
 
 QString QtMaterialTextFieldValidationGroup::fieldErrorMessage(QtMaterialOutlinedTextField* field) const
@@ -249,7 +260,7 @@ QStringList QtMaterialTextFieldValidationGroup::invalidFieldLabels() const
     QStringList result;
 
     for (QtMaterialOutlinedTextField* field : invalidFields()) {
-        result.append(effectiveFieldLabel(field));
+        result.append(d_ptr->effectiveFieldLabel(this, field));
     }
 
     return result;
@@ -270,61 +281,61 @@ QString QtMaterialTextFieldValidationGroup::validationSummaryText(const QString&
     return d_ptr->m_validationSummary.join(separator);
 }
 
-int QtMaterialTextFieldValidationGroup::indexOf(QtMaterialOutlinedTextField* field) const noexcept
+int QtMaterialTextFieldValidationGroupPrivate::indexOf(QtMaterialOutlinedTextField* field) const noexcept
 {
     if (!field) {
         return -1;
     }
 
-    for (int i = 0; i < d_ptr->m_fields.size(); ++i) {
-        if (d_ptr->m_fields.at(i) == field) {
+    for (int i = 0; i < m_fields.size(); ++i) {
+        if (m_fields.at(i) == field) {
             return i;
         }
     }
-
     return -1;
 }
 
-void QtMaterialTextFieldValidationGroup::removeNullFields()
+void QtMaterialTextFieldValidationGroupPrivate::removeNullFields()
 {
-    for (int i = d_ptr->m_fields.size() - 1; i >= 0; --i) {
-        if (!d_ptr->m_fields.at(i)) {
-            d_ptr->m_fields.removeAt(i);
+    for (int i = m_fields.size() - 1; i >= 0; --i) {
+        if (!m_fields.at(i)) {
+            m_fields.removeAt(i);
         }
     }
 }
 
-bool QtMaterialTextFieldValidationGroup::computeAcceptable() const noexcept
+bool QtMaterialTextFieldValidationGroupPrivate::computeAcceptable() const noexcept
 {
-    for (const auto& field : d_ptr->m_fields) {
+    for (const auto& field : m_fields) {
         if (field && !field->isAcceptableInput()) {
             return false;
         }
     }
-
     return true;
 }
 
-void QtMaterialTextFieldValidationGroup::refreshAcceptable()
+void QtMaterialTextFieldValidationGroupPrivate::refreshAcceptable(QtMaterialTextFieldValidationGroup* q)
 {
     removeNullFields();
 
     const bool acceptable = computeAcceptable();
-    if (d_ptr->m_acceptable == acceptable) {
+    if (m_acceptable == acceptable) {
         return;
     }
 
-    d_ptr->m_acceptable = acceptable;
-    emit acceptableChanged(d_ptr->m_acceptable);
+    m_acceptable = acceptable;
+    emit q->acceptableChanged(m_acceptable);
 }
 
-QString QtMaterialTextFieldValidationGroup::effectiveFieldLabel(QtMaterialOutlinedTextField* field) const
+QString QtMaterialTextFieldValidationGroupPrivate::effectiveFieldLabel(
+    const QtMaterialTextFieldValidationGroup* q,
+    QtMaterialOutlinedTextField* field) const
 {
     if (!field) {
         return QString();
     }
 
-    const QString explicitLabel = d_ptr->m_fieldLabels.value(field).trimmed();
+    const QString explicitLabel = m_fieldLabels.value(field).trimmed();
     if (!explicitLabel.isEmpty()) {
         return explicitLabel;
     }
@@ -340,18 +351,17 @@ QString QtMaterialTextFieldValidationGroup::effectiveFieldLabel(QtMaterialOutlin
     }
 
     const int idx = indexOf(field);
-    return idx >= 0
-        ? QStringLiteral("Field %1").arg(idx + 1)
-        : QStringLiteral("Field");
+    return idx >= 0 ? QStringLiteral("Field %1").arg(idx + 1) : QStringLiteral("Field");
 }
 
-QString QtMaterialTextFieldValidationGroup::effectiveFieldErrorMessage(QtMaterialOutlinedTextField* field) const
+QString QtMaterialTextFieldValidationGroupPrivate::effectiveFieldErrorMessage(
+    QtMaterialOutlinedTextField* field) const
 {
     if (!field) {
         return QString();
     }
 
-    const QString explicitMessage = d_ptr->m_fieldErrorMessages.value(field).trimmed();
+    const QString explicitMessage = m_fieldErrorMessages.value(field).trimmed();
     if (!explicitMessage.isEmpty()) {
         return explicitMessage;
     }
@@ -364,33 +374,31 @@ QString QtMaterialTextFieldValidationGroup::effectiveFieldErrorMessage(QtMateria
     return QStringLiteral("Invalid value");
 }
 
-QStringList QtMaterialTextFieldValidationGroup::computeValidationSummary() const
+QStringList QtMaterialTextFieldValidationGroupPrivate::computeValidationSummary(
+    const QtMaterialTextFieldValidationGroup* q) const
 {
     QStringList result;
-
-    for (QtMaterialOutlinedTextField* field : invalidFields()) {
-        const QString label = effectiveFieldLabel(field);
+    for (QtMaterialOutlinedTextField* field : q->invalidFields()) {
+        const QString label = effectiveFieldLabel(q, field);
         const QString message = effectiveFieldErrorMessage(field);
-
         if (message.isEmpty()) {
             result.append(label);
         } else {
             result.append(QStringLiteral("%1: %2").arg(label, message));
         }
     }
-
     return result;
 }
 
-void QtMaterialTextFieldValidationGroup::refreshValidationSummary()
+void QtMaterialTextFieldValidationGroupPrivate::refreshValidationSummary(QtMaterialTextFieldValidationGroup* q)
 {
-    const QStringList next = computeValidationSummary();
-    if (d_ptr->m_validationSummary == next) {
+    const QStringList next = computeValidationSummary(q);
+    if (m_validationSummary == next) {
         return;
     }
 
-    d_ptr->m_validationSummary = next;
-    emit validationSummaryChanged(d_ptr->m_validationSummary);
+    m_validationSummary = next;
+    emit q->validationSummaryChanged(m_validationSummary);
 }
 
 } // namespace QtMaterial

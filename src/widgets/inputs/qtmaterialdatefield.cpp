@@ -17,6 +17,15 @@ struct QtMaterialDateFieldPrivate {
     bool m_parseError = false;
     QToolButton* m_calendarButton = nullptr;
     QToolButton* m_clearButton = nullptr;
+    void syncEditorFromDate(QtMaterialDateField& q);
+    void syncDateFromEditor(QtMaterialDateField& q);
+    void updateTrailingAffordances(QtMaterialDateField& q);
+    void updateAccessibilityMetadata(QtMaterialDateField& q);
+    bool d_ptr->isDateInRange(const QDate& date) const noexcept;
+    QString effectiveErrorTextForDate(const QtMaterialDateField& q) const;
+    void d_ptr->setParseError(*this, QtMaterialDateField& q, bool hasError);
+    void d_ptr->notifyDateAcceptabilityIfChanged(*this, QtMaterialDateField& q, bool previousAcceptable);
+
 };
 
 
@@ -40,6 +49,122 @@ QtMaterialDateField::QtMaterialDateField(const QString& labelText, QWidget* pare
 
 QtMaterialDateField::~QtMaterialDateField() = default;
 
+void QtMaterialDateFieldPrivate::syncEditorFromDate(QtMaterialDateField& q)
+{
+    if (!q.lineEdit()) {
+        return;
+    }
+
+    if (m_date.isValid()) {
+        q.lineEdit()->setText(m_date.toString(m_displayFormat));
+    } else {
+        q.lineEdit()->clear();
+        q.lineEdit()->setPlaceholderText(m_placeholderTextForDate);
+    }
+}
+
+void QtMaterialDateFieldPrivate::syncDateFromEditor(QtMaterialDateField& q)
+{
+    if (!q.lineEdit()) {
+        return;
+    }
+
+    const QString text = q.lineEdit()->text().trimmed();
+    if (text.isEmpty()) {
+        q.setDate(QDate());
+        setParseError(q, false);
+        return;
+    }
+
+    const QDate parsed = QDate::fromString(text, m_displayFormat);
+    if (!parsed.isValid()) {
+        setParseError(q, true);
+        updateAccessibilityMetadata(q);
+        return;
+    }
+
+    m_date = parsed;
+    setParseError(q, !isDateInRange(parsed));
+    emit q.dateChanged(m_date);
+    updateTrailingAffordances(q);
+    updateAccessibilityMetadata(q);
+}
+
+void QtMaterialDateFieldPrivate::updateTrailingAffordances(QtMaterialDateField& q)
+{
+    Q_UNUSED(q);
+    // Integration direction:
+    // - route trailing icon/button through shared prefix/suffix shell
+    // - sync icon tint from resolved text-field spec
+    // - keep the date shell visually aligned with outlined/filled variants
+}
+
+void QtMaterialDateFieldPrivate::updateAccessibilityMetadata(QtMaterialDateField& q)
+{
+    const QString summary = q.accessibilitySummary();
+    q.setAccessibleName(q.labelText().isEmpty() ? q.tr("Date") : q.labelText());
+    q.setAccessibleDescription(summary);
+    if (m_lastAccessibilitySummary != summary) {
+        m_lastAccessibilitySummary = summary;
+        emit q.accessibilitySummaryChanged(summary);
+    }
+}
+
+bool QtMaterialDateFieldPrivate::isDateInRange(const QDate& date) const noexcept
+{
+    if (!date.isValid()) {
+        return true;
+    }
+    if (m_minimumDate.isValid() && date < m_minimumDate) {
+        return false;
+    }
+    if (m_maximumDate.isValid() && date > m_maximumDate) {
+        return false;
+    }
+    return true;
+}
+
+QString QtMaterialDateFieldPrivate::effectiveErrorTextForDate(const QtMaterialDateField& q) const
+{
+    if (m_parseError) {
+        if (m_date.isValid() && !isDateInRange(m_date)) {
+            if (m_minimumDate.isValid() && m_date < m_minimumDate) {
+                return q.tr("Date must be on or after %1").arg(m_minimumDate.toString(m_displayFormat));
+            }
+            if (m_maximumDate.isValid() && m_date > m_maximumDate) {
+                return q.tr("Date must be on or before %1").arg(m_maximumDate.toString(m_displayFormat));
+            }
+        }
+        return q.tr("Enter a valid date");
+    }
+    return QString();
+}
+
+void QtMaterialDateFieldPrivate::setParseError(QtMaterialDateField& q, bool hasError)
+{
+    if (m_parseError == hasError) {
+        return;
+    }
+
+    const bool wasAcceptable = q.isDateAcceptable();
+    m_parseError = hasError;
+    q.setHasErrorState(hasError);
+    q.setErrorText(effectiveErrorTextForDate(q));
+    emit q.parseErrorChanged(hasError);
+    notifyDateAcceptabilityIfChanged(q, wasAcceptable);
+    updateAccessibilityMetadata(q);
+}
+
+void QtMaterialDateFieldPrivate::notifyDateAcceptabilityIfChanged(QtMaterialDateField& q,
+                                                                  bool previousAcceptable)
+{
+    const bool nowAcceptable = q.isDateAcceptable();
+    if (previousAcceptable != nowAcceptable) {
+        emit q.dateAcceptableChanged(nowAcceptable);
+    }
+}
+
+
 QDate QtMaterialDateField::date() const noexcept
 {
     return d_ptr->m_date;
@@ -53,12 +178,12 @@ void QtMaterialDateField::setDate(const QDate& date)
 
     const bool wasAcceptable = isDateAcceptable();
     d_ptr->m_date = date;
-    syncEditorFromDate();
-    setParseError(d_ptr->m_date.isValid() && !isDateInRange(d_ptr->m_date));
+    d_ptr->syncEditorFromDate(*this);
+    d_ptr->setParseError(*this, d_ptr->m_date.isValid() && !d_ptr->isDateInRange(d_ptr->m_date));
     emit dateChanged(d_ptr->m_date);
-    notifyDateAcceptabilityIfChanged(wasAcceptable);
-    updateTrailingAffordances();
-    updateAccessibilityMetadata();
+    d_ptr->notifyDateAcceptabilityIfChanged(*this, wasAcceptable);
+    d_ptr->updateTrailingAffordances(*this);
+    d_ptr->updateAccessibilityMetadata(*this);
     update();
 }
 
@@ -74,7 +199,7 @@ void QtMaterialDateField::setDisplayFormat(const QString& format)
         return;
     }
     d_ptr->m_displayFormat = format;
-    syncEditorFromDate();
+    d_ptr->syncEditorFromDate(*this);
     emit displayFormatChanged(d_ptr->m_displayFormat);
     contentChangedEvent();
 }
@@ -90,7 +215,7 @@ void QtMaterialDateField::setClearable(bool clearable)
         return;
     }
     d_ptr->m_clearable = clearable;
-    updateTrailingAffordances();
+    d_ptr->updateTrailingAffordances(*this);
     emit clearableChanged(d_ptr->m_clearable);
 }
 
@@ -116,18 +241,18 @@ void QtMaterialDateField::setPlaceholderTextForDate(const QString& text)
 void QtMaterialDateField::contentChangedEvent()
 {
     QtMaterialOutlinedTextField::contentChangedEvent();
-    updateAccessibilityMetadata();
+    d_ptr->updateAccessibilityMetadata(*this);
 }
 
 void QtMaterialDateField::themeChangedEvent(const QtMaterial::Theme& theme)
 {
     QtMaterialOutlinedTextField::themeChangedEvent(theme);
-    updateTrailingAffordances();
+    d_ptr->updateTrailingAffordances(*this);
 }
 
 void QtMaterialDateField::handleEditorEditingFinished()
 {
-    syncDateFromEditor();
+    d_ptr->syncDateFromEditor(*this);
 }
 
 void QtMaterialDateField::handleCalendarButtonClicked()
@@ -144,65 +269,13 @@ void QtMaterialDateField::handleClearButtonClicked()
     emit parseErrorChanged(false);
 }
 
-void QtMaterialDateField::syncEditorFromDate()
-{
-    if (!lineEdit()) {
-        return;
-    }
-    if (d_ptr->m_date.isValid()) {
-        lineEdit()->setText(d_ptr->m_date.toString(d_ptr->m_displayFormat));
-    } else {
-        lineEdit()->clear();
-        lineEdit()->setPlaceholderText(d_ptr->m_placeholderTextForDate);
-    }
-}
-
-void QtMaterialDateField::syncDateFromEditor()
-{
-    if (!lineEdit()) {
-        return;
-    }
-
-    const QString text = lineEdit()->text().trimmed();
-    if (text.isEmpty()) {
-        setDate(QDate());
-        setParseError(false);
-        return;
-    }
-
-    const QDate parsed = QDate::fromString(text, d_ptr->m_displayFormat);
-    if (!parsed.isValid()) {
-        setParseError(true);
-        updateAccessibilityMetadata();
-        return;
-    }
-
-    d_ptr->m_date = parsed;
-    setParseError(!isDateInRange(parsed));
-    emit dateChanged(d_ptr->m_date);
-    updateTrailingAffordances();
-    updateAccessibilityMetadata();
-}
 
 
-void QtMaterialDateField::updateTrailingAffordances()
-{
-    // Integration direction:
-    // - route trailing icon/button through shared prefix/suffix shell
-    // - sync icon tint from resolved text-field spec
-    // - keep the date shell visually aligned with outlined/filled variants
-}
 
-void QtMaterialDateField::updateAccessibilityMetadata()
-{
-    const QString summary = accessibilitySummary();
-    setAccessibleName(labelText().isEmpty() ? tr("Date") : labelText());
-    setAccessibleDescription(summary);
-    if (d_ptr->m_lastAccessibilitySummary != summary) {
-        d_ptr->m_lastAccessibilitySummary = summary;
-        emit accessibilitySummaryChanged(summary);
-    }
-}
+
+
+
+
 
 QDate QtMaterialDateField::minimumDate() const noexcept
 {
@@ -221,13 +294,13 @@ void QtMaterialDateField::setMinimumDate(const QDate& date)
         d_ptr->m_maximumDate = d_ptr->m_minimumDate;
     }
 
-    if (d_ptr->m_date.isValid() && !isDateInRange(d_ptr->m_date)) {
-        setParseError(true);
+    if (d_ptr->m_date.isValid() && !d_ptr->isDateInRange(d_ptr->m_date)) {
+        d_ptr->setParseError(*this, true);
     }
 
     emit dateRangeChanged(d_ptr->m_minimumDate, d_ptr->m_maximumDate);
-    notifyDateAcceptabilityIfChanged(wasAcceptable);
-    updateAccessibilityMetadata();
+    d_ptr->notifyDateAcceptabilityIfChanged(*this, wasAcceptable);
+    d_ptr->updateAccessibilityMetadata(*this);
     update();
 }
 
@@ -248,19 +321,19 @@ void QtMaterialDateField::setMaximumDate(const QDate& date)
         d_ptr->m_minimumDate = d_ptr->m_maximumDate;
     }
 
-    if (d_ptr->m_date.isValid() && !isDateInRange(d_ptr->m_date)) {
-        setParseError(true);
+    if (d_ptr->m_date.isValid() && !d_ptr->isDateInRange(d_ptr->m_date)) {
+        d_ptr->setParseError(*this, true);
     }
 
     emit dateRangeChanged(d_ptr->m_minimumDate, d_ptr->m_maximumDate);
-    notifyDateAcceptabilityIfChanged(wasAcceptable);
-    updateAccessibilityMetadata();
+    d_ptr->notifyDateAcceptabilityIfChanged(*this, wasAcceptable);
+    d_ptr->updateAccessibilityMetadata(*this);
     update();
 }
 
 bool QtMaterialDateField::isDateAcceptable() const noexcept
 {
-    return !d_ptr->m_parseError && (!d_ptr->m_date.isValid() || isDateInRange(d_ptr->m_date));
+    return !d_ptr->m_parseError && (!d_ptr->m_date.isValid() || d_ptr->isDateInRange(d_ptr->m_date));
 }
 
 bool QtMaterialDateField::hasParseError() const noexcept
@@ -286,7 +359,7 @@ QString QtMaterialDateField::accessibilitySummary() const
     if (d_ptr->m_maximumDate.isValid()) {
         parts << tr("Maximum %1").arg(d_ptr->m_maximumDate.toString(d_ptr->m_displayFormat));
     }
-    const QString error = effectiveErrorTextForDate();
+    const QString error = d_ptr->effectiveErrorTextForDate(*this);
     if (!error.isEmpty()) {
         parts << error;
     }
@@ -294,54 +367,11 @@ QString QtMaterialDateField::accessibilitySummary() const
 }
 
 
-bool QtMaterialDateField::isDateInRange(const QDate& date) const noexcept
-{
-    if (!date.isValid()) {
-        return true;
-    }
-    if (d_ptr->m_minimumDate.isValid() && date < d_ptr->m_minimumDate) {
-        return false;
-    }
-    if (d_ptr->m_maximumDate.isValid() && date > d_ptr->m_maximumDate) {
-        return false;
-    }
-    return true;
-}
 
-QString QtMaterialDateField::effectiveErrorTextForDate() const
-{
-    if (d_ptr->m_parseError) {
-        if (d_ptr->m_date.isValid() && !isDateInRange(d_ptr->m_date)) {
-            if (d_ptr->m_minimumDate.isValid() && d_ptr->m_date < d_ptr->m_minimumDate) {
-                return tr("Date must be on or after %1").arg(d_ptr->m_minimumDate.toString(d_ptr->m_displayFormat));
-            }
-            if (d_ptr->m_maximumDate.isValid() && d_ptr->m_date > d_ptr->m_maximumDate) {
-                return tr("Date must be on or before %1").arg(d_ptr->m_maximumDate.toString(d_ptr->m_displayFormat));
-            }
-        }
-        return tr("Enter a valid date");
-    }
-    return QString();
-}
 
-void QtMaterialDateField::setParseError(bool hasError)
-{
-    if (d_ptr->m_parseError == hasError) {
-        return;
-    }
-    const bool wasAcceptable = isDateAcceptable();
-    d_ptr->m_parseError = hasError;
-    setHasErrorState(hasError);
-    setErrorText(effectiveErrorTextForDate());
-    emit parseErrorChanged(hasError);
-    notifyDateAcceptabilityIfChanged(wasAcceptable);
-    updateAccessibilityMetadata();
-}
 
-void QtMaterialDateField::notifyDateAcceptabilityIfChanged(bool previousAcceptable)
-{
-    const bool nowAcceptable = isDateAcceptable();
-    if (previousAcceptable != nowAcceptable) {
-        emit dateAcceptableChanged(nowAcceptable);
-    }
-}
+
+
+
+
+

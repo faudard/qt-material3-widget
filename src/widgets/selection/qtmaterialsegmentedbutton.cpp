@@ -315,38 +315,51 @@ void QtMaterialSegmentedButton::invalidateResolvedSpec()
     d->specDirty = true;
 }
 
-void QtMaterialSegmentedButton::ensureSpecResolved() const
+namespace {
+
+void ensureSegmentedButtonSpecResolved(const QtMaterialSegmentedButton& self,
+                                       QtMaterialSegmentedButtonPrivate& d)
 {
-    if (!d->specDirty) {
+    if (!d.specDirty) {
         return;
     }
+
     SpecFactory factory;
-    d->spec = factory.segmentedButtonSpec(theme(), density());
-    d->specDirty = false;
+    d.spec = factory.segmentedButtonSpec(self.theme(), self.density());
+    d.specDirty = false;
 }
 
-QRect QtMaterialSegmentedButton::segmentRect(int index) const
+QRect segmentedButtonSegmentRect(const QtMaterialSegmentedButton& self,
+                                 QtMaterialSegmentedButtonPrivate& d,
+                                 int index)
 {
-    ensureSpecResolved();
-    if (d->segments.isEmpty()) {
+    ensureSegmentedButtonSpecResolved(self, d);
+
+    if (d.segments.isEmpty()) {
         return QRect();
     }
-    const int segmentWidth = qMax(d->spec.minSegmentWidth, width() / qMax(1, d->segments.size()));
-    const int totalWidth = segmentWidth * d->segments.size();
-    const int startX = (width() - totalWidth) / 2;
-    const int y = (height() - d->spec.segmentHeight) / 2;
-    return QRect(startX + index * segmentWidth, y, segmentWidth, d->spec.segmentHeight);
+
+    const int segmentWidth = qMax(d.spec.minSegmentWidth, self.width() / qMax(1, d.segments.size()));
+    const int totalWidth = segmentWidth * d.segments.size();
+    const int startX = (self.width() - totalWidth) / 2;
+    const int y = (self.height() - d.spec.segmentHeight) / 2;
+    return QRect(startX + index * segmentWidth, y, segmentWidth, d.spec.segmentHeight);
 }
 
-int QtMaterialSegmentedButton::indexAt(const QPoint& pos) const
+int segmentedButtonIndexAt(const QtMaterialSegmentedButton& self,
+                           QtMaterialSegmentedButtonPrivate& d,
+                           const QPoint& pos)
 {
-    for (int i = 0; i < d->segments.size(); ++i) {
-        if (segmentRect(i).contains(pos)) {
+    for (int i = 0; i < d.segments.size(); ++i) {
+        if (segmentedButtonSegmentRect(self, d, i).contains(pos)) {
             return i;
         }
     }
+
     return -1;
 }
+
+} // namespace
 
 void QtMaterialSegmentedButton::toggleIndex(int index)
 {
@@ -364,7 +377,7 @@ void QtMaterialSegmentedButton::toggleIndex(int index)
 
 QSize QtMaterialSegmentedButton::sizeHint() const
 {
-    ensureSpecResolved();
+    ensureSegmentedButtonSpecResolved(*this, *d);
     int width = 0;
     QFont resolvedFont = font();
     if (theme().typography().contains(d->spec.labelTypeRole)) {
@@ -383,13 +396,13 @@ QSize QtMaterialSegmentedButton::sizeHint() const
 
 QSize QtMaterialSegmentedButton::minimumSizeHint() const
 {
-    ensureSpecResolved();
+    ensureSegmentedButtonSpecResolved(*this, *d);
     return QSize(d->spec.minSegmentWidth * qMax(1, d->segments.size()), d->spec.touchTarget.height());
 }
 
 void QtMaterialSegmentedButton::mousePressEvent(QMouseEvent* event)
 {
-    toggleIndex(indexAt(event->pos()));
+    toggleIndex(segmentedButtonIndexAt(*this, *d, event->pos()));
     QtMaterialControl::mousePressEvent(event);
 }
 
@@ -440,7 +453,7 @@ void QtMaterialSegmentedButton::keyPressEvent(QKeyEvent* event)
 
 void QtMaterialSegmentedButton::paintEvent(QPaintEvent*)
 {
-    ensureSpecResolved();
+    ensureSegmentedButtonSpecResolved(*this, *d);
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -455,7 +468,7 @@ void QtMaterialSegmentedButton::paintEvent(QPaintEvent*)
         : d->spec.segmentHeight / 2.0;
 
     for (int i = 0; i < d->segments.size(); ++i) {
-        const QRect r = segmentRect(i);
+        const QRect r = segmentedButtonSegmentRect(*this, *d, i);
         const bool checked = d->segments.at(i).checked;
         QPainterPath path;
         path.addRoundedRect(QRectF(r).adjusted(0.5, 0.5, -0.5, -0.5), radius, radius);
@@ -474,7 +487,7 @@ void QtMaterialSegmentedButton::paintEvent(QPaintEvent*)
 
     if (hasFocus() && d->currentIndex >= 0) {
         QPainterPath focusPath;
-        focusPath.addRoundedRect(QRectF(segmentRect(d->currentIndex)).adjusted(1, 1, -1, -1), radius, radius);
+        focusPath.addRoundedRect(QRectF(segmentedButtonSegmentRect(*this, *d, d->currentIndex)).adjusted(1, 1, -1, -1), radius, radius);
         QtMaterialFocusIndicator::paintPathFocusRing(&painter, focusPath, d->spec.focusRingColor, 2.0);
     }
 }

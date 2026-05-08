@@ -106,8 +106,6 @@ private:
     void syncAsyncStateFromProgress();
     void syncMaterialStateFromAsyncState();
     void syncAccessibleState();
-    QColor resolvedActiveColor() const;
-    QColor resolvedTrackColor() const;
 
     std::unique_ptr<QtMaterialCircularProgressIndicatorPrivate> d;
 };

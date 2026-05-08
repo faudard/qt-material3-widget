@@ -30,6 +30,24 @@ QColor fallbackTrack(const QWidget* widget) {
     color.setAlpha(qMax(32, color.alpha() / 2));
     return color;
 }
+
+QColor resolvedLinearActiveColor(const ProgressIndicatorSpec& spec, const QWidget* widget)
+{
+    return spec.activeColor.isValid() ? spec.activeColor : fallbackActive(widget);
+}
+
+QColor resolvedLinearTrackColor(const ProgressIndicatorSpec& spec, const QWidget* widget)
+{
+    return spec.trackColor.isValid() ? spec.trackColor : fallbackTrack(widget);
+}
+
+QColor resolvedLinearStopColor(const ProgressIndicatorSpec& spec, const QWidget* widget)
+{
+    return spec.stopIndicatorColor.isValid()
+        ? spec.stopIndicatorColor
+        : resolvedLinearActiveColor(spec, widget);
+}
+
 } // namespace
 
 class QtMaterialLinearProgressIndicatorPrivate
@@ -233,9 +251,9 @@ void QtMaterialLinearProgressIndicator::paintEvent(QPaintEvent*) {
     QRectF track(r.left(), r.center().y() - h / 2.0, r.width(), h);
     const qreal radius = h / 2.0;
     painter.setPen(Qt::NoPen);
-    painter.setBrush(resolvedTrackColor());
+    painter.setBrush(resolvedLinearTrackColor(d->spec, this));
     painter.drawRoundedRect(track, radius, radius);
-    painter.setBrush(resolvedActiveColor());
+    painter.setBrush(resolvedLinearActiveColor(d->spec, this));
     if (d->mode == Mode::Determinate) {
         const qreal gap = d->value > 0.0 && d->value < 1.0 ? qMin<qreal>(d->spec.trackGap, track.width()) : 0.0;
         const qreal w = qMax<qreal>(0.0, track.width() * d->value - gap);
@@ -248,7 +266,7 @@ void QtMaterialLinearProgressIndicator::paintEvent(QPaintEvent*) {
             painter.drawRoundedRect(active, radius, radius);
         }
         if (d->spec.stopIndicatorSize > 0 && d->value > 0.0 && d->value < 1.0) {
-            painter.setBrush(resolvedStopColor());
+            painter.setBrush(resolvedLinearStopColor(d->spec, this));
             const qreal s = qMin<qreal>(d->spec.stopIndicatorSize, h);
             const qreal x = (d->invertedAppearance || layoutDirection() == Qt::RightToLeft)
                 ? active.left() - gap / 2.0
@@ -327,16 +345,16 @@ void QtMaterialLinearProgressIndicator::syncMaterialStateFromAsyncState() {
     setMaterialState(d->asyncState.toPropertyString());
 }
 
-QColor QtMaterialLinearProgressIndicator::resolvedActiveColor() const {
+QColor QtMaterialLinearProgressIndicator::resolvedLinearActiveColor(d->spec, this) const {
     return d->spec.activeColor.isValid() ? d->spec.activeColor : fallbackActive(this);
 }
 
-QColor QtMaterialLinearProgressIndicator::resolvedTrackColor() const {
+QColor QtMaterialLinearProgressIndicator::resolvedLinearTrackColor(d->spec, this) const {
     return d->spec.trackColor.isValid() ? d->spec.trackColor : fallbackTrack(this);
 }
 
-QColor QtMaterialLinearProgressIndicator::resolvedStopColor() const {
-    return d->spec.stopIndicatorColor.isValid() ? d->spec.stopIndicatorColor : resolvedActiveColor();
+QColor QtMaterialLinearProgressIndicator::resolvedLinearStopColor(d->spec, this) const {
+    return d->spec.stopIndicatorColor.isValid() ? d->spec.stopIndicatorColor : resolvedLinearActiveColor(d->spec, this);
 }
 
 QString QtMaterial::QtMaterialLinearProgressIndicator::accessibleValueText() const

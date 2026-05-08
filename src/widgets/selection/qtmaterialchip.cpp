@@ -124,49 +124,49 @@ void QtMaterialChip::stateChangedEvent()
     update();
 }
 
-ChipSpec QtMaterialChip::resolveSpec() const
-{
+ChipSpec resolveChipSpec(ChipVariant variant, const Theme& theme, Density density) {
     SpecFactory factory;
-    switch (d->variant) {
+    switch (variant) {
     case ChipVariant::Filter:
-        return factory.filterChipSpec(theme(), density());
+        return factory.filterChipSpec(theme, density);
     case ChipVariant::Input:
-        return factory.inputChipSpec(theme(), density());
+        return factory.inputChipSpec(theme, density);
     case ChipVariant::Suggestion:
-        return factory.suggestionChipSpec(theme(), density());
+        return factory.suggestionChipSpec(theme, density);
     case ChipVariant::Assist:
     default:
-        return factory.assistChipSpec(theme(), density());
+        return factory.assistChipSpec(theme, density);
     }
+
 }
 
-void QtMaterialChip::ensureSpecResolved() const
-{
-    if (!d->specDirty) {
+void ensureChipSpecResolved(QtMaterialChipPrivate& d, const Theme& theme, Density density) {
+    if (!d.specDirty) {
         return;
     }
-    d->spec = resolveSpec();
-    d->specDirty = false;
+    d.spec = resolveChipSpec(d.variant, theme, density);
+    d.specDirty = false;
+
 }
 
-QRectF QtMaterialChip::containerRect() const
-{
-    ensureSpecResolved();
-    const int y = (height() - d->spec.containerHeight) / 2;
-    return QRectF(0.5, y + 0.5, width() - 1.0, d->spec.containerHeight - 1.0);
+QRectF chipContainerRect(QtMaterialChipPrivate& d, const Theme& theme, Density density, int widgetWidth, int widgetHeight) {
+    ensureChipSpecResolved(d, theme, density);
+    const int y = (widgetHeight - d.spec.containerHeight) / 2;
+    return QRectF(0.5, y + 0.5, widgetWidth - 1.0, d.spec.containerHeight - 1.0);
+
 }
 
-QRect QtMaterialChip::trailingIconRect(const QRectF& visualRect) const
-{
-    ensureSpecResolved();
-    const int x = static_cast<int>(visualRect.right()) - d->spec.horizontalPadding - d->spec.iconSize;
-    const int y = static_cast<int>(visualRect.center().y()) - d->spec.iconSize / 2;
-    return QRect(x, y, d->spec.iconSize, d->spec.iconSize);
+QRect chipTrailingIconRect(QtMaterialChipPrivate& d, const Theme& theme, Density density, const QRectF& visualRect) {
+    ensureChipSpecResolved(d, theme, density);
+    const int x = static_cast<int>(visualRect.right()) - d.spec.horizontalPadding - d.spec.iconSize;
+    const int y = static_cast<int>(visualRect.center().y()) - d.spec.iconSize / 2;
+    return QRect(x, y, d.spec.iconSize, d.spec.iconSize);
+
 }
 
 QSize QtMaterialChip::sizeHint() const
 {
-    ensureSpecResolved();
+    ensureChipSpecResolved(*d, theme(), density());
     QFont resolvedFont = font();
     if (theme().typography().contains(d->spec.labelTypeRole)) {
         resolvedFont = theme().typography().style(d->spec.labelTypeRole).font;
@@ -184,14 +184,14 @@ QSize QtMaterialChip::sizeHint() const
 
 QSize QtMaterialChip::minimumSizeHint() const
 {
-    ensureSpecResolved();
+    ensureChipSpecResolved(*d, theme(), density());
     return QSize(d->spec.minWidth, d->spec.touchTarget.height());
 }
 
 void QtMaterialChip::mouseReleaseEvent(QMouseEvent* event)
 {
-    ensureSpecResolved();
-    if ((d->removable || !d->trailingIcon.isNull()) && trailingIconRect(containerRect()).contains(event->pos())) {
+    ensureChipSpecResolved(*d, theme(), density());
+    if ((d->removable || !d->trailingIcon.isNull()) && chipTrailingIconRect(*d, theme(), density(), chipContainerRect(*d, theme(), density(), width(), height())).contains(event->pos())) {
         emit removeRequested();
         event->accept();
         return;
@@ -201,11 +201,11 @@ void QtMaterialChip::mouseReleaseEvent(QMouseEvent* event)
 
 void QtMaterialChip::paintEvent(QPaintEvent*)
 {
-    ensureSpecResolved();
+    ensureChipSpecResolved(*d, theme(), density());
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const QRectF visualRect = containerRect();
+    const QRectF visualRect = chipContainerRect(*d, theme(), density(), width(), height());
     const qreal radius = theme().shapes().contains(d->spec.shapeRole)
         ? theme().shapes().radius(d->spec.shapeRole)
         : visualRect.height() / 2.0;
@@ -255,7 +255,7 @@ void QtMaterialChip::paintEvent(QPaintEvent*)
     int right = static_cast<int>(visualRect.right()) - d->spec.horizontalPadding;
     QRect closeRect;
     if (d->removable || !d->trailingIcon.isNull()) {
-        closeRect = trailingIconRect(visualRect);
+        closeRect = chipTrailingIconRect(*d, theme(), density(), visualRect);
         right = closeRect.left() - d->spec.iconSpacing;
     }
 

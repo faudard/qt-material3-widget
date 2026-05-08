@@ -84,13 +84,7 @@ protected:
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
 
 private:
-    void ensureSpecResolved() const;
-    void invalidateResolvedSpec();
-    void updateChildGeometry();
-    void updatePaletteFromSpec();
-    void updateAccessibilityState();
 
-  void updateFilterText();
     std::unique_ptr<QtMaterialAutocompletePrivate> d_ptr;
 
 };

@@ -17,7 +17,7 @@ namespace QtMaterial {
 
 struct QtMaterialTablePrivate
 {
-    TableSpec m_spec;
+    TableSpec m_spec = defaultTableSpec();
     bool m_dense = false;
     QString m_accessibilitySummary;
 };
@@ -33,7 +33,7 @@ public:
     {
     }
 
-    void setSpec(const TableSpec& spec) { d_ptr->m_spec = spec; }
+    void setSpec(const TableSpec& spec) { d_ptr.m_spec = spec; }
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override
     {
@@ -42,19 +42,19 @@ public:
 
         painter->save();
         if (opt.state & QStyle::State_Selected) {
-            painter->fillRect(opt.rect, d_ptr->m_spec.rowSelectedColor);
-            opt.palette.setColor(QPalette::Text, d_ptr->m_spec.rowSelectedTextColor);
+            painter->fillRect(opt.rect, d_ptr.m_spec.rowSelectedColor);
+            opt.palette.setColor(QPalette::Text, d_ptr.m_spec.rowSelectedTextColor);
         } else if (opt.state & QStyle::State_MouseOver) {
-            painter->fillRect(opt.rect, d_ptr->m_spec.rowHoverColor);
+            painter->fillRect(opt.rect, d_ptr.m_spec.rowHoverColor);
         }
 
-        opt.font = d_ptr->m_spec.bodyFont;
+        opt.font = d_ptr.m_spec.bodyFont;
         QStyledItemDelegate::paint(painter, opt, index);
         painter->restore();
     }
 
 private:
-    TableSpec d_ptr->m_spec = defaultTableSpec();
+    TableSpec d_ptr.m_spec = defaultTableSpec();
 };
 
 QString pluralize(int value, QStringView singular, QStringView plural)
@@ -62,13 +62,16 @@ QString pluralize(int value, QStringView singular, QStringView plural)
     return QString::number(value) + QLatin1Char(' ') + (value == 1 ? singular.toString() : plural.toString());
 }
 
+
+QString tableHeaderText(const QtMaterialTable* table, int column);
+QString tableCellText(const QModelIndex& index);
+
 } // namespace
 
 QtMaterialTable::QtMaterialTable(QWidget* parent)
     : QTableView(parent)
-    , d_ptr->m_spec(defaultTableSpec())
+    , d_ptr(std::make_unique<QtMaterialTablePrivate>())
 {
-    d_ptr = std::make_unique<QtMaterialTablePrivate>();
 
     setObjectName(QStringLiteral("QtMaterialTable"));
     setAccessibleName(QStringLiteral("Table"));
@@ -135,8 +138,8 @@ QString QtMaterialTable::currentCellAccessibleText() const
         return QString();
     }
 
-    const QString header = headerText(index.column());
-    const QString value = cellText(index);
+    const QString header = tableHeaderText(this, index.column());
+    const QString value = tableCellText(index);
     const QString position = tr("row %1, column %2").arg(index.row() + 1).arg(index.column() + 1);
 
     if (header.isEmpty()) {
@@ -147,7 +150,7 @@ QString QtMaterialTable::currentCellAccessibleText() const
 
 QString QtMaterialTable::rowAccessibleText(int row) const
 {
-    const QAbstractItemModel* currentModel = model();
+    const QAbstractItemModel* currentModel = table->model();
     if (!currentModel || row < 0 || row >= currentModel->rowCount(rootIndex())) {
         return QString();
     }
@@ -159,8 +162,8 @@ QString QtMaterialTable::rowAccessibleText(int row) const
             continue;
         }
 
-        const QString header = headerText(column);
-        const QString value = cellText(idx);
+        const QString header = tableHeaderText(this, column);
+        const QString value = tableCellText(idx);
         if (value.isEmpty()) {
             continue;
         }
@@ -338,17 +341,17 @@ void QtMaterialTable::syncAccessibility()
     }
 }
 
-QString QtMaterialTable::headerText(int column) const
+QString tableHeaderText(const QtMaterialTable* table, int column)
 {
-    const QAbstractItemModel* currentModel = model();
-    if (!currentModel || column < 0 || column >= currentModel->columnCount(rootIndex())) {
+    const QAbstractItemModel* currentModel = table->model();
+    if (!currentModel || column < 0 || column >= currentModel->columnCount(table->rootIndex())) {
         return QString();
     }
 
     return currentModel->headerData(column, Qt::Horizontal, Qt::DisplayRole).toString();
 }
 
-QString QtMaterialTable::cellText(const QModelIndex& index) const
+QString tableCellText(const QModelIndex& index)
 {
     if (!index.isValid()) {
         return QString();

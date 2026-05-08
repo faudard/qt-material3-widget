@@ -104,9 +104,6 @@ private:
     void syncAsyncStateFromProgress();
     void syncMaterialStateFromAsyncState();
     void updateAccessibleState();
-    QColor resolvedActiveColor() const;
-    QColor resolvedTrackColor() const;
-    QColor resolvedStopColor() const;
 
     std::unique_ptr<QtMaterialLinearProgressIndicatorPrivate> d;
 };

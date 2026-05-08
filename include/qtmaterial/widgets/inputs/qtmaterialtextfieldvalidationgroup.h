@@ -65,14 +65,6 @@ signals:
     void validationSummaryChanged(const QStringList& summary);
 
 private:
-    int indexOf(QtMaterialOutlinedTextField* field) const noexcept;
-    void removeNullFields();
-    bool computeAcceptable() const noexcept;
-    void refreshAcceptable();
-    QString effectiveFieldLabel(QtMaterialOutlinedTextField* field) const;
-    QString effectiveFieldErrorMessage(QtMaterialOutlinedTextField* field) const;
-    QStringList computeValidationSummary() const;
-    void refreshValidationSummary();
     std::unique_ptr<QtMaterialTextFieldValidationGroupPrivate> d_ptr;
 
 };

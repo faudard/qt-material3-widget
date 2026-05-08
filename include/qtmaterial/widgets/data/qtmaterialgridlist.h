@@ -87,20 +87,6 @@ protected:
 
 private:
     std::unique_ptr<QtMaterialGridListPrivate> d_ptr;
-    enum ItemRole {
-        TitleRole = Qt::UserRole + 120,
-        SupportingTextRole,
-    };
-
-    QListWidgetItem* gridItemAt(int index) const;
-    int nextEnabledIndex(int from, int delta) const;
-    int firstEnabledIndex() const;
-    int lastEnabledIndex() const;
-    void updateItemText(QListWidgetItem* item);
-    void updateItemAccessibility(QListWidgetItem* item);
-    void updateGridGeometry();
-    void syncAccessibilitySummary();
-    void emitSelectionChangedIfNeeded();
 
 };
 

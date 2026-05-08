@@ -96,13 +96,6 @@ protected:
 
 private:
     std::unique_ptr<QtMaterialCarouselPrivate> d_ptr;
-    bool isValidIndex(int index) const noexcept;
-    int firstVisibleIndex() const noexcept;
-    int nextEnabledIndex(int start, int delta) const noexcept;
-    QRect itemRect(int index) const;
-    void updateAccessibilitySummary();
-    void emitCurrentIndexChanged(int index);
-
-};
+    };
 
 } // namespace QtMaterial

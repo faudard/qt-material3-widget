@@ -79,8 +79,6 @@ protected:
 
 private:
     std::unique_ptr<QtMaterialDividerPrivate> d_ptr;
-    QColor resolvedColor() const;
-    void syncAccessibility();
 
 };
 

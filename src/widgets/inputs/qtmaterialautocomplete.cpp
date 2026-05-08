@@ -35,6 +35,81 @@ struct QtMaterialAutocompletePrivate {
     mutable AutocompleteSpec m_spec;
 };
 
+namespace {
+
+// Tranche 31: local helpers formerly declared as private QtMaterialAutocomplete methods.
+// Keeping them local removes implementation-only declarations from the public header
+// without changing the public/protected API surface of QtMaterialAutocomplete.
+void invalidateResolvedSpec(QtMaterialAutocompletePrivate* d)
+{
+    d->m_specDirty = true;
+}
+
+void ensureSpecResolved(QtMaterialAutocompletePrivate* d, const Theme& theme)
+{
+    if (!d->m_specDirty) {
+        return;
+    }
+
+    SpecFactory factory;
+    d->m_spec = factory.autocompleteSpec(theme);
+    d->m_specDirty = false;
+}
+
+void updateChildGeometry(QtMaterialAutocomplete* q,
+                         QtMaterialAutocompletePrivate* d,
+                         const Theme& theme)
+{
+    ensureSpecResolved(d, theme);
+    constexpr int margin = 16;
+    d->m_lineEdit->setGeometry(q->rect().adjusted(margin, 4, -margin, -4));
+}
+
+void updatePaletteFromSpec(QtMaterialAutocompletePrivate* d, const Theme& theme)
+{
+    ensureSpecResolved(d, theme);
+
+    QPalette palette = d->m_lineEdit->palette();
+    palette.setColor(QPalette::Base, Qt::transparent);
+    palette.setColor(QPalette::Text, d->m_spec.inputTextColor);
+    palette.setColor(QPalette::PlaceholderText, d->m_spec.placeholderColor);
+    d->m_lineEdit->setPalette(palette);
+}
+
+void updateFilterText(QtMaterialAutocomplete* q, QtMaterialAutocompletePrivate* d)
+{
+    d->m_popup->setFilterText(d->m_lineEdit->text());
+    q->setPopupVisible(!d->m_lineEdit->text().isEmpty());
+}
+
+void updateAccessibilityState(QtMaterialAutocomplete* q, QtMaterialAutocompletePrivate* d)
+{
+    if (q->accessibleName().isEmpty()) {
+        const QString fallback = q->placeholderText().isEmpty()
+            ? QtMaterialAutocomplete::tr("Autocomplete")
+            : q->placeholderText();
+        q->setAccessibleName(fallback);
+    }
+
+    const QString summary = q->accessibilitySummary();
+    q->setAccessibleDescription(summary);
+
+    if (d->m_lineEdit) {
+        d->m_lineEdit->setAccessibleName(q->accessibleName());
+        d->m_lineEdit->setAccessibleDescription(summary);
+    }
+
+    if (summary != d->m_lastAccessibilitySummary) {
+        d->m_lastAccessibilitySummary = summary;
+        emit q->accessibilitySummaryChanged(summary);
+    }
+}
+
+// End tranche 31 local helpers.
+
+} // namespace
+
+
 
 QtMaterialAutocomplete::QtMaterialAutocomplete(QWidget* parent)
     : QtMaterialWidget(parent)
@@ -49,7 +124,7 @@ QtMaterialAutocomplete::QtMaterialAutocomplete(QWidget* parent)
     d_ptr->m_popup->hide();
 
     connect(d_ptr->m_lineEdit, &QLineEdit::textChanged, this, [this](const QString& text) {
-        updateFilterText();
+        updateFilterText(this, d_ptr.get());
         emit textChanged(text);
     });
     connect(d_ptr->m_popup, &::QtMaterialAutocompletePopup::completionActivated, this, [this](const QString& completion) {
@@ -77,13 +152,13 @@ void QtMaterialAutocomplete::setSuggestions(const QStringList& suggestions)
 {
     d_ptr->m_ownedStringModel->setStringList(suggestions);
     d_ptr->m_popup->setSuggestions(suggestions);
-    updateFilterText();
+    updateFilterText(this, d_ptr.get());
 }
 
 void QtMaterialAutocomplete::setModel(QAbstractItemModel* model)
 {
     d_ptr->m_popup->setModel(model ? model : d_ptr->m_ownedStringModel);
-    updateFilterText();
+    updateFilterText(this, d_ptr.get());
 }
 
 QAbstractItemModel* QtMaterialAutocomplete::model() const noexcept
@@ -104,57 +179,24 @@ void QtMaterialAutocomplete::setPopupVisible(bool visible)
 void QtMaterialAutocomplete::themeChangedEvent(const Theme& theme)
 {
     QtMaterialWidget::themeChangedEvent(theme);
-    invalidateResolvedSpec();
-    updatePaletteFromSpec();
+    invalidateResolvedSpec(d_ptr.get());
+    updatePaletteFromSpec(d_ptr.get(), theme);
 }
 
-void QtMaterialAutocomplete::invalidateResolvedSpec()
-{
-    d_ptr->m_specDirty = true;
-}
 
-void QtMaterialAutocomplete::ensureSpecResolved() const
-{
-    if (!d_ptr->m_specDirty) {
-        return;
-    }
-    SpecFactory factory;
-    d_ptr->m_spec = factory.autocompleteSpec(theme());
-    d_ptr->m_specDirty = false;
-}
 
-void QtMaterialAutocomplete::updateChildGeometry()
-{
-    ensureSpecResolved();
-    const int margin = 16;
-    d_ptr->m_lineEdit->setGeometry(rect().adjusted(margin, 4, -margin, -4));
-}
 
-void QtMaterialAutocomplete::updatePaletteFromSpec()
-{
-    ensureSpecResolved();
-    QPalette palette = d_ptr->m_lineEdit->palette();
-    palette.setColor(QPalette::Base, Qt::transparent);
-    palette.setColor(QPalette::Text, d_ptr->m_spec.inputTextColor);
-    palette.setColor(QPalette::PlaceholderText, d_ptr->m_spec.placeholderColor);
-    d_ptr->m_lineEdit->setPalette(palette);
-}
 
-void QtMaterialAutocomplete::updateFilterText()
-{
-    d_ptr->m_popup->setFilterText(d_ptr->m_lineEdit->text());
-    setPopupVisible(!d_ptr->m_lineEdit->text().isEmpty());
-}
 
 QSize QtMaterialAutocomplete::sizeHint() const
 {
-    ensureSpecResolved();
+    ensureSpecResolved(d_ptr.get(), theme());
     return QSize(280, d_ptr->m_spec.inputMinHeight);
 }
 
 QSize QtMaterialAutocomplete::minimumSizeHint() const
 {
-    ensureSpecResolved();
+    ensureSpecResolved(d_ptr.get(), theme());
     return QSize(160, d_ptr->m_spec.inputMinHeight);
 }
 
@@ -185,7 +227,7 @@ bool QtMaterialAutocomplete::eventFilter(QObject* watched, QEvent* event)
             }
         }
         if (event->type() == QEvent::FocusIn) {
-            updateFilterText();
+            updateFilterText(this, d_ptr.get());
         }
         if (event->type() == QEvent::FocusOut) {
             // Popup owns its own focus while visible. Hide only when the popup is not active.
@@ -200,12 +242,12 @@ bool QtMaterialAutocomplete::eventFilter(QObject* watched, QEvent* event)
 void QtMaterialAutocomplete::resizeEvent(QResizeEvent* event)
 {
     QtMaterialWidget::resizeEvent(event);
-    updateChildGeometry();
+    updateChildGeometry(this, d_ptr.get(), theme());
 }
 
 void QtMaterialAutocomplete::paintEvent(QPaintEvent*)
 {
-    ensureSpecResolved();
+    ensureSpecResolved(d_ptr.get(), theme());
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -237,7 +279,7 @@ void QtMaterialAutocomplete::setMaxVisibleCompletions(int count) {
     if (d_ptr->m_popup) {
         d_ptr->m_popup->setMaximumHeight(sizeHint().height() * d_ptr->m_maxVisibleCompletions);
     }
-    updateAccessibilityState();
+    updateAccessibilityState(this, d_ptr.get());
 }
 
 bool QtMaterialAutocomplete::completesOnReturn() const noexcept {
@@ -298,21 +340,5 @@ QString QtMaterialAutocomplete::accessibilitySummary() const {
     return parts.join(QStringLiteral(". "));
 }
 
-void QtMaterialAutocomplete::updateAccessibilityState() {
-    if (accessibleName().isEmpty()) {
-        const QString fallback = placeholderText().isEmpty() ? tr("Autocomplete") : placeholderText();
-        setAccessibleName(fallback);
-    }
-    const QString summary = accessibilitySummary();
-    setAccessibleDescription(summary);
-    if (d_ptr->m_lineEdit) {
-        d_ptr->m_lineEdit->setAccessibleName(accessibleName());
-        d_ptr->m_lineEdit->setAccessibleDescription(summary);
-    }
-    if (summary != d_ptr->m_lastAccessibilitySummary) {
-        d_ptr->m_lastAccessibilitySummary = summary;
-        emit accessibilitySummaryChanged(summary);
-    }
-}
 
 } // namespace QtMaterial

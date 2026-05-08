@@ -9,8 +9,6 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
-class QtMaterialChipPrivate;
-
 struct QtMaterialChipPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialChip : public QtMaterialAbstractButton {
@@ -48,10 +46,6 @@ protected:
     void stateChangedEvent() override;
 
 private:
-    void ensureSpecResolved() const;
-    ChipSpec resolveSpec() const;
-    QRectF containerRect() const;
-    QRect trailingIconRect(const QRectF& visualRect) const;
     std::unique_ptr<QtMaterialChipPrivate> d;
 };
 
