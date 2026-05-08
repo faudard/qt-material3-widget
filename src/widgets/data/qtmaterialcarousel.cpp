@@ -8,8 +8,20 @@
 #include <QStyleOptionFocusRect>
 
 #include <algorithm>
+#include <memory>
 
 namespace QtMaterial {
+
+struct QtMaterialCarouselPrivate
+{
+    QVector<QtMaterialCarousel::Item> m_items;
+    int m_currentIndex = -1;
+    bool m_wrapAround = true;
+    int m_visibleItemCount = 3;
+    QString m_accessibilitySummary;
+};
+
+
 namespace {
 constexpr int kDefaultCardWidth = 176;
 constexpr int kDefaultCardHeight = 128;
@@ -26,6 +38,8 @@ QString fallbackCarouselName()
 QtMaterialCarousel::QtMaterialCarousel(QWidget* parent)
     : QWidget(parent)
 {
+    d_ptr = std::make_unique<QtMaterialCarouselPrivate>();
+
     setFocusPolicy(Qt::StrongFocus);
     setAttribute(Qt::WA_Hover, true);
     setAccessibleName(fallbackCarouselName());
@@ -36,24 +50,24 @@ QtMaterialCarousel::~QtMaterialCarousel() = default;
 
 int QtMaterialCarousel::addItem(const QString& title, const QString& supportingText, const QIcon& icon)
 {
-    insertItem(m_items.size(), title, supportingText, icon);
-    return m_items.size() - 1;
+    insertItem(d_ptr->m_items.size(), title, supportingText, icon);
+    return d_ptr->m_items.size() - 1;
 }
 
 void QtMaterialCarousel::insertItem(int index, const QString& title, const QString& supportingText, const QIcon& icon)
 {
-    index = qBound(0, index, m_items.size());
-    m_items.insert(index, Item{title, supportingText, icon, true});
+    index = qBound(0, index, d_ptr->m_items.size());
+    d_ptr->m_items.insert(index, Item{title, supportingText, icon, true});
 
-    if (m_currentIndex < 0) {
-        m_currentIndex = index;
-        emitCurrentIndexChanged(m_currentIndex);
-    } else if (index <= m_currentIndex) {
-        ++m_currentIndex;
-        emitCurrentIndexChanged(m_currentIndex);
+    if (d_ptr->m_currentIndex < 0) {
+        d_ptr->m_currentIndex = index;
+        emitCurrentIndexChanged(d_ptr->m_currentIndex);
+    } else if (index <= d_ptr->m_currentIndex) {
+        ++d_ptr->m_currentIndex;
+        emitCurrentIndexChanged(d_ptr->m_currentIndex);
     }
 
-    emit itemCountChanged(m_items.size());
+    emit itemCountChanged(d_ptr->m_items.size());
     updateAccessibilitySummary();
     updateGeometry();
     update();
@@ -65,26 +79,26 @@ void QtMaterialCarousel::removeItem(int index)
         return;
     }
 
-    m_items.removeAt(index);
+    d_ptr->m_items.removeAt(index);
 
-    if (m_items.isEmpty()) {
-        if (m_currentIndex != -1) {
-            m_currentIndex = -1;
-            emitCurrentIndexChanged(m_currentIndex);
+    if (d_ptr->m_items.isEmpty()) {
+        if (d_ptr->m_currentIndex != -1) {
+            d_ptr->m_currentIndex = -1;
+            emitCurrentIndexChanged(d_ptr->m_currentIndex);
         }
-    } else if (index < m_currentIndex) {
-        --m_currentIndex;
-        emitCurrentIndexChanged(m_currentIndex);
-    } else if (index == m_currentIndex) {
-        m_currentIndex = qMin(index, m_items.size() - 1);
-        if (!m_items.at(m_currentIndex).enabled) {
-            const int enabled = nextEnabledIndex(m_currentIndex, 1);
-            m_currentIndex = enabled >= 0 ? enabled : m_currentIndex;
+    } else if (index < d_ptr->m_currentIndex) {
+        --d_ptr->m_currentIndex;
+        emitCurrentIndexChanged(d_ptr->m_currentIndex);
+    } else if (index == d_ptr->m_currentIndex) {
+        d_ptr->m_currentIndex = qMin(index, d_ptr->m_items.size() - 1);
+        if (!d_ptr->m_items.at(d_ptr->m_currentIndex).enabled) {
+            const int enabled = nextEnabledIndex(d_ptr->m_currentIndex, 1);
+            d_ptr->m_currentIndex = enabled >= 0 ? enabled : d_ptr->m_currentIndex;
         }
-        emitCurrentIndexChanged(m_currentIndex);
+        emitCurrentIndexChanged(d_ptr->m_currentIndex);
     }
 
-    emit itemCountChanged(m_items.size());
+    emit itemCountChanged(d_ptr->m_items.size());
     updateAccessibilitySummary();
     updateGeometry();
     update();
@@ -92,12 +106,12 @@ void QtMaterialCarousel::removeItem(int index)
 
 void QtMaterialCarousel::clear()
 {
-    if (m_items.isEmpty()) {
+    if (d_ptr->m_items.isEmpty()) {
         return;
     }
 
-    m_items.clear();
-    m_currentIndex = -1;
+    d_ptr->m_items.clear();
+    d_ptr->m_currentIndex = -1;
     emit itemCountChanged(0);
     emitCurrentIndexChanged(-1);
     updateAccessibilitySummary();
@@ -107,49 +121,49 @@ void QtMaterialCarousel::clear()
 
 int QtMaterialCarousel::count() const noexcept
 {
-    return m_items.size();
+    return d_ptr->m_items.size();
 }
 
 bool QtMaterialCarousel::isEmpty() const noexcept
 {
-    return m_items.isEmpty();
+    return d_ptr->m_items.isEmpty();
 }
 
 QString QtMaterialCarousel::itemTitle(int index) const
 {
-    return isValidIndex(index) ? m_items.at(index).title : QString();
+    return isValidIndex(index) ? d_ptr->m_items.at(index).title : QString();
 }
 
 void QtMaterialCarousel::setItemTitle(int index, const QString& title)
 {
-    if (!isValidIndex(index) || m_items[index].title == title) {
+    if (!isValidIndex(index) || d_ptr->m_items[index].title == title) {
         return;
     }
 
-    m_items[index].title = title;
+    d_ptr->m_items[index].title = title;
     updateAccessibilitySummary();
     update();
 }
 
 QString QtMaterialCarousel::itemSupportingText(int index) const
 {
-    return isValidIndex(index) ? m_items.at(index).supportingText : QString();
+    return isValidIndex(index) ? d_ptr->m_items.at(index).supportingText : QString();
 }
 
 void QtMaterialCarousel::setItemSupportingText(int index, const QString& text)
 {
-    if (!isValidIndex(index) || m_items[index].supportingText == text) {
+    if (!isValidIndex(index) || d_ptr->m_items[index].supportingText == text) {
         return;
     }
 
-    m_items[index].supportingText = text;
+    d_ptr->m_items[index].supportingText = text;
     updateAccessibilitySummary();
     update();
 }
 
 QIcon QtMaterialCarousel::itemIcon(int index) const
 {
-    return isValidIndex(index) ? m_items.at(index).icon : QIcon();
+    return isValidIndex(index) ? d_ptr->m_items.at(index).icon : QIcon();
 }
 
 void QtMaterialCarousel::setItemIcon(int index, const QIcon& icon)
@@ -158,27 +172,27 @@ void QtMaterialCarousel::setItemIcon(int index, const QIcon& icon)
         return;
     }
 
-    m_items[index].icon = icon;
+    d_ptr->m_items[index].icon = icon;
     update();
 }
 
 bool QtMaterialCarousel::isItemEnabled(int index) const
 {
-    return isValidIndex(index) && m_items.at(index).enabled;
+    return isValidIndex(index) && d_ptr->m_items.at(index).enabled;
 }
 
 void QtMaterialCarousel::setItemEnabled(int index, bool enabled)
 {
-    if (!isValidIndex(index) || m_items[index].enabled == enabled) {
+    if (!isValidIndex(index) || d_ptr->m_items[index].enabled == enabled) {
         return;
     }
 
-    m_items[index].enabled = enabled;
-    if (!enabled && index == m_currentIndex) {
+    d_ptr->m_items[index].enabled = enabled;
+    if (!enabled && index == d_ptr->m_currentIndex) {
         const int replacement = nextEnabledIndex(index, 1);
         if (replacement >= 0) {
-            m_currentIndex = replacement;
-            emitCurrentIndexChanged(m_currentIndex);
+            d_ptr->m_currentIndex = replacement;
+            emitCurrentIndexChanged(d_ptr->m_currentIndex);
         }
     }
 
@@ -188,50 +202,50 @@ void QtMaterialCarousel::setItemEnabled(int index, bool enabled)
 
 int QtMaterialCarousel::currentIndex() const noexcept
 {
-    return m_currentIndex;
+    return d_ptr->m_currentIndex;
 }
 
 void QtMaterialCarousel::setCurrentIndex(int index)
 {
-    if (!isValidIndex(index) || !m_items.at(index).enabled || index == m_currentIndex) {
+    if (!isValidIndex(index) || !d_ptr->m_items.at(index).enabled || index == d_ptr->m_currentIndex) {
         return;
     }
 
-    m_currentIndex = index;
-    emitCurrentIndexChanged(m_currentIndex);
+    d_ptr->m_currentIndex = index;
+    emitCurrentIndexChanged(d_ptr->m_currentIndex);
     updateAccessibilitySummary();
     update();
 }
 
 bool QtMaterialCarousel::wrapAround() const noexcept
 {
-    return m_wrapAround;
+    return d_ptr->m_wrapAround;
 }
 
 void QtMaterialCarousel::setWrapAround(bool wrap)
 {
-    if (m_wrapAround == wrap) {
+    if (d_ptr->m_wrapAround == wrap) {
         return;
     }
 
-    m_wrapAround = wrap;
-    emit wrapAroundChanged(m_wrapAround);
+    d_ptr->m_wrapAround = wrap;
+    emit wrapAroundChanged(d_ptr->m_wrapAround);
 }
 
 int QtMaterialCarousel::visibleItemCount() const noexcept
 {
-    return m_visibleItemCount;
+    return d_ptr->m_visibleItemCount;
 }
 
 void QtMaterialCarousel::setVisibleItemCount(int count)
 {
     count = qBound(1, count, 9);
-    if (m_visibleItemCount == count) {
+    if (d_ptr->m_visibleItemCount == count) {
         return;
     }
 
-    m_visibleItemCount = count;
-    emit visibleItemCountChanged(m_visibleItemCount);
+    d_ptr->m_visibleItemCount = count;
+    emit visibleItemCountChanged(d_ptr->m_visibleItemCount);
     updateGeometry();
     update();
 }
@@ -242,17 +256,17 @@ QString QtMaterialCarousel::itemAccessibleText(int index) const
         return QString();
     }
 
-    const auto& item = m_items.at(index);
+    const auto& item = d_ptr->m_items.at(index);
     QStringList parts;
     parts << item.title;
     if (!item.supportingText.isEmpty()) {
         parts << item.supportingText;
     }
-    parts << QStringLiteral("%1 of %2").arg(index + 1).arg(m_items.size());
+    parts << QStringLiteral("%1 of %2").arg(index + 1).arg(d_ptr->m_items.size());
     if (!item.enabled) {
         parts << QStringLiteral("disabled");
     }
-    if (index == m_currentIndex) {
+    if (index == d_ptr->m_currentIndex) {
         parts << QStringLiteral("current");
     }
     return parts.join(QStringLiteral(", "));
@@ -260,17 +274,17 @@ QString QtMaterialCarousel::itemAccessibleText(int index) const
 
 QString QtMaterialCarousel::currentItemAccessibleText() const
 {
-    return itemAccessibleText(m_currentIndex);
+    return itemAccessibleText(d_ptr->m_currentIndex);
 }
 
 QString QtMaterialCarousel::accessibilitySummary() const
 {
-    return m_accessibilitySummary;
+    return d_ptr->m_accessibilitySummary;
 }
 
 QSize QtMaterialCarousel::sizeHint() const
 {
-    const int cards = qMax(1, m_visibleItemCount);
+    const int cards = qMax(1, d_ptr->m_visibleItemCount);
     return QSize(kPadding * 2 + cards * kDefaultCardWidth + (cards - 1) * kGap,
                  kPadding * 2 + kDefaultCardHeight);
 }
@@ -282,7 +296,7 @@ QSize QtMaterialCarousel::minimumSizeHint() const
 
 void QtMaterialCarousel::next()
 {
-    const int nextIndex = nextEnabledIndex(m_currentIndex, 1);
+    const int nextIndex = nextEnabledIndex(d_ptr->m_currentIndex, 1);
     if (nextIndex >= 0) {
         setCurrentIndex(nextIndex);
     }
@@ -290,7 +304,7 @@ void QtMaterialCarousel::next()
 
 void QtMaterialCarousel::previous()
 {
-    const int previousIndex = nextEnabledIndex(m_currentIndex, -1);
+    const int previousIndex = nextEnabledIndex(d_ptr->m_currentIndex, -1);
     if (previousIndex >= 0) {
         setCurrentIndex(previousIndex);
     }
@@ -298,8 +312,8 @@ void QtMaterialCarousel::previous()
 
 void QtMaterialCarousel::activateCurrentItem()
 {
-    if (isValidIndex(m_currentIndex) && m_items.at(m_currentIndex).enabled) {
-        emit itemActivated(m_currentIndex);
+    if (isValidIndex(d_ptr->m_currentIndex) && d_ptr->m_items.at(d_ptr->m_currentIndex).enabled) {
+        emit itemActivated(d_ptr->m_currentIndex);
     }
 }
 
@@ -316,8 +330,8 @@ void QtMaterialCarousel::keyPressEvent(QKeyEvent* event)
         event->accept();
         return;
     case Qt::Key_Home:
-        for (int i = 0; i < m_items.size(); ++i) {
-            if (m_items.at(i).enabled) {
+        for (int i = 0; i < d_ptr->m_items.size(); ++i) {
+            if (d_ptr->m_items.at(i).enabled) {
                 setCurrentIndex(i);
                 break;
             }
@@ -325,8 +339,8 @@ void QtMaterialCarousel::keyPressEvent(QKeyEvent* event)
         event->accept();
         return;
     case Qt::Key_End:
-        for (int i = m_items.size() - 1; i >= 0; --i) {
-            if (m_items.at(i).enabled) {
+        for (int i = d_ptr->m_items.size() - 1; i >= 0; --i) {
+            if (d_ptr->m_items.at(i).enabled) {
                 setCurrentIndex(i);
                 break;
             }
@@ -353,8 +367,8 @@ void QtMaterialCarousel::mouseReleaseEvent(QMouseEvent* event)
         return;
     }
 
-    for (int i = 0; i < m_items.size(); ++i) {
-        if (itemRect(i).contains(event->pos()) && m_items.at(i).enabled) {
+    for (int i = 0; i < d_ptr->m_items.size(); ++i) {
+        if (itemRect(i).contains(event->pos()) && d_ptr->m_items.at(i).enabled) {
             setCurrentIndex(i);
             emit itemClicked(i);
             emit itemActivated(i);
@@ -376,14 +390,14 @@ void QtMaterialCarousel::paintEvent(QPaintEvent*)
     const QColor muted = palette().color(QPalette::Disabled, QPalette::Text);
     const QColor highlight = palette().color(QPalette::Highlight);
 
-    for (int i = 0; i < m_items.size(); ++i) {
+    for (int i = 0; i < d_ptr->m_items.size(); ++i) {
         const QRect rect = itemRect(i);
         if (rect.isNull()) {
             continue;
         }
 
-        const bool current = i == m_currentIndex;
-        const bool enabled = m_items.at(i).enabled;
+        const bool current = i == d_ptr->m_currentIndex;
+        const bool enabled = d_ptr->m_items.at(i).enabled;
         const QColor fill = current ? highlight.lighter(185) : base;
 
         painter.setPen(current ? QPen(highlight, 2) : QPen(palette().color(QPalette::Mid), 1));
@@ -391,10 +405,10 @@ void QtMaterialCarousel::paintEvent(QPaintEvent*)
         painter.drawRoundedRect(rect.adjusted(1, 1, -1, -1), kRadius, kRadius);
 
         QRect content = rect.adjusted(14, 12, -14, -12);
-        if (!m_items.at(i).icon.isNull()) {
+        if (!d_ptr->m_items.at(i).icon.isNull()) {
             const QSize iconSize(28, 28);
             const QRect iconRect(content.topLeft(), iconSize);
-            m_items.at(i).icon.paint(&painter, iconRect, Qt::AlignCenter,
+            d_ptr->m_items.at(i).icon.paint(&painter, iconRect, Qt::AlignCenter,
                                       enabled ? QIcon::Normal : QIcon::Disabled);
             content.setTop(iconRect.bottom() + 10);
         }
@@ -406,9 +420,9 @@ void QtMaterialCarousel::paintEvent(QPaintEvent*)
         const QFontMetrics titleMetrics(titleFont);
         painter.drawText(content,
                          Qt::AlignLeft | Qt::AlignTop,
-                         titleMetrics.elidedText(m_items.at(i).title, Qt::ElideRight, content.width()));
+                         titleMetrics.elidedText(d_ptr->m_items.at(i).title, Qt::ElideRight, content.width()));
 
-        if (!m_items.at(i).supportingText.isEmpty()) {
+        if (!d_ptr->m_items.at(i).supportingText.isEmpty()) {
             QFont supportFont = font();
             supportFont.setPointSize(qMax(1, supportFont.pointSize() - 1));
             painter.setFont(supportFont);
@@ -417,7 +431,7 @@ void QtMaterialCarousel::paintEvent(QPaintEvent*)
             const QFontMetrics supportMetrics(supportFont);
             painter.drawText(supportRect,
                              Qt::AlignLeft | Qt::AlignTop,
-                             supportMetrics.elidedText(m_items.at(i).supportingText,
+                             supportMetrics.elidedText(d_ptr->m_items.at(i).supportingText,
                                                        Qt::ElideRight,
                                                        supportRect.width()));
         }
@@ -442,40 +456,40 @@ void QtMaterialCarousel::changeEvent(QEvent* event)
 
 bool QtMaterialCarousel::isValidIndex(int index) const noexcept
 {
-    return index >= 0 && index < m_items.size();
+    return index >= 0 && index < d_ptr->m_items.size();
 }
 
 int QtMaterialCarousel::firstVisibleIndex() const noexcept
 {
-    if (m_items.isEmpty()) {
+    if (d_ptr->m_items.isEmpty()) {
         return 0;
     }
 
-    const int half = m_visibleItemCount / 2;
-    return qBound(0, m_currentIndex - half, qMax(0, m_items.size() - m_visibleItemCount));
+    const int half = d_ptr->m_visibleItemCount / 2;
+    return qBound(0, d_ptr->m_currentIndex - half, qMax(0, d_ptr->m_items.size() - d_ptr->m_visibleItemCount));
 }
 
 int QtMaterialCarousel::nextEnabledIndex(int start, int delta) const noexcept
 {
-    if (m_items.isEmpty() || delta == 0) {
+    if (d_ptr->m_items.isEmpty() || delta == 0) {
         return -1;
     }
 
-    int index = isValidIndex(start) ? start : (delta > 0 ? -1 : m_items.size());
-    for (int step = 0; step < m_items.size(); ++step) {
+    int index = isValidIndex(start) ? start : (delta > 0 ? -1 : d_ptr->m_items.size());
+    for (int step = 0; step < d_ptr->m_items.size(); ++step) {
         index += delta;
-        if (m_wrapAround) {
-            if (index >= m_items.size()) {
+        if (d_ptr->m_wrapAround) {
+            if (index >= d_ptr->m_items.size()) {
                 index = 0;
             } else if (index < 0) {
-                index = m_items.size() - 1;
+                index = d_ptr->m_items.size() - 1;
             }
         }
 
         if (!isValidIndex(index)) {
             return -1;
         }
-        if (m_items.at(index).enabled) {
+        if (d_ptr->m_items.at(index).enabled) {
             return index;
         }
     }
@@ -489,7 +503,7 @@ QRect QtMaterialCarousel::itemRect(int index) const
     }
 
     const int first = firstVisibleIndex();
-    const int last = qMin(m_items.size(), first + m_visibleItemCount);
+    const int last = qMin(d_ptr->m_items.size(), first + d_ptr->m_visibleItemCount);
     if (index < first || index >= last) {
         return QRect();
     }
@@ -508,22 +522,22 @@ QRect QtMaterialCarousel::itemRect(int index) const
 void QtMaterialCarousel::updateAccessibilitySummary()
 {
     QString summary;
-    if (m_items.isEmpty()) {
+    if (d_ptr->m_items.isEmpty()) {
         summary = QStringLiteral("Carousel, empty");
     } else {
         summary = QStringLiteral("Carousel, %1 items, current %2")
-                      .arg(m_items.size())
+                      .arg(d_ptr->m_items.size())
                       .arg(currentItemAccessibleText());
     }
 
-    if (m_accessibilitySummary == summary) {
+    if (d_ptr->m_accessibilitySummary == summary) {
         setAccessibleDescription(summary);
         return;
     }
 
-    m_accessibilitySummary = summary;
-    setAccessibleDescription(m_accessibilitySummary);
-    emit accessibilitySummaryChanged(m_accessibilitySummary);
+    d_ptr->m_accessibilitySummary = summary;
+    setAccessibleDescription(d_ptr->m_accessibilitySummary);
+    emit accessibilitySummaryChanged(d_ptr->m_accessibilitySummary);
 }
 
 void QtMaterialCarousel::emitCurrentIndexChanged(int index)

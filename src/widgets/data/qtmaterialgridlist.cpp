@@ -3,8 +3,19 @@
 #include <QKeyEvent>
 #include <QResizeEvent>
 #include <QScrollBar>
+#include <memory>
 
 namespace QtMaterial {
+
+struct QtMaterialGridListPrivate
+{
+    QtMaterialGridList::SelectionMode m_selectionMode = QtMaterialGridList::SelectionMode::SingleSelection;
+    int m_columns = 3;
+    QSize m_cellExtent = QSize(160, 112);
+    QString m_accessibilitySummary;
+};
+
+
 
 namespace {
 
@@ -34,6 +45,8 @@ QAbstractItemView::SelectionMode toQtSelectionMode(QtMaterialGridList::Selection
 QtMaterialGridList::QtMaterialGridList(QWidget* parent)
     : QListWidget(parent)
 {
+    d_ptr = std::make_unique<QtMaterialGridListPrivate>();
+
     setObjectName(QStringLiteral("QtMaterialGridList"));
     setAccessibleName(QStringLiteral("Grid list"));
     setFocusPolicy(Qt::StrongFocus);
@@ -46,7 +59,7 @@ QtMaterialGridList::QtMaterialGridList(QWidget* parent)
     setFlow(QListView::LeftToRight);
     setUniformItemSizes(true);
     setSpacing(8);
-    QListWidget::setSelectionMode(toQtSelectionMode(m_selectionMode));
+    QListWidget::setSelectionMode(toQtSelectionMode(d_ptr->m_selectionMode));
 
     updateGridGeometry();
     syncAccessibilitySummary();
@@ -96,7 +109,7 @@ void QtMaterialGridList::insertGridItem(int index,
     auto* item = new QListWidgetItem(icon, QString(), this);
     item->setData(TitleRole, title);
     item->setData(SupportingTextRole, supportingText);
-    item->setSizeHint(m_cellExtent);
+    item->setSizeHint(d_ptr->m_cellExtent);
     item->setTextAlignment(Qt::AlignCenter);
     updateItemText(item);
     updateItemAccessibility(item);
@@ -221,16 +234,16 @@ void QtMaterialGridList::setCurrentIndex(int index)
 
 QtMaterialGridList::SelectionMode QtMaterialGridList::gridSelectionMode() const
 {
-    return m_selectionMode;
+    return d_ptr->m_selectionMode;
 }
 
 void QtMaterialGridList::setGridSelectionMode(SelectionMode mode)
 {
-    if (m_selectionMode == mode) {
+    if (d_ptr->m_selectionMode == mode) {
         return;
     }
 
-    m_selectionMode = mode;
+    d_ptr->m_selectionMode = mode;
     QListWidget::setSelectionMode(toQtSelectionMode(mode));
 
     if (mode == SelectionMode::NoSelection) {
@@ -272,7 +285,7 @@ QList<int> QtMaterialGridList::selectedIndexesList() const
 
 void QtMaterialGridList::setItemSelected(int index, bool selected)
 {
-    if (m_selectionMode == SelectionMode::NoSelection || !isItemEnabled(index)) {
+    if (d_ptr->m_selectionMode == SelectionMode::NoSelection || !isItemEnabled(index)) {
         return;
     }
 
@@ -290,43 +303,43 @@ void QtMaterialGridList::clearGridSelection()
 
 int QtMaterialGridList::columns() const
 {
-    return m_columns;
+    return d_ptr->m_columns;
 }
 
 void QtMaterialGridList::setColumns(int columns)
 {
     columns = qMax(1, columns);
-    if (m_columns == columns) {
+    if (d_ptr->m_columns == columns) {
         return;
     }
 
-    m_columns = columns;
+    d_ptr->m_columns = columns;
     updateGridGeometry();
     syncAccessibilitySummary();
-    Q_EMIT columnsChanged(m_columns);
+    Q_EMIT columnsChanged(d_ptr->m_columns);
 }
 
 QSize QtMaterialGridList::cellExtent() const
 {
-    return m_cellExtent;
+    return d_ptr->m_cellExtent;
 }
 
 void QtMaterialGridList::setCellExtent(const QSize& size)
 {
     const QSize normalized(qMax(48, size.width()), qMax(48, size.height()));
-    if (m_cellExtent == normalized) {
+    if (d_ptr->m_cellExtent == normalized) {
         return;
     }
 
-    m_cellExtent = normalized;
+    d_ptr->m_cellExtent = normalized;
     for (int i = 0; i < count(); ++i) {
         if (auto* item = gridItemAt(i)) {
-            item->setSizeHint(m_cellExtent);
+            item->setSizeHint(d_ptr->m_cellExtent);
         }
     }
 
     updateGridGeometry();
-    Q_EMIT cellExtentChanged(m_cellExtent);
+    Q_EMIT cellExtentChanged(d_ptr->m_cellExtent);
 }
 
 QString QtMaterialGridList::itemAccessibleText(int index) const
@@ -364,7 +377,7 @@ QString QtMaterialGridList::currentItemAccessibleText() const
 
 QString QtMaterialGridList::accessibilitySummary() const
 {
-    return m_accessibilitySummary;
+    return d_ptr->m_accessibilitySummary;
 }
 
 void QtMaterialGridList::keyPressEvent(QKeyEvent* event)
@@ -385,10 +398,10 @@ void QtMaterialGridList::keyPressEvent(QKeyEvent* event)
         target = nextEnabledIndex(current, rtl ? -1 : 1);
         break;
     case Qt::Key_Up:
-        target = nextEnabledIndex(current, -m_columns);
+        target = nextEnabledIndex(current, -d_ptr->m_columns);
         break;
     case Qt::Key_Down:
-        target = nextEnabledIndex(current, m_columns);
+        target = nextEnabledIndex(current, d_ptr->m_columns);
         break;
     case Qt::Key_Home:
         target = firstEnabledIndex();
@@ -499,12 +512,12 @@ void QtMaterialGridList::updateItemAccessibility(QListWidgetItem* item)
 
 void QtMaterialGridList::updateGridGeometry()
 {
-    QSize gridSize = m_cellExtent;
-    if (m_columns > 0 && viewport()) {
+    QSize gridSize = d_ptr->m_cellExtent;
+    if (d_ptr->m_columns > 0 && viewport()) {
         const int available = qMax(0, viewport()->width() - verticalScrollBar()->sizeHint().width());
         if (available > 0) {
-            const int horizontalSpacing = spacing() * qMax(0, m_columns - 1);
-            const int width = qMax(m_cellExtent.width(), (available - horizontalSpacing) / m_columns);
+            const int horizontalSpacing = spacing() * qMax(0, d_ptr->m_columns - 1);
+            const int width = qMax(d_ptr->m_cellExtent.width(), (available - horizontalSpacing) / d_ptr->m_columns);
             gridSize.setWidth(width);
         }
     }
@@ -525,13 +538,13 @@ void QtMaterialGridList::syncAccessibilitySummary()
     }
 
     const QString summary = parts.join(QStringLiteral(", "));
-    if (m_accessibilitySummary == summary) {
+    if (d_ptr->m_accessibilitySummary == summary) {
         return;
     }
 
-    m_accessibilitySummary = summary;
+    d_ptr->m_accessibilitySummary = summary;
     setAccessibleDescription(summary);
-    Q_EMIT accessibilitySummaryChanged(m_accessibilitySummary);
+    Q_EMIT accessibilitySummaryChanged(d_ptr->m_accessibilitySummary);
 }
 
 } // namespace QtMaterial

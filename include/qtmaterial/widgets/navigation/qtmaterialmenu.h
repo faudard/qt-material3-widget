@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QIcon>
 #include <QPoint>
 #include <QString>
@@ -8,6 +10,7 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 
+class QtMaterialMenuPrivate;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialMenu : public QWidget
 {
     Q_OBJECT
@@ -85,6 +88,7 @@ protected:
     void focusOutEvent(QFocusEvent* event) override;
 
 private:
+    std::unique_ptr<QtMaterialMenuPrivate> d_ptr;
     bool isValidIndex(int index) const noexcept;
     bool isActivatableIndex(int index) const;
     int firstActivatableIndex() const;
@@ -95,8 +99,4 @@ private:
     void updateAccessibility();
     void emitAccessibilitySummaryIfChanged();
 
-    QVector<Item> m_items;
-    int m_currentIndex = -1;
-    int m_pressedIndex = -1;
-    QString m_lastAccessibilitySummary;
 };

@@ -5,8 +5,20 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QVBoxLayout>
+#include <memory>
 
 namespace QtMaterial {
+
+struct QtMaterialListPrivate
+{
+    QVector<QtMaterialListItem*> m_items;
+    QVBoxLayout* m_layout = nullptr;
+    QtMaterialList::SelectionMode m_selectionMode = QtMaterialList::SelectionMode::SingleSelection;
+    int m_currentIndex = -1;
+    QString m_lastAccessibilitySummary;
+};
+
+
 
 namespace {
 QString defaultListAccessibleName()
@@ -17,12 +29,14 @@ QString defaultListAccessibleName()
 
 QtMaterialList::QtMaterialList(QWidget* parent)
     : QWidget(parent)
-    , m_layout(new QVBoxLayout(this))
+    , d_ptr->m_layout(new QVBoxLayout(this))
 {
+    d_ptr = std::make_unique<QtMaterialListPrivate>();
+
     setFocusPolicy(Qt::StrongFocus);
     setAccessibleName(defaultListAccessibleName());
-    m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->setSpacing(0);
+    d_ptr->m_layout->setContentsMargins(0, 0, 0, 0);
+    d_ptr->m_layout->setSpacing(0);
     syncAccessibility();
 }
 
@@ -30,23 +44,23 @@ QtMaterialList::~QtMaterialList() = default;
 
 int QtMaterialList::count() const noexcept
 {
-    return m_items.size();
+    return d_ptr->m_items.size();
 }
 
 bool QtMaterialList::isEmpty() const noexcept
 {
-    return m_items.isEmpty();
+    return d_ptr->m_items.isEmpty();
 }
 
 QtMaterialListItem* QtMaterialList::itemAt(int index) const
 {
-    return isValidIndex(index) ? m_items.at(index) : nullptr;
+    return isValidIndex(index) ? d_ptr->m_items.at(index) : nullptr;
 }
 
 int QtMaterialList::indexOf(const QtMaterialListItem* item) const noexcept
 {
-    for (int i = 0; i < m_items.size(); ++i) {
-        if (m_items.at(i) == item) {
+    for (int i = 0; i < d_ptr->m_items.size(); ++i) {
+        if (d_ptr->m_items.at(i) == item) {
             return i;
         }
     }
@@ -55,7 +69,7 @@ int QtMaterialList::indexOf(const QtMaterialListItem* item) const noexcept
 
 void QtMaterialList::addItem(QtMaterialListItem* item)
 {
-    insertItem(m_items.size(), item);
+    insertItem(d_ptr->m_items.size(), item);
 }
 
 QtMaterialListItem* QtMaterialList::addItem(const QString& headline)
@@ -67,22 +81,22 @@ QtMaterialListItem* QtMaterialList::addItem(const QString& headline)
 
 void QtMaterialList::insertItem(int index, QtMaterialListItem* item)
 {
-    if (!item || m_items.contains(item)) {
+    if (!item || d_ptr->m_items.contains(item)) {
         return;
     }
 
-    index = qBound(0, index, m_items.size());
+    index = qBound(0, index, d_ptr->m_items.size());
     item->setParent(this);
     initialiseItem(item);
-    m_items.insert(index, item);
-    m_layout->insertWidget(index, item);
+    d_ptr->m_items.insert(index, item);
+    d_ptr->m_layout->insertWidget(index, item);
 
-    if (m_currentIndex < 0 && item->isEnabled()) {
-        m_currentIndex = index;
-        emit currentIndexChanged(m_currentIndex);
-    } else if (m_currentIndex >= index) {
-        ++m_currentIndex;
-        emit currentIndexChanged(m_currentIndex);
+    if (d_ptr->m_currentIndex < 0 && item->isEnabled()) {
+        d_ptr->m_currentIndex = index;
+        emit currentIndexChanged(d_ptr->m_currentIndex);
+    } else if (d_ptr->m_currentIndex >= index) {
+        ++d_ptr->m_currentIndex;
+        emit currentIndexChanged(d_ptr->m_currentIndex);
     }
 
     syncItemSelection();
@@ -95,27 +109,27 @@ QtMaterialListItem* QtMaterialList::takeItem(int index)
         return nullptr;
     }
 
-    auto* item = m_items.takeAt(index);
-    m_layout->removeWidget(item);
+    auto* item = d_ptr->m_items.takeAt(index);
+    d_ptr->m_layout->removeWidget(item);
     item->removeEventFilter(this);
     item->disconnect(this);
     item->setParent(nullptr);
 
-    if (m_items.isEmpty()) {
-        if (m_currentIndex != -1) {
-            m_currentIndex = -1;
-            emit currentIndexChanged(m_currentIndex);
+    if (d_ptr->m_items.isEmpty()) {
+        if (d_ptr->m_currentIndex != -1) {
+            d_ptr->m_currentIndex = -1;
+            emit currentIndexChanged(d_ptr->m_currentIndex);
         }
-    } else if (m_currentIndex == index) {
-        const int next = nextEnabledIndex(qMin(index, m_items.size() - 1), 1);
+    } else if (d_ptr->m_currentIndex == index) {
+        const int next = nextEnabledIndex(qMin(index, d_ptr->m_items.size() - 1), 1);
         const int fallback = next >= 0 ? next : lastEnabledIndex();
-        if (m_currentIndex != fallback) {
-            m_currentIndex = fallback;
-            emit currentIndexChanged(m_currentIndex);
+        if (d_ptr->m_currentIndex != fallback) {
+            d_ptr->m_currentIndex = fallback;
+            emit currentIndexChanged(d_ptr->m_currentIndex);
         }
-    } else if (m_currentIndex > index) {
-        --m_currentIndex;
-        emit currentIndexChanged(m_currentIndex);
+    } else if (d_ptr->m_currentIndex > index) {
+        --d_ptr->m_currentIndex;
+        emit currentIndexChanged(d_ptr->m_currentIndex);
     }
 
     syncItemSelection();
@@ -132,9 +146,9 @@ void QtMaterialList::removeItem(int index)
 
 void QtMaterialList::clear()
 {
-    const bool hadItems = !m_items.isEmpty();
-    while (!m_items.isEmpty()) {
-        removeItem(m_items.size() - 1);
+    const bool hadItems = !d_ptr->m_items.isEmpty();
+    while (!d_ptr->m_items.isEmpty()) {
+        removeItem(d_ptr->m_items.size() - 1);
     }
 
     if (hadItems) {
@@ -145,50 +159,50 @@ void QtMaterialList::clear()
 
 int QtMaterialList::currentIndex() const noexcept
 {
-    return m_currentIndex;
+    return d_ptr->m_currentIndex;
 }
 
 void QtMaterialList::setCurrentIndex(int index)
 {
     if (index < 0) {
-        if (m_currentIndex == -1) {
+        if (d_ptr->m_currentIndex == -1) {
             return;
         }
-        m_currentIndex = -1;
+        d_ptr->m_currentIndex = -1;
         syncItemSelection();
-        emit currentIndexChanged(m_currentIndex);
+        emit currentIndexChanged(d_ptr->m_currentIndex);
         syncAccessibility();
         return;
     }
 
-    if (!isValidIndex(index) || !m_items.at(index)->isEnabled()) {
+    if (!isValidIndex(index) || !d_ptr->m_items.at(index)->isEnabled()) {
         return;
     }
 
-    if (m_currentIndex == index) {
+    if (d_ptr->m_currentIndex == index) {
         return;
     }
 
-    m_currentIndex = index;
+    d_ptr->m_currentIndex = index;
     syncItemSelection();
-    emit currentIndexChanged(m_currentIndex);
+    emit currentIndexChanged(d_ptr->m_currentIndex);
     syncAccessibility();
 }
 
 QtMaterialList::SelectionMode QtMaterialList::selectionMode() const noexcept
 {
-    return m_selectionMode;
+    return d_ptr->m_selectionMode;
 }
 
 void QtMaterialList::setSelectionMode(SelectionMode mode)
 {
-    if (m_selectionMode == mode) {
+    if (d_ptr->m_selectionMode == mode) {
         return;
     }
 
-    m_selectionMode = mode;
+    d_ptr->m_selectionMode = mode;
     syncItemSelection();
-    emit selectionModeChanged(m_selectionMode);
+    emit selectionModeChanged(d_ptr->m_selectionMode);
     emit selectionChanged();
     syncAccessibility();
 }
@@ -196,8 +210,8 @@ void QtMaterialList::setSelectionMode(SelectionMode mode)
 QList<int> QtMaterialList::selectedIndexes() const
 {
     QList<int> indexes;
-    for (int i = 0; i < m_items.size(); ++i) {
-        if (m_items.at(i)->isSelected()) {
+    for (int i = 0; i < d_ptr->m_items.size(); ++i) {
+        if (d_ptr->m_items.at(i)->isSelected()) {
             indexes.append(i);
         }
     }
@@ -207,7 +221,7 @@ QList<int> QtMaterialList::selectedIndexes() const
 void QtMaterialList::clearSelection()
 {
     bool changed = false;
-    for (auto* item : m_items) {
+    for (auto* item : d_ptr->m_items) {
         if (item->isSelected()) {
             item->setSelected(false);
             changed = true;
@@ -222,18 +236,18 @@ void QtMaterialList::clearSelection()
 
 bool QtMaterialList::isItemEnabled(int index) const
 {
-    return isValidIndex(index) && m_items.at(index)->isEnabled();
+    return isValidIndex(index) && d_ptr->m_items.at(index)->isEnabled();
 }
 
 void QtMaterialList::setItemEnabled(int index, bool enabled)
 {
-    if (!isValidIndex(index) || m_items.at(index)->isEnabled() == enabled) {
+    if (!isValidIndex(index) || d_ptr->m_items.at(index)->isEnabled() == enabled) {
         return;
     }
 
-    m_items.at(index)->setEnabled(enabled);
+    d_ptr->m_items.at(index)->setEnabled(enabled);
 
-    if (!enabled && m_currentIndex == index) {
+    if (!enabled && d_ptr->m_currentIndex == index) {
         const int next = nextEnabledIndex(index + 1, 1);
         const int previous = next >= 0 ? next : nextEnabledIndex(index - 1, -1);
         setCurrentIndex(previous);
@@ -269,7 +283,7 @@ QString QtMaterialList::itemAccessibleText(int index) const
 
 QString QtMaterialList::accessibilitySummary() const
 {
-    const int total = m_items.size();
+    const int total = d_ptr->m_items.size();
     const int selected = selectedIndexes().size();
 
     if (total == 0) {
@@ -280,8 +294,8 @@ QString QtMaterialList::accessibilitySummary() const
                           .arg(total)
                           .arg(total == 1 ? QString() : QStringLiteral("s"));
 
-    if (m_currentIndex >= 0) {
-        summary += QStringLiteral(", current %1 of %2").arg(m_currentIndex + 1).arg(total);
+    if (d_ptr->m_currentIndex >= 0) {
+        summary += QStringLiteral(", current %1 of %2").arg(d_ptr->m_currentIndex + 1).arg(total);
     }
     if (selected > 0) {
         summary += QStringLiteral(", %1 selected").arg(selected);
@@ -349,7 +363,7 @@ void QtMaterialList::keyPressEvent(QKeyEvent* event)
     case Qt::Key_Return:
     case Qt::Key_Enter:
     case Qt::Key_Space:
-        if (activateIndex(m_currentIndex)) {
+        if (activateIndex(d_ptr->m_currentIndex)) {
             event->accept();
             return;
         }
@@ -395,16 +409,16 @@ void QtMaterialList::initialiseItem(QtMaterialListItem* item)
 
 void QtMaterialList::syncItemSelection()
 {
-    if (m_selectionMode == SelectionMode::NoSelection) {
-        for (auto* item : m_items) {
+    if (d_ptr->m_selectionMode == SelectionMode::NoSelection) {
+        for (auto* item : d_ptr->m_items) {
             item->setSelected(false);
         }
         return;
     }
 
-    if (m_selectionMode == SelectionMode::SingleSelection) {
-        for (int i = 0; i < m_items.size(); ++i) {
-            m_items.at(i)->setSelected(i == m_currentIndex);
+    if (d_ptr->m_selectionMode == SelectionMode::SingleSelection) {
+        for (int i = 0; i < d_ptr->m_items.size(); ++i) {
+            d_ptr->m_items.at(i)->setSelected(i == d_ptr->m_currentIndex);
         }
     }
 }
@@ -421,23 +435,23 @@ void QtMaterialList::syncAccessibility()
 void QtMaterialList::emitAccessibilityIfChanged()
 {
     const QString summary = accessibilitySummary();
-    if (m_lastAccessibilitySummary == summary) {
+    if (d_ptr->m_lastAccessibilitySummary == summary) {
         return;
     }
-    m_lastAccessibilitySummary = summary;
+    d_ptr->m_lastAccessibilitySummary = summary;
     emit accessibilitySummaryChanged(summary);
 }
 
 bool QtMaterialList::activateIndex(int index)
 {
-    if (!isValidIndex(index) || !m_items.at(index)->isEnabled()) {
+    if (!isValidIndex(index) || !d_ptr->m_items.at(index)->isEnabled()) {
         return false;
     }
 
     setCurrentIndex(index);
 
-    if (m_selectionMode == SelectionMode::MultiSelection) {
-        m_items.at(index)->setSelected(!m_items.at(index)->isSelected());
+    if (d_ptr->m_selectionMode == SelectionMode::MultiSelection) {
+        d_ptr->m_items.at(index)->setSelected(!d_ptr->m_items.at(index)->isSelected());
     } else {
         syncItemSelection();
         emit selectionChanged();
@@ -450,16 +464,16 @@ bool QtMaterialList::activateIndex(int index)
 
 bool QtMaterialList::moveCurrent(int delta)
 {
-    if (m_items.isEmpty()) {
+    if (d_ptr->m_items.isEmpty()) {
         return false;
     }
 
-    const int start = m_currentIndex < 0
-        ? (delta >= 0 ? 0 : m_items.size() - 1)
-        : m_currentIndex + delta;
+    const int start = d_ptr->m_currentIndex < 0
+        ? (delta >= 0 ? 0 : d_ptr->m_items.size() - 1)
+        : d_ptr->m_currentIndex + delta;
     const int next = nextEnabledIndex(start, delta);
 
-    if (next < 0 || next == m_currentIndex) {
+    if (next < 0 || next == d_ptr->m_currentIndex) {
         return false;
     }
 
@@ -473,7 +487,7 @@ bool QtMaterialList::moveCurrent(int delta)
 bool QtMaterialList::moveToBoundary(bool first)
 {
     const int index = first ? firstEnabledIndex() : lastEnabledIndex();
-    if (index < 0 || index == m_currentIndex) {
+    if (index < 0 || index == d_ptr->m_currentIndex) {
         return false;
     }
 
@@ -486,12 +500,12 @@ bool QtMaterialList::moveToBoundary(bool first)
 
 int QtMaterialList::nextEnabledIndex(int start, int delta) const
 {
-    if (delta == 0 || m_items.isEmpty()) {
+    if (delta == 0 || d_ptr->m_items.isEmpty()) {
         return -1;
     }
 
-    for (int i = start; i >= 0 && i < m_items.size(); i += delta) {
-        if (m_items.at(i)->isEnabled()) {
+    for (int i = start; i >= 0 && i < d_ptr->m_items.size(); i += delta) {
+        if (d_ptr->m_items.at(i)->isEnabled()) {
             return i;
         }
     }
@@ -505,12 +519,12 @@ int QtMaterialList::firstEnabledIndex() const
 
 int QtMaterialList::lastEnabledIndex() const
 {
-    return nextEnabledIndex(m_items.size() - 1, -1);
+    return nextEnabledIndex(d_ptr->m_items.size() - 1, -1);
 }
 
 bool QtMaterialList::isValidIndex(int index) const noexcept
 {
-    return index >= 0 && index < m_items.size();
+    return index >= 0 && index < d_ptr->m_items.size();
 }
 
 } // namespace QtMaterial

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QColor>
 #include <QEvent>
 #include <QRect>
@@ -10,6 +12,8 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+class QtMaterialDividerPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDivider : public QWidget {
     Q_OBJECT
@@ -73,17 +77,10 @@ protected:
     void changeEvent(QEvent *event) override;
 
 private:
+    std::unique_ptr<QtMaterialDividerPrivate> d_ptr;
     QColor resolvedColor() const;
     void syncAccessibility();
 
-    Qt::Orientation m_orientation = Qt::Horizontal;
-    int m_leadingInset = 0;
-    int m_trailingInset = 0;
-    int m_thickness = 1;
-    QColor m_color;
-    bool m_decorative = true;
-    QString m_accessibilityLabel;
-    QString m_lastAccessibilitySummary;
 };
 
 } // namespace QtMaterial

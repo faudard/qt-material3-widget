@@ -5,8 +5,25 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QResizeEvent>
+#include <memory>
 
 namespace QtMaterial {
+
+struct QtMaterialListItemPrivate
+{
+    mutable bool m_specDirty = true;
+    mutable bool m_layoutDirty = true;
+    mutable QtMaterial::ListItemSpec m_spec;
+    QString m_headlineText;
+    QString m_supportingText;
+    QIcon m_leadingIcon;
+    QIcon m_trailingIcon;
+    bool m_selected = false;
+    bool m_dividerVisible = false;
+    QtMaterialListItem::DensityVariant m_densityVariant = QtMaterialListItem::DensityVariant::Standard;
+};
+
+
 
 namespace {
 int heightForDensity(QtMaterialListItem::DensityVariant variant)
@@ -26,135 +43,139 @@ int heightForDensity(QtMaterialListItem::DensityVariant variant)
 QtMaterialListItem::QtMaterialListItem(QWidget* parent)
     : QtMaterialControl(parent)
 {
+    d_ptr = std::make_unique<QtMaterialListItemPrivate>();
+
     setFocusPolicy(Qt::StrongFocus);
-    setMinimumHeight(heightForDensity(m_densityVariant));
+    setMinimumHeight(heightForDensity(d_ptr->m_densityVariant));
 }
 
 QtMaterialListItem::QtMaterialListItem(const QString& headline, QWidget* parent)
     : QtMaterialControl(parent)
-    , m_headlineText(headline)
+    , d_ptr->m_headlineText(headline)
 {
+    d_ptr = std::make_unique<QtMaterialListItemPrivate>();
+
     setFocusPolicy(Qt::StrongFocus);
-    setMinimumHeight(heightForDensity(m_densityVariant));
+    setMinimumHeight(heightForDensity(d_ptr->m_densityVariant));
 }
 
 QtMaterialListItem::~QtMaterialListItem() = default;
 
 QString QtMaterialListItem::headlineText() const
 {
-    return m_headlineText;
+    return d_ptr->m_headlineText;
 }
 
 void QtMaterialListItem::setHeadlineText(const QString& text)
 {
-    if (m_headlineText == text) {
+    if (d_ptr->m_headlineText == text) {
         return;
     }
 
-    m_headlineText = text;
+    d_ptr->m_headlineText = text;
     contentChangedEvent();
 }
 
 QString QtMaterialListItem::supportingText() const
 {
-    return m_supportingText;
+    return d_ptr->m_supportingText;
 }
 
 void QtMaterialListItem::setSupportingText(const QString& text)
 {
-    if (m_supportingText == text) {
+    if (d_ptr->m_supportingText == text) {
         return;
     }
 
-    m_supportingText = text;
+    d_ptr->m_supportingText = text;
     contentChangedEvent();
 }
 
 QIcon QtMaterialListItem::leadingIcon() const
 {
-    return m_leadingIcon;
+    return d_ptr->m_leadingIcon;
 }
 
 void QtMaterialListItem::setLeadingIcon(const QIcon& icon)
 {
-    m_leadingIcon = icon;
+    d_ptr->m_leadingIcon = icon;
     update();
 }
 
 QIcon QtMaterialListItem::trailingIcon() const
 {
-    return m_trailingIcon;
+    return d_ptr->m_trailingIcon;
 }
 
 void QtMaterialListItem::setTrailingIcon(const QIcon& icon)
 {
-    m_trailingIcon = icon;
+    d_ptr->m_trailingIcon = icon;
     update();
 }
 
 bool QtMaterialListItem::isSelected() const noexcept
 {
-    return m_selected;
+    return d_ptr->m_selected;
 }
 
 void QtMaterialListItem::setSelected(bool selected)
 {
-    if (m_selected == selected) {
+    if (d_ptr->m_selected == selected) {
         return;
     }
 
-    m_selected = selected;
-    emit selectionChanged(m_selected);
+    d_ptr->m_selected = selected;
+    emit selectionChanged(d_ptr->m_selected);
     update();
 }
 
 bool QtMaterialListItem::isDividerVisible() const noexcept
 {
-    return m_dividerVisible;
+    return d_ptr->m_dividerVisible;
 }
 
 void QtMaterialListItem::setDividerVisible(bool visible)
 {
-    if (m_dividerVisible == visible) {
+    if (d_ptr->m_dividerVisible == visible) {
         return;
     }
 
-    m_dividerVisible = visible;
+    d_ptr->m_dividerVisible = visible;
     update();
 }
 
 QtMaterialListItem::DensityVariant QtMaterialListItem::densityVariant() const noexcept
 {
-    return m_densityVariant;
+    return d_ptr->m_densityVariant;
 }
 
 void QtMaterialListItem::setDensityVariant(DensityVariant variant)
 {
-    if (m_densityVariant == variant) {
+    if (d_ptr->m_densityVariant == variant) {
         return;
     }
 
-    m_densityVariant = variant;
+    d_ptr->m_densityVariant = variant;
     updateGeometry();
-    setMinimumHeight(heightForDensity(m_densityVariant));
+    setMinimumHeight(heightForDensity(d_ptr->m_densityVariant));
     update();
 }
 
 QSize QtMaterialListItem::sizeHint() const
 {
-    return QSize(240, heightForDensity(m_densityVariant));
+    return QSize(240, heightForDensity(d_ptr->m_densityVariant));
 }
 
 QSize QtMaterialListItem::minimumSizeHint() const
 {
-    return QSize(120, heightForDensity(m_densityVariant));
+    return QSize(120, heightForDensity(d_ptr->m_densityVariant));
 }
 
 void QtMaterialListItem::paintEvent(QPaintEvent*)
 {
     QPainter painter(this);
 
-    if (m_selected) {
+    if (d_ptr->m_selected) {
         painter.fillRect(rect(), palette().alternateBase());
     }
 
@@ -162,37 +183,37 @@ void QtMaterialListItem::paintEvent(QPaintEvent*)
     const int iconSize = 20;
     int textLeft = leftPadding;
 
-    if (!m_leadingIcon.isNull()) {
-        m_leadingIcon.paint(&painter, QRect(leftPadding, (height() - iconSize) / 2, iconSize, iconSize));
+    if (!d_ptr->m_leadingIcon.isNull()) {
+        d_ptr->m_leadingIcon.paint(&painter, QRect(leftPadding, (height() - iconSize) / 2, iconSize, iconSize));
         textLeft += iconSize + 12;
     }
 
     int textRight = width() - 16;
-    if (!m_trailingIcon.isNull()) {
+    if (!d_ptr->m_trailingIcon.isNull()) {
         const QRect trailingRect(width() - 16 - iconSize, (height() - iconSize) / 2, iconSize, iconSize);
-        m_trailingIcon.paint(&painter, trailingRect);
+        d_ptr->m_trailingIcon.paint(&painter, trailingRect);
         textRight = trailingRect.left() - 12;
     }
 
     painter.setPen(palette().windowText().color());
 
-    const bool hasSupporting = !m_supportingText.isEmpty();
+    const bool hasSupporting = !d_ptr->m_supportingText.isEmpty();
     if (hasSupporting) {
         painter.drawText(QRect(textLeft, 10, textRight - textLeft, 20),
                          Qt::AlignLeft | Qt::AlignVCenter,
-                         m_headlineText.isEmpty() ? QStringLiteral("List item") : m_headlineText);
+                         d_ptr->m_headlineText.isEmpty() ? QStringLiteral("List item") : d_ptr->m_headlineText);
 
         painter.setPen(palette().mid().color());
         painter.drawText(QRect(textLeft, 30, textRight - textLeft, 18),
                          Qt::AlignLeft | Qt::AlignVCenter,
-                         m_supportingText);
+                         d_ptr->m_supportingText);
     } else {
         painter.drawText(QRect(textLeft, 0, textRight - textLeft, height()),
                          Qt::AlignLeft | Qt::AlignVCenter,
-                         m_headlineText.isEmpty() ? QStringLiteral("List item") : m_headlineText);
+                         d_ptr->m_headlineText.isEmpty() ? QStringLiteral("List item") : d_ptr->m_headlineText);
     }
 
-    if (m_dividerVisible) {
+    if (d_ptr->m_dividerVisible) {
         painter.fillRect(QRect(16, height() - 1, qMax(0, width() - 32), 1), palette().mid());
     }
 }
@@ -226,7 +247,7 @@ void QtMaterialListItem::keyPressEvent(QKeyEvent* event)
 void QtMaterialListItem::resizeEvent(QResizeEvent* event)
 {
     QtMaterialControl::resizeEvent(event);
-    m_layoutDirty = true;
+    d_ptr->m_layoutDirty = true;
 }
 
 void QtMaterialListItem::changeEvent(QEvent* event)
@@ -238,7 +259,7 @@ void QtMaterialListItem::changeEvent(QEvent* event)
 void QtMaterialListItem::themeChangedEvent(const QtMaterial::Theme& theme)
 {
     QtMaterialControl::themeChangedEvent(theme);
-    m_specDirty = true;
+    d_ptr->m_specDirty = true;
     update();
 }
 
@@ -250,24 +271,24 @@ void QtMaterialListItem::stateChangedEvent()
 
 void QtMaterialListItem::contentChangedEvent()
 {
-    m_layoutDirty = true;
+    d_ptr->m_layoutDirty = true;
     updateGeometry();
     update();
 }
 
 void QtMaterialListItem::ensureSpecResolved() const
 {
-    m_specDirty = false;
+    d_ptr->m_specDirty = false;
 }
 
 void QtMaterialListItem::ensureLayoutResolved() const
 {
-    m_layoutDirty = false;
+    d_ptr->m_layoutDirty = false;
 }
 
 void QtMaterialListItem::invalidateLayoutCache()
 {
-    m_layoutDirty = true;
+    d_ptr->m_layoutDirty = true;
 }
 
 } // namespace QtMaterial

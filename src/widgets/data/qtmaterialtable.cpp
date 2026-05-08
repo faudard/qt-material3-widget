@@ -10,8 +10,18 @@
 #include <QStyle>
 #include <QStyleOptionViewItem>
 #include <QStyledItemDelegate>
+#include <memory>
 
 namespace QtMaterial {
+
+struct QtMaterialTablePrivate
+{
+    TableSpec m_spec;
+    bool m_dense = false;
+    QString m_accessibilitySummary;
+};
+
+
 namespace {
 
 class MaterialTableDelegate final : public QStyledItemDelegate
@@ -22,7 +32,7 @@ public:
     {
     }
 
-    void setSpec(const TableSpec& spec) { m_spec = spec; }
+    void setSpec(const TableSpec& spec) { d_ptr->m_spec = spec; }
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override
     {
@@ -31,19 +41,19 @@ public:
 
         painter->save();
         if (opt.state & QStyle::State_Selected) {
-            painter->fillRect(opt.rect, m_spec.rowSelectedColor);
-            opt.palette.setColor(QPalette::Text, m_spec.rowSelectedTextColor);
+            painter->fillRect(opt.rect, d_ptr->m_spec.rowSelectedColor);
+            opt.palette.setColor(QPalette::Text, d_ptr->m_spec.rowSelectedTextColor);
         } else if (opt.state & QStyle::State_MouseOver) {
-            painter->fillRect(opt.rect, m_spec.rowHoverColor);
+            painter->fillRect(opt.rect, d_ptr->m_spec.rowHoverColor);
         }
 
-        opt.font = m_spec.bodyFont;
+        opt.font = d_ptr->m_spec.bodyFont;
         QStyledItemDelegate::paint(painter, opt, index);
         painter->restore();
     }
 
 private:
-    TableSpec m_spec = defaultTableSpec();
+    TableSpec d_ptr->m_spec = defaultTableSpec();
 };
 
 QString pluralize(int value, QStringView singular, QStringView plural)
@@ -55,8 +65,10 @@ QString pluralize(int value, QStringView singular, QStringView plural)
 
 QtMaterialTable::QtMaterialTable(QWidget* parent)
     : QTableView(parent)
-    , m_spec(defaultTableSpec())
+    , d_ptr->m_spec(defaultTableSpec())
 {
+    d_ptr = std::make_unique<QtMaterialTablePrivate>();
+
     setObjectName(QStringLiteral("QtMaterialTable"));
     setAccessibleName(QStringLiteral("Table"));
     setAlternatingRowColors(false);
@@ -83,12 +95,12 @@ QtMaterialTable::~QtMaterialTable() = default;
 
 TableSpec QtMaterialTable::spec() const
 {
-    return m_spec;
+    return d_ptr->m_spec;
 }
 
 void QtMaterialTable::setSpec(const TableSpec& spec)
 {
-    m_spec = spec;
+    d_ptr->m_spec = spec;
     applySpec();
     viewport()->update();
     update();
@@ -96,23 +108,23 @@ void QtMaterialTable::setSpec(const TableSpec& spec)
 
 bool QtMaterialTable::dense() const
 {
-    return m_dense;
+    return d_ptr->m_dense;
 }
 
 void QtMaterialTable::setDense(bool dense)
 {
-    if (m_dense == dense) {
+    if (d_ptr->m_dense == dense) {
         return;
     }
 
-    m_dense = dense;
+    d_ptr->m_dense = dense;
     applySpec();
-    Q_EMIT denseChanged(m_dense);
+    Q_EMIT denseChanged(d_ptr->m_dense);
 }
 
 QString QtMaterialTable::accessibilitySummary() const
 {
-    return m_accessibilitySummary;
+    return d_ptr->m_accessibilitySummary;
 }
 
 QString QtMaterialTable::currentCellAccessibleText() const
@@ -182,11 +194,11 @@ void QtMaterialTable::paintEvent(QPaintEvent* event)
 
     QPainter painter(viewport());
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(QPen(m_spec.focusRingColor, m_spec.focusRingWidth));
+    painter.setPen(QPen(d_ptr->m_spec.focusRingColor, d_ptr->m_spec.focusRingWidth));
     painter.setBrush(Qt::NoBrush);
     painter.drawRoundedRect(viewport()->rect().adjusted(1, 1, -2, -2),
-                            m_spec.cornerRadius,
-                            m_spec.cornerRadius);
+                            d_ptr->m_spec.cornerRadius,
+                            d_ptr->m_spec.cornerRadius);
 }
 
 void QtMaterialTable::focusInEvent(QFocusEvent* event)
@@ -260,26 +272,26 @@ void QtMaterialTable::currentChanged(const QModelIndex& current, const QModelInd
 
 void QtMaterialTable::applySpec()
 {
-    const int rowHeight = m_dense ? qMax(32, m_spec.rowHeight - 12) : m_spec.rowHeight;
+    const int rowHeight = d_ptr->m_dense ? qMax(32, d_ptr->m_spec.rowHeight - 12) : d_ptr->m_spec.rowHeight;
     verticalHeader()->setDefaultSectionSize(rowHeight);
-    horizontalHeader()->setDefaultSectionSize(m_spec.headerHeight);
-    horizontalHeader()->setMinimumHeight(m_spec.headerHeight);
+    horizontalHeader()->setDefaultSectionSize(d_ptr->m_spec.headerHeight);
+    horizontalHeader()->setMinimumHeight(d_ptr->m_spec.headerHeight);
     setGridStyle(Qt::SolidLine);
-    setFont(m_spec.bodyFont);
+    setFont(d_ptr->m_spec.bodyFont);
 
     QPalette palette = this->palette();
-    palette.setColor(QPalette::Base, m_spec.backgroundColor);
-    palette.setColor(QPalette::Text, m_spec.foregroundColor);
-    palette.setColor(QPalette::Highlight, m_spec.rowSelectedColor);
-    palette.setColor(QPalette::HighlightedText, m_spec.rowSelectedTextColor);
-    palette.setColor(QPalette::Window, m_spec.backgroundColor);
-    palette.setColor(QPalette::Button, m_spec.headerBackgroundColor);
-    palette.setColor(QPalette::ButtonText, m_spec.headerForegroundColor);
+    palette.setColor(QPalette::Base, d_ptr->m_spec.backgroundColor);
+    palette.setColor(QPalette::Text, d_ptr->m_spec.foregroundColor);
+    palette.setColor(QPalette::Highlight, d_ptr->m_spec.rowSelectedColor);
+    palette.setColor(QPalette::HighlightedText, d_ptr->m_spec.rowSelectedTextColor);
+    palette.setColor(QPalette::Window, d_ptr->m_spec.backgroundColor);
+    palette.setColor(QPalette::Button, d_ptr->m_spec.headerBackgroundColor);
+    palette.setColor(QPalette::ButtonText, d_ptr->m_spec.headerForegroundColor);
     setPalette(palette);
     viewport()->setPalette(palette);
 
     if (auto* delegate = dynamic_cast<MaterialTableDelegate*>(itemDelegate())) {
-        delegate->setSpec(m_spec);
+        delegate->setSpec(d_ptr->m_spec);
     }
 
     const QString style = QStringLiteral(
@@ -288,13 +300,13 @@ void QtMaterialTable::applySpec()
                               "QTableView::item { padding: 0 12px; border: 0; }"
                               "QTableView::item:hover { background: rgba(%7,%8,%9,%10); }"
                               "QScrollBar { background: transparent; }")
-                              .arg(m_spec.backgroundColor.name(), m_spec.foregroundColor.name(), m_spec.gridColor.name())
-                              .arg(m_spec.cornerRadius)
-                              .arg(m_spec.headerBackgroundColor.name(), m_spec.headerForegroundColor.name())
-                              .arg(m_spec.rowHoverColor.red())
-                              .arg(m_spec.rowHoverColor.green())
-                              .arg(m_spec.rowHoverColor.blue())
-                              .arg(m_spec.rowHoverColor.alpha());
+                              .arg(d_ptr->m_spec.backgroundColor.name(), d_ptr->m_spec.foregroundColor.name(), d_ptr->m_spec.gridColor.name())
+                              .arg(d_ptr->m_spec.cornerRadius)
+                              .arg(d_ptr->m_spec.headerBackgroundColor.name(), d_ptr->m_spec.headerForegroundColor.name())
+                              .arg(d_ptr->m_spec.rowHoverColor.red())
+                              .arg(d_ptr->m_spec.rowHoverColor.green())
+                              .arg(d_ptr->m_spec.rowHoverColor.blue())
+                              .arg(d_ptr->m_spec.rowHoverColor.alpha());
     setStyleSheet(style);
 }
 
@@ -315,9 +327,9 @@ void QtMaterialTable::syncAccessibility()
     const QString summary = parts.join(QStringLiteral(", "));
     setAccessibleDescription(summary);
 
-    if (summary != m_accessibilitySummary) {
-        m_accessibilitySummary = summary;
-        Q_EMIT accessibilitySummaryChanged(m_accessibilitySummary);
+    if (summary != d_ptr->m_accessibilitySummary) {
+        d_ptr->m_accessibilitySummary = summary;
+        Q_EMIT accessibilitySummaryChanged(d_ptr->m_accessibilitySummary);
         QAccessibleEvent event(this, QAccessible::DescriptionChanged);
         event.setChild(0);
         QAccessible::updateAccessibility(&event);

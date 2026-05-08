@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QIcon>
 #include <QSize>
 #include <QString>
@@ -9,6 +11,8 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+class QtMaterialCarouselPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialCarousel : public QWidget
 {
@@ -91,6 +95,7 @@ protected:
     void changeEvent(QEvent* event) override;
 
 private:
+    std::unique_ptr<QtMaterialCarouselPrivate> d_ptr;
     bool isValidIndex(int index) const noexcept;
     int firstVisibleIndex() const noexcept;
     int nextEnabledIndex(int start, int delta) const noexcept;
@@ -98,11 +103,6 @@ private:
     void updateAccessibilitySummary();
     void emitCurrentIndexChanged(int index);
 
-    QVector<Item> m_items;
-    int m_currentIndex = -1;
-    bool m_wrapAround = true;
-    int m_visibleItemCount = 3;
-    QString m_accessibilitySummary;
 };
 
 } // namespace QtMaterial

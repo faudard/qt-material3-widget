@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QWidget>
 #include <qicon.h>
 
@@ -13,6 +15,8 @@ class QPaintEvent;
 class QResizeEvent;
 
 namespace QtMaterial {
+
+class QtMaterialListItemPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialListItem : public QtMaterialControl
 {
@@ -69,21 +73,12 @@ protected:
     void contentChangedEvent();
 
 private:
+    std::unique_ptr<QtMaterialListItemPrivate> d_ptr;
     void ensureSpecResolved() const;
     void ensureLayoutResolved() const;
     void invalidateLayoutCache();
 
-    mutable bool m_specDirty = true;
-    mutable bool m_layoutDirty = true;
-    mutable QtMaterial::ListItemSpec m_spec;
 
-    QString m_headlineText;
-    QString m_supportingText;
-    QIcon m_leadingIcon;
-    QIcon m_trailingIcon;
-    bool m_selected = false;
-    bool m_dividerVisible = false;
-    DensityVariant m_densityVariant = DensityVariant::Standard;
 };
 
 } // namespace QtMaterial

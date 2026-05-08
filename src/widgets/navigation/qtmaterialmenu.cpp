@@ -8,6 +8,16 @@
 #include <QPainterPath>
 #include <QPalette>
 #include <QPaintEvent>
+#include <memory>
+
+struct QtMaterialMenuPrivate
+{
+    QVector<QtMaterialMenu::Item> m_items;
+    int m_currentIndex = -1;
+    int m_pressedIndex = -1;
+    QString m_lastAccessibilitySummary;
+};
+
 
 namespace {
 constexpr int kHorizontalPadding = 12;
@@ -30,6 +40,8 @@ QColor withAlpha(QColor color, int alpha)
 QtMaterialMenu::QtMaterialMenu(QWidget* parent)
     : QWidget(parent)
 {
+    d_ptr = std::make_unique<QtMaterialMenuPrivate>();
+
     setAttribute(Qt::WA_Hover, true);
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
@@ -44,8 +56,8 @@ int QtMaterialMenu::addItem(const QString& text, const QIcon& icon)
     Item item;
     item.text = text;
     item.icon = icon;
-    const int index = m_items.size();
-    m_items.append(item);
+    const int index = d_ptr->m_items.size();
+    d_ptr->m_items.append(item);
     ensureCurrentIndex();
     updateGeometry();
     updateAccessibility();
@@ -58,8 +70,8 @@ int QtMaterialMenu::addSeparator()
     Item item;
     item.role = ItemRole::Separator;
     item.enabled = false;
-    const int index = m_items.size();
-    m_items.append(item);
+    const int index = d_ptr->m_items.size();
+    d_ptr->m_items.append(item);
     updateGeometry();
     updateAccessibility();
     update();
@@ -68,12 +80,12 @@ int QtMaterialMenu::addSeparator()
 
 void QtMaterialMenu::clear()
 {
-    if (m_items.isEmpty()) {
+    if (d_ptr->m_items.isEmpty()) {
         return;
     }
 
-    m_items.clear();
-    m_pressedIndex = -1;
+    d_ptr->m_items.clear();
+    d_ptr->m_pressedIndex = -1;
     setCurrentIndex(-1);
     updateGeometry();
     updateAccessibility();
@@ -82,26 +94,26 @@ void QtMaterialMenu::clear()
 
 int QtMaterialMenu::count() const noexcept
 {
-    return m_items.size();
+    return d_ptr->m_items.size();
 }
 
 bool QtMaterialMenu::isEmpty() const noexcept
 {
-    return m_items.isEmpty();
+    return d_ptr->m_items.isEmpty();
 }
 
 QString QtMaterialMenu::itemText(int index) const
 {
-    return isValidIndex(index) ? m_items.at(index).text : QString();
+    return isValidIndex(index) ? d_ptr->m_items.at(index).text : QString();
 }
 
 void QtMaterialMenu::setItemText(int index, const QString& text)
 {
-    if (!isValidIndex(index) || m_items[index].text == text) {
+    if (!isValidIndex(index) || d_ptr->m_items[index].text == text) {
         return;
     }
 
-    m_items[index].text = text;
+    d_ptr->m_items[index].text = text;
     updateGeometry();
     updateAccessibility();
     update();
@@ -109,7 +121,7 @@ void QtMaterialMenu::setItemText(int index, const QString& text)
 
 QIcon QtMaterialMenu::itemIcon(int index) const
 {
-    return isValidIndex(index) ? m_items.at(index).icon : QIcon();
+    return isValidIndex(index) ? d_ptr->m_items.at(index).icon : QIcon();
 }
 
 void QtMaterialMenu::setItemIcon(int index, const QIcon& icon)
@@ -118,7 +130,7 @@ void QtMaterialMenu::setItemIcon(int index, const QIcon& icon)
         return;
     }
 
-    m_items[index].icon = icon;
+    d_ptr->m_items[index].icon = icon;
     updateGeometry();
     updateAccessibility();
     update();
@@ -126,7 +138,7 @@ void QtMaterialMenu::setItemIcon(int index, const QIcon& icon)
 
 bool QtMaterialMenu::isSeparator(int index) const
 {
-    return isValidIndex(index) && m_items.at(index).role == ItemRole::Separator;
+    return isValidIndex(index) && d_ptr->m_items.at(index).role == ItemRole::Separator;
 }
 
 bool QtMaterialMenu::isItemEnabled(int index) const
@@ -136,12 +148,12 @@ bool QtMaterialMenu::isItemEnabled(int index) const
 
 void QtMaterialMenu::setItemEnabled(int index, bool enabled)
 {
-    if (!isValidIndex(index) || isSeparator(index) || m_items[index].enabled == enabled) {
+    if (!isValidIndex(index) || isSeparator(index) || d_ptr->m_items[index].enabled == enabled) {
         return;
     }
 
-    m_items[index].enabled = enabled;
-    if (!isActivatableIndex(m_currentIndex)) {
+    d_ptr->m_items[index].enabled = enabled;
+    if (!isActivatableIndex(d_ptr->m_currentIndex)) {
         setCurrentIndex(nextActivatableIndex(index, enabled ? 0 : 1));
     }
     updateAccessibility();
@@ -150,18 +162,18 @@ void QtMaterialMenu::setItemEnabled(int index, bool enabled)
 
 bool QtMaterialMenu::isItemCheckable(int index) const
 {
-    return isValidIndex(index) && m_items.at(index).checkable;
+    return isValidIndex(index) && d_ptr->m_items.at(index).checkable;
 }
 
 void QtMaterialMenu::setItemCheckable(int index, bool checkable)
 {
-    if (!isValidIndex(index) || isSeparator(index) || m_items[index].checkable == checkable) {
+    if (!isValidIndex(index) || isSeparator(index) || d_ptr->m_items[index].checkable == checkable) {
         return;
     }
 
-    m_items[index].checkable = checkable;
+    d_ptr->m_items[index].checkable = checkable;
     if (!checkable) {
-        m_items[index].checked = false;
+        d_ptr->m_items[index].checked = false;
     }
     updateAccessibility();
     update();
@@ -169,23 +181,23 @@ void QtMaterialMenu::setItemCheckable(int index, bool checkable)
 
 bool QtMaterialMenu::isItemChecked(int index) const
 {
-    return isValidIndex(index) && m_items.at(index).checked;
+    return isValidIndex(index) && d_ptr->m_items.at(index).checked;
 }
 
 void QtMaterialMenu::setItemChecked(int index, bool checked)
 {
-    if (!isValidIndex(index) || isSeparator(index) || !m_items[index].checkable || m_items[index].checked == checked) {
+    if (!isValidIndex(index) || isSeparator(index) || !d_ptr->m_items[index].checkable || d_ptr->m_items[index].checked == checked) {
         return;
     }
 
-    m_items[index].checked = checked;
+    d_ptr->m_items[index].checked = checked;
     updateAccessibility();
     update();
 }
 
 int QtMaterialMenu::currentIndex() const noexcept
 {
-    return m_currentIndex;
+    return d_ptr->m_currentIndex;
 }
 
 void QtMaterialMenu::setCurrentIndex(int index)
@@ -194,19 +206,19 @@ void QtMaterialMenu::setCurrentIndex(int index)
         index = nextActivatableIndex(index, 1);
     }
 
-    if (m_currentIndex == index) {
+    if (d_ptr->m_currentIndex == index) {
         return;
     }
 
-    m_currentIndex = index;
-    Q_EMIT currentIndexChanged(m_currentIndex);
+    d_ptr->m_currentIndex = index;
+    Q_EMIT currentIndexChanged(d_ptr->m_currentIndex);
     updateAccessibility();
     update();
 }
 
 int QtMaterialMenu::itemAt(const QPoint& position) const
 {
-    for (int i = 0; i < m_items.size(); ++i) {
+    for (int i = 0; i < d_ptr->m_items.size(); ++i) {
         if (itemRect(i).contains(position)) {
             return i;
         }
@@ -235,7 +247,7 @@ QString QtMaterialMenu::itemAccessibleText(int index) const
         return {};
     }
 
-    const Item& item = m_items.at(index);
+    const Item& item = d_ptr->m_items.at(index);
     if (item.role == ItemRole::Separator) {
         return QStringLiteral("Separator");
     }
@@ -248,7 +260,7 @@ QString QtMaterialMenu::itemAccessibleText(int index) const
     if (item.checkable) {
         parts << (item.checked ? QStringLiteral("checked") : QStringLiteral("not checked"));
     }
-    if (index == m_currentIndex) {
+    if (index == d_ptr->m_currentIndex) {
         parts << QStringLiteral("focused");
     }
     return parts.join(QStringLiteral(", "));
@@ -256,17 +268,17 @@ QString QtMaterialMenu::itemAccessibleText(int index) const
 
 QString QtMaterialMenu::accessibilitySummary() const
 {
-    const int total = m_items.size();
+    const int total = d_ptr->m_items.size();
     int activatable = 0;
-    for (int i = 0; i < m_items.size(); ++i) {
+    for (int i = 0; i < d_ptr->m_items.size(); ++i) {
         if (isActivatableIndex(i)) {
             ++activatable;
         }
     }
 
     QString summary = tr("Menu, %n item(s)", nullptr, activatable);
-    if (m_currentIndex >= 0) {
-        summary += QStringLiteral(", ") + itemAccessibleText(m_currentIndex);
+    if (d_ptr->m_currentIndex >= 0) {
+        summary += QStringLiteral(", ") + itemAccessibleText(d_ptr->m_currentIndex);
     } else if (total == 0) {
         summary += QStringLiteral(", empty");
     }
@@ -281,7 +293,7 @@ QSize QtMaterialMenu::sizeHint() const
     bool hasCheckable = false;
     int height = kVerticalPadding * 2;
 
-    for (const Item& item : m_items) {
+    for (const Item& item : d_ptr->m_items) {
         if (item.role == ItemRole::Separator) {
             height += kSeparatorHeight;
             continue;
@@ -324,8 +336,8 @@ void QtMaterialMenu::paintEvent(QPaintEvent* event)
     const QColor disabledColor = palette().color(QPalette::Disabled, QPalette::WindowText);
     const QColor stateColor = palette().color(QPalette::Highlight);
 
-    for (int i = 0; i < m_items.size(); ++i) {
-        const Item& item = m_items.at(i);
+    for (int i = 0; i < d_ptr->m_items.size(); ++i) {
+        const Item& item = d_ptr->m_items.at(i);
         const QRect row = itemRect(i);
 
         if (item.role == ItemRole::Separator) {
@@ -335,8 +347,8 @@ void QtMaterialMenu::paintEvent(QPaintEvent* event)
             continue;
         }
 
-        if (i == m_currentIndex || i == m_pressedIndex) {
-            const int alpha = (i == m_pressedIndex) ? 38 : 22;
+        if (i == d_ptr->m_currentIndex || i == d_ptr->m_pressedIndex) {
+            const int alpha = (i == d_ptr->m_pressedIndex) ? 38 : 22;
             painter.fillRect(row, withAlpha(stateColor, alpha));
         }
 
@@ -398,7 +410,7 @@ void QtMaterialMenu::mousePressEvent(QMouseEvent* event)
     if (event->button() == Qt::LeftButton) {
         const int index = itemAt(event->pos());
         if (isActivatableIndex(index)) {
-            m_pressedIndex = index;
+            d_ptr->m_pressedIndex = index;
             setCurrentIndex(index);
             update();
         }
@@ -408,8 +420,8 @@ void QtMaterialMenu::mousePressEvent(QMouseEvent* event)
 
 void QtMaterialMenu::mouseReleaseEvent(QMouseEvent* event)
 {
-    const int pressed = m_pressedIndex;
-    m_pressedIndex = -1;
+    const int pressed = d_ptr->m_pressedIndex;
+    d_ptr->m_pressedIndex = -1;
     if (event->button() == Qt::LeftButton && pressed >= 0 && pressed == itemAt(event->pos())) {
         activateIndex(pressed);
     }
@@ -419,7 +431,7 @@ void QtMaterialMenu::mouseReleaseEvent(QMouseEvent* event)
 
 void QtMaterialMenu::leaveEvent(QEvent* event)
 {
-    m_pressedIndex = -1;
+    d_ptr->m_pressedIndex = -1;
     update();
     QWidget::leaveEvent(event);
 }
@@ -429,12 +441,12 @@ void QtMaterialMenu::keyPressEvent(QKeyEvent* event)
     switch (event->key()) {
     case Qt::Key_Down:
     case Qt::Key_Right:
-        setCurrentIndex(nextActivatableIndex(m_currentIndex, 1));
+        setCurrentIndex(nextActivatableIndex(d_ptr->m_currentIndex, 1));
         event->accept();
         return;
     case Qt::Key_Up:
     case Qt::Key_Left:
-        setCurrentIndex(nextActivatableIndex(m_currentIndex, -1));
+        setCurrentIndex(nextActivatableIndex(d_ptr->m_currentIndex, -1));
         event->accept();
         return;
     case Qt::Key_Home:
@@ -448,7 +460,7 @@ void QtMaterialMenu::keyPressEvent(QKeyEvent* event)
     case Qt::Key_Return:
     case Qt::Key_Enter:
     case Qt::Key_Space:
-        activateIndex(m_currentIndex);
+        activateIndex(d_ptr->m_currentIndex);
         event->accept();
         return;
     case Qt::Key_Escape:
@@ -480,17 +492,17 @@ void QtMaterialMenu::focusOutEvent(QFocusEvent* event)
 
 bool QtMaterialMenu::isValidIndex(int index) const noexcept
 {
-    return index >= 0 && index < m_items.size();
+    return index >= 0 && index < d_ptr->m_items.size();
 }
 
 bool QtMaterialMenu::isActivatableIndex(int index) const
 {
-    return isValidIndex(index) && m_items.at(index).role == ItemRole::Action && m_items.at(index).enabled;
+    return isValidIndex(index) && d_ptr->m_items.at(index).role == ItemRole::Action && d_ptr->m_items.at(index).enabled;
 }
 
 int QtMaterialMenu::firstActivatableIndex() const
 {
-    for (int i = 0; i < m_items.size(); ++i) {
+    for (int i = 0; i < d_ptr->m_items.size(); ++i) {
         if (isActivatableIndex(i)) {
             return i;
         }
@@ -500,7 +512,7 @@ int QtMaterialMenu::firstActivatableIndex() const
 
 int QtMaterialMenu::lastActivatableIndex() const
 {
-    for (int i = m_items.size() - 1; i >= 0; --i) {
+    for (int i = d_ptr->m_items.size() - 1; i >= 0; --i) {
         if (isActivatableIndex(i)) {
             return i;
         }
@@ -510,7 +522,7 @@ int QtMaterialMenu::lastActivatableIndex() const
 
 int QtMaterialMenu::nextActivatableIndex(int start, int step) const
 {
-    if (m_items.isEmpty()) {
+    if (d_ptr->m_items.isEmpty()) {
         return -1;
     }
 
@@ -520,14 +532,14 @@ int QtMaterialMenu::nextActivatableIndex(int start, int step) const
 
     int index = start;
     if (!isValidIndex(index)) {
-        index = step > 0 ? -1 : m_items.size();
+        index = step > 0 ? -1 : d_ptr->m_items.size();
     }
 
-    for (int scanned = 0; scanned < m_items.size(); ++scanned) {
+    for (int scanned = 0; scanned < d_ptr->m_items.size(); ++scanned) {
         index += step;
         if (index < 0) {
-            index = m_items.size() - 1;
-        } else if (index >= m_items.size()) {
+            index = d_ptr->m_items.size() - 1;
+        } else if (index >= d_ptr->m_items.size()) {
             index = 0;
         }
 
@@ -545,8 +557,8 @@ void QtMaterialMenu::activateIndex(int index)
         return;
     }
 
-    if (m_items[index].checkable) {
-        m_items[index].checked = !m_items[index].checked;
+    if (d_ptr->m_items[index].checkable) {
+        d_ptr->m_items[index].checked = !d_ptr->m_items[index].checked;
         updateAccessibility();
         update();
     }
@@ -556,7 +568,7 @@ void QtMaterialMenu::activateIndex(int index)
 
 void QtMaterialMenu::ensureCurrentIndex()
 {
-    if (!isActivatableIndex(m_currentIndex)) {
+    if (!isActivatableIndex(d_ptr->m_currentIndex)) {
         setCurrentIndex(firstActivatableIndex());
     }
 }
@@ -578,10 +590,10 @@ void QtMaterialMenu::updateAccessibility()
 void QtMaterialMenu::emitAccessibilitySummaryIfChanged()
 {
     const QString summary = accessibilitySummary();
-    if (m_lastAccessibilitySummary == summary) {
+    if (d_ptr->m_lastAccessibilitySummary == summary) {
         return;
     }
 
-    m_lastAccessibilitySummary = summary;
+    d_ptr->m_lastAccessibilitySummary = summary;
     Q_EMIT accessibilitySummaryChanged(summary);
 }

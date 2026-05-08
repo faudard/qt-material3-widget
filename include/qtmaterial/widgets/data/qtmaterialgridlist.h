@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QIcon>
 #include <QListWidget>
 #include <QSize>
@@ -9,6 +11,8 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+class QtMaterialGridListPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialGridList : public QListWidget {
     Q_OBJECT
@@ -82,6 +86,7 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
+    std::unique_ptr<QtMaterialGridListPrivate> d_ptr;
     enum ItemRole {
         TitleRole = Qt::UserRole + 120,
         SupportingTextRole,
@@ -97,10 +102,6 @@ private:
     void syncAccessibilitySummary();
     void emitSelectionChangedIfNeeded();
 
-    SelectionMode m_selectionMode = SelectionMode::SingleSelection;
-    int m_columns = 3;
-    QSize m_cellExtent = QSize(160, 112);
-    QString m_accessibilitySummary;
 };
 
 } // namespace QtMaterial

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QIcon>
 #include <QSize>
 #include <QString>
@@ -10,6 +12,8 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+class QtMaterialNavigationRailPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialNavigationRail : public QtMaterialControl {
     Q_OBJECT
@@ -60,11 +64,7 @@ protected:
     void invalidateResolvedSpec() override;
 
 private:
-    struct Destination {
-        QString text;
-        QIcon icon;
-        bool enabled = true;
-    };
+    std::unique_ptr<QtMaterialNavigationRailPrivate> d_ptr;
 
     void ensureSpecResolved() const;
     QRect itemRect(int index) const;
@@ -76,13 +76,7 @@ private:
     int nextEnabledIndex(int from, int step) const noexcept;
     void syncAccessibility();
 
-    QVector<Destination> m_destinations;
-    int m_currentIndex = -1;
-    bool m_labelsVisible = true;
-    QString m_lastAccessibilitySummary;
 
-    mutable bool m_specDirty = true;
-    mutable NavigationRailSpec m_spec;
 };
 
 } // namespace QtMaterial

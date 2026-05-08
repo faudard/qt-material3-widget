@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QList>
 #include <QVector>
 #include <QWidget>
@@ -9,6 +11,8 @@
 class QVBoxLayout;
 
 namespace QtMaterial {
+
+class QtMaterialListPrivate;
 
 class QtMaterialListItem;
 
@@ -69,6 +73,7 @@ protected:
     void changeEvent(QEvent* event) override;
 
 private:
+    std::unique_ptr<QtMaterialListPrivate> d_ptr;
     void initialiseItem(QtMaterialListItem* item);
     void syncItemSelection();
     void syncAccessibility();
@@ -82,11 +87,6 @@ private:
     int lastEnabledIndex() const;
     bool isValidIndex(int index) const noexcept;
 
-    QVector<QtMaterialListItem*> m_items;
-    QVBoxLayout* m_layout = nullptr;
-    SelectionMode m_selectionMode = SelectionMode::SingleSelection;
-    int m_currentIndex = -1;
-    QString m_lastAccessibilitySummary;
 };
 
 } // namespace QtMaterial

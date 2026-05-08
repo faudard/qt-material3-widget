@@ -1,3 +1,4 @@
+#include <memory>
 
 #pragma once
 
@@ -9,6 +10,8 @@
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
 
 namespace QtMaterial {
+
+class QtMaterialTablePrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTable : public QTableView
 {
@@ -47,14 +50,12 @@ protected:
     void currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
 
 private:
+    std::unique_ptr<QtMaterialTablePrivate> d_ptr;
     void applySpec();
     void syncAccessibility();
     QString headerText(int column) const;
     QString cellText(const QModelIndex& index) const;
 
-    TableSpec m_spec;
-    bool m_dense = false;
-    QString m_accessibilitySummary;
 };
 
 } // namespace QtMaterial
