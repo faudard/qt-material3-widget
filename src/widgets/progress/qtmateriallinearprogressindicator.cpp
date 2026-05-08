@@ -345,18 +345,6 @@ void QtMaterialLinearProgressIndicator::syncMaterialStateFromAsyncState() {
     setMaterialState(d->asyncState.toPropertyString());
 }
 
-QColor QtMaterialLinearProgressIndicator::resolvedLinearActiveColor(d->spec, this) const {
-    return d->spec.activeColor.isValid() ? d->spec.activeColor : fallbackActive(this);
-}
-
-QColor QtMaterialLinearProgressIndicator::resolvedLinearTrackColor(d->spec, this) const {
-    return d->spec.trackColor.isValid() ? d->spec.trackColor : fallbackTrack(this);
-}
-
-QColor QtMaterialLinearProgressIndicator::resolvedLinearStopColor(d->spec, this) const {
-    return d->spec.stopIndicatorColor.isValid() ? d->spec.stopIndicatorColor : resolvedLinearActiveColor(d->spec, this);
-}
-
 QString QtMaterial::QtMaterialLinearProgressIndicator::accessibleValueText() const
 {
     const QString status = d->asyncState.statusText().trimmed();

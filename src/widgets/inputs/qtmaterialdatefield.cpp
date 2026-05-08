@@ -21,10 +21,10 @@ struct QtMaterialDateFieldPrivate {
     void syncDateFromEditor(QtMaterialDateField& q);
     void updateTrailingAffordances(QtMaterialDateField& q);
     void updateAccessibilityMetadata(QtMaterialDateField& q);
-    bool d_ptr->isDateInRange(const QDate& date) const noexcept;
+    bool isDateInRange(const QDate& date) const noexcept;
     QString effectiveErrorTextForDate(const QtMaterialDateField& q) const;
-    void d_ptr->setParseError(*this, QtMaterialDateField& q, bool hasError);
-    void d_ptr->notifyDateAcceptabilityIfChanged(*this, QtMaterialDateField& q, bool previousAcceptable);
+    void setParseError(QtMaterialDateField& q, bool hasError);
+    void notifyDateAcceptabilityIfChanged(QtMaterialDateField& q, bool previousAcceptable);
 
 };
 

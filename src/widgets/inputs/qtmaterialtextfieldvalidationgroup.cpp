@@ -14,13 +14,12 @@ struct QtMaterialTextFieldValidationGroupPrivate {
     QStringList m_validationSummary;
     bool m_acceptable = true;
 
-    int d_ptr->indexOf(QtMaterialOutlinedTextField* field) const noexcept;
-    void d_ptr->removeNullFields();
+    int indexOf(QtMaterialOutlinedTextField* field) const noexcept;
+    void removeNullFields();
     bool computeAcceptable() const noexcept;
     void refreshAcceptable(QtMaterialTextFieldValidationGroup* q);
-    QString d_ptr->effectiveFieldLabel(this, const QtMaterialTextFieldValidationGroup* q,
-                                QtMaterialOutlinedTextField* field) const;
-    QString d_ptr->effectiveFieldErrorMessage(QtMaterialOutlinedTextField* field) const;
+    QString effectiveFieldLabel(const QtMaterialTextFieldValidationGroup* q, QtMaterialOutlinedTextField* field) const;
+    QString effectiveFieldErrorMessage(QtMaterialOutlinedTextField* field) const;
     QStringList computeValidationSummary(const QtMaterialTextFieldValidationGroup* q) const;
     void refreshValidationSummary(QtMaterialTextFieldValidationGroup* q);
 

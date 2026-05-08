@@ -566,33 +566,5 @@ void QtMaterialSnackbar::updateAutoHide()
     }
 }
 
-int QtMaterialSnackbar::snackbarDurationMs(d_ptr->request) const
-{
-    switch (d_ptr->request.duration) {
-    case SnackbarDuration::Short:
-        return 4000;
-    case SnackbarDuration::Long:
-        return 10000;
-    case SnackbarDuration::Indefinite:
-        return 0;
-    }
-
-    return 0;
-}
-
-QRectF QtMaterialSnackbar::snackbarContainerRect(*this) const
-{
-    return QRectF(rect());
-}
-
-qreal QtMaterialSnackbar::resolvedCornerRadius() const noexcept
-{
-    if (!d_ptr->specPtr) {
-        return 8.0;
-    }
-
-    const int specRadius = theme().shapes().radius(d_ptr->specPtr->shapeRole);
-    return specRadius > 0 ? qreal(specRadius) : 8.0;
-}
 
 } // namespace QtMaterial

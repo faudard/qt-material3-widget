@@ -267,16 +267,4 @@ void QtMaterialListItem::contentChangedEvent()
     update();
 }
 
-void QtMaterialListItem::ensureSpecResolved() const
-{
-}
-
-void QtMaterialListItem::ensureLayoutResolved() const
-{
-}
-
-void QtMaterialListItem::invalidateLayoutCache()
-{
-}
-
 } // namespace QtMaterial

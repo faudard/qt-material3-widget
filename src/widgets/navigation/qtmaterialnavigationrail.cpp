@@ -108,7 +108,7 @@ struct QtMaterialNavigationRailPrivate
     }
 };
 
-
+void syncAccessibility(QtMaterialNavigationRail* rail, QtMaterialNavigationRailPrivate* d);
 
 namespace {
 QColor disabledColor(QColor color)
@@ -465,9 +465,10 @@ void QtMaterialNavigationRail::paintEvent(QPaintEvent*)
 
     if (hasFocus() && d_ptr->m_currentIndex >= 0) {
         QPainterPath focusPath;
-        focusPath.addRoundedRect(QRectF(indicatorRect(d_ptr->itemRect(theme(), d_ptr->m_currentIndex))).adjusted(-2, -2, 2, 2),
-                                 indicatorRadius,
-                                 indicatorRadius);
+        const QRect focusItem = d_ptr->itemRect(theme(), d_ptr->m_currentIndex);
+        focusPath.addRoundedRect(QRectF(d_ptr->indicatorRect(theme(), focusItem)).adjusted(-2, -2, 2, 2),
+                                  indicatorRadius,
+                                  indicatorRadius);
         QtMaterialFocusIndicator::paintPathFocusRing(&painter, focusPath, d_ptr->m_spec.focusRingColor, 2.0);
     }
 }

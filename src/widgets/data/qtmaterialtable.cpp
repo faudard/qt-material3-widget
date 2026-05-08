@@ -79,9 +79,9 @@ QtMaterialTable::QtMaterialTable(QWidget* parent)
     : QTableView(parent)
     , d_ptr(std::make_unique<QtMaterialTablePrivate>())
 {
-
     setObjectName(QStringLiteral("QtMaterialTable"));
     setAccessibleName(QStringLiteral("Table"));
+
     setAlternatingRowColors(false);
     setMouseTracking(true);
     setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -89,6 +89,7 @@ QtMaterialTable::QtMaterialTable(QWidget* parent)
     setShowGrid(true);
     setFocusPolicy(Qt::StrongFocus);
     setSortingEnabled(true);
+
     setItemDelegate(new MaterialTableDelegate(this));
 
     horizontalHeader()->setStretchLastSection(true);
@@ -157,7 +158,7 @@ QString QtMaterialTable::currentCellAccessibleText() const
 
 QString QtMaterialTable::rowAccessibleText(int row) const
 {
-    const QAbstractItemModel* currentModel = table->model();
+    const QAbstractItemModel* currentModel = model();
     if (!currentModel || row < 0 || row >= currentModel->rowCount(rootIndex())) {
         return QString();
     }

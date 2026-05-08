@@ -24,7 +24,8 @@ struct QtMaterialAutocompletePopupPrivate {
     mutable bool m_specDirty = true;
     mutable QtMaterial::AutocompletePopupSpec m_spec;
     QPointer<QLineEdit> m_anchorLineEdit;
-    QPointer<QAbstractItemModel> d_ptr->m_sourceModel;
+    QPointer<QAbstractItemModel> m_sourceModel;
+    QSortFilterProxyModel* m_filterModel = nullptr;
     QStringListModel* m_ownedStringModel = nullptr;
     QListView* m_view = nullptr;
     QString m_filterText;

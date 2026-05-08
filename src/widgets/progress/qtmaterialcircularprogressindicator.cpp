@@ -435,14 +435,5 @@ void QtMaterialCircularProgressIndicator::syncAccessibleState()
     emit accessibilitySummaryChanged(summary);
 }
 
-QColor QtMaterialCircularProgressIndicator::resolvedCircularActiveColor(d->spec, this) const
-{
-    return d->spec.activeColor.isValid() ? d->spec.activeColor : fallbackActive(this);
-}
-
-QColor QtMaterialCircularProgressIndicator::resolvedCircularTrackColor(d->spec, this) const
-{
-    return d->spec.trackColor.isValid() ? d->spec.trackColor : fallbackTrack(this);
-}
 
 } // namespace QtMaterial

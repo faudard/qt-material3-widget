@@ -2,7 +2,7 @@
 #include <memory>
 
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
-
+#include "qtmaterial/theme/qtmaterialthememanager.h"
 #include <QEvent>
 #include <QFont>
 #include <QFontMetrics>
@@ -61,12 +61,13 @@ namespace {
 
 void ensureSpecResolved(const QtMaterialCard* self, QtMaterialCardPrivate* d)
 {
+    Q_UNUSED(self);
     if (!d->specDirty) {
         return;
     }
 
     QtMaterial::SpecFactory factory;
-    d->spec = factory.cardSpec(self->theme());
+    d->spec = factory.cardSpec(QtMaterial::ThemeManager::instance().theme());
     d->specDirty = false;
     d->layoutDirty = true;
 }
