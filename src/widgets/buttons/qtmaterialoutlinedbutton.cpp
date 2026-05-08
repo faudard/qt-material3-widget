@@ -5,129 +5,155 @@
 #include <QResizeEvent>
 
 #include "private/qtmaterialbuttonrenderhelper_p.h"
+#include "private/qtmaterialoutlinedbutton_p.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
-#include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 
 namespace QtMaterial {
 
 QtMaterialOutlinedButton::QtMaterialOutlinedButton(QWidget* parent)
-    : QtMaterialTextButton(parent)
+ : QtMaterialTextButton(parent)
+ , d(new QtMaterialOutlinedButtonPrivate)
 {
 }
 
-QtMaterialOutlinedButton::~QtMaterialOutlinedButton() = default;
+QtMaterialOutlinedButton::~QtMaterialOutlinedButton()
+{
+ delete d;
+}
+
+void QtMaterialOutlinedButtonPrivate::invalidateLayout(QtMaterialOutlinedButton& button)
+{
+ layout.dirty = true;
+ button.updateGeometry();
+ button.update();
+}
+
+void QtMaterialOutlinedButtonPrivate::ensureLayoutResolved(const QtMaterialOutlinedButton& button) const
+{
+ button.ensureSpecResolved();
+ if (!layout.dirty) {
+  return;
+ }
+
+ const ButtonSpec& spec = button.currentButtonSpec();
+ QFont resolvedFont = button.font();
+ if (button.theme().typography().contains(spec.labelTypeRole)) {
+  resolvedFont = button.theme().typography().style(spec.labelTypeRole).font;
+ }
+
+ layout.visualRect = ButtonRenderHelper::containerRect(button.rect(), spec).adjusted(1, 1, -1, -1).toAlignedRect();
+ layout.cornerRadius = ButtonRenderHelper::cornerRadius(button.theme(), spec, layout.visualRect);
+ layout.containerPath = ButtonRenderHelper::containerPath(button.theme(), spec, layout.visualRect);
+
+ const auto contentLayout = ButtonRenderHelper::layoutContent(
+  &button,
+  spec,
+  layout.visualRect,
+  resolvedFont,
+  button.text());
+ layout.iconRect = contentLayout.iconRect;
+ layout.textRect = contentLayout.textRect;
+ layout.elidedText = contentLayout.elidedText;
+ layout.hasIcon = contentLayout.hasIcon;
+ layout.dirty = false;
+}
 
 void QtMaterialOutlinedButton::themeChangedEvent(const Theme& theme)
 {
-    QtMaterialTextButton::themeChangedEvent(theme);
-    invalidateLayoutCache();
+ QtMaterialTextButton::themeChangedEvent(theme);
+ d->invalidateLayout(*this);
 }
 
 void QtMaterialOutlinedButton::invalidateResolvedSpec()
 {
-    QtMaterialTextButton::invalidateResolvedSpec();
-    invalidateLayoutCache();
+ QtMaterialTextButton::invalidateResolvedSpec();
+ d->invalidateLayout(*this);
 }
 
 void QtMaterialOutlinedButton::contentChangedEvent()
 {
-    invalidateLayoutCache();
+ d->invalidateLayout(*this);
 }
 
 void QtMaterialOutlinedButton::resizeEvent(QResizeEvent* event)
 {
-    invalidateLayoutCache();
-    QtMaterialTextButton::resizeEvent(event);
+ d->invalidateLayout(*this);
+ QtMaterialTextButton::resizeEvent(event);
 }
 
 void QtMaterialOutlinedButton::changeEvent(QEvent* event)
 {
-    if (event->type() == QEvent::FontChange || event->type() == QEvent::StyleChange) {
-        invalidateLayoutCache();
-    }
-    QtMaterialTextButton::changeEvent(event);
+ if (event->type() == QEvent::FontChange || event->type() == QEvent::StyleChange) {
+  d->invalidateLayout(*this);
+ }
+ QtMaterialTextButton::changeEvent(event);
 }
 
 ButtonSpec QtMaterialOutlinedButton::resolveButtonSpec() const
 {
-    SpecFactory factory;
-    return factory.outlinedButtonSpec(theme(), density());
-}
-
-void QtMaterialOutlinedButton::invalidateLayoutCache()
-{
-    m_layoutDirty = true;
-}
-
-void QtMaterialOutlinedButton::ensureLayoutResolved() const
-{
-    ensureSpecResolved();
-
-    if (!m_layoutDirty) {
-        return;
-    }
-
-    QFont resolvedFont = font();
-    if (theme().typography().contains(m_spec.labelTypeRole)) {
-        resolvedFont = theme().typography().style(m_spec.labelTypeRole).font;
-    }
-
-    m_cachedVisualRect = ButtonRenderHelper::containerRect(rect(), m_spec).adjusted(1, 1, -1, -1).toAlignedRect();
-    m_cachedCornerRadius = ButtonRenderHelper::cornerRadius(theme(), m_spec, m_cachedVisualRect);
-    m_cachedContainerPath = ButtonRenderHelper::containerPath(theme(), m_spec, m_cachedVisualRect);
-
-    const auto layout = ButtonRenderHelper::layoutContent(this, m_spec, m_cachedVisualRect, resolvedFont, text());
-    m_cachedIconRect = layout.iconRect;
-    m_cachedTextRect = layout.textRect;
-    m_cachedElidedText = layout.elidedText;
-    m_cachedHasIcon = layout.hasIcon;
-    m_layoutDirty = false;
+ SpecFactory factory;
+ return factory.outlinedButtonSpec(theme(), density());
 }
 
 void QtMaterialOutlinedButton::paintEvent(QPaintEvent*)
 {
-    ensurePolished();
-    ensureSpecResolved();
-    ensureLayoutResolved();
+ ensurePolished();
+ ensureSpecResolved();
+ d->ensureLayoutResolved(*this);
+ const ButtonSpec& spec = currentButtonSpec();
 
-    QFont resolvedFont = font();
-    if (theme().typography().contains(m_spec.labelTypeRole)) {
-        resolvedFont = theme().typography().style(m_spec.labelTypeRole).font;
-    }
+ QFont resolvedFont = font();
+ if (theme().typography().contains(spec.labelTypeRole)) {
+  resolvedFont = theme().typography().style(spec.labelTypeRole).font;
+ }
 
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+ QPainter painter(this);
+ painter.setRenderHint(QPainter::Antialiasing, true);
 
-    painter.save();
-    painter.setBrush(Qt::NoBrush);
-    painter.setPen(QPen(isEnabled() ? m_spec.outlineColor : m_spec.disabledOutlineColor, 1.0));
-    painter.drawPath(m_cachedContainerPath);
-    painter.restore();
+ painter.save();
+ painter.setBrush(Qt::NoBrush);
+ painter.setPen(QPen(isEnabled() ? spec.outlineColor : spec.disabledOutlineColor, 1.0));
+ painter.drawPath(d->layout.containerPath);
+ painter.restore();
 
-    const qreal layerOpacity = animatedStateLayerOpacity();
-    if (layerOpacity > 0.0) {
-        QtMaterialStateLayerPainter::paintPath(&painter, m_cachedContainerPath, m_spec.stateLayerColor, layerOpacity);
-    }
+ const qreal layerOpacity = ButtonRenderHelper::stateLayerOpacity(theme(), interactionState());
+ if (layerOpacity > 0.0) {
+  QtMaterialStateLayerPainter::paintPath(
+   &painter,
+   d->layout.containerPath,
+   spec.stateLayerColor,
+   layerOpacity);
+ }
 
-    if (m_ripple) {
-        m_ripple->setClipPath(m_cachedContainerPath);
-        m_ripple->paint(&painter, m_spec.stateLayerColor);
-    }
+ setRippleClipPath(d->layout.containerPath);
+ paintRipple(&painter, spec.stateLayerColor);
 
-    ButtonRenderHelper::ContentLayout layout;
-    layout.iconRect = m_cachedIconRect;
-    layout.textRect = m_cachedTextRect;
-    layout.elidedText = m_cachedElidedText;
-    layout.hasIcon = m_cachedHasIcon;
+ ButtonRenderHelper::ContentLayout contentLayout;
+ contentLayout.iconRect = d->layout.iconRect;
+ contentLayout.textRect = d->layout.textRect;
+ contentLayout.elidedText = d->layout.elidedText;
+ contentLayout.hasIcon = d->layout.hasIcon;
 
-    const QColor contentColor = isEnabled() ? m_spec.labelColor : m_spec.disabledLabelColor;
-    ButtonRenderHelper::paintContentLayout(&painter, this, m_spec, layout, contentColor, contentColor, resolvedFont);
+ const QColor contentColor = isEnabled() ? spec.labelColor : spec.disabledLabelColor;
+ ButtonRenderHelper::paintContentLayout(
+  &painter,
+  this,
+  spec,
+  contentLayout,
+  contentColor,
+  contentColor,
+  resolvedFont);
 
-    if (interactionState().isFocused()) {
-        QtMaterialFocusIndicator::paintRectFocusRing(&painter, m_cachedVisualRect, m_spec.focusRingColor, m_cachedCornerRadius, 2.0);
-    }
+ if (interactionState().isFocused()) {
+  QtMaterialFocusIndicator::paintRectFocusRing(
+   &painter,
+   d->layout.visualRect,
+   spec.focusRingColor,
+   d->layout.cornerRadius,
+   2.0);
+ }
 }
 
 } // namespace QtMaterial
