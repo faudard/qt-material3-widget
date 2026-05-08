@@ -594,3 +594,10 @@ if(TARGET qtmaterial3_specs)
         include/qtmaterial/specs/qtmaterialspecvalidation.h
     )
 endif()
+
+# qt-material3-widget public ABI audit: begin
+include(cmake/QtMaterial3PublicAbiAudit.cmake OPTIONAL)
+if(COMMAND qtmaterial3_add_public_abi_audit)
+    qtmaterial3_add_public_abi_audit()
+endif()
+# qt-material3-widget public ABI audit: end
