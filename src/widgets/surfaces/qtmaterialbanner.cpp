@@ -15,6 +15,7 @@
 
 #include <memory>
 #include <QPainterPath>
+#include <QPointer>
 namespace {
 constexpr int kDefaultMinWidth = 280;
 constexpr int kDefaultMinHeight = 64;

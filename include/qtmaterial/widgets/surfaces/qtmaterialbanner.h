@@ -8,7 +8,6 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialsurface.h"
-#include "qtmaterial/specs/qtmaterialbannerspec.h"
 
 #include <memory>
 class QEvent;

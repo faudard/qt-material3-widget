@@ -5,6 +5,7 @@
 #include <QSizePolicy>
 #include <QtGlobal>
 #include <memory>
+#include <qcoreevent.h>
 
 namespace QtMaterial {
 

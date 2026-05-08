@@ -3,7 +3,7 @@
 #pragma once
 
 #include <QModelIndex>
-#include <QTableView>
+class QTableView;
 #include <QString>
 
 #include "qtmaterial/qtmaterialglobal.h"

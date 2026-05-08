@@ -94,6 +94,7 @@ void QtMaterialSnackbarHost::showNext()
     d_ptr->snackbar->showSnackbar();
 }
 
+QtMaterialSnackbarHost::~QtMaterialSnackbarHost() = default;
+
 } // namespace QtMaterial
 
-QtMaterialSnackbarHost::~QtMaterialSnackbarHost() = default;

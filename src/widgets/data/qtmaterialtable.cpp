@@ -1,5 +1,6 @@
 
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
+#include <QTableView>
 
 #include <QAbstractItemModel>
 #include <QAccessible>

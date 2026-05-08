@@ -1,4 +1,5 @@
 #include "qtmaterial/widgets/data/qtmateriallistitem.h"
+#include "qtmaterial/specs/qtmateriallistitemspec.h"
 
 #include <QEvent>
 #include <QKeyEvent>
@@ -42,18 +43,17 @@ int heightForDensity(QtMaterialListItem::DensityVariant variant)
 
 QtMaterialListItem::QtMaterialListItem(QWidget* parent)
     : QtMaterialControl(parent)
+    , d_ptr(std::make_unique<QtMaterialListItemPrivate>())
 {
-    d_ptr = std::make_unique<QtMaterialListItemPrivate>();
-
     setFocusPolicy(Qt::StrongFocus);
     setMinimumHeight(heightForDensity(d_ptr->m_densityVariant));
 }
 
 QtMaterialListItem::QtMaterialListItem(const QString& headline, QWidget* parent)
     : QtMaterialControl(parent)
-    , d_ptr->m_headlineText(headline)
+    , d_ptr(std::make_unique<QtMaterialListItemPrivate>())
 {
-    d_ptr = std::make_unique<QtMaterialListItemPrivate>();
+    d_ptr->m_headlineText = headline;
 
     setFocusPolicy(Qt::StrongFocus);
     setMinimumHeight(heightForDensity(d_ptr->m_densityVariant));
