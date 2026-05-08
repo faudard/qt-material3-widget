@@ -1,18 +1,19 @@
 #pragma once
 #include <QString>
-
-#include <QPainterPath>
-#include <QRect>
+#include <memory>
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
 #include "qtmaterial/specs/qtmaterialiconbuttonspec.h"
 
+class QPainterPath;
+class QRect;
+
 namespace QtMaterial {
 
-class QtMaterialRippleController;
-class QtMaterialTransitionController;
+class QtMaterialIconButtonPrivate;
 
+class QtMaterialRippleController;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialIconButton : public QtMaterialAbstractButton
 {
 public:
@@ -55,20 +56,7 @@ private:
     QRect visualContainerRect() const;
     QPainterPath containerPath() const;
     QRect iconRect() const;
-
-    mutable bool m_specDirty = true;
-    mutable bool m_layoutDirty = true;
-
-    mutable IconButtonSpec m_spec;
-    mutable QRect m_cachedVisualRect;
-    mutable QRect m_cachedIconRect;
-    mutable qreal m_cachedCornerRadius = 0.0;
-    mutable QPainterPath m_cachedContainerPath;
-
-    QtMaterialRippleController* m_ripple = nullptr;
-    QtMaterialTransitionController* m_transition = nullptr;
-    bool m_selected = false;
-    bool m_requiresAccessibleName = true;
+ std::unique_ptr<QtMaterialIconButtonPrivate> d;
 };
 
 } // namespace QtMaterial

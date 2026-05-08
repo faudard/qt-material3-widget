@@ -1,14 +1,14 @@
 #pragma once
 
 #include "qtmaterial/core/qtmaterialselectioncontrol.h"
-#include "qtmaterial/specs/qtmaterialcheckboxspec.h"
+#include <memory>
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
 
-class QtMaterialRippleController;
-class QtMaterialTransitionController;
+class QtMaterialCheckboxPrivate;
 
+class QtMaterialRippleController;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialCheckbox : public QtMaterialSelectionControl
 {
     Q_OBJECT
@@ -37,15 +37,7 @@ private:
     void resolveSpecIfNeeded() const;
     void syncCheckedFromCheckState();
     qreal targetTransitionProgress() const noexcept;
-
-    mutable bool m_specDirty = true;
-    mutable CheckboxSpec m_spec;
-
-    Qt::CheckState m_checkState = Qt::Unchecked;
-    bool m_tristate = false;
-
-    QtMaterialRippleController* m_ripple = nullptr;
-    QtMaterialTransitionController* m_transition = nullptr;
+ std::unique_ptr<QtMaterialCheckboxPrivate> d;
 };
 
 } // namespace QtMaterial

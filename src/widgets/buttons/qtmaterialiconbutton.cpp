@@ -1,10 +1,13 @@
 #include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
+#include <memory>
 
 #include <QAbstractButton>
 
 #include <QEvent>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPainterPath>
+#include <QRect>
 #include <QResizeEvent>
 
 #include "qtmaterial/core/qtmaterialeventcompat.h"
@@ -16,6 +19,22 @@
 #include "private/qtmaterialbuttonmotionhelper_p.h"
 
 namespace QtMaterial {
+
+
+struct QtMaterialIconButtonPrivate
+{
+ bool m_specDirty = true;
+ bool m_layoutDirty = true;
+ IconButtonSpec m_spec;
+ QRect m_cachedVisualRect;
+ QRect m_cachedIconRect;
+ qreal m_cachedCornerRadius = 0.0;
+ QPainterPath m_cachedContainerPath;
+ QtMaterialRippleController* m_ripple = nullptr;
+ QtMaterialTransitionController* m_transition = nullptr;
+ bool m_selected = false;
+ bool m_requiresAccessibleName = true;
+};
 
 namespace {
 
@@ -74,10 +93,12 @@ qreal stateLayerOpacityFor(const QtMaterialInteractionState& state, const Theme&
 } // namespace
 
 QtMaterialIconButton::QtMaterialIconButton(QWidget* parent)
-    : QtMaterialAbstractButton(parent)
-    , m_ripple(new QtMaterialRippleController(this))
-    , m_transition(new QtMaterialTransitionController(this))
+ : QtMaterialAbstractButton(parent)
+ , d(std::make_unique<QtMaterialIconButtonPrivate>())
 {
+ d->m_ripple = new QtMaterialRippleController(this);
+ d->m_transition = new QtMaterialTransitionController(this);
+
     setFocusPolicy(Qt::StrongFocus);
     setCheckable(false);
     setMaterialComponent(QStringLiteral("button"));
@@ -85,10 +106,10 @@ QtMaterialIconButton::QtMaterialIconButton(QWidget* parent)
     setMaterialRole(QStringLiteral("action"));
     syncAccessibilityState();
 
-    m_transition->setProgress(m_selected ? 1.0 : 0.0);
+    d->m_transition->setProgress(d->m_selected ? 1.0 : 0.0);
 
     QObject::connect(
-        m_transition,
+        d->m_transition,
         &QtMaterialTransitionController::progressChanged,
         this,
         [this](qreal) { update(); });
@@ -97,8 +118,8 @@ QtMaterialIconButton::QtMaterialIconButton(QWidget* parent)
         setSelected(checked);
     });
 
-    m_specDirty = true;
-    m_layoutDirty = true;
+    d->m_specDirty = true;
+    d->m_layoutDirty = true;
 }
 
 QtMaterialIconButton::QtMaterialIconButton(const QIcon& icon, QWidget* parent)
@@ -112,7 +133,7 @@ QtMaterialIconButton::~QtMaterialIconButton() = default;
 QSize QtMaterialIconButton::sizeHint() const
 {
     ensureSpecResolved();
-    const int side = std::max(m_spec.touchTarget.width(), m_spec.touchTarget.height());
+    const int side = std::max(d->m_spec.touchTarget.width(), d->m_spec.touchTarget.height());
     return QSize(side, side);
 }
 
@@ -123,21 +144,21 @@ QSize QtMaterialIconButton::minimumSizeHint() const
 
 bool QtMaterialIconButton::isSelected() const noexcept
 {
-    return m_selected;
+    return d->m_selected;
 }
 
 void QtMaterialIconButton::setSelected(bool selected)
 {
-    if (m_selected == selected) {
+    if (d->m_selected == selected) {
         return;
     }
 
-    m_selected = selected;
+    d->m_selected = selected;
     interactionState().setSelected(selected);
     syncAccessibilityState();
 
-    if (m_transition) {
-        selected ? m_transition->startForward() : m_transition->startBackward();
+    if (d->m_transition) {
+        selected ? d->m_transition->startForward() : d->m_transition->startBackward();
     } else {
         update();
     }
@@ -147,16 +168,16 @@ void QtMaterialIconButton::setSelected(bool selected)
 
 bool QtMaterialIconButton::requiresAccessibleName() const noexcept
 {
-    return m_requiresAccessibleName;
+    return d->m_requiresAccessibleName;
 }
 
 void QtMaterialIconButton::setRequiresAccessibleName(bool required)
 {
-    if (m_requiresAccessibleName == required) {
+    if (d->m_requiresAccessibleName == required) {
         return;
     }
 
-    m_requiresAccessibleName = required;
+    d->m_requiresAccessibleName = required;
     syncAccessibilityState();
 }
 
@@ -200,8 +221,8 @@ void QtMaterialIconButton::syncIconButtonAccessibility()
 
 void QtMaterialIconButton::mousePressEvent(QMouseEvent* event)
 {
-    if (m_ripple) {
-        m_ripple->addRipple(QtMaterial::mousePosition(event));
+    if (d->m_ripple) {
+        d->m_ripple->addRipple(QtMaterial::mousePosition(event));
     }
 
     QtMaterialAbstractButton::mousePressEvent(event);
@@ -217,45 +238,45 @@ void QtMaterialIconButton::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const qreal progress = m_transition ? m_transition->progress() : (m_selected ? 1.0 : 0.0);
+    const qreal progress = d->m_transition ? d->m_transition->progress() : (d->m_selected ? 1.0 : 0.0);
 
     const QColor containerColor = isEnabled()
-                                      ? ButtonMotionHelper::blendColor(m_spec.containerColor, m_spec.selectedContainerColor, progress)
-                                      : m_spec.containerColor;
+                                      ? ButtonMotionHelper::blendColor(d->m_spec.containerColor, d->m_spec.selectedContainerColor, progress)
+                                      : d->m_spec.containerColor;
 
     const QColor iconColor = isEnabled()
-                                 ? ButtonMotionHelper::blendColor(m_spec.iconColor, m_spec.selectedIconColor, progress)
-                                 : m_spec.disabledIconColor;
+                                 ? ButtonMotionHelper::blendColor(d->m_spec.iconColor, d->m_spec.selectedIconColor, progress)
+                                 : d->m_spec.disabledIconColor;
 
     const qreal overlayOpacity =
         ButtonMotionHelper::targetStateLayerOpacity(theme(), interactionState());
 
-    painter.fillPath(m_cachedContainerPath, containerColor);
+    painter.fillPath(d->m_cachedContainerPath, containerColor);
 
     if (overlayOpacity > 0.0) {
         QtMaterialStateLayerPainter::paintPath(
             &painter,
-            m_cachedContainerPath,
-            m_spec.stateLayerColor,
+            d->m_cachedContainerPath,
+            d->m_spec.stateLayerColor,
             overlayOpacity);
     }
 
-    if (m_ripple) {
-        m_ripple->setClipPath(m_cachedContainerPath);
-        m_ripple->paint(&painter, m_spec.stateLayerColor);
+    if (d->m_ripple) {
+        d->m_ripple->setClipPath(d->m_cachedContainerPath);
+        d->m_ripple->paint(&painter, d->m_spec.stateLayerColor);
     }
 
     if (interactionState().isFocused()) {
         QtMaterialFocusIndicator::paintPathFocusRing(
             &painter,
-            m_cachedContainerPath,
-            m_spec.stateLayerColor,
+            d->m_cachedContainerPath,
+            d->m_spec.stateLayerColor,
             2.0);
     }
 
     if (!icon().isNull()) {
         const QPixmap pixmap = icon().pixmap(
-            QSize(m_spec.iconSize, m_spec.iconSize),
+            QSize(d->m_spec.iconSize, d->m_spec.iconSize),
             isEnabled() ? QIcon::Normal : QIcon::Disabled);
 
         if (!pixmap.isNull()) {
@@ -266,7 +287,7 @@ void QtMaterialIconButton::paintEvent(QPaintEvent* event)
             ip.fillRect(image.rect(), iconColor);
             ip.end();
 
-            painter.drawImage(m_cachedIconRect, image);
+            painter.drawImage(d->m_cachedIconRect, image);
         }
     }
 }
@@ -321,85 +342,85 @@ IconButtonSpec QtMaterialIconButton::resolveIconButtonSpec() const
 
 void QtMaterialIconButton::invalidateLayoutCache()
 {
-    m_layoutDirty = true;
+    d->m_layoutDirty = true;
     updateGeometry();
     update();
 }
 
 void QtMaterialIconButton::invalidateResolvedSpec()
 {
-    m_specDirty = true;
-    m_layoutDirty = true;
+    d->m_specDirty = true;
+    d->m_layoutDirty = true;
     updateGeometry();
     update();
 }
 
 void QtMaterialIconButton::ensureSpecResolved() const
 {
-    if (!m_specDirty) {
+    if (!d->m_specDirty) {
         return;
     }
 
-    m_spec = resolveIconButtonSpec();
+    d->m_spec = resolveIconButtonSpec();
 
     ButtonMotionHelper::configureMotion(
         theme(),
-        m_spec,
-        m_transition,
-        m_ripple);
+        d->m_spec,
+        d->m_transition,
+        d->m_ripple);
 
-    m_specDirty = false;
-    m_layoutDirty = true;
+    d->m_specDirty = false;
+    d->m_layoutDirty = true;
 }
 
 void QtMaterialIconButton::ensureLayoutResolved() const
 {
     ensureSpecResolved();
 
-    if (!m_layoutDirty) {
+    if (!d->m_layoutDirty) {
         return;
     }
 
     const QRect outer = rect();
-    const QSize visualSize(m_spec.containerSize, m_spec.containerSize);
+    const QSize visualSize(d->m_spec.containerSize, d->m_spec.containerSize);
 
-    m_cachedVisualRect = QRect(
+    d->m_cachedVisualRect = QRect(
         outer.center().x() - visualSize.width() / 2,
         outer.center().y() - visualSize.height() / 2,
         visualSize.width(),
         visualSize.height());
 
-    m_cachedCornerRadius = radiusForSpec(m_spec);
+    d->m_cachedCornerRadius = radiusForSpec(d->m_spec);
 
     QPainterPath path;
-    path.addRoundedRect(QRectF(m_cachedVisualRect), m_cachedCornerRadius, m_cachedCornerRadius);
-    m_cachedContainerPath = path;
+    path.addRoundedRect(QRectF(d->m_cachedVisualRect), d->m_cachedCornerRadius, d->m_cachedCornerRadius);
+    d->m_cachedContainerPath = path;
 
-    m_cachedIconRect = QRect(
-        m_cachedVisualRect.center().x() - m_spec.iconSize / 2,
-        m_cachedVisualRect.center().y() - m_spec.iconSize / 2,
-        m_spec.iconSize,
-        m_spec.iconSize);
+    d->m_cachedIconRect = QRect(
+        d->m_cachedVisualRect.center().x() - d->m_spec.iconSize / 2,
+        d->m_cachedVisualRect.center().y() - d->m_spec.iconSize / 2,
+        d->m_spec.iconSize,
+        d->m_spec.iconSize);
 
-    m_layoutDirty = false;
+    d->m_layoutDirty = false;
 }
 
 QRect QtMaterialIconButton::visualContainerRect() const
 {
     ensureLayoutResolved();
-    return m_cachedVisualRect;
+    return d->m_cachedVisualRect;
 }
 
 QPainterPath QtMaterialIconButton::containerPath() const
 {
     ensureLayoutResolved();
-    return m_cachedContainerPath;
+    return d->m_cachedContainerPath;
 }
 
 QRect QtMaterialIconButton::iconRect() const
 {
     ensureLayoutResolved();
-    return m_cachedIconRect;
+    return d->m_cachedIconRect;
 }
 
 } // namespace QtMaterial

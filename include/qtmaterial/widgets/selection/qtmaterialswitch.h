@@ -1,11 +1,7 @@
 #pragma once
 
-#include <QPainterPath>
-#include <QRectF>
-#include <QFont>
-
+#include <memory>
 #include "qtmaterial/core/qtmaterialselectioncontrol.h"
-#include "qtmaterial/specs/qtmaterialswitchspec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 class QKeyEvent;
@@ -14,9 +10,9 @@ class QResizeEvent;
 
 namespace QtMaterial {
 
-class QtMaterialRippleController;
-class QtMaterialTransitionController;
+class QtMaterialSwitchPrivate;
 
+class QtMaterialRippleController;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSwitch : public QtMaterialSelectionControl
 {
     Q_OBJECT
@@ -46,24 +42,7 @@ private:
     void resolveLayoutIfNeeded() const;
     void syncTransitionState(bool animated);
     void syncAccessibleState();
-
-    mutable bool m_specDirty = true;
-    mutable bool m_layoutDirty = true;
-    mutable SwitchSpec m_spec;
-
-    QtMaterialTransitionController* m_transition = nullptr;
-    QtMaterialRippleController* m_ripple = nullptr;
-
-    mutable QRectF m_cachedTrackRect;
-    mutable QRectF m_cachedStateLayerRect;
-    mutable QRectF m_cachedHandleRect;
-    mutable QRectF m_cachedFocusRingRect;
-    mutable QRect m_cachedLabelRect;
-    mutable QPainterPath m_cachedTrackPath;
-    mutable QPainterPath m_cachedRippleClipPath;
-    mutable QPainterPath m_cachedFocusRingPath;
-    mutable QString m_cachedElidedText;
-    mutable QFont m_cachedLabelFont;
+ std::unique_ptr<QtMaterialSwitchPrivate> d;
 };
 
 } // namespace QtMaterial

@@ -1,10 +1,13 @@
 #include "qtmaterial/widgets/selection/qtmaterialswitch.h"
+#include <memory>
 
 // #include <QChangeEvent>
 #include <QFontMetrics>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPainterPath>
+#include <QRectF>
 #include <QResizeEvent>
 #include <QStyle>
 
@@ -12,10 +15,31 @@
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
+#include "qtmaterial/specs/qtmaterialswitchspec.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/core/qtmaterialeventcompat.h"
 
 namespace QtMaterial {
+
+
+struct QtMaterialSwitchPrivate
+{
+ bool m_specDirty = true;
+ bool m_layoutDirty = true;
+ SwitchSpec m_spec;
+ QtMaterialTransitionController* m_transition = nullptr;
+ QtMaterialRippleController* m_ripple = nullptr;
+ QRectF m_cachedTrackRect;
+ QRectF m_cachedStateLayerRect;
+ QRectF m_cachedHandleRect;
+ QRectF m_cachedFocusRingRect;
+ QRect m_cachedLabelRect;
+ QPainterPath m_cachedTrackPath;
+ QPainterPath m_cachedRippleClipPath;
+ QPainterPath m_cachedFocusRingPath;
+ QString m_cachedElidedText;
+ QFont m_cachedLabelFont;
+};
 
 namespace {
 
@@ -37,16 +61,18 @@ QColor blendColor(const QColor& a, const QColor& b, qreal t)
 } // namespace
 
 QtMaterialSwitch::QtMaterialSwitch(QWidget* parent)
-    : QtMaterialSelectionControl(parent)
-    , m_transition(new QtMaterialTransitionController(this))
-    , m_ripple(new QtMaterialRippleController(this))
+ : QtMaterialSelectionControl(parent)
+ , d(std::make_unique<QtMaterialSwitchPrivate>())
 {
+ d->m_transition = new QtMaterialTransitionController(this);
+ d->m_ripple = new QtMaterialRippleController(this);
+
     setCheckable(true);
     setFocusPolicy(Qt::StrongFocus);
     setAccessibleDescription(QStringLiteral("Material 3 switch"));
 
-    QObject::connect(m_transition, &QtMaterialTransitionController::progressChanged, this, [this](qreal) {
-        m_layoutDirty = true;
+    QObject::connect(d->m_transition, &QtMaterialTransitionController::progressChanged, this, [this](qreal) {
+        d->m_layoutDirty = true;
         update();
     });
     QObject::connect(this, &QAbstractButton::toggled, this, [this](bool) {
@@ -69,16 +95,16 @@ QtMaterialSwitch::~QtMaterialSwitch() = default;
 void QtMaterialSwitch::themeChangedEvent(const Theme& theme)
 {
     QtMaterialSelectionControl::themeChangedEvent(theme);
-    m_specDirty = true;
-    m_layoutDirty = true;
+    d->m_specDirty = true;
+    d->m_layoutDirty = true;
     updateGeometry();
     update();
 }
 
 void QtMaterialSwitch::invalidateResolvedSpec()
 {
-    m_specDirty = true;
-    m_layoutDirty = true;
+    d->m_specDirty = true;
+    d->m_layoutDirty = true;
 }
 
 void QtMaterialSwitch::stateChangedEvent()
@@ -99,33 +125,33 @@ void QtMaterialSwitch::contentChangedEvent()
 
 void QtMaterialSwitch::resolveSpecIfNeeded() const
 {
-    if (!m_specDirty) {
+    if (!d->m_specDirty) {
         return;
     }
 
     SpecFactory factory;
-    m_spec = factory.switchSpec(theme(), density());
-    if (m_transition && theme().motion().contains(m_spec.motionToken)) {
-        const MotionStyle motion = theme().motion().style(m_spec.motionToken);
+    d->m_spec = factory.switchSpec(theme(), density());
+    if (d->m_transition && theme().motion().contains(d->m_spec.motionToken)) {
+        const MotionStyle motion = theme().motion().style(d->m_spec.motionToken);
         if (motion.durationMs > 0) {
-            m_transition->setDuration(motion.durationMs);
+            d->m_transition->setDuration(motion.durationMs);
         }
-        m_transition->setEasingCurve(motion.easing);
+        d->m_transition->setEasingCurve(motion.easing);
     }
-    m_specDirty = false;
-    m_layoutDirty = true;
+    d->m_specDirty = false;
+    d->m_layoutDirty = true;
 }
 
 void QtMaterialSwitch::invalidateLayoutCache()
 {
-    m_layoutDirty = true;
+    d->m_layoutDirty = true;
 }
 
 void QtMaterialSwitch::resolveLayoutIfNeeded() const
 {
     const_cast<QtMaterialSwitch*>(this)->resolveSpecIfNeeded();
 
-    if (!m_layoutDirty) {
+    if (!d->m_layoutDirty) {
         return;
     }
 
@@ -133,12 +159,12 @@ void QtMaterialSwitch::resolveLayoutIfNeeded() const
 
     const int controlWidth = qMin(
         bounds.width(),
-        qMax(m_spec.touchTarget.width(), m_spec.trackWidth)
+        qMax(d->m_spec.touchTarget.width(), d->m_spec.trackWidth)
         );
 
     const int controlHeight = qMin(
         bounds.height(),
-        qMax(m_spec.touchTarget.height(), m_spec.trackHeight)
+        qMax(d->m_spec.touchTarget.height(), d->m_spec.trackHeight)
         );
 
     const bool rtl = layoutDirection() == Qt::RightToLeft;
@@ -150,31 +176,31 @@ void QtMaterialSwitch::resolveLayoutIfNeeded() const
 
     QRectF localTrackRect = SelectionRenderHelper::switchTrackRect(
         QRect(0, 0, controlRect.width(), controlRect.height()),
-        m_spec
+        d->m_spec
         );
 
     localTrackRect.translate(controlRect.topLeft());
 
-    const qreal progress = m_transition
-                               ? m_transition->progress()
+    const qreal progress = d->m_transition
+                               ? d->m_transition->progress()
                                : (isChecked() ? 1.0 : 0.0);
 
-    m_cachedTrackRect = localTrackRect;
-    m_cachedTrackPath = SelectionRenderHelper::roundedTrackPath(m_cachedTrackRect);
-    m_cachedHandleRect = SelectionRenderHelper::switchHandleRect(
-        m_cachedTrackRect,
-        m_spec,
+    d->m_cachedTrackRect = localTrackRect;
+    d->m_cachedTrackPath = SelectionRenderHelper::roundedTrackPath(d->m_cachedTrackRect);
+    d->m_cachedHandleRect = SelectionRenderHelper::switchHandleRect(
+        d->m_cachedTrackRect,
+        d->m_spec,
         progress
         );
 
-    const QRect handleBounds = m_cachedHandleRect.toAlignedRect();
+    const QRect handleBounds = d->m_cachedHandleRect.toAlignedRect();
 
-    m_cachedStateLayerRect = SelectionRenderHelper::centeredStateLayerRect(
+    d->m_cachedStateLayerRect = SelectionRenderHelper::centeredStateLayerRect(
         handleBounds,
-        m_spec.stateLayerSize
+        d->m_spec.stateLayerSize
         );
 
-    m_cachedFocusRingRect = m_cachedTrackRect.adjusted(
+    d->m_cachedFocusRingRect = d->m_cachedTrackRect.adjusted(
         -3.0,
         -3.0,
         3.0,
@@ -184,7 +210,7 @@ void QtMaterialSwitch::resolveLayoutIfNeeded() const
     const int gap = text().isEmpty() ? 0 : spacing();
 
     if (rtl) {
-        m_cachedLabelRect = QRect(
+        d->m_cachedLabelRect = QRect(
             0,
             0,
             qMax(0, controlRect.left() - gap),
@@ -193,7 +219,7 @@ void QtMaterialSwitch::resolveLayoutIfNeeded() const
     } else {
         const int labelX = controlRect.right() + 1 + gap;
 
-        m_cachedLabelRect = QRect(
+        d->m_cachedLabelRect = QRect(
             labelX,
             0,
             qMax(0, width() - labelX),
@@ -201,48 +227,48 @@ void QtMaterialSwitch::resolveLayoutIfNeeded() const
             );
     }
 
-    const qreal trackRadius = m_cachedTrackRect.height() / 2.0;
+    const qreal trackRadius = d->m_cachedTrackRect.height() / 2.0;
 
-    m_cachedRippleClipPath = QPainterPath();
-    m_cachedRippleClipPath.addEllipse(m_cachedStateLayerRect);
+    d->m_cachedRippleClipPath = QPainterPath();
+    d->m_cachedRippleClipPath.addEllipse(d->m_cachedStateLayerRect);
 
-    m_cachedFocusRingPath = QPainterPath();
-    m_cachedFocusRingPath.addRoundedRect(
-        m_cachedFocusRingRect,
-        m_cachedFocusRingRect.height() / 2.0,
-        m_cachedFocusRingRect.height() / 2.0
+    d->m_cachedFocusRingPath = QPainterPath();
+    d->m_cachedFocusRingPath.addRoundedRect(
+        d->m_cachedFocusRingRect,
+        d->m_cachedFocusRingRect.height() / 2.0,
+        d->m_cachedFocusRingRect.height() / 2.0
         );
 
-    m_cachedLabelFont = SelectionRenderHelper::labelFont(
+    d->m_cachedLabelFont = SelectionRenderHelper::labelFont(
         theme(),
-        m_spec.labelTypeRole,
+        d->m_spec.labelTypeRole,
         font()
         );
 
-    const QFontMetrics metrics(m_cachedLabelFont);
-    m_cachedElidedText = metrics.elidedText(
+    const QFontMetrics metrics(d->m_cachedLabelFont);
+    d->m_cachedElidedText = metrics.elidedText(
         text(),
         Qt::ElideRight,
-        m_cachedLabelRect.width()
+        d->m_cachedLabelRect.width()
         );
 
-    m_layoutDirty = false;
+    d->m_layoutDirty = false;
 }
 
 void QtMaterialSwitch::syncTransitionState(bool animated)
 {
-    if (!m_transition) {
+    if (!d->m_transition) {
         return;
     }
 
     if (animated) {
         if (isChecked()) {
-            m_transition->startForward();
+            d->m_transition->startForward();
         } else {
-            m_transition->startBackward();
+            d->m_transition->startBackward();
         }
     } else {
-        m_transition->setProgress(isChecked() ? 1.0 : 0.0);
+        d->m_transition->setProgress(isChecked() ? 1.0 : 0.0);
     }
 }
 
@@ -261,18 +287,18 @@ QSize QtMaterialSwitch::sizeHint() const
 {
     const_cast<QtMaterialSwitch*>(this)->resolveSpecIfNeeded();
 
-    const QFont labelFont = SelectionRenderHelper::labelFont(theme(), m_spec.labelTypeRole, font());
+    const QFont labelFont = SelectionRenderHelper::labelFont(theme(), d->m_spec.labelTypeRole, font());
     const QFontMetrics metrics(labelFont);
     const int labelWidth = text().isEmpty() ? 0 : (metrics.horizontalAdvance(text()) + spacing());
-    const int width = qMax(m_spec.touchTarget.width(), m_spec.trackWidth) + labelWidth;
-    const int height = qMax(m_spec.touchTarget.height(), qMax(m_spec.trackHeight, metrics.height()));
+    const int width = qMax(d->m_spec.touchTarget.width(), d->m_spec.trackWidth) + labelWidth;
+    const int height = qMax(d->m_spec.touchTarget.height(), qMax(d->m_spec.trackHeight, metrics.height()));
     return QSize(width, height);
 }
 
 QSize QtMaterialSwitch::minimumSizeHint() const
 {
     const_cast<QtMaterialSwitch*>(this)->resolveSpecIfNeeded();
-    return QSize(m_spec.touchTarget.width(), qMax(m_spec.touchTarget.height(), m_spec.trackHeight));
+    return QSize(d->m_spec.touchTarget.width(), qMax(d->m_spec.touchTarget.height(), d->m_spec.trackHeight));
 }
 
 void QtMaterialSwitch::resizeEvent(QResizeEvent* event)
@@ -291,8 +317,8 @@ void QtMaterialSwitch::changeEvent(QEvent* event)
 
 void QtMaterialSwitch::mousePressEvent(QMouseEvent* event)
 {
-    if (m_ripple) {
-        m_ripple->addRipple(QtMaterial::mousePosition(event));
+    if (d->m_ripple) {
+        d->m_ripple->addRipple(QtMaterial::mousePosition(event));
     }
     QtMaterialSelectionControl::mousePressEvent(event);
 }
@@ -323,56 +349,56 @@ void QtMaterialSwitch::paintEvent(QPaintEvent*)
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     const bool enabled = isEnabled();
-    const qreal progress = m_transition ? m_transition->progress() : (isChecked() ? 1.0 : 0.0);
+    const qreal progress = d->m_transition ? d->m_transition->progress() : (isChecked() ? 1.0 : 0.0);
     const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(theme(), interactionState());
 
     const QColor offTrack = enabled
-                                ? m_spec.unselectedTrackColor
-                                : m_spec.disabledUnselectedTrackColor;
+                                ? d->m_spec.unselectedTrackColor
+                                : d->m_spec.disabledUnselectedTrackColor;
     const QColor onTrack = enabled
-                               ? m_spec.selectedTrackColor
-                               : m_spec.disabledSelectedTrackColor;
+                               ? d->m_spec.selectedTrackColor
+                               : d->m_spec.disabledSelectedTrackColor;
 
     const QColor offHandle = enabled
-                                 ? m_spec.unselectedHandleColor
-                                 : m_spec.disabledUnselectedHandleColor;
+                                 ? d->m_spec.unselectedHandleColor
+                                 : d->m_spec.disabledUnselectedHandleColor;
     const QColor onHandle = enabled
-                                ? m_spec.selectedHandleColor
-                                : m_spec.disabledSelectedHandleColor;
+                                ? d->m_spec.selectedHandleColor
+                                : d->m_spec.disabledSelectedHandleColor;
 
     const QColor trackColor = blendColor(offTrack, onTrack, progress);
     const QColor handleColor = blendColor(offHandle, onHandle, progress);
 
-    SelectionRenderHelper::paintCircularStateLayer(&painter, m_cachedStateLayerRect, m_spec.stateLayerColor, stateOpacity);
+    SelectionRenderHelper::paintCircularStateLayer(&painter, d->m_cachedStateLayerRect, d->m_spec.stateLayerColor, stateOpacity);
 
     painter.save();
     painter.setPen(Qt::NoPen);
     painter.setBrush(trackColor);
-    painter.drawPath(m_cachedTrackPath);
+    painter.drawPath(d->m_cachedTrackPath);
     painter.setBrush(handleColor);
-    painter.drawEllipse(m_cachedHandleRect);
+    painter.drawEllipse(d->m_cachedHandleRect);
     painter.restore();
 
-    if (m_ripple) {
-        m_ripple->setClipPath(m_cachedRippleClipPath);
-        m_ripple->paint(&painter, m_spec.stateLayerColor);
+    if (d->m_ripple) {
+        d->m_ripple->setClipPath(d->m_cachedRippleClipPath);
+        d->m_ripple->paint(&painter, d->m_spec.stateLayerColor);
     }
 
-    if (!m_cachedElidedText.isEmpty()) {
-        const QColor labelColor = enabled ? m_spec.labelColor : m_spec.disabledLabelColor;
+    if (!d->m_cachedElidedText.isEmpty()) {
+        const QColor labelColor = enabled ? d->m_spec.labelColor : d->m_spec.disabledLabelColor;
         SelectionRenderHelper::paintLabel(&painter,
-                                          m_cachedLabelRect,
+                                          d->m_cachedLabelRect,
                                           labelAlignment(),
-                                          m_cachedElidedText,
+                                          d->m_cachedElidedText,
                                           labelColor,
-                                          m_cachedLabelFont);
+                                          d->m_cachedLabelFont);
     }
 
     if (interactionState().isFocused()) {
         painter.save();
         QtMaterialFocusIndicator::paintPathFocusRing(&painter,
-                                                     m_cachedFocusRingPath,
-                                                     m_spec.focusRingColor,
+                                                     d->m_cachedFocusRingPath,
+                                                     d->m_spec.focusRingColor,
                                                      2.0);
         painter.restore();
     }

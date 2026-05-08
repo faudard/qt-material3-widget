@@ -1,4 +1,5 @@
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
+#include <memory>
 
 #include <QMouseEvent>
 #include <QPainter>
@@ -8,9 +9,22 @@
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
+#include "qtmaterial/specs/qtmaterialcheckboxspec.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 
 namespace QtMaterial {
+
+
+struct QtMaterialCheckboxPrivate
+{
+ bool m_specDirty = true;
+ CheckboxSpec m_spec;
+ Qt::CheckState m_checkState = Qt::Unchecked;
+ bool m_tristate = false;
+ QtMaterialRippleController* m_ripple = nullptr;
+ QtMaterialTransitionController* m_transition = nullptr;
+};
+
 namespace {
 
 qreal lerp(qreal a, qreal b, qreal t)
@@ -36,17 +50,19 @@ QColor blendColor(const QColor& a, const QColor& b, qreal t)
 } // namespace
 
 QtMaterialCheckbox::QtMaterialCheckbox(QWidget* parent)
-    : QtMaterialSelectionControl(parent)
-    , m_ripple(new QtMaterialRippleController(this))
-    , m_transition(new QtMaterialTransitionController(this))
+ : QtMaterialSelectionControl(parent)
+ , d(std::make_unique<QtMaterialCheckboxPrivate>())
 {
+ d->m_ripple = new QtMaterialRippleController(this);
+ d->m_transition = new QtMaterialTransitionController(this);
+
     setCheckable(true);
     setFocusPolicy(Qt::StrongFocus);
     syncCheckedFromCheckState();
 
-    if (m_transition) {
-        m_transition->setProgress(targetTransitionProgress());
-        QObject::connect(m_transition,
+    if (d->m_transition) {
+        d->m_transition->setProgress(targetTransitionProgress());
+        QObject::connect(d->m_transition,
                          &QtMaterialTransitionController::progressChanged,
                          this,
                          [this](qreal) { update(); });
@@ -57,51 +73,51 @@ QtMaterialCheckbox::~QtMaterialCheckbox() = default;
 
 bool QtMaterialCheckbox::isTristate() const noexcept
 {
-    return m_tristate;
+    return d->m_tristate;
 }
 
 void QtMaterialCheckbox::setTristate(bool tristate)
 {
-    if (m_tristate == tristate) {
+    if (d->m_tristate == tristate) {
         return;
     }
 
-    m_tristate = tristate;
-    if (!m_tristate && m_checkState == Qt::PartiallyChecked) {
+    d->m_tristate = tristate;
+    if (!d->m_tristate && d->m_checkState == Qt::PartiallyChecked) {
         setCheckState(Qt::Unchecked);
     }
 }
 
 Qt::CheckState QtMaterialCheckbox::checkState() const noexcept
 {
-    return m_checkState;
+    return d->m_checkState;
 }
 
 void QtMaterialCheckbox::setCheckState(Qt::CheckState state)
 {
-    if (!m_tristate && state == Qt::PartiallyChecked) {
+    if (!d->m_tristate && state == Qt::PartiallyChecked) {
         state = Qt::Unchecked;
     }
 
-    if (m_checkState == state) {
+    if (d->m_checkState == state) {
         return;
     }
 
-    m_checkState = state;
+    d->m_checkState = state;
     syncCheckedFromCheckState();
 
-    if (m_transition) {
+    if (d->m_transition) {
         const qreal target = targetTransitionProgress();
-        m_transition->setProgress(target);
+        d->m_transition->setProgress(target);
     }
 
-    emit checkStateChanged(m_checkState);
+    emit checkStateChanged(d->m_checkState);
     update();
 }
 
 void QtMaterialCheckbox::syncCheckedFromCheckState()
 {
-    const bool selected = (m_checkState != Qt::Unchecked);
+    const bool selected = (d->m_checkState != Qt::Unchecked);
 
     if (QAbstractButton::isChecked() != selected) {
         QAbstractButton::setChecked(selected);
@@ -110,7 +126,7 @@ void QtMaterialCheckbox::syncCheckedFromCheckState()
 
 qreal QtMaterialCheckbox::targetTransitionProgress() const noexcept
 {
-    switch (m_checkState) {
+    switch (d->m_checkState) {
     case Qt::PartiallyChecked:
         return 0.5;
     case Qt::Checked:
@@ -124,39 +140,39 @@ qreal QtMaterialCheckbox::targetTransitionProgress() const noexcept
 void QtMaterialCheckbox::themeChangedEvent(const Theme& theme)
 {
     QtMaterialSelectionControl::themeChangedEvent(theme);
-    m_specDirty = true;
+    d->m_specDirty = true;
 }
 
 void QtMaterialCheckbox::invalidateResolvedSpec()
 {
-    m_specDirty = true;
+    d->m_specDirty = true;
 }
 
 void QtMaterialCheckbox::resolveSpecIfNeeded() const
 {
-    if (!m_specDirty) {
+    if (!d->m_specDirty) {
         return;
     }
 
     SpecFactory factory;
-    m_spec = factory.checkboxSpec(theme(), density());
-    const_cast<QtMaterialCheckbox*>(this)->setSpacing(m_spec.spacing);
+    d->m_spec = factory.checkboxSpec(theme(), density());
+    const_cast<QtMaterialCheckbox*>(this)->setSpacing(d->m_spec.spacing);
 
-    if (m_transition && theme().motion().contains(m_spec.motionToken)) {
-        const MotionStyle motion = theme().motion().style(m_spec.motionToken);
+    if (d->m_transition && theme().motion().contains(d->m_spec.motionToken)) {
+        const MotionStyle motion = theme().motion().style(d->m_spec.motionToken);
         if (motion.durationMs > 0) {
-            m_transition->setDuration(motion.durationMs);
+            d->m_transition->setDuration(motion.durationMs);
         }
-        m_transition->setEasingCurve(motion.easing);
+        d->m_transition->setEasingCurve(motion.easing);
     }
 
-    m_specDirty = false;
+    d->m_specDirty = false;
 }
 
 void QtMaterialCheckbox::mousePressEvent(QMouseEvent* event)
 {
-    if (m_ripple) {
-        m_ripple->addRipple(QtMaterial::mousePosition(event));
+    if (d->m_ripple) {
+        d->m_ripple->addRipple(QtMaterial::mousePosition(event));
     }
     QtMaterialSelectionControl::mousePressEvent(event);
 }
@@ -167,8 +183,8 @@ void QtMaterialCheckbox::nextCheckState()
         return;
     }
 
-    if (m_tristate) {
-        switch (m_checkState) {
+    if (d->m_tristate) {
+        switch (d->m_checkState) {
         case Qt::Unchecked:
             setCheckState(Qt::PartiallyChecked);
             break;
@@ -183,7 +199,7 @@ void QtMaterialCheckbox::nextCheckState()
         return;
     }
 
-    setCheckState(m_checkState == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+    setCheckState(d->m_checkState == Qt::Checked ? Qt::Unchecked : Qt::Checked);
 }
 
 void QtMaterialCheckbox::paintEvent(QPaintEvent*)
@@ -195,27 +211,27 @@ void QtMaterialCheckbox::paintEvent(QPaintEvent*)
 
     const QRect box = indicatorRect();
     const QRectF stateLayerRect =
-        SelectionRenderHelper::centeredStateLayerRect(box, m_spec.stateLayerSize);
+        SelectionRenderHelper::centeredStateLayerRect(box, d->m_spec.stateLayerSize);
     const qreal stateOpacity =
         SelectionRenderHelper::stateLayerOpacity(theme(), interactionState());
     const qreal progress =
-        m_transition ? m_transition->progress() : targetTransitionProgress();
+        d->m_transition ? d->m_transition->progress() : targetTransitionProgress();
 
     SelectionRenderHelper::paintCircularStateLayer(
-        &painter, stateLayerRect, m_spec.stateLayerColor, stateOpacity);
+        &painter, stateLayerRect, d->m_spec.stateLayerColor, stateOpacity);
 
     QPainterPath rippleClip;
     rippleClip.addEllipse(stateLayerRect);
-    if (m_ripple) {
-        m_ripple->setClipPath(rippleClip);
-        m_ripple->paint(&painter, m_spec.stateLayerColor);
+    if (d->m_ripple) {
+        d->m_ripple->setClipPath(rippleClip);
+        d->m_ripple->paint(&painter, d->m_spec.stateLayerColor);
     }
 
     const bool enabled = isEnabled();
     const QColor selectedContainer =
-        enabled ? m_spec.selectedContainerColor : m_spec.disabledSelectedContainerColor;
+        enabled ? d->m_spec.selectedContainerColor : d->m_spec.disabledSelectedContainerColor;
     const QColor unselectedOutline =
-        enabled ? m_spec.unselectedOutlineColor : m_spec.disabledUnselectedOutlineColor;
+        enabled ? d->m_spec.unselectedOutlineColor : d->m_spec.disabledUnselectedOutlineColor;
     const QColor outlineColor =
         blendColor(unselectedOutline, selectedContainer, qMin(progress * 2.0, 1.0));
 
@@ -223,15 +239,15 @@ void QtMaterialCheckbox::paintEvent(QPaintEvent*)
     fillColor.setAlphaF(selectedContainer.alphaF() * qMin(progress * 2.0, 1.0));
 
     painter.save();
-    painter.setPen(QPen(outlineColor, m_spec.outlineWidth));
+    painter.setPen(QPen(outlineColor, d->m_spec.outlineWidth));
     painter.setBrush(fillColor);
-    painter.drawRoundedRect(QRectF(box), m_spec.cornerRadius, m_spec.cornerRadius);
+    painter.drawRoundedRect(QRectF(box), d->m_spec.cornerRadius, d->m_spec.cornerRadius);
 
-    if (m_checkState == Qt::PartiallyChecked) {
-        QColor iconColor = m_spec.selectedIconColor;
+    if (d->m_checkState == Qt::PartiallyChecked) {
+        QColor iconColor = d->m_spec.selectedIconColor;
         iconColor.setAlphaF(iconColor.alphaF() * qMax(progress, 0.5));
         painter.setPen(QPen(iconColor,
-                            m_spec.checkmarkStrokeWidth,
+                            d->m_spec.checkmarkStrokeWidth,
                             Qt::SolidLine,
                             Qt::RoundCap,
                             Qt::RoundJoin));
@@ -239,10 +255,10 @@ void QtMaterialCheckbox::paintEvent(QPaintEvent*)
         painter.drawLine(QPointF(box.left() + box.width() * 0.22, y),
                          QPointF(box.right() - box.width() * 0.22, y));
     } else if (progress > 0.0) {
-        QColor iconColor = m_spec.selectedIconColor;
+        QColor iconColor = d->m_spec.selectedIconColor;
         iconColor.setAlphaF(iconColor.alphaF() * progress);
         painter.setPen(QPen(iconColor,
-                            m_spec.checkmarkStrokeWidth,
+                            d->m_spec.checkmarkStrokeWidth,
                             Qt::SolidLine,
                             Qt::RoundCap,
                             Qt::RoundJoin));
@@ -264,9 +280,9 @@ void QtMaterialCheckbox::paintEvent(QPaintEvent*)
     painter.restore();
 
     const QFont labelFont =
-        SelectionRenderHelper::labelFont(theme(), m_spec.labelTypeRole, font());
+        SelectionRenderHelper::labelFont(theme(), d->m_spec.labelTypeRole, font());
     const QColor labelColor =
-        enabled ? m_spec.labelColor : m_spec.disabledLabelColor;
+        enabled ? d->m_spec.labelColor : d->m_spec.disabledLabelColor;
 
     SelectionRenderHelper::paintLabel(
         &painter, labelRect(), labelAlignment(), text(), labelColor, labelFont);
@@ -275,7 +291,7 @@ void QtMaterialCheckbox::paintEvent(QPaintEvent*)
         QtMaterialFocusIndicator::paintRectFocusRing(
             &painter,
             stateLayerRect,
-            m_spec.focusRingColor,
+            d->m_spec.focusRingColor,
             stateLayerRect.height() / 2.0,
             2.0);
     }
