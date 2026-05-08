@@ -14,6 +14,7 @@ class QPaintEvent;
 class QResizeEvent;
 class QShowEvent;
 class QWidget;
+class QPainterPath;
 
 namespace QtMaterial {
 
