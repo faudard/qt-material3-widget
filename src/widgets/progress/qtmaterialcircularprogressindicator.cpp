@@ -1,4 +1,5 @@
 #include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
+#include <memory>
 
 #include <QEvent>
 #include <QPainter>
@@ -34,16 +35,29 @@ QColor fallbackTrack(const QWidget* widget)
 
 } // namespace
 
+class QtMaterialCircularProgressIndicatorPrivate
+{
+public:
+    ProgressIndicatorSpec spec;
+    QtMaterialAsyncState asyncState;
+    qreal value = 0.0;
+    qreal phase = 0.0;
+    QtMaterialCircularProgressIndicator::Mode mode = QtMaterialCircularProgressIndicator::Mode::Determinate;
+    QPointer<QVariantAnimation> animation;
+};
+
 QtMaterialCircularProgressIndicator::QtMaterialCircularProgressIndicator(QWidget* parent)
     : QtMaterialWidget(parent)
+    , d(std::make_unique<QtMaterialCircularProgressIndicatorPrivate>())
 {
     init();
 }
 
 QtMaterialCircularProgressIndicator::QtMaterialCircularProgressIndicator(const ProgressIndicatorSpec& spec, QWidget* parent)
     : QtMaterialWidget(parent)
-    , m_spec(spec)
+    , d(std::make_unique<QtMaterialCircularProgressIndicatorPrivate>())
 {
+    d->spec = spec;
     init();
 }
 
@@ -62,24 +76,24 @@ void QtMaterialCircularProgressIndicator::init()
 
 qreal QtMaterialCircularProgressIndicator::value() const noexcept
 {
-    return m_value;
+    return d->value;
 }
 
 void QtMaterialCircularProgressIndicator::setValue(qreal value)
 {
     const qreal normalized = clampProgress(value);
-    if (qFuzzyCompare(m_value + 1.0, normalized + 1.0)) {
+    if (qFuzzyCompare(d->value + 1.0, normalized + 1.0)) {
         return;
     }
 
-    m_value = normalized;
-    if (m_mode == Mode::Determinate) {
-        m_asyncState.setProgress(m_value);
+    d->value = normalized;
+    if (d->mode == Mode::Determinate) {
+        d->asyncState.setProgress(d->value);
         syncMaterialStateFromAsyncState();
         emit asyncStateChanged();
     }
 
-    emit valueChanged(m_value);
+    emit valueChanged(d->value);
     syncAccessibleState();
     update();
 }
@@ -91,19 +105,19 @@ void QtMaterialCircularProgressIndicator::resetValue()
 
 QtMaterialCircularProgressIndicator::Mode QtMaterialCircularProgressIndicator::mode() const noexcept
 {
-    return m_mode;
+    return d->mode;
 }
 
 void QtMaterialCircularProgressIndicator::setMode(Mode mode)
 {
-    if (m_mode == mode) {
+    if (d->mode == mode) {
         return;
     }
 
-    m_mode = mode;
+    d->mode = mode;
     syncAsyncStateFromProgress();
     updateAnimationState();
-    emit modeChanged(m_mode);
+    emit modeChanged(d->mode);
     emit asyncStateChanged();
     syncAccessibleState();
     update();
@@ -111,16 +125,16 @@ void QtMaterialCircularProgressIndicator::setMode(Mode mode)
 
 bool QtMaterialCircularProgressIndicator::isBusy() const noexcept
 {
-    return m_asyncState.isBusy();
+    return d->asyncState.isBusy();
 }
 
 void QtMaterialCircularProgressIndicator::setBusy(bool busy)
 {
-    if (m_asyncState.isBusy() == busy) {
+    if (d->asyncState.isBusy() == busy) {
         return;
     }
 
-    m_asyncState.setBusy(busy);
+    d->asyncState.setBusy(busy);
     syncMaterialStateFromAsyncState();
     emit asyncStateChanged();
     syncAccessibleState();
@@ -129,7 +143,7 @@ void QtMaterialCircularProgressIndicator::setBusy(bool busy)
 
 bool QtMaterialCircularProgressIndicator::isIndeterminate() const noexcept
 {
-    return m_mode == Mode::Indeterminate;
+    return d->mode == Mode::Indeterminate;
 }
 
 void QtMaterialCircularProgressIndicator::setIndeterminate(bool indeterminate)
@@ -139,16 +153,16 @@ void QtMaterialCircularProgressIndicator::setIndeterminate(bool indeterminate)
 
 QString QtMaterialCircularProgressIndicator::statusText() const
 {
-    return m_asyncState.statusText();
+    return d->asyncState.statusText();
 }
 
 void QtMaterialCircularProgressIndicator::setStatusText(const QString& text)
 {
-    if (m_asyncState.statusText() == text) {
+    if (d->asyncState.statusText() == text) {
         return;
     }
 
-    m_asyncState.setStatusText(text);
+    d->asyncState.setStatusText(text);
     syncMaterialStateFromAsyncState();
     emit asyncStateChanged();
     syncAccessibleState();
@@ -157,11 +171,11 @@ void QtMaterialCircularProgressIndicator::setStatusText(const QString& text)
 QString QtMaterialCircularProgressIndicator::accessibleValueText() const
 {
     const QString status = statusText().trimmed();
-    if (m_mode == Mode::Indeterminate) {
+    if (d->mode == Mode::Indeterminate) {
         return status.isEmpty() ? QStringLiteral("In progress") : status;
     }
 
-    const int percent = qBound(0, qRound(m_value * 100.0), 100);
+    const int percent = qBound(0, qRound(d->value * 100.0), 100);
     const QString progress = QStringLiteral("%1%").arg(percent);
     return status.isEmpty() ? progress : QStringLiteral("%1, %2").arg(status, progress);
 }
@@ -173,22 +187,22 @@ QString QtMaterialCircularProgressIndicator::accessibilitySummary() const
 
 QtMaterialAsyncState QtMaterialCircularProgressIndicator::asyncState() const
 {
-    return m_asyncState;
+    return d->asyncState;
 }
 
 void QtMaterialCircularProgressIndicator::setAsyncState(const QtMaterialAsyncState& state)
 {
-    m_asyncState = state;
-    m_mode = m_asyncState.isIndeterminate() ? Mode::Indeterminate : Mode::Determinate;
-    if (m_asyncState.hasProgress()) {
-        m_value = clampProgress(m_asyncState.progress());
-        m_asyncState.setProgress(m_value);
+    d->asyncState = state;
+    d->mode = d->asyncState.isIndeterminate() ? Mode::Indeterminate : Mode::Determinate;
+    if (d->asyncState.hasProgress()) {
+        d->value = clampProgress(d->asyncState.progress());
+        d->asyncState.setProgress(d->value);
     }
 
     syncMaterialStateFromAsyncState();
     updateAnimationState();
-    emit modeChanged(m_mode);
-    emit valueChanged(m_value);
+    emit modeChanged(d->mode);
+    emit valueChanged(d->value);
     emit asyncStateChanged();
     syncAccessibleState();
     update();
@@ -196,15 +210,15 @@ void QtMaterialCircularProgressIndicator::setAsyncState(const QtMaterialAsyncSta
 
 QColor QtMaterialCircularProgressIndicator::activeColor() const
 {
-    return m_spec.activeColor;
+    return d->spec.activeColor;
 }
 
 void QtMaterialCircularProgressIndicator::setActiveColor(const QColor& color)
 {
-    if (m_spec.activeColor == color) {
+    if (d->spec.activeColor == color) {
         return;
     }
-    m_spec.activeColor = color;
+    d->spec.activeColor = color;
     emit specChanged();
     update();
 }
@@ -216,15 +230,15 @@ void QtMaterialCircularProgressIndicator::resetActiveColor()
 
 QColor QtMaterialCircularProgressIndicator::trackColor() const
 {
-    return m_spec.trackColor;
+    return d->spec.trackColor;
 }
 
 void QtMaterialCircularProgressIndicator::setTrackColor(const QColor& color)
 {
-    if (m_spec.trackColor == color) {
+    if (d->spec.trackColor == color) {
         return;
     }
-    m_spec.trackColor = color;
+    d->spec.trackColor = color;
     emit specChanged();
     update();
 }
@@ -236,32 +250,32 @@ void QtMaterialCircularProgressIndicator::resetTrackColor()
 
 int QtMaterialCircularProgressIndicator::trackGap() const noexcept
 {
-    return m_spec.trackGap;
+    return d->spec.trackGap;
 }
 
 void QtMaterialCircularProgressIndicator::setTrackGap(int gap)
 {
     gap = qMax(0, gap);
-    if (m_spec.trackGap == gap) {
+    if (d->spec.trackGap == gap) {
         return;
     }
-    m_spec.trackGap = gap;
+    d->spec.trackGap = gap;
     emit specChanged();
     update();
 }
 
 int QtMaterialCircularProgressIndicator::strokeWidth() const noexcept
 {
-    return m_spec.circularStrokeWidth;
+    return d->spec.circularStrokeWidth;
 }
 
 void QtMaterialCircularProgressIndicator::setStrokeWidth(int width)
 {
     width = qMax(1, width);
-    if (m_spec.circularStrokeWidth == width) {
+    if (d->spec.circularStrokeWidth == width) {
         return;
     }
-    m_spec.circularStrokeWidth = width;
+    d->spec.circularStrokeWidth = width;
     emit specChanged();
     updateGeometry();
     update();
@@ -269,12 +283,12 @@ void QtMaterialCircularProgressIndicator::setStrokeWidth(int width)
 
 ProgressIndicatorSpec QtMaterialCircularProgressIndicator::spec() const
 {
-    return m_spec;
+    return d->spec;
 }
 
 void QtMaterialCircularProgressIndicator::setSpec(const ProgressIndicatorSpec& spec)
 {
-    m_spec = spec;
+    d->spec = spec;
     initAnimation();
     emit specChanged();
     updateGeometry();
@@ -283,7 +297,7 @@ void QtMaterialCircularProgressIndicator::setSpec(const ProgressIndicatorSpec& s
 
 QSize QtMaterialCircularProgressIndicator::sizeHint() const
 {
-    return m_spec.circularSize.expandedTo(QSize(16, 16));
+    return d->spec.circularSize.expandedTo(QSize(16, 16));
 }
 
 QSize QtMaterialCircularProgressIndicator::minimumSizeHint() const
@@ -296,7 +310,7 @@ void QtMaterialCircularProgressIndicator::paintEvent(QPaintEvent*)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const int stroke = qMax(1, m_spec.circularStrokeWidth);
+    const int stroke = qMax(1, d->spec.circularStrokeWidth);
     QRectF arcRect = rect().adjusted(stroke, stroke, -stroke, -stroke);
     if (arcRect.isEmpty()) {
         return;
@@ -306,20 +320,20 @@ void QtMaterialCircularProgressIndicator::paintEvent(QPaintEvent*)
     QPen activePen(resolvedActiveColor(), stroke, Qt::SolidLine, Qt::RoundCap);
 
     painter.setPen(trackPen);
-    const int gap16 = qMax(0, m_spec.trackGap) * 16;
+    const int gap16 = qMax(0, d->spec.trackGap) * 16;
     painter.drawArc(arcRect, gap16, 360 * 16 - (2 * gap16));
 
     painter.setPen(activePen);
-    if (m_mode == Mode::Determinate) {
-        const int span = qRound(360.0 * 16.0 * m_value) - (m_value > 0.0 && m_value < 1.0 ? gap16 : 0);
+    if (d->mode == Mode::Determinate) {
+        const int span = qRound(360.0 * 16.0 * d->value) - (d->value > 0.0 && d->value < 1.0 ? gap16 : 0);
         if (span > 0) {
             painter.drawArc(arcRect, 90 * 16, -span);
         }
         return;
     }
 
-    const int start = qRound((90.0 - 360.0 * m_phase) * 16.0);
-    const int span = -qRound((72.0 + 108.0 * (0.5 + 0.5 * std::sin(m_phase * 6.283185307179586))) * 16.0);
+    const int start = qRound((90.0 - 360.0 * d->phase) * 16.0);
+    const int span = -qRound((72.0 + 108.0 * (0.5 + 0.5 * std::sin(d->phase * 6.283185307179586))) * 16.0);
     painter.drawArc(arcRect, start, span);
 }
 
@@ -345,54 +359,54 @@ void QtMaterialCircularProgressIndicator::changeEvent(QEvent* event)
 
 void QtMaterialCircularProgressIndicator::initAnimation()
 {
-    if (!m_animation) {
-        m_animation = new QVariantAnimation(this);
-        connect(m_animation, &QVariantAnimation::valueChanged, this, [this](const QVariant& value) {
-            m_phase = value.toReal();
+    if (!d->animation) {
+        d->animation = new QVariantAnimation(this);
+        connect(d->animation, &QVariantAnimation::valueChanged, this, [this](const QVariant& value) {
+            d->phase = value.toReal();
             update();
         });
     }
 
-    m_animation->setStartValue(0.0);
-    m_animation->setEndValue(1.0);
-    m_animation->setDuration(qMax(250, m_spec.animationDurationMs));
-    m_animation->setLoopCount(-1);
+    d->animation->setStartValue(0.0);
+    d->animation->setEndValue(1.0);
+    d->animation->setDuration(qMax(250, d->spec.animationDurationMs));
+    d->animation->setLoopCount(-1);
 }
 
 void QtMaterialCircularProgressIndicator::updateAnimationState()
 {
-    if (!m_animation) {
+    if (!d->animation) {
         return;
     }
 
-    if (m_mode == Mode::Indeterminate && isVisible()) {
-        if (m_animation->state() != QVariantAnimation::Running) {
-            m_animation->start();
+    if (d->mode == Mode::Indeterminate && isVisible()) {
+        if (d->animation->state() != QVariantAnimation::Running) {
+            d->animation->start();
         }
     } else {
-        if (m_animation->state() != QVariantAnimation::Stopped) {
-            m_animation->stop();
+        if (d->animation->state() != QVariantAnimation::Stopped) {
+            d->animation->stop();
         }
-        m_phase = 0.0;
+        d->phase = 0.0;
     }
 }
 
 void QtMaterialCircularProgressIndicator::syncAsyncStateFromProgress()
 {
-    if (m_mode == Mode::Indeterminate) {
-        m_asyncState.clearProgress();
-        m_asyncState.setIndeterminate(true);
-        m_asyncState.setBusy(true);
+    if (d->mode == Mode::Indeterminate) {
+        d->asyncState.clearProgress();
+        d->asyncState.setIndeterminate(true);
+        d->asyncState.setBusy(true);
     } else {
-        m_asyncState.setIndeterminate(false);
-        m_asyncState.setProgress(m_value);
+        d->asyncState.setIndeterminate(false);
+        d->asyncState.setProgress(d->value);
     }
     syncMaterialStateFromAsyncState();
 }
 
 void QtMaterialCircularProgressIndicator::syncMaterialStateFromAsyncState()
 {
-    setMaterialState(m_asyncState.toPropertyString());
+    setMaterialState(d->asyncState.toPropertyString());
 }
 
 void QtMaterialCircularProgressIndicator::syncAccessibleState()
@@ -412,12 +426,12 @@ void QtMaterialCircularProgressIndicator::syncAccessibleState()
 
 QColor QtMaterialCircularProgressIndicator::resolvedActiveColor() const
 {
-    return m_spec.activeColor.isValid() ? m_spec.activeColor : fallbackActive(this);
+    return d->spec.activeColor.isValid() ? d->spec.activeColor : fallbackActive(this);
 }
 
 QColor QtMaterialCircularProgressIndicator::resolvedTrackColor() const
 {
-    return m_spec.trackColor.isValid() ? m_spec.trackColor : fallbackTrack(this);
+    return d->spec.trackColor.isValid() ? d->spec.trackColor : fallbackTrack(this);
 }
 
 } // namespace QtMaterial

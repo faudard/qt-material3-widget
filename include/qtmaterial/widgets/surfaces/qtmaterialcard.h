@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialsurface.h"
 #include "qtmaterial/specs/qtmaterialcardspec.h"
@@ -15,6 +17,8 @@ class QPaintEvent;
 class QResizeEvent;
 
 namespace QtMaterial {
+
+class QtMaterialCardPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialCard : public QtMaterialSurface {
     Q_OBJECT
@@ -89,21 +93,8 @@ private:
     QColor resolvedContentColor() const;
 
 private:
-    QString m_titleText;
-    QString m_bodyText;
-    Variant m_variant = Variant::Elevated;
-    bool m_interactive = false;
-    bool m_pressed = false;
-    bool m_hovered = false;
-    QString m_lastAccessibilitySummary;
+    std::unique_ptr<QtMaterialCardPrivate> d;
 
-    mutable bool m_specDirty = true;
-    mutable bool m_layoutDirty = true;
-    mutable QtMaterial::CardSpec m_spec;
-    mutable QRect m_cachedVisualRect;
-    mutable QRect m_cachedContentRect;
-    mutable qreal m_cachedCornerRadius = 12.0;
-    mutable QPainterPath m_cachedContainerPath;
 };
 
 } // namespace QtMaterial

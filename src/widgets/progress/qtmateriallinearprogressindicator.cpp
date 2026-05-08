@@ -1,4 +1,5 @@
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
+#include <memory>
 
 #include <QEvent>
 #include <QHideEvent>
@@ -31,8 +32,22 @@ QColor fallbackTrack(const QWidget* widget) {
 }
 } // namespace
 
+class QtMaterialLinearProgressIndicatorPrivate
+{
+public:
+    ProgressIndicatorSpec spec;
+    QtMaterialAsyncState asyncState;
+    qreal value = 0.0;
+    qreal phase = 0.0;
+    QtMaterialLinearProgressIndicator::Mode mode = QtMaterialLinearProgressIndicator::Mode::Determinate;
+    bool invertedAppearance = false;
+    QPointer<QVariantAnimation> animation;
+};
+
 QtMaterialLinearProgressIndicator::QtMaterialLinearProgressIndicator(QWidget* parent)
-    : QtMaterialWidget(parent) {
+    : QtMaterialWidget(parent)
+    , d(std::make_unique<QtMaterialLinearProgressIndicatorPrivate>())
+{
     setMaterialComponent(QStringLiteral("LinearProgressIndicator"));
     syncAsyncStateFromProgress();
     initAnimation();
@@ -42,7 +57,9 @@ QtMaterialLinearProgressIndicator::QtMaterialLinearProgressIndicator(QWidget* pa
 
 QtMaterialLinearProgressIndicator::QtMaterialLinearProgressIndicator(const ProgressIndicatorSpec& spec, QWidget* parent)
     : QtMaterialWidget(parent)
-    , m_spec(spec) {
+    , d(std::make_unique<QtMaterialLinearProgressIndicatorPrivate>())
+{
+    d->spec = spec;
     setMaterialComponent(QStringLiteral("LinearProgressIndicator"));
     syncAsyncStateFromProgress();
     initAnimation();
@@ -52,146 +69,146 @@ QtMaterialLinearProgressIndicator::QtMaterialLinearProgressIndicator(const Progr
 
 QtMaterialLinearProgressIndicator::~QtMaterialLinearProgressIndicator() = default;
 
-qreal QtMaterialLinearProgressIndicator::value() const noexcept { return m_value; }
+qreal QtMaterialLinearProgressIndicator::value() const noexcept { return d->value; }
 
 void QtMaterialLinearProgressIndicator::setValue(qreal value) {
     const qreal normalized = clampProgress(value);
-    if (qFuzzyCompare(m_value + 1.0, normalized + 1.0)) {
+    if (qFuzzyCompare(d->value + 1.0, normalized + 1.0)) {
         return;
     }
-    m_value = normalized;
-    if (m_mode == Mode::Determinate) {
-        m_asyncState.setProgress(m_value);
+    d->value = normalized;
+    if (d->mode == Mode::Determinate) {
+        d->asyncState.setProgress(d->value);
         syncMaterialStateFromAsyncState();
         emit asyncStateChanged();
     }
-    emit valueChanged(m_value);
+    emit valueChanged(d->value);
     update();
 }
 
 void QtMaterialLinearProgressIndicator::resetValue() { setValue(0.0); }
 
-QtMaterialLinearProgressIndicator::Mode QtMaterialLinearProgressIndicator::mode() const noexcept { return m_mode; }
+QtMaterialLinearProgressIndicator::Mode QtMaterialLinearProgressIndicator::mode() const noexcept { return d->mode; }
 
 void QtMaterialLinearProgressIndicator::setMode(Mode mode) {
-    if (m_mode == mode) {
+    if (d->mode == mode) {
         return;
     }
-    m_mode = mode;
+    d->mode = mode;
     syncAsyncStateFromProgress();
     updateAnimationState();
-    emit modeChanged(m_mode);
+    emit modeChanged(d->mode);
     emit asyncStateChanged();
     update();
 }
 
-bool QtMaterialLinearProgressIndicator::isBusy() const noexcept { return m_asyncState.isBusy(); }
+bool QtMaterialLinearProgressIndicator::isBusy() const noexcept { return d->asyncState.isBusy(); }
 
 void QtMaterialLinearProgressIndicator::setBusy(bool busy) {
-    if (m_asyncState.isBusy() == busy) {
+    if (d->asyncState.isBusy() == busy) {
         return;
     }
-    m_asyncState.setBusy(busy);
+    d->asyncState.setBusy(busy);
     syncMaterialStateFromAsyncState();
     emit asyncStateChanged();
     update();
 }
 
 bool QtMaterialLinearProgressIndicator::isIndeterminate() const noexcept {
-    return m_mode == Mode::Indeterminate;
+    return d->mode == Mode::Indeterminate;
 }
 
 void QtMaterialLinearProgressIndicator::setIndeterminate(bool indeterminate) {
     setMode(indeterminate ? Mode::Indeterminate : Mode::Determinate);
 }
 
-QString QtMaterialLinearProgressIndicator::statusText() const { return m_asyncState.statusText(); }
+QString QtMaterialLinearProgressIndicator::statusText() const { return d->asyncState.statusText(); }
 
 void QtMaterialLinearProgressIndicator::setStatusText(const QString& text) {
-    if (m_asyncState.statusText() == text) {
+    if (d->asyncState.statusText() == text) {
         return;
     }
-    m_asyncState.setStatusText(text);
+    d->asyncState.setStatusText(text);
     setAccessibleDescription(text);
     syncMaterialStateFromAsyncState();
     emit asyncStateChanged();
 }
 
-QtMaterialAsyncState QtMaterialLinearProgressIndicator::asyncState() const { return m_asyncState; }
+QtMaterialAsyncState QtMaterialLinearProgressIndicator::asyncState() const { return d->asyncState; }
 
 void QtMaterialLinearProgressIndicator::setAsyncState(const QtMaterialAsyncState& state) {
-    m_asyncState = state;
-    m_mode = m_asyncState.isIndeterminate() ? Mode::Indeterminate : Mode::Determinate;
-    if (m_asyncState.hasProgress()) {
-        m_value = m_asyncState.progress();
+    d->asyncState = state;
+    d->mode = d->asyncState.isIndeterminate() ? Mode::Indeterminate : Mode::Determinate;
+    if (d->asyncState.hasProgress()) {
+        d->value = d->asyncState.progress();
     }
-    setAccessibleDescription(m_asyncState.statusText());
+    setAccessibleDescription(d->asyncState.statusText());
     syncMaterialStateFromAsyncState();
     updateAnimationState();
-    emit modeChanged(m_mode);
-    emit valueChanged(m_value);
+    emit modeChanged(d->mode);
+    emit valueChanged(d->value);
     emit asyncStateChanged();
     update();
 }
 
-bool QtMaterialLinearProgressIndicator::invertedAppearance() const noexcept { return m_invertedAppearance; }
+bool QtMaterialLinearProgressIndicator::invertedAppearance() const noexcept { return d->invertedAppearance; }
 
 void QtMaterialLinearProgressIndicator::setInvertedAppearance(bool inverted) {
-    if (m_invertedAppearance == inverted) {
+    if (d->invertedAppearance == inverted) {
         return;
     }
-    m_invertedAppearance = inverted;
-    emit invertedAppearanceChanged(m_invertedAppearance);
+    d->invertedAppearance = inverted;
+    emit invertedAppearanceChanged(d->invertedAppearance);
     update();
 }
 
-QColor QtMaterialLinearProgressIndicator::activeColor() const { return m_spec.activeColor; }
+QColor QtMaterialLinearProgressIndicator::activeColor() const { return d->spec.activeColor; }
 
 void QtMaterialLinearProgressIndicator::setActiveColor(const QColor& color) {
-    if (m_spec.activeColor == color) return;
-    m_spec.activeColor = color;
+    if (d->spec.activeColor == color) return;
+    d->spec.activeColor = color;
     emit specChanged();
     update();
 }
 
 void QtMaterialLinearProgressIndicator::resetActiveColor() { setActiveColor(QColor()); }
 
-QColor QtMaterialLinearProgressIndicator::trackColor() const { return m_spec.trackColor; }
+QColor QtMaterialLinearProgressIndicator::trackColor() const { return d->spec.trackColor; }
 
 void QtMaterialLinearProgressIndicator::setTrackColor(const QColor& color) {
-    if (m_spec.trackColor == color) return;
-    m_spec.trackColor = color;
+    if (d->spec.trackColor == color) return;
+    d->spec.trackColor = color;
     emit specChanged();
     update();
 }
 
 void QtMaterialLinearProgressIndicator::resetTrackColor() { setTrackColor(QColor()); }
 
-int QtMaterialLinearProgressIndicator::trackGap() const noexcept { return m_spec.trackGap; }
+int QtMaterialLinearProgressIndicator::trackGap() const noexcept { return d->spec.trackGap; }
 
 void QtMaterialLinearProgressIndicator::setTrackGap(int gap) {
     gap = qMax(0, gap);
-    if (m_spec.trackGap == gap) return;
-    m_spec.trackGap = gap;
+    if (d->spec.trackGap == gap) return;
+    d->spec.trackGap = gap;
     emit specChanged();
     update();
 }
 
-int QtMaterialLinearProgressIndicator::stopIndicatorSize() const noexcept { return m_spec.stopIndicatorSize; }
+int QtMaterialLinearProgressIndicator::stopIndicatorSize() const noexcept { return d->spec.stopIndicatorSize; }
 
 void QtMaterialLinearProgressIndicator::setStopIndicatorSize(int size) {
     size = qMax(0, size);
-    if (m_spec.stopIndicatorSize == size) return;
-    m_spec.stopIndicatorSize = size;
+    if (d->spec.stopIndicatorSize == size) return;
+    d->spec.stopIndicatorSize = size;
     emit specChanged();
     updateGeometry();
     update();
 }
 
-ProgressIndicatorSpec QtMaterialLinearProgressIndicator::spec() const { return m_spec; }
+ProgressIndicatorSpec QtMaterialLinearProgressIndicator::spec() const { return d->spec; }
 
 void QtMaterialLinearProgressIndicator::setSpec(const ProgressIndicatorSpec& spec) {
-    m_spec = spec;
+    d->spec = spec;
     initAnimation();
     emit specChanged();
     updateGeometry();
@@ -199,41 +216,41 @@ void QtMaterialLinearProgressIndicator::setSpec(const ProgressIndicatorSpec& spe
 }
 
 QSize QtMaterialLinearProgressIndicator::sizeHint() const {
-    const int h = qMax(1, m_spec.linearHeight) + m_spec.margins.top() + m_spec.margins.bottom();
+    const int h = qMax(1, d->spec.linearHeight) + d->spec.margins.top() + d->spec.margins.bottom();
     return QSize(240, h);
 }
 
 QSize QtMaterialLinearProgressIndicator::minimumSizeHint() const {
-    const int h = qMax(1, m_spec.linearHeight) + m_spec.margins.top() + m_spec.margins.bottom();
+    const int h = qMax(1, d->spec.linearHeight) + d->spec.margins.top() + d->spec.margins.bottom();
     return QSize(64, h);
 }
 
 void QtMaterialLinearProgressIndicator::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    QRectF r = rect().adjusted(m_spec.margins.left(), m_spec.margins.top(), -m_spec.margins.right(), -m_spec.margins.bottom());
-    const qreal h = qMax(1.0, static_cast<double>(m_spec.linearHeight));
+    QRectF r = rect().adjusted(d->spec.margins.left(), d->spec.margins.top(), -d->spec.margins.right(), -d->spec.margins.bottom());
+    const qreal h = qMax(1.0, static_cast<double>(d->spec.linearHeight));
     QRectF track(r.left(), r.center().y() - h / 2.0, r.width(), h);
     const qreal radius = h / 2.0;
     painter.setPen(Qt::NoPen);
     painter.setBrush(resolvedTrackColor());
     painter.drawRoundedRect(track, radius, radius);
     painter.setBrush(resolvedActiveColor());
-    if (m_mode == Mode::Determinate) {
-        const qreal gap = m_value > 0.0 && m_value < 1.0 ? qMin<qreal>(m_spec.trackGap, track.width()) : 0.0;
-        const qreal w = qMax<qreal>(0.0, track.width() * m_value - gap);
+    if (d->mode == Mode::Determinate) {
+        const qreal gap = d->value > 0.0 && d->value < 1.0 ? qMin<qreal>(d->spec.trackGap, track.width()) : 0.0;
+        const qreal w = qMax<qreal>(0.0, track.width() * d->value - gap);
         QRectF active = track;
         active.setWidth(w);
-        if (m_invertedAppearance || layoutDirection() == Qt::RightToLeft) {
+        if (d->invertedAppearance || layoutDirection() == Qt::RightToLeft) {
             active.moveRight(track.right());
         }
         if (active.width() > 0.0) {
             painter.drawRoundedRect(active, radius, radius);
         }
-        if (m_spec.stopIndicatorSize > 0 && m_value > 0.0 && m_value < 1.0) {
+        if (d->spec.stopIndicatorSize > 0 && d->value > 0.0 && d->value < 1.0) {
             painter.setBrush(resolvedStopColor());
-            const qreal s = qMin<qreal>(m_spec.stopIndicatorSize, h);
-            const qreal x = (m_invertedAppearance || layoutDirection() == Qt::RightToLeft)
+            const qreal s = qMin<qreal>(d->spec.stopIndicatorSize, h);
+            const qreal x = (d->invertedAppearance || layoutDirection() == Qt::RightToLeft)
                 ? active.left() - gap / 2.0
                 : active.right() + gap / 2.0;
             painter.drawEllipse(QPointF(x, track.center().y()), s / 2.0, s / 2.0);
@@ -242,9 +259,9 @@ void QtMaterialLinearProgressIndicator::paintEvent(QPaintEvent*) {
     }
     const qreal segmentWidth = track.width() * 0.32;
     const qreal travel = track.width() + segmentWidth;
-    qreal x = track.left() - segmentWidth + travel * m_phase;
-    if (m_invertedAppearance || layoutDirection() == Qt::RightToLeft) {
-        x = track.right() - travel * m_phase;
+    qreal x = track.left() - segmentWidth + travel * d->phase;
+    if (d->invertedAppearance || layoutDirection() == Qt::RightToLeft) {
+        x = track.right() - travel * d->phase;
     }
     QRectF active(x, track.top(), segmentWidth, track.height());
     active = active.intersected(track);
@@ -271,65 +288,65 @@ void QtMaterialLinearProgressIndicator::changeEvent(QEvent* event) {
 }
 
 void QtMaterialLinearProgressIndicator::initAnimation() {
-    if (!m_animation) {
-        m_animation = new QVariantAnimation(this);
-        connect(m_animation, &QVariantAnimation::valueChanged, this, [this](const QVariant& value) {
-            m_phase = value.toReal();
+    if (!d->animation) {
+        d->animation = new QVariantAnimation(this);
+        connect(d->animation, &QVariantAnimation::valueChanged, this, [this](const QVariant& value) {
+            d->phase = value.toReal();
             update();
         });
     }
-    m_animation->setStartValue(0.0);
-    m_animation->setEndValue(1.0);
-    m_animation->setDuration(qMax(250, m_spec.animationDurationMs));
-    m_animation->setLoopCount(-1);
+    d->animation->setStartValue(0.0);
+    d->animation->setEndValue(1.0);
+    d->animation->setDuration(qMax(250, d->spec.animationDurationMs));
+    d->animation->setLoopCount(-1);
 }
 
 void QtMaterialLinearProgressIndicator::updateAnimationState() {
-    if (!m_animation) return;
-    if (m_mode == Mode::Indeterminate && isVisible()) {
-        if (m_animation->state() != QVariantAnimation::Running) m_animation->start();
+    if (!d->animation) return;
+    if (d->mode == Mode::Indeterminate && isVisible()) {
+        if (d->animation->state() != QVariantAnimation::Running) d->animation->start();
     } else {
-        if (m_animation->state() != QVariantAnimation::Stopped) m_animation->stop();
-        m_phase = 0.0;
+        if (d->animation->state() != QVariantAnimation::Stopped) d->animation->stop();
+        d->phase = 0.0;
     }
 }
 
 void QtMaterialLinearProgressIndicator::syncAsyncStateFromProgress() {
-    if (m_mode == Mode::Indeterminate) {
-        m_asyncState.clearProgress();
-        m_asyncState.setIndeterminate(true);
-        m_asyncState.setBusy(true);
+    if (d->mode == Mode::Indeterminate) {
+        d->asyncState.clearProgress();
+        d->asyncState.setIndeterminate(true);
+        d->asyncState.setBusy(true);
     } else {
-        m_asyncState.setIndeterminate(false);
-        m_asyncState.setProgress(m_value);
+        d->asyncState.setIndeterminate(false);
+        d->asyncState.setProgress(d->value);
     }
     syncMaterialStateFromAsyncState();
 }
 
 void QtMaterialLinearProgressIndicator::syncMaterialStateFromAsyncState() {
-    setMaterialState(m_asyncState.toPropertyString());
+    setMaterialState(d->asyncState.toPropertyString());
 }
 
 QColor QtMaterialLinearProgressIndicator::resolvedActiveColor() const {
-    return m_spec.activeColor.isValid() ? m_spec.activeColor : fallbackActive(this);
+    return d->spec.activeColor.isValid() ? d->spec.activeColor : fallbackActive(this);
 }
 
 QColor QtMaterialLinearProgressIndicator::resolvedTrackColor() const {
-    return m_spec.trackColor.isValid() ? m_spec.trackColor : fallbackTrack(this);
+    return d->spec.trackColor.isValid() ? d->spec.trackColor : fallbackTrack(this);
 }
 
 QColor QtMaterialLinearProgressIndicator::resolvedStopColor() const {
-    return m_spec.stopIndicatorColor.isValid() ? m_spec.stopIndicatorColor : resolvedActiveColor();
+    return d->spec.stopIndicatorColor.isValid() ? d->spec.stopIndicatorColor : resolvedActiveColor();
 }
 
 QString QtMaterial::QtMaterialLinearProgressIndicator::accessibleValueText() const
 {
-    const QString status = m_asyncState.statusText().trimmed();
-    if (m_mode == Mode::Indeterminate) {
+    const QString status = d->asyncState.statusText().trimmed();
+    if (d->mode == Mode::Indeterminate) {
         return status.isEmpty() ? tr("In progress") : status;
     }
 
-    const qreal clamped = std::isnan(m_value) ? 0.0 : qBound(0.0, m_value, 1.0);
+    const qreal clamped = std::isnan(d->value) ? 0.0 : qBound(0.0, d->value, 1.0);
     const QString progress = tr("%1%").arg(qRound(clamped * 100.0));
     return status.isEmpty() ? progress : tr("%1, %2").arg(status, progress);
 }

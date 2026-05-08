@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QColor>
 #include <QPointer>
 #include <QSize>
@@ -13,6 +15,8 @@
 class QVariantAnimation;
 
 namespace QtMaterial {
+
+class QtMaterialCircularProgressIndicatorPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialCircularProgressIndicator : public QtMaterialWidget
 {
@@ -105,12 +109,7 @@ private:
     QColor resolvedActiveColor() const;
     QColor resolvedTrackColor() const;
 
-    ProgressIndicatorSpec m_spec;
-    QtMaterialAsyncState m_asyncState;
-    qreal m_value = 0.0;
-    qreal m_phase = 0.0;
-    Mode m_mode = Mode::Determinate;
-    QPointer<QVariantAnimation> m_animation;
+    std::unique_ptr<QtMaterialCircularProgressIndicatorPrivate> d;
 };
 
 } // namespace QtMaterial

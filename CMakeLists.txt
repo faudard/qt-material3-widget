@@ -12,6 +12,11 @@ project(qt-material3-widgets
 
 include(GNUInstallDirs)
 include(CTest)
+# QtMaterial3 public widget PIMPL contract audit: begin
+if(QTMATERIAL3_BUILD_TESTS)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3PimplContract.cmake)
+endif()
+# QtMaterial3 public widget PIMPL contract audit: end
 include(CMakePackageConfigHelpers)
 
 option(QTMATERIAL3_BUILD_TESTS "Build tests" ${BUILD_TESTING})
@@ -601,3 +606,10 @@ if(COMMAND qtmaterial3_add_public_abi_audit)
     qtmaterial3_add_public_abi_audit()
 endif()
 # qt-material3-widget public ABI audit: end
+
+# >>> qt-material3-widget PIMPL tranche 11: public header hygiene
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/QtMaterial3PublicHeaderHygiene.cmake" OPTIONAL)
+if(COMMAND qtmaterial3_add_public_header_hygiene_tests)
+    qtmaterial3_add_public_header_hygiene_tests()
+endif()
+# <<< qt-material3-widget PIMPL tranche 11: public header hygiene

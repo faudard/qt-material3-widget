@@ -95,3 +95,5 @@ void QtMaterialSnackbarHost::showNext()
 }
 
 } // namespace QtMaterial
+
+QtMaterialSnackbarHost::~QtMaterialSnackbarHost() = default;

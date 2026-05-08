@@ -19,6 +19,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSnackbarHost : public QObject
     Q_OBJECT
 
 public:
+    ~QtMaterialSnackbarHost() override;
     explicit QtMaterialSnackbarHost(QWidget* host, QObject* parent = nullptr);
 
     void showMessage(const SnackbarRequest& request, bool replaceCurrent = false);

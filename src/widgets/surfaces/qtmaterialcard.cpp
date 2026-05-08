@@ -1,4 +1,5 @@
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
+#include <memory>
 
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 
@@ -27,8 +28,28 @@ QColor withAlpha(QColor color, int alpha)
 
 namespace QtMaterial {
 
+class QtMaterialCardPrivate
+{
+public:
+    QString titleText;
+    QString bodyText;
+    QtMaterialCard::Variant variant = QtMaterialCard::Variant::Elevated;
+    bool interactive = false;
+    bool pressed = false;
+    bool hovered = false;
+    QString lastAccessibilitySummary;
+    bool specDirty = true;
+    bool layoutDirty = true;
+    QtMaterial::CardSpec spec;
+    QRect cachedVisualRect;
+    QRect cachedContentRect;
+    qreal cachedCornerRadius = 12.0;
+    QPainterPath cachedContainerPath;
+};
+
 QtMaterialCard::QtMaterialCard(QWidget* parent)
     : QtMaterialSurface(parent)
+    , d(std::make_unique<QtMaterialCardPrivate>())
 {
     setFocusPolicy(Qt::NoFocus);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
@@ -43,25 +64,25 @@ QSize QtMaterialCard::sizeHint() const
     ensureSpecResolved();
 
     const QFontMetrics fm(font());
-    const int textWidth = qMax(fm.horizontalAdvance(m_titleText), fm.horizontalAdvance(m_bodyText));
-    const int titleHeight = m_titleText.isEmpty() ? 0 : fm.height();
-    const QRect bodyBounds = m_bodyText.isEmpty()
+    const int textWidth = qMax(fm.horizontalAdvance(d->titleText), fm.horizontalAdvance(d->bodyText));
+    const int titleHeight = d->titleText.isEmpty() ? 0 : fm.height();
+    const QRect bodyBounds = d->bodyText.isEmpty()
         ? QRect()
         : fm.boundingRect(QRect(0, 0, 280, 1000),
                           Qt::TextWordWrap,
-                          m_bodyText);
+                          d->bodyText);
 
-    const int spacing = (!m_titleText.isEmpty() && !m_bodyText.isEmpty()) ? 8 : 0;
+    const int spacing = (!d->titleText.isEmpty() && !d->bodyText.isEmpty()) ? 8 : 0;
     const int width = qMax(kDefaultMinimumWidth,
-                           m_spec.contentPadding.left()
+                           d->spec.contentPadding.left()
                                + qMax(textWidth, bodyBounds.width())
-                               + m_spec.contentPadding.right());
+                               + d->spec.contentPadding.right());
     const int height = qMax(kDefaultMinimumHeight,
-                            m_spec.contentPadding.top()
+                            d->spec.contentPadding.top()
                                 + titleHeight
                                 + spacing
                                 + bodyBounds.height()
-                                + m_spec.contentPadding.bottom());
+                                + d->spec.contentPadding.bottom());
 
     return QSize(width, height);
 }
@@ -73,95 +94,95 @@ QSize QtMaterialCard::minimumSizeHint() const
 
 void QtMaterialCard::setTitleText(const QString& text)
 {
-    if (m_titleText == text) {
+    if (d->titleText == text) {
         return;
     }
 
-    m_titleText = text;
+    d->titleText = text;
     invalidateLayoutCache();
     syncAccessibility();
     updateGeometry();
     update();
-    Q_EMIT titleTextChanged(m_titleText);
+    Q_EMIT titleTextChanged(d->titleText);
 }
 
 QString QtMaterialCard::titleText() const
 {
-    return m_titleText;
+    return d->titleText;
 }
 
 void QtMaterialCard::setBodyText(const QString& text)
 {
-    if (m_bodyText == text) {
+    if (d->bodyText == text) {
         return;
     }
 
-    m_bodyText = text;
+    d->bodyText = text;
     invalidateLayoutCache();
     syncAccessibility();
     updateGeometry();
     update();
-    Q_EMIT bodyTextChanged(m_bodyText);
+    Q_EMIT bodyTextChanged(d->bodyText);
 }
 
 QString QtMaterialCard::bodyText() const
 {
-    return m_bodyText;
+    return d->bodyText;
 }
 
 QtMaterialCard::Variant QtMaterialCard::variant() const noexcept
 {
-    return m_variant;
+    return d->variant;
 }
 
 void QtMaterialCard::setVariant(Variant variant)
 {
-    if (m_variant == variant) {
+    if (d->variant == variant) {
         return;
     }
 
-    m_variant = variant;
+    d->variant = variant;
     invalidateLayoutCache();
     update();
-    Q_EMIT variantChanged(m_variant);
+    Q_EMIT variantChanged(d->variant);
 }
 
 bool QtMaterialCard::isInteractive() const noexcept
 {
-    return m_interactive;
+    return d->interactive;
 }
 
 void QtMaterialCard::setInteractive(bool interactive)
 {
-    if (m_interactive == interactive) {
+    if (d->interactive == interactive) {
         return;
     }
 
-    m_interactive = interactive;
-    setFocusPolicy(m_interactive ? Qt::StrongFocus : Qt::NoFocus);
-    if (!m_interactive && m_pressed) {
-        m_pressed = false;
+    d->interactive = interactive;
+    setFocusPolicy(d->interactive ? Qt::StrongFocus : Qt::NoFocus);
+    if (!d->interactive && d->pressed) {
+        d->pressed = false;
     }
     syncAccessibility();
     update();
-    Q_EMIT interactiveChanged(m_interactive);
+    Q_EMIT interactiveChanged(d->interactive);
 }
 
 bool QtMaterialCard::isPressed() const noexcept
 {
-    return m_pressed;
+    return d->pressed;
 }
 
 QString QtMaterialCard::accessibilitySummary() const
 {
-    if (!m_titleText.isEmpty() && !m_bodyText.isEmpty()) {
-        return QStringLiteral("%1. %2").arg(m_titleText, m_bodyText);
+    if (!d->titleText.isEmpty() && !d->bodyText.isEmpty()) {
+        return QStringLiteral("%1. %2").arg(d->titleText, d->bodyText);
     }
-    if (!m_titleText.isEmpty()) {
-        return m_titleText;
+    if (!d->titleText.isEmpty()) {
+        return d->titleText;
     }
-    if (!m_bodyText.isEmpty()) {
-        return m_bodyText;
+    if (!d->bodyText.isEmpty()) {
+        return d->bodyText;
     }
     return QStringLiteral("Card");
 }
@@ -177,50 +198,50 @@ void QtMaterialCard::paintEvent(QPaintEvent* event)
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     const QColor container = resolvedContainerColor();
-    painter.fillPath(m_cachedContainerPath, container);
+    painter.fillPath(d->cachedContainerPath, container);
 
-    if (m_variant == Variant::Outlined) {
-        QPen outlinePen(m_spec.outlineColor);
+    if (d->variant == Variant::Outlined) {
+        QPen outlinePen(d->spec.outlineColor);
         outlinePen.setWidth(1);
         painter.setPen(outlinePen);
         painter.setBrush(Qt::NoBrush);
-        painter.drawPath(m_cachedContainerPath);
+        painter.drawPath(d->cachedContainerPath);
     }
 
-    if (m_interactive && (m_hovered || m_pressed)) {
-        const int alpha = m_pressed ? 30 : 18;
-        painter.fillPath(m_cachedContainerPath, withAlpha(resolvedContentColor(), alpha));
+    if (d->interactive && (d->hovered || d->pressed)) {
+        const int alpha = d->pressed ? 30 : 18;
+        painter.fillPath(d->cachedContainerPath, withAlpha(resolvedContentColor(), alpha));
     }
 
-    QRect textRect = m_cachedContentRect;
+    QRect textRect = d->cachedContentRect;
     const QFont baseFont = font();
     QFont titleFont = baseFont;
     titleFont.setBold(true);
 
-    if (!m_titleText.isEmpty()) {
+    if (!d->titleText.isEmpty()) {
         painter.setFont(titleFont);
         painter.setPen(resolvedContentColor());
         const QFontMetrics titleMetrics(titleFont);
         const QRect titleRect(textRect.left(), textRect.top(), textRect.width(), titleMetrics.height());
         painter.drawText(titleRect,
                          Qt::AlignLeft | Qt::AlignVCenter,
-                         titleMetrics.elidedText(m_titleText, Qt::ElideRight, titleRect.width()));
+                         titleMetrics.elidedText(d->titleText, Qt::ElideRight, titleRect.width()));
         textRect.setTop(titleRect.bottom() + 1 + 8);
     }
 
-    if (!m_bodyText.isEmpty()) {
+    if (!d->bodyText.isEmpty()) {
         painter.setFont(baseFont);
         painter.setPen(resolvedContentColor());
-        painter.drawText(textRect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, m_bodyText);
+        painter.drawText(textRect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, d->bodyText);
     }
 
-    if (m_interactive && hasFocus()) {
-        QPen focusPen(m_spec.outlineColor);
+    if (d->interactive && hasFocus()) {
+        QPen focusPen(d->spec.outlineColor);
         focusPen.setWidth(2);
         focusPen.setJoinStyle(Qt::RoundJoin);
         painter.setPen(focusPen);
         painter.setBrush(Qt::NoBrush);
-        painter.drawPath(m_cachedContainerPath);
+        painter.drawPath(d->cachedContainerPath);
     }
 }
 
@@ -251,15 +272,15 @@ void QtMaterialCard::changeEvent(QEvent* event)
 
 void QtMaterialCard::keyPressEvent(QKeyEvent* event)
 {
-    if (!m_interactive || !isEnabled()) {
+    if (!d->interactive || !isEnabled()) {
         QtMaterialSurface::keyPressEvent(event);
         return;
     }
 
     if ((event->key() == Qt::Key_Space || event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
         && !event->isAutoRepeat()) {
-        if (!m_pressed) {
-            m_pressed = true;
+        if (!d->pressed) {
+            d->pressed = true;
             update();
             Q_EMIT pressed();
         }
@@ -272,15 +293,15 @@ void QtMaterialCard::keyPressEvent(QKeyEvent* event)
 
 void QtMaterialCard::keyReleaseEvent(QKeyEvent* event)
 {
-    if (!m_interactive || !isEnabled()) {
+    if (!d->interactive || !isEnabled()) {
         QtMaterialSurface::keyReleaseEvent(event);
         return;
     }
 
     if ((event->key() == Qt::Key_Space || event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
         && !event->isAutoRepeat()) {
-        const bool wasPressed = m_pressed;
-        m_pressed = false;
+        const bool wasPressed = d->pressed;
+        d->pressed = false;
         update();
         if (wasPressed) {
             Q_EMIT released();
@@ -295,8 +316,8 @@ void QtMaterialCard::keyReleaseEvent(QKeyEvent* event)
 
 void QtMaterialCard::mousePressEvent(QMouseEvent* event)
 {
-    if (m_interactive && isEnabled() && event->button() == Qt::LeftButton && rect().contains(event->pos())) {
-        m_pressed = true;
+    if (d->interactive && isEnabled() && event->button() == Qt::LeftButton && rect().contains(event->pos())) {
+        d->pressed = true;
         update();
         Q_EMIT pressed();
         event->accept();
@@ -308,9 +329,9 @@ void QtMaterialCard::mousePressEvent(QMouseEvent* event)
 
 void QtMaterialCard::mouseReleaseEvent(QMouseEvent* event)
 {
-    if (m_interactive && isEnabled() && event->button() == Qt::LeftButton) {
-        const bool wasPressed = m_pressed;
-        m_pressed = false;
+    if (d->interactive && isEnabled() && event->button() == Qt::LeftButton) {
+        const bool wasPressed = d->pressed;
+        d->pressed = false;
         update();
         Q_EMIT released();
         if (wasPressed && rect().contains(event->pos())) {
@@ -328,19 +349,19 @@ bool QtMaterialCard::event(QEvent* event)
     switch (event->type()) {
     case QEvent::Enter:
     case QEvent::HoverEnter:
-        if (!m_hovered) {
-            m_hovered = true;
+        if (!d->hovered) {
+            d->hovered = true;
             update();
         }
         break;
     case QEvent::Leave:
     case QEvent::HoverLeave:
-        if (m_hovered) {
-            m_hovered = false;
+        if (d->hovered) {
+            d->hovered = false;
             update();
         }
-        if (m_pressed) {
-            m_pressed = false;
+        if (d->pressed) {
+            d->pressed = false;
             update();
             Q_EMIT released();
         }
@@ -356,7 +377,7 @@ void QtMaterialCard::themeChangedEvent(const QtMaterial::Theme& theme)
 {
     QtMaterialSurface::themeChangedEvent(theme);
     Q_UNUSED(theme)
-    m_specDirty = true;
+    d->specDirty = true;
     invalidateLayoutCache();
     updateGeometry();
     update();
@@ -370,46 +391,46 @@ void QtMaterialCard::stateChangedEvent()
 
 void QtMaterialCard::ensureSpecResolved() const
 {
-    if (!m_specDirty) {
+    if (!d->specDirty) {
         return;
     }
 
     QtMaterial::SpecFactory factory;
-    m_spec = factory.cardSpec(theme());
-    m_specDirty = false;
-    m_layoutDirty = true;
+    d->spec = factory.cardSpec(theme());
+    d->specDirty = false;
+    d->layoutDirty = true;
 }
 
 void QtMaterialCard::ensureLayoutResolved() const
 {
-    if (!m_layoutDirty) {
+    if (!d->layoutDirty) {
         return;
     }
 
-    m_cachedVisualRect = visualRect();
-    m_cachedContentRect = contentRectForPaint();
-    m_cachedCornerRadius = kDefaultCornerRadius;
-    m_cachedContainerPath = containerPath();
-    m_layoutDirty = false;
+    d->cachedVisualRect = visualRect();
+    d->cachedContentRect = contentRectForPaint();
+    d->cachedCornerRadius = kDefaultCornerRadius;
+    d->cachedContainerPath = containerPath();
+    d->layoutDirty = false;
 }
 
 void QtMaterialCard::invalidateLayoutCache()
 {
-    m_layoutDirty = true;
+    d->layoutDirty = true;
 }
 
 void QtMaterialCard::syncAccessibility()
 {
     const QString summary = accessibilitySummary();
 
-    if (accessibleName().isEmpty() || accessibleName() == m_lastAccessibilitySummary) {
-        setAccessibleName(m_titleText.isEmpty() ? QStringLiteral("Card") : m_titleText);
+    if (accessibleName().isEmpty() || accessibleName() == d->lastAccessibilitySummary) {
+        setAccessibleName(d->titleText.isEmpty() ? QStringLiteral("Card") : d->titleText);
     }
 
     setAccessibleDescription(summary);
 
-    if (m_lastAccessibilitySummary != summary) {
-        m_lastAccessibilitySummary = summary;
+    if (d->lastAccessibilitySummary != summary) {
+        d->lastAccessibilitySummary = summary;
         Q_EMIT accessibilitySummaryChanged(summary);
     }
 }
@@ -422,21 +443,21 @@ QRect QtMaterialCard::visualRect() const
 QRect QtMaterialCard::contentRectForPaint() const
 {
     ensureSpecResolved();
-    return visualRect().marginsRemoved(m_spec.contentPadding);
+    return visualRect().marginsRemoved(d->spec.contentPadding);
 }
 
 QPainterPath QtMaterialCard::containerPath() const
 {
     QPainterPath path;
-    path.addRoundedRect(QRectF(m_cachedVisualRect), m_cachedCornerRadius, m_cachedCornerRadius);
+    path.addRoundedRect(QRectF(d->cachedVisualRect), d->cachedCornerRadius, d->cachedCornerRadius);
     return path;
 }
 
 QColor QtMaterialCard::resolvedContainerColor() const
 {
-    QColor color = m_spec.containerColor;
+    QColor color = d->spec.containerColor;
 
-    if (m_variant == Variant::Outlined) {
+    if (d->variant == Variant::Outlined) {
         color.setAlpha(0);
         return color;
     }
@@ -450,7 +471,7 @@ QColor QtMaterialCard::resolvedContainerColor() const
 
 QColor QtMaterialCard::resolvedContentColor() const
 {
-    QColor color = m_spec.contentColor;
+    QColor color = d->spec.contentColor;
     if (!isEnabled()) {
         color.setAlpha(128);
     }
