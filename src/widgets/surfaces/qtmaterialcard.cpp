@@ -12,6 +12,7 @@
 #include <QPen>
 #include <QResizeEvent>
 
+#include <QPainterPath>
 namespace {
 
 constexpr int kDefaultMinimumWidth = 120;
@@ -24,6 +25,12 @@ QColor withAlpha(QColor color, int alpha)
     return color;
 }
 
+QPainterPath qtMaterialCardContainerPath(const QRect& visualRect, qreal cornerRadius)
+{
+    QPainterPath path;
+    path.addRoundedRect(QRectF(visualRect), cornerRadius, cornerRadius);
+    return path;
+}
 } // namespace
 
 namespace QtMaterial {
@@ -446,12 +453,6 @@ QRect QtMaterialCard::contentRectForPaint() const
     return visualRect().marginsRemoved(d->spec.contentPadding);
 }
 
-QPainterPath QtMaterialCard::containerPath() const
-{
-    QPainterPath path;
-    path.addRoundedRect(QRectF(d->cachedVisualRect), d->cachedCornerRadius, d->cachedCornerRadius);
-    return path;
-}
 
 QColor QtMaterialCard::resolvedContainerColor() const
 {

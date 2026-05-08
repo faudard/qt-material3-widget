@@ -4,8 +4,6 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialsurface.h"
-
-#include <QPainterPath>
 #include <QRect>
 #include <QString>
 
@@ -87,7 +85,6 @@ private:
 
     QRect visualRect() const;
     QRect contentRectForPaint() const;
-    QPainterPath containerPath() const;
     QColor resolvedContainerColor() const;
     QColor resolvedContentColor() const;
 

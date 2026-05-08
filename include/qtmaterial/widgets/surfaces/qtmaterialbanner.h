@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QIcon>
-#include <QPainterPath>
 #include <QPointer>
 #include <QRect>
 #include <QSize>
@@ -11,6 +10,7 @@
 #include "qtmaterial/core/qtmaterialsurface.h"
 #include "qtmaterial/specs/qtmaterialbannerspec.h"
 
+#include <memory>
 class QEvent;
 class QKeyEvent;
 class QPaintEvent;
@@ -21,6 +21,7 @@ namespace QtMaterial {
 class Theme;
 struct BannerSpec;
 }
+class QtMaterialBannerPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialBanner : public QtMaterial::QtMaterialSurface
 {
@@ -90,29 +91,7 @@ private:
     void syncAccessibility();
     void emitAccessibilitySummaryIfChanged();
 
-    QString m_titleText;
-    QString m_bodyText;
-    QIcon m_leadingIcon;
-    bool m_dismissible = true;
-    bool m_dismissOnEscape = true;
-    QString m_primaryActionText;
-    QString m_secondaryActionText;
-    QString m_dismissAccessibleName;
-    QString m_lastAccessibilitySummary;
+    std::unique_ptr<QtMaterialBannerPrivate> d;
 
-    mutable bool m_specDirty = true;
-    mutable bool m_layoutDirty = true;
-    mutable QtMaterial::BannerSpec m_spec;
-    mutable QRect m_visualRect;
-    mutable QRect m_contentRect;
-    mutable QRect m_titleRect;
-    mutable QRect m_bodyRect;
-    mutable QRect m_iconRect;
-    mutable QPainterPath m_containerPath;
-    mutable QString m_elidedTitle;
-    mutable QString m_elidedBody;
 
-    QPointer<QToolButton> m_dismissButton;
-    QPointer<QToolButton> m_primaryActionButton;
-    QPointer<QToolButton> m_secondaryActionButton;
 };

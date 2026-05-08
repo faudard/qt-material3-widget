@@ -6,11 +6,13 @@
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialbuttonspec.h"
 
+class QWidget;
+
 namespace QtMaterial {
 
 class QtMaterialTextButtonPrivate {
 public:
- explicit QtMaterialTextButtonPrivate(QObject* parent)
+ explicit QtMaterialTextButtonPrivate(QWidget* parent)
   : ripple(new QtMaterialRippleController(parent))
   , stateLayerTransition(new QtMaterialTransitionController(parent))
  {}

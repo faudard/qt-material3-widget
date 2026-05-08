@@ -71,11 +71,11 @@ struct QtMaterialOutlinedTextFieldPrivate {
     bool m_clearButtonEnabled = false;
     QLineEdit::EchoMode m_configuredEchoMode = QLineEdit::Normal;
     bool m_passwordVisible = false;
-    ValidationFeedbackMode m_validationFeedbackMode = ValidationFeedbackMode::ManualOnly;
+    QtMaterialOutlinedTextField::ValidationFeedbackMode m_validationFeedbackMode = ValidationFeedbackMode::ManualOnly;
     bool m_manualErrorState = false;
     bool m_automaticValidationError = false;
     bool m_validationCommitted = false;
-    EndActionMode m_endActionMode = EndActionMode::None;
+    QtMaterialOutlinedTextField::EndActionMode m_endActionMode = EndActionMode::None;
     QIcon m_trailingActionIcon;
     QString m_trailingActionText;
     QString m_trailingActionToolTip;

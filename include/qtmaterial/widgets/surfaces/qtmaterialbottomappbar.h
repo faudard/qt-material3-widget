@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QIcon>
-#include <QPainterPath>
 #include <QPointer>
 #include <QRect>
 #include <QSize>
@@ -11,12 +10,14 @@
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialsurface.h"
 
+#include <memory>
 class QAbstractButton;
 class QEvent;
 class QKeyEvent;
 class QPaintEvent;
 class QResizeEvent;
 class QToolButton;
+class QtMaterialBottomAppBarPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialBottomAppBar : public QtMaterial::QtMaterialSurface
 {
@@ -83,11 +84,7 @@ protected:
     void stateChangedEvent() override;
 
 private:
-    struct ActionButtonEntry {
-        QPointer<QToolButton> button;
-        int index = -1;
-        QString accessibleName;
-    };
+    std::unique_ptr<QtMaterialBottomAppBarPrivate> d;
 
     void ensureLayoutResolved() const;
     void invalidateLayoutCache();
@@ -97,22 +94,6 @@ private:
     QString effectiveNavigationAccessibleName() const;
     QRect availableContentRect() const;
 
-    QString m_title;
-    QIcon m_navigationIcon;
-    QString m_navigationAccessibleName;
-    bool m_elevated = false;
-    bool m_fabAttached = false;
 
-    mutable bool m_layoutDirty = true;
-    mutable QRect m_visualRect;
-    mutable QRect m_navRect;
-    mutable QRect m_titleRect;
-    mutable QRect m_fabRect;
-    mutable QVector<QRect> m_actionRects;
-    mutable QPainterPath m_containerPath;
 
-    QPointer<QToolButton> m_navigationButton;
-    QVector<ActionButtonEntry> m_actionButtons;
-    QPointer<QAbstractButton> m_fabButton;
-    QString m_lastAccessibilitySummary;
 };

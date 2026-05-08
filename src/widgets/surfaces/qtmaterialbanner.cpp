@@ -13,6 +13,8 @@
 #include "qtmaterial/specs/qtmaterialbannerspec.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 
+#include <memory>
+#include <QPainterPath>
 namespace {
 constexpr int kDefaultMinWidth = 280;
 constexpr int kDefaultMinHeight = 64;
@@ -25,8 +27,38 @@ constexpr int kActionSpacing = 8;
 constexpr int kCornerRadius = 12;
 }
 
+struct QtMaterialBannerPrivate
+{
+    QString m_titleText;
+    QString m_bodyText;
+    QIcon m_leadingIcon;
+    bool m_dismissible = true;
+    bool m_dismissOnEscape = true;
+    QString m_primaryActionText;
+    QString m_secondaryActionText;
+    QString m_dismissAccessibleName;
+    QString m_lastAccessibilitySummary;
+
+    mutable bool m_specDirty = true;
+    mutable bool m_layoutDirty = true;
+    mutable QtMaterial::BannerSpec m_spec;
+    mutable QRect m_visualRect;
+    mutable QRect m_contentRect;
+    mutable QRect m_titleRect;
+    mutable QRect m_bodyRect;
+    mutable QRect m_iconRect;
+    mutable QPainterPath m_containerPath;
+    mutable QString m_elidedTitle;
+    mutable QString m_elidedBody;
+
+    QPointer<QToolButton> m_dismissButton;
+    QPointer<QToolButton> m_primaryActionButton;
+    QPointer<QToolButton> m_secondaryActionButton;
+};
+
 QtMaterialBanner::QtMaterialBanner(QWidget* parent)
     : QtMaterialSurface(parent)
+    , d(std::make_unique<QtMaterialBannerPrivate>())
 {
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -41,59 +73,59 @@ QtMaterialBanner::QtMaterialBanner(const QString& titleText,
                                    QWidget* parent)
     : QtMaterialBanner(parent)
 {
-    m_titleText = titleText;
-    m_bodyText = bodyText;
+    d->m_titleText = titleText;
+    d->m_bodyText = bodyText;
     syncAccessibility();
 }
 
 QtMaterialBanner::~QtMaterialBanner() = default;
 
-QString QtMaterialBanner::titleText() const { return m_titleText; }
+QString QtMaterialBanner::titleText() const { return d->m_titleText; }
 
 void QtMaterialBanner::setTitleText(const QString& text)
 {
-    if (m_titleText == text) {
+    if (d->m_titleText == text) {
         return;
     }
-    m_titleText = text;
+    d->m_titleText = text;
     invalidateLayoutCache();
     syncAccessibility();
     updateGeometry();
     update();
 }
 
-QString QtMaterialBanner::bodyText() const { return m_bodyText; }
+QString QtMaterialBanner::bodyText() const { return d->m_bodyText; }
 
 void QtMaterialBanner::setBodyText(const QString& text)
 {
-    if (m_bodyText == text) {
+    if (d->m_bodyText == text) {
         return;
     }
-    m_bodyText = text;
+    d->m_bodyText = text;
     invalidateLayoutCache();
     syncAccessibility();
     updateGeometry();
     update();
 }
 
-QIcon QtMaterialBanner::leadingIcon() const { return m_leadingIcon; }
+QIcon QtMaterialBanner::leadingIcon() const { return d->m_leadingIcon; }
 
 void QtMaterialBanner::setLeadingIcon(const QIcon& icon)
 {
-    m_leadingIcon = icon;
+    d->m_leadingIcon = icon;
     invalidateLayoutCache();
     updateGeometry();
     update();
 }
 
-bool QtMaterialBanner::isDismissible() const { return m_dismissible; }
+bool QtMaterialBanner::isDismissible() const { return d->m_dismissible; }
 
 void QtMaterialBanner::setDismissible(bool dismissible)
 {
-    if (m_dismissible == dismissible) {
+    if (d->m_dismissible == dismissible) {
         return;
     }
-    m_dismissible = dismissible;
+    d->m_dismissible = dismissible;
     syncDismissButton();
     invalidateLayoutCache();
     syncAccessibility();
@@ -101,25 +133,25 @@ void QtMaterialBanner::setDismissible(bool dismissible)
     update();
 }
 
-bool QtMaterialBanner::dismissOnEscape() const noexcept { return m_dismissOnEscape; }
+bool QtMaterialBanner::dismissOnEscape() const noexcept { return d->m_dismissOnEscape; }
 
 void QtMaterialBanner::setDismissOnEscape(bool dismissOnEscape)
 {
-    if (m_dismissOnEscape == dismissOnEscape) {
+    if (d->m_dismissOnEscape == dismissOnEscape) {
         return;
     }
-    m_dismissOnEscape = dismissOnEscape;
+    d->m_dismissOnEscape = dismissOnEscape;
     syncAccessibility();
 }
 
-QString QtMaterialBanner::primaryActionText() const { return m_primaryActionText; }
+QString QtMaterialBanner::primaryActionText() const { return d->m_primaryActionText; }
 
 void QtMaterialBanner::setPrimaryActionText(const QString& text)
 {
-    if (m_primaryActionText == text) {
+    if (d->m_primaryActionText == text) {
         return;
     }
-    m_primaryActionText = text;
+    d->m_primaryActionText = text;
     syncActionButtons();
     invalidateLayoutCache();
     syncAccessibility();
@@ -127,14 +159,14 @@ void QtMaterialBanner::setPrimaryActionText(const QString& text)
     update();
 }
 
-QString QtMaterialBanner::secondaryActionText() const { return m_secondaryActionText; }
+QString QtMaterialBanner::secondaryActionText() const { return d->m_secondaryActionText; }
 
 void QtMaterialBanner::setSecondaryActionText(const QString& text)
 {
-    if (m_secondaryActionText == text) {
+    if (d->m_secondaryActionText == text) {
         return;
     }
-    m_secondaryActionText = text;
+    d->m_secondaryActionText = text;
     syncActionButtons();
     invalidateLayoutCache();
     syncAccessibility();
@@ -144,15 +176,15 @@ void QtMaterialBanner::setSecondaryActionText(const QString& text)
 
 QString QtMaterialBanner::dismissAccessibleName() const
 {
-    return m_dismissAccessibleName.isEmpty() ? QStringLiteral("Dismiss banner") : m_dismissAccessibleName;
+    return d->m_dismissAccessibleName.isEmpty() ? QStringLiteral("Dismiss banner") : d->m_dismissAccessibleName;
 }
 
 void QtMaterialBanner::setDismissAccessibleName(const QString& name)
 {
-    if (m_dismissAccessibleName == name) {
+    if (d->m_dismissAccessibleName == name) {
         return;
     }
-    m_dismissAccessibleName = name;
+    d->m_dismissAccessibleName = name;
     syncDismissButton();
     syncAccessibility();
 }
@@ -160,19 +192,19 @@ void QtMaterialBanner::setDismissAccessibleName(const QString& name)
 QString QtMaterialBanner::accessibilitySummary() const
 {
     QStringList parts;
-    if (!m_titleText.isEmpty()) {
-        parts << m_titleText;
+    if (!d->m_titleText.isEmpty()) {
+        parts << d->m_titleText;
     }
-    if (!m_bodyText.isEmpty()) {
-        parts << m_bodyText;
+    if (!d->m_bodyText.isEmpty()) {
+        parts << d->m_bodyText;
     }
-    if (!m_primaryActionText.isEmpty()) {
-        parts << tr("Primary action: %1").arg(m_primaryActionText);
+    if (!d->m_primaryActionText.isEmpty()) {
+        parts << tr("Primary action: %1").arg(d->m_primaryActionText);
     }
-    if (!m_secondaryActionText.isEmpty()) {
-        parts << tr("Secondary action: %1").arg(m_secondaryActionText);
+    if (!d->m_secondaryActionText.isEmpty()) {
+        parts << tr("Secondary action: %1").arg(d->m_secondaryActionText);
     }
-    if (m_dismissible) {
+    if (d->m_dismissible) {
         parts << dismissAccessibleName();
     }
     return parts.join(QStringLiteral(". "));
@@ -181,7 +213,7 @@ QString QtMaterialBanner::accessibilitySummary() const
 QSize QtMaterialBanner::sizeHint() const
 {
     ensureLayoutResolved();
-    return QSize(qMax(kDefaultMinWidth, m_visualRect.width()), qMax(kDefaultMinHeight, m_visualRect.height()));
+    return QSize(qMax(kDefaultMinWidth, d->m_visualRect.width()), qMax(kDefaultMinHeight, d->m_visualRect.height()));
 }
 
 QSize QtMaterialBanner::minimumSizeHint() const
@@ -211,22 +243,22 @@ void QtMaterialBanner::paintEvent(QPaintEvent*)
 
     painter.setPen(QPen(outlineColor, 1));
     painter.setBrush(baseColor);
-    painter.drawPath(m_containerPath);
+    painter.drawPath(d->m_containerPath);
 
-    if (!m_leadingIcon.isNull() && m_iconRect.isValid()) {
-        const QPixmap pix = m_leadingIcon.pixmap(m_iconRect.size());
-        painter.drawPixmap(m_iconRect, pix);
+    if (!d->m_leadingIcon.isNull() && d->m_iconRect.isValid()) {
+        const QPixmap pix = d->m_leadingIcon.pixmap(d->m_iconRect.size());
+        painter.drawPixmap(d->m_iconRect, pix);
     }
 
     painter.setPen(textColor);
     QFont titleFont = font();
     titleFont.setBold(true);
     painter.setFont(titleFont);
-    painter.drawText(m_titleRect, Qt::AlignLeft | Qt::AlignVCenter, m_elidedTitle);
+    painter.drawText(d->m_titleRect, Qt::AlignLeft | Qt::AlignVCenter, d->m_elidedTitle);
 
-    if (!m_bodyText.isEmpty()) {
+    if (!d->m_bodyText.isEmpty()) {
         painter.setFont(font());
-        painter.drawText(m_bodyRect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, m_elidedBody);
+        painter.drawText(d->m_bodyRect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, d->m_elidedBody);
     }
 
     if (hasFocus()) {
@@ -234,7 +266,7 @@ void QtMaterialBanner::paintEvent(QPaintEvent*)
         focusPen.setStyle(Qt::DashLine);
         painter.setPen(focusPen);
         painter.setBrush(Qt::NoBrush);
-        painter.drawPath(m_containerPath);
+        painter.drawPath(d->m_containerPath);
     }
 }
 
@@ -265,7 +297,7 @@ void QtMaterialBanner::changeEvent(QEvent* event)
 
 void QtMaterialBanner::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Escape && m_dismissible && m_dismissOnEscape) {
+    if (event->key() == Qt::Key_Escape && d->m_dismissible && d->m_dismissOnEscape) {
         dismiss();
         event->accept();
         return;
@@ -276,7 +308,7 @@ void QtMaterialBanner::keyPressEvent(QKeyEvent* event)
 void QtMaterialBanner::themeChangedEvent(const QtMaterial::Theme& theme)
 {
     QtMaterialSurface::themeChangedEvent(theme);
-    m_specDirty = true;
+    d->m_specDirty = true;
     invalidateLayoutCache();
     updateGeometry();
     update();
@@ -290,10 +322,10 @@ void QtMaterialBanner::stateChangedEvent()
 
 bool QtMaterialBanner::eventFilter(QObject* watched, QEvent* event)
 {
-    if ((watched == m_dismissButton || watched == m_primaryActionButton || watched == m_secondaryActionButton)
+    if ((watched == d->m_dismissButton || watched == d->m_primaryActionButton || watched == d->m_secondaryActionButton)
         && event->type() == QEvent::KeyPress) {
         auto* keyEvent = static_cast<QKeyEvent*>(event);
-        if (keyEvent->key() == Qt::Key_Escape && m_dismissible && m_dismissOnEscape) {
+        if (keyEvent->key() == Qt::Key_Escape && d->m_dismissible && d->m_dismissOnEscape) {
             dismiss();
             return true;
         }
@@ -303,17 +335,17 @@ bool QtMaterialBanner::eventFilter(QObject* watched, QEvent* event)
 
 void QtMaterialBanner::ensureSpecResolved() const
 {
-    if (!m_specDirty) {
+    if (!d->m_specDirty) {
         return;
     }
     QtMaterial::SpecFactory factory;
     Q_UNUSED(factory);
-    m_specDirty = false;
+    d->m_specDirty = false;
 }
 
 void QtMaterialBanner::ensureLayoutResolved() const
 {
-    if (!m_layoutDirty) {
+    if (!d->m_layoutDirty) {
         return;
     }
 
@@ -321,17 +353,17 @@ void QtMaterialBanner::ensureLayoutResolved() const
         ? rect().adjusted(kOuterMargin, kOuterMargin, -kOuterMargin, -kOuterMargin)
         : QRect(0, 0, kDefaultMinWidth, kDefaultMinHeight);
 
-    m_visualRect = bounds;
-    m_contentRect = bounds.adjusted(kHorizontalPadding, kVerticalPadding, -kHorizontalPadding, -kVerticalPadding);
+    d->m_visualRect = bounds;
+    d->m_contentRect = bounds.adjusted(kHorizontalPadding, kVerticalPadding, -kHorizontalPadding, -kVerticalPadding);
 
-    int leading = m_contentRect.left();
-    int trailing = m_contentRect.right();
+    int leading = d->m_contentRect.left();
+    int trailing = d->m_contentRect.right();
 
-    if (!m_leadingIcon.isNull()) {
-        m_iconRect = QRect(leading, m_contentRect.top(), kIconSize, kIconSize);
-        leading = m_iconRect.right() + 1 + kIconSpacing;
+    if (!d->m_leadingIcon.isNull()) {
+        d->m_iconRect = QRect(leading, d->m_contentRect.top(), kIconSize, kIconSize);
+        leading = d->m_iconRect.right() + 1 + kIconSpacing;
     } else {
-        m_iconRect = QRect();
+        d->m_iconRect = QRect();
     }
 
     auto reserveButton = [&](QToolButton* button) {
@@ -340,16 +372,16 @@ void QtMaterialBanner::ensureLayoutResolved() const
         }
         const QSize hint = button->sizeHint().expandedTo(QSize(40, 32));
         const QRect buttonRect(trailing - hint.width() + 1,
-                               m_contentRect.top(),
+                               d->m_contentRect.top(),
                                hint.width(),
                                hint.height());
         button->setGeometry(buttonRect);
         trailing = buttonRect.left() - kActionSpacing;
     };
 
-    reserveButton(m_dismissButton);
-    reserveButton(m_primaryActionButton);
-    reserveButton(m_secondaryActionButton);
+    reserveButton(d->m_dismissButton);
+    reserveButton(d->m_primaryActionButton);
+    reserveButton(d->m_secondaryActionButton);
 
     const int textWidth = qMax(0, trailing - leading + 1);
     QFont titleFont = font();
@@ -357,41 +389,41 @@ void QtMaterialBanner::ensureLayoutResolved() const
     const QFontMetrics titleFm(titleFont);
     const QFontMetrics bodyFm(font());
 
-    m_titleRect = QRect(leading, m_contentRect.top(), textWidth, titleFm.height());
-    m_elidedTitle = titleFm.elidedText(m_titleText, Qt::ElideRight, textWidth);
+    d->m_titleRect = QRect(leading, d->m_contentRect.top(), textWidth, titleFm.height());
+    d->m_elidedTitle = titleFm.elidedText(d->m_titleText, Qt::ElideRight, textWidth);
 
-    if (!m_bodyText.isEmpty()) {
-        const int bodyTop = m_titleRect.bottom() + 1 + 4;
-        m_bodyRect = QRect(leading, bodyTop, textWidth, qMax(bodyFm.height(), m_contentRect.bottom() - bodyTop + 1));
-        m_elidedBody = bodyFm.elidedText(m_bodyText, Qt::ElideRight, textWidth * 2);
+    if (!d->m_bodyText.isEmpty()) {
+        const int bodyTop = d->m_titleRect.bottom() + 1 + 4;
+        d->m_bodyRect = QRect(leading, bodyTop, textWidth, qMax(bodyFm.height(), d->m_contentRect.bottom() - bodyTop + 1));
+        d->m_elidedBody = bodyFm.elidedText(d->m_bodyText, Qt::ElideRight, textWidth * 2);
     } else {
-        m_bodyRect = QRect();
-        m_elidedBody.clear();
+        d->m_bodyRect = QRect();
+        d->m_elidedBody.clear();
     }
 
-    m_containerPath = QPainterPath();
-    m_containerPath.addRoundedRect(QRectF(m_visualRect), kCornerRadius, kCornerRadius);
-    m_layoutDirty = false;
+    d->m_containerPath = QPainterPath();
+    d->m_containerPath.addRoundedRect(QRectF(d->m_visualRect), kCornerRadius, kCornerRadius);
+    d->m_layoutDirty = false;
 }
 
 void QtMaterialBanner::invalidateLayoutCache()
 {
-    m_layoutDirty = true;
+    d->m_layoutDirty = true;
 }
 
 void QtMaterialBanner::syncDismissButton()
 {
-    if (!m_dismissible) {
-        if (m_dismissButton) {
-            m_dismissButton->hide();
-            m_dismissButton->removeEventFilter(this);
-            m_dismissButton->deleteLater();
-            m_dismissButton = nullptr;
+    if (!d->m_dismissible) {
+        if (d->m_dismissButton) {
+            d->m_dismissButton->hide();
+            d->m_dismissButton->removeEventFilter(this);
+            d->m_dismissButton->deleteLater();
+            d->m_dismissButton = nullptr;
         }
         return;
     }
 
-    if (!m_dismissButton) {
+    if (!d->m_dismissButton) {
         auto* button = new QToolButton(this);
         button->setObjectName(QStringLiteral("qtmaterial_banner_dismissButton"));
         button->setAutoRaise(true);
@@ -400,13 +432,13 @@ void QtMaterialBanner::syncDismissButton()
         button->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
         connect(button, &QAbstractButton::clicked, this, &QtMaterialBanner::dismiss);
         button->installEventFilter(this);
-        m_dismissButton = button;
+        d->m_dismissButton = button;
     }
 
-    if (m_dismissButton) {
-        m_dismissButton->setAccessibleName(dismissAccessibleName());
-        m_dismissButton->setToolTip(dismissAccessibleName());
-        m_dismissButton->setVisible(true);
+    if (d->m_dismissButton) {
+        d->m_dismissButton->setAccessibleName(dismissAccessibleName());
+        d->m_dismissButton->setToolTip(dismissAccessibleName());
+        d->m_dismissButton->setVisible(true);
     }
 }
 
@@ -443,19 +475,19 @@ void QtMaterialBanner::syncActionButtons()
         target->setVisible(true);
     };
 
-    syncButton(m_primaryActionButton,
-               m_primaryActionText,
+    syncButton(d->m_primaryActionButton,
+               d->m_primaryActionText,
                "qtmaterial_banner_primaryActionButton",
                &QtMaterialBanner::primaryActionTriggered);
-    syncButton(m_secondaryActionButton,
-               m_secondaryActionText,
+    syncButton(d->m_secondaryActionButton,
+               d->m_secondaryActionText,
                "qtmaterial_banner_secondaryActionButton",
                &QtMaterialBanner::secondaryActionTriggered);
 }
 
 void QtMaterialBanner::syncAccessibility()
 {
-    setAccessibleName(m_titleText.isEmpty() ? tr("Banner") : m_titleText);
+    setAccessibleName(d->m_titleText.isEmpty() ? tr("Banner") : d->m_titleText);
     setAccessibleDescription(accessibilitySummary());
     syncDismissButton();
     emitAccessibilitySummaryIfChanged();
@@ -464,9 +496,9 @@ void QtMaterialBanner::syncAccessibility()
 void QtMaterialBanner::emitAccessibilitySummaryIfChanged()
 {
     const QString summary = accessibilitySummary();
-    if (m_lastAccessibilitySummary == summary) {
+    if (d->m_lastAccessibilitySummary == summary) {
         return;
     }
-    m_lastAccessibilitySummary = summary;
+    d->m_lastAccessibilitySummary = summary;
     emit accessibilitySummaryChanged(summary);
 }

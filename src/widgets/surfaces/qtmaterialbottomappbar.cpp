@@ -11,6 +11,8 @@
 #include <QToolButton>
 #include <qstyleoption.h>
 
+#include <memory>
+#include <QPainterPath>
 namespace {
 constexpr int kDefaultHeight = 80;
 constexpr int kMinimumWidth = 240;
@@ -26,8 +28,38 @@ QString fallbackActionName(int index)
 }
 }
 
+struct QtMaterialBottomAppBarPrivate
+{
+    struct ActionButtonEntry
+    {
+        QPointer<QToolButton> button;
+        int index = -1;
+        QString accessibleName;
+    };
+
+    QString m_title;
+    QIcon m_navigationIcon;
+    QString m_navigationAccessibleName;
+    bool m_elevated = false;
+    bool m_fabAttached = false;
+
+    mutable bool m_layoutDirty = true;
+    mutable QRect m_visualRect;
+    mutable QRect m_navRect;
+    mutable QRect m_titleRect;
+    mutable QRect m_fabRect;
+    mutable QVector<QRect> m_actionRects;
+    mutable QPainterPath m_containerPath;
+
+    QPointer<QToolButton> m_navigationButton;
+    QVector<ActionButtonEntry> m_actionButtons;
+    QPointer<QAbstractButton> m_fabButton;
+    QString m_lastAccessibilitySummary;
+};
+
 QtMaterialBottomAppBar::QtMaterialBottomAppBar(QWidget* parent)
     : QtMaterialSurface(parent)
+    , d(std::make_unique<QtMaterialBottomAppBarPrivate>())
 {
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -46,19 +78,19 @@ QtMaterialBottomAppBar::~QtMaterialBottomAppBar() = default;
 
 QString QtMaterialBottomAppBar::title() const
 {
-    return m_title;
+    return d->m_title;
 }
 
 void QtMaterialBottomAppBar::setTitle(const QString& title)
 {
-    if (m_title == title) {
+    if (d->m_title == title) {
         return;
     }
     const QString previousSummary = accessibilitySummary();
-    m_title = title;
+    d->m_title = title;
     invalidateLayoutCache();
     syncAccessibility();
-    emit titleChanged(m_title);
+    emit titleChanged(d->m_title);
     emitAccessibilityIfChanged(previousSummary);
     updateGeometry();
     update();
@@ -66,31 +98,31 @@ void QtMaterialBottomAppBar::setTitle(const QString& title)
 
 bool QtMaterialBottomAppBar::elevated() const noexcept
 {
-    return m_elevated;
+    return d->m_elevated;
 }
 
 void QtMaterialBottomAppBar::setElevated(bool value)
 {
-    if (m_elevated == value) {
+    if (d->m_elevated == value) {
         return;
     }
-    m_elevated = value;
+    d->m_elevated = value;
     emit elevatedChanged(value);
     update();
 }
 
 bool QtMaterialBottomAppBar::fabAttached() const noexcept
 {
-    return m_fabAttached;
+    return d->m_fabAttached;
 }
 
 void QtMaterialBottomAppBar::setFabAttached(bool value)
 {
-    if (m_fabAttached == value) {
+    if (d->m_fabAttached == value) {
         return;
     }
     const QString previousSummary = accessibilitySummary();
-    m_fabAttached = value;
+    d->m_fabAttached = value;
     invalidateLayoutCache();
     syncAccessibility();
     emit fabAttachedChanged(value);
@@ -101,13 +133,13 @@ void QtMaterialBottomAppBar::setFabAttached(bool value)
 
 QIcon QtMaterialBottomAppBar::navigationIcon() const
 {
-    return m_navigationIcon;
+    return d->m_navigationIcon;
 }
 
 void QtMaterialBottomAppBar::setNavigationIcon(const QIcon& icon)
 {
     const QString previousSummary = accessibilitySummary();
-    m_navigationIcon = icon;
+    d->m_navigationIcon = icon;
     syncButtons();
     invalidateLayoutCache();
     syncAccessibility();
@@ -122,31 +154,31 @@ void QtMaterialBottomAppBar::clearNavigationIcon()
 
 QString QtMaterialBottomAppBar::navigationAccessibleName() const
 {
-    return m_navigationAccessibleName;
+    return d->m_navigationAccessibleName;
 }
 
 void QtMaterialBottomAppBar::setNavigationAccessibleName(const QString& name)
 {
-    if (m_navigationAccessibleName == name) {
+    if (d->m_navigationAccessibleName == name) {
         return;
     }
     const QString previousSummary = accessibilitySummary();
-    m_navigationAccessibleName = name;
+    d->m_navigationAccessibleName = name;
     syncButtons();
     syncAccessibility();
-    emit navigationAccessibleNameChanged(m_navigationAccessibleName);
+    emit navigationAccessibleNameChanged(d->m_navigationAccessibleName);
     emitAccessibilityIfChanged(previousSummary);
 }
 
 int QtMaterialBottomAppBar::actionCount() const noexcept
 {
-    return m_actionButtons.size();
+    return d->m_actionButtons.size();
 }
 
 int QtMaterialBottomAppBar::addActionButton(const QIcon& icon, const QString& toolTip)
 {
     const QString previousSummary = accessibilitySummary();
-    const int index = m_actionButtons.size();
+    const int index = d->m_actionButtons.size();
     auto* button = new QToolButton(this);
     button->setObjectName(QStringLiteral("qtmaterial_bottomAppBar_action_%1").arg(index));
     button->setAutoRaise(true);
@@ -156,7 +188,7 @@ int QtMaterialBottomAppBar::addActionButton(const QIcon& icon, const QString& to
     button->setAccessibleName(toolTip.isEmpty() ? fallbackActionName(index) : toolTip);
     button->setAccessibleDescription(QStringLiteral("Bottom app bar action"));
     connect(button, &QToolButton::clicked, this, [this, index]() { emit actionTriggered(index); });
-    m_actionButtons.push_back({button, index, toolTip});
+    d->m_actionButtons.push_back({button, index, toolTip});
     invalidateLayoutCache();
     syncButtons();
     syncAccessibility();
@@ -169,12 +201,12 @@ int QtMaterialBottomAppBar::addActionButton(const QIcon& icon, const QString& to
 void QtMaterialBottomAppBar::clearActionButtons()
 {
     const QString previousSummary = accessibilitySummary();
-    for (auto& entry : m_actionButtons) {
+    for (auto& entry : d->m_actionButtons) {
         if (entry.button) {
             entry.button->deleteLater();
         }
     }
-    m_actionButtons.clear();
+    d->m_actionButtons.clear();
     invalidateLayoutCache();
     syncAccessibility();
     emitAccessibilityIfChanged(previousSummary);
@@ -184,10 +216,10 @@ void QtMaterialBottomAppBar::clearActionButtons()
 
 QString QtMaterialBottomAppBar::actionAccessibleName(int index) const
 {
-    if (index < 0 || index >= m_actionButtons.size()) {
+    if (index < 0 || index >= d->m_actionButtons.size()) {
         return QString();
     }
-    const auto& entry = m_actionButtons.at(index);
+    const auto& entry = d->m_actionButtons.at(index);
     if (!entry.accessibleName.isEmpty()) {
         return entry.accessibleName;
     }
@@ -199,18 +231,18 @@ QString QtMaterialBottomAppBar::actionAccessibleName(int index) const
 
 void QtMaterialBottomAppBar::setActionAccessibleName(int index, const QString& name)
 {
-    if (index < 0 || index >= m_actionButtons.size()) {
+    if (index < 0 || index >= d->m_actionButtons.size()) {
         return;
     }
-    if (m_actionButtons[index].accessibleName == name) {
+    if (d->m_actionButtons[index].accessibleName == name) {
         return;
     }
     const QString previousSummary = accessibilitySummary();
-    m_actionButtons[index].accessibleName = name;
-    if (m_actionButtons[index].button) {
-        m_actionButtons[index].button->setAccessibleName(actionAccessibleName(index));
-        if (m_actionButtons[index].button->toolTip().isEmpty()) {
-            m_actionButtons[index].button->setToolTip(actionAccessibleName(index));
+    d->m_actionButtons[index].accessibleName = name;
+    if (d->m_actionButtons[index].button) {
+        d->m_actionButtons[index].button->setAccessibleName(actionAccessibleName(index));
+        if (d->m_actionButtons[index].button->toolTip().isEmpty()) {
+            d->m_actionButtons[index].button->setToolTip(actionAccessibleName(index));
         }
     }
     syncAccessibility();
@@ -228,22 +260,22 @@ QString QtMaterialBottomAppBar::actionAccessibleText(int index) const
 
 void QtMaterialBottomAppBar::setFabButton(QAbstractButton* button)
 {
-    if (m_fabButton == button) {
+    if (d->m_fabButton == button) {
         return;
     }
     const QString previousSummary = accessibilitySummary();
-    if (m_fabButton) {
-        m_fabButton->setParent(nullptr);
+    if (d->m_fabButton) {
+        d->m_fabButton->setParent(nullptr);
     }
-    m_fabButton = button;
-    if (m_fabButton) {
-        m_fabButton->setParent(this);
-        m_fabButton->setFocusPolicy(Qt::StrongFocus);
-        if (m_fabButton->accessibleName().isEmpty()) {
-            m_fabButton->setAccessibleName(QStringLiteral("Primary action"));
+    d->m_fabButton = button;
+    if (d->m_fabButton) {
+        d->m_fabButton->setParent(this);
+        d->m_fabButton->setFocusPolicy(Qt::StrongFocus);
+        if (d->m_fabButton->accessibleName().isEmpty()) {
+            d->m_fabButton->setAccessibleName(QStringLiteral("Primary action"));
         }
-        m_fabButton->setAccessibleDescription(QStringLiteral("Bottom app bar floating action button"));
-        m_fabButton->raise();
+        d->m_fabButton->setAccessibleDescription(QStringLiteral("Bottom app bar floating action button"));
+        d->m_fabButton->raise();
     }
     invalidateLayoutCache();
     syncAccessibility();
@@ -254,31 +286,31 @@ void QtMaterialBottomAppBar::setFabButton(QAbstractButton* button)
 
 QAbstractButton* QtMaterialBottomAppBar::fabButton() const noexcept
 {
-    return m_fabButton;
+    return d->m_fabButton;
 }
 
 QString QtMaterialBottomAppBar::fabAccessibleText() const
 {
-    if (!m_fabButton) {
+    if (!d->m_fabButton) {
         return QString();
     }
-    const QString name = m_fabButton->accessibleName().isEmpty()
-        ? m_fabButton->text()
-        : m_fabButton->accessibleName();
+    const QString name = d->m_fabButton->accessibleName().isEmpty()
+        ? d->m_fabButton->text()
+        : d->m_fabButton->accessibleName();
     return name.isEmpty() ? QStringLiteral("Primary action") : name;
 }
 
 QString QtMaterialBottomAppBar::accessibilitySummary() const
 {
     QStringList parts;
-    parts << (m_title.isEmpty() ? QStringLiteral("Bottom app bar") : m_title);
-    if (!m_navigationIcon.isNull()) {
+    parts << (d->m_title.isEmpty() ? QStringLiteral("Bottom app bar") : d->m_title);
+    if (!d->m_navigationIcon.isNull()) {
         parts << effectiveNavigationAccessibleName();
     }
-    if (!m_actionButtons.isEmpty()) {
-        parts << tr("%n action(s)", nullptr, m_actionButtons.size());
+    if (!d->m_actionButtons.isEmpty()) {
+        parts << tr("%n action(s)", nullptr, d->m_actionButtons.size());
     }
-    if (m_fabButton) {
+    if (d->m_fabButton) {
         parts << fabAccessibleText();
     }
     return parts.join(QStringLiteral(", "));
@@ -286,7 +318,7 @@ QString QtMaterialBottomAppBar::accessibilitySummary() const
 
 QSize QtMaterialBottomAppBar::sizeHint() const
 {
-    return QSize(kPreferredWidth, kDefaultHeight + (m_fabAttached ? 16 : 0));
+    return QSize(kPreferredWidth, kDefaultHeight + (d->m_fabAttached ? 16 : 0));
 }
 
 QSize QtMaterialBottomAppBar::minimumSizeHint() const
@@ -308,20 +340,20 @@ void QtMaterialBottomAppBar::paintEvent(QPaintEvent* event)
 
     p.setPen(Qt::NoPen);
     p.setBrush(base);
-    p.drawRect(m_visualRect);
+    p.drawRect(d->m_visualRect);
 
-    if (m_elevated) {
+    if (d->m_elevated) {
         p.setPen(outline);
-        p.drawLine(m_visualRect.topLeft(), m_visualRect.topRight());
+        p.drawLine(d->m_visualRect.topLeft(), d->m_visualRect.topRight());
     }
 
     p.setPen(text);
     QFont titleFont = font();
     titleFont.setBold(true);
     p.setFont(titleFont);
-    const QString elided = QFontMetrics(titleFont).elidedText(m_title, Qt::ElideRight, m_titleRect.width());
+    const QString elided = QFontMetrics(titleFont).elidedText(d->m_title, Qt::ElideRight, d->m_titleRect.width());
     const int horizontalAlignment = layoutDirection() == Qt::RightToLeft ? Qt::AlignRight : Qt::AlignLeft;
-    p.drawText(m_titleRect, Qt::AlignVCenter | horizontalAlignment, elided);
+    p.drawText(d->m_titleRect, Qt::AlignVCenter | horizontalAlignment, elided);
 
     if (hasFocus()) {
         QStyleOptionFocusRect option;
@@ -357,7 +389,7 @@ void QtMaterialBottomAppBar::changeEvent(QEvent* event)
 void QtMaterialBottomAppBar::keyPressEvent(QKeyEvent* event)
 {
     if ((event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter || event->key() == Qt::Key_Space || event->key() == Qt::Key_Select)
-        && m_navigationButton && m_navigationButton->isVisible()) {
+        && d->m_navigationButton && d->m_navigationButton->isVisible()) {
         emit navigationTriggered();
         event->accept();
         return;
@@ -386,97 +418,97 @@ void QtMaterialBottomAppBar::stateChangedEvent()
 
 void QtMaterialBottomAppBar::ensureLayoutResolved() const
 {
-    if (!m_layoutDirty) {
+    if (!d->m_layoutDirty) {
         return;
     }
 
-    m_visualRect = rect().adjusted(0, m_fabAttached ? 8 : 0, 0, 0);
-    if (m_visualRect.height() <= 0) {
-        m_visualRect = QRect(0, 0, width(), sizeHint().height());
+    d->m_visualRect = rect().adjusted(0, d->m_fabAttached ? 8 : 0, 0, 0);
+    if (d->m_visualRect.height() <= 0) {
+        d->m_visualRect = QRect(0, 0, width(), sizeHint().height());
     }
     const QRect content = availableContentRect();
     int left = content.left();
     int right = content.right();
     const bool rtl = layoutDirection() == Qt::RightToLeft;
 
-    m_navRect = QRect();
-    if (m_navigationButton && m_navigationButton->isVisible()) {
+    d->m_navRect = QRect();
+    if (d->m_navigationButton && d->m_navigationButton->isVisible()) {
         if (rtl) {
-            m_navRect = QRect(right - kActionSlot + 1, content.center().y() - kActionSlot / 2, kActionSlot, kActionSlot);
-            right = m_navRect.left() - kBetweenPadding;
+            d->m_navRect = QRect(right - kActionSlot + 1, content.center().y() - kActionSlot / 2, kActionSlot, kActionSlot);
+            right = d->m_navRect.left() - kBetweenPadding;
         } else {
-            m_navRect = QRect(left, content.center().y() - kActionSlot / 2, kActionSlot, kActionSlot);
-            left = m_navRect.right() + kBetweenPadding;
+            d->m_navRect = QRect(left, content.center().y() - kActionSlot / 2, kActionSlot, kActionSlot);
+            left = d->m_navRect.right() + kBetweenPadding;
         }
-        m_navigationButton->setGeometry(m_navRect);
+        d->m_navigationButton->setGeometry(d->m_navRect);
     }
 
-    m_actionRects.clear();
+    d->m_actionRects.clear();
     if (rtl) {
         int currentLeft = left;
-        for (int i = 0; i < m_actionButtons.size(); ++i) {
+        for (int i = 0; i < d->m_actionButtons.size(); ++i) {
             QRect slot(currentLeft, content.center().y() - kActionSlot / 2, kActionSlot, kActionSlot);
-            m_actionRects.push_back(slot);
+            d->m_actionRects.push_back(slot);
             currentLeft = slot.right() + kBetweenPadding;
-            if (m_actionButtons[i].button) {
-                m_actionButtons[i].button->setGeometry(slot);
+            if (d->m_actionButtons[i].button) {
+                d->m_actionButtons[i].button->setGeometry(slot);
             }
         }
         left = currentLeft;
     } else {
         int currentRight = right;
-        for (int i = m_actionButtons.size() - 1; i >= 0; --i) {
+        for (int i = d->m_actionButtons.size() - 1; i >= 0; --i) {
             QRect slot(currentRight - kActionSlot + 1, content.center().y() - kActionSlot / 2, kActionSlot, kActionSlot);
-            m_actionRects.prepend(slot);
+            d->m_actionRects.prepend(slot);
             currentRight = slot.left() - kBetweenPadding;
-            if (m_actionButtons[i].button) {
-                m_actionButtons[i].button->setGeometry(slot);
+            if (d->m_actionButtons[i].button) {
+                d->m_actionButtons[i].button->setGeometry(slot);
             }
         }
         right = currentRight;
     }
 
-    m_fabRect = QRect();
-    if (m_fabAttached && m_fabButton) {
-        m_fabRect = QRect(content.center().x() - kFabSlot / 2, m_visualRect.top() - 20, kFabSlot, kFabSlot);
-        m_fabButton->setGeometry(m_fabRect);
-        m_fabButton->raise();
+    d->m_fabRect = QRect();
+    if (d->m_fabAttached && d->m_fabButton) {
+        d->m_fabRect = QRect(content.center().x() - kFabSlot / 2, d->m_visualRect.top() - 20, kFabSlot, kFabSlot);
+        d->m_fabButton->setGeometry(d->m_fabRect);
+        d->m_fabButton->raise();
         const int gap = (kFabSlot / 2) + kBetweenPadding;
-        if (left < m_fabRect.center().x() && m_fabRect.center().x() < right) {
+        if (left < d->m_fabRect.center().x() && d->m_fabRect.center().x() < right) {
             if (layoutDirection() == Qt::RightToLeft) {
-                left = std::max(left, m_fabRect.right() + gap);
+                left = std::max(left, d->m_fabRect.right() + gap);
             } else {
-                right = std::min(right, m_fabRect.left() - gap);
+                right = std::min(right, d->m_fabRect.left() - gap);
             }
         }
     }
 
-    m_titleRect = QRect(left, content.top(), std::max(0, right - left), content.height());
-    m_layoutDirty = false;
+    d->m_titleRect = QRect(left, content.top(), std::max(0, right - left), content.height());
+    d->m_layoutDirty = false;
 }
 
 void QtMaterialBottomAppBar::invalidateLayoutCache()
 {
-    m_layoutDirty = true;
+    d->m_layoutDirty = true;
     updateGeometry();
     update();
 }
 
 void QtMaterialBottomAppBar::syncButtons()
 {
-    if (!m_navigationButton) {
-        m_navigationButton = new QToolButton(this);
-        m_navigationButton->setObjectName(QStringLiteral("qtmaterial_bottomAppBar_navigationButton"));
-        m_navigationButton->setAutoRaise(true);
-        m_navigationButton->setFocusPolicy(Qt::StrongFocus);
-        connect(m_navigationButton, &QToolButton::clicked, this, &QtMaterialBottomAppBar::navigationTriggered);
+    if (!d->m_navigationButton) {
+        d->m_navigationButton = new QToolButton(this);
+        d->m_navigationButton->setObjectName(QStringLiteral("qtmaterial_bottomAppBar_navigationButton"));
+        d->m_navigationButton->setAutoRaise(true);
+        d->m_navigationButton->setFocusPolicy(Qt::StrongFocus);
+        connect(d->m_navigationButton, &QToolButton::clicked, this, &QtMaterialBottomAppBar::navigationTriggered);
     }
-    m_navigationButton->setVisible(!m_navigationIcon.isNull());
-    m_navigationButton->setIcon(m_navigationIcon);
-    m_navigationButton->setAccessibleName(effectiveNavigationAccessibleName());
-    m_navigationButton->setAccessibleDescription(QStringLiteral("Bottom app bar navigation"));
-    if (m_navigationButton->toolTip().isEmpty()) {
-        m_navigationButton->setToolTip(effectiveNavigationAccessibleName());
+    d->m_navigationButton->setVisible(!d->m_navigationIcon.isNull());
+    d->m_navigationButton->setIcon(d->m_navigationIcon);
+    d->m_navigationButton->setAccessibleName(effectiveNavigationAccessibleName());
+    d->m_navigationButton->setAccessibleDescription(QStringLiteral("Bottom app bar navigation"));
+    if (d->m_navigationButton->toolTip().isEmpty()) {
+        d->m_navigationButton->setToolTip(effectiveNavigationAccessibleName());
     }
 
     auto syncButton = [this](QToolButton* button) {
@@ -488,9 +520,9 @@ void QtMaterialBottomAppBar::syncButtons()
         button->setStyleSheet(QStringLiteral("QToolButton { border: none; background: transparent; }"));
     };
 
-    syncButton(m_navigationButton);
-    for (int i = 0; i < m_actionButtons.size(); ++i) {
-        auto& entry = m_actionButtons[i];
+    syncButton(d->m_navigationButton);
+    for (int i = 0; i < d->m_actionButtons.size(); ++i) {
+        auto& entry = d->m_actionButtons[i];
         if (!entry.button) {
             continue;
         }
@@ -503,14 +535,14 @@ void QtMaterialBottomAppBar::syncButtons()
         entry.button->raise();
         syncButton(entry.button);
     }
-    if (m_fabButton) {
-        m_fabButton->raise();
+    if (d->m_fabButton) {
+        d->m_fabButton->raise();
     }
 }
 
 void QtMaterialBottomAppBar::syncAccessibility()
 {
-    const QString name = m_title.isEmpty() ? QStringLiteral("Bottom app bar") : m_title;
+    const QString name = d->m_title.isEmpty() ? QStringLiteral("Bottom app bar") : d->m_title;
     setAccessibleName(name);
     setAccessibleDescription(accessibilitySummary());
 }
@@ -518,21 +550,21 @@ void QtMaterialBottomAppBar::syncAccessibility()
 void QtMaterialBottomAppBar::emitAccessibilityIfChanged(const QString& previousSummary)
 {
     const QString current = accessibilitySummary();
-    if (current != previousSummary && current != m_lastAccessibilitySummary) {
-        m_lastAccessibilitySummary = current;
+    if (current != previousSummary && current != d->m_lastAccessibilitySummary) {
+        d->m_lastAccessibilitySummary = current;
         emit accessibilitySummaryChanged(current);
     }
 }
 
 QString QtMaterialBottomAppBar::effectiveNavigationAccessibleName() const
 {
-    if (!m_navigationAccessibleName.isEmpty()) {
-        return m_navigationAccessibleName;
+    if (!d->m_navigationAccessibleName.isEmpty()) {
+        return d->m_navigationAccessibleName;
     }
     return QStringLiteral("Navigate");
 }
 
 QRect QtMaterialBottomAppBar::availableContentRect() const
 {
-    return m_visualRect.adjusted(kHorizontalPadding, 8, -kHorizontalPadding, -8);
+    return d->m_visualRect.adjusted(kHorizontalPadding, 8, -kHorizontalPadding, -8);
 }
