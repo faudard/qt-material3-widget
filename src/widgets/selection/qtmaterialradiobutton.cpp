@@ -1,4 +1,7 @@
 #include "qtmaterial/widgets/selection/qtmaterialradiobutton.h"
+#include <memory>
+#include <QPainterPath>
+#include <QRectF>
 
 // #include <QChangeEvent>
 #include <QFontMetrics>
@@ -10,6 +13,7 @@
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialradiobuttonspec.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/core/qtmaterialeventcompat.h"
 
@@ -40,27 +44,49 @@ QColor blendColor(const QColor& a, const QColor& b, qreal t)
 }
 }
 
+struct QtMaterialRadioButtonPrivate
+{
+    explicit QtMaterialRadioButtonPrivate(QtMaterialRadioButton* owner)
+        : ripple(new QtMaterialRippleController(owner))
+        , transition(new QtMaterialTransitionController(owner))
+    {
+    }
+
+    mutable bool specDirty = true;
+    mutable bool layoutDirty = true;
+    mutable RadioButtonSpec spec;
+    QtMaterialRippleController* ripple = nullptr;
+    QtMaterialTransitionController* transition = nullptr;
+    mutable QRectF cachedIndicatorRect;
+    mutable QRectF cachedDotRect;
+    mutable QRectF cachedStateLayerRect;
+    mutable QRectF cachedFocusRingRect;
+    mutable QRect cachedLabelRect;
+    mutable QPainterPath cachedIndicatorPath;
+    mutable QPainterPath cachedRippleClipPath;
+    mutable QString cachedElidedText;
+};
+
 QtMaterialRadioButton::QtMaterialRadioButton(QWidget* parent)
     : QtMaterialSelectionControl(parent)
-    , m_ripple(new QtMaterialRippleController(this))
-    , m_transition(new QtMaterialTransitionController(this))
+    , d(std::make_unique<QtMaterialRadioButtonPrivate>(this))
 {
     setCheckable(true);
     setAutoExclusive(false);
     setFocusPolicy(Qt::StrongFocus);
 
-    m_transition->setProgress(isChecked() ? 1.0 : 0.0);
+    d->transition->setProgress(isChecked() ? 1.0 : 0.0);
 
-    QObject::connect(m_transition, &QtMaterialTransitionController::progressChanged, this, [this](qreal) {
+    QObject::connect(d->transition, &QtMaterialTransitionController::progressChanged, this, [this](qreal) {
         update();
     });
 
     QObject::connect(this, &QAbstractButton::toggled, this, [this](bool checked) {
         resolveSpecIfNeeded();
-        if (!m_transition) {
+        if (!d->transition) {
             return;
         }
-        checked ? m_transition->startForward() : m_transition->startBackward();
+        checked ? d->transition->startForward() : d->transition->startBackward();
     });
 }
 
@@ -75,16 +101,16 @@ QtMaterialRadioButton::~QtMaterialRadioButton() = default;
 void QtMaterialRadioButton::themeChangedEvent(const Theme& theme)
 {
     QtMaterialSelectionControl::themeChangedEvent(theme);
-    m_specDirty = true;
-    m_layoutDirty = true;
+    d->specDirty = true;
+    d->layoutDirty = true;
     updateGeometry();
     update();
 }
 
 void QtMaterialRadioButton::invalidateResolvedSpec()
 {
-    m_specDirty = true;
-    m_layoutDirty = true;
+    d->specDirty = true;
+    d->layoutDirty = true;
 }
 
 void QtMaterialRadioButton::stateChangedEvent()
@@ -95,34 +121,34 @@ void QtMaterialRadioButton::stateChangedEvent()
 
 void QtMaterialRadioButton::resolveSpecIfNeeded() const
 {
-    if (!m_specDirty) {
+    if (!d->specDirty) {
         return;
     }
 
     SpecFactory factory;
-    m_spec = factory.radioButtonSpec(theme(), density());
-    const_cast<QtMaterialRadioButton*>(this)->setSpacing(m_spec.spacing);
-    if (m_transition && theme().motion().contains(m_spec.motionToken)) {
-        const MotionStyle motion = theme().motion().style(m_spec.motionToken);
+    d->spec = factory.radioButtonSpec(theme(), density());
+    const_cast<QtMaterialRadioButton*>(this)->setSpacing(d->spec.spacing);
+    if (d->transition && theme().motion().contains(d->spec.motionToken)) {
+        const MotionStyle motion = theme().motion().style(d->spec.motionToken);
         if (motion.durationMs > 0) {
-            m_transition->setDuration(motion.durationMs);
+            d->transition->setDuration(motion.durationMs);
         }
-        m_transition->setEasingCurve(motion.easing);
+        d->transition->setEasingCurve(motion.easing);
     }
-    m_specDirty = false;
-    m_layoutDirty = true;
+    d->specDirty = false;
+    d->layoutDirty = true;
 }
 
 void QtMaterialRadioButton::invalidateLayoutCache()
 {
-    m_layoutDirty = true;
+    d->layoutDirty = true;
 }
 
 void QtMaterialRadioButton::resolveLayoutIfNeeded() const
 {
     const_cast<QtMaterialRadioButton*>(this)->resolveSpecIfNeeded();
 
-    if (!m_layoutDirty) {
+    if (!d->layoutDirty) {
         return;
     }
 
@@ -130,12 +156,12 @@ void QtMaterialRadioButton::resolveLayoutIfNeeded() const
 
     const int controlWidth = qMin(
         bounds.width(),
-        qMax(m_spec.touchTarget.width(), m_spec.indicatorSize)
+        qMax(d->spec.touchTarget.width(), d->spec.indicatorSize)
         );
 
     const int controlHeight = qMin(
         bounds.height(),
-        qMax(m_spec.touchTarget.height(), m_spec.indicatorSize)
+        qMax(d->spec.touchTarget.height(), d->spec.indicatorSize)
         );
 
     const bool rtl = layoutDirection() == Qt::RightToLeft;
@@ -146,28 +172,28 @@ void QtMaterialRadioButton::resolveLayoutIfNeeded() const
     const QRect controlRect(controlX, controlY, controlWidth, controlHeight);
 
     const int indicatorX =
-        controlRect.center().x() - m_spec.indicatorSize / 2;
+        controlRect.center().x() - d->spec.indicatorSize / 2;
 
     const int indicatorY =
-        controlRect.center().y() - m_spec.indicatorSize / 2;
+        controlRect.center().y() - d->spec.indicatorSize / 2;
 
     const QRect indicatorBounds(
         indicatorX,
         indicatorY,
-        m_spec.indicatorSize,
-        m_spec.indicatorSize
+        d->spec.indicatorSize,
+        d->spec.indicatorSize
         );
 
-    m_cachedIndicatorRect = QRectF(indicatorBounds);
-    m_cachedDotRect = centeredRect(m_cachedIndicatorRect, m_spec.dotSize);
+    d->cachedIndicatorRect = QRectF(indicatorBounds);
+    d->cachedDotRect = centeredRect(d->cachedIndicatorRect, d->spec.dotSize);
 
-    m_cachedStateLayerRect =
+    d->cachedStateLayerRect =
         SelectionRenderHelper::centeredStateLayerRect(
             indicatorBounds,
-            m_spec.stateLayerSize
+            d->spec.stateLayerSize
             );
 
-    m_cachedFocusRingRect = m_cachedStateLayerRect.adjusted(
+    d->cachedFocusRingRect = d->cachedStateLayerRect.adjusted(
         -3.0,
         -3.0,
         3.0,
@@ -177,7 +203,7 @@ void QtMaterialRadioButton::resolveLayoutIfNeeded() const
     const int gap = text().isEmpty() ? 0 : spacing();
 
     if (rtl) {
-        m_cachedLabelRect = QRect(
+        d->cachedLabelRect = QRect(
             0,
             0,
             qMax(0, controlRect.left() - gap),
@@ -186,7 +212,7 @@ void QtMaterialRadioButton::resolveLayoutIfNeeded() const
     } else {
         const int labelX = controlRect.right() + 1 + gap;
 
-        m_cachedLabelRect = QRect(
+        d->cachedLabelRect = QRect(
             labelX,
             0,
             qMax(0, width() - labelX),
@@ -194,45 +220,45 @@ void QtMaterialRadioButton::resolveLayoutIfNeeded() const
             );
     }
 
-    m_cachedIndicatorPath = QPainterPath();
-    m_cachedIndicatorPath.addEllipse(m_cachedIndicatorRect);
+    d->cachedIndicatorPath = QPainterPath();
+    d->cachedIndicatorPath.addEllipse(d->cachedIndicatorRect);
 
-    m_cachedRippleClipPath = QPainterPath();
-    m_cachedRippleClipPath.addEllipse(m_cachedStateLayerRect);
+    d->cachedRippleClipPath = QPainterPath();
+    d->cachedRippleClipPath.addEllipse(d->cachedStateLayerRect);
 
     const QFont labelFont = SelectionRenderHelper::labelFont(
         theme(),
-        m_spec.labelTypeRole,
+        d->spec.labelTypeRole,
         font()
         );
 
     const QFontMetrics metrics(labelFont);
 
-    m_cachedElidedText = metrics.elidedText(
+    d->cachedElidedText = metrics.elidedText(
         text(),
         Qt::ElideRight,
-        m_cachedLabelRect.width()
+        d->cachedLabelRect.width()
         );
 
-    m_layoutDirty = false;
+    d->layoutDirty = false;
 }
 
 QSize QtMaterialRadioButton::sizeHint() const
 {
     const_cast<QtMaterialRadioButton*>(this)->resolveSpecIfNeeded();
 
-    const QFont labelFont = SelectionRenderHelper::labelFont(theme(), m_spec.labelTypeRole, font());
+    const QFont labelFont = SelectionRenderHelper::labelFont(theme(), d->spec.labelTypeRole, font());
     const QFontMetrics metrics(labelFont);
     const int labelWidth = text().isEmpty() ? 0 : (metrics.horizontalAdvance(text()) + spacing());
-    const int width = qMax(m_spec.touchTarget.width(), m_spec.indicatorSize) + labelWidth;
-    const int height = qMax(m_spec.touchTarget.height(), qMax(m_spec.indicatorSize, metrics.height()));
+    const int width = qMax(d->spec.touchTarget.width(), d->spec.indicatorSize) + labelWidth;
+    const int height = qMax(d->spec.touchTarget.height(), qMax(d->spec.indicatorSize, metrics.height()));
     return QSize(width, height);
 }
 
 QSize QtMaterialRadioButton::minimumSizeHint() const
 {
     const_cast<QtMaterialRadioButton*>(this)->resolveSpecIfNeeded();
-    return QSize(m_spec.touchTarget.width(), qMax(m_spec.touchTarget.height(), m_spec.indicatorSize));
+    return QSize(d->spec.touchTarget.width(), qMax(d->spec.touchTarget.height(), d->spec.indicatorSize));
 }
 
 void QtMaterialRadioButton::resizeEvent(QResizeEvent* event)
@@ -251,8 +277,8 @@ void QtMaterialRadioButton::changeEvent(QEvent* event)
 
 void QtMaterialRadioButton::mousePressEvent(QMouseEvent* event)
 {
-    if (m_ripple) {
-        m_ripple->addRipple(QtMaterial::mousePosition(event));
+    if (d->ripple) {
+        d->ripple->addRipple(QtMaterial::mousePosition(event));
     }
     QtMaterialSelectionControl::mousePressEvent(event);
 }
@@ -265,32 +291,32 @@ void QtMaterialRadioButton::paintEvent(QPaintEvent*)
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     const bool enabled = isEnabled();
-    const qreal progress = m_transition ? m_transition->progress() : (isChecked() ? 1.0 : 0.0);
+    const qreal progress = d->transition ? d->transition->progress() : (isChecked() ? 1.0 : 0.0);
     const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(theme(), interactionState());
 
     SelectionRenderHelper::paintCircularStateLayer(
         &painter,
-        m_cachedStateLayerRect,
-        m_spec.stateLayerColor,
+        d->cachedStateLayerRect,
+        d->spec.stateLayerColor,
         stateOpacity);
 
     painter.save();
 
     const QColor ringColor = enabled
-                                 ? blendColor(m_spec.unselectedOutlineColor, m_spec.selectedColor, progress)
-                                 : m_spec.disabledColor;
+                                 ? blendColor(d->spec.unselectedOutlineColor, d->spec.selectedColor, progress)
+                                 : d->spec.disabledColor;
 
-    QPen pen(ringColor, m_spec.outlineWidth);
+    QPen pen(ringColor, d->spec.outlineWidth);
     pen.setCosmetic(true);
 
     painter.setPen(pen);
     painter.setBrush(Qt::NoBrush);
-    painter.drawPath(m_cachedIndicatorPath);
+    painter.drawPath(d->cachedIndicatorPath);
 
     if (progress > 0.0) {
-        QRectF dotRect = centeredRect(m_cachedIndicatorRect, m_spec.dotSize * progress);
+        QRectF dotRect = centeredRect(d->cachedIndicatorRect, d->spec.dotSize * progress);
 
-        QColor dotColor = enabled ? m_spec.selectedColor : m_spec.disabledColor;
+        QColor dotColor = enabled ? d->spec.selectedColor : d->spec.disabledColor;
         dotColor.setAlphaF(dotColor.alphaF() * progress);
 
         painter.setPen(Qt::NoPen);
@@ -300,20 +326,20 @@ void QtMaterialRadioButton::paintEvent(QPaintEvent*)
 
     painter.restore();
 
-    if (m_ripple) {
-        m_ripple->setClipPath(m_cachedRippleClipPath);
-        m_ripple->paint(&painter, m_spec.stateLayerColor);
+    if (d->ripple) {
+        d->ripple->setClipPath(d->cachedRippleClipPath);
+        d->ripple->paint(&painter, d->spec.stateLayerColor);
     }
 
-    if (!m_cachedElidedText.isEmpty()) {
-        const QFont labelFont = SelectionRenderHelper::labelFont(theme(), m_spec.labelTypeRole, font());
-        const QColor labelColor = enabled ? m_spec.labelColor : m_spec.disabledColor;
+    if (!d->cachedElidedText.isEmpty()) {
+        const QFont labelFont = SelectionRenderHelper::labelFont(theme(), d->spec.labelTypeRole, font());
+        const QColor labelColor = enabled ? d->spec.labelColor : d->spec.disabledColor;
 
         SelectionRenderHelper::paintLabel(
             &painter,
-            m_cachedLabelRect,
+            d->cachedLabelRect,
             labelAlignment(),
-            m_cachedElidedText,
+            d->cachedElidedText,
             labelColor,
             labelFont);
     }
@@ -321,9 +347,9 @@ void QtMaterialRadioButton::paintEvent(QPaintEvent*)
     if (interactionState().isFocused()) {
         QtMaterialFocusIndicator::paintRectFocusRing(
             &painter,
-            m_cachedFocusRingRect,
-            m_spec.focusRingColor,
-            m_cachedFocusRingRect.width() / 2.0,
+            d->cachedFocusRingRect,
+            d->spec.focusRingColor,
+            d->cachedFocusRingRect.width() / 2.0,
             2.0);
     }
 }

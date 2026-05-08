@@ -1,4 +1,5 @@
 #include "qtmaterial/widgets/selection/qtmaterialchip.h"
+#include <memory>
 
 #include <QMouseEvent>
 #include <QPainter>
@@ -10,6 +11,16 @@
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 
 namespace QtMaterial {
+
+struct QtMaterialChipPrivate
+{
+    ChipVariant variant = ChipVariant::Assist;
+    bool removable = false;
+    QIcon trailingIcon;
+    mutable bool specDirty = true;
+    mutable ChipSpec spec;
+};
+
 namespace {
 
 qreal stateOpacity(const Theme& theme, const QtMaterialInteractionState& state)
@@ -33,6 +44,7 @@ qreal stateOpacity(const Theme& theme, const QtMaterialInteractionState& state)
 
 QtMaterialChip::QtMaterialChip(QWidget* parent)
     : QtMaterialAbstractButton(parent)
+    , d(std::make_unique<QtMaterialChipPrivate>())
 {
     setCheckable(false);
     setFocusPolicy(Qt::StrongFocus);
@@ -49,15 +61,15 @@ QtMaterialChip::~QtMaterialChip() = default;
 
 ChipVariant QtMaterialChip::variant() const noexcept
 {
-    return m_variant;
+    return d->variant;
 }
 
 void QtMaterialChip::setVariant(ChipVariant variant)
 {
-    if (m_variant == variant) {
+    if (d->variant == variant) {
         return;
     }
-    m_variant = variant;
+    d->variant = variant;
     if (variant == ChipVariant::Filter) {
         setCheckable(true);
     }
@@ -69,15 +81,15 @@ void QtMaterialChip::setVariant(ChipVariant variant)
 
 bool QtMaterialChip::isRemovable() const noexcept
 {
-    return m_removable;
+    return d->removable;
 }
 
 void QtMaterialChip::setRemovable(bool removable)
 {
-    if (m_removable == removable) {
+    if (d->removable == removable) {
         return;
     }
-    m_removable = removable;
+    d->removable = removable;
     updateGeometry();
     update();
     emit removableChanged(removable);
@@ -85,12 +97,12 @@ void QtMaterialChip::setRemovable(bool removable)
 
 QIcon QtMaterialChip::trailingIcon() const
 {
-    return m_trailingIcon;
+    return d->trailingIcon;
 }
 
 void QtMaterialChip::setTrailingIcon(const QIcon& icon)
 {
-    m_trailingIcon = icon;
+    d->trailingIcon = icon;
     updateGeometry();
     update();
 }
@@ -103,7 +115,7 @@ void QtMaterialChip::themeChangedEvent(const Theme& theme)
 
 void QtMaterialChip::invalidateResolvedSpec()
 {
-    m_specDirty = true;
+    d->specDirty = true;
 }
 
 void QtMaterialChip::stateChangedEvent()
@@ -115,7 +127,7 @@ void QtMaterialChip::stateChangedEvent()
 ChipSpec QtMaterialChip::resolveSpec() const
 {
     SpecFactory factory;
-    switch (m_variant) {
+    switch (d->variant) {
     case ChipVariant::Filter:
         return factory.filterChipSpec(theme(), density());
     case ChipVariant::Input:
@@ -130,56 +142,56 @@ ChipSpec QtMaterialChip::resolveSpec() const
 
 void QtMaterialChip::ensureSpecResolved() const
 {
-    if (!m_specDirty) {
+    if (!d->specDirty) {
         return;
     }
-    m_spec = resolveSpec();
-    m_specDirty = false;
+    d->spec = resolveSpec();
+    d->specDirty = false;
 }
 
 QRectF QtMaterialChip::containerRect() const
 {
     ensureSpecResolved();
-    const int y = (height() - m_spec.containerHeight) / 2;
-    return QRectF(0.5, y + 0.5, width() - 1.0, m_spec.containerHeight - 1.0);
+    const int y = (height() - d->spec.containerHeight) / 2;
+    return QRectF(0.5, y + 0.5, width() - 1.0, d->spec.containerHeight - 1.0);
 }
 
 QRect QtMaterialChip::trailingIconRect(const QRectF& visualRect) const
 {
     ensureSpecResolved();
-    const int x = static_cast<int>(visualRect.right()) - m_spec.horizontalPadding - m_spec.iconSize;
-    const int y = static_cast<int>(visualRect.center().y()) - m_spec.iconSize / 2;
-    return QRect(x, y, m_spec.iconSize, m_spec.iconSize);
+    const int x = static_cast<int>(visualRect.right()) - d->spec.horizontalPadding - d->spec.iconSize;
+    const int y = static_cast<int>(visualRect.center().y()) - d->spec.iconSize / 2;
+    return QRect(x, y, d->spec.iconSize, d->spec.iconSize);
 }
 
 QSize QtMaterialChip::sizeHint() const
 {
     ensureSpecResolved();
     QFont resolvedFont = font();
-    if (theme().typography().contains(m_spec.labelTypeRole)) {
-        resolvedFont = theme().typography().style(m_spec.labelTypeRole).font;
+    if (theme().typography().contains(d->spec.labelTypeRole)) {
+        resolvedFont = theme().typography().style(d->spec.labelTypeRole).font;
     }
     const QFontMetrics fm(resolvedFont);
-    int width = m_spec.horizontalPadding * 2 + fm.horizontalAdvance(text());
+    int width = d->spec.horizontalPadding * 2 + fm.horizontalAdvance(text());
     if (!icon().isNull()) {
-        width += m_spec.iconSize + m_spec.iconSpacing;
+        width += d->spec.iconSize + d->spec.iconSpacing;
     }
-    if (m_removable || !m_trailingIcon.isNull()) {
-        width += m_spec.iconSize + m_spec.iconSpacing;
+    if (d->removable || !d->trailingIcon.isNull()) {
+        width += d->spec.iconSize + d->spec.iconSpacing;
     }
-    return QSize(qMax(m_spec.minWidth, width), m_spec.touchTarget.height());
+    return QSize(qMax(d->spec.minWidth, width), d->spec.touchTarget.height());
 }
 
 QSize QtMaterialChip::minimumSizeHint() const
 {
     ensureSpecResolved();
-    return QSize(m_spec.minWidth, m_spec.touchTarget.height());
+    return QSize(d->spec.minWidth, d->spec.touchTarget.height());
 }
 
 void QtMaterialChip::mouseReleaseEvent(QMouseEvent* event)
 {
     ensureSpecResolved();
-    if ((m_removable || !m_trailingIcon.isNull()) && trailingIconRect(containerRect()).contains(event->pos())) {
+    if ((d->removable || !d->trailingIcon.isNull()) && trailingIconRect(containerRect()).contains(event->pos())) {
         emit removeRequested();
         event->accept();
         return;
@@ -194,65 +206,65 @@ void QtMaterialChip::paintEvent(QPaintEvent*)
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     const QRectF visualRect = containerRect();
-    const qreal radius = theme().shapes().contains(m_spec.shapeRole)
-        ? theme().shapes().radius(m_spec.shapeRole)
+    const qreal radius = theme().shapes().contains(d->spec.shapeRole)
+        ? theme().shapes().radius(d->spec.shapeRole)
         : visualRect.height() / 2.0;
 
     QPainterPath path;
     path.addRoundedRect(visualRect, radius, radius);
 
     const bool selected = isChecked();
-    const QColor container = selected ? m_spec.selectedContainerColor : m_spec.containerColor;
+    const QColor container = selected ? d->spec.selectedContainerColor : d->spec.containerColor;
     const QColor labelColor = !isEnabled()
-        ? m_spec.disabledLabelColor
-        : (selected ? m_spec.selectedLabelColor : m_spec.labelColor);
+        ? d->spec.disabledLabelColor
+        : (selected ? d->spec.selectedLabelColor : d->spec.labelColor);
     const QColor iconColor = !isEnabled()
-        ? m_spec.disabledLabelColor
-        : (selected ? m_spec.selectedIconColor : m_spec.iconColor);
+        ? d->spec.disabledLabelColor
+        : (selected ? d->spec.selectedIconColor : d->spec.iconColor);
 
     if (container.alpha() > 0) {
         painter.fillPath(path, container);
     }
 
-    const QColor outline = isEnabled() ? m_spec.outlineColor : m_spec.disabledOutlineColor;
+    const QColor outline = isEnabled() ? d->spec.outlineColor : d->spec.disabledOutlineColor;
     if (outline.isValid() && outline.alpha() > 0) {
-        QPen pen(outline, m_spec.outlineWidth);
+        QPen pen(outline, d->spec.outlineWidth);
         painter.setPen(pen);
         painter.drawPath(path);
     }
 
     const qreal opacity = stateOpacity(theme(), interactionState());
     if (opacity > 0.0) {
-        QtMaterialStateLayerPainter::paintPath(&painter, path, m_spec.stateLayerColor, opacity);
+        QtMaterialStateLayerPainter::paintPath(&painter, path, d->spec.stateLayerColor, opacity);
     }
 
     QFont resolvedFont = font();
-    if (theme().typography().contains(m_spec.labelTypeRole)) {
-        resolvedFont = theme().typography().style(m_spec.labelTypeRole).font;
+    if (theme().typography().contains(d->spec.labelTypeRole)) {
+        resolvedFont = theme().typography().style(d->spec.labelTypeRole).font;
     }
     painter.setFont(resolvedFont);
     painter.setPen(labelColor);
 
-    int x = static_cast<int>(visualRect.left()) + m_spec.horizontalPadding;
+    int x = static_cast<int>(visualRect.left()) + d->spec.horizontalPadding;
     if (!icon().isNull()) {
-        const QRect iconRect(x, static_cast<int>(visualRect.center().y()) - m_spec.iconSize / 2, m_spec.iconSize, m_spec.iconSize);
+        const QRect iconRect(x, static_cast<int>(visualRect.center().y()) - d->spec.iconSize / 2, d->spec.iconSize, d->spec.iconSize);
         icon().paint(&painter, iconRect, Qt::AlignCenter, isEnabled() ? QIcon::Normal : QIcon::Disabled);
-        x += m_spec.iconSize + m_spec.iconSpacing;
+        x += d->spec.iconSize + d->spec.iconSpacing;
     }
 
-    int right = static_cast<int>(visualRect.right()) - m_spec.horizontalPadding;
+    int right = static_cast<int>(visualRect.right()) - d->spec.horizontalPadding;
     QRect closeRect;
-    if (m_removable || !m_trailingIcon.isNull()) {
+    if (d->removable || !d->trailingIcon.isNull()) {
         closeRect = trailingIconRect(visualRect);
-        right = closeRect.left() - m_spec.iconSpacing;
+        right = closeRect.left() - d->spec.iconSpacing;
     }
 
     painter.drawText(QRect(x, static_cast<int>(visualRect.top()), right - x, static_cast<int>(visualRect.height())),
                      Qt::AlignVCenter | Qt::AlignLeft, text());
 
     if (!closeRect.isNull()) {
-        if (!m_trailingIcon.isNull()) {
-            m_trailingIcon.paint(&painter, closeRect, Qt::AlignCenter, isEnabled() ? QIcon::Normal : QIcon::Disabled);
+        if (!d->trailingIcon.isNull()) {
+            d->trailingIcon.paint(&painter, closeRect, Qt::AlignCenter, isEnabled() ? QIcon::Normal : QIcon::Disabled);
         } else {
             painter.setPen(QPen(iconColor, 1.8));
             painter.drawLine(closeRect.topLeft() + QPoint(4, 4), closeRect.bottomRight() - QPoint(4, 4));
@@ -261,7 +273,7 @@ void QtMaterialChip::paintEvent(QPaintEvent*)
     }
 
     if (interactionState().isFocused()) {
-        QtMaterialFocusIndicator::paintPathFocusRing(&painter, path, m_spec.focusRingColor, 2.0);
+        QtMaterialFocusIndicator::paintPathFocusRing(&painter, path, d->spec.focusRingColor, 2.0);
     }
 }
 

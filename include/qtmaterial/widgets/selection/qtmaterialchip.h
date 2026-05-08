@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QIcon>
 
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
@@ -7,6 +9,8 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+struct QtMaterialChipPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialChip : public QtMaterialAbstractButton {
     Q_OBJECT
@@ -47,12 +51,7 @@ private:
     ChipSpec resolveSpec() const;
     QRectF containerRect() const;
     QRect trailingIconRect(const QRectF& visualRect) const;
-
-    ChipVariant m_variant = ChipVariant::Assist;
-    bool m_removable = false;
-    QIcon m_trailingIcon;
-    mutable bool m_specDirty = true;
-    mutable ChipSpec m_spec;
+    std::unique_ptr<QtMaterialChipPrivate> d;
 };
 
 } // namespace QtMaterial

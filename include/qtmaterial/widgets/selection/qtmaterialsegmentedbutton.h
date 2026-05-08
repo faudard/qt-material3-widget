@@ -1,13 +1,15 @@
 #pragma once
 
+#include <memory>
+
 #include <QIcon>
-#include <QVector>
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
-#include "qtmaterial/specs/qtmaterialsegmentedbuttonspec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+struct QtMaterialSegmentedButtonPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSegmentedButton : public QtMaterialControl {
     Q_OBJECT
@@ -63,14 +65,7 @@ protected:
     void invalidateResolvedSpec() override;
 
 private:
-    struct Segment {
-        QString text;
-        QIcon icon;
-        bool checked = false;
-        bool enabled = true;
-    };
-
-    void ensureSpecResolved() const;
+void ensureSpecResolved() const;
     QRect segmentRect(int index) const;
     int indexAt(const QPoint& pos) const;
     void toggleIndex(int index);
@@ -78,12 +73,7 @@ private:
     int lastEnabledIndex() const noexcept;
     int nextEnabledIndex(int start, int delta) const noexcept;
     void syncAccessibility();
-
-    QVector<Segment> m_segments;
-    int m_currentIndex = -1;
-    bool m_multiSelection = false;
-    mutable bool m_specDirty = true;
-    mutable SegmentedButtonSpec m_spec;
+    std::unique_ptr<QtMaterialSegmentedButtonPrivate> d;
 };
 
 } // namespace QtMaterial
