@@ -1,4 +1,5 @@
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
+#include <memory>
 
 #include <QCalendarWidget>
 #include <QDate>
@@ -15,8 +16,18 @@
 
 namespace QtMaterial {
 
+struct QtMaterialDatePickerPrivate {
+    DatePickerSpec m_spec = defaultDatePickerSpec();
+    QCalendarWidget* m_calendar = nullptr;
+    QLabel* m_headerLabel = nullptr;
+    QToolButton* m_prevButton = nullptr;
+    QToolButton* m_nextButton = nullptr;
+    QToolButton* m_todayButton = nullptr;
+};
+
 QtMaterialDatePicker::QtMaterialDatePicker(QWidget* parent)
-    : QFrame(parent), m_spec(defaultDatePickerSpec())
+    : QFrame(parent)
+    , d_ptr(std::make_unique<QtMaterialDatePickerPrivate>())
 {
     setObjectName(QStringLiteral("QtMaterialDatePicker"));
     setFocusPolicy(Qt::StrongFocus);
@@ -30,71 +41,71 @@ QtMaterialDatePicker::~QtMaterialDatePicker() = default;
 
 QDate QtMaterialDatePicker::selectedDate() const
 {
-    return m_calendar->selectedDate();
+    return d_ptr->m_calendar->selectedDate();
 }
 
 void QtMaterialDatePicker::setSelectedDate(const QDate& date)
 {
-    if (!date.isValid() || m_calendar->selectedDate() == date) {
+    if (!date.isValid() || d_ptr->m_calendar->selectedDate() == date) {
         return;
     }
-    m_calendar->setSelectedDate(date);
+    d_ptr->m_calendar->setSelectedDate(date);
     updateHeader();
     emit selectedDateChanged(date);
 }
 
 QDate QtMaterialDatePicker::minimumDate() const
 {
-    return m_calendar->minimumDate();
+    return d_ptr->m_calendar->minimumDate();
 }
 
 void QtMaterialDatePicker::setMinimumDate(const QDate& date)
 {
     if (date.isValid()) {
-        m_calendar->setMinimumDate(date);
+        d_ptr->m_calendar->setMinimumDate(date);
     }
 }
 
 QDate QtMaterialDatePicker::maximumDate() const
 {
-    return m_calendar->maximumDate();
+    return d_ptr->m_calendar->maximumDate();
 }
 
 void QtMaterialDatePicker::setMaximumDate(const QDate& date)
 {
     if (date.isValid()) {
-        m_calendar->setMaximumDate(date);
+        d_ptr->m_calendar->setMaximumDate(date);
     }
 }
 
 DatePickerSpec QtMaterialDatePicker::spec() const
 {
-    return m_spec;
+    return d_ptr->m_spec;
 }
 
 void QtMaterialDatePicker::setSpec(const DatePickerSpec& spec)
 {
-    m_spec = spec;
+    d_ptr->m_spec = spec;
     applySpec();
     update();
 }
 
 void QtMaterialDatePicker::showPreviousMonth()
 {
-    m_calendar->showPreviousMonth();
+    d_ptr->m_calendar->showPreviousMonth();
     updateHeader();
 }
 
 void QtMaterialDatePicker::showNextMonth()
 {
-    m_calendar->showNextMonth();
+    d_ptr->m_calendar->showNextMonth();
     updateHeader();
 }
 
 void QtMaterialDatePicker::showToday()
 {
     setSelectedDate(QDate::currentDate());
-    m_calendar->showSelectedDate();
+    d_ptr->m_calendar->showSelectedDate();
 }
 
 void QtMaterialDatePicker::changeEvent(QEvent* event)
@@ -138,69 +149,69 @@ void QtMaterialDatePicker::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(m_spec.backgroundColor);
-    painter.drawRoundedRect(rect().adjusted(0, 0, -1, -1), m_spec.cornerRadius, m_spec.cornerRadius);
+    painter.setBrush(d_ptr->m_spec.backgroundColor);
+    painter.drawRoundedRect(rect().adjusted(0, 0, -1, -1), d_ptr->m_spec.cornerRadius, d_ptr->m_spec.cornerRadius);
 
     if (hasFocus()) {
-        QPen pen(m_spec.focusRingColor, m_spec.focusRingWidth);
+        QPen pen(d_ptr->m_spec.focusRingColor, d_ptr->m_spec.focusRingWidth);
         painter.setPen(pen);
         painter.setBrush(Qt::NoBrush);
-        painter.drawRoundedRect(rect().adjusted(2, 2, -3, -3), m_spec.cornerRadius, m_spec.cornerRadius);
+        painter.drawRoundedRect(rect().adjusted(2, 2, -3, -3), d_ptr->m_spec.cornerRadius, d_ptr->m_spec.cornerRadius);
     }
 }
 
 void QtMaterialDatePicker::buildUi()
 {
     auto* root = new QVBoxLayout(this);
-    root->setContentsMargins(m_spec.contentMargins);
+    root->setContentsMargins(d_ptr->m_spec.contentMargins);
     root->setSpacing(8);
 
     auto* header = new QGridLayout();
     header->setContentsMargins(0, 0, 0, 0);
     header->setColumnStretch(1, 1);
 
-    m_headerLabel = new QLabel(this);
-    m_headerLabel->setObjectName(QStringLiteral("QtMaterialDatePickerHeader"));
+    d_ptr->m_headerLabel = new QLabel(this);
+    d_ptr->m_headerLabel->setObjectName(QStringLiteral("QtMaterialDatePickerHeader"));
 
-    m_prevButton = new QToolButton(this);
-    m_prevButton->setText(QStringLiteral("‹"));
-    m_prevButton->setAccessibleName(tr("Previous month"));
-    connect(m_prevButton, &QToolButton::clicked, this, &QtMaterialDatePicker::showPreviousMonth);
+    d_ptr->m_prevButton = new QToolButton(this);
+    d_ptr->m_prevButton->setText(QStringLiteral("‹"));
+    d_ptr->m_prevButton->setAccessibleName(tr("Previous month"));
+    connect(d_ptr->m_prevButton, &QToolButton::clicked, this, &QtMaterialDatePicker::showPreviousMonth);
 
-    m_nextButton = new QToolButton(this);
-    m_nextButton->setText(QStringLiteral("›"));
-    m_nextButton->setAccessibleName(tr("Next month"));
-    connect(m_nextButton, &QToolButton::clicked, this, &QtMaterialDatePicker::showNextMonth);
+    d_ptr->m_nextButton = new QToolButton(this);
+    d_ptr->m_nextButton->setText(QStringLiteral("›"));
+    d_ptr->m_nextButton->setAccessibleName(tr("Next month"));
+    connect(d_ptr->m_nextButton, &QToolButton::clicked, this, &QtMaterialDatePicker::showNextMonth);
 
-    m_todayButton = new QToolButton(this);
-    m_todayButton->setText(tr("Today"));
-    m_todayButton->setAccessibleName(tr("Show today"));
-    connect(m_todayButton, &QToolButton::clicked, this, &QtMaterialDatePicker::showToday);
+    d_ptr->m_todayButton = new QToolButton(this);
+    d_ptr->m_todayButton->setText(tr("Today"));
+    d_ptr->m_todayButton->setAccessibleName(tr("Show today"));
+    connect(d_ptr->m_todayButton, &QToolButton::clicked, this, &QtMaterialDatePicker::showToday);
 
-    header->addWidget(m_prevButton, 0, 0);
-    header->addWidget(m_headerLabel, 0, 1);
-    header->addWidget(m_todayButton, 0, 2);
-    header->addWidget(m_nextButton, 0, 3);
+    header->addWidget(d_ptr->m_prevButton, 0, 0);
+    header->addWidget(d_ptr->m_headerLabel, 0, 1);
+    header->addWidget(d_ptr->m_todayButton, 0, 2);
+    header->addWidget(d_ptr->m_nextButton, 0, 3);
     root->addLayout(header);
 
-    m_calendar = new QCalendarWidget(this);
-    m_calendar->setObjectName(QStringLiteral("QtMaterialDatePickerCalendar"));
-    m_calendar->setGridVisible(false);
-    m_calendar->setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
-    m_calendar->setNavigationBarVisible(false);
-    m_calendar->setFocusPolicy(Qt::StrongFocus);
-    connect(m_calendar, &QCalendarWidget::selectionChanged, this, [this]() {
+    d_ptr->m_calendar = new QCalendarWidget(this);
+    d_ptr->m_calendar->setObjectName(QStringLiteral("QtMaterialDatePickerCalendar"));
+    d_ptr->m_calendar->setGridVisible(false);
+    d_ptr->m_calendar->setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
+    d_ptr->m_calendar->setNavigationBarVisible(false);
+    d_ptr->m_calendar->setFocusPolicy(Qt::StrongFocus);
+    connect(d_ptr->m_calendar, &QCalendarWidget::selectionChanged, this, [this]() {
         updateHeader();
-        emit selectedDateChanged(m_calendar->selectedDate());
+        emit selectedDateChanged(d_ptr->m_calendar->selectedDate());
     });
-    connect(m_calendar, &QCalendarWidget::activated, this, &QtMaterialDatePicker::activated);
-    root->addWidget(m_calendar);
+    connect(d_ptr->m_calendar, &QCalendarWidget::activated, this, &QtMaterialDatePicker::activated);
+    root->addWidget(d_ptr->m_calendar);
 }
 
 void QtMaterialDatePicker::updateHeader()
 {
-    const QDate date = m_calendar->selectedDate();
-    m_headerLabel->setText(QLocale().toString(date, QStringLiteral("MMMM yyyy")));
+    const QDate date = d_ptr->m_calendar->selectedDate();
+    d_ptr->m_headerLabel->setText(QLocale().toString(date, QStringLiteral("MMMM yyyy")));
     setAccessibleName(tr("Date picker, selected %1").arg(QLocale().toString(date, QLocale::LongFormat)));
 }
 
@@ -208,39 +219,39 @@ void QtMaterialDatePicker::applySpec()
 {
     setAutoFillBackground(false);
     if (layout()) {
-        layout()->setContentsMargins(m_spec.contentMargins);
+        layout()->setContentsMargins(d_ptr->m_spec.contentMargins);
     }
 
     QPalette palette = this->palette();
-    palette.setColor(QPalette::WindowText, m_spec.foregroundColor);
-    palette.setColor(QPalette::Text, m_spec.foregroundColor);
-    palette.setColor(QPalette::ButtonText, m_spec.foregroundColor);
-    palette.setColor(QPalette::Base, m_spec.backgroundColor);
-    palette.setColor(QPalette::Window, m_spec.backgroundColor);
+    palette.setColor(QPalette::WindowText, d_ptr->m_spec.foregroundColor);
+    palette.setColor(QPalette::Text, d_ptr->m_spec.foregroundColor);
+    palette.setColor(QPalette::ButtonText, d_ptr->m_spec.foregroundColor);
+    palette.setColor(QPalette::Base, d_ptr->m_spec.backgroundColor);
+    palette.setColor(QPalette::Window, d_ptr->m_spec.backgroundColor);
     setPalette(palette);
 
-    m_headerLabel->setFont(m_spec.headlineFont);
-    m_headerLabel->setStyleSheet(QStringLiteral("color:%1;").arg(m_spec.headlineColor.name()));
-    m_calendar->setFont(m_spec.dayFont);
+    d_ptr->m_headerLabel->setFont(d_ptr->m_spec.headlineFont);
+    d_ptr->m_headerLabel->setStyleSheet(QStringLiteral("color:%1;").arg(d_ptr->m_spec.headlineColor.name()));
+    d_ptr->m_calendar->setFont(d_ptr->m_spec.dayFont);
 
     QTextCharFormat selected;
-    selected.setBackground(m_spec.selectedDateColor);
-    selected.setForeground(m_spec.selectedDateTextColor);
-    m_calendar->setDateTextFormat(m_calendar->selectedDate(), selected);
+    selected.setBackground(d_ptr->m_spec.selectedDateColor);
+    selected.setForeground(d_ptr->m_spec.selectedDateTextColor);
+    d_ptr->m_calendar->setDateTextFormat(d_ptr->m_calendar->selectedDate(), selected);
 
     const QString style = QStringLiteral(
         "QCalendarWidget QWidget { background: %1; color: %2; }"
         "QCalendarWidget QAbstractItemView { selection-background-color: %3; selection-color: %4; outline: 0; }"
         "QToolButton { border: 0; border-radius: 16px; padding: 6px 10px; color: %2; background: transparent; }"
         "QToolButton:hover { background: rgba(%5,%6,%7,%8); }")
-        .arg(m_spec.backgroundColor.name(),
-             m_spec.foregroundColor.name(),
-             m_spec.selectedDateColor.name(),
-             m_spec.selectedDateTextColor.name())
-        .arg(m_spec.hoverColor.red())
-        .arg(m_spec.hoverColor.green())
-        .arg(m_spec.hoverColor.blue())
-        .arg(m_spec.hoverColor.alpha());
+        .arg(d_ptr->m_spec.backgroundColor.name(),
+             d_ptr->m_spec.foregroundColor.name(),
+             d_ptr->m_spec.selectedDateColor.name(),
+             d_ptr->m_spec.selectedDateTextColor.name())
+        .arg(d_ptr->m_spec.hoverColor.red())
+        .arg(d_ptr->m_spec.hoverColor.green())
+        .arg(d_ptr->m_spec.hoverColor.blue())
+        .arg(d_ptr->m_spec.hoverColor.alpha());
     setStyleSheet(style);
 }
 

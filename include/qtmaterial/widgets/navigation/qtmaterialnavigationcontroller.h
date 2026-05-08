@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #include <QObject>
 #include <QPointer>
@@ -11,6 +12,8 @@ class QStackedWidget;
 QT_END_NAMESPACE
 
 namespace QtMaterial {
+
+class QtMaterialStackedWidgetControllerPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialNavigationController : public QObject {
     Q_OBJECT
@@ -34,7 +37,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialStackedWidgetController final : publi
 
 public:
     explicit QtMaterialStackedWidgetController(QStackedWidget* stack, QObject* parent = nullptr);
-    ~QtMaterialStackedWidgetController() override = default;
+    ~QtMaterialStackedWidgetController() override;
 
     int currentIndex() const override;
 
@@ -45,32 +48,7 @@ public:
     QStackedWidget* stackedWidget() const;
 
 private:
-    QPointer<QStackedWidget> m_stack;
+    std::unique_ptr<QtMaterialStackedWidgetControllerPrivate> d_ptr;
 };
-
-inline QtMaterialStackedWidgetController::QtMaterialStackedWidgetController(QStackedWidget* stack, QObject* parent)
-    : QtMaterialNavigationController(parent), m_stack(stack)
-{
-    if (m_stack) {
-        QObject::connect(m_stack, SIGNAL(currentChanged(int)), this, SIGNAL(currentIndexChanged(int)));
-    }
-}
-
-inline int QtMaterialStackedWidgetController::currentIndex() const
-{
-    return m_stack ? m_stack->currentIndex() : -1;
-}
-
-inline void QtMaterialStackedWidgetController::setCurrentIndex(int index)
-{
-    if (m_stack) {
-        m_stack->setCurrentIndex(index);
-    }
-}
-
-inline QStackedWidget* QtMaterialStackedWidgetController::stackedWidget() const
-{
-    return m_stack.data();
-}
 
 } // namespace QtMaterial

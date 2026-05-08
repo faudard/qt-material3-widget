@@ -423,6 +423,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     src/widgets/selection/qtmaterialchip.cpp
     src/widgets/selection/qtmaterialsegmentedbutton.cpp
     src/widgets/navigation/qtmaterialnavigationrail.cpp
+    src\widgets\navigation\qtmaterialnavigationcontroller.cpp
     src/widgets/navigation/qtmaterialmenu.cpp
     src/widgets/inputs/qtmaterialautocomplete.cpp
     src/widgets/qtmaterialdatepicker.cpp

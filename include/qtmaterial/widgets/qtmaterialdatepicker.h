@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #include <QDate>
 #include <QFrame>
@@ -11,6 +12,8 @@ class QLabel;
 class QToolButton;
 
 namespace QtMaterial {
+
+class QtMaterialDatePickerPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDatePicker : public QFrame {
     Q_OBJECT
@@ -53,12 +56,7 @@ private:
     void updateHeader();
     void applySpec();
 
-    DatePickerSpec m_spec;
-    QCalendarWidget* m_calendar = nullptr;
-    QLabel* m_headerLabel = nullptr;
-    QToolButton* m_prevButton = nullptr;
-    QToolButton* m_nextButton = nullptr;
-    QToolButton* m_todayButton = nullptr;
+    std::unique_ptr<QtMaterialDatePickerPrivate> d_ptr;
 };
 
 } // namespace QtMaterial
