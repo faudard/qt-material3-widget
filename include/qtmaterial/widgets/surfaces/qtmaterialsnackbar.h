@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QPointer>
 #include <QVariant>
 
@@ -16,6 +18,8 @@ class QObject;
 
 namespace QtMaterial {
 
+
+class QtMaterialSnackbarPrivate;
 class QtMaterialTransitionController;
 struct SnackbarSpec;
 
@@ -96,7 +100,10 @@ protected:
     void syncGeometryToHost() override;
 
 private:
-    enum class State {
+
+ friend class QtMaterialSnackbarPrivate;
+
+ enum class State {
         Hidden,
         Entering,
         Visible,
@@ -115,22 +122,9 @@ private:
     qreal resolvedCornerRadius() const noexcept;
 
 private:
-    mutable bool m_specDirty = true;
-    mutable QtMaterial::SnackbarSpec* m_specPtr = nullptr;
 
-    SnackbarRequest m_request;
-    SnackbarDismissReason m_pendingDismissReason = SnackbarDismissReason::Manual;
-    State m_state = State::Hidden;
+ std::unique_ptr<QtMaterialSnackbarPrivate> d_ptr;
 
-    QLabel* m_label = nullptr;
-    QPushButton* m_actionButton = nullptr;
-    QPushButton* m_dismissButton = nullptr;
-    QHBoxLayout* m_layout = nullptr;
-    QTimer* m_timer = nullptr;
-    bool m_pauseAutoHideOnInteraction = true;
-    bool m_autoHidePaused = false;
-    QString m_lastAccessibilitySummary;
-    QPointer<QtMaterialTransitionController> m_transition;
 };
 
 } // namespace QtMaterial

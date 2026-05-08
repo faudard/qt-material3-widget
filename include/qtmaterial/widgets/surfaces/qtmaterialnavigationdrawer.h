@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QPointer>
 #include <QPainterPath>
 #include <QRect>
@@ -14,6 +16,8 @@ class QShowEvent;
 class QHideEvent;
 namespace QtMaterial {
 
+
+class QtMaterialNavigationDrawerPrivate;
 class QtMaterialScrimWidget;
 class QtMaterialTransitionController;
 
@@ -59,19 +63,7 @@ private:
     QWidget* firstFocusableChild() const;
 
 private:
-    Edge m_edge = Edge::Left;
-    bool m_open = false;
+    std::unique_ptr<QtMaterialNavigationDrawerPrivate> d_ptr;
 
-    mutable bool m_specDirty = true;
-    mutable bool m_layoutDirty = true;
-    mutable QtMaterial::NavigationDrawerSpec m_spec;
-    mutable QRect m_cachedVisualRect;
-    mutable QRect m_cachedContentRect;
-    mutable QPainterPath m_cachedContainerPath;
-    mutable qreal m_cachedCornerRadius = 0.0;
-    mutable int m_cachedShadowMargin = 0;
-
-    QPointer<QtMaterialScrimWidget> m_scrim;
-    QtMaterialTransitionController* m_transition = nullptr;
 };
 }

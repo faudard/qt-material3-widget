@@ -7,8 +7,27 @@
 #include <QResizeEvent>
 #include <QShowEvent>
 #include <QWidget>
+#include <memory>
+#include "qtmaterial/specs/qtmaterialnavigationdrawerspec.h"
 
 namespace QtMaterial {
+
+
+class QtMaterialNavigationDrawerPrivate {
+public:
+ QtMaterialNavigationDrawer::Edge edge = QtMaterialNavigationDrawer::Edge::Left;
+ bool open = false;
+ mutable bool specDirty = true;
+ mutable bool layoutDirty = true;
+ mutable QtMaterial::NavigationDrawerSpec spec;
+ mutable QRect cachedVisualRect;
+ mutable QRect cachedContentRect;
+ mutable QPainterPath cachedContainerPath;
+ mutable qreal cachedCornerRadius = 0.0;
+ mutable int cachedShadowMargin = 0;
+ QPointer<QtMaterialScrimWidget> scrim;
+ QtMaterialTransitionController* transition = nullptr;
+};
 
 QtMaterialNavigationDrawer::QtMaterialNavigationDrawer(QWidget* parent)
     : QtMaterialOverlaySurface(parent)
@@ -33,23 +52,23 @@ QSize QtMaterialNavigationDrawer::minimumSizeHint() const
 
 void QtMaterialNavigationDrawer::setEdge(Edge edge)
 {
-    if (m_edge == edge) {
+    if (d_ptr->edge == edge) {
         return;
     }
 
-    m_edge = edge;
+    d_ptr->edge = edge;
     invalidateLayoutCache();
     update();
 }
 
 QtMaterialNavigationDrawer::Edge QtMaterialNavigationDrawer::edge() const noexcept
 {
-    return m_edge;
+    return d_ptr->edge;
 }
 
 void QtMaterialNavigationDrawer::open()
 {
-    m_open = true;
+    d_ptr->open = true;
     show();
     raise();
     focusInitialChild();
@@ -57,13 +76,13 @@ void QtMaterialNavigationDrawer::open()
 
 void QtMaterialNavigationDrawer::closeDrawer()
 {
-    m_open = false;
+    d_ptr->open = false;
     hide();
 }
 
 bool QtMaterialNavigationDrawer::isOpen() const noexcept
 {
-    return m_open;
+    return d_ptr->open;
 }
 
 void QtMaterialNavigationDrawer::paintEvent(QPaintEvent*)
@@ -81,13 +100,13 @@ void QtMaterialNavigationDrawer::resizeEvent(QResizeEvent* event)
 void QtMaterialNavigationDrawer::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);
-    m_open = true;
+    d_ptr->open = true;
 }
 
 void QtMaterialNavigationDrawer::hideEvent(QHideEvent* event)
 {
     QWidget::hideEvent(event);
-    m_open = false;
+    d_ptr->open = false;
 }
 
 void QtMaterialNavigationDrawer::changeEvent(QEvent* event)
@@ -109,29 +128,29 @@ void QtMaterialNavigationDrawer::keyPressEvent(QKeyEvent* event)
 
 void QtMaterialNavigationDrawer::themeChangedEvent(const QtMaterial::Theme&)
 {
-    m_specDirty = true;
+    d_ptr->specDirty = true;
     update();
 }
 
 void QtMaterialNavigationDrawer::invalidateResolvedSpec()
 {
-    m_specDirty = true;
+    d_ptr->specDirty = true;
     update();
 }
 
 void QtMaterialNavigationDrawer::ensureSpecResolved() const
 {
-    m_specDirty = false;
+    d_ptr->specDirty = false;
 }
 
 void QtMaterialNavigationDrawer::ensureLayoutResolved() const
 {
-    m_layoutDirty = false;
+    d_ptr->layoutDirty = false;
 }
 
 void QtMaterialNavigationDrawer::invalidateLayoutCache()
 {
-    m_layoutDirty = true;
+    d_ptr->layoutDirty = true;
 }
 
 void QtMaterialNavigationDrawer::updateScrimVisuals()

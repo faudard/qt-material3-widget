@@ -16,8 +16,40 @@
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialbottomsheetspec.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include <memory>
 
 namespace QtMaterial {
+
+class QtMaterialBottomSheetPrivate {
+public:
+ mutable bool specDirty = true;
+ mutable bool geometryDirty = true;
+ mutable QtMaterial::BottomSheetSpec* specPtr = nullptr;
+ mutable QRect cachedVisualRect;
+ mutable QRect cachedContentRect;
+ mutable QPainterPath cachedContainerPath;
+ mutable qreal cachedCornerRadius = 0.0;
+ QPointer<QtMaterialScrimWidget> scrim;
+ QPointer<QtMaterialTransitionController> transition;
+ QPointer<QWidget> container;
+ QPointer<QWidget> initialFocusWidget;
+ QPointer<QWidget> lastFocusBeforeOpen;
+ QtMaterialBottomSheet::SheetState state = QtMaterialBottomSheet::SheetState::Closed;
+ bool modal = true;
+ bool expanded = true;
+ bool dismissOnEscape = true;
+ bool dismissOnScrim = true;
+ bool dragToDismissEnabled = true;
+ bool restoreFocusOnClose = true;
+ bool dragging = false;
+ int expandedHeight = 320;
+ int collapsedHeight = 80;
+ QPoint dragStartGlobalPos;
+ QString titleText;
+ QString supportingText;
+ QString lastAccessibilitySummary;
+};
+
 namespace {
 
 QPainterPath topRoundedSheetPath(const QRectF &r, qreal radius)
@@ -63,27 +95,27 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     setAttribute(Qt::WA_StyledBackground, false);
     setAutoFillBackground(false);
 
-    m_container = new QWidget(this);
-    m_container->setObjectName(QStringLiteral("qtmaterial_bottomsheet_container"));
-    m_container->setAttribute(Qt::WA_StyledBackground, false);
-    m_container->setAutoFillBackground(false);
-    m_container->hide();
+    d_ptr->container = new QWidget(this);
+    d_ptr->container->setObjectName(QStringLiteral("qtmaterial_bottomsheet_container"));
+    d_ptr->container->setAttribute(Qt::WA_StyledBackground, false);
+    d_ptr->container->setAutoFillBackground(false);
+    d_ptr->container->hide();
 
-    m_transition = new QtMaterialTransitionController(this);
-    m_transition->applyMotionToken(theme(), MotionToken::Medium2);
+    d_ptr->transition = new QtMaterialTransitionController(this);
+    d_ptr->transition->applyMotionToken(theme(), MotionToken::Medium2);
 
-    m_scrim = new QtMaterialScrimWidget(parent ? parent : this);
-    if (m_scrim) {
-        m_scrim->setObjectName(QStringLiteral("qtmaterial_bottomsheet_scrim"));
-        m_scrim->hide();
-        m_scrim->installEventFilter(this);
+    d_ptr->scrim = new QtMaterialScrimWidget(parent ? parent : this);
+    if (d_ptr->scrim) {
+        d_ptr->scrim->setObjectName(QStringLiteral("qtmaterial_bottomsheet_scrim"));
+        d_ptr->scrim->hide();
+        d_ptr->scrim->installEventFilter(this);
     }
 
     if (QWidget *host = parentWidget()) {
         host->installEventFilter(this);
     }
 
-    connect(m_transition, &QtMaterialTransitionController::progressChanged, this, [this](qreal value) {
+    connect(d_ptr->transition, &QtMaterialTransitionController::progressChanged, this, [this](qreal value) {
         invalidateCachedGeometry();
         syncContainerGeometry();
         applySheetMask();
@@ -92,22 +124,22 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
         update();
     });
 
-    connect(m_transition, &QtMaterialTransitionController::finished, this, [this]() {
-        if (m_state == SheetState::Closing) {
+    connect(d_ptr->transition, &QtMaterialTransitionController::finished, this, [this]() {
+        if (d_ptr->state == SheetState::Closing) {
             setState(SheetState::Closed);
             clearMask();
             hide();
-            if (m_container) {
-                m_container->hide();
+            if (d_ptr->container) {
+                d_ptr->container->hide();
             }
-            if (m_scrim) {
-                m_scrim->hide();
+            if (d_ptr->scrim) {
+                d_ptr->scrim->hide();
             }
-            if (m_restoreFocusOnClose && m_lastFocusBeforeOpen) {
-                m_lastFocusBeforeOpen->setFocus(Qt::OtherFocusReason);
+            if (d_ptr->restoreFocusOnClose && d_ptr->lastFocusBeforeOpen) {
+                d_ptr->lastFocusBeforeOpen->setFocus(Qt::OtherFocusReason);
             }
             emit closed();
-        } else if (m_state == SheetState::Opening) {
+        } else if (d_ptr->state == SheetState::Opening) {
             setState(SheetState::Open);
             focusFirstChild();
             emit opened();
@@ -122,105 +154,105 @@ QtMaterialBottomSheet::~QtMaterialBottomSheet()
     if (QWidget *host = parentWidget()) {
         host->removeEventFilter(this);
     }
-    if (m_scrim) {
-        m_scrim->removeEventFilter(this);
+    if (d_ptr->scrim) {
+        d_ptr->scrim->removeEventFilter(this);
     }
 }
 
 void QtMaterialBottomSheet::open()
 {
-    if (isVisible() && (m_state == SheetState::Opening || m_state == SheetState::Open)) {
+    if (isVisible() && (d_ptr->state == SheetState::Opening || d_ptr->state == SheetState::Open)) {
         return;
     }
 
-    m_lastFocusBeforeOpen = QApplication::focusWidget();
+    d_ptr->lastFocusBeforeOpen = QApplication::focusWidget();
     ensureSpecResolved();
-    if (m_specPtr) {
-        m_transition->applyMotionToken(theme(), m_specPtr->motionToken);
+    if (d_ptr->specPtr) {
+        d_ptr->transition->applyMotionToken(theme(), d_ptr->specPtr->motionToken);
     }
 
     syncToHost();
     show();
     raise();
 
-    if (m_container) {
-        m_container->show();
-        m_container->raise();
+    if (d_ptr->container) {
+        d_ptr->container->show();
+        d_ptr->container->raise();
     }
-    if (m_scrim && m_modal) {
-        m_scrim->show();
-        m_scrim->raise();
+    if (d_ptr->scrim && d_ptr->modal) {
+        d_ptr->scrim->show();
+        d_ptr->scrim->raise();
     }
 
     syncContainerGeometry();
     applySheetMask();
     raise();
     setState(SheetState::Opening);
-    m_transition->startForward();
+    d_ptr->transition->startForward();
     syncAccessibility();
 }
 
 void QtMaterialBottomSheet::close()
 {
-    if (m_state == SheetState::Closing || m_state == SheetState::Closed) {
+    if (d_ptr->state == SheetState::Closing || d_ptr->state == SheetState::Closed) {
         return;
     }
 
     ensureSpecResolved();
-    if (m_specPtr) {
-        m_transition->applyMotionToken(theme(), m_specPtr->motionToken);
+    if (d_ptr->specPtr) {
+        d_ptr->transition->applyMotionToken(theme(), d_ptr->specPtr->motionToken);
     }
 
     setState(SheetState::Closing);
     emit dismissed();
-    m_transition->startBackward();
+    d_ptr->transition->startBackward();
     syncAccessibility();
 }
 
 bool QtMaterialBottomSheet::isOpen() const noexcept
 {
-    return m_state == SheetState::Open || m_state == SheetState::Opening;
+    return d_ptr->state == SheetState::Open || d_ptr->state == SheetState::Opening;
 }
 
 qreal QtMaterialBottomSheet::progress() const noexcept
 {
-    return m_transition ? m_transition->progress() : 0.0;
+    return d_ptr->transition ? d_ptr->transition->progress() : 0.0;
 }
 
 QtMaterialBottomSheet::SheetState QtMaterialBottomSheet::state() const noexcept
 {
-    return m_state;
+    return d_ptr->state;
 }
 
 void QtMaterialBottomSheet::setModal(bool modal)
 {
-    if (m_modal == modal) {
+    if (d_ptr->modal == modal) {
         return;
     }
 
-    m_modal = modal;
+    d_ptr->modal = modal;
     syncScrim();
     applySheetMask();
     syncAccessibility();
-    emit modalChanged(m_modal);
+    emit modalChanged(d_ptr->modal);
 }
 
 bool QtMaterialBottomSheet::isModal() const noexcept
 {
-    return m_modal;
+    return d_ptr->modal;
 }
 
 void QtMaterialBottomSheet::setExpandedHeight(int px)
 {
     const int clamped = qMax(120, px);
-    if (m_expandedHeight == clamped) {
+    if (d_ptr->expandedHeight == clamped) {
         return;
     }
 
-    m_expandedHeight = clamped;
-    if (m_collapsedHeight > m_expandedHeight) {
-        m_collapsedHeight = m_expandedHeight;
-        emit collapsedHeightChanged(m_collapsedHeight);
+    d_ptr->expandedHeight = clamped;
+    if (d_ptr->collapsedHeight > d_ptr->expandedHeight) {
+        d_ptr->collapsedHeight = d_ptr->expandedHeight;
+        emit collapsedHeightChanged(d_ptr->collapsedHeight);
     }
     invalidateCachedGeometry();
     syncContainerGeometry();
@@ -228,55 +260,55 @@ void QtMaterialBottomSheet::setExpandedHeight(int px)
     updateGeometry();
     update();
     syncAccessibility();
-    emit expandedHeightChanged(m_expandedHeight);
+    emit expandedHeightChanged(d_ptr->expandedHeight);
 }
 
 int QtMaterialBottomSheet::expandedHeight() const noexcept
 {
-    return m_expandedHeight;
+    return d_ptr->expandedHeight;
 }
 
 void QtMaterialBottomSheet::setCollapsedHeight(int px)
 {
-    const int clamped = qBound(56, px, m_expandedHeight);
-    if (m_collapsedHeight == clamped) {
+    const int clamped = qBound(56, px, d_ptr->expandedHeight);
+    if (d_ptr->collapsedHeight == clamped) {
         return;
     }
 
-    m_collapsedHeight = clamped;
+    d_ptr->collapsedHeight = clamped;
     invalidateCachedGeometry();
     syncContainerGeometry();
     applySheetMask();
     updateGeometry();
     update();
     syncAccessibility();
-    emit collapsedHeightChanged(m_collapsedHeight);
+    emit collapsedHeightChanged(d_ptr->collapsedHeight);
 }
 
 int QtMaterialBottomSheet::collapsedHeight() const noexcept
 {
-    return m_collapsedHeight;
+    return d_ptr->collapsedHeight;
 }
 
 void QtMaterialBottomSheet::setExpanded(bool expanded)
 {
-    if (m_expanded == expanded) {
+    if (d_ptr->expanded == expanded) {
         return;
     }
 
-    m_expanded = expanded;
+    d_ptr->expanded = expanded;
     invalidateCachedGeometry();
     syncContainerGeometry();
     applySheetMask();
     updateGeometry();
     update();
     syncAccessibility();
-    emit expandedChanged(m_expanded);
+    emit expandedChanged(d_ptr->expanded);
 }
 
 bool QtMaterialBottomSheet::isExpanded() const noexcept
 {
-    return m_expanded;
+    return d_ptr->expanded;
 }
 
 void QtMaterialBottomSheet::expand()
@@ -291,76 +323,76 @@ void QtMaterialBottomSheet::collapse()
 
 void QtMaterialBottomSheet::setDismissOnEscape(bool enabled)
 {
-    if (m_dismissOnEscape == enabled) {
+    if (d_ptr->dismissOnEscape == enabled) {
         return;
     }
-    m_dismissOnEscape = enabled;
+    d_ptr->dismissOnEscape = enabled;
     emit dismissOnEscapeChanged(enabled);
 }
 
 bool QtMaterialBottomSheet::dismissOnEscape() const noexcept
 {
-    return m_dismissOnEscape;
+    return d_ptr->dismissOnEscape;
 }
 
 void QtMaterialBottomSheet::setDismissOnScrim(bool enabled)
 {
-    if (m_dismissOnScrim == enabled) {
+    if (d_ptr->dismissOnScrim == enabled) {
         return;
     }
-    m_dismissOnScrim = enabled;
+    d_ptr->dismissOnScrim = enabled;
     emit dismissOnScrimChanged(enabled);
 }
 
 bool QtMaterialBottomSheet::dismissOnScrim() const noexcept
 {
-    return m_dismissOnScrim;
+    return d_ptr->dismissOnScrim;
 }
 
 void QtMaterialBottomSheet::setDragToDismissEnabled(bool enabled)
 {
-    if (m_dragToDismissEnabled == enabled) {
+    if (d_ptr->dragToDismissEnabled == enabled) {
         return;
     }
-    m_dragToDismissEnabled = enabled;
+    d_ptr->dragToDismissEnabled = enabled;
     emit dragToDismissEnabledChanged(enabled);
 }
 
 bool QtMaterialBottomSheet::isDragToDismissEnabled() const noexcept
 {
-    return m_dragToDismissEnabled;
+    return d_ptr->dragToDismissEnabled;
 }
 
 void QtMaterialBottomSheet::setRestoreFocusOnClose(bool enabled)
 {
-    if (m_restoreFocusOnClose == enabled) {
+    if (d_ptr->restoreFocusOnClose == enabled) {
         return;
     }
-    m_restoreFocusOnClose = enabled;
+    d_ptr->restoreFocusOnClose = enabled;
     emit restoreFocusOnCloseChanged(enabled);
 }
 
 bool QtMaterialBottomSheet::restoreFocusOnClose() const noexcept
 {
-    return m_restoreFocusOnClose;
+    return d_ptr->restoreFocusOnClose;
 }
 
 void QtMaterialBottomSheet::setInitialFocusWidget(QWidget *widget)
 {
-    if (m_initialFocusWidget == widget) {
+    if (d_ptr->initialFocusWidget == widget) {
         return;
     }
-    m_initialFocusWidget = widget;
+    d_ptr->initialFocusWidget = widget;
 }
 
 QWidget *QtMaterialBottomSheet::initialFocusWidget() const noexcept
 {
-    return m_initialFocusWidget.data();
+    return d_ptr->initialFocusWidget.data();
 }
 
 QSize QtMaterialBottomSheet::sizeHint() const
 {
-    return QSize(640, qMax(m_expandedHeight, 240));
+    return QSize(640, qMax(d_ptr->expandedHeight, 240));
 }
 
 QSize QtMaterialBottomSheet::minimumSizeHint() const
@@ -370,52 +402,52 @@ QSize QtMaterialBottomSheet::minimumSizeHint() const
 
 QWidget *QtMaterialBottomSheet::contentWidget() const noexcept
 {
-    return m_container;
+    return d_ptr->container;
 }
 
 void QtMaterialBottomSheet::setTitleText(const QString &text)
 {
-    if (m_titleText == text) {
+    if (d_ptr->titleText == text) {
         return;
     }
-    m_titleText = text;
+    d_ptr->titleText = text;
     syncAccessibility();
-    emit titleTextChanged(m_titleText);
+    emit titleTextChanged(d_ptr->titleText);
 }
 
 QString QtMaterialBottomSheet::titleText() const
 {
-    return m_titleText;
+    return d_ptr->titleText;
 }
 
 void QtMaterialBottomSheet::setSupportingText(const QString &text)
 {
-    if (m_supportingText == text) {
+    if (d_ptr->supportingText == text) {
         return;
     }
-    m_supportingText = text;
+    d_ptr->supportingText = text;
     syncAccessibility();
-    emit supportingTextChanged(m_supportingText);
+    emit supportingTextChanged(d_ptr->supportingText);
 }
 
 QString QtMaterialBottomSheet::supportingText() const
 {
-    return m_supportingText;
+    return d_ptr->supportingText;
 }
 
 QString QtMaterialBottomSheet::accessibilitySummary() const
 {
     QStringList parts;
-    if (!m_titleText.trimmed().isEmpty()) {
-        parts << m_titleText.trimmed();
+    if (!d_ptr->titleText.trimmed().isEmpty()) {
+        parts << d_ptr->titleText.trimmed();
     } else {
         parts << tr("Bottom sheet");
     }
-    if (!m_supportingText.trimmed().isEmpty()) {
-        parts << m_supportingText.trimmed();
+    if (!d_ptr->supportingText.trimmed().isEmpty()) {
+        parts << d_ptr->supportingText.trimmed();
     }
-    parts << (m_expanded ? tr("Expanded") : tr("Collapsed"));
-    if (m_modal) {
+    parts << (d_ptr->expanded ? tr("Expanded") : tr("Collapsed"));
+    if (d_ptr->modal) {
         parts << tr("Modal");
     }
     return parts.join(QStringLiteral(", "));
@@ -434,12 +466,12 @@ bool QtMaterialBottomSheet::eventFilter(QObject *watched, QEvent *event)
             update();
             break;
         case QEvent::MouseButtonPress:
-            if (!isOpen() || m_modal || !m_dismissOnScrim) {
+            if (!isOpen() || d_ptr->modal || !d_ptr->dismissOnScrim) {
                 break;
             }
             ensureGeometryResolved();
             if (const auto *mouseEvent = static_cast<QMouseEvent *>(event)) {
-                if (!m_cachedVisualRect.contains(mouseEvent->pos())) {
+                if (!d_ptr->cachedVisualRect.contains(mouseEvent->pos())) {
                     close();
                     return true;
                 }
@@ -450,8 +482,8 @@ bool QtMaterialBottomSheet::eventFilter(QObject *watched, QEvent *event)
         }
     }
 
-    if (watched == m_scrim && event->type() == QEvent::MouseButtonPress) {
-        if (isOpen() && m_dismissOnScrim) {
+    if (watched == d_ptr->scrim && event->type() == QEvent::MouseButtonPress) {
+        if (isOpen() && d_ptr->dismissOnScrim) {
             close();
             return true;
         }
@@ -464,15 +496,15 @@ void QtMaterialBottomSheet::paintEvent(QPaintEvent *)
 {
     ensureSpecResolved();
     ensureGeometryResolved();
-    if (!m_specPtr || m_cachedVisualRect.isEmpty()) {
+    if (!d_ptr->specPtr || d_ptr->cachedVisualRect.isEmpty()) {
         return;
     }
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(m_specPtr->containerColor);
-    painter.drawPath(m_cachedContainerPath);
+    painter.setBrush(d_ptr->specPtr->containerColor);
+    painter.drawPath(d_ptr->cachedContainerPath);
 }
 
 void QtMaterialBottomSheet::resizeEvent(QResizeEvent *event)
@@ -496,7 +528,7 @@ void QtMaterialBottomSheet::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Escape:
     case Qt::Key_Back:
-        if (m_dismissOnEscape) {
+        if (d_ptr->dismissOnEscape) {
             close();
             event->accept();
             return;
@@ -504,7 +536,7 @@ void QtMaterialBottomSheet::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::Key_Down:
         if (event->modifiers() & Qt::ControlModifier) {
-            if (m_expanded) {
+            if (d_ptr->expanded) {
                 collapse();
             } else {
                 close();
@@ -529,11 +561,11 @@ void QtMaterialBottomSheet::keyPressEvent(QKeyEvent *event)
 
 void QtMaterialBottomSheet::mousePressEvent(QMouseEvent *event)
 {
-    if (m_dragToDismissEnabled && event->button() == Qt::LeftButton) {
+    if (d_ptr->dragToDismissEnabled && event->button() == Qt::LeftButton) {
         ensureGeometryResolved();
-        if (m_cachedVisualRect.contains(event->pos())) {
-            m_dragging = true;
-            m_dragStartGlobalPos = globalMousePosition(event);
+        if (d_ptr->cachedVisualRect.contains(event->pos())) {
+            d_ptr->dragging = true;
+            d_ptr->dragStartGlobalPos = globalMousePosition(event);
             event->accept();
             return;
         }
@@ -543,7 +575,7 @@ void QtMaterialBottomSheet::mousePressEvent(QMouseEvent *event)
 
 void QtMaterialBottomSheet::mouseMoveEvent(QMouseEvent *event)
 {
-    if (m_dragging) {
+    if (d_ptr->dragging) {
         event->accept();
         return;
     }
@@ -552,11 +584,11 @@ void QtMaterialBottomSheet::mouseMoveEvent(QMouseEvent *event)
 
 void QtMaterialBottomSheet::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (m_dragging) {
-        const int deltaY = globalMousePosition(event).y() - m_dragStartGlobalPos.y();
-        m_dragging = false;
+    if (d_ptr->dragging) {
+        const int deltaY = globalMousePosition(event).y() - d_ptr->dragStartGlobalPos.y();
+        d_ptr->dragging = false;
         if (deltaY > qMax(48, effectiveSheetHeight() / 4)) {
-            if (m_expanded && m_collapsedHeight < m_expandedHeight) {
+            if (d_ptr->expanded && d_ptr->collapsedHeight < d_ptr->expandedHeight) {
                 collapse();
             } else {
                 close();
@@ -573,11 +605,11 @@ void QtMaterialBottomSheet::mouseReleaseEvent(QMouseEvent *event)
 void QtMaterialBottomSheet::themeChangedEvent(const QtMaterial::Theme &theme)
 {
     QtMaterialOverlaySurface::themeChangedEvent(theme);
-    m_specDirty = true;
+    d_ptr->specDirty = true;
     invalidateCachedGeometry();
     ensureSpecResolved();
-    if (m_specPtr) {
-        m_transition->applyMotionToken(this->theme(), m_specPtr->motionToken);
+    if (d_ptr->specPtr) {
+        d_ptr->transition->applyMotionToken(this->theme(), d_ptr->specPtr->motionToken);
     }
     syncContainerGeometry();
     applySheetMask();
@@ -587,25 +619,25 @@ void QtMaterialBottomSheet::themeChangedEvent(const QtMaterial::Theme &theme)
 
 void QtMaterialBottomSheet::ensureSpecResolved() const
 {
-    if (!m_specDirty && m_specPtr) {
+    if (!d_ptr->specDirty && d_ptr->specPtr) {
         return;
     }
 
     static QtMaterial::SpecFactory factory;
     static QtMaterial::BottomSheetSpec spec;
     spec = factory.bottomSheetSpec(theme());
-    m_specPtr = &spec;
-    m_specDirty = false;
+    d_ptr->specPtr = &spec;
+    d_ptr->specDirty = false;
 }
 
 void QtMaterialBottomSheet::ensureGeometryResolved() const
 {
-    if (!m_geometryDirty) {
+    if (!d_ptr->geometryDirty) {
         return;
     }
 
     ensureSpecResolved();
-    if (!m_specPtr) {
+    if (!d_ptr->specPtr) {
         return;
     }
 
@@ -616,36 +648,36 @@ void QtMaterialBottomSheet::ensureGeometryResolved() const
 
     const int minHeight = qMax(120, minimumSizeHint().height());
     const int sheetHeight = qMin(qMax(effectiveSheetHeight(), minHeight), hostRect.height());
-    const qreal progressValue = m_transition ? m_transition->progress() : 1.0;
+    const qreal progressValue = d_ptr->transition ? d_ptr->transition->progress() : 1.0;
     const qreal p = qBound(0.0, progressValue, 1.0);
     const int hiddenY = hostRect.height();
     const int y = hiddenY - qRound(sheetHeight * p);
 
-    m_cachedVisualRect = QRect(0, y, hostRect.width(), sheetHeight);
-    m_cachedContentRect = m_cachedVisualRect.adjusted(0, m_specPtr->topPadding, 0, 0);
+    d_ptr->cachedVisualRect = QRect(0, y, hostRect.width(), sheetHeight);
+    d_ptr->cachedContentRect = d_ptr->cachedVisualRect.adjusted(0, d_ptr->specPtr->topPadding, 0, 0);
 
-    const int specRadius = theme().shapes().radius(m_specPtr->shapeRole);
+    const int specRadius = theme().shapes().radius(d_ptr->specPtr->shapeRole);
     const qreal resolvedRadius = specRadius > 0 ? qreal(specRadius) : 28.0;
-    m_cachedCornerRadius = qMin(resolvedRadius, sheetHeight / 2.0);
-    m_cachedContainerPath = topRoundedSheetPath(QRectF(m_cachedVisualRect), m_cachedCornerRadius);
-    m_geometryDirty = false;
+    d_ptr->cachedCornerRadius = qMin(resolvedRadius, sheetHeight / 2.0);
+    d_ptr->cachedContainerPath = topRoundedSheetPath(QRectF(d_ptr->cachedVisualRect), d_ptr->cachedCornerRadius);
+    d_ptr->geometryDirty = false;
 }
 
 void QtMaterialBottomSheet::invalidateCachedGeometry()
 {
-    m_geometryDirty = true;
-    m_cachedVisualRect = QRect();
-    m_cachedContentRect = QRect();
-    m_cachedContainerPath = QPainterPath();
-    m_cachedCornerRadius = 0.0;
+    d_ptr->geometryDirty = true;
+    d_ptr->cachedVisualRect = QRect();
+    d_ptr->cachedContentRect = QRect();
+    d_ptr->cachedContainerPath = QPainterPath();
+    d_ptr->cachedCornerRadius = 0.0;
 }
 
 void QtMaterialBottomSheet::syncToHost()
 {
     if (QWidget *host = parentWidget()) {
         setGeometry(host->rect());
-        if (m_scrim) {
-            m_scrim->setGeometry(host->rect());
+        if (d_ptr->scrim) {
+            d_ptr->scrim->setGeometry(host->rect());
         }
     }
     invalidateCachedGeometry();
@@ -654,95 +686,95 @@ void QtMaterialBottomSheet::syncToHost()
 
 void QtMaterialBottomSheet::syncScrim()
 {
-    if (!m_scrim) {
+    if (!d_ptr->scrim) {
         return;
     }
 
-    if (!m_modal || m_state == SheetState::Closed) {
-        m_scrim->hide();
+    if (!d_ptr->modal || d_ptr->state == SheetState::Closed) {
+        d_ptr->scrim->hide();
         return;
     }
 
     ensureSpecResolved();
-    if (!m_specPtr) {
+    if (!d_ptr->specPtr) {
         return;
     }
 
-    QColor scrim = m_specPtr->scrimColor;
-    const qreal progressValue = m_transition ? m_transition->progress() : 1.0;
+    QColor scrim = d_ptr->specPtr->scrimColor;
+    const qreal progressValue = d_ptr->transition ? d_ptr->transition->progress() : 1.0;
     const qreal p = qBound(0.0, progressValue, 1.0);
     scrim.setAlphaF(qBound(0.0, scrim.alphaF() * p, 1.0));
-    m_scrim->setGeometry(rect());
-    m_scrim->setScrimColor(scrim);
-    if (!m_scrim->isVisible()) {
-        m_scrim->show();
+    d_ptr->scrim->setGeometry(rect());
+    d_ptr->scrim->setScrimColor(scrim);
+    if (!d_ptr->scrim->isVisible()) {
+        d_ptr->scrim->show();
     }
-    m_scrim->raise();
+    d_ptr->scrim->raise();
 }
 
 void QtMaterialBottomSheet::syncContainerGeometry()
 {
-    if (!m_container) {
+    if (!d_ptr->container) {
         return;
     }
 
     ensureGeometryResolved();
-    if (m_cachedVisualRect.isEmpty()) {
-        m_container->hide();
+    if (d_ptr->cachedVisualRect.isEmpty()) {
+        d_ptr->container->hide();
         return;
     }
 
-    m_container->setGeometry(m_cachedVisualRect);
+    d_ptr->container->setGeometry(d_ptr->cachedVisualRect);
     applyContainerClip();
-    if (isVisible() && !m_container->isVisible()) {
-        m_container->show();
+    if (isVisible() && !d_ptr->container->isVisible()) {
+        d_ptr->container->show();
     }
-    m_container->raise();
+    d_ptr->container->raise();
 }
 
 void QtMaterialBottomSheet::applyContainerClip()
 {
-    if (!m_container) {
+    if (!d_ptr->container) {
         return;
     }
 
     ensureGeometryResolved();
-    if (m_cachedVisualRect.isEmpty()) {
-        m_container->clearMask();
+    if (d_ptr->cachedVisualRect.isEmpty()) {
+        d_ptr->container->clearMask();
         return;
     }
 
-    const QPainterPath localPath = m_cachedContainerPath.translated(-m_cachedVisualRect.topLeft());
+    const QPainterPath localPath = d_ptr->cachedContainerPath.translated(-d_ptr->cachedVisualRect.topLeft());
     const QRegion maskRegion(localPath.toFillPolygon().toPolygon());
-    m_container->setMask(maskRegion);
+    d_ptr->container->setMask(maskRegion);
 }
 
 void QtMaterialBottomSheet::applySheetMask()
 {
     ensureGeometryResolved();
-    if (m_cachedVisualRect.isEmpty()) {
+    if (d_ptr->cachedVisualRect.isEmpty()) {
         clearMask();
         return;
     }
 
-    if (m_modal) {
+    if (d_ptr->modal) {
         clearMask();
         return;
     }
 
-    const QRegion panelRegion(m_cachedContainerPath.toFillPolygon().toPolygon());
+    const QRegion panelRegion(d_ptr->cachedContainerPath.toFillPolygon().toPolygon());
     setMask(panelRegion);
 }
 
 void QtMaterialBottomSheet::focusFirstChild()
 {
-    if (m_initialFocusWidget && m_initialFocusWidget->isVisible() && m_initialFocusWidget->isEnabled()) {
-        m_initialFocusWidget->setFocus(Qt::OtherFocusReason);
+    if (d_ptr->initialFocusWidget && d_ptr->initialFocusWidget->isVisible() && d_ptr->initialFocusWidget->isEnabled()) {
+        d_ptr->initialFocusWidget->setFocus(Qt::OtherFocusReason);
         return;
     }
 
-    if (m_container) {
-        const auto children = m_container->findChildren<QWidget *>();
+    if (d_ptr->container) {
+        const auto children = d_ptr->container->findChildren<QWidget *>();
         for (QWidget *child : children) {
             if (!child || !child->isVisible() || !child->isEnabled()) {
                 continue;
@@ -761,46 +793,46 @@ void QtMaterialBottomSheet::syncAccessibility()
 {
     const QString summary = accessibilitySummary();
     if (accessibleName().trimmed().isEmpty()) {
-        setAccessibleName(m_titleText.trimmed().isEmpty() ? tr("Bottom sheet") : m_titleText.trimmed());
+        setAccessibleName(d_ptr->titleText.trimmed().isEmpty() ? tr("Bottom sheet") : d_ptr->titleText.trimmed());
     }
     setAccessibleDescription(summary);
 
-    if (m_lastAccessibilitySummary != summary) {
-        m_lastAccessibilitySummary = summary;
+    if (d_ptr->lastAccessibilitySummary != summary) {
+        d_ptr->lastAccessibilitySummary = summary;
         emit accessibilitySummaryChanged(summary);
     }
 }
 
 void QtMaterialBottomSheet::setState(SheetState state)
 {
-    if (m_state == state) {
+    if (d_ptr->state == state) {
         return;
     }
-    m_state = state;
-    emit stateChanged(m_state);
+    d_ptr->state = state;
+    emit stateChanged(d_ptr->state);
 }
 
 int QtMaterialBottomSheet::effectiveSheetHeight() const
 {
-    return m_expanded ? m_expandedHeight : m_collapsedHeight;
+    return d_ptr->expanded ? d_ptr->expandedHeight : d_ptr->collapsedHeight;
 }
 
 QRect QtMaterialBottomSheet::sheetVisualRect() const
 {
     ensureGeometryResolved();
-    return m_cachedVisualRect;
+    return d_ptr->cachedVisualRect;
 }
 
 QRect QtMaterialBottomSheet::contentRect() const
 {
     ensureGeometryResolved();
-    return m_cachedContentRect;
+    return d_ptr->cachedContentRect;
 }
 
 qreal QtMaterialBottomSheet::cornerRadius() const
 {
     ensureGeometryResolved();
-    return m_cachedCornerRadius;
+    return d_ptr->cachedCornerRadius;
 }
 
 } // namespace QtMaterial

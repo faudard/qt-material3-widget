@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QPointer>
 #include <QSize>
 #include <QString>
@@ -18,6 +20,8 @@ class QPainterPath;
 
 namespace QtMaterial {
 
+
+class QtMaterialBottomSheetPrivate;
 class BottomSheetSpec;
 class QtMaterialScrimWidget;
 class QtMaterialTransitionController;
@@ -144,34 +148,8 @@ private:
     qreal cornerRadius() const;
 
 private:
-    mutable bool m_specDirty = true;
-    mutable bool m_geometryDirty = true;
-    mutable QtMaterial::BottomSheetSpec *m_specPtr = nullptr;
-    mutable QRect m_cachedVisualRect;
-    mutable QRect m_cachedContentRect;
-    mutable QPainterPath m_cachedContainerPath;
-    mutable qreal m_cachedCornerRadius = 0.0;
+    std::unique_ptr<QtMaterialBottomSheetPrivate> d_ptr;
 
-    QPointer<QtMaterialScrimWidget> m_scrim;
-    QPointer<QtMaterialTransitionController> m_transition;
-    QPointer<QWidget> m_container;
-    QPointer<QWidget> m_initialFocusWidget;
-    QPointer<QWidget> m_lastFocusBeforeOpen;
-
-    SheetState m_state = SheetState::Closed;
-    bool m_modal = true;
-    bool m_expanded = true;
-    bool m_dismissOnEscape = true;
-    bool m_dismissOnScrim = true;
-    bool m_dragToDismissEnabled = true;
-    bool m_restoreFocusOnClose = true;
-    bool m_dragging = false;
-    int m_expandedHeight = 320;
-    int m_collapsedHeight = 80;
-    QPoint m_dragStartGlobalPos;
-    QString m_titleText;
-    QString m_supportingText;
-    QString m_lastAccessibilitySummary;
 };
 
 } // namespace QtMaterial

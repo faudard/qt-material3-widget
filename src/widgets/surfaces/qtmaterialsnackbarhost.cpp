@@ -2,21 +2,32 @@
 
 #include <QTimer>
 #include <QWidget>
+#include <memory>
 
 namespace QtMaterial {
 
+
+class QtMaterialSnackbarHostPrivate {
+public:
+ QPointer<QWidget> host;
+ QPointer<QtMaterialSnackbar> snackbar;
+ QQueue<SnackbarRequest> queue;
+ bool showing = false;
+};
+
 QtMaterialSnackbarHost::QtMaterialSnackbarHost(QWidget* host, QObject* parent)
     : QObject(parent)
-    , m_host(host)
+ , d_ptr(std::make_unique<QtMaterialSnackbarHostPrivate>())
 {
-    m_snackbar = new QtMaterialSnackbar(host);
-    m_snackbar->setHostWidget(host);
+ d_ptr->host = host;
+    d_ptr->snackbar = new QtMaterialSnackbar(host);
+    d_ptr->snackbar->setHostWidget(host);
 
-    connect(m_snackbar, &QtMaterialSnackbar::dismissed,
+    connect(d_ptr->snackbar, &QtMaterialSnackbar::dismissed,
             this, [this](SnackbarDismissReason) {
-                m_showing = false;
+                d_ptr->showing = false;
 
-                if (!m_queue.isEmpty()) {
+                if (!d_ptr->queue.isEmpty()) {
                     QTimer::singleShot(0, this, [this]() { showNext(); });
                 }
             });
@@ -24,63 +35,63 @@ QtMaterialSnackbarHost::QtMaterialSnackbarHost(QWidget* host, QObject* parent)
 
 void QtMaterialSnackbarHost::showMessage(const SnackbarRequest& request, bool replaceCurrent)
 {
-    if (!m_snackbar) {
+    if (!d_ptr->snackbar) {
         return;
     }
 
-    if (!m_showing) {
-        m_snackbar->setRequest(request);
-        m_showing = true;
-        m_snackbar->showSnackbar();
+    if (!d_ptr->showing) {
+        d_ptr->snackbar->setRequest(request);
+        d_ptr->showing = true;
+        d_ptr->snackbar->showSnackbar();
         return;
     }
 
     if (replaceCurrent) {
-        m_queue.prepend(request);
-        m_snackbar->dismiss(SnackbarDismissReason::Consecutive);
+        d_ptr->queue.prepend(request);
+        d_ptr->snackbar->dismiss(SnackbarDismissReason::Consecutive);
         return;
     }
 
-    m_queue.enqueue(request);
+    d_ptr->queue.enqueue(request);
 }
 
 void QtMaterialSnackbarHost::dismissCurrent()
 {
-    if (m_snackbar && m_showing) {
-        m_snackbar->dismiss(SnackbarDismissReason::Manual);
+    if (d_ptr->snackbar && d_ptr->showing) {
+        d_ptr->snackbar->dismiss(SnackbarDismissReason::Manual);
     }
 }
 
 bool QtMaterialSnackbarHost::isShowing() const noexcept
 {
-    return m_showing;
+    return d_ptr->showing;
 }
 
 int QtMaterialSnackbarHost::pendingCount() const noexcept
 {
-    return m_queue.size();
+    return d_ptr->queue.size();
 }
 
 QWidget* QtMaterialSnackbarHost::hostWidget() const noexcept
 {
-    return m_host;
+    return d_ptr->host;
 }
 
 QtMaterialSnackbar* QtMaterialSnackbarHost::snackbar() const noexcept
 {
-    return m_snackbar;
+    return d_ptr->snackbar;
 }
 
 void QtMaterialSnackbarHost::showNext()
 {
-    if (!m_snackbar || m_queue.isEmpty()) {
+    if (!d_ptr->snackbar || d_ptr->queue.isEmpty()) {
         return;
     }
 
-    const SnackbarRequest request = m_queue.dequeue();
-    m_snackbar->setRequest(request);
-    m_showing = true;
-    m_snackbar->showSnackbar();
+    const SnackbarRequest request = d_ptr->queue.dequeue();
+    d_ptr->snackbar->setRequest(request);
+    d_ptr->showing = true;
+    d_ptr->snackbar->showSnackbar();
 }
 
 } // namespace QtMaterial

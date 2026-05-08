@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <functional>
 #include <utility>
 
@@ -21,6 +23,8 @@ QT_END_NAMESPACE
 
 namespace QtMaterial {
 
+
+class QtMaterialTabsPrivate;
 class QtMaterialNavigationController;
 class QtMaterialTabsBar;
 
@@ -167,42 +171,41 @@ private slots:
     void onCurrentTabChanged(int index);
 
 private:
-    struct TabDescriptor {
-        QString id;
-        QString testId;
-        QtMaterialRoute route;
-        std::function<QWidget*()> factory;
-        bool loaded = true;
-        QString badgeText;
-        bool badgeVisible = false;
-    };
+    friend class QtMaterialTabsPrivate;
 
-    TabDescriptor* descriptor(int index);
-    const TabDescriptor* descriptor(int index) const;
-    void resolveSpecFromTheme();
-    void applyResolvedSpec();
-    void ensureDescriptorCount(int count);
-    void updateAutomationMetadata(int index);
-    void updateAllAutomationMetadata();
-    void syncAccessibilityState();
-    void syncControllersFromCurrentIndex(int index);
-    void syncNavigationModelFromTabs();
-    void syncNavigationModelSelectionFromCurrentTab();
-    void syncCurrentIndexFromController(int index);
-    static QString normalizeRoutePath(const QString& routePath);
-    static QString routePathFromUrl(const QUrl& url);
-    QtMaterialTabsBar* materialTabBar() const;
+ struct TabDescriptor;
 
-    TabsSpec m_authoredSpec;
-    TabsSpec m_resolvedSpec;
-    QVector<TabDescriptor> m_descriptors;
-    QVector<QPointer<QtMaterialNavigationController>> m_boundControllers;
-    QPointer<QStackedWidget> m_boundStack;
-    QPointer<QtMaterialNavigationModel> m_navigationModel;
-    bool m_lazyLoading = false;
-    bool m_syncingExternal = false;
-    bool m_syncingNavigationModel = false;
-    QString m_lastAccessibilitySummary;
+ TabDescriptor* descriptor(int index);
+
+ const TabDescriptor* descriptor(int index) const;
+
+ void resolveSpecFromTheme();
+
+ void applyResolvedSpec();
+
+ void ensureDescriptorCount(int count);
+ void updateAutomationMetadata(int index);
+
+ void updateAllAutomationMetadata();
+
+ void syncAccessibilityState();
+
+ void syncControllersFromCurrentIndex(int index);
+
+ void syncNavigationModelFromTabs();
+
+ void syncNavigationModelSelectionFromCurrentTab();
+
+ void syncCurrentIndexFromController(int index);
+
+ static QString normalizeRoutePath(const QString& routePath);
+
+ static QString routePathFromUrl(const QUrl& url);
+
+ QtMaterialTabsBar* materialTabBar() const;
+
+ std::unique_ptr<QtMaterialTabsPrivate> d_ptr;
+
 };
 
 

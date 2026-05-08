@@ -24,8 +24,34 @@
 #include "qtmaterial/theme/qtmaterialtheme.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h"
+#include <memory>
 
 namespace QtMaterial {
+
+struct QtMaterialTabs::TabDescriptor {
+ QString id;
+ QString testId;
+ QtMaterialRoute route;
+ std::function<QWidget*()> factory;
+ bool loaded = true;
+ QString badgeText;
+ bool badgeVisible = false;
+};
+
+class QtMaterialTabsPrivate {
+public:
+ TabsSpec authoredSpec;
+ TabsSpec resolvedSpec;
+ QVector<QtMaterialTabs::TabDescriptor> descriptors;
+ QVector<QPointer<QtMaterialNavigationController>> boundControllers;
+ QPointer<QStackedWidget> boundStack;
+ QPointer<QtMaterialNavigationModel> navigationModel;
+ bool lazyLoading = false;
+ bool syncingExternal = false;
+ bool syncingNavigationModel = false;
+ QString lastAccessibilitySummary;
+};
+
 namespace {
 
 QColor withAlpha(QColor color, qreal opacity)
@@ -444,9 +470,10 @@ QtMaterialTabs::QtMaterialTabs(QWidget* parent)
 
 QtMaterialTabs::QtMaterialTabs(const TabsSpec& spec, QWidget* parent)
     : QTabWidget(parent)
-    , m_authoredSpec(spec)
-    , m_resolvedSpec(spec)
+ , d_ptr(std::make_unique<QtMaterialTabsPrivate>())
 {
+ d_ptr->authoredSpec = spec;
+ d_ptr->resolvedSpec = spec;
     setDocumentMode(true);
     setTabBar(new QtMaterialTabsBar(this));
     setMovable(false);
@@ -465,7 +492,7 @@ QtMaterialTabs::QtMaterialTabs(const TabsSpec& spec, QWidget* parent)
 
     connect(this, &QTabWidget::currentChanged, this, &QtMaterialTabs::onCurrentTabChanged);
     connect(&ThemeManager::instance(), &ThemeManager::themeChanged, this, [this](const Theme&) {
-        if (m_authoredSpec.useGlobalTheme) {
+        if (d_ptr->authoredSpec.useGlobalTheme) {
             refreshTheme();
         }
     });
@@ -483,102 +510,102 @@ TabsSpec QtMaterialTabs::spec() const
 
 TabsSpec QtMaterialTabs::authoredSpec() const
 {
-    return m_authoredSpec;
+    return d_ptr->authoredSpec;
 }
 
 TabsSpec QtMaterialTabs::resolvedSpec() const
 {
-    return m_resolvedSpec;
+    return d_ptr->resolvedSpec;
 }
 
 void QtMaterialTabs::setSpec(const TabsSpec& spec)
 {
-    m_authoredSpec = spec;
+    d_ptr->authoredSpec = spec;
     resolveSpecFromTheme();
     applyResolvedSpec();
     emit specChanged();
 }
 
-TabsVariant QtMaterialTabs::variant() const { return m_authoredSpec.variant; }
+TabsVariant QtMaterialTabs::variant() const { return d_ptr->authoredSpec.variant; }
 void QtMaterialTabs::setVariant(TabsVariant value)
 {
-    if (m_authoredSpec.variant == value) {
+    if (d_ptr->authoredSpec.variant == value) {
         return;
     }
-    m_authoredSpec.variant = value;
+    d_ptr->authoredSpec.variant = value;
     resolveSpecFromTheme();
     applyResolvedSpec();
     emit variantChanged(value);
 }
 
-TabsDensity QtMaterialTabs::density() const { return m_authoredSpec.density; }
+TabsDensity QtMaterialTabs::density() const { return d_ptr->authoredSpec.density; }
 void QtMaterialTabs::setDensity(TabsDensity value)
 {
-    if (m_authoredSpec.density == value) {
+    if (d_ptr->authoredSpec.density == value) {
         return;
     }
-    m_authoredSpec.density = value;
+    d_ptr->authoredSpec.density = value;
     resolveSpecFromTheme();
     applyResolvedSpec();
     emit densityChanged(value);
 }
 
-TabsAlignment QtMaterialTabs::alignment() const { return m_authoredSpec.alignment; }
+TabsAlignment QtMaterialTabs::alignment() const { return d_ptr->authoredSpec.alignment; }
 void QtMaterialTabs::setAlignment(TabsAlignment value)
 {
-    if (m_authoredSpec.alignment == value) {
+    if (d_ptr->authoredSpec.alignment == value) {
         return;
     }
-    m_authoredSpec.alignment = value;
+    d_ptr->authoredSpec.alignment = value;
     resolveSpecFromTheme();
     applyResolvedSpec();
     emit alignmentChanged(value);
 }
 
-bool QtMaterialTabs::isScrollable() const { return m_authoredSpec.scrollable; }
+bool QtMaterialTabs::isScrollable() const { return d_ptr->authoredSpec.scrollable; }
 void QtMaterialTabs::setScrollable(bool value)
 {
-    if (m_authoredSpec.scrollable == value) {
+    if (d_ptr->authoredSpec.scrollable == value) {
         return;
     }
-    m_authoredSpec.scrollable = value;
+    d_ptr->authoredSpec.scrollable = value;
     resolveSpecFromTheme();
     applyResolvedSpec();
     emit scrollableChanged(value);
 }
 
-int QtMaterialTabs::indicatorHeight() const { return m_authoredSpec.indicatorHeight; }
+int QtMaterialTabs::indicatorHeight() const { return d_ptr->authoredSpec.indicatorHeight; }
 void QtMaterialTabs::setIndicatorHeight(int value)
 {
     value = qMax(1, value);
-    if (m_authoredSpec.indicatorHeight == value) {
+    if (d_ptr->authoredSpec.indicatorHeight == value) {
         return;
     }
-    m_authoredSpec.indicatorHeight = value;
+    d_ptr->authoredSpec.indicatorHeight = value;
     resolveSpecFromTheme();
     applyResolvedSpec();
     emit indicatorHeightChanged(value);
 }
 
-TabsOverflowMode QtMaterialTabs::overflowMode() const { return m_authoredSpec.overflowMode; }
+TabsOverflowMode QtMaterialTabs::overflowMode() const { return d_ptr->authoredSpec.overflowMode; }
 void QtMaterialTabs::setOverflowMode(TabsOverflowMode value)
 {
-    if (m_authoredSpec.overflowMode == value) {
+    if (d_ptr->authoredSpec.overflowMode == value) {
         return;
     }
-    m_authoredSpec.overflowMode = value;
+    d_ptr->authoredSpec.overflowMode = value;
     resolveSpecFromTheme();
     applyResolvedSpec();
     emit overflowModeChanged(value);
 }
 
-bool QtMaterialTabs::usesGlobalTheme() const { return m_authoredSpec.useGlobalTheme; }
+bool QtMaterialTabs::usesGlobalTheme() const { return d_ptr->authoredSpec.useGlobalTheme; }
 void QtMaterialTabs::setUseGlobalTheme(bool value)
 {
-    if (m_authoredSpec.useGlobalTheme == value) {
+    if (d_ptr->authoredSpec.useGlobalTheme == value) {
         return;
     }
-    m_authoredSpec.useGlobalTheme = value;
+    d_ptr->authoredSpec.useGlobalTheme = value;
     resolveSpecFromTheme();
     applyResolvedSpec();
     emit useGlobalThemeChanged(value);
@@ -590,13 +617,13 @@ void QtMaterialTabs::refreshTheme()
     applyResolvedSpec();
 }
 
-bool QtMaterialTabs::wrapNavigation() const { return m_authoredSpec.wrapNavigation; }
+bool QtMaterialTabs::wrapNavigation() const { return d_ptr->authoredSpec.wrapNavigation; }
 void QtMaterialTabs::setWrapNavigation(bool value)
 {
-    if (m_authoredSpec.wrapNavigation == value) {
+    if (d_ptr->authoredSpec.wrapNavigation == value) {
         return;
     }
-    m_authoredSpec.wrapNavigation = value;
+    d_ptr->authoredSpec.wrapNavigation = value;
     resolveSpecFromTheme();
     applyResolvedSpec();
     emit wrapNavigationChanged(value);
@@ -669,8 +696,8 @@ QString QtMaterialTabs::tabId(int index) const
 
 int QtMaterialTabs::indexOfTabId(const QString& id) const
 {
-    for (int i = 0; i < m_descriptors.size(); ++i) {
-        if (m_descriptors.at(i).id == id) {
+    for (int i = 0; i < d_ptr->descriptors.size(); ++i) {
+        if (d_ptr->descriptors.at(i).id == id) {
             return i;
         }
     }
@@ -694,8 +721,8 @@ QString QtMaterialTabs::tabTestId(int index) const
 
 int QtMaterialTabs::indexOfTabTestId(const QString& testId) const
 {
-    for (int i = 0; i < m_descriptors.size(); ++i) {
-        if (m_descriptors.at(i).testId == testId) {
+    for (int i = 0; i < d_ptr->descriptors.size(); ++i) {
+        if (d_ptr->descriptors.at(i).testId == testId) {
             return i;
         }
     }
@@ -733,8 +760,8 @@ int QtMaterialTabs::indexOfRoute(const QtMaterialRoute& value) const
 int QtMaterialTabs::indexOfRoute(const QString& routePath) const
 {
     const QString normalized = normalizeRoutePath(routePath);
-    for (int i = 0; i < m_descriptors.size(); ++i) {
-        if (m_descriptors.at(i).route.path() == normalized) {
+    for (int i = 0; i < d_ptr->descriptors.size(); ++i) {
+        if (d_ptr->descriptors.at(i).route.path() == normalized) {
             return i;
         }
     }
@@ -768,15 +795,15 @@ bool QtMaterialTabs::navigateToUrl(const QUrl& url)
 
 bool QtMaterialTabs::lazyLoading() const
 {
-    return m_lazyLoading;
+    return d_ptr->lazyLoading;
 }
 
 void QtMaterialTabs::setLazyLoading(bool enabled)
 {
-    if (m_lazyLoading == enabled) {
+    if (d_ptr->lazyLoading == enabled) {
         return;
     }
-    m_lazyLoading = enabled;
+    d_ptr->lazyLoading = enabled;
     if (enabled && currentIndex() >= 0) {
         ensureTabLoaded(currentIndex());
     }
@@ -788,7 +815,7 @@ void QtMaterialTabs::setTabFactory(int index, std::function<QWidget*()> factory)
     if (TabDescriptor* d = descriptor(index)) {
         d->factory = std::move(factory);
         d->loaded = false;
-        if (!m_lazyLoading || index == currentIndex()) {
+        if (!d_ptr->lazyLoading || index == currentIndex()) {
             ensureTabLoaded(index);
         }
     }
@@ -855,7 +882,7 @@ void QtMaterialTabs::bindTo(QStackedWidget* stack)
         return;
     }
 
-    m_boundStack = stack;
+    d_ptr->boundStack = stack;
     auto* controller = new QtMaterialStackedWidgetController(stack, this);
     bindToController(controller);
     emit stackBindingChanged(stack);
@@ -866,13 +893,13 @@ void QtMaterialTabs::bindToController(QtMaterialNavigationController* controller
     if (!controller) {
         return;
     }
-    for (const auto& existing : m_boundControllers) {
+    for (const auto& existing : d_ptr->boundControllers) {
         if (existing == controller) {
             return;
         }
     }
 
-    m_boundControllers.push_back(controller);
+    d_ptr->boundControllers.push_back(controller);
     connect(controller, &QtMaterialNavigationController::currentIndexChanged,
             this, &QtMaterialTabs::syncCurrentIndexFromController);
     syncCurrentIndexFromController(controller->currentIndex());
@@ -885,9 +912,9 @@ void QtMaterialTabs::unbindController(QtMaterialNavigationController* controller
         return;
     }
     disconnect(controller, nullptr, this, nullptr);
-    for (int i = 0; i < m_boundControllers.size(); ++i) {
-        if (m_boundControllers.at(i) == controller) {
-            m_boundControllers.removeAt(i);
+    for (int i = 0; i < d_ptr->boundControllers.size(); ++i) {
+        if (d_ptr->boundControllers.at(i) == controller) {
+            d_ptr->boundControllers.removeAt(i);
             emit controllerBindingChanged(controller, false);
             break;
         }
@@ -900,39 +927,39 @@ void QtMaterialTabs::unbindAll()
     for (auto* controller : controllers) {
         unbindController(controller);
     }
-    m_boundStack = nullptr;
+    d_ptr->boundStack = nullptr;
     emit stackBindingChanged(nullptr);
 }
 
 void QtMaterialTabs::unbindStackedWidget()
 {
-    if (!m_boundStack) {
+    if (!d_ptr->boundStack) {
         return;
     }
     const auto controllers = boundControllers();
     for (auto* controller : controllers) {
         if (auto* stacked = qobject_cast<QtMaterialStackedWidgetController*>(controller)) {
-            if (stacked->stackedWidget() == m_boundStack) {
+            if (stacked->stackedWidget() == d_ptr->boundStack) {
                 unbindController(stacked);
                 stacked->deleteLater();
                 break;
             }
         }
     }
-    m_boundStack = nullptr;
+    d_ptr->boundStack = nullptr;
     emit stackBindingChanged(nullptr);
 }
 
 QStackedWidget* QtMaterialTabs::boundStackedWidget() const
 {
-    return m_boundStack.data();
+    return d_ptr->boundStack.data();
 }
 
 QVector<QtMaterialNavigationController*> QtMaterialTabs::boundControllers() const
 {
     QVector<QtMaterialNavigationController*> out;
-    out.reserve(m_boundControllers.size());
-    for (const auto& controller : m_boundControllers) {
+    out.reserve(d_ptr->boundControllers.size());
+    for (const auto& controller : d_ptr->boundControllers) {
         if (controller) {
             out.push_back(controller);
         }
@@ -951,10 +978,10 @@ void QtMaterialTabs::changeEvent(QEvent* event)
 void QtMaterialTabs::tabInserted(int index)
 {
     ensureDescriptorCount(count());
-    if (index >= 0 && index < m_descriptors.size()) {
-        m_descriptors.insert(index, TabDescriptor{});
-        while (m_descriptors.size() > count()) {
-            m_descriptors.removeLast();
+    if (index >= 0 && index < d_ptr->descriptors.size()) {
+        d_ptr->descriptors.insert(index, TabDescriptor{});
+        while (d_ptr->descriptors.size() > count()) {
+            d_ptr->descriptors.removeLast();
         }
     }
     updateAllAutomationMetadata();
@@ -962,11 +989,11 @@ void QtMaterialTabs::tabInserted(int index)
 
 void QtMaterialTabs::tabRemoved(int index)
 {
-    if (index >= 0 && index < m_descriptors.size()) {
-        m_descriptors.removeAt(index);
+    if (index >= 0 && index < d_ptr->descriptors.size()) {
+        d_ptr->descriptors.removeAt(index);
     }
-    while (m_descriptors.size() > count()) {
-        m_descriptors.removeLast();
+    while (d_ptr->descriptors.size() > count()) {
+        d_ptr->descriptors.removeLast();
     }
     updateAllAutomationMetadata();
 }
@@ -982,25 +1009,25 @@ void QtMaterialTabs::onCurrentTabChanged(int index)
 
 QtMaterialTabs::TabDescriptor* QtMaterialTabs::descriptor(int index)
 {
-    if (index < 0 || index >= m_descriptors.size()) {
+    if (index < 0 || index >= d_ptr->descriptors.size()) {
         return nullptr;
     }
-    return &m_descriptors[index];
+    return &d_ptr->descriptors[index];
 }
 
 const QtMaterialTabs::TabDescriptor* QtMaterialTabs::descriptor(int index) const
 {
-    if (index < 0 || index >= m_descriptors.size()) {
+    if (index < 0 || index >= d_ptr->descriptors.size()) {
         return nullptr;
     }
-    return &m_descriptors[index];
+    return &d_ptr->descriptors[index];
 }
 
 void QtMaterialTabs::resolveSpecFromTheme()
 {
-    m_resolvedSpec = m_authoredSpec;
+    d_ptr->resolvedSpec = d_ptr->authoredSpec;
 
-    if (!m_authoredSpec.useGlobalTheme) {
+    if (!d_ptr->authoredSpec.useGlobalTheme) {
         return;
     }
 
@@ -1017,60 +1044,60 @@ void QtMaterialTabs::resolveSpecFromTheme()
     const QColor error = roleOrFallback(scheme, ColorRole::Error, QColor(QStringLiteral("#B3261E")));
     const QColor onError = roleOrFallback(scheme, ColorRole::OnError, Qt::white);
 
-    if (!m_resolvedSpec.containerColor.isValid()) {
-        m_resolvedSpec.containerColor = surface;
+    if (!d_ptr->resolvedSpec.containerColor.isValid()) {
+        d_ptr->resolvedSpec.containerColor = surface;
     }
-    if (!m_resolvedSpec.inactiveLabelColor.isValid()) {
-        m_resolvedSpec.inactiveLabelColor = onSurfaceVariant;
+    if (!d_ptr->resolvedSpec.inactiveLabelColor.isValid()) {
+        d_ptr->resolvedSpec.inactiveLabelColor = onSurfaceVariant;
     }
-    if (!m_resolvedSpec.activeLabelColor.isValid()) {
-        m_resolvedSpec.activeLabelColor = (m_authoredSpec.variant == TabsVariant::Primary) ? primary : onSurface;
+    if (!d_ptr->resolvedSpec.activeLabelColor.isValid()) {
+        d_ptr->resolvedSpec.activeLabelColor = (d_ptr->authoredSpec.variant == TabsVariant::Primary) ? primary : onSurface;
     }
-    if (!m_resolvedSpec.activeIndicatorColor.isValid()) {
-        m_resolvedSpec.activeIndicatorColor = primary;
+    if (!d_ptr->resolvedSpec.activeIndicatorColor.isValid()) {
+        d_ptr->resolvedSpec.activeIndicatorColor = primary;
     }
-    if (!m_resolvedSpec.stateLayerColor.isValid()) {
-        m_resolvedSpec.stateLayerColor = m_resolvedSpec.activeLabelColor;
+    if (!d_ptr->resolvedSpec.stateLayerColor.isValid()) {
+        d_ptr->resolvedSpec.stateLayerColor = d_ptr->resolvedSpec.activeLabelColor;
     }
-    if (!m_resolvedSpec.hoverStateLayerColor.isValid()) {
-        m_resolvedSpec.hoverStateLayerColor = stateLayer.color.isValid() ? stateLayer.color : m_resolvedSpec.stateLayerColor;
+    if (!d_ptr->resolvedSpec.hoverStateLayerColor.isValid()) {
+        d_ptr->resolvedSpec.hoverStateLayerColor = stateLayer.color.isValid() ? stateLayer.color : d_ptr->resolvedSpec.stateLayerColor;
     }
-    if (!m_resolvedSpec.focusedStateLayerColor.isValid()) {
-        m_resolvedSpec.focusedStateLayerColor = stateLayer.color.isValid() ? stateLayer.color : m_resolvedSpec.stateLayerColor;
+    if (!d_ptr->resolvedSpec.focusedStateLayerColor.isValid()) {
+        d_ptr->resolvedSpec.focusedStateLayerColor = stateLayer.color.isValid() ? stateLayer.color : d_ptr->resolvedSpec.stateLayerColor;
     }
-    if (!m_resolvedSpec.pressedStateLayerColor.isValid()) {
-        m_resolvedSpec.pressedStateLayerColor = stateLayer.color.isValid() ? stateLayer.color : m_resolvedSpec.stateLayerColor;
+    if (!d_ptr->resolvedSpec.pressedStateLayerColor.isValid()) {
+        d_ptr->resolvedSpec.pressedStateLayerColor = stateLayer.color.isValid() ? stateLayer.color : d_ptr->resolvedSpec.stateLayerColor;
     }
-    if (!m_resolvedSpec.focusRingColor.isValid()) {
-        m_resolvedSpec.focusRingColor = outline;
+    if (!d_ptr->resolvedSpec.focusRingColor.isValid()) {
+        d_ptr->resolvedSpec.focusRingColor = outline;
     }
-    if (!m_resolvedSpec.disabledLabelColor.isValid()) {
-        m_resolvedSpec.disabledLabelColor = palette.color(QPalette::Disabled, QPalette::WindowText);
+    if (!d_ptr->resolvedSpec.disabledLabelColor.isValid()) {
+        d_ptr->resolvedSpec.disabledLabelColor = palette.color(QPalette::Disabled, QPalette::WindowText);
     }
-    if (!m_resolvedSpec.badgeColor.isValid()) {
-        m_resolvedSpec.badgeColor = error;
+    if (!d_ptr->resolvedSpec.badgeColor.isValid()) {
+        d_ptr->resolvedSpec.badgeColor = error;
     }
-    if (!m_resolvedSpec.badgeLabelColor.isValid()) {
-        m_resolvedSpec.badgeLabelColor = onError;
+    if (!d_ptr->resolvedSpec.badgeLabelColor.isValid()) {
+        d_ptr->resolvedSpec.badgeLabelColor = onError;
     }
-    if (!m_resolvedSpec.overflowButtonColor.isValid()) {
-        m_resolvedSpec.overflowButtonColor = onSurfaceVariant;
+    if (!d_ptr->resolvedSpec.overflowButtonColor.isValid()) {
+        d_ptr->resolvedSpec.overflowButtonColor = onSurfaceVariant;
     }
 
-    if (m_resolvedSpec.hoverOpacity < 0.0) {
-        m_resolvedSpec.hoverOpacity = stateLayer.hoverOpacity;
+    if (d_ptr->resolvedSpec.hoverOpacity < 0.0) {
+        d_ptr->resolvedSpec.hoverOpacity = stateLayer.hoverOpacity;
     }
-    if (m_resolvedSpec.focusOpacity < 0.0) {
-        m_resolvedSpec.focusOpacity = stateLayer.focusOpacity;
+    if (d_ptr->resolvedSpec.focusOpacity < 0.0) {
+        d_ptr->resolvedSpec.focusOpacity = stateLayer.focusOpacity;
     }
-    if (m_resolvedSpec.pressedOpacity < 0.0) {
-        m_resolvedSpec.pressedOpacity = stateLayer.pressOpacity;
+    if (d_ptr->resolvedSpec.pressedOpacity < 0.0) {
+        d_ptr->resolvedSpec.pressedOpacity = stateLayer.pressOpacity;
     }
 }
 
 void QtMaterialTabs::applyResolvedSpec()
 {
-    const QString alignmentRule = m_resolvedSpec.alignment == TabsAlignment::Center
+    const QString alignmentRule = d_ptr->resolvedSpec.alignment == TabsAlignment::Center
         ? QStringLiteral("center")
         : QStringLiteral("left");
 
@@ -1083,22 +1110,22 @@ void QtMaterialTabs::applyResolvedSpec()
             alignment: %2;
         }
     )")
-        .arg(m_resolvedSpec.containerColor.name(QColor::HexArgb))
+        .arg(d_ptr->resolvedSpec.containerColor.name(QColor::HexArgb))
         .arg(alignmentRule));
 
     if (auto* bar = materialTabBar()) {
-        bar->setResolvedSpec(m_resolvedSpec);
-        bar->setWrapNavigation(m_resolvedSpec.wrapNavigation);
+        bar->setResolvedSpec(d_ptr->resolvedSpec);
+        bar->setWrapNavigation(d_ptr->resolvedSpec.wrapNavigation);
     }
 }
 
 void QtMaterialTabs::ensureDescriptorCount(int desiredCount)
 {
-    while (m_descriptors.size() < desiredCount) {
-        m_descriptors.push_back(TabDescriptor{});
+    while (d_ptr->descriptors.size() < desiredCount) {
+        d_ptr->descriptors.push_back(TabDescriptor{});
     }
-    while (m_descriptors.size() > desiredCount) {
-        m_descriptors.removeLast();
+    while (d_ptr->descriptors.size() > desiredCount) {
+        d_ptr->descriptors.removeLast();
     }
 }
 
@@ -1135,30 +1162,30 @@ void QtMaterialTabs::updateAllAutomationMetadata()
 
 void QtMaterialTabs::syncControllersFromCurrentIndex(int index)
 {
-    if (m_syncingExternal) {
+    if (d_ptr->syncingExternal) {
         return;
     }
-    m_syncingExternal = true;
-    for (const auto& controller : m_boundControllers) {
+    d_ptr->syncingExternal = true;
+    for (const auto& controller : d_ptr->boundControllers) {
         if (controller && controller->currentIndex() != index) {
             controller->setCurrentIndex(index);
         }
     }
-    m_syncingExternal = false;
+    d_ptr->syncingExternal = false;
 }
 
 void QtMaterialTabs::syncCurrentIndexFromController(int index)
 {
-    if (m_syncingExternal) {
+    if (d_ptr->syncingExternal) {
         return;
     }
     if (index < 0 || index >= count()) {
         return;
     }
-    m_syncingExternal = true;
+    d_ptr->syncingExternal = true;
     ensureTabLoaded(index);
     setCurrentIndex(index);
-    m_syncingExternal = false;
+    d_ptr->syncingExternal = false;
 }
 
 QString QtMaterialTabs::normalizeRoutePath(const QString& routePath)
@@ -1198,48 +1225,48 @@ QtMaterialTabsBar* QtMaterialTabs::materialTabBar() const
 
 
 QtMaterialNavigationModel* QtMaterialTabs::navigationModel() const {
-    return m_navigationModel;
+    return d_ptr->navigationModel;
 }
 
 void QtMaterialTabs::setNavigationModel(QtMaterialNavigationModel* model) {
-    if (m_navigationModel == model) {
+    if (d_ptr->navigationModel == model) {
         return;
     }
 
-    if (m_navigationModel) {
-        disconnect(m_navigationModel, nullptr, this, nullptr);
+    if (d_ptr->navigationModel) {
+        disconnect(d_ptr->navigationModel, nullptr, this, nullptr);
     }
 
-    m_navigationModel = model;
+    d_ptr->navigationModel = model;
 
-    if (m_navigationModel) {
-        connect(m_navigationModel, &QtMaterialNavigationModel::selectedRouteChanged, this, [this](const QString& routePath) {
-            if (m_syncingNavigationModel || routePath.isEmpty()) {
+    if (d_ptr->navigationModel) {
+        connect(d_ptr->navigationModel, &QtMaterialNavigationModel::selectedRouteChanged, this, [this](const QString& routePath) {
+            if (d_ptr->syncingNavigationModel || routePath.isEmpty()) {
                 return;
             }
-            m_syncingNavigationModel = true;
+            d_ptr->syncingNavigationModel = true;
             navigateTo(routePath);
-            m_syncingNavigationModel = false;
+            d_ptr->syncingNavigationModel = false;
         });
-        connect(m_navigationModel, &QtMaterialNavigationModel::selectedIdChanged, this, [this](const QString& id) {
-            if (m_syncingNavigationModel || id.isEmpty()) {
+        connect(d_ptr->navigationModel, &QtMaterialNavigationModel::selectedIdChanged, this, [this](const QString& id) {
+            if (d_ptr->syncingNavigationModel || id.isEmpty()) {
                 return;
             }
             const int row = indexOfTabId(id);
             if (row >= 0) {
-                m_syncingNavigationModel = true;
+                d_ptr->syncingNavigationModel = true;
                 setCurrentIndex(row);
-                m_syncingNavigationModel = false;
+                d_ptr->syncingNavigationModel = false;
             }
         });
         syncNavigationModelFromTabs();
     }
 
-    emit navigationModelChanged(m_navigationModel);
+    emit navigationModelChanged(d_ptr->navigationModel);
 }
 
 void QtMaterialTabs::syncNavigationModelFromTabs() {
-    if (!m_navigationModel || m_syncingNavigationModel) {
+    if (!d_ptr->navigationModel || d_ptr->syncingNavigationModel) {
         return;
     }
 
@@ -1266,14 +1293,14 @@ void QtMaterialTabs::syncNavigationModelFromTabs() {
         items.push_back(item);
     }
 
-    m_syncingNavigationModel = true;
-    m_navigationModel->setItems(items);
+    d_ptr->syncingNavigationModel = true;
+    d_ptr->navigationModel->setItems(items);
     syncNavigationModelSelectionFromCurrentTab();
-    m_syncingNavigationModel = false;
+    d_ptr->syncingNavigationModel = false;
 }
 
 void QtMaterialTabs::syncNavigationModelSelectionFromCurrentTab() {
-    if (!m_navigationModel || m_syncingNavigationModel) {
+    if (!d_ptr->navigationModel || d_ptr->syncingNavigationModel) {
         return;
     }
 
@@ -1282,17 +1309,17 @@ void QtMaterialTabs::syncNavigationModelSelectionFromCurrentTab() {
         return;
     }
 
-    m_syncingNavigationModel = true;
+    d_ptr->syncingNavigationModel = true;
     const QString routePath = route(index).toString();
     if (!routePath.isEmpty()) {
-        m_navigationModel->setSelectedRoute(routePath);
+        d_ptr->navigationModel->setSelectedRoute(routePath);
     } else {
         const QString id = tabId(index);
         if (!id.isEmpty()) {
-            m_navigationModel->setSelectedId(id);
+            d_ptr->navigationModel->setSelectedId(id);
         }
     }
-    m_syncingNavigationModel = false;
+    d_ptr->syncingNavigationModel = false;
 }
 
 void QtMaterial::QtMaterialTabs::syncAccessibilityState()
@@ -1311,11 +1338,11 @@ void QtMaterial::QtMaterialTabs::syncAccessibilityState()
         bar->setAccessibleDescription(summary);
     }
 
-    if (m_lastAccessibilitySummary == summary) {
+    if (d_ptr->lastAccessibilitySummary == summary) {
         return;
     }
 
-    m_lastAccessibilitySummary = summary;
+    d_ptr->lastAccessibilitySummary = summary;
     emit accessibilitySummaryChanged(summary);
 }
 

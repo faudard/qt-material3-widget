@@ -12,8 +12,28 @@
 #include "qtmaterial/specs/qtmaterialsnackbarspec.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
+#include <memory>
 
 namespace QtMaterial {
+
+
+class QtMaterialSnackbarPrivate {
+public:
+ mutable bool specDirty = true;
+ mutable QtMaterial::SnackbarSpec* specPtr = nullptr;
+ SnackbarRequest request;
+ SnackbarDismissReason pendingDismissReason = SnackbarDismissReason::Manual;
+ QtMaterialSnackbar::State state = QtMaterialSnackbar::State::Hidden;
+ QLabel* label = nullptr;
+ QPushButton* actionButton = nullptr;
+ QPushButton* dismissButton = nullptr;
+ QHBoxLayout* layout = nullptr;
+ QTimer* timer = nullptr;
+ bool pauseAutoHideOnInteraction = true;
+ bool autoHidePaused = false;
+ QString lastAccessibilitySummary;
+ QPointer<QtMaterialTransitionController> transition;
+};
 
 QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
     : QtMaterialOverlaySurface(parent)
@@ -24,61 +44,61 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
     setAttribute(Qt::WA_TranslucentBackground, true);
     hide();
 
-    m_label = new QLabel(this);
-    m_label->setWordWrap(true);
-    m_label->setTextInteractionFlags(Qt::NoTextInteraction);
+    d_ptr->label = new QLabel(this);
+    d_ptr->label->setWordWrap(true);
+    d_ptr->label->setTextInteractionFlags(Qt::NoTextInteraction);
 
-    m_actionButton = new QPushButton(this);
-    m_actionButton->setFlat(true);
-    m_actionButton->hide();
+    d_ptr->actionButton = new QPushButton(this);
+    d_ptr->actionButton->setFlat(true);
+    d_ptr->actionButton->hide();
 
-    m_dismissButton = new QPushButton(QString(QChar(0x2715)), this);
-    m_dismissButton->setFlat(true);
-    m_dismissButton->hide();
+    d_ptr->dismissButton = new QPushButton(QString(QChar(0x2715)), this);
+    d_ptr->dismissButton->setFlat(true);
+    d_ptr->dismissButton->hide();
 
-    m_layout = new QHBoxLayout(this);
-    m_layout->setContentsMargins(16, 14, 8, 14);
-    m_layout->setSpacing(8);
-    m_layout->addWidget(m_label, 1);
-    m_layout->addWidget(m_actionButton, 0);
-    m_layout->addWidget(m_dismissButton, 0);
+    d_ptr->layout = new QHBoxLayout(this);
+    d_ptr->layout->setContentsMargins(16, 14, 8, 14);
+    d_ptr->layout->setSpacing(8);
+    d_ptr->layout->addWidget(d_ptr->label, 1);
+    d_ptr->layout->addWidget(d_ptr->actionButton, 0);
+    d_ptr->layout->addWidget(d_ptr->dismissButton, 0);
 
-    m_timer = new QTimer(this);
-    m_timer->setSingleShot(true);
+    d_ptr->timer = new QTimer(this);
+    d_ptr->timer->setSingleShot(true);
 
-    m_transition = new QtMaterialTransitionController(this);
-    m_transition->applyMotionToken(theme(), MotionToken::Medium2);
+    d_ptr->transition = new QtMaterialTransitionController(this);
+    d_ptr->transition->applyMotionToken(theme(), MotionToken::Medium2);
 
-    connect(m_timer, &QTimer::timeout, this, [this]() {
+    connect(d_ptr->timer, &QTimer::timeout, this, [this]() {
         dismiss(SnackbarDismissReason::Timeout);
     });
 
-    connect(m_actionButton, &QPushButton::clicked, this, [this]() {
+    connect(d_ptr->actionButton, &QPushButton::clicked, this, [this]() {
         emit actionTriggered();
         dismiss(SnackbarDismissReason::Action);
     });
 
-    connect(m_dismissButton, &QPushButton::clicked, this, [this]() {
+    connect(d_ptr->dismissButton, &QPushButton::clicked, this, [this]() {
         dismiss(SnackbarDismissReason::Manual);
     });
 
-    connect(m_transition, &QtMaterialTransitionController::progressChanged,
+    connect(d_ptr->transition, &QtMaterialTransitionController::progressChanged,
             this, [this](qreal value) {
                 syncGeometryToHost();
                 emit progressChanged(value);
                 update();
             });
 
-    connect(m_transition, &QtMaterialTransitionController::finished,
+    connect(d_ptr->transition, &QtMaterialTransitionController::finished,
             this, [this]() {
-                if (m_state == State::Entering) {
-                    m_state = State::Visible;
+                if (d_ptr->state == State::Entering) {
+                    d_ptr->state = State::Visible;
                     updateAutoHide();
                     emit shown();
-                } else if (m_state == State::Leaving) {
-                    m_state = State::Hidden;
+                } else if (d_ptr->state == State::Leaving) {
+                    d_ptr->state = State::Hidden;
                     hide();
-                    emit dismissed(m_pendingDismissReason);
+                    emit dismissed(d_ptr->pendingDismissReason);
                 }
             });
 
@@ -90,7 +110,7 @@ QtMaterialSnackbar::~QtMaterialSnackbar() = default;
 
 void QtMaterialSnackbar::setRequest(const SnackbarRequest& request)
 {
-    m_request = request;
+    d_ptr->request = request;
     applyRequestToUi();
     updateAutoHide();
     updateGeometry();
@@ -99,67 +119,67 @@ void QtMaterialSnackbar::setRequest(const SnackbarRequest& request)
 
 SnackbarRequest QtMaterialSnackbar::request() const noexcept
 {
-    return m_request;
+    return d_ptr->request;
 }
 
 void QtMaterialSnackbar::setText(const QString& text)
 {
-    if (m_request.text == text) {
+    if (d_ptr->request.text == text) {
         return;
     }
 
-    m_request.text = text;
+    d_ptr->request.text = text;
     applyRequestToUi();
 }
 
 QString QtMaterialSnackbar::text() const
 {
-    return m_request.text;
+    return d_ptr->request.text;
 }
 
 void QtMaterialSnackbar::setActionText(const QString& text)
 {
-    if (m_request.actionText == text) {
+    if (d_ptr->request.actionText == text) {
         return;
     }
 
-    m_request.actionText = text;
+    d_ptr->request.actionText = text;
     applyRequestToUi();
 }
 
 QString QtMaterialSnackbar::actionText() const
 {
-    return m_request.actionText;
+    return d_ptr->request.actionText;
 }
 
 void QtMaterialSnackbar::setDuration(SnackbarDuration duration)
 {
-    if (m_request.duration == duration) {
+    if (d_ptr->request.duration == duration) {
         return;
     }
 
-    m_request.duration = duration;
+    d_ptr->request.duration = duration;
     updateAutoHide();
 }
 
 SnackbarDuration QtMaterialSnackbar::duration() const noexcept
 {
-    return m_request.duration;
+    return d_ptr->request.duration;
 }
 
 void QtMaterialSnackbar::setShowDismissButton(bool on)
 {
-    if (m_request.showDismissButton == on) {
+    if (d_ptr->request.showDismissButton == on) {
         return;
     }
 
-    m_request.showDismissButton = on;
+    d_ptr->request.showDismissButton = on;
     applyRequestToUi();
 }
 
 bool QtMaterialSnackbar::showDismissButton() const noexcept
 {
-    return m_request.showDismissButton;
+    return d_ptr->request.showDismissButton;
 }
 
 void QtMaterialSnackbar::showSnackbar()
@@ -169,8 +189,8 @@ void QtMaterialSnackbar::showSnackbar()
     }
 
     ensureSpecResolved();
-    if (m_specPtr) {
-        m_transition->applyMotionToken(theme(), m_specPtr->enterMotion);
+    if (d_ptr->specPtr) {
+        d_ptr->transition->applyMotionToken(theme(), d_ptr->specPtr->enterMotion);
     }
 
     applyResolvedTheme();
@@ -180,40 +200,40 @@ void QtMaterialSnackbar::showSnackbar()
     show();
     raise();
 
-    m_timer->stop();
-    m_pendingDismissReason = SnackbarDismissReason::Manual;
-    m_state = State::Entering;
-    m_transition->startForward();
+    d_ptr->timer->stop();
+    d_ptr->pendingDismissReason = SnackbarDismissReason::Manual;
+    d_ptr->state = State::Entering;
+    d_ptr->transition->startForward();
 }
 
 void QtMaterialSnackbar::dismiss(SnackbarDismissReason reason)
 {
-    if (m_state == State::Hidden || m_state == State::Leaving) {
+    if (d_ptr->state == State::Hidden || d_ptr->state == State::Leaving) {
         return;
     }
 
-    m_timer->stop();
-    m_pendingDismissReason = reason;
+    d_ptr->timer->stop();
+    d_ptr->pendingDismissReason = reason;
 
     ensureSpecResolved();
-    if (m_specPtr) {
-        m_transition->applyMotionToken(theme(), m_specPtr->exitMotion);
+    if (d_ptr->specPtr) {
+        d_ptr->transition->applyMotionToken(theme(), d_ptr->specPtr->exitMotion);
     }
 
-    m_state = State::Leaving;
-    m_transition->startBackward();
+    d_ptr->state = State::Leaving;
+    d_ptr->transition->startBackward();
 }
 
 qreal QtMaterialSnackbar::progress() const noexcept
 {
-    return m_transition ? m_transition->progress() : 0.0;
+    return d_ptr->transition ? d_ptr->transition->progress() : 0.0;
 }
 
 QSize QtMaterialSnackbar::sizeHint() const
 {
     ensureSpecResolved();
 
-    const int minHeight = m_specPtr ? m_specPtr->minHeight : 48;
+    const int minHeight = d_ptr->specPtr ? d_ptr->specPtr->minHeight : 48;
     const int minWidth = 200;
     const QSize hint = layout() ? layout()->sizeHint() : QSize(minWidth, minHeight);
 
@@ -223,20 +243,20 @@ QSize QtMaterialSnackbar::sizeHint() const
 QSize QtMaterialSnackbar::minimumSizeHint() const
 {
     ensureSpecResolved();
-    return QSize(200, m_specPtr ? m_specPtr->minHeight : 48);
+    return QSize(200, d_ptr->specPtr ? d_ptr->specPtr->minHeight : 48);
 }
 
 void QtMaterialSnackbar::paintEvent(QPaintEvent*)
 {
     ensureSpecResolved();
-    if (!m_specPtr) {
+    if (!d_ptr->specPtr) {
         return;
     }
 
     const qreal p = progress();
     const qreal radius = resolvedCornerRadius();
 
-    QColor fill = m_specPtr->containerColor;
+    QColor fill = d_ptr->specPtr->containerColor;
     fill.setAlphaF(fill.alphaF() * p);
 
     QPainter painter(this);
@@ -298,7 +318,7 @@ bool QtMaterialSnackbar::event(QEvent* event)
 
 bool QtMaterialSnackbar::eventFilter(QObject* watched, QEvent* event)
 {
-    if (watched == m_actionButton || watched == m_dismissButton) {
+    if (watched == d_ptr->actionButton || watched == d_ptr->dismissButton) {
         switch (event->type()) {
         case QEvent::Enter:
         case QEvent::HoverEnter:
@@ -323,17 +343,17 @@ QString QtMaterialSnackbar::accessibilitySummary() const
 {
     QStringList parts;
 
-    const QString message = m_request.text.trimmed();
+    const QString message = d_ptr->request.text.trimmed();
     if (!message.isEmpty()) {
         parts << message;
     }
 
-    const QString action = m_request.actionText.trimmed();
+    const QString action = d_ptr->request.actionText.trimmed();
     if (!action.isEmpty()) {
         parts << tr("Action: %1").arg(action);
     }
 
-    if (m_request.showDismissButton) {
+    if (d_ptr->request.showDismissButton) {
         parts << tr("Dismissible");
     }
 
@@ -342,18 +362,18 @@ QString QtMaterialSnackbar::accessibilitySummary() const
 
 bool QtMaterialSnackbar::pauseAutoHideOnInteraction() const noexcept
 {
-    return m_pauseAutoHideOnInteraction;
+    return d_ptr->pauseAutoHideOnInteraction;
 }
 
 void QtMaterialSnackbar::setPauseAutoHideOnInteraction(bool enabled)
 {
-    if (m_pauseAutoHideOnInteraction == enabled) {
+    if (d_ptr->pauseAutoHideOnInteraction == enabled) {
         return;
     }
 
-    m_pauseAutoHideOnInteraction = enabled;
-    if (!enabled && m_autoHidePaused) {
-        m_autoHidePaused = false;
+    d_ptr->pauseAutoHideOnInteraction = enabled;
+    if (!enabled && d_ptr->autoHidePaused) {
+        d_ptr->autoHidePaused = false;
         updateAutoHide();
     }
 }
@@ -367,46 +387,46 @@ void QtMaterialSnackbar::syncAccessibilityState()
     }
     setAccessibleDescription(summary);
 
-    if (m_label) {
-        m_label->setAccessibleName(tr("Snackbar message"));
-        m_label->setAccessibleDescription(m_request.text.trimmed());
+    if (d_ptr->label) {
+        d_ptr->label->setAccessibleName(tr("Snackbar message"));
+        d_ptr->label->setAccessibleDescription(d_ptr->request.text.trimmed());
     }
 
-    const QString action = m_request.actionText.trimmed();
-    if (m_actionButton) {
+    const QString action = d_ptr->request.actionText.trimmed();
+    if (d_ptr->actionButton) {
         if (!action.isEmpty()) {
-            m_actionButton->setAccessibleName(action);
-            m_actionButton->setAccessibleDescription(tr("Activates snackbar action"));
+            d_ptr->actionButton->setAccessibleName(action);
+            d_ptr->actionButton->setAccessibleDescription(tr("Activates snackbar action"));
         } else {
-            m_actionButton->setAccessibleName(tr("Snackbar action"));
-            m_actionButton->setAccessibleDescription(QString());
+            d_ptr->actionButton->setAccessibleName(tr("Snackbar action"));
+            d_ptr->actionButton->setAccessibleDescription(QString());
         }
     }
 
-    if (m_dismissButton) {
-        m_dismissButton->setAccessibleName(tr("Dismiss snackbar"));
-        m_dismissButton->setAccessibleDescription(tr("Dismisses the snackbar"));
+    if (d_ptr->dismissButton) {
+        d_ptr->dismissButton->setAccessibleName(tr("Dismiss snackbar"));
+        d_ptr->dismissButton->setAccessibleDescription(tr("Dismisses the snackbar"));
     }
 
-    if (summary != m_lastAccessibilitySummary) {
-        m_lastAccessibilitySummary = summary;
+    if (summary != d_ptr->lastAccessibilitySummary) {
+        d_ptr->lastAccessibilitySummary = summary;
         emit accessibilitySummaryChanged(summary);
     }
 }
 
 void QtMaterialSnackbar::setAutoHidePaused(bool paused)
 {
-    if (!m_pauseAutoHideOnInteraction || currentDurationMs() <= 0) {
+    if (!d_ptr->pauseAutoHideOnInteraction || currentDurationMs() <= 0) {
         return;
     }
 
-    if (m_autoHidePaused == paused) {
+    if (d_ptr->autoHidePaused == paused) {
         return;
     }
 
-    m_autoHidePaused = paused;
-    if (m_autoHidePaused) {
-        m_timer->stop();
+    d_ptr->autoHidePaused = paused;
+    if (d_ptr->autoHidePaused) {
+        d_ptr->timer->stop();
         return;
     }
 
@@ -419,29 +439,29 @@ void QtMaterialSnackbar::syncGeometryToHost()
     QWidget* host = hostWidget();
     ensureSpecResolved();
 
-    if (!host || !m_specPtr || !m_layout || !m_label || !m_actionButton || !m_dismissButton) {
+    if (!host || !d_ptr->specPtr || !d_ptr->layout || !d_ptr->label || !d_ptr->actionButton || !d_ptr->dismissButton) {
         return;
     }
 
-    m_layout->setContentsMargins(m_specPtr->contentPadding);
-    m_layout->setSpacing(m_specPtr->actionSpacing);
+    d_ptr->layout->setContentsMargins(d_ptr->specPtr->contentPadding);
+    d_ptr->layout->setSpacing(d_ptr->specPtr->actionSpacing);
 
-    const QMargins margins = m_specPtr->outerMargins;
-    const int maxWidth = qMin(m_specPtr->maxWidth,
+    const QMargins margins = d_ptr->specPtr->outerMargins;
+    const int maxWidth = qMin(d_ptr->specPtr->maxWidth,
                               qMax(200, host->width() - margins.left() - margins.right()));
 
     const int estimatedButtonWidth =
-        (m_actionButton->isVisible()
-             ? qMax(m_specPtr->actionMinWidth, m_actionButton->sizeHint().width())
+        (d_ptr->actionButton->isVisible()
+             ? qMax(d_ptr->specPtr->actionMinWidth, d_ptr->actionButton->sizeHint().width())
              : 0)
-        + (m_dismissButton->isVisible() ? m_specPtr->dismissButtonSize : 0)
+        + (d_ptr->dismissButton->isVisible() ? d_ptr->specPtr->dismissButtonSize : 0)
         + 24;
 
-    m_label->setMaximumWidth(qMax(120, maxWidth - estimatedButtonWidth));
+    d_ptr->label->setMaximumWidth(qMax(120, maxWidth - estimatedButtonWidth));
 
     const QSize hint = sizeHint();
     const int w = qMin(maxWidth, qMax(hint.width(), 200));
-    const int h = qMax(m_specPtr->minHeight, hint.height());
+    const int h = qMax(d_ptr->specPtr->minHeight, hint.height());
 
     const qreal p = progress();
     const int finalX = (host->width() - w) / 2;
@@ -454,7 +474,7 @@ void QtMaterialSnackbar::syncGeometryToHost()
 
 void QtMaterialSnackbar::ensureSpecResolved() const
 {
-    if (!m_specDirty && m_specPtr) {
+    if (!d_ptr->specDirty && d_ptr->specPtr) {
         return;
     }
 
@@ -462,50 +482,50 @@ void QtMaterialSnackbar::ensureSpecResolved() const
     static QtMaterial::SnackbarSpec spec;
     spec = factory.snackbarSpec(theme());
 
-    m_specPtr = &spec;
-    m_specDirty = false;
+    d_ptr->specPtr = &spec;
+    d_ptr->specDirty = false;
 }
 
 void QtMaterialSnackbar::invalidateResolvedSpec()
 {
-    m_specDirty = true;
-    m_specPtr = nullptr;
+    d_ptr->specDirty = true;
+    d_ptr->specPtr = nullptr;
 }
 
 void QtMaterialSnackbar::applyResolvedTheme()
 {
     ensureSpecResolved();
-    if (!m_specPtr || !m_layout || !m_label || !m_actionButton || !m_dismissButton) {
+    if (!d_ptr->specPtr || !d_ptr->layout || !d_ptr->label || !d_ptr->actionButton || !d_ptr->dismissButton) {
         return;
     }
 
-    m_layout->setContentsMargins(m_specPtr->contentPadding);
-    m_layout->setSpacing(m_specPtr->actionSpacing);
+    d_ptr->layout->setContentsMargins(d_ptr->specPtr->contentPadding);
+    d_ptr->layout->setSpacing(d_ptr->specPtr->actionSpacing);
 
-    m_label->setStyleSheet(QStringLiteral(
+    d_ptr->label->setStyleSheet(QStringLiteral(
                                "background: transparent; color: %1;")
-                               .arg(m_specPtr->textColor.name(QColor::HexArgb)));
+                               .arg(d_ptr->specPtr->textColor.name(QColor::HexArgb)));
 
-    m_actionButton->setMinimumWidth(m_specPtr->actionMinWidth);
-    m_actionButton->setStyleSheet(QStringLiteral(
+    d_ptr->actionButton->setMinimumWidth(d_ptr->specPtr->actionMinWidth);
+    d_ptr->actionButton->setStyleSheet(QStringLiteral(
                                       "QPushButton { background: transparent; border: none; color: %1; padding: 8px 12px; }")
-                                      .arg(m_specPtr->actionColor.name(QColor::HexArgb)));
+                                      .arg(d_ptr->specPtr->actionColor.name(QColor::HexArgb)));
 
-    m_dismissButton->setFixedSize(m_specPtr->dismissButtonSize, m_specPtr->dismissButtonSize);
-    m_dismissButton->setStyleSheet(QStringLiteral(
+    d_ptr->dismissButton->setFixedSize(d_ptr->specPtr->dismissButtonSize, d_ptr->specPtr->dismissButtonSize);
+    d_ptr->dismissButton->setStyleSheet(QStringLiteral(
                                        "QPushButton { background: transparent; border: none; color: %1; }")
-                                       .arg(m_specPtr->dismissIconColor.name(QColor::HexArgb)));
+                                       .arg(d_ptr->specPtr->dismissIconColor.name(QColor::HexArgb)));
 }
 
 void QtMaterialSnackbar::applyRequestToUi()
 {
-    m_label->setText(m_request.text);
+    d_ptr->label->setText(d_ptr->request.text);
 
-    const bool hasAction = !m_request.actionText.trimmed().isEmpty();
-    m_actionButton->setVisible(hasAction);
-    m_actionButton->setText(m_request.actionText);
+    const bool hasAction = !d_ptr->request.actionText.trimmed().isEmpty();
+    d_ptr->actionButton->setVisible(hasAction);
+    d_ptr->actionButton->setText(d_ptr->request.actionText);
 
-    m_dismissButton->setVisible(m_request.showDismissButton);
+    d_ptr->dismissButton->setVisible(d_ptr->request.showDismissButton);
 
     updateGeometry();
     syncGeometryToHost();
@@ -514,17 +534,17 @@ void QtMaterialSnackbar::applyRequestToUi()
 
 void QtMaterialSnackbar::updateAutoHide()
 {
-    m_timer->stop();
+    d_ptr->timer->stop();
 
     const int durationMs = currentDurationMs();
-    if (durationMs > 0 && (m_state == State::Entering || m_state == State::Visible)) {
-        m_timer->start(durationMs);
+    if (durationMs > 0 && (d_ptr->state == State::Entering || d_ptr->state == State::Visible)) {
+        d_ptr->timer->start(durationMs);
     }
 }
 
 int QtMaterialSnackbar::currentDurationMs() const
 {
-    switch (m_request.duration) {
+    switch (d_ptr->request.duration) {
     case SnackbarDuration::Short:
         return 4000;
     case SnackbarDuration::Long:
@@ -543,11 +563,11 @@ QRectF QtMaterialSnackbar::containerRect() const
 
 qreal QtMaterialSnackbar::resolvedCornerRadius() const noexcept
 {
-    if (!m_specPtr) {
+    if (!d_ptr->specPtr) {
         return 8.0;
     }
 
-    const int specRadius = theme().shapes().radius(m_specPtr->shapeRole);
+    const int specRadius = theme().shapes().radius(d_ptr->specPtr->shapeRole);
     return specRadius > 0 ? qreal(specRadius) : 8.0;
 }
 

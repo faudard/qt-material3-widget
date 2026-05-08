@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QPointer>
 #include <QQueue>
 
@@ -10,6 +12,8 @@ class QWidget;
 
 namespace QtMaterial {
 
+
+class QtMaterialSnackbarHostPrivate;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSnackbarHost : public QObject
 {
     Q_OBJECT
@@ -30,10 +34,9 @@ private:
     void showNext();
 
 private:
-    QPointer<QWidget> m_host;
-    QPointer<QtMaterialSnackbar> m_snackbar;
-    QQueue<SnackbarRequest> m_queue;
-    bool m_showing = false;
+
+ std::unique_ptr<QtMaterialSnackbarHostPrivate> d_ptr;
+
 };
 
 } // namespace QtMaterial

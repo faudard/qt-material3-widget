@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QPointer>
 #include <QString>
 
@@ -14,6 +16,8 @@ class QWidget;
 
 namespace QtMaterial {
 
+
+class QtMaterialDialogPrivate;
 class QtMaterialScrimWidget;
 class QtMaterialTransitionController;
 
@@ -74,23 +78,8 @@ private:
     void focusInitialWidget();
     bool moveFocusInsideDialog(bool next);
 
-    mutable bool m_specDirty = true;
-    mutable DialogSpec m_spec;
+    std::unique_ptr<QtMaterialDialogPrivate> d_ptr;
 
-    QString m_titleText;
-    QString m_supportingText;
-
-    QPointer<QWidget> m_bodyWidget;
-    QPointer<QWidget> m_initialFocusWidget;
-    QPointer<QWidget> m_previousFocusWidget;
-    QPointer<QAbstractButton> m_defaultButton;
-
-    QVBoxLayout* m_layout = nullptr;
-    QtMaterialScrimWidget* m_scrim = nullptr;
-    QtMaterialTransitionController* m_transition = nullptr;
-
-    bool m_dismissOnEscape = true;
-    bool m_restoreFocusOnClose = true;
 };
 
 } // namespace QtMaterial

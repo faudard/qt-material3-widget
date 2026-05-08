@@ -14,24 +14,45 @@
 #include "qtmaterial/effects/qtmaterialshadowrenderer.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include <memory>
+#include "qtmaterial/specs/qtmaterialdialogspec.h"
 
 namespace QtMaterial {
 
+
+class QtMaterialDialogPrivate {
+public:
+ mutable bool specDirty = true;
+ mutable DialogSpec spec;
+ QString titleText;
+ QString supportingText;
+ QPointer<QWidget> bodyWidget;
+ QPointer<QWidget> initialFocusWidget;
+ QPointer<QWidget> previousFocusWidget;
+ QPointer<QAbstractButton> defaultButton;
+ QVBoxLayout* layout = nullptr;
+ QtMaterialScrimWidget* scrim = nullptr;
+ QtMaterialTransitionController* transition = nullptr;
+ bool dismissOnEscape = true;
+ bool restoreFocusOnClose = true;
+};
+
 QtMaterialDialog::QtMaterialDialog(QWidget* parent)
     : QtMaterialOverlaySurface(parent)
-    , m_layout(new QVBoxLayout(this))
-    , m_scrim(new QtMaterialScrimWidget(parent ? parent : this))
-    , m_transition(new QtMaterialTransitionController(this))
+ , d_ptr(std::make_unique<QtMaterialDialogPrivate>())
 {
+ d_ptr->layout = new QVBoxLayout(this);
+ d_ptr->scrim = new QtMaterialScrimWidget(parent ? parent : this);
+ d_ptr->transition = new QtMaterialTransitionController(this);
     setObjectName(QStringLiteral("qtmaterial_dialog"));
     setFocusPolicy(Qt::StrongFocus);
     setAccessibleName(QStringLiteral("Dialog"));
 
-    m_layout->setContentsMargins(24, 24, 24, 24);
+    d_ptr->layout->setContentsMargins(24, 24, 24, 24);
 
     hide();
-    if (m_scrim) {
-        m_scrim->hide();
+    if (d_ptr->scrim) {
+        d_ptr->scrim->hide();
     }
 
     updateAccessibilityMetadata();
@@ -41,53 +62,53 @@ QtMaterialDialog::~QtMaterialDialog() = default;
 
 QString QtMaterialDialog::titleText() const
 {
-    return m_titleText;
+    return d_ptr->titleText;
 }
 
 void QtMaterialDialog::setTitleText(const QString& title)
 {
-    if (m_titleText == title) {
+    if (d_ptr->titleText == title) {
         return;
     }
 
-    m_titleText = title;
+    d_ptr->titleText = title;
     updateAccessibilityMetadata();
 }
 
 QString QtMaterialDialog::supportingText() const
 {
-    return m_supportingText;
+    return d_ptr->supportingText;
 }
 
 void QtMaterialDialog::setSupportingText(const QString& text)
 {
-    if (m_supportingText == text) {
+    if (d_ptr->supportingText == text) {
         return;
     }
 
-    m_supportingText = text;
+    d_ptr->supportingText = text;
     updateAccessibilityMetadata();
 }
 
 void QtMaterialDialog::setBodyWidget(QWidget* widget)
 {
-    if (m_bodyWidget == widget) {
+    if (d_ptr->bodyWidget == widget) {
         return;
     }
 
-    if (m_bodyWidget) {
-        m_layout->removeWidget(m_bodyWidget);
-        m_bodyWidget->setParent(nullptr);
+    if (d_ptr->bodyWidget) {
+        d_ptr->layout->removeWidget(d_ptr->bodyWidget);
+        d_ptr->bodyWidget->setParent(nullptr);
     }
 
-    m_bodyWidget = widget;
+    d_ptr->bodyWidget = widget;
 
-    if (m_bodyWidget) {
-        m_bodyWidget->setParent(this);
-        m_layout->addWidget(m_bodyWidget);
+    if (d_ptr->bodyWidget) {
+        d_ptr->bodyWidget->setParent(this);
+        d_ptr->layout->addWidget(d_ptr->bodyWidget);
 
-        if (!m_initialFocusWidget) {
-            m_initialFocusWidget = m_bodyWidget;
+        if (!d_ptr->initialFocusWidget) {
+            d_ptr->initialFocusWidget = d_ptr->bodyWidget;
         }
     }
 
@@ -96,69 +117,69 @@ void QtMaterialDialog::setBodyWidget(QWidget* widget)
 
 QWidget* QtMaterialDialog::bodyWidget() const
 {
-    return m_bodyWidget;
+    return d_ptr->bodyWidget;
 }
 
 QWidget* QtMaterialDialog::initialFocusWidget() const
 {
-    return m_initialFocusWidget;
+    return d_ptr->initialFocusWidget;
 }
 
 void QtMaterialDialog::setInitialFocusWidget(QWidget* widget)
 {
-    if (m_initialFocusWidget == widget) {
+    if (d_ptr->initialFocusWidget == widget) {
         return;
     }
 
-    m_initialFocusWidget = widget;
+    d_ptr->initialFocusWidget = widget;
 }
 
 QAbstractButton* QtMaterialDialog::defaultButton() const
 {
-    return m_defaultButton;
+    return d_ptr->defaultButton;
 }
 
 void QtMaterialDialog::setDefaultButton(QAbstractButton* button)
 {
-    if (m_defaultButton == button) {
+    if (d_ptr->defaultButton == button) {
         return;
     }
 
-    m_defaultButton = button;
+    d_ptr->defaultButton = button;
 }
 
 bool QtMaterialDialog::dismissOnEscape() const noexcept
 {
-    return m_dismissOnEscape;
+    return d_ptr->dismissOnEscape;
 }
 
 void QtMaterialDialog::setDismissOnEscape(bool enabled)
 {
-    m_dismissOnEscape = enabled;
+    d_ptr->dismissOnEscape = enabled;
 }
 
 bool QtMaterialDialog::restoreFocusOnClose() const noexcept
 {
-    return m_restoreFocusOnClose;
+    return d_ptr->restoreFocusOnClose;
 }
 
 void QtMaterialDialog::setRestoreFocusOnClose(bool enabled)
 {
-    m_restoreFocusOnClose = enabled;
+    d_ptr->restoreFocusOnClose = enabled;
 }
 
 QString QtMaterialDialog::accessibilitySummary() const
 {
-    if (!m_titleText.isEmpty() && !m_supportingText.isEmpty()) {
-        return m_titleText + QStringLiteral(". ") + m_supportingText;
+    if (!d_ptr->titleText.isEmpty() && !d_ptr->supportingText.isEmpty()) {
+        return d_ptr->titleText + QStringLiteral(". ") + d_ptr->supportingText;
     }
 
-    if (!m_titleText.isEmpty()) {
-        return m_titleText;
+    if (!d_ptr->titleText.isEmpty()) {
+        return d_ptr->titleText;
     }
 
-    if (!m_supportingText.isEmpty()) {
-        return m_supportingText;
+    if (!d_ptr->supportingText.isEmpty()) {
+        return d_ptr->supportingText;
     }
 
     return QStringLiteral("Dialog");
@@ -166,23 +187,23 @@ QString QtMaterialDialog::accessibilitySummary() const
 
 void QtMaterialDialog::open()
 {
-    m_previousFocusWidget = QApplication::focusWidget();
+    d_ptr->previousFocusWidget = QApplication::focusWidget();
 
     resolveSpecIfNeeded();
     syncChildGeometry();
 
-    if (m_scrim) {
-        m_scrim->setGeometry(parentWidget() ? parentWidget()->rect() : rect());
-        m_scrim->show();
-        m_scrim->raise();
+    if (d_ptr->scrim) {
+        d_ptr->scrim->setGeometry(parentWidget() ? parentWidget()->rect() : rect());
+        d_ptr->scrim->show();
+        d_ptr->scrim->raise();
     }
 
     show();
     raise();
     activateWindow();
 
-    if (m_transition) {
-        m_transition->startForward();
+    if (d_ptr->transition) {
+        d_ptr->transition->startForward();
     }
 
     focusInitialWidget();
@@ -191,18 +212,18 @@ void QtMaterialDialog::open()
 
 void QtMaterialDialog::close()
 {
-    if (m_transition) {
-        m_transition->startBackward();
+    if (d_ptr->transition) {
+        d_ptr->transition->startBackward();
     }
 
     hide();
 
-    if (m_scrim) {
-        m_scrim->hide();
+    if (d_ptr->scrim) {
+        d_ptr->scrim->hide();
     }
 
-    if (m_restoreFocusOnClose && m_previousFocusWidget) {
-        m_previousFocusWidget->setFocus(Qt::OtherFocusReason);
+    if (d_ptr->restoreFocusOnClose && d_ptr->previousFocusWidget) {
+        d_ptr->previousFocusWidget->setFocus(Qt::OtherFocusReason);
     }
 
     Q_EMIT closed();
@@ -217,30 +238,30 @@ void QtMaterialDialog::reject()
 void QtMaterialDialog::themeChangedEvent(const Theme& theme)
 {
     QtMaterialOverlaySurface::themeChangedEvent(theme);
-    m_specDirty = true;
+    d_ptr->specDirty = true;
 }
 
 void QtMaterialDialog::invalidateResolvedSpec()
 {
-    m_specDirty = true;
+    d_ptr->specDirty = true;
 }
 
 void QtMaterialDialog::resolveSpecIfNeeded() const
 {
-    if (!m_specDirty) {
+    if (!d_ptr->specDirty) {
         return;
     }
 
     SpecFactory factory;
-    m_spec = factory.dialogSpec(theme());
-    m_specDirty = false;
+    d_ptr->spec = factory.dialogSpec(theme());
+    d_ptr->specDirty = false;
 }
 
 void QtMaterialDialog::syncChildGeometry()
 {
     resolveSpecIfNeeded();
 
-    const int maximumWidth = qMax(1, m_spec.maxWidth);
+    const int maximumWidth = qMax(1, d_ptr->spec.maxWidth);
     const int dialogWidth = qMin(maximumWidth, parentWidget() ? parentWidget()->width() : width());
 
     resize(dialogWidth, qMax(160, sizeHint().height()));
@@ -254,8 +275,8 @@ void QtMaterialDialog::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
 
-    if (m_scrim && parentWidget()) {
-        m_scrim->setGeometry(parentWidget()->rect());
+    if (d_ptr->scrim && parentWidget()) {
+        d_ptr->scrim->setGeometry(parentWidget()->rect());
     }
 }
 
@@ -265,16 +286,16 @@ void QtMaterialDialog::keyPressEvent(QKeyEvent* event)
         return;
     }
 
-    if (event->key() == Qt::Key_Escape && m_dismissOnEscape) {
+    if (event->key() == Qt::Key_Escape && d_ptr->dismissOnEscape) {
         event->accept();
         reject();
         return;
     }
 
     if ((event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
-        && m_defaultButton && m_defaultButton->isEnabled() && m_defaultButton->isVisible()) {
+        && d_ptr->defaultButton && d_ptr->defaultButton->isEnabled() && d_ptr->defaultButton->isVisible()) {
         event->accept();
-        m_defaultButton->click();
+        d_ptr->defaultButton->click();
         return;
     }
 
@@ -308,14 +329,14 @@ void QtMaterialDialog::paintEvent(QPaintEvent*)
                                                  4);
 
     painter.setPen(Qt::NoPen);
-    painter.setBrush(m_spec.containerColor);
+    painter.setBrush(d_ptr->spec.containerColor);
     painter.drawRoundedRect(panel, 28.0, 28.0);
 }
 
 void QtMaterialDialog::updateAccessibilityMetadata()
 {
-    setAccessibleName(m_titleText.isEmpty() ? QStringLiteral("Dialog") : m_titleText);
-    setAccessibleDescription(m_supportingText);
+    setAccessibleName(d_ptr->titleText.isEmpty() ? QStringLiteral("Dialog") : d_ptr->titleText);
+    setAccessibleDescription(d_ptr->supportingText);
 
 #if QT_CONFIG(accessibility)
     QAccessibleEvent event(this, QAccessible::NameChanged);
@@ -334,7 +355,7 @@ QList<QWidget*> QtMaterialDialog::focusableDialogChildren() const
     result.reserve(children.size());
 
     for (QWidget* child : children) {
-        if (!child || child == m_scrim) {
+        if (!child || child == d_ptr->scrim) {
             continue;
         }
 
@@ -375,10 +396,10 @@ void QtMaterialDialog::focusInitialWidget()
 {
     QWidget* target = nullptr;
 
-    if (m_initialFocusWidget && m_initialFocusWidget->isEnabled()
-        && m_initialFocusWidget->isVisibleTo(this)
-        && m_initialFocusWidget->focusPolicy() != Qt::NoFocus) {
-        target = m_initialFocusWidget;
+    if (d_ptr->initialFocusWidget && d_ptr->initialFocusWidget->isEnabled()
+        && d_ptr->initialFocusWidget->isVisibleTo(this)
+        && d_ptr->initialFocusWidget->focusPolicy() != Qt::NoFocus) {
+        target = d_ptr->initialFocusWidget;
     } else {
         const auto focusable = focusableDialogChildren();
         if (!focusable.isEmpty()) {
