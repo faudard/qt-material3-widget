@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #include <QHash>
 #include <QList>
@@ -10,6 +11,7 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+class QtMaterialTextFieldValidationGroupPrivate;
 
 class QtMaterialOutlinedTextField;
 
@@ -71,12 +73,8 @@ private:
     QString effectiveFieldErrorMessage(QtMaterialOutlinedTextField* field) const;
     QStringList computeValidationSummary() const;
     void refreshValidationSummary();
+    std::unique_ptr<QtMaterialTextFieldValidationGroupPrivate> d_ptr;
 
-    QList<QPointer<QtMaterialOutlinedTextField>> m_fields;
-    QHash<const QtMaterialOutlinedTextField*, QString> m_fieldLabels;
-    QHash<const QtMaterialOutlinedTextField*, QString> m_fieldErrorMessages;
-    QStringList m_validationSummary;
-    bool m_acceptable = true;
 };
 
 } // namespace QtMaterial

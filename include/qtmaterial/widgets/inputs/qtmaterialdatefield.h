@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <memory>
 #include <QDate>
 #include <QString>
 
@@ -9,6 +10,7 @@
 
 class QToolButton;
 
+class QtMaterialDateFieldPrivate;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDateField : public QtMaterial::QtMaterialOutlinedTextField
 {
     Q_OBJECT
@@ -37,7 +39,6 @@ public:
     QString placeholderTextForDate() const;
     void setPlaceholderTextForDate(const QString& text);
 
-
   QDate minimumDate() const noexcept;
 
   void setMinimumDate(const QDate& date);
@@ -58,7 +59,6 @@ signals:
     void clearableChanged(bool clearable);
     void calendarRequested();
     void parseErrorChanged(bool hasError);
-
 
   void dateRangeChanged(const QDate& minimumDate, const QDate& maximumDate);
 
@@ -89,19 +89,6 @@ private:
   void setParseError(bool hasError);
 
   void notifyDateAcceptabilityIfChanged(bool previousAcceptable);
+    std::unique_ptr<QtMaterialDateFieldPrivate> d_ptr;
 
-  QDate m_date;
-
-
-  QDate m_minimumDate;
-  QDate m_maximumDate;
-
-
-  mutable QString m_lastAccessibilitySummary;
-    QString m_displayFormat;
-    QString m_placeholderTextForDate;
-    bool m_clearable = false;
-    bool m_parseError = false;
-    QToolButton* m_calendarButton = nullptr;
-    QToolButton* m_clearButton = nullptr;
 };

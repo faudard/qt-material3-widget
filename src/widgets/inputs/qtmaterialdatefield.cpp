@@ -3,10 +3,26 @@
 
 #include <QLineEdit>
 #include <QToolButton>
+#include <memory>
+
+struct QtMaterialDateFieldPrivate {
+
+    QDate m_date;
+    QDate m_minimumDate;
+    QDate m_maximumDate;
+    mutable QString m_lastAccessibilitySummary;
+    QString m_displayFormat = QStringLiteral("yyyy-MM-dd");
+    QString m_placeholderTextForDate;
+    bool m_clearable = false;
+    bool m_parseError = false;
+    QToolButton* m_calendarButton = nullptr;
+    QToolButton* m_clearButton = nullptr;
+};
+
 
 QtMaterialDateField::QtMaterialDateField(QWidget* parent)
     : QtMaterialOutlinedTextField(parent)
-    , m_displayFormat(QStringLiteral("yyyy-MM-dd"))
+    , d_ptr(std::make_unique<QtMaterialDateFieldPrivate>())
 {
     // Future integration direction:
     // - create trailing calendar button
@@ -26,20 +42,20 @@ QtMaterialDateField::~QtMaterialDateField() = default;
 
 QDate QtMaterialDateField::date() const noexcept
 {
-    return m_date;
+    return d_ptr->m_date;
 }
 
 void QtMaterialDateField::setDate(const QDate& date)
 {
-    if (m_date == date) {
+    if (d_ptr->m_date == date) {
         return;
     }
 
     const bool wasAcceptable = isDateAcceptable();
-    m_date = date;
+    d_ptr->m_date = date;
     syncEditorFromDate();
-    setParseError(m_date.isValid() && !isDateInRange(m_date));
-    emit dateChanged(m_date);
+    setParseError(d_ptr->m_date.isValid() && !isDateInRange(d_ptr->m_date));
+    emit dateChanged(d_ptr->m_date);
     notifyDateAcceptabilityIfChanged(wasAcceptable);
     updateTrailingAffordances();
     updateAccessibilityMetadata();
@@ -49,47 +65,47 @@ void QtMaterialDateField::setDate(const QDate& date)
 
 QString QtMaterialDateField::displayFormat() const
 {
-    return m_displayFormat;
+    return d_ptr->m_displayFormat;
 }
 
 void QtMaterialDateField::setDisplayFormat(const QString& format)
 {
-    if (m_displayFormat == format) {
+    if (d_ptr->m_displayFormat == format) {
         return;
     }
-    m_displayFormat = format;
+    d_ptr->m_displayFormat = format;
     syncEditorFromDate();
-    emit displayFormatChanged(m_displayFormat);
+    emit displayFormatChanged(d_ptr->m_displayFormat);
     contentChangedEvent();
 }
 
 bool QtMaterialDateField::isClearable() const noexcept
 {
-    return m_clearable;
+    return d_ptr->m_clearable;
 }
 
 void QtMaterialDateField::setClearable(bool clearable)
 {
-    if (m_clearable == clearable) {
+    if (d_ptr->m_clearable == clearable) {
         return;
     }
-    m_clearable = clearable;
+    d_ptr->m_clearable = clearable;
     updateTrailingAffordances();
-    emit clearableChanged(m_clearable);
+    emit clearableChanged(d_ptr->m_clearable);
 }
 
 QString QtMaterialDateField::placeholderTextForDate() const
 {
-    return m_placeholderTextForDate;
+    return d_ptr->m_placeholderTextForDate;
 }
 
 void QtMaterialDateField::setPlaceholderTextForDate(const QString& text)
 {
-    if (m_placeholderTextForDate == text) {
+    if (d_ptr->m_placeholderTextForDate == text) {
         return;
     }
 
-    m_placeholderTextForDate = text;
+    d_ptr->m_placeholderTextForDate = text;
     if (!date().isValid()) {
         setPlaceholderText(text);
     }
@@ -133,11 +149,11 @@ void QtMaterialDateField::syncEditorFromDate()
     if (!lineEdit()) {
         return;
     }
-    if (m_date.isValid()) {
-        lineEdit()->setText(m_date.toString(m_displayFormat));
+    if (d_ptr->m_date.isValid()) {
+        lineEdit()->setText(d_ptr->m_date.toString(d_ptr->m_displayFormat));
     } else {
         lineEdit()->clear();
-        lineEdit()->setPlaceholderText(m_placeholderTextForDate);
+        lineEdit()->setPlaceholderText(d_ptr->m_placeholderTextForDate);
     }
 }
 
@@ -154,16 +170,16 @@ void QtMaterialDateField::syncDateFromEditor()
         return;
     }
 
-    const QDate parsed = QDate::fromString(text, m_displayFormat);
+    const QDate parsed = QDate::fromString(text, d_ptr->m_displayFormat);
     if (!parsed.isValid()) {
         setParseError(true);
         updateAccessibilityMetadata();
         return;
     }
 
-    m_date = parsed;
+    d_ptr->m_date = parsed;
     setParseError(!isDateInRange(parsed));
-    emit dateChanged(m_date);
+    emit dateChanged(d_ptr->m_date);
     updateTrailingAffordances();
     updateAccessibilityMetadata();
 }
@@ -182,34 +198,34 @@ void QtMaterialDateField::updateAccessibilityMetadata()
     const QString summary = accessibilitySummary();
     setAccessibleName(labelText().isEmpty() ? tr("Date") : labelText());
     setAccessibleDescription(summary);
-    if (m_lastAccessibilitySummary != summary) {
-        m_lastAccessibilitySummary = summary;
+    if (d_ptr->m_lastAccessibilitySummary != summary) {
+        d_ptr->m_lastAccessibilitySummary = summary;
         emit accessibilitySummaryChanged(summary);
     }
 }
 
 QDate QtMaterialDateField::minimumDate() const noexcept
 {
-    return m_minimumDate;
+    return d_ptr->m_minimumDate;
 }
 
 void QtMaterialDateField::setMinimumDate(const QDate& date)
 {
-    if (m_minimumDate == date) {
+    if (d_ptr->m_minimumDate == date) {
         return;
     }
 
     const bool wasAcceptable = isDateAcceptable();
-    m_minimumDate = date;
-    if (m_minimumDate.isValid() && m_maximumDate.isValid() && m_minimumDate > m_maximumDate) {
-        m_maximumDate = m_minimumDate;
+    d_ptr->m_minimumDate = date;
+    if (d_ptr->m_minimumDate.isValid() && d_ptr->m_maximumDate.isValid() && d_ptr->m_minimumDate > d_ptr->m_maximumDate) {
+        d_ptr->m_maximumDate = d_ptr->m_minimumDate;
     }
 
-    if (m_date.isValid() && !isDateInRange(m_date)) {
+    if (d_ptr->m_date.isValid() && !isDateInRange(d_ptr->m_date)) {
         setParseError(true);
     }
 
-    emit dateRangeChanged(m_minimumDate, m_maximumDate);
+    emit dateRangeChanged(d_ptr->m_minimumDate, d_ptr->m_maximumDate);
     notifyDateAcceptabilityIfChanged(wasAcceptable);
     updateAccessibilityMetadata();
     update();
@@ -217,26 +233,26 @@ void QtMaterialDateField::setMinimumDate(const QDate& date)
 
 QDate QtMaterialDateField::maximumDate() const noexcept
 {
-    return m_maximumDate;
+    return d_ptr->m_maximumDate;
 }
 
 void QtMaterialDateField::setMaximumDate(const QDate& date)
 {
-    if (m_maximumDate == date) {
+    if (d_ptr->m_maximumDate == date) {
         return;
     }
 
     const bool wasAcceptable = isDateAcceptable();
-    m_maximumDate = date;
-    if (m_minimumDate.isValid() && m_maximumDate.isValid() && m_maximumDate < m_minimumDate) {
-        m_minimumDate = m_maximumDate;
+    d_ptr->m_maximumDate = date;
+    if (d_ptr->m_minimumDate.isValid() && d_ptr->m_maximumDate.isValid() && d_ptr->m_maximumDate < d_ptr->m_minimumDate) {
+        d_ptr->m_minimumDate = d_ptr->m_maximumDate;
     }
 
-    if (m_date.isValid() && !isDateInRange(m_date)) {
+    if (d_ptr->m_date.isValid() && !isDateInRange(d_ptr->m_date)) {
         setParseError(true);
     }
 
-    emit dateRangeChanged(m_minimumDate, m_maximumDate);
+    emit dateRangeChanged(d_ptr->m_minimumDate, d_ptr->m_maximumDate);
     notifyDateAcceptabilityIfChanged(wasAcceptable);
     updateAccessibilityMetadata();
     update();
@@ -244,12 +260,12 @@ void QtMaterialDateField::setMaximumDate(const QDate& date)
 
 bool QtMaterialDateField::isDateAcceptable() const noexcept
 {
-    return !m_parseError && (!m_date.isValid() || isDateInRange(m_date));
+    return !d_ptr->m_parseError && (!d_ptr->m_date.isValid() || isDateInRange(d_ptr->m_date));
 }
 
 bool QtMaterialDateField::hasParseError() const noexcept
 {
-    return m_parseError;
+    return d_ptr->m_parseError;
 }
 
 QString QtMaterialDateField::accessibilitySummary() const
@@ -259,16 +275,16 @@ QString QtMaterialDateField::accessibilitySummary() const
     if (!label.isEmpty()) {
         parts << label;
     }
-    if (m_date.isValid()) {
-        parts << m_date.toString(m_displayFormat);
+    if (d_ptr->m_date.isValid()) {
+        parts << d_ptr->m_date.toString(d_ptr->m_displayFormat);
     } else {
         parts << tr("No date selected");
     }
-    if (m_minimumDate.isValid()) {
-        parts << tr("Minimum %1").arg(m_minimumDate.toString(m_displayFormat));
+    if (d_ptr->m_minimumDate.isValid()) {
+        parts << tr("Minimum %1").arg(d_ptr->m_minimumDate.toString(d_ptr->m_displayFormat));
     }
-    if (m_maximumDate.isValid()) {
-        parts << tr("Maximum %1").arg(m_maximumDate.toString(m_displayFormat));
+    if (d_ptr->m_maximumDate.isValid()) {
+        parts << tr("Maximum %1").arg(d_ptr->m_maximumDate.toString(d_ptr->m_displayFormat));
     }
     const QString error = effectiveErrorTextForDate();
     if (!error.isEmpty()) {
@@ -283,10 +299,10 @@ bool QtMaterialDateField::isDateInRange(const QDate& date) const noexcept
     if (!date.isValid()) {
         return true;
     }
-    if (m_minimumDate.isValid() && date < m_minimumDate) {
+    if (d_ptr->m_minimumDate.isValid() && date < d_ptr->m_minimumDate) {
         return false;
     }
-    if (m_maximumDate.isValid() && date > m_maximumDate) {
+    if (d_ptr->m_maximumDate.isValid() && date > d_ptr->m_maximumDate) {
         return false;
     }
     return true;
@@ -294,13 +310,13 @@ bool QtMaterialDateField::isDateInRange(const QDate& date) const noexcept
 
 QString QtMaterialDateField::effectiveErrorTextForDate() const
 {
-    if (m_parseError) {
-        if (m_date.isValid() && !isDateInRange(m_date)) {
-            if (m_minimumDate.isValid() && m_date < m_minimumDate) {
-                return tr("Date must be on or after %1").arg(m_minimumDate.toString(m_displayFormat));
+    if (d_ptr->m_parseError) {
+        if (d_ptr->m_date.isValid() && !isDateInRange(d_ptr->m_date)) {
+            if (d_ptr->m_minimumDate.isValid() && d_ptr->m_date < d_ptr->m_minimumDate) {
+                return tr("Date must be on or after %1").arg(d_ptr->m_minimumDate.toString(d_ptr->m_displayFormat));
             }
-            if (m_maximumDate.isValid() && m_date > m_maximumDate) {
-                return tr("Date must be on or before %1").arg(m_maximumDate.toString(m_displayFormat));
+            if (d_ptr->m_maximumDate.isValid() && d_ptr->m_date > d_ptr->m_maximumDate) {
+                return tr("Date must be on or before %1").arg(d_ptr->m_maximumDate.toString(d_ptr->m_displayFormat));
             }
         }
         return tr("Enter a valid date");
@@ -310,11 +326,11 @@ QString QtMaterialDateField::effectiveErrorTextForDate() const
 
 void QtMaterialDateField::setParseError(bool hasError)
 {
-    if (m_parseError == hasError) {
+    if (d_ptr->m_parseError == hasError) {
         return;
     }
     const bool wasAcceptable = isDateAcceptable();
-    m_parseError = hasError;
+    d_ptr->m_parseError = hasError;
     setHasErrorState(hasError);
     setErrorText(effectiveErrorTextForDate());
     emit parseErrorChanged(hasError);

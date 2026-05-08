@@ -16,6 +16,7 @@
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "private/qtmaterialtextfieldshellhelper_p.h"
 #include "../../core/private/qtmaterialaccessibilityhelper_p.h"
+#include <memory>
 
 namespace {
 
@@ -26,77 +27,127 @@ constexpr int kMinimumAccessoryTextWidth = 24;
 } // namespace
 
 namespace QtMaterial {
+struct QtMaterialOutlinedTextFieldPrivate {
+
+    explicit QtMaterialOutlinedTextFieldPrivate(QtMaterialOutlinedTextField* q)
+        : m_lineEdit(new QLineEdit(q))
+        , m_transition(new QtMaterialTransitionController(q))
+    {}
+
+    mutable bool m_specDirty = true;
+    mutable bool m_layoutDirty = true;
+    mutable TextFieldSpec m_spec;
+    mutable QRect m_cachedContainerRect;
+    mutable QRect m_cachedLabelRect;
+    mutable QRect m_cachedEditorRect;
+    mutable QRect m_cachedSupportingRect;
+    mutable QRect m_cachedFocusRect;
+    mutable QRect m_cachedLeadingIconRect;
+    mutable QRect m_cachedPrefixRect;
+    mutable QRect m_cachedSuffixRect;
+    mutable QRect m_cachedTrailingIconRect;
+    mutable QRect m_cachedEndActionRect;
+    mutable qreal m_cachedRadius = 0.0;
+    mutable QString m_cachedLabelText;
+    mutable QString m_cachedSupportingText;
+    mutable QString m_cachedErrorText;
+    mutable QString m_cachedDisplaySupportingText;
+    mutable QString m_cachedPrefixText;
+    mutable QString m_cachedSuffixText;
+    mutable QString m_cachedEndActionText;
+    mutable QFont m_cachedLabelFont;
+    mutable QFont m_cachedSupportingFont;
+    mutable QPainterPath m_cachedContainerPath;
+    QPointer<QLineEdit> m_lineEdit;
+    QPointer<QLabel> m_prefixLabel;
+    QPointer<QLabel> m_suffixLabel;
+    QPointer<QLabel> m_leadingIconLabel;
+    QPointer<QLabel> m_trailingIconLabel;
+    QPointer<QToolButton> m_endActionButton;
+    QString m_prefixText;
+    QString m_suffixText;
+    QIcon m_leadingIcon;
+    QIcon m_trailingIcon;
+    bool m_clearButtonEnabled = false;
+    QLineEdit::EchoMode m_configuredEchoMode = QLineEdit::Normal;
+    bool m_passwordVisible = false;
+    ValidationFeedbackMode m_validationFeedbackMode = ValidationFeedbackMode::ManualOnly;
+    bool m_manualErrorState = false;
+    bool m_automaticValidationError = false;
+    bool m_validationCommitted = false;
+    EndActionMode m_endActionMode = EndActionMode::None;
+    QIcon m_trailingActionIcon;
+    QString m_trailingActionText;
+    QString m_trailingActionToolTip;
+    bool m_trailingActionVisibleWhenEmpty = false;
+    QtMaterialTransitionController* m_transition = nullptr;
+};
+
 
 QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
     : QtMaterialInputControl(parent)
-    , m_lineEdit(new QLineEdit(this))
-    , m_prefixLabel(new QLabel(this))
-    , m_suffixLabel(new QLabel(this))
-    , m_leadingIconLabel(new QLabel(this))
-    , m_trailingIconLabel(new QLabel(this))
-    , m_endActionButton(new QToolButton(this))
-    , m_transition(new QtMaterialTransitionController(this))
+    , d_ptr(std::make_unique<QtMaterialOutlinedTextFieldPrivate>(this))
 {
     setMinimumHeight(64);
 
-    if (m_prefixLabel) {
-        m_prefixLabel->setObjectName(QStringLiteral("prefixLabel"));
-        m_prefixLabel->hide();
-        m_prefixLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-        m_prefixLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    if (d_ptr->m_prefixLabel) {
+        d_ptr->m_prefixLabel->setObjectName(QStringLiteral("prefixLabel"));
+        d_ptr->m_prefixLabel->hide();
+        d_ptr->m_prefixLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        d_ptr->m_prefixLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     }
 
-    if (m_suffixLabel) {
-        m_suffixLabel->setObjectName(QStringLiteral("suffixLabel"));
-        m_suffixLabel->hide();
-        m_suffixLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-        m_suffixLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    if (d_ptr->m_suffixLabel) {
+        d_ptr->m_suffixLabel->setObjectName(QStringLiteral("suffixLabel"));
+        d_ptr->m_suffixLabel->hide();
+        d_ptr->m_suffixLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        d_ptr->m_suffixLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     }
 
-    if (m_leadingIconLabel) {
-        m_leadingIconLabel->setObjectName(QStringLiteral("leadingIconLabel"));
-        m_leadingIconLabel->hide();
-        m_leadingIconLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-        m_leadingIconLabel->setAlignment(Qt::AlignCenter);
+    if (d_ptr->m_leadingIconLabel) {
+        d_ptr->m_leadingIconLabel->setObjectName(QStringLiteral("leadingIconLabel"));
+        d_ptr->m_leadingIconLabel->hide();
+        d_ptr->m_leadingIconLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        d_ptr->m_leadingIconLabel->setAlignment(Qt::AlignCenter);
     }
 
-    if (m_trailingIconLabel) {
-        m_trailingIconLabel->setObjectName(QStringLiteral("trailingIconLabel"));
-        m_trailingIconLabel->hide();
-        m_trailingIconLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-        m_trailingIconLabel->setAlignment(Qt::AlignCenter);
+    if (d_ptr->m_trailingIconLabel) {
+        d_ptr->m_trailingIconLabel->setObjectName(QStringLiteral("trailingIconLabel"));
+        d_ptr->m_trailingIconLabel->hide();
+        d_ptr->m_trailingIconLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        d_ptr->m_trailingIconLabel->setAlignment(Qt::AlignCenter);
     }
 
-    if (m_endActionButton) {
-        m_endActionButton->setObjectName(QStringLiteral("endActionButton"));
-        m_endActionButton->hide();
-        m_endActionButton->setAutoRaise(true);
-        m_endActionButton->setFocusPolicy(Qt::StrongFocus);
-        m_endActionButton->setCursor(Qt::PointingHandCursor);
+    if (d_ptr->m_endActionButton) {
+        d_ptr->m_endActionButton->setObjectName(QStringLiteral("endActionButton"));
+        d_ptr->m_endActionButton->hide();
+        d_ptr->m_endActionButton->setAutoRaise(true);
+        d_ptr->m_endActionButton->setFocusPolicy(Qt::StrongFocus);
+        d_ptr->m_endActionButton->setCursor(Qt::PointingHandCursor);
 
-        QObject::connect(m_endActionButton, &QToolButton::clicked, this, [this]() {
+        QObject::connect(d_ptr->m_endActionButton, &QToolButton::clicked, this, [this]() {
             switch (resolvedEndActionMode()) {
             case EndActionMode::ClearText:
-                if (m_lineEdit) {
-                    m_lineEdit->clear();
-                    m_lineEdit->setFocus();
+                if (d_ptr->m_lineEdit) {
+                    d_ptr->m_lineEdit->clear();
+                    d_ptr->m_lineEdit->setFocus();
                 }
                 emit clearTriggered();
                 break;
 
             case EndActionMode::TogglePasswordVisibility:
-                m_passwordVisible = !m_passwordVisible;
-                if (m_lineEdit) {
-                    m_lineEdit->setEchoMode(
-                        m_passwordVisible ? QLineEdit::Normal : m_configuredEchoMode);
-                    m_lineEdit->setFocus();
+                d_ptr->m_passwordVisible = !d_ptr->m_passwordVisible;
+                if (d_ptr->m_lineEdit) {
+                    d_ptr->m_lineEdit->setEchoMode(
+                        d_ptr->m_passwordVisible ? QLineEdit::Normal : d_ptr->m_configuredEchoMode);
+                    d_ptr->m_lineEdit->setFocus();
                 }
-                emit passwordVisibilityChanged(m_passwordVisible);
+                emit passwordVisibilityChanged(d_ptr->m_passwordVisible);
                 break;
 
             case EndActionMode::CustomTrailingAction:
-                if (m_lineEdit) {
-                    m_lineEdit->setFocus();
+                if (d_ptr->m_lineEdit) {
+                    d_ptr->m_lineEdit->setFocus();
                 }
                 emit trailingActionTriggered();
                 break;
@@ -114,17 +165,17 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
         });
     }
 
-    if (m_lineEdit) {
-        m_lineEdit->setFrame(false);
-        m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
-        m_lineEdit->setClearButtonEnabled(false);
-        m_lineEdit->setEchoMode(m_configuredEchoMode);
-        m_lineEdit->installEventFilter(this);
+    if (d_ptr->m_lineEdit) {
+        d_ptr->m_lineEdit->setFrame(false);
+        d_ptr->m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
+        d_ptr->m_lineEdit->setClearButtonEnabled(false);
+        d_ptr->m_lineEdit->setEchoMode(d_ptr->m_configuredEchoMode);
+        d_ptr->m_lineEdit->installEventFilter(this);
 
-        QObject::connect(m_lineEdit, &QLineEdit::textChanged, this, [this]() {
-            if (m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnEdit
-                || (m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnCommit
-                    && m_validationCommitted)) {
+        QObject::connect(d_ptr->m_lineEdit, &QLineEdit::textChanged, this, [this]() {
+            if (d_ptr->m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnEdit
+                || (d_ptr->m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnCommit
+                    && d_ptr->m_validationCommitted)) {
                 refreshValidationState(false);
             }
 
@@ -135,11 +186,11 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
             update();
         });
 
-        QObject::connect(m_lineEdit, &QLineEdit::textEdited, this, [this](const QString&) {
+        QObject::connect(d_ptr->m_lineEdit, &QLineEdit::textEdited, this, [this](const QString&) {
             updateModifiedStateFromLineEdit();
             updateTouchedState(true);
         });
-        QObject::connect(m_lineEdit, &QLineEdit::editingFinished, this, [this]() {
+        QObject::connect(d_ptr->m_lineEdit, &QLineEdit::editingFinished, this, [this]() {
             refreshValidationState(true);
             syncAccessibilityState();
             invalidateLayoutCache();
@@ -162,21 +213,21 @@ QtMaterialOutlinedTextField::~QtMaterialOutlinedTextField() = default;
 
 QString QtMaterialOutlinedTextField::text() const
 {
-    return m_lineEdit ? m_lineEdit->text() : QString();
+    return d_ptr->m_lineEdit ? d_ptr->m_lineEdit->text() : QString();
 }
 
 void QtMaterialOutlinedTextField::setText(const QString& text)
 {
-    if (!m_lineEdit || m_lineEdit->text() == text) {
+    if (!d_ptr->m_lineEdit || d_ptr->m_lineEdit->text() == text) {
         return;
     }
 
-    m_lineEdit->setText(text);
+    d_ptr->m_lineEdit->setText(text);
     syncCharacterCounterWidget();
 
-    if (m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnEdit
-        || (m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnCommit
-            && m_validationCommitted)) {
+    if (d_ptr->m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnEdit
+        || (d_ptr->m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnCommit
+            && d_ptr->m_validationCommitted)) {
         refreshValidationState(false);
     }
 
@@ -189,16 +240,16 @@ void QtMaterialOutlinedTextField::setText(const QString& text)
 
 QString QtMaterialOutlinedTextField::placeholderText() const
 {
-    return m_lineEdit ? m_lineEdit->placeholderText() : QString();
+    return d_ptr->m_lineEdit ? d_ptr->m_lineEdit->placeholderText() : QString();
 }
 
 void QtMaterialOutlinedTextField::setPlaceholderText(const QString& text)
 {
-    if (!m_lineEdit || m_lineEdit->placeholderText() == text) {
+    if (!d_ptr->m_lineEdit || d_ptr->m_lineEdit->placeholderText() == text) {
         return;
     }
 
-    m_lineEdit->setPlaceholderText(text);
+    d_ptr->m_lineEdit->setPlaceholderText(text);
     syncAccessibilityState();
     syncCharacterCounterWidget();
     update();
@@ -206,16 +257,16 @@ void QtMaterialOutlinedTextField::setPlaceholderText(const QString& text)
 
 QString QtMaterialOutlinedTextField::prefixText() const
 {
-    return m_prefixText;
+    return d_ptr->m_prefixText;
 }
 
 void QtMaterialOutlinedTextField::setPrefixText(const QString& text)
 {
-    if (m_prefixText == text) {
+    if (d_ptr->m_prefixText == text) {
         return;
     }
 
-    m_prefixText = text;
+    d_ptr->m_prefixText = text;
     invalidateLayoutCache();
     syncLineEditGeometry();
     updateGeometry();
@@ -224,16 +275,16 @@ void QtMaterialOutlinedTextField::setPrefixText(const QString& text)
 
 QString QtMaterialOutlinedTextField::suffixText() const
 {
-    return m_suffixText;
+    return d_ptr->m_suffixText;
 }
 
 void QtMaterialOutlinedTextField::setSuffixText(const QString& text)
 {
-    if (m_suffixText == text) {
+    if (d_ptr->m_suffixText == text) {
         return;
     }
 
-    m_suffixText = text;
+    d_ptr->m_suffixText = text;
     invalidateLayoutCache();
     syncLineEditGeometry();
     updateGeometry();
@@ -242,16 +293,16 @@ void QtMaterialOutlinedTextField::setSuffixText(const QString& text)
 
 QIcon QtMaterialOutlinedTextField::leadingIcon() const
 {
-    return m_leadingIcon;
+    return d_ptr->m_leadingIcon;
 }
 
 void QtMaterialOutlinedTextField::setLeadingIcon(const QIcon& icon)
 {
-    if (m_leadingIcon.cacheKey() == icon.cacheKey()) {
+    if (d_ptr->m_leadingIcon.cacheKey() == icon.cacheKey()) {
         return;
     }
 
-    m_leadingIcon = icon;
+    d_ptr->m_leadingIcon = icon;
     invalidateLayoutCache();
     syncLineEditGeometry();
     updateGeometry();
@@ -260,16 +311,16 @@ void QtMaterialOutlinedTextField::setLeadingIcon(const QIcon& icon)
 
 QIcon QtMaterialOutlinedTextField::trailingIcon() const
 {
-    return m_trailingIcon;
+    return d_ptr->m_trailingIcon;
 }
 
 void QtMaterialOutlinedTextField::setTrailingIcon(const QIcon& icon)
 {
-    if (m_trailingIcon.cacheKey() == icon.cacheKey()) {
+    if (d_ptr->m_trailingIcon.cacheKey() == icon.cacheKey()) {
         return;
     }
 
-    m_trailingIcon = icon;
+    d_ptr->m_trailingIcon = icon;
     invalidateLayoutCache();
     syncLineEditGeometry();
     updateGeometry();
@@ -278,16 +329,16 @@ void QtMaterialOutlinedTextField::setTrailingIcon(const QIcon& icon)
 
 bool QtMaterialOutlinedTextField::isClearButtonEnabled() const noexcept
 {
-    return m_clearButtonEnabled;
+    return d_ptr->m_clearButtonEnabled;
 }
 
 void QtMaterialOutlinedTextField::setClearButtonEnabled(bool enabled)
 {
-    if (m_clearButtonEnabled == enabled) {
+    if (d_ptr->m_clearButtonEnabled == enabled) {
         return;
     }
 
-    m_clearButtonEnabled = enabled;
+    d_ptr->m_clearButtonEnabled = enabled;
     invalidateLayoutCache();
     syncLineEditGeometry();
     updateGeometry();
@@ -296,27 +347,27 @@ void QtMaterialOutlinedTextField::setClearButtonEnabled(bool enabled)
 
 QLineEdit::EchoMode QtMaterialOutlinedTextField::echoMode() const
 {
-    return m_configuredEchoMode;
+    return d_ptr->m_configuredEchoMode;
 }
 
 void QtMaterialOutlinedTextField::setEchoMode(QLineEdit::EchoMode mode)
 {
-    if (m_configuredEchoMode == mode) {
-        if (mode != QLineEdit::Password && m_passwordVisible) {
-            m_passwordVisible = false;
+    if (d_ptr->m_configuredEchoMode == mode) {
+        if (mode != QLineEdit::Password && d_ptr->m_passwordVisible) {
+            d_ptr->m_passwordVisible = false;
         }
     } else {
-        m_configuredEchoMode = mode;
-        if (m_configuredEchoMode != QLineEdit::Password) {
-            m_passwordVisible = false;
+        d_ptr->m_configuredEchoMode = mode;
+        if (d_ptr->m_configuredEchoMode != QLineEdit::Password) {
+            d_ptr->m_passwordVisible = false;
         }
     }
 
-    if (m_lineEdit) {
-        m_lineEdit->setEchoMode(
-            (m_configuredEchoMode == QLineEdit::Password && m_passwordVisible)
+    if (d_ptr->m_lineEdit) {
+        d_ptr->m_lineEdit->setEchoMode(
+            (d_ptr->m_configuredEchoMode == QLineEdit::Password && d_ptr->m_passwordVisible)
                 ? QLineEdit::Normal
-                : m_configuredEchoMode);
+                : d_ptr->m_configuredEchoMode);
     }
 
     invalidateLayoutCache();
@@ -327,7 +378,7 @@ void QtMaterialOutlinedTextField::setEchoMode(QLineEdit::EchoMode mode)
 
 QLineEdit* QtMaterialOutlinedTextField::lineEdit() const
 {
-    return m_lineEdit;
+    return d_ptr->m_lineEdit;
 }
 
 bool QtMaterialOutlinedTextField::isTouched() const noexcept
@@ -359,16 +410,16 @@ void QtMaterialOutlinedTextField::updateTouchedState(bool touched)
 
 const QValidator* QtMaterialOutlinedTextField::validator() const
 {
-    return m_lineEdit ? m_lineEdit->validator() : nullptr;
+    return d_ptr->m_lineEdit ? d_ptr->m_lineEdit->validator() : nullptr;
 }
 
 void QtMaterialOutlinedTextField::setValidator(const QValidator* validator)
 {
-    if (!m_lineEdit || m_lineEdit->validator() == validator) {
+    if (!d_ptr->m_lineEdit || d_ptr->m_lineEdit->validator() == validator) {
         return;
     }
 
-    m_lineEdit->setValidator(validator);
+    d_ptr->m_lineEdit->setValidator(validator);
     refreshValidationState(false);
     emitValidationStateSignalsIfChanged();
     syncAccessibilityState();
@@ -377,16 +428,16 @@ void QtMaterialOutlinedTextField::setValidator(const QValidator* validator)
 
 QString QtMaterialOutlinedTextField::inputMask() const
 {
-    return m_lineEdit ? m_lineEdit->inputMask() : QString();
+    return d_ptr->m_lineEdit ? d_ptr->m_lineEdit->inputMask() : QString();
 }
 
 void QtMaterialOutlinedTextField::setInputMask(const QString& inputMask)
 {
-    if (!m_lineEdit || m_lineEdit->inputMask() == inputMask) {
+    if (!d_ptr->m_lineEdit || d_ptr->m_lineEdit->inputMask() == inputMask) {
         return;
     }
 
-    m_lineEdit->setInputMask(inputMask);
+    d_ptr->m_lineEdit->setInputMask(inputMask);
     syncCharacterCounterWidget();
     refreshValidationState(false);
     syncAccessibilityState();
@@ -396,16 +447,16 @@ void QtMaterialOutlinedTextField::setInputMask(const QString& inputMask)
 
 bool QtMaterialOutlinedTextField::isReadOnly() const
 {
-    return m_lineEdit ? m_lineEdit->isReadOnly() : false;
+    return d_ptr->m_lineEdit ? d_ptr->m_lineEdit->isReadOnly() : false;
 }
 
 void QtMaterialOutlinedTextField::setReadOnly(bool readOnly)
 {
-    if (!m_lineEdit || m_lineEdit->isReadOnly() == readOnly) {
+    if (!d_ptr->m_lineEdit || d_ptr->m_lineEdit->isReadOnly() == readOnly) {
         return;
     }
 
-    m_lineEdit->setReadOnly(readOnly);
+    d_ptr->m_lineEdit->setReadOnly(readOnly);
 
     invalidateLayoutCache();
     syncLineEditGeometry();
@@ -456,21 +507,21 @@ void QtMaterialOutlinedTextField::setRequiredText(const QString& text)
 
 int QtMaterialOutlinedTextField::maxLength() const
 {
-    return m_lineEdit ? m_lineEdit->maxLength() : 32767;
+    return d_ptr->m_lineEdit ? d_ptr->m_lineEdit->maxLength() : 32767;
 }
 
 void QtMaterialOutlinedTextField::setMaxLength(int maxLength)
 {
-    if (!m_lineEdit) {
+    if (!d_ptr->m_lineEdit) {
         return;
     }
 
     const int normalizedMaxLength = maxLength <= 0 ? 32767 : maxLength;
-    if (m_lineEdit->maxLength() == normalizedMaxLength) {
+    if (d_ptr->m_lineEdit->maxLength() == normalizedMaxLength) {
         return;
     }
 
-    m_lineEdit->setMaxLength(normalizedMaxLength);
+    d_ptr->m_lineEdit->setMaxLength(normalizedMaxLength);
     invalidateLayoutCache();
     syncLineEditGeometry();
     syncAccessibilityState();
@@ -504,8 +555,8 @@ QString QtMaterialOutlinedTextField::characterCounterText() const
 
 QString QtMaterialOutlinedTextField::effectiveCharacterCounterText() const
 {
-    const int currentLength = m_lineEdit ? m_lineEdit->text().size() : 0;
-    const int maximumLength = m_lineEdit ? m_lineEdit->maxLength() : 32767;
+    const int currentLength = d_ptr->m_lineEdit ? d_ptr->m_lineEdit->text().size() : 0;
+    const int maximumLength = d_ptr->m_lineEdit ? d_ptr->m_lineEdit->maxLength() : 32767;
 
     if (maximumLength == 32767) {
         return QString::number(currentLength);
@@ -555,25 +606,25 @@ void QtMaterialOutlinedTextField::syncCharacterCounterWidget()
 QtMaterialOutlinedTextField::ValidationFeedbackMode
 QtMaterialOutlinedTextField::validationFeedbackMode() const noexcept
 {
-    return m_validationFeedbackMode;
+    return d_ptr->m_validationFeedbackMode;
 }
 
 void QtMaterialOutlinedTextField::setValidationFeedbackMode(ValidationFeedbackMode mode)
 {
-    if (m_validationFeedbackMode == mode) {
+    if (d_ptr->m_validationFeedbackMode == mode) {
         return;
     }
 
-    m_validationFeedbackMode = mode;
+    d_ptr->m_validationFeedbackMode = mode;
 
-    if (m_validationFeedbackMode == ValidationFeedbackMode::ManualOnly) {
-        m_validationCommitted = false;
-        m_automaticValidationError = false;
+    if (d_ptr->m_validationFeedbackMode == ValidationFeedbackMode::ManualOnly) {
+        d_ptr->m_validationCommitted = false;
+        d_ptr->m_automaticValidationError = false;
         syncEffectiveErrorState();
     syncEffectiveErrorVisibility();
-    } else if (m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnCommit) {
-        m_validationCommitted = false;
-        m_automaticValidationError = false;
+    } else if (d_ptr->m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnCommit) {
+        d_ptr->m_validationCommitted = false;
+        d_ptr->m_automaticValidationError = false;
         syncEffectiveErrorState();
     syncEffectiveErrorVisibility();
     } else {
@@ -636,12 +687,12 @@ bool QtMaterialOutlinedTextField::validateInput()
 
 void QtMaterialOutlinedTextField::resetValidationFeedback()
 {
-    const bool hadAutomaticValidationError = m_automaticValidationError;
-    const bool wasCommitted = m_validationCommitted;
+    const bool hadAutomaticValidationError = d_ptr->m_automaticValidationError;
+    const bool wasCommitted = d_ptr->m_validationCommitted;
 
-    m_validationCommitted = false;
-    if (m_validationFeedbackMode != ValidationFeedbackMode::ManualOnly) {
-        m_automaticValidationError = false;
+    d_ptr->m_validationCommitted = false;
+    if (d_ptr->m_validationFeedbackMode != ValidationFeedbackMode::ManualOnly) {
+        d_ptr->m_automaticValidationError = false;
     }
 
     resetValidationErrorVisibility();
@@ -664,7 +715,7 @@ bool QtMaterialOutlinedTextField::isEffectiveErrorVisible() const noexcept
 
 bool QtMaterialOutlinedTextField::hasAutomaticValidationError() const noexcept
 {
-    return m_automaticValidationError;
+    return d_ptr->m_automaticValidationError;
 }
 
 bool QtMaterialOutlinedTextField::isAcceptableInput() const
@@ -674,16 +725,16 @@ bool QtMaterialOutlinedTextField::isAcceptableInput() const
 
 bool QtMaterialOutlinedTextField::hasErrorState() const noexcept
 {
-    return m_manualErrorState || m_automaticValidationError;
+    return d_ptr->m_manualErrorState || d_ptr->m_automaticValidationError;
 }
 
 void QtMaterialOutlinedTextField::setHasErrorState(bool value)
 {
-    if (m_manualErrorState == value) {
+    if (d_ptr->m_manualErrorState == value) {
         return;
     }
 
-    m_manualErrorState = value;
+    d_ptr->m_manualErrorState = value;
     syncEffectiveErrorState();
     syncEffectiveErrorVisibility();
 }
@@ -691,16 +742,16 @@ void QtMaterialOutlinedTextField::setHasErrorState(bool value)
 QtMaterialOutlinedTextField::EndActionMode
 QtMaterialOutlinedTextField::endActionMode() const noexcept
 {
-    return m_endActionMode;
+    return d_ptr->m_endActionMode;
 }
 
 void QtMaterialOutlinedTextField::setEndActionMode(EndActionMode mode)
 {
-    if (m_endActionMode == mode) {
+    if (d_ptr->m_endActionMode == mode) {
         return;
     }
 
-    m_endActionMode = mode;
+    d_ptr->m_endActionMode = mode;
     invalidateLayoutCache();
     syncLineEditGeometry();
     updateGeometry();
@@ -709,16 +760,16 @@ void QtMaterialOutlinedTextField::setEndActionMode(EndActionMode mode)
 
 QIcon QtMaterialOutlinedTextField::trailingActionIcon() const
 {
-    return m_trailingActionIcon;
+    return d_ptr->m_trailingActionIcon;
 }
 
 void QtMaterialOutlinedTextField::setTrailingActionIcon(const QIcon& icon)
 {
-    if (m_trailingActionIcon.cacheKey() == icon.cacheKey()) {
+    if (d_ptr->m_trailingActionIcon.cacheKey() == icon.cacheKey()) {
         return;
     }
 
-    m_trailingActionIcon = icon;
+    d_ptr->m_trailingActionIcon = icon;
     invalidateLayoutCache();
     syncLineEditGeometry();
     updateGeometry();
@@ -727,16 +778,16 @@ void QtMaterialOutlinedTextField::setTrailingActionIcon(const QIcon& icon)
 
 QString QtMaterialOutlinedTextField::trailingActionText() const
 {
-    return m_trailingActionText;
+    return d_ptr->m_trailingActionText;
 }
 
 void QtMaterialOutlinedTextField::setTrailingActionText(const QString& text)
 {
-    if (m_trailingActionText == text) {
+    if (d_ptr->m_trailingActionText == text) {
         return;
     }
 
-    m_trailingActionText = text;
+    d_ptr->m_trailingActionText = text;
     invalidateLayoutCache();
     syncLineEditGeometry();
     updateGeometry();
@@ -745,32 +796,32 @@ void QtMaterialOutlinedTextField::setTrailingActionText(const QString& text)
 
 QString QtMaterialOutlinedTextField::trailingActionToolTip() const
 {
-    return m_trailingActionToolTip;
+    return d_ptr->m_trailingActionToolTip;
 }
 
 void QtMaterialOutlinedTextField::setTrailingActionToolTip(const QString& text)
 {
-    if (m_trailingActionToolTip == text) {
+    if (d_ptr->m_trailingActionToolTip == text) {
         return;
     }
 
-    m_trailingActionToolTip = text;
+    d_ptr->m_trailingActionToolTip = text;
     syncAccessoryWidgets();
     update();
 }
 
 bool QtMaterialOutlinedTextField::isTrailingActionVisibleWhenEmpty() const noexcept
 {
-    return m_trailingActionVisibleWhenEmpty;
+    return d_ptr->m_trailingActionVisibleWhenEmpty;
 }
 
 void QtMaterialOutlinedTextField::setTrailingActionVisibleWhenEmpty(bool value)
 {
-    if (m_trailingActionVisibleWhenEmpty == value) {
+    if (d_ptr->m_trailingActionVisibleWhenEmpty == value) {
         return;
     }
 
-    m_trailingActionVisibleWhenEmpty = value;
+    d_ptr->m_trailingActionVisibleWhenEmpty = value;
     invalidateLayoutCache();
     syncLineEditGeometry();
     updateGeometry();
@@ -809,7 +860,7 @@ QtMaterialOutlinedTextField::ShellVariant QtMaterialOutlinedTextField::shellVari
 void QtMaterialOutlinedTextField::themeChangedEvent(const QtMaterial::Theme& theme)
 {
     QtMaterialInputControl::themeChangedEvent(theme);
-    m_specDirty = true;
+    d_ptr->m_specDirty = true;
     invalidateLayoutCache();
     syncLineEditPalette();
     syncAccessoryWidgets();
@@ -817,7 +868,7 @@ void QtMaterialOutlinedTextField::themeChangedEvent(const QtMaterial::Theme& the
 
 void QtMaterialOutlinedTextField::invalidateResolvedSpec()
 {
-    m_specDirty = true;
+    d_ptr->m_specDirty = true;
     invalidateLayoutCache();
 }
 
@@ -832,7 +883,7 @@ void QtMaterialOutlinedTextField::syncAccessibilityState()
     QtMaterialInputControl::syncAccessibilityState();
     AccessibilityHelper::applyInputAccessibility(
         this,
-        m_lineEdit,
+        d_ptr->m_lineEdit,
         labelText(),
         supportingText(),
         effectiveErrorText(),
@@ -846,43 +897,43 @@ TextFieldSpec QtMaterialOutlinedTextField::resolveTextFieldSpec(const SpecFactor
 
 void QtMaterialOutlinedTextField::ensureSpecResolved() const
 {
-    if (!m_specDirty) {
+    if (!d_ptr->m_specDirty) {
         return;
     }
 
     SpecFactory factory;
-    m_spec = resolveTextFieldSpec(factory);
-    m_specDirty = false;
+    d_ptr->m_spec = resolveTextFieldSpec(factory);
+    d_ptr->m_specDirty = false;
 }
 
 const TextFieldSpec& QtMaterialOutlinedTextField::spec() const
 {
     ensureSpecResolved();
-    return m_spec;
+    return d_ptr->m_spec;
 }
 
 void QtMaterialOutlinedTextField::invalidateLayoutCache()
 {
-    m_layoutDirty = true;
+    d_ptr->m_layoutDirty = true;
 }
 
 bool QtMaterialOutlinedTextField::currentFocusState() const
 {
-    return (m_lineEdit && m_lineEdit->hasFocus()) || hasFocus();
+    return (d_ptr->m_lineEdit && d_ptr->m_lineEdit->hasFocus()) || hasFocus();
 }
 
 QtMaterialOutlinedTextField::EndActionMode QtMaterialOutlinedTextField::resolvedEndActionMode() const noexcept
 {
-    if (m_endActionMode == EndActionMode::TogglePasswordVisibility
-        && m_configuredEchoMode == QLineEdit::Password) {
+    if (d_ptr->m_endActionMode == EndActionMode::TogglePasswordVisibility
+        && d_ptr->m_configuredEchoMode == QLineEdit::Password) {
         return EndActionMode::TogglePasswordVisibility;
     }
 
-    if (m_endActionMode == EndActionMode::ClearText && shouldShowClearAction()) {
+    if (d_ptr->m_endActionMode == EndActionMode::ClearText && shouldShowClearAction()) {
         return EndActionMode::ClearText;
     }
 
-    if (m_endActionMode == EndActionMode::CustomTrailingAction
+    if (d_ptr->m_endActionMode == EndActionMode::CustomTrailingAction
         && shouldShowCustomTrailingAction()) {
         return EndActionMode::CustomTrailingAction;
     }
@@ -892,18 +943,18 @@ QtMaterialOutlinedTextField::EndActionMode QtMaterialOutlinedTextField::resolved
 
 bool QtMaterialOutlinedTextField::shouldShowClearAction() const noexcept
 {
-    return m_clearButtonEnabled
-        && m_lineEdit
+    return d_ptr->m_clearButtonEnabled
+        && d_ptr->m_lineEdit
         && isEnabled()
-        && !m_lineEdit->isReadOnly()
-        && (m_trailingActionVisibleWhenEmpty || !m_lineEdit->text().isEmpty());
+        && !d_ptr->m_lineEdit->isReadOnly()
+        && (d_ptr->m_trailingActionVisibleWhenEmpty || !d_ptr->m_lineEdit->text().isEmpty());
 }
 
 bool QtMaterialOutlinedTextField::shouldShowCustomTrailingAction() const noexcept
 {
     return isEnabled()
-        && (!m_trailingActionIcon.isNull() || !m_trailingActionText.isEmpty())
-        && (m_trailingActionVisibleWhenEmpty || (m_lineEdit && !m_lineEdit->text().isEmpty()));
+        && (!d_ptr->m_trailingActionIcon.isNull() || !d_ptr->m_trailingActionText.isEmpty())
+        && (d_ptr->m_trailingActionVisibleWhenEmpty || (d_ptr->m_lineEdit && !d_ptr->m_lineEdit->text().isEmpty()));
 }
 
 int QtMaterialOutlinedTextField::iconExtent() const
@@ -918,15 +969,15 @@ int QtMaterialOutlinedTextField::effectiveLeadingReserve() const
     int width = 0;
     int visibleCount = 0;
 
-    if (!m_leadingIcon.isNull()) {
+    if (!d_ptr->m_leadingIcon.isNull()) {
         width += iconExtent();
         ++visibleCount;
     }
 
-    if (!m_prefixText.isEmpty()) {
+    if (!d_ptr->m_prefixText.isEmpty()) {
         const int prefixWidth =
             qMax(kMinimumAccessoryTextWidth,
-                 fm.horizontalAdvance(m_prefixText) + (2 * kAccessoryTextPadding));
+                 fm.horizontalAdvance(d_ptr->m_prefixText) + (2 * kAccessoryTextPadding));
         width += prefixWidth;
         ++visibleCount;
     }
@@ -948,10 +999,10 @@ int QtMaterialOutlinedTextField::effectiveTrailingReserve() const
     int width = 0;
     int visibleCount = 0;
 
-    if (!m_suffixText.isEmpty()) {
+    if (!d_ptr->m_suffixText.isEmpty()) {
         const int suffixWidth =
             qMax(kMinimumAccessoryTextWidth,
-                 fm.horizontalAdvance(m_suffixText) + (2 * kAccessoryTextPadding));
+                 fm.horizontalAdvance(d_ptr->m_suffixText) + (2 * kAccessoryTextPadding));
         width += suffixWidth;
         ++visibleCount;
     }
@@ -962,17 +1013,17 @@ int QtMaterialOutlinedTextField::effectiveTrailingReserve() const
     if (resolvedMode == EndActionMode::ClearText) {
         endSlotWidth = iconExtent() + 6;
     } else if (resolvedMode == EndActionMode::TogglePasswordVisibility) {
-        endSlotWidth = fm.horizontalAdvance(m_passwordVisible ? tr("Hide") : tr("Show")) + 16;
+        endSlotWidth = fm.horizontalAdvance(d_ptr->m_passwordVisible ? tr("Hide") : tr("Show")) + 16;
     } else if (resolvedMode == EndActionMode::CustomTrailingAction) {
-        if (!m_trailingActionIcon.isNull() && !m_trailingActionText.isEmpty()) {
+        if (!d_ptr->m_trailingActionIcon.isNull() && !d_ptr->m_trailingActionText.isEmpty()) {
             endSlotWidth = qMax(iconExtent(),
-                                fm.horizontalAdvance(m_trailingActionText) + 16);
-        } else if (!m_trailingActionIcon.isNull()) {
+                                fm.horizontalAdvance(d_ptr->m_trailingActionText) + 16);
+        } else if (!d_ptr->m_trailingActionIcon.isNull()) {
             endSlotWidth = iconExtent() + 6;
         } else {
-            endSlotWidth = fm.horizontalAdvance(m_trailingActionText) + 16;
+            endSlotWidth = fm.horizontalAdvance(d_ptr->m_trailingActionText) + 16;
         }
-    } else if (!m_trailingIcon.isNull()) {
+    } else if (!d_ptr->m_trailingIcon.isNull()) {
         endSlotWidth = iconExtent();
     }
 
@@ -1050,14 +1101,14 @@ void QtMaterialOutlinedTextField::setInputMaskErrorText(const QString& text)
 bool QtMaterialOutlinedTextField::isRequiredValidationError() const
 {
     return m_required
-        && m_lineEdit
+        && d_ptr->m_lineEdit
         && isEnabled()
-        && m_lineEdit->text().trimmed().isEmpty();
+        && d_ptr->m_lineEdit->text().trimmed().isEmpty();
 }
 
 QString QtMaterialOutlinedTextField::effectiveErrorText() const
 {
-    if (m_manualErrorState && !errorText().isEmpty()) {
+    if (d_ptr->m_manualErrorState && !errorText().isEmpty()) {
         return errorText();
     }
 
@@ -1088,7 +1139,7 @@ QString QtMaterialOutlinedTextField::effectiveErrorText() const
 
 bool QtMaterialOutlinedTextField::currentValidationError() const
 {
-    if (!m_lineEdit || !isEnabled()) {
+    if (!d_ptr->m_lineEdit || !isEnabled()) {
         return false;
     }
 
@@ -1096,35 +1147,35 @@ bool QtMaterialOutlinedTextField::currentValidationError() const
         return true;
     }
 
-    if (m_lineEdit->text().isEmpty()) {
+    if (d_ptr->m_lineEdit->text().isEmpty()) {
         return false;
     }
 
-    return !m_lineEdit->hasAcceptableInput();
+    return !d_ptr->m_lineEdit->hasAcceptableInput();
 }
 
 void QtMaterialOutlinedTextField::refreshValidationState(bool commit)
 {
-    switch (m_validationFeedbackMode) {
+    switch (d_ptr->m_validationFeedbackMode) {
     case ValidationFeedbackMode::ManualOnly:
-        m_validationCommitted = false;
-        m_automaticValidationError = false;
+        d_ptr->m_validationCommitted = false;
+        d_ptr->m_automaticValidationError = false;
         break;
 
     case ValidationFeedbackMode::ValidatorOnEdit:
-        m_validationCommitted = true;
-        m_automaticValidationError = currentValidationError();
+        d_ptr->m_validationCommitted = true;
+        d_ptr->m_automaticValidationError = currentValidationError();
         break;
 
     case ValidationFeedbackMode::ValidatorOnCommit:
         if (commit) {
-            m_validationCommitted = true;
+            d_ptr->m_validationCommitted = true;
         }
 
-        if (m_validationCommitted) {
-            m_automaticValidationError = currentValidationError();
+        if (d_ptr->m_validationCommitted) {
+            d_ptr->m_automaticValidationError = currentValidationError();
         } else {
-            m_automaticValidationError = false;
+            d_ptr->m_automaticValidationError = false;
         }
         break;
     }
@@ -1135,14 +1186,14 @@ void QtMaterialOutlinedTextField::refreshValidationState(bool commit)
 
 void QtMaterialOutlinedTextField::syncEffectiveErrorState()
 {
-    QtMaterialInputControl::setHasErrorState(m_manualErrorState || m_automaticValidationError);
+    QtMaterialInputControl::setHasErrorState(d_ptr->m_manualErrorState || d_ptr->m_automaticValidationError);
     emitValidationStateSignalsIfChanged();
 }
 
 void QtMaterialOutlinedTextField::emitValidationStateSignalsIfChanged()
 {
-    const bool automaticError = m_automaticValidationError;
-    const bool effectiveError = m_manualErrorState || m_automaticValidationError;
+    const bool automaticError = d_ptr->m_automaticValidationError;
+    const bool effectiveError = d_ptr->m_manualErrorState || d_ptr->m_automaticValidationError;
     const bool acceptableInput = isAcceptableInput();
 
     if (m_lastEmittedAutomaticValidationError != automaticError) {
@@ -1170,7 +1221,7 @@ bool QtMaterialOutlinedTextField::shouldShowEffectiveError() const noexcept
 
     // Manual errors are explicit application state, for example server-side
     // validation. They should not be hidden by user-interaction policies.
-    if (m_manualErrorState) {
+    if (d_ptr->m_manualErrorState) {
         return true;
     }
 
@@ -1186,7 +1237,7 @@ bool QtMaterialOutlinedTextField::shouldShowEffectiveError() const noexcept
     case ErrorDisplayMode::WhenModified:
         return isModified();
     case ErrorDisplayMode::AfterCommit:
-        return m_validationCommitted;
+        return d_ptr->m_validationCommitted;
     }
 
     return true;
@@ -1210,16 +1261,16 @@ void QtMaterialOutlinedTextField::syncEffectiveErrorVisibility()
 
 bool QtMaterialOutlinedTextField::isModified() const
 {
-    return m_lineEdit ? m_lineEdit->isModified() : false;
+    return d_ptr->m_lineEdit ? d_ptr->m_lineEdit->isModified() : false;
 }
 
 void QtMaterialOutlinedTextField::setModified(bool modified)
 {
-    if (!m_lineEdit) {
+    if (!d_ptr->m_lineEdit) {
         return;
     }
 
-    m_lineEdit->setModified(modified);
+    d_ptr->m_lineEdit->setModified(modified);
     updateModifiedStateFromLineEdit();
 }
 
@@ -1243,18 +1294,18 @@ void QtMaterialOutlinedTextField::ensureLayoutResolved() const
 {
     ensureSpecResolved();
 
-    if (!m_layoutDirty) {
+    if (!d_ptr->m_layoutDirty) {
         return;
     }
 
     QtMaterialTextFieldShellHelper::Accessories accessories;
-    accessories.prefixText = m_prefixText;
-    accessories.suffixText = m_suffixText;
-    accessories.customEndActionText = m_trailingActionText;
-    accessories.hasLeadingIcon = !m_leadingIcon.isNull();
-    accessories.hasTrailingIcon = !m_trailingIcon.isNull();
-    accessories.hasCustomEndActionIcon = !m_trailingActionIcon.isNull();
-    accessories.passwordVisible = m_passwordVisible;
+    accessories.prefixText = d_ptr->m_prefixText;
+    accessories.suffixText = d_ptr->m_suffixText;
+    accessories.customEndActionText = d_ptr->m_trailingActionText;
+    accessories.hasLeadingIcon = !d_ptr->m_leadingIcon.isNull();
+    accessories.hasTrailingIcon = !d_ptr->m_trailingIcon.isNull();
+    accessories.hasCustomEndActionIcon = !d_ptr->m_trailingActionIcon.isNull();
+    accessories.passwordVisible = d_ptr->m_passwordVisible;
     accessories.layoutDirection = layoutDirection();
     accessories.iconExtent = iconExtent();
     accessories.accessorySpacing = kAccessorySpacing;
@@ -1301,10 +1352,10 @@ void QtMaterialOutlinedTextField::ensureLayoutResolved() const
             effectiveErrorText(),
             font());
 
-    m_cachedContainerRect = layout.containerRect;
-    m_cachedLabelRect = layout.labelRect;
-    m_cachedEditorRect = layout.editorRect;
-    m_cachedSupportingRect = layout.supportingRect;
+    d_ptr->m_cachedContainerRect = layout.containerRect;
+    d_ptr->m_cachedLabelRect = layout.labelRect;
+    d_ptr->m_cachedEditorRect = layout.editorRect;
+    d_ptr->m_cachedSupportingRect = layout.supportingRect;
     m_cachedCharacterCounterRect = QRect();
     if (m_characterCounterEnabled) {
         const QString counterText = effectiveCharacterCounterText();
@@ -1313,58 +1364,58 @@ void QtMaterialOutlinedTextField::ensureLayoutResolved() const
             counterFont.setPointSizeF(qMax<qreal>(1.0, counterFont.pointSizeF() * 0.85));
         }
         const int counterWidth = QFontMetrics(counterFont).horizontalAdvance(counterText) + 6;
-        const int boundedCounterWidth = qMin(counterWidth, m_cachedSupportingRect.width());
-        if (boundedCounterWidth > 0 && m_cachedSupportingRect.isValid()) {
+        const int boundedCounterWidth = qMin(counterWidth, d_ptr->m_cachedSupportingRect.width());
+        if (boundedCounterWidth > 0 && d_ptr->m_cachedSupportingRect.isValid()) {
             const bool rtl = layoutDirection() == Qt::RightToLeft;
             if (rtl) {
-                m_cachedCharacterCounterRect = QRect(m_cachedSupportingRect.left(),
-                                                     m_cachedSupportingRect.top(),
+                m_cachedCharacterCounterRect = QRect(d_ptr->m_cachedSupportingRect.left(),
+                                                     d_ptr->m_cachedSupportingRect.top(),
                                                      boundedCounterWidth,
-                                                     m_cachedSupportingRect.height());
-                m_cachedSupportingRect.setLeft(m_cachedCharacterCounterRect.right() + 4);
+                                                     d_ptr->m_cachedSupportingRect.height());
+                d_ptr->m_cachedSupportingRect.setLeft(m_cachedCharacterCounterRect.right() + 4);
             } else {
-                m_cachedCharacterCounterRect = QRect(m_cachedSupportingRect.right() - boundedCounterWidth + 1,
-                                                     m_cachedSupportingRect.top(),
+                m_cachedCharacterCounterRect = QRect(d_ptr->m_cachedSupportingRect.right() - boundedCounterWidth + 1,
+                                                     d_ptr->m_cachedSupportingRect.top(),
                                                      boundedCounterWidth,
-                                                     m_cachedSupportingRect.height());
-                m_cachedSupportingRect.setRight(m_cachedCharacterCounterRect.left() - 4);
+                                                     d_ptr->m_cachedSupportingRect.height());
+                d_ptr->m_cachedSupportingRect.setRight(m_cachedCharacterCounterRect.left() - 4);
             }
         }
     }
-    m_cachedFocusRect = layout.focusRect;
-    m_cachedLeadingIconRect = layout.leadingIconRect;
-    m_cachedPrefixRect = layout.prefixRect;
-    m_cachedSuffixRect = layout.suffixRect;
-    m_cachedTrailingIconRect = layout.trailingIconRect;
-    m_cachedEndActionRect = layout.endActionRect;
-    m_cachedRadius = layout.radius;
+    d_ptr->m_cachedFocusRect = layout.focusRect;
+    d_ptr->m_cachedLeadingIconRect = layout.leadingIconRect;
+    d_ptr->m_cachedPrefixRect = layout.prefixRect;
+    d_ptr->m_cachedSuffixRect = layout.suffixRect;
+    d_ptr->m_cachedTrailingIconRect = layout.trailingIconRect;
+    d_ptr->m_cachedEndActionRect = layout.endActionRect;
+    d_ptr->m_cachedRadius = layout.radius;
 
-    m_cachedLabelText = text.labelText;
-    m_cachedSupportingText = text.supportingText;
-    m_cachedErrorText = text.errorText;
-    m_cachedPrefixText = text.prefixText;
-    m_cachedSuffixText = text.suffixText;
-    m_cachedEndActionText = text.endActionText;
-    m_cachedDisplaySupportingText = isEffectiveErrorVisible() ? text.errorText : text.supportingText;
+    d_ptr->m_cachedLabelText = text.labelText;
+    d_ptr->m_cachedSupportingText = text.supportingText;
+    d_ptr->m_cachedErrorText = text.errorText;
+    d_ptr->m_cachedPrefixText = text.prefixText;
+    d_ptr->m_cachedSuffixText = text.suffixText;
+    d_ptr->m_cachedEndActionText = text.endActionText;
+    d_ptr->m_cachedDisplaySupportingText = isEffectiveErrorVisible() ? text.errorText : text.supportingText;
 
-    m_cachedLabelFont = font();
-    m_cachedSupportingFont = font();
+    d_ptr->m_cachedLabelFont = font();
+    d_ptr->m_cachedSupportingFont = font();
 
-    m_cachedContainerPath = QPainterPath();
-    m_cachedContainerPath.addRoundedRect(
-        m_cachedContainerRect,
-        m_cachedRadius,
-        m_cachedRadius);
+    d_ptr->m_cachedContainerPath = QPainterPath();
+    d_ptr->m_cachedContainerPath.addRoundedRect(
+        d_ptr->m_cachedContainerRect,
+        d_ptr->m_cachedRadius,
+        d_ptr->m_cachedRadius);
 
-    m_layoutDirty = false;
+    d_ptr->m_layoutDirty = false;
 }
 
 void QtMaterialOutlinedTextField::syncLineEditGeometry()
 {
     ensureLayoutResolved();
 
-    if (m_lineEdit && m_lineEdit->geometry() != m_cachedEditorRect) {
-        m_lineEdit->setGeometry(m_cachedEditorRect);
+    if (d_ptr->m_lineEdit && d_ptr->m_lineEdit->geometry() != d_ptr->m_cachedEditorRect) {
+        d_ptr->m_lineEdit->setGeometry(d_ptr->m_cachedEditorRect);
     }
     syncCharacterCounterWidget();
 
@@ -1391,128 +1442,128 @@ void QtMaterialOutlinedTextField::syncAccessoryWidgets()
         label->setPalette(palette);
     };
 
-    applyTextPalette(m_prefixLabel, textColor);
-    applyTextPalette(m_suffixLabel, textColor);
+    applyTextPalette(d_ptr->m_prefixLabel, textColor);
+    applyTextPalette(d_ptr->m_suffixLabel, textColor);
 
-    if (m_prefixLabel) {
-        m_prefixLabel->setFont(font());
-        if (m_cachedPrefixRect.isEmpty() || m_cachedPrefixText.isEmpty()) {
-            m_prefixLabel->hide();
+    if (d_ptr->m_prefixLabel) {
+        d_ptr->m_prefixLabel->setFont(font());
+        if (d_ptr->m_cachedPrefixRect.isEmpty() || d_ptr->m_cachedPrefixText.isEmpty()) {
+            d_ptr->m_prefixLabel->hide();
         } else {
-            m_prefixLabel->setGeometry(m_cachedPrefixRect);
-            m_prefixLabel->setAlignment(Qt::AlignVCenter | (rtl ? Qt::AlignRight : Qt::AlignLeft));
-            m_prefixLabel->setText(m_cachedPrefixText);
-            m_prefixLabel->show();
+            d_ptr->m_prefixLabel->setGeometry(d_ptr->m_cachedPrefixRect);
+            d_ptr->m_prefixLabel->setAlignment(Qt::AlignVCenter | (rtl ? Qt::AlignRight : Qt::AlignLeft));
+            d_ptr->m_prefixLabel->setText(d_ptr->m_cachedPrefixText);
+            d_ptr->m_prefixLabel->show();
         }
     }
 
-    if (m_suffixLabel) {
-        m_suffixLabel->setFont(font());
-        if (m_cachedSuffixRect.isEmpty() || m_cachedSuffixText.isEmpty()) {
-            m_suffixLabel->hide();
+    if (d_ptr->m_suffixLabel) {
+        d_ptr->m_suffixLabel->setFont(font());
+        if (d_ptr->m_cachedSuffixRect.isEmpty() || d_ptr->m_cachedSuffixText.isEmpty()) {
+            d_ptr->m_suffixLabel->hide();
         } else {
-            m_suffixLabel->setGeometry(m_cachedSuffixRect);
-            m_suffixLabel->setAlignment(Qt::AlignVCenter | (rtl ? Qt::AlignRight : Qt::AlignLeft));
-            m_suffixLabel->setText(m_cachedSuffixText);
-            m_suffixLabel->show();
+            d_ptr->m_suffixLabel->setGeometry(d_ptr->m_cachedSuffixRect);
+            d_ptr->m_suffixLabel->setAlignment(Qt::AlignVCenter | (rtl ? Qt::AlignRight : Qt::AlignLeft));
+            d_ptr->m_suffixLabel->setText(d_ptr->m_cachedSuffixText);
+            d_ptr->m_suffixLabel->show();
         }
     }
 
     const int iconSize = iconExtent();
 
-    if (m_leadingIconLabel) {
-        if (m_cachedLeadingIconRect.isEmpty() || m_leadingIcon.isNull()) {
-            m_leadingIconLabel->hide();
+    if (d_ptr->m_leadingIconLabel) {
+        if (d_ptr->m_cachedLeadingIconRect.isEmpty() || d_ptr->m_leadingIcon.isNull()) {
+            d_ptr->m_leadingIconLabel->hide();
         } else {
-            m_leadingIconLabel->setPixmap(
-                m_leadingIcon.pixmap(QSize(iconSize, iconSize),
+            d_ptr->m_leadingIconLabel->setPixmap(
+                d_ptr->m_leadingIcon.pixmap(QSize(iconSize, iconSize),
                                      isEnabled() ? QIcon::Normal : QIcon::Disabled));
-            m_leadingIconLabel->setGeometry(m_cachedLeadingIconRect);
-            m_leadingIconLabel->show();
+            d_ptr->m_leadingIconLabel->setGeometry(d_ptr->m_cachedLeadingIconRect);
+            d_ptr->m_leadingIconLabel->show();
         }
     }
 
-    if (m_trailingIconLabel) {
-        if (m_cachedTrailingIconRect.isEmpty() || m_trailingIcon.isNull()) {
-            m_trailingIconLabel->hide();
+    if (d_ptr->m_trailingIconLabel) {
+        if (d_ptr->m_cachedTrailingIconRect.isEmpty() || d_ptr->m_trailingIcon.isNull()) {
+            d_ptr->m_trailingIconLabel->hide();
         } else {
-            m_trailingIconLabel->setPixmap(
-                m_trailingIcon.pixmap(QSize(iconSize, iconSize),
+            d_ptr->m_trailingIconLabel->setPixmap(
+                d_ptr->m_trailingIcon.pixmap(QSize(iconSize, iconSize),
                                       isEnabled() ? QIcon::Normal : QIcon::Disabled));
-            m_trailingIconLabel->setGeometry(m_cachedTrailingIconRect);
-            m_trailingIconLabel->show();
+            d_ptr->m_trailingIconLabel->setGeometry(d_ptr->m_cachedTrailingIconRect);
+            d_ptr->m_trailingIconLabel->show();
         }
     }
 
-    if (m_endActionButton) {
-        QPalette palette = m_endActionButton->palette();
+    if (d_ptr->m_endActionButton) {
+        QPalette palette = d_ptr->m_endActionButton->palette();
         palette.setColor(QPalette::ButtonText, secondaryTextColor);
-        m_endActionButton->setPalette(palette);
-        m_endActionButton->setEnabled(isEnabled());
-        m_endActionButton->setFont(font());
+        d_ptr->m_endActionButton->setPalette(palette);
+        d_ptr->m_endActionButton->setEnabled(isEnabled());
+        d_ptr->m_endActionButton->setFont(font());
 
         const EndActionMode mode = resolvedEndActionMode();
 
-        if (m_cachedEndActionRect.isEmpty() || mode == EndActionMode::None) {
-            m_endActionButton->setAccessibleName(QString());
-            m_endActionButton->setAccessibleDescription(QString());
-            m_endActionButton->hide();
+        if (d_ptr->m_cachedEndActionRect.isEmpty() || mode == EndActionMode::None) {
+            d_ptr->m_endActionButton->setAccessibleName(QString());
+            d_ptr->m_endActionButton->setAccessibleDescription(QString());
+            d_ptr->m_endActionButton->hide();
         } else {
-            m_endActionButton->setGeometry(m_cachedEndActionRect);
-            m_endActionButton->setIcon(QIcon());
-            m_endActionButton->setText(QString());
-            m_endActionButton->setToolTip(QString());
+            d_ptr->m_endActionButton->setGeometry(d_ptr->m_cachedEndActionRect);
+            d_ptr->m_endActionButton->setIcon(QIcon());
+            d_ptr->m_endActionButton->setText(QString());
+            d_ptr->m_endActionButton->setToolTip(QString());
 
             if (mode == EndActionMode::ClearText) {
                 const QIcon clearIcon = style()->standardIcon(QStyle::SP_LineEditClearButton);
                 if (clearIcon.isNull()) {
-                    m_endActionButton->setText(QStringLiteral("×"));
+                    d_ptr->m_endActionButton->setText(QStringLiteral("×"));
                 } else {
-                    m_endActionButton->setIcon(clearIcon);
-                    m_endActionButton->setIconSize(QSize(iconSize, iconSize));
+                    d_ptr->m_endActionButton->setIcon(clearIcon);
+                    d_ptr->m_endActionButton->setIconSize(QSize(iconSize, iconSize));
                 }
-                m_endActionButton->setToolTip(tr("Clear text"));
-                m_endActionButton->setAccessibleName(tr("Clear text"));
-                m_endActionButton->setAccessibleDescription(tr("Clear text"));
+                d_ptr->m_endActionButton->setToolTip(tr("Clear text"));
+                d_ptr->m_endActionButton->setAccessibleName(tr("Clear text"));
+                d_ptr->m_endActionButton->setAccessibleDescription(tr("Clear text"));
             } else if (mode == EndActionMode::TogglePasswordVisibility) {
                 const QString passwordActionText =
-                    m_passwordVisible ? tr("Hide password") : tr("Show password");
-                m_endActionButton->setText(m_cachedEndActionText);
-                m_endActionButton->setToolTip(passwordActionText);
-                m_endActionButton->setAccessibleName(passwordActionText);
-                m_endActionButton->setAccessibleDescription(passwordActionText);
+                    d_ptr->m_passwordVisible ? tr("Hide password") : tr("Show password");
+                d_ptr->m_endActionButton->setText(d_ptr->m_cachedEndActionText);
+                d_ptr->m_endActionButton->setToolTip(passwordActionText);
+                d_ptr->m_endActionButton->setAccessibleName(passwordActionText);
+                d_ptr->m_endActionButton->setAccessibleDescription(passwordActionText);
             } else if (mode == EndActionMode::CustomTrailingAction) {
-                if (!m_trailingActionIcon.isNull()) {
-                    m_endActionButton->setIcon(m_trailingActionIcon);
-                    m_endActionButton->setIconSize(QSize(iconSize, iconSize));
+                if (!d_ptr->m_trailingActionIcon.isNull()) {
+                    d_ptr->m_endActionButton->setIcon(d_ptr->m_trailingActionIcon);
+                    d_ptr->m_endActionButton->setIconSize(QSize(iconSize, iconSize));
                 }
-                if (!m_cachedEndActionText.isEmpty()) {
-                    m_endActionButton->setText(m_cachedEndActionText);
+                if (!d_ptr->m_cachedEndActionText.isEmpty()) {
+                    d_ptr->m_endActionButton->setText(d_ptr->m_cachedEndActionText);
                 }
-                m_endActionButton->setToolTip(m_trailingActionToolTip);
-                const QString customAccessibleName = !m_trailingActionText.isEmpty()
-                    ? m_trailingActionText
-                    : (!m_trailingActionToolTip.isEmpty()
-                           ? m_trailingActionToolTip
+                d_ptr->m_endActionButton->setToolTip(d_ptr->m_trailingActionToolTip);
+                const QString customAccessibleName = !d_ptr->m_trailingActionText.isEmpty()
+                    ? d_ptr->m_trailingActionText
+                    : (!d_ptr->m_trailingActionToolTip.isEmpty()
+                           ? d_ptr->m_trailingActionToolTip
                            : tr("Text field action"));
-                m_endActionButton->setAccessibleName(customAccessibleName);
-                m_endActionButton->setAccessibleDescription(m_trailingActionToolTip);
+                d_ptr->m_endActionButton->setAccessibleName(customAccessibleName);
+                d_ptr->m_endActionButton->setAccessibleDescription(d_ptr->m_trailingActionToolTip);
             }
 
-            m_endActionButton->show();
+            d_ptr->m_endActionButton->show();
         }
     }
 }
 
 void QtMaterialOutlinedTextField::syncLineEditPalette()
 {
-    if (!m_lineEdit) {
+    if (!d_ptr->m_lineEdit) {
         return;
     }
 
     ensureSpecResolved();
 
-    QPalette palette = m_lineEdit->palette();
+    QPalette palette = d_ptr->m_lineEdit->palette();
     palette.setColor(
         QPalette::Text,
         isEnabled() ? spec().inputTextColor : spec().disabledInputTextColor);
@@ -1521,7 +1572,7 @@ void QtMaterialOutlinedTextField::syncLineEditPalette()
         isEnabled() ? spec().labelColor : spec().disabledLabelColor);
     palette.setColor(QPalette::Base, Qt::transparent);
     palette.setColor(QPalette::Window, Qt::transparent);
-    m_lineEdit->setPalette(palette);
+    d_ptr->m_lineEdit->setPalette(palette);
 
     syncAccessoryWidgets();
 }
@@ -1565,23 +1616,23 @@ void QtMaterialOutlinedTextField::changeEvent(QEvent* event)
 
 bool QtMaterialOutlinedTextField::eventFilter(QObject* watched, QEvent* event)
 {
-    if (watched == m_lineEdit) {
+    if (watched == d_ptr->m_lineEdit) {
         switch (event->type()) {
         case QEvent::FocusIn:
             interactionState().setFocused(true);
-            if (m_transition) {
-                m_transition->startForward();
+            if (d_ptr->m_transition) {
+                d_ptr->m_transition->startForward();
             }
             update();
             break;
 
         case QEvent::FocusOut:
             interactionState().setFocused(false);
-            if (m_transition) {
-                m_transition->startBackward();
+            if (d_ptr->m_transition) {
+                d_ptr->m_transition->startBackward();
             }
             updateTouchedState(true);
-            if (m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnCommit) {
+            if (d_ptr->m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnCommit) {
                 refreshValidationState(true);
             }
             update();
@@ -1620,26 +1671,26 @@ void QtMaterialOutlinedTextField::paintEvent(QPaintEvent*)
     QPainter painter(this);
 
     QtMaterialTextFieldShellHelper::Layout layout;
-    layout.containerRect = m_cachedContainerRect;
-    layout.labelRect = m_cachedLabelRect;
-    layout.editorRect = m_cachedEditorRect;
-    layout.supportingRect = m_cachedSupportingRect;
-    layout.focusRect = m_cachedFocusRect;
-    layout.leadingIconRect = m_cachedLeadingIconRect;
-    layout.prefixRect = m_cachedPrefixRect;
-    layout.suffixRect = m_cachedSuffixRect;
-    layout.trailingIconRect = m_cachedTrailingIconRect;
-    layout.endActionRect = m_cachedEndActionRect;
+    layout.containerRect = d_ptr->m_cachedContainerRect;
+    layout.labelRect = d_ptr->m_cachedLabelRect;
+    layout.editorRect = d_ptr->m_cachedEditorRect;
+    layout.supportingRect = d_ptr->m_cachedSupportingRect;
+    layout.focusRect = d_ptr->m_cachedFocusRect;
+    layout.leadingIconRect = d_ptr->m_cachedLeadingIconRect;
+    layout.prefixRect = d_ptr->m_cachedPrefixRect;
+    layout.suffixRect = d_ptr->m_cachedSuffixRect;
+    layout.trailingIconRect = d_ptr->m_cachedTrailingIconRect;
+    layout.endActionRect = d_ptr->m_cachedEndActionRect;
     layout.layoutDirection = layoutDirection();
-    layout.radius = m_cachedRadius;
+    layout.radius = d_ptr->m_cachedRadius;
 
     QtMaterialTextFieldShellHelper::ElidedText text;
-    text.labelText = m_cachedLabelText;
-    text.supportingText = m_cachedSupportingText;
-    text.errorText = m_cachedErrorText;
-    text.prefixText = m_cachedPrefixText;
-    text.suffixText = m_cachedSuffixText;
-    text.endActionText = m_cachedEndActionText;
+    text.labelText = d_ptr->m_cachedLabelText;
+    text.supportingText = d_ptr->m_cachedSupportingText;
+    text.errorText = d_ptr->m_cachedErrorText;
+    text.prefixText = d_ptr->m_cachedPrefixText;
+    text.suffixText = d_ptr->m_cachedSuffixText;
+    text.endActionText = d_ptr->m_cachedEndActionText;
 
     QtMaterialTextFieldShellHelper::paintShell(
         &painter,
@@ -1652,7 +1703,7 @@ void QtMaterialOutlinedTextField::paintEvent(QPaintEvent*)
             : QtMaterialTextFieldShellHelper::Variant::Outlined,
         text,
         isEffectiveErrorVisible(),
-        m_cachedLabelFont);
+        d_ptr->m_cachedLabelFont);
 }
 
 } // namespace QtMaterial

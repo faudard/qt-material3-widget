@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #include <QPointer>
 #include <QStringList>
@@ -19,6 +20,7 @@ class QResizeEvent;
 
 namespace QtMaterial { class Theme; }
 
+class QtMaterialAutocompletePopupPrivate;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialAutocompletePopup : public QWidget {
     Q_OBJECT
 public:
@@ -65,14 +67,8 @@ private:
     void updatePopupPalette();
     void syncToAnchorGeometry();
     void syncSelectionFromCurrentIndex();
+    std::unique_ptr<QtMaterialAutocompletePopupPrivate> d_ptr;
 
-    mutable bool m_specDirty = true;
-    mutable QtMaterial::AutocompletePopupSpec m_spec;
-    QPointer<QLineEdit> m_anchorLineEdit;
     QPointer<QAbstractItemModel> m_sourceModel;
-    QStringListModel* m_ownedStringModel = nullptr;
     QSortFilterProxyModel* m_filterModel = nullptr;
-    QListView* m_view = nullptr;
-    QString m_filterText;
-    bool m_popupVisible = false;
 };

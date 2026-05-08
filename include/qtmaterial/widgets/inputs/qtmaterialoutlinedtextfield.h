@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #include <QFont>
 #include <QIcon>
@@ -18,6 +19,7 @@ class QShowEvent;
 class QToolButton;
 
 namespace QtMaterial {
+class QtMaterialOutlinedTextFieldPrivate;
 
 class QtMaterialTransitionController;
 class SpecFactory;
@@ -109,7 +111,6 @@ public:
     bool isCharacterCounterEnabled() const noexcept;
     void setCharacterCounterEnabled(bool enabled);
     QString characterCounterText() const;
-
 
     ValidationFeedbackMode validationFeedbackMode() const noexcept;
     void setValidationFeedbackMode(ValidationFeedbackMode mode);
@@ -228,80 +229,24 @@ private:
     bool shouldShowEffectiveError() const noexcept;
     void syncEffectiveErrorVisibility();
     void emitValidationStateSignalsIfChanged();
+    std::unique_ptr<QtMaterialOutlinedTextFieldPrivate> d_ptr;
 
-    mutable bool m_specDirty = true;
-    mutable bool m_layoutDirty = true;
-    mutable TextFieldSpec m_spec;
-
-    mutable QRect m_cachedContainerRect;
-    mutable QRect m_cachedLabelRect;
-    mutable QRect m_cachedEditorRect;
-    mutable QRect m_cachedSupportingRect;
     mutable QRect m_cachedCharacterCounterRect;
-    mutable QRect m_cachedFocusRect;
-
-    mutable QRect m_cachedLeadingIconRect;
-    mutable QRect m_cachedPrefixRect;
-    mutable QRect m_cachedSuffixRect;
-    mutable QRect m_cachedTrailingIconRect;
-    mutable QRect m_cachedEndActionRect;
-
-    mutable qreal m_cachedRadius = 0.0;
-
-    mutable QString m_cachedLabelText;
-    mutable QString m_cachedSupportingText;
-    mutable QString m_cachedErrorText;
-    mutable QString m_cachedDisplaySupportingText;
-    mutable QString m_cachedPrefixText;
-    mutable QString m_cachedSuffixText;
-    mutable QString m_cachedEndActionText;
-
-    mutable QFont m_cachedLabelFont;
-    mutable QFont m_cachedSupportingFont;
-    mutable QPainterPath m_cachedContainerPath;
-
-    QPointer<QLineEdit> m_lineEdit;
-    QPointer<QLabel> m_prefixLabel;
-    QPointer<QLabel> m_suffixLabel;
-    QPointer<QLabel> m_leadingIconLabel;
-    QPointer<QLabel> m_trailingIconLabel;
-    QPointer<QToolButton> m_endActionButton;
     QPointer<QLabel> m_characterCounterLabel;
-
-    QString m_prefixText;
-    QString m_suffixText;
-    QIcon m_leadingIcon;
-    QIcon m_trailingIcon;
-    bool m_clearButtonEnabled = false;
-    QLineEdit::EchoMode m_configuredEchoMode = QLineEdit::Normal;
-    bool m_passwordVisible = false;
     RequiredValidationMode m_requiredValidationMode = RequiredValidationMode::NonBlank;
     QString m_validatorErrorText;
     QString m_inputMaskErrorText;
     AutomaticValidationErrorKind m_automaticValidationErrorKind = AutomaticValidationErrorKind::None;
-
-    ValidationFeedbackMode m_validationFeedbackMode = ValidationFeedbackMode::ManualOnly;
     ErrorDisplayMode m_errorDisplayMode = ErrorDisplayMode::Always;
     bool m_errorVisibilityForced = false;
     bool m_effectiveErrorVisible = false;
-    bool m_manualErrorState = false;
-    bool m_automaticValidationError = false;
-    bool m_validationCommitted = false;
     bool m_lastEmittedAutomaticValidationError = false;
     bool m_lastEmittedEffectiveErrorState = false;
     bool m_lastEmittedAcceptableInput = true;    
     bool m_required = false;
     QString m_requiredText;
 
-    EndActionMode m_endActionMode = EndActionMode::None;
-    QIcon m_trailingActionIcon;
-    QString m_trailingActionText;
-    QString m_trailingActionToolTip;
-    bool m_trailingActionVisibleWhenEmpty = false;
-
     bool m_characterCounterEnabled = false;
-
-    QtMaterialTransitionController* m_transition = nullptr;
     bool m_lastKnownModified = false;
     bool m_touched = false;
 };

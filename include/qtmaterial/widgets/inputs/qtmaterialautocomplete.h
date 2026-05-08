@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #include <QPointer>
 #include <QStringList>
@@ -17,6 +18,7 @@ QT_END_NAMESPACE
 class QtMaterialAutocompletePopup;
 
 namespace QtMaterial {
+class QtMaterialAutocompletePrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialAutocomplete : public QtMaterialWidget {
     Q_OBJECT
@@ -90,22 +92,8 @@ private:
     void updateAccessibilityState();
 
   void updateFilterText();
+    std::unique_ptr<QtMaterialAutocompletePrivate> d_ptr;
 
-    QLineEdit* m_lineEdit = nullptr;
-    QtMaterialAutocompletePopup* m_popup = nullptr;
-    QStringListModel* m_ownedStringModel = nullptr;
-    int m_maxVisibleCompletions = 8;
-
-  bool m_completesOnReturn = true;
-
-  bool m_opensOnFocus = true;
-
-  bool m_hidePopupOnEscape = true;
-
-  QString m_lastAccessibilitySummary;
-
-  mutable bool m_specDirty = true;
-    mutable AutocompleteSpec m_spec;
 };
 
 } // namespace QtMaterial
