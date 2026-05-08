@@ -29,14 +29,16 @@ QString defaultListAccessibleName()
 
 QtMaterialList::QtMaterialList(QWidget* parent)
     : QWidget(parent)
-    , d_ptr->m_layout(new QVBoxLayout(this))
+    , d_ptr(std::make_unique<QtMaterialListPrivate>())
 {
-    d_ptr = std::make_unique<QtMaterialListPrivate>();
+    d_ptr->m_layout = new QVBoxLayout(this);
 
     setFocusPolicy(Qt::StrongFocus);
     setAccessibleName(defaultListAccessibleName());
+
     d_ptr->m_layout->setContentsMargins(0, 0, 0, 0);
     d_ptr->m_layout->setSpacing(0);
+
     syncAccessibility();
 }
 
