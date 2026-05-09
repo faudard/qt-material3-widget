@@ -29,8 +29,63 @@ public:
  QtMaterialTransitionController* transition = nullptr;
 };
 
+namespace {
+
+void ensureNavigationDrawerSpecResolved(const QtMaterialNavigationDrawerPrivate* d)
+{
+    if (!d) {
+        return;
+    }
+    d->specDirty = false;
+}
+
+void ensureNavigationDrawerLayoutResolved(const QtMaterialNavigationDrawerPrivate* d)
+{
+    if (!d) {
+        return;
+    }
+    d->layoutDirty = false;
+}
+
+void invalidateNavigationDrawerLayoutCache(QtMaterialNavigationDrawerPrivate* d)
+{
+    if (!d) {
+        return;
+    }
+    d->layoutDirty = true;
+}
+
+void updateNavigationDrawerScrimVisuals(QtMaterialNavigationDrawerPrivate*)
+{
+}
+
+QWidget* firstNavigationDrawerFocusableChild(const QtMaterialNavigationDrawer* drawer)
+{
+    if (!drawer) {
+        return nullptr;
+    }
+
+    const auto children = drawer->findChildren<QWidget*>();
+    for (QWidget* child : children) {
+        if (child && child->isVisible() && child->isEnabled() && child->focusPolicy() != Qt::NoFocus) {
+            return child;
+        }
+    }
+    return nullptr;
+}
+
+void focusNavigationDrawerInitialChild(QtMaterialNavigationDrawer* drawer)
+{
+    if (QWidget* child = firstNavigationDrawerFocusableChild(drawer)) {
+        child->setFocus(Qt::OtherFocusReason);
+    }
+}
+
+} // namespace
+
 QtMaterialNavigationDrawer::QtMaterialNavigationDrawer(QWidget* parent)
     : QtMaterialOverlaySurface(parent)
+    , d_ptr(std::make_unique<QtMaterialNavigationDrawerPrivate>())
 {
     setFocusPolicy(Qt::StrongFocus);
     setAutoFillBackground(true);
@@ -57,7 +112,7 @@ void QtMaterialNavigationDrawer::setEdge(Edge edge)
     }
 
     d_ptr->edge = edge;
-    invalidateLayoutCache();
+    invalidateNavigationDrawerLayoutCache(d_ptr.get());
     update();
 }
 
@@ -71,7 +126,7 @@ void QtMaterialNavigationDrawer::open()
     d_ptr->open = true;
     show();
     raise();
-    focusInitialChild();
+    focusNavigationDrawerInitialChild(this);
 }
 
 void QtMaterialNavigationDrawer::closeDrawer()
@@ -94,7 +149,7 @@ void QtMaterialNavigationDrawer::paintEvent(QPaintEvent*)
 void QtMaterialNavigationDrawer::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
-    invalidateLayoutCache();
+    invalidateNavigationDrawerLayoutCache(d_ptr.get());
 }
 
 void QtMaterialNavigationDrawer::showEvent(QShowEvent* event)
@@ -136,43 +191,6 @@ void QtMaterialNavigationDrawer::invalidateResolvedSpec()
 {
     d_ptr->specDirty = true;
     update();
-}
-
-void QtMaterialNavigationDrawer::ensureSpecResolved() const
-{
-    d_ptr->specDirty = false;
-}
-
-void QtMaterialNavigationDrawer::ensureLayoutResolved() const
-{
-    d_ptr->layoutDirty = false;
-}
-
-void QtMaterialNavigationDrawer::invalidateLayoutCache()
-{
-    d_ptr->layoutDirty = true;
-}
-
-void QtMaterialNavigationDrawer::updateScrimVisuals()
-{
-}
-
-void QtMaterialNavigationDrawer::focusInitialChild()
-{
-    if (QWidget* child = firstFocusableChild()) {
-        child->setFocus(Qt::OtherFocusReason);
-    }
-}
-
-QWidget* QtMaterialNavigationDrawer::firstFocusableChild() const
-{
-    const auto children = findChildren<QWidget*>();
-    for (QWidget* child : children) {
-        if (child && child->isVisible() && child->isEnabled() && child->focusPolicy() != Qt::NoFocus) {
-            return child;
-        }
-    }
-    return nullptr;
 }
 
 } // namespace QtMaterial

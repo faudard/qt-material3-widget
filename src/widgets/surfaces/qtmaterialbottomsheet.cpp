@@ -48,6 +48,8 @@ public:
  QString titleText;
  QString supportingText;
  QString lastAccessibilitySummary;
+    void d_ptr->invalidateCachedGeometry();
+    int d_ptr->effectiveSheetHeight() const noexcept;
 };
 
 namespace {
@@ -89,6 +91,7 @@ QPoint globalMousePosition(const QMouseEvent *event)
 
 QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     : QtMaterialOverlaySurface(parent)
+    , d_ptr(std::make_unique<QtMaterialBottomSheetPrivate>())
 {
     setObjectName(QStringLiteral("qtmaterial_bottomsheet"));
     setFocusPolicy(Qt::StrongFocus);
@@ -116,7 +119,7 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     }
 
     connect(d_ptr->transition, &QtMaterialTransitionController::progressChanged, this, [this](qreal value) {
-        invalidateCachedGeometry();
+        d_ptr->invalidateCachedGeometry();
         syncContainerGeometry();
         applySheetMask();
         emit progressChanged(value);
@@ -254,7 +257,7 @@ void QtMaterialBottomSheet::setExpandedHeight(int px)
         d_ptr->collapsedHeight = d_ptr->expandedHeight;
         emit collapsedHeightChanged(d_ptr->collapsedHeight);
     }
-    invalidateCachedGeometry();
+    d_ptr->invalidateCachedGeometry();
     syncContainerGeometry();
     applySheetMask();
     updateGeometry();
@@ -276,7 +279,7 @@ void QtMaterialBottomSheet::setCollapsedHeight(int px)
     }
 
     d_ptr->collapsedHeight = clamped;
-    invalidateCachedGeometry();
+    d_ptr->invalidateCachedGeometry();
     syncContainerGeometry();
     applySheetMask();
     updateGeometry();
@@ -297,7 +300,7 @@ void QtMaterialBottomSheet::setExpanded(bool expanded)
     }
 
     d_ptr->expanded = expanded;
-    invalidateCachedGeometry();
+    d_ptr->invalidateCachedGeometry();
     syncContainerGeometry();
     applySheetMask();
     updateGeometry();
@@ -510,7 +513,7 @@ void QtMaterialBottomSheet::paintEvent(QPaintEvent *)
 void QtMaterialBottomSheet::resizeEvent(QResizeEvent *event)
 {
     QtMaterialOverlaySurface::resizeEvent(event);
-    invalidateCachedGeometry();
+    d_ptr->invalidateCachedGeometry();
     syncToHost();
     applySheetMask();
 }
@@ -587,7 +590,7 @@ void QtMaterialBottomSheet::mouseReleaseEvent(QMouseEvent *event)
     if (d_ptr->dragging) {
         const int deltaY = globalMousePosition(event).y() - d_ptr->dragStartGlobalPos.y();
         d_ptr->dragging = false;
-        if (deltaY > qMax(48, effectiveSheetHeight() / 4)) {
+        if (deltaY > qMax(48, d_ptr->effectiveSheetHeight() / 4)) {
             if (d_ptr->expanded && d_ptr->collapsedHeight < d_ptr->expandedHeight) {
                 collapse();
             } else {
@@ -606,7 +609,7 @@ void QtMaterialBottomSheet::themeChangedEvent(const QtMaterial::Theme &theme)
 {
     QtMaterialOverlaySurface::themeChangedEvent(theme);
     d_ptr->specDirty = true;
-    invalidateCachedGeometry();
+    d_ptr->invalidateCachedGeometry();
     ensureSpecResolved();
     if (d_ptr->specPtr) {
         d_ptr->transition->applyMotionToken(this->theme(), d_ptr->specPtr->motionToken);
@@ -647,7 +650,7 @@ void QtMaterialBottomSheet::ensureGeometryResolved() const
     }
 
     const int minHeight = qMax(120, minimumSizeHint().height());
-    const int sheetHeight = qMin(qMax(effectiveSheetHeight(), minHeight), hostRect.height());
+    const int sheetHeight = qMin(qMax(d_ptr->effectiveSheetHeight(), minHeight), hostRect.height());
     const qreal progressValue = d_ptr->transition ? d_ptr->transition->progress() : 1.0;
     const qreal p = qBound(0.0, progressValue, 1.0);
     const int hiddenY = hostRect.height();
@@ -663,13 +666,12 @@ void QtMaterialBottomSheet::ensureGeometryResolved() const
     d_ptr->geometryDirty = false;
 }
 
-void QtMaterialBottomSheet::invalidateCachedGeometry()
-{
-    d_ptr->geometryDirty = true;
-    d_ptr->cachedVisualRect = QRect();
-    d_ptr->cachedContentRect = QRect();
-    d_ptr->cachedContainerPath = QPainterPath();
-    d_ptr->cachedCornerRadius = 0.0;
+void QtMaterialBottomSheetPrivate::invalidateCachedGeometry() {
+    geometryDirty = true;
+    cachedVisualRect = QRect();
+    cachedContentRect = QRect();
+    cachedContainerPath = QPainterPath();
+    cachedCornerRadius = 0.0;
 }
 
 void QtMaterialBottomSheet::syncToHost()
@@ -680,7 +682,7 @@ void QtMaterialBottomSheet::syncToHost()
             d_ptr->scrim->setGeometry(host->rect());
         }
     }
-    invalidateCachedGeometry();
+    d_ptr->invalidateCachedGeometry();
     syncContainerGeometry();
 }
 
@@ -812,9 +814,8 @@ void QtMaterialBottomSheet::setState(SheetState state)
     emit stateChanged(d_ptr->state);
 }
 
-int QtMaterialBottomSheet::effectiveSheetHeight() const
-{
-    return d_ptr->expanded ? d_ptr->expandedHeight : d_ptr->collapsedHeight;
+int QtMaterialBottomSheetPrivate::effectiveSheetHeight() const noexcept {
+    return expanded ? expandedHeight : collapsedHeight;
 }
 
 QRect QtMaterialBottomSheet::sheetVisualRect() const

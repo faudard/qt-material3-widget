@@ -52,13 +52,6 @@ protected:
     void invalidateResolvedSpec() override;
 
 private:
-    void ensureSpecResolved() const;
-    void ensureLayoutResolved() const;
-    void invalidateLayoutCache();
-    void updateScrimVisuals();
-    void focusInitialChild();
-    QWidget* firstFocusableChild() const;
-
 private:
     std::unique_ptr<QtMaterialNavigationDrawerPrivate> d_ptr;
 

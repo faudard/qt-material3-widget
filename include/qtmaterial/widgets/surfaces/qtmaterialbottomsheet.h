@@ -129,7 +129,6 @@ protected:
 private:
     void ensureSpecResolved() const;
     void ensureGeometryResolved() const;
-    void invalidateCachedGeometry();
     void syncToHost();
     void syncScrim();
     void syncContainerGeometry();
@@ -138,7 +137,6 @@ private:
     void focusFirstChild();
     void syncAccessibility();
     void setState(SheetState state);
-    int effectiveSheetHeight() const;
     QRect sheetVisualRect() const;
     QRect contentRect() const;
     qreal cornerRadius() const;
