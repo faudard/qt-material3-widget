@@ -2,7 +2,7 @@
 
 #include <QObject>
 
-#include "private/qtmaterialbuttonlayoutcache_p.h"
+#include "qtmaterialbuttonlayoutcache_p.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 
 namespace QtMaterial {

@@ -8,6 +8,7 @@
 #include <QShowEvent>
 #include <QWidget>
 #include <memory>
+#include <QPainterPath>
 #include "qtmaterial/specs/qtmaterialnavigationdrawerspec.h"
 
 namespace QtMaterial {

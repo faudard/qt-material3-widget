@@ -2,7 +2,7 @@
 #include <QtGlobal>
 #include <QColor>
 
-#include "private/qtmaterialbuttonlayoutcache_p.h"
+#include "qtmaterialbuttonlayoutcache_p.h"
 
 namespace QtMaterial {
 

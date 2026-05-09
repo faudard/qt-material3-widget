@@ -161,7 +161,7 @@ QSize QtMaterialExtendedFab::minimumSizeHint() const
     return sizeHint();
 }
 
-void applyFabVariant(FabSpec* spec, const Theme& theme, QtMaterialFabVariant variant)
+static void applyFabVariant(FabSpec* spec, const Theme& theme, QtMaterialFabVariant variant)
 {
     if (!spec) {
         return;

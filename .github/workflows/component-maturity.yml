@@ -1,0 +1,53 @@
+name: Component maturity
+
+on:
+  pull_request:
+    paths:
+      - 'docs/components/component-registry.json'
+      - 'docs/component-status.md'
+      - 'docs/components/maturity.md'
+      - 'docs/public-api/buttons.md'
+      - 'examples/gallery/pages/buttonspage.cpp'
+      - 'scripts/generate_component_status.py'
+      - 'scripts/promote_buttons_maturity.py'
+      - 'scripts/run_buttons_maturity_checks.py'
+      - 'tests/CMakeLists.txt'
+      - 'tests/widgets/buttons/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/components/component-registry.json'
+      - 'docs/component-status.md'
+      - 'docs/components/maturity.md'
+      - 'docs/public-api/buttons.md'
+      - 'examples/gallery/pages/buttonspage.cpp'
+      - 'scripts/generate_component_status.py'
+      - 'scripts/promote_buttons_maturity.py'
+      - 'scripts/run_buttons_maturity_checks.py'
+      - 'tests/CMakeLists.txt'
+      - 'tests/widgets/buttons/**'
+  workflow_dispatch:
+
+jobs:
+  registry-and-buttons-maturity:
+    name: Registry and Buttons maturity audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Validate generated component status
+        run: python scripts/generate_component_status.py --check
+
+      - name: Audit Buttons maturity evidence
+        run: python scripts/promote_buttons_maturity.py --dry-run --fail-on-blockers
+
+      - name: Run local maturity wrapper without CTest
+        run: python scripts/run_buttons_maturity_checks.py
