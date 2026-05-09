@@ -10,6 +10,7 @@
 #include <QSignalSpy>
 #include <QStyle>
 #include <QWidget>
+#include "QAccessibleInterface"
 
 #include <functional>
 #include <memory>
@@ -247,7 +248,7 @@ void tst_ButtonContracts::accessibilityContract()
         QVERIFY2(!button->accessibleName().trimmed().isEmpty(), contextMessage(testCase, "accessibleName is not empty").constData());
 
 #if QT_CONFIG(accessibility)
-        std::unique_ptr<QAccessibleInterface> iface(QAccessible::queryAccessibleInterface(button.get()));
+        QAccessibleInterface* iface = QAccessible::queryAccessibleInterface(button.get());
         QVERIFY2(iface != nullptr, contextMessage(testCase, "QAccessible interface exists").constData());
         QCOMPARE(iface->role(), QAccessible::Button);
 #endif

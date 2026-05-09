@@ -62,23 +62,12 @@ DataPage::DataPage(QWidget* parent)
     layout->addWidget(table);
 
     auto* gridList = new QtMaterial::QtMaterialGridList(this);
-
-    auto* gridModel = new QStandardItemModel(gridList);
-
     for (int i = 0; i < 6; ++i) {
-        auto* item = new QStandardItem(
-            QStringLiteral("Grid item %1").arg(i + 1)
+        gridList->addGridItem(
+            QStringLiteral("Grid item %1").arg(i + 1),
+            QStringLiteral("Supporting text")
             );
-
-        item->setData(
-            QStringLiteral("Supporting text"),
-            Qt::UserRole + 1
-            );
-
-        gridModel->appendRow(item);
     }
-
-    gridList->setModel(gridModel);
     gridList->setMinimumHeight(180);
     gridList->setMaximumHeight(280);
     gridList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -86,23 +75,10 @@ DataPage::DataPage(QWidget* parent)
     layout->addWidget(gridList);
 
     auto* carousel = new QtMaterial::QtMaterialCarousel(this);
-
     for (int i = 0; i < 3; ++i) {
-        auto* page = new QWidget(carousel);
-        auto* pageLayout = new QVBoxLayout(page);
-
-        auto* label = new QLabel(
-            QStringLiteral("Carousel page %1").arg(i + 1),
-            page
-            );
-
-        label->setAlignment(Qt::AlignCenter);
-
-        pageLayout->addWidget(label);
-
-        carousel->addPage(
-            page,
-            QStringLiteral("Page %1").arg(i + 1)
+        carousel->addItem(
+            QStringLiteral("Page %1").arg(i + 1),
+            QStringLiteral("Carousel page %1").arg(i + 1)
             );
     }
 

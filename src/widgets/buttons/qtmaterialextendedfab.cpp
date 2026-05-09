@@ -143,11 +143,7 @@ void QtMaterialExtendedFab::changeEvent(QEvent* event)
     QtMaterialFilledButton::changeEvent(event);
 }
 
-ButtonSpec QtMaterialExtendedFab::resolveButtonSpec() const
-{
-    SpecFactory factory;
-    return extendedFabToButtonSpec(factory.extendedFabSpec(theme(), density()));
-}
+
 
 QSize QtMaterialExtendedFab::sizeHint() const
 {
@@ -163,6 +159,61 @@ QSize QtMaterialExtendedFab::sizeHint() const
 QSize QtMaterialExtendedFab::minimumSizeHint() const
 {
     return sizeHint();
+}
+
+void applyFabVariant(FabSpec* spec, const Theme& theme, QtMaterialFabVariant variant)
+{
+    if (!spec) {
+        return;
+    }
+
+    switch (variant) {
+    case QtMaterialFabVariant::Primary:
+        spec->containerColor = theme.colorScheme().color(ColorRole::PrimaryContainer);
+        spec->iconColor = theme.colorScheme().color(ColorRole::OnPrimaryContainer);
+        break;
+
+    case QtMaterialFabVariant::Secondary:
+        spec->containerColor = theme.colorScheme().color(ColorRole::SecondaryContainer);
+        spec->iconColor = theme.colorScheme().color(ColorRole::OnSecondaryContainer);
+        break;
+
+    case QtMaterialFabVariant::Tertiary:
+        spec->containerColor = theme.colorScheme().color(ColorRole::TertiaryContainer);
+        spec->iconColor = theme.colorScheme().color(ColorRole::OnTertiaryContainer);
+        break;
+
+    case QtMaterialFabVariant::Surface:
+        spec->containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
+        spec->iconColor = theme.colorScheme().color(ColorRole::Primary);
+        break;
+    }
+
+    spec->stateLayerColor = spec->iconColor;
+}
+
+QtMaterialFabVariant QtMaterialExtendedFab::fabVariant() const noexcept
+{
+    return m_fabVariant;
+}
+
+void QtMaterialExtendedFab::setFabVariant(QtMaterialFabVariant variant)
+{
+    if (m_fabVariant == variant) {
+        return;
+    }
+
+    m_fabVariant = variant;
+    updateGeometry();
+    update();
+}
+
+ButtonSpec QtMaterialExtendedFab::resolveButtonSpec() const
+{
+    SpecFactory factory;
+    FabSpec spec = factory.extendedFabSpec(theme(), density());
+    applyFabVariant(&spec, theme(), m_fabVariant);
+    return extendedFabToButtonSpec(spec);
 }
 
 } // namespace QtMaterial

@@ -270,6 +270,39 @@ QSize QtMaterialSnackbar::minimumSizeHint() const
     return QSize(200, d_ptr->specPtr ? d_ptr->specPtr->minHeight : 48);
 }
 
+qreal QtMaterialSnackbar::resolvedCornerRadius() const noexcept
+{
+    if (!d_ptr || !d_ptr->specPtr) {
+        return 0.0;
+    }
+
+    const ShapeRole role = d_ptr->specPtr->shapeRole;
+    const int themeRadius = theme().shapes().radius(role);
+
+    if (themeRadius > 0 || role == ShapeRole::None) {
+        return themeRadius;
+    }
+
+    switch (role) {
+    case ShapeRole::None:
+        return 0.0;
+    case ShapeRole::ExtraSmall:
+        return 4.0;
+    case ShapeRole::Small:
+        return 8.0;
+    case ShapeRole::Medium:
+        return 12.0;
+    case ShapeRole::Large:
+        return 16.0;
+    case ShapeRole::ExtraLarge:
+        return 28.0;
+    case ShapeRole::Full:
+        return qMin(width(), height()) / 2.0;
+    }
+
+    return 0.0;
+}
+
 void QtMaterialSnackbar::paintEvent(QPaintEvent*)
 {
     ensureSpecResolved();

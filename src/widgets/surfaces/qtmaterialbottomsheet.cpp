@@ -48,8 +48,8 @@ public:
  QString titleText;
  QString supportingText;
  QString lastAccessibilitySummary;
-    void d_ptr->invalidateCachedGeometry();
-    int d_ptr->effectiveSheetHeight() const noexcept;
+ void invalidateCachedGeometry();
+ int effectiveSheetHeight() const noexcept;
 };
 
 namespace {

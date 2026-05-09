@@ -10,6 +10,12 @@
 
 namespace QtMaterial {
 
+enum class QtMaterialFabVariant {
+    Primary,
+    Secondary,
+    Tertiary,
+    Surface
+};
 
 class QtMaterialFabPrivate;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialFab : public QtMaterialFilledButton {
@@ -34,6 +40,9 @@ public:
     QString effectiveAccessibleName() const;
     bool hasUsableAccessibleName() const;
     QString accessibilitySummary() const;
+
+    QtMaterialFabVariant fabVariant() const noexcept;
+    void setFabVariant(QtMaterialFabVariant variant);
 
 Q_SIGNALS:
     void accessibilitySummaryChanged(const QString& summary);

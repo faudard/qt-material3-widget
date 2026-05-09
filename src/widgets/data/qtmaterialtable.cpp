@@ -70,8 +70,29 @@ QString pluralize(int value, QStringView singular, QStringView plural)
 }
 
 
-QString tableHeaderText(const QtMaterialTable* table, int column);
-QString tableCellText(const QModelIndex& index);
+QString tableHeaderText(const QtMaterialTable* table, int column)
+{
+    const QAbstractItemModel* currentModel = table->model();
+    if (!currentModel || column < 0 || column >= currentModel->columnCount(table->rootIndex())) {
+        return QString();
+    }
+
+    return currentModel->headerData(column, Qt::Horizontal, Qt::DisplayRole).toString();
+}
+
+QString tableCellText(const QModelIndex& index)
+{
+    if (!index.isValid()) {
+        return QString();
+    }
+
+    const QVariant accessible = index.data(Qt::AccessibleTextRole);
+    if (accessible.isValid() && !accessible.toString().isEmpty()) {
+        return accessible.toString();
+    }
+
+    return index.data(Qt::DisplayRole).toString();
+}
 
 } // namespace
 
@@ -349,28 +370,6 @@ void QtMaterialTable::syncAccessibility()
     }
 }
 
-QString tableHeaderText(const QtMaterialTable* table, int column)
-{
-    const QAbstractItemModel* currentModel = table->model();
-    if (!currentModel || column < 0 || column >= currentModel->columnCount(table->rootIndex())) {
-        return QString();
-    }
 
-    return currentModel->headerData(column, Qt::Horizontal, Qt::DisplayRole).toString();
-}
-
-QString tableCellText(const QModelIndex& index)
-{
-    if (!index.isValid()) {
-        return QString();
-    }
-
-    const QVariant accessible = index.data(Qt::AccessibleTextRole);
-    if (accessible.isValid() && !accessible.toString().isEmpty()) {
-        return accessible.toString();
-    }
-
-    return index.data(Qt::DisplayRole).toString();
-}
 
 } // namespace QtMaterial
