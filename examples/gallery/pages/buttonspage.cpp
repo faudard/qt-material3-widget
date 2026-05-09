@@ -211,5 +211,136 @@ ButtonsPage::ButtonsPage(QWidget* parent)
     addLabeledWidget(fabGrid, 3, 2, QStringLiteral("Surface Extended"), surfaceExtended, this);
     root->addLayout(fabGrid);
 
-    root->addStretch(1);
+ // BEGIN GENERATED BUTTONS MATURITY GALLERY COVERAGE
+ root->addWidget(separator(this));
+
+ root->addWidget(sectionTitle(QStringLiteral("Buttons maturity coverage"), this));
+ root->addWidget(helperText(
+     QStringLiteral("This section is intentionally exhaustive: disabled standard buttons, icon + text, "
+                    "long labels, RTL layout and explicit accessibility names for icon-only actions. "
+                    "It exists to make the gallery a concrete proof for the Buttons maturity matrix."),
+     this));
+
+ auto* disabledGrid = new QGridLayout();
+ disabledGrid->setHorizontalSpacing(16);
+ disabledGrid->setVerticalSpacing(16);
+
+ auto* disabledText = new QtMaterial::QtMaterialTextButton(this);
+ disabledText->setText(QStringLiteral("Text"));
+ disabledText->setEnabled(false);
+
+ auto* disabledFilled = new QtMaterial::QtMaterialFilledButton(this);
+ disabledFilled->setText(QStringLiteral("Filled"));
+ disabledFilled->setEnabled(false);
+
+ auto* disabledTonal = new QtMaterial::QtMaterialFilledTonalButton(this);
+ disabledTonal->setText(QStringLiteral("Tonal"));
+ disabledTonal->setEnabled(false);
+
+ auto* disabledOutlined = new QtMaterial::QtMaterialOutlinedButton(this);
+ disabledOutlined->setText(QStringLiteral("Outlined"));
+ disabledOutlined->setEnabled(false);
+
+ auto* disabledElevated = new QtMaterial::QtMaterialElevatedButton(this);
+ disabledElevated->setText(QStringLiteral("Elevated"));
+ disabledElevated->setEnabled(false);
+
+ auto* disabledIcon = new QtMaterial::QtMaterialIconButton(this);
+ disabledIcon->setIcon(standardIcon(this, QStyle::SP_DialogOpenButton));
+ disabledIcon->setAccessibleName(QStringLiteral("Open unavailable"));
+ disabledIcon->setAccessibleDescription(QStringLiteral("Disabled icon-only button with explicit accessible name."));
+ disabledIcon->setToolTip(QStringLiteral("Open unavailable"));
+ disabledIcon->setEnabled(false);
+
+ addLabeledWidget(disabledGrid, 0, 0, QStringLiteral("Disabled text"), disabledText, this);
+ addLabeledWidget(disabledGrid, 0, 1, QStringLiteral("Disabled filled"), disabledFilled, this);
+ addLabeledWidget(disabledGrid, 0, 2, QStringLiteral("Disabled tonal"), disabledTonal, this);
+ addLabeledWidget(disabledGrid, 1, 0, QStringLiteral("Disabled outlined"), disabledOutlined, this);
+ addLabeledWidget(disabledGrid, 1, 1, QStringLiteral("Disabled elevated"), disabledElevated, this);
+ addLabeledWidget(disabledGrid, 1, 2, QStringLiteral("Disabled icon"), disabledIcon, this);
+ root->addLayout(disabledGrid);
+
+ root->addWidget(helperText(
+     QStringLiteral("Icon-only buttons and compact FABs must expose an explicit accessible name. "
+                    "Visible labels normally provide the accessible name for text-bearing buttons."),
+     this));
+
+ auto* iconTextGrid = new QGridLayout();
+ iconTextGrid->setHorizontalSpacing(16);
+ iconTextGrid->setVerticalSpacing(16);
+
+ const QIcon saveIcon = standardIcon(this, QStyle::SP_DialogSaveButton);
+ const QIcon editIcon = standardIcon(this, QStyle::SP_FileDialogDetailedView);
+
+ auto* textLong = new QtMaterial::QtMaterialTextButton(this);
+ textLong->setText(QStringLiteral("Review very long action label"));
+
+ auto* filledIconText = new QtMaterial::QtMaterialFilledButton(this);
+ filledIconText->setText(QStringLiteral("Save"));
+ filledIconText->setIcon(saveIcon);
+
+ auto* tonalIconText = new QtMaterial::QtMaterialFilledTonalButton(this);
+ tonalIconText->setText(QStringLiteral("Edit"));
+ tonalIconText->setIcon(editIcon);
+
+ auto* outlinedIconText = new QtMaterial::QtMaterialOutlinedButton(this);
+ outlinedIconText->setText(QStringLiteral("Open"));
+ outlinedIconText->setIcon(standardIcon(this, QStyle::SP_DialogOpenButton));
+
+ auto* elevatedIconText = new QtMaterial::QtMaterialElevatedButton(this);
+ elevatedIconText->setText(QStringLiteral("Upload"));
+ elevatedIconText->setIcon(standardIcon(this, QStyle::SP_ArrowUp));
+
+ auto* filledLong = new QtMaterial::QtMaterialFilledButton(this);
+ filledLong->setText(QStringLiteral("Create project from selected template"));
+ filledLong->setIcon(standardIcon(this, QStyle::SP_FileDialogNewFolder));
+
+ addLabeledWidget(iconTextGrid, 0, 0, QStringLiteral("Text long label"), textLong, this);
+ addLabeledWidget(iconTextGrid, 0, 1, QStringLiteral("Filled icon + text"), filledIconText, this);
+ addLabeledWidget(iconTextGrid, 0, 2, QStringLiteral("Tonal icon + text"), tonalIconText, this);
+ addLabeledWidget(iconTextGrid, 1, 0, QStringLiteral("Outlined icon + text"), outlinedIconText, this);
+ addLabeledWidget(iconTextGrid, 1, 1, QStringLiteral("Elevated icon + text"), elevatedIconText, this);
+ addLabeledWidget(iconTextGrid, 1, 2, QStringLiteral("Filled long label"), filledLong, this);
+ root->addLayout(iconTextGrid);
+
+ root->addWidget(separator(this));
+ root->addWidget(sectionTitle(QStringLiteral("RTL preview"), this));
+ root->addWidget(helperText(
+     QStringLiteral("The container below uses Qt::RightToLeft. Text-bearing buttons should keep stable "
+                    "size hints while mirroring start/end padding and icon/text order where applicable."),
+     this));
+
+ auto* rtlContainer = new QWidget(this);
+ rtlContainer->setLayoutDirection(Qt::RightToLeft);
+ auto* rtlLayout = new QGridLayout(rtlContainer);
+ rtlLayout->setHorizontalSpacing(16);
+ rtlLayout->setVerticalSpacing(16);
+
+ auto* rtlFilled = new QtMaterial::QtMaterialFilledButton(rtlContainer);
+ rtlFilled->setText(QStringLiteral("حفظ"));
+ rtlFilled->setIcon(saveIcon);
+ rtlFilled->setAccessibleName(QStringLiteral("Save RTL"));
+
+ auto* rtlOutlined = new QtMaterial::QtMaterialOutlinedButton(rtlContainer);
+ rtlOutlined->setText(QStringLiteral("فتح"));
+ rtlOutlined->setIcon(standardIcon(this, QStyle::SP_DialogOpenButton));
+ rtlOutlined->setAccessibleName(QStringLiteral("Open RTL"));
+
+ auto* rtlExtended = new QtMaterial::QtMaterialExtendedFab(composeIcon, QStringLiteral("إنشاء"), rtlContainer);
+ rtlExtended->setAccessibleName(QStringLiteral("Create RTL"));
+ rtlExtended->setToolTip(QStringLiteral("Create RTL"));
+
+ auto* rtlLong = new QtMaterial::QtMaterialFilledTonalButton(rtlContainer);
+ rtlLong->setText(QStringLiteral("مراجعة الإجراء الطويل"));
+ rtlLong->setIcon(editIcon);
+ rtlLong->setAccessibleName(QStringLiteral("Review long RTL action"));
+
+ addLabeledWidget(rtlLayout, 0, 0, QStringLiteral("Filled RTL"), rtlFilled, rtlContainer);
+ addLabeledWidget(rtlLayout, 0, 1, QStringLiteral("Outlined RTL"), rtlOutlined, rtlContainer);
+ addLabeledWidget(rtlLayout, 1, 0, QStringLiteral("Extended FAB RTL"), rtlExtended, rtlContainer);
+ addLabeledWidget(rtlLayout, 1, 1, QStringLiteral("Long label RTL"), rtlLong, rtlContainer);
+ root->addWidget(rtlContainer);
+ // END GENERATED BUTTONS MATURITY GALLERY COVERAGE
+
+ root->addStretch(1);
 }

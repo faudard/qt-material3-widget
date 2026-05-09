@@ -1,16 +1,235 @@
 [
   {
-    "id": "button.extended-fab",
-    "name": "Extended Floating Action Button",
+    "id": "button.text",
+    "name": "Text Button",
     "family": "Buttons",
     "maturity": "usable",
-    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialextendedfab.h",
-    "specType": "FabSpec",
-    "widgetType": "QtMaterialExtendedFab",
-    "testTarget": "tst_extendedfab",
-    "galleryRoute": "/buttons/extended-fab",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialtextbutton.h",
+    "specType": "ButtonSpec",
+    "widgetType": "QtMaterialTextButton",
+    "testTarget": "tst_textbutton",
+    "galleryRoute": "/buttons/text",
     "docsPath": "docs/public-api/buttons.md",
-    "releaseScope": true
+    "maturityPolicy": "manual",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": null,
+      "keyboard": null,
+      "hidpi": null,
+      "rtl": null,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
+      "lastReviewed": null,
+      "gaps": [
+        "Verify Space and Enter keyboard activation.",
+        "Verify accessible role/name/state and disabled state.",
+        "Validate RTL text alignment and HiDPI state-layer rendering."
+      ],
+      "nextActions": [
+        "Cover this variant with the shared button contract tests."
+      ]
+    }
+  },
+  {
+    "id": "button.filled",
+    "name": "Filled Button",
+    "family": "Buttons",
+    "maturity": "usable",
+    "maturityPolicy": "manual",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h",
+    "specType": "ButtonSpec",
+    "widgetType": "QtMaterialFilledButton",
+    "testTarget": "tst_filledbutton",
+    "galleryRoute": "/buttons/filled",
+    "docsPath": "docs/public-api/buttons.md",
+    "releaseScope": true,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 1,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
+      "lastReviewed": null,
+      "evidence": {
+        "api": [
+          "Public header is declared in the registry.",
+          "Widget type is declared as QtMaterialFilledButton."
+        ],
+        "tests": [
+          "Test target declared: tst_filledbutton."
+        ],
+        "docs": [
+          "Shared button documentation page declared."
+        ],
+        "example": [
+          "Gallery route declared: /buttons/filled."
+        ]
+      },
+      "gaps": [
+        "Verify Space and Enter keyboard activation.",
+        "Verify accessible name, role, disabled state, and focus state.",
+        "Validate HiDPI rendering for ripple, elevation, and focus ring.",
+        "Validate icon/text ordering in RTL mode."
+      ],
+      "nextActions": [
+        "Use this as the first Reference candidate for the Buttons family."
+      ]
+    },
+    "referenceCandidate": true
+  },
+  {
+    "id": "button.filled-tonal",
+    "name": "Filled Tonal Button",
+    "family": "Buttons",
+    "maturity": "usable",
+    "maturityPolicy": "manual",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h",
+    "specType": "ButtonSpec",
+    "widgetType": "QtMaterialFilledTonalButton",
+    "testTarget": "tst_filledtonalbutton",
+    "galleryRoute": "/buttons/filled-tonal",
+    "docsPath": "docs/public-api/buttons.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": null,
+      "keyboard": null,
+      "hidpi": null,
+      "rtl": null,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
+      "lastReviewed": null,
+      "gaps": [
+        "Verify state-layer colors and contrast against Material 3 filled tonal expectations.",
+        "Verify keyboard activation and accessible role/name/state.",
+        "Validate HiDPI rendering and RTL icon/text ordering."
+      ],
+      "nextActions": [
+        "Align maturity with the other text-bearing button variants after shared button contract tests land."
+      ]
+    }
+  },
+  {
+    "id": "button.outlined",
+    "name": "Outlined Button",
+    "family": "Buttons",
+    "maturity": "usable",
+    "maturityPolicy": "manual",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h",
+    "specType": "ButtonSpec",
+    "widgetType": "QtMaterialOutlinedButton",
+    "testTarget": "tst_outlinedbutton",
+    "galleryRoute": "/buttons/outlined",
+    "docsPath": "docs/public-api/buttons.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": null,
+      "keyboard": null,
+      "hidpi": null,
+      "rtl": null,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
+      "lastReviewed": null,
+      "gaps": [
+        "Verify outline stroke color, disabled stroke, clipping, and focus ring.",
+        "Verify keyboard activation and accessible role/name/state.",
+        "Validate HiDPI stroke crispness and RTL icon/text ordering."
+      ],
+      "nextActions": [
+        "Add outlined-specific rendering assertions for border/stroke behavior."
+      ]
+    }
+  },
+  {
+    "id": "button.elevated",
+    "name": "Elevated Button",
+    "family": "Buttons",
+    "maturity": "usable",
+    "maturityPolicy": "manual",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h",
+    "specType": "ButtonSpec",
+    "widgetType": "QtMaterialElevatedButton",
+    "testTarget": "tst_elevatedbutton",
+    "galleryRoute": "/buttons/elevated",
+    "docsPath": "docs/public-api/buttons.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": null,
+      "keyboard": null,
+      "hidpi": null,
+      "rtl": null,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
+      "lastReviewed": null,
+      "gaps": [
+        "Verify elevation, shadow, disabled elevation, and pressed/hover elevation transitions.",
+        "Verify keyboard activation and accessible role/name/state.",
+        "Validate HiDPI shadow rendering and RTL icon/text ordering."
+      ],
+      "nextActions": [
+        "Add elevated-specific rendering assertions for shadow/elevation behavior."
+      ]
+    }
+  },
+  {
+    "id": "button.icon",
+    "name": "Icon Button",
+    "family": "Buttons",
+    "maturity": "usable",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialiconbutton.h",
+    "specType": "IconButtonSpec",
+    "widgetType": "QtMaterialIconButton",
+    "testTarget": "tst_iconbutton",
+    "galleryRoute": "/buttons/icon",
+    "docsPath": "docs/public-api/buttons.md",
+    "maturityPolicy": "manual",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": null,
+      "keyboard": null,
+      "hidpi": null,
+      "rtl": "N/A",
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
+      "lastReviewed": null,
+      "gaps": [
+        "Verify explicit accessible-name requirement for icon-only usage.",
+        "Verify Space and Enter keyboard activation.",
+        "Validate HiDPI icon centering, focus ring, and ripple clipping."
+      ],
+      "nextActions": [
+        "Add icon-only accessibility contract tests."
+      ]
+    }
   },
   {
     "id": "button.fab",
@@ -23,43 +242,66 @@
     "testTarget": "tst_fab",
     "galleryRoute": "/buttons/fab",
     "docsPath": "docs/public-api/buttons.md",
-    "releaseScope": true
+    "releaseScope": true,
+    "maturityPolicy": "manual",
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": null,
+      "keyboard": null,
+      "hidpi": null,
+      "rtl": "N/A",
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
+      "lastReviewed": null,
+      "gaps": [
+        "Verify explicit accessible-name requirement for icon-only FAB usage.",
+        "Verify elevation, shape, ripple clipping, and minimum touch target.",
+        "Validate HiDPI icon centering and shadow rendering."
+      ],
+      "nextActions": [
+        "Add FAB-specific accessibility, elevation, and HiDPI contract tests."
+      ]
+    }
   },
   {
-    "id": "button.filled",
-    "name": "Filled Button",
+    "id": "button.extended-fab",
+    "name": "Extended Floating Action Button",
     "family": "Buttons",
     "maturity": "usable",
-    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h",
-    "specType": "ButtonSpec",
-    "widgetType": "QtMaterialFilledButton",
-    "testTarget": "tst_filledbutton",
-    "galleryRoute": "/buttons/filled",
-    "docsPath": "docs/public-api/buttons.md"
-  },
-  {
-    "id": "button.icon",
-    "name": "Icon Button",
-    "family": "Buttons",
-    "maturity": "usable",
-    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialiconbutton.h",
-    "specType": "IconButtonSpec",
-    "widgetType": "QtMaterialIconButton",
-    "testTarget": "tst_iconbutton",
-    "galleryRoute": "/buttons/icon",
-    "docsPath": "docs/public-api/buttons.md"
-  },
-  {
-    "id": "button.text",
-    "name": "Text Button",
-    "family": "Buttons",
-    "maturity": "usable",
-    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialtextbutton.h",
-    "specType": "ButtonSpec",
-    "widgetType": "QtMaterialTextButton",
-    "testTarget": "tst_textbutton",
-    "galleryRoute": "/buttons/text",
-    "docsPath": "docs/public-api/buttons.md"
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialextendedfab.h",
+    "specType": "FabSpec",
+    "widgetType": "QtMaterialExtendedFab",
+    "testTarget": "tst_extendedfab",
+    "galleryRoute": "/buttons/extended-fab",
+    "docsPath": "docs/public-api/buttons.md",
+    "releaseScope": true,
+    "maturityPolicy": "manual",
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": null,
+      "keyboard": null,
+      "hidpi": null,
+      "rtl": null,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
+      "lastReviewed": null,
+      "gaps": [
+        "Verify icon/text layout, long label behavior, and accessible name.",
+        "Verify keyboard activation and disabled non-activation.",
+        "Validate HiDPI shadow/ripple rendering and RTL icon/text ordering."
+      ],
+      "nextActions": [
+        "Add extended-FAB layout, keyboard, accessibility, HiDPI, and RTL tests."
+      ]
+    }
   },
   {
     "id": "compact.chip",
@@ -75,16 +317,29 @@
     "releaseScope": false
   },
   {
-    "id": "data.divider",
-    "name": "Divider",
-    "family": "Data display",
+    "id": "data.carousel",
+    "name": "Carousel",
+    "family": "Data",
     "maturity": "usable",
-    "publicHeader": "qtmaterial/widgets/data/qtmaterialdivider.h",
-    "specType": "DividerSpec",
-    "widgetType": "QtMaterialDivider",
-    "testTarget": "tst_divider",
-    "galleryRoute": "/data/divider",
-    "docsPath": "docs/public-api/divider-release-readiness.md",
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialcarousel.h",
+    "specType": "DataComponentSpec",
+    "widgetType": "QtMaterialCarousel",
+    "testTarget": "tst_carousel",
+    "galleryRoute": "/data/carousel",
+    "docsPath": "docs/public-api/data-widgets.md",
+    "releaseScope": true
+  },
+  {
+    "id": "data.grid-list",
+    "name": "Grid List",
+    "family": "Data",
+    "maturity": "usable",
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialgridlist.h",
+    "specType": "DataComponentSpec",
+    "widgetType": "QtMaterialGridList",
+    "testTarget": "tst_gridlist",
+    "galleryRoute": "/data/grid-list",
+    "docsPath": "docs/public-api/data-widgets.md",
     "releaseScope": true
   },
   {
@@ -101,16 +356,29 @@
     "releaseScope": true
   },
   {
-    "id": "data.grid-list",
-    "name": "Grid List",
-    "family": "Data",
+    "id": "data.divider",
+    "name": "Divider",
+    "family": "Data display",
     "maturity": "usable",
-    "publicHeader": "qtmaterial/widgets/data/qtmaterialgridlist.h",
-    "specType": "DataComponentSpec",
-    "widgetType": "QtMaterialGridList",
-    "testTarget": "tst_gridlist",
-    "galleryRoute": "/data/grid-list",
-    "docsPath": "docs/public-api/data-widgets.md",
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialdivider.h",
+    "specType": "DividerSpec",
+    "widgetType": "QtMaterialDivider",
+    "testTarget": "tst_divider",
+    "galleryRoute": "/data/divider",
+    "docsPath": "docs/public-api/divider-release-readiness.md",
+    "releaseScope": true
+  },
+  {
+    "id": "input.date.field",
+    "name": "Date Field",
+    "family": "Inputs",
+    "maturity": "usable",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialdatefield.h",
+    "specType": "TextFieldSpec",
+    "widgetType": "QtMaterialDateField",
+    "testTarget": "tst_datefield",
+    "galleryRoute": "/inputs/date-field",
+    "docsPath": "docs/public-api/inputs.md",
     "releaseScope": true
   },
   {
@@ -163,18 +431,6 @@
     "docsPath": "docs/public-api/navigation.md"
   },
   {
-    "id": "progress.linear",
-    "name": "Linear Progress Indicator",
-    "family": "Progress",
-    "maturity": "partial",
-    "publicHeader": "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h",
-    "specType": "ProgressIndicatorSpec",
-    "widgetType": "QtMaterialLinearProgressIndicator",
-    "testTarget": "tst_progressindicators",
-    "galleryRoute": "/progress/linear",
-    "docsPath": "docs/public-api/progress-indicators.md"
-  },
-  {
     "id": "progress.circular",
     "name": "Circular Progress Indicator",
     "family": "Progress",
@@ -186,6 +442,18 @@
     "galleryRoute": "/progress/circular",
     "docsPath": "docs/public-api/progress-indicators.md",
     "releaseScope": true
+  },
+  {
+    "id": "progress.linear",
+    "name": "Linear Progress Indicator",
+    "family": "Progress",
+    "maturity": "partial",
+    "publicHeader": "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h",
+    "specType": "ProgressIndicatorSpec",
+    "widgetType": "QtMaterialLinearProgressIndicator",
+    "testTarget": "tst_progressindicators",
+    "galleryRoute": "/progress/linear",
+    "docsPath": "docs/public-api/progress-indicators.md"
   },
   {
     "id": "selection.checkbox",
@@ -237,6 +505,19 @@
     "docsPath": "docs/public-api/selection.md"
   },
   {
+    "id": "surface.banner",
+    "name": "Banner",
+    "family": "Surfaces",
+    "maturity": "usable",
+    "releaseScope": true,
+    "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialbanner.h",
+    "specType": "BannerSpec",
+    "widgetType": "QtMaterialBanner",
+    "testTarget": "tst_banner",
+    "galleryRoute": "/surfaces/banner",
+    "docsPath": "docs/public-api/banner-release-readiness.md"
+  },
+  {
     "id": "surface.bottom-app-bar",
     "name": "Bottom App Bar",
     "family": "Surfaces",
@@ -247,6 +528,19 @@
     "testTarget": "tst_bottomappbar",
     "galleryRoute": "/surfaces/bottom-app-bar",
     "docsPath": "docs/public-api/appbars-release-readiness.md",
+    "releaseScope": true
+  },
+  {
+    "id": "surface.bottom-sheet",
+    "name": "Bottom Sheet",
+    "family": "Surfaces",
+    "maturity": "usable",
+    "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h",
+    "specType": "BottomSheetSpec",
+    "widgetType": "QtMaterialBottomSheet",
+    "testTarget": "tst_bottomsheet",
+    "galleryRoute": "/surfaces/bottom-sheet",
+    "docsPath": "docs/public-api/bottomsheet-release-readiness.md",
     "releaseScope": true
   },
   {
@@ -274,16 +568,16 @@
     "docsPath": "docs/public-api/surfaces.md"
   },
   {
-    "id": "surface.bottom-sheet",
-    "name": "Bottom Sheet",
+    "id": "surface.navigation-drawer",
+    "name": "Navigation Drawer",
     "family": "Surfaces",
     "maturity": "usable",
-    "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h",
-    "specType": "BottomSheetSpec",
-    "widgetType": "QtMaterialBottomSheet",
-    "testTarget": "tst_bottomsheet",
-    "galleryRoute": "/surfaces/bottom-sheet",
-    "docsPath": "docs/public-api/bottomsheet-release-readiness.md",
+    "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h",
+    "specType": "NavigationDrawerSpec",
+    "widgetType": "QtMaterialNavigationDrawer",
+    "testTarget": "tst_navigationdrawer",
+    "galleryRoute": "/surfaces/navigation-drawer",
+    "docsPath": "docs/public-api/navigationdrawer-release-readiness.md",
     "releaseScope": true
   },
   {
@@ -310,57 +604,5 @@
     "galleryRoute": "/surfaces/top-app-bar",
     "docsPath": "docs/public-api/appbars-release-readiness.md",
     "releaseScope": true
-  },
-  {
-    "id": "input.date.field",
-    "name": "Date Field",
-    "family": "Inputs",
-    "maturity": "usable",
-    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialdatefield.h",
-    "specType": "TextFieldSpec",
-    "widgetType": "QtMaterialDateField",
-    "testTarget": "tst_datefield",
-    "galleryRoute": "/inputs/date-field",
-    "docsPath": "docs/public-api/inputs.md",
-    "releaseScope": true
-  },
-  {
-    "id": "data.carousel",
-    "name": "Carousel",
-    "family": "Data",
-    "maturity": "usable",
-    "publicHeader": "qtmaterial/widgets/data/qtmaterialcarousel.h",
-    "specType": "DataComponentSpec",
-    "widgetType": "QtMaterialCarousel",
-    "testTarget": "tst_carousel",
-    "galleryRoute": "/data/carousel",
-    "docsPath": "docs/public-api/data-widgets.md",
-    "releaseScope": true
-  },
-  {
-    "id": "surface.navigation-drawer",
-    "name": "Navigation Drawer",
-    "family": "Surfaces",
-    "maturity": "usable",
-    "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h",
-    "specType": "NavigationDrawerSpec",
-    "widgetType": "QtMaterialNavigationDrawer",
-    "testTarget": "tst_navigationdrawer",
-    "galleryRoute": "/surfaces/navigation-drawer",
-    "docsPath": "docs/public-api/navigationdrawer-release-readiness.md",
-    "releaseScope": true
-  },
-  {
-    "id": "surface.banner",
-    "name": "Banner",
-    "family": "Surfaces",
-    "maturity": "usable",
-    "releaseScope": true,
-    "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialbanner.h",
-    "specType": "BannerSpec",
-    "widgetType": "QtMaterialBanner",
-    "testTarget": "tst_banner",
-    "galleryRoute": "/surfaces/banner",
-    "docsPath": "docs/public-api/banner-release-readiness.md"
   }
 ]
