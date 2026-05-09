@@ -28,6 +28,7 @@ public:
     void setRequiresAccessibleName(bool required);
     bool hasUsableAccessibleName() const;
     QString effectiveAccessibleName() const;
+    QString accessibilitySummary() const;
 
 protected:
     void paintEvent(QPaintEvent* event) override;

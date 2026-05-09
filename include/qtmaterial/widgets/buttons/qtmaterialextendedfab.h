@@ -1,14 +1,16 @@
 #pragma once
 
 #include <QIcon>
-#include <QSize>
 #include <QString>
 
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 
+class QEvent;
+
 namespace QtMaterial {
 
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialExtendedFab : public QtMaterialFilledButton {
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialExtendedFab : public QtMaterialFilledButton
+{
     Q_OBJECT
 
 public:
@@ -26,10 +28,12 @@ public:
 
 protected:
     ButtonSpec resolveButtonSpec() const override;
+    void contentChangedEvent() override;
+    void changeEvent(QEvent* event) override;
+    void syncAccessibilityState() override;
 
 private:
     void initializeExtendedFab();
-    void syncAccessibilityState();
 };
 
 } // namespace QtMaterial

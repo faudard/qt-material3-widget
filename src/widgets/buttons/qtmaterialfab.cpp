@@ -60,6 +60,9 @@ void QtMaterialFab::initializeFab()
     setText(QString());
     setCheckable(false);
     setFocusPolicy(Qt::StrongFocus);
+    setMaterialComponent(QStringLiteral("button"));
+    setMaterialVariant(QStringLiteral("fab"));
+    setMaterialRole(QStringLiteral("action"));
     syncAccessibilityState();
 }
 
@@ -97,19 +100,26 @@ void QtMaterialFab::setIconAccessibleName(const QString& name)
 
 QString QtMaterialFab::effectiveAccessibleName() const
 {
-    if (!accessibleName().trimmed().isEmpty()) {
-        return accessibleName().trimmed();
+    const QString explicitName = accessibleName().trimmed();
+    if (!explicitName.isEmpty()) {
+        return explicitName;
     }
 
-    if (!d_ptr->m_iconAccessibleName.trimmed().isEmpty()) {
-        return d_ptr->m_iconAccessibleName.trimmed();
+    const QString iconName = d_ptr->m_iconAccessibleName.trimmed();
+    if (!iconName.isEmpty()) {
+        return iconName;
     }
 
-    if (!toolTip().trimmed().isEmpty()) {
-        return toolTip().trimmed();
+    if (!requiresAccessibleName()) {
+        const QString tooltipName = toolTip().trimmed();
+        if (!tooltipName.isEmpty()) {
+            return tooltipName;
+        }
+
+        return QStringLiteral("Floating action button");
     }
 
-    return d_ptr->m_requiresAccessibleName ? QString() : QStringLiteral("Floating action button");
+    return QString();
 }
 
 bool QtMaterialFab::hasUsableAccessibleName() const

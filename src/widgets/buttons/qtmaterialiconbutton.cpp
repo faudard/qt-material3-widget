@@ -188,17 +188,36 @@ QString QtMaterialIconButton::effectiveAccessibleName() const
         return explicitName;
     }
 
-    const QString tooltipName = toolTip().trimmed();
-    if (!tooltipName.isEmpty()) {
-        return tooltipName;
+    if (!requiresAccessibleName()) {
+        const QString textName = QAbstractButton::text().trimmed();
+        if (!textName.isEmpty()) {
+            return textName;
+        }
+
+        const QString tooltipName = toolTip().trimmed();
+        if (!tooltipName.isEmpty()) {
+            return tooltipName;
+        }
+
+        return QStringLiteral("Icon button");
     }
 
-    return QAbstractButton::text().trimmed();
+    return QString();
 }
 
 bool QtMaterialIconButton::hasUsableAccessibleName() const
 {
     return !effectiveAccessibleName().isEmpty();
+}
+
+QString QtMaterialIconButton::accessibilitySummary() const
+{
+    const QString name = effectiveAccessibleName();
+    if (!name.isEmpty()) {
+        return name;
+    }
+
+    return QStringLiteral("Icon button requires an explicit accessible name");
 }
 
 void QtMaterialIconButton::syncAccessibilityState()
@@ -209,14 +228,18 @@ void QtMaterialIconButton::syncAccessibilityState()
 
 void QtMaterialIconButton::syncIconButtonAccessibility()
 {
-    if (!accessibleName().trimmed().isEmpty()) {
+    const QString name = effectiveAccessibleName();
+
+    if (!name.isEmpty()) {
+        if (accessibleName().trimmed().isEmpty() && !requiresAccessibleName()) {
+            QWidget::setAccessibleName(name);
+        }
+        setAccessibleDescription(QStringLiteral("Icon button"));
         return;
     }
 
-    const QString fallback = effectiveAccessibleName();
-    if (!fallback.isEmpty()) {
-        QWidget::setAccessibleName(fallback);
-    }
+    setAccessibleDescription(QStringLiteral(
+        "Icon button requires an explicit accessible name for assistive technologies"));
 }
 
 void QtMaterialIconButton::mousePressEvent(QMouseEvent* event)
