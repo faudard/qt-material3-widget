@@ -250,6 +250,17 @@ void QtMaterialDateField::themeChangedEvent(const QtMaterial::Theme& theme)
     d_ptr->updateTrailingAffordances(*this);
 }
 
+void QtMaterialDateField::notifyDateAcceptableIfChanged()
+{
+    const bool acceptable = isDateAcceptable();
+    if (acceptable == m_lastDateAcceptable) {
+        return;
+    }
+
+    m_lastDateAcceptable = acceptable;
+    emit dateAcceptableChanged(acceptable);
+}
+
 void QtMaterialDateField::handleEditorEditingFinished()
 {
     d_ptr->syncDateFromEditor(*this);

@@ -21,14 +21,14 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `button.elevated` | Elevated Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| `button.extended-fab` | Extended Floating Action Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| `button.fab` | Floating Action Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| `button.filled` | Filled Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| `button.filled-tonal` | Filled Tonal Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| `button.icon` | Icon Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| `button.outlined` | Outlined Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| `button.text` | Text Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| `button.elevated` | Elevated Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.extended-fab` | Extended Floating Action Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.fab` | Floating Action Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.filled` | Filled Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.filled-tonal` | Filled Tonal Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.icon` | Icon Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.outlined` | Outlined Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.text` | Text Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 
 ### Compact controls
 
@@ -128,11 +128,11 @@ The Buttons family can be considered `complete` only when all eight public varia
 
 | Component | Action |
 |---|---|
-| Elevated Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| Extended Floating Action Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| Floating Action Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| Filled Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| Filled Tonal Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| Icon Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| Outlined Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
-| Text Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| Elevated Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Extended Floating Action Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Floating Action Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Filled Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Filled Tonal Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Icon Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Outlined Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Text Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |

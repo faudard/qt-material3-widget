@@ -34,12 +34,24 @@ def load_auditor_module():
     if not AUDITOR.exists():
         raise SyncError("scripts/audit_buttons_maturity_axes.py is missing; run apply_buttons_axis_audit.py first")
 
-    spec = importlib.util.spec_from_file_location("audit_buttons_maturity_axes", AUDITOR)
+    module_name = "audit_buttons_maturity_axes"
+    spec = importlib.util.spec_from_file_location(module_name, AUDITOR)
     if spec is None or spec.loader is None:
         raise SyncError("could not load audit_buttons_maturity_axes.py")
 
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+
+    previous = sys.modules.get(module_name)
+    sys.modules[module_name] = module
+    try:
+        spec.loader.exec_module(module)
+    except Exception:
+        if previous is None:
+            sys.modules.pop(module_name, None)
+        else:
+            sys.modules[module_name] = previous
+        raise
+
     return module
 
 

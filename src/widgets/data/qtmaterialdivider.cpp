@@ -69,6 +69,9 @@ QtMaterialDivider::QtMaterialDivider(QWidget *parent)
     d_ptr = std::make_unique<QtMaterialDividerPrivate>();
 
     setAttribute(Qt::WA_TransparentForMouseEvents);
+    setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_TranslucentBackground);
+    setAutoFillBackground(false);
     setFocusPolicy(Qt::NoFocus);
     setOrientation(Qt::Horizontal);
     syncAccessibility(this, d_ptr.get());
@@ -80,6 +83,9 @@ QtMaterialDivider::QtMaterialDivider(Qt::Orientation orientation, QWidget *paren
     d_ptr = std::make_unique<QtMaterialDividerPrivate>();
 
     setAttribute(Qt::WA_TransparentForMouseEvents);
+    setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_TranslucentBackground);
+    setAutoFillBackground(false);
     setFocusPolicy(Qt::NoFocus);
     setOrientation(orientation);
     syncAccessibility(this, d_ptr.get());

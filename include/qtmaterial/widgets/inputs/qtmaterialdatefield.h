@@ -75,7 +75,9 @@ private slots:
     void handleClearButtonClicked();
 
 private:
+    void notifyDateAcceptableIfChanged();
     friend class QtMaterialDateFieldPrivate;
     std::unique_ptr<QtMaterialDateFieldPrivate> d_ptr;
 
+    bool m_lastDateAcceptable = true;
 };

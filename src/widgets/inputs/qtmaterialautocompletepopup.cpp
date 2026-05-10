@@ -128,17 +128,21 @@ QString QtMaterialAutocompletePopup::currentCompletion() const
 
 void QtMaterialAutocompletePopup::setPopupVisible(bool visible)
 {
-    if (d_ptr->m_popupVisible == visible) {
+    if (d_ptr->m_popupVisible == visible && isVisible() == visible) {
         return;
     }
+
     d_ptr->m_popupVisible = visible;
-    if (visible && d_ptr->m_filterModel->rowCount() > 0) {
+
+    if (visible) {
         updatePopupGeometry();
         show();
         raise();
+        activateWindow();
     } else {
         hide();
     }
+
     emit popupVisibilityChanged(d_ptr->m_popupVisible && isVisible());
 }
 

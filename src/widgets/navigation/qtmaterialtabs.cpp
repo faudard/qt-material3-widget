@@ -1191,13 +1191,20 @@ void QtMaterialTabs::syncCurrentIndexFromController(int index)
 QString QtMaterialTabs::normalizeRoutePath(const QString& routePath)
 {
     QString value = routePath.trimmed();
+
     while (value.startsWith(QLatin1Char('/'))) {
         value.remove(0, 1);
     }
+
     while (value.endsWith(QLatin1Char('/'))) {
         value.chop(1);
     }
-    return value;
+
+    if (value.isEmpty()) {
+        return QString();
+    }
+
+    return QLatin1Char('/') + value;
 }
 
 QString QtMaterialTabs::routePathFromUrl(const QUrl& url)
@@ -1205,16 +1212,19 @@ QString QtMaterialTabs::routePathFromUrl(const QUrl& url)
     if (!url.isValid()) {
         return QString();
     }
+
     QString path;
     if (!url.host().isEmpty()) {
         path += url.host();
     }
+
     if (!url.path().isEmpty()) {
         if (!path.isEmpty() && !url.path().startsWith(QLatin1Char('/'))) {
             path += QLatin1Char('/');
         }
         path += url.path();
     }
+
     return normalizeRoutePath(path);
 }
 

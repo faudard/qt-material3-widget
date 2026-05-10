@@ -574,33 +574,50 @@ void QtMaterialOutlinedTextField::syncCharacterCounterWidget()
         return;
     }
 
-    if (!m_characterCounterLabel) {
-        m_characterCounterLabel = new QLabel(this);
-        m_characterCounterLabel->setObjectName(QStringLiteral("qtmaterial_textfield_characterCounter"));
-        m_characterCounterLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-        m_characterCounterLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        m_characterCounterLabel->setAccessibleName(QStringLiteral("Character count"));
-    }
-
     ensureSpecResolved();
     ensureLayoutResolved();
 
+    const bool shouldShow =
+        isVisible() &&
+        m_cachedCharacterCounterRect.isValid() &&
+        !m_cachedCharacterCounterRect.isEmpty();
+
+    if (!shouldShow) {
+        if (m_characterCounterLabel) {
+            m_characterCounterLabel->hide();
+        }
+        return;
+    }
+
+    QLabel* counterLabel = m_characterCounterLabel;
+    if (!counterLabel) {
+        counterLabel = new QLabel(this);
+        m_characterCounterLabel = counterLabel;
+        counterLabel->setObjectName(QStringLiteral("qtmaterial_textfield_characterCounter"));
+        counterLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        counterLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        counterLabel->setAccessibleName(QStringLiteral("Character count"));
+        counterLabel->hide();
+    }
+
     QFont counterFont = font();
     if (counterFont.pointSizeF() > 0.0) {
-        counterFont.setPointSizeF(qMax<qreal>(1.0, counterFont.pointSizeF() * 0.85));
+        counterFont.setPointSizeF(qMax(1.0, counterFont.pointSizeF() * 0.85));
     }
-    m_characterCounterLabel->setFont(counterFont);
-    m_characterCounterLabel->setText(effectiveCharacterCounterText());
-    m_characterCounterLabel->setAccessibleDescription(m_characterCounterLabel->text());
 
-    QPalette palette = m_characterCounterLabel->palette();
-    palette.setColor(QPalette::WindowText,
-                     isEnabled() ? spec().supportingTextColor : spec().disabledLabelColor);
-    m_characterCounterLabel->setPalette(palette);
+    counterLabel->setFont(counterFont);
+    counterLabel->setText(effectiveCharacterCounterText());
+    counterLabel->setAccessibleDescription(counterLabel->text());
 
-    m_characterCounterLabel->setGeometry(m_cachedCharacterCounterRect);
-    m_characterCounterLabel->setVisible(isVisible() && m_characterCounterEnabled && !m_cachedCharacterCounterRect.isEmpty());
-    m_characterCounterLabel->raise();
+    QPalette palette = counterLabel->palette();
+    palette.setColor(
+        QPalette::WindowText,
+        isEnabled() ? spec().supportingTextColor : spec().disabledLabelColor);
+    counterLabel->setPalette(palette);
+
+    counterLabel->setGeometry(m_cachedCharacterCounterRect);
+    counterLabel->show();
+    counterLabel->raise();
 }
 
 QtMaterialOutlinedTextField::ValidationFeedbackMode
@@ -693,6 +710,7 @@ void QtMaterialOutlinedTextField::resetValidationFeedback()
     d_ptr->m_validationCommitted = false;
     if (d_ptr->m_validationFeedbackMode != ValidationFeedbackMode::ManualOnly) {
         d_ptr->m_automaticValidationError = false;
+        m_automaticValidationErrorKind = AutomaticValidationErrorKind::None;
     }
 
     resetValidationErrorVisibility();
@@ -1100,10 +1118,49 @@ void QtMaterialOutlinedTextField::setInputMaskErrorText(const QString& text)
 
 bool QtMaterialOutlinedTextField::isRequiredValidationError() const
 {
-    return m_required
-        && d_ptr->m_lineEdit
-        && isEnabled()
-        && d_ptr->m_lineEdit->text().trimmed().isEmpty();
+    if (!m_required || !d_ptr->m_lineEdit || !isEnabled()) {
+        return false;
+    }
+
+    const QString value = d_ptr->m_lineEdit->text();
+    switch (m_requiredValidationMode) {
+    case RequiredValidationMode::NonEmpty:
+        return value.isEmpty();
+    case RequiredValidationMode::NonBlank:
+        return value.trimmed().isEmpty();
+    }
+
+    return value.trimmed().isEmpty();
+}
+
+QtMaterialOutlinedTextField::AutomaticValidationErrorKind
+QtMaterialOutlinedTextField::currentValidationErrorKind() const
+{
+    if (!d_ptr->m_lineEdit || !isEnabled()) {
+        return AutomaticValidationErrorKind::None;
+    }
+
+    if (isRequiredValidationError()) {
+        return AutomaticValidationErrorKind::Required;
+    }
+
+    if (d_ptr->m_lineEdit->text().isEmpty()) {
+        return AutomaticValidationErrorKind::None;
+    }
+
+    if (d_ptr->m_lineEdit->hasAcceptableInput()) {
+        return AutomaticValidationErrorKind::None;
+    }
+
+    if (!d_ptr->m_lineEdit->inputMask().isEmpty()) {
+        return AutomaticValidationErrorKind::InputMask;
+    }
+
+    if (d_ptr->m_lineEdit->validator()) {
+        return AutomaticValidationErrorKind::Validator;
+    }
+
+    return AutomaticValidationErrorKind::Validator;
 }
 
 QString QtMaterialOutlinedTextField::effectiveErrorText() const
@@ -1112,22 +1169,24 @@ QString QtMaterialOutlinedTextField::effectiveErrorText() const
         return errorText();
     }
 
-    switch (m_automaticValidationErrorKind) {
-    case AutomaticValidationErrorKind::Required:
-        return m_requiredText.isEmpty() ? tr("Required") : m_requiredText;
-    case AutomaticValidationErrorKind::InputMask:
-        if (!m_inputMaskErrorText.isEmpty()) {
-            return m_inputMaskErrorText;
+    if (d_ptr->m_automaticValidationError) {
+        switch (m_automaticValidationErrorKind) {
+        case AutomaticValidationErrorKind::Required:
+            return m_requiredText.isEmpty() ? tr("Required") : m_requiredText;
+        case AutomaticValidationErrorKind::InputMask:
+            if (!m_inputMaskErrorText.isEmpty()) {
+                return m_inputMaskErrorText;
+            }
+            break;
+        case AutomaticValidationErrorKind::Validator:
+            if (!m_validatorErrorText.isEmpty()) {
+                return m_validatorErrorText;
+            }
+            break;
+        case AutomaticValidationErrorKind::None:
+        default:
+            break;
         }
-        break;
-    case AutomaticValidationErrorKind::Validator:
-        if (!m_validatorErrorText.isEmpty()) {
-            return m_validatorErrorText;
-        }
-        break;
-    case AutomaticValidationErrorKind::None:
-    default:
-        break;
     }
 
     if (hasErrorState() && !errorText().isEmpty()) {
@@ -1156,26 +1215,55 @@ bool QtMaterialOutlinedTextField::currentValidationError() const
 
 void QtMaterialOutlinedTextField::refreshValidationState(bool commit)
 {
+    const auto resolveAutomaticValidationErrorKind = [this]() -> AutomaticValidationErrorKind {
+        if (!d_ptr->m_lineEdit || !isEnabled()) {
+            return AutomaticValidationErrorKind::None;
+        }
+
+        if (isRequiredValidationError()) {
+            return AutomaticValidationErrorKind::Required;
+        }
+
+        if (d_ptr->m_lineEdit->text().isEmpty()) {
+            return AutomaticValidationErrorKind::None;
+        }
+
+        if (d_ptr->m_lineEdit->hasAcceptableInput()) {
+            return AutomaticValidationErrorKind::None;
+        }
+
+        if (!d_ptr->m_lineEdit->inputMask().isEmpty()) {
+            return AutomaticValidationErrorKind::InputMask;
+        }
+
+        if (d_ptr->m_lineEdit->validator()) {
+            return AutomaticValidationErrorKind::Validator;
+        }
+
+        return AutomaticValidationErrorKind::Validator;
+    };
+
     switch (d_ptr->m_validationFeedbackMode) {
     case ValidationFeedbackMode::ManualOnly:
         d_ptr->m_validationCommitted = false;
         d_ptr->m_automaticValidationError = false;
+        m_automaticValidationErrorKind = AutomaticValidationErrorKind::None;
         break;
-
     case ValidationFeedbackMode::ValidatorOnEdit:
         d_ptr->m_validationCommitted = true;
-        d_ptr->m_automaticValidationError = currentValidationError();
+        m_automaticValidationErrorKind = resolveAutomaticValidationErrorKind();
+        d_ptr->m_automaticValidationError = m_automaticValidationErrorKind != AutomaticValidationErrorKind::None;
         break;
-
     case ValidationFeedbackMode::ValidatorOnCommit:
         if (commit) {
             d_ptr->m_validationCommitted = true;
         }
-
         if (d_ptr->m_validationCommitted) {
-            d_ptr->m_automaticValidationError = currentValidationError();
+            m_automaticValidationErrorKind = resolveAutomaticValidationErrorKind();
+            d_ptr->m_automaticValidationError = m_automaticValidationErrorKind != AutomaticValidationErrorKind::None;
         } else {
             d_ptr->m_automaticValidationError = false;
+            m_automaticValidationErrorKind = AutomaticValidationErrorKind::None;
         }
         break;
     }

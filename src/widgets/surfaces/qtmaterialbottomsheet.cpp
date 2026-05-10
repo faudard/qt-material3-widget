@@ -17,6 +17,7 @@
 #include "qtmaterial/specs/qtmaterialbottomsheetspec.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include <memory>
+#include <QVariant>
 
 namespace QtMaterial {
 
@@ -564,15 +565,26 @@ void QtMaterialBottomSheet::keyPressEvent(QKeyEvent *event)
 
 void QtMaterialBottomSheet::mousePressEvent(QMouseEvent *event)
 {
-    if (d_ptr->dragToDismissEnabled && event->button() == Qt::LeftButton) {
+    if (d_ptr->dragToDismissEnabled && event->button() == Qt::LeftButton && isOpen()) {
         ensureGeometryResolved();
-        if (d_ptr->cachedVisualRect.contains(event->pos())) {
+
+        const QRect targetVisualRect(
+            0,
+            qMax(0, height() - d_ptr->effectiveSheetHeight()),
+            width(),
+            qMin(d_ptr->effectiveSheetHeight(), height()));
+        const bool pressInsideCurrentSheet = d_ptr->cachedVisualRect.contains(event->pos());
+        const bool pressInsideTargetSheet = targetVisualRect.contains(event->pos());
+
+        if (pressInsideCurrentSheet || pressInsideTargetSheet) {
             d_ptr->dragging = true;
             d_ptr->dragStartGlobalPos = globalMousePosition(event);
+            setProperty("_qtm3_drag_start_local_y", event->pos().y());
             event->accept();
             return;
         }
     }
+
     QtMaterialOverlaySurface::mousePressEvent(event);
 }
 
@@ -588,20 +600,27 @@ void QtMaterialBottomSheet::mouseMoveEvent(QMouseEvent *event)
 void QtMaterialBottomSheet::mouseReleaseEvent(QMouseEvent *event)
 {
     if (d_ptr->dragging) {
-        const int deltaY = globalMousePosition(event).y() - d_ptr->dragStartGlobalPos.y();
+        const int globalDeltaY = globalMousePosition(event).y() - d_ptr->dragStartGlobalPos.y();
+        const int dragStartLocalY = property("_qtm3_drag_start_local_y").toInt();
+        const int localDeltaY = event->pos().y() - dragStartLocalY;
+        const int deltaY = qAbs(globalDeltaY) >= qAbs(localDeltaY) ? globalDeltaY : localDeltaY;
         d_ptr->dragging = false;
-        if (deltaY > qMax(48, d_ptr->effectiveSheetHeight() / 4)) {
+        setProperty("_qtm3_drag_start_local_y", QVariant());
+
+        const int dragDownThreshold = qBound(32, d_ptr->effectiveSheetHeight() / 5, 96);
+        if (deltaY >= dragDownThreshold) {
             if (d_ptr->expanded && d_ptr->collapsedHeight < d_ptr->expandedHeight) {
                 collapse();
             } else {
                 close();
             }
-        } else if (deltaY < -32) {
+        } else if (deltaY <= -32) {
             expand();
         }
         event->accept();
         return;
     }
+
     QtMaterialOverlaySurface::mouseReleaseEvent(event);
 }
 
@@ -793,12 +812,23 @@ void QtMaterialBottomSheet::focusFirstChild()
 
 void QtMaterialBottomSheet::syncAccessibility()
 {
-    const QString summary = accessibilitySummary();
-    if (accessibleName().trimmed().isEmpty()) {
-        setAccessibleName(d_ptr->titleText.trimmed().isEmpty() ? tr("Bottom sheet") : d_ptr->titleText.trimmed());
-    }
-    setAccessibleDescription(summary);
+    constexpr const char* autoAccessibleNameProperty = "_qtm3_auto_accessible_name";
 
+    const QString summary = accessibilitySummary();
+    const QString autoName = d_ptr->titleText.trimmed().isEmpty() ? tr("Bottom sheet") : d_ptr->titleText.trimmed();
+    const QString currentName = accessibleName().trimmed();
+    const QString previousAutoName = property(autoAccessibleNameProperty).toString().trimmed();
+    const bool hasLegacyFallbackAutoName = previousAutoName.isEmpty() && currentName == tr("Bottom sheet");
+    const bool currentNameIsAuto = currentName.isEmpty()
+        || hasLegacyFallbackAutoName
+        || (!previousAutoName.isEmpty() && currentName == previousAutoName);
+
+    if (currentNameIsAuto) {
+        setAccessibleName(autoName);
+        setProperty(autoAccessibleNameProperty, autoName);
+    }
+
+    setAccessibleDescription(summary);
     if (d_ptr->lastAccessibilitySummary != summary) {
         d_ptr->lastAccessibilitySummary = summary;
         emit accessibilitySummaryChanged(summary);

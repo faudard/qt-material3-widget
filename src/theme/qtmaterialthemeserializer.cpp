@@ -11,9 +11,48 @@
 
 #include <array>
 #include <utility>
+#include "qtmaterial/theme/qtmaterialcolorbackend.h"
 
 namespace QtMaterial {
 namespace {
+
+ColorBackendPolicy colorBackendPolicyFromString(const QString& value, bool* ok)
+{
+    const QString normalized = value.trimmed();
+
+    if (normalized == QStringLiteral("Auto")) {
+        if (ok) {
+            *ok = true;
+        }
+        return ColorBackendPolicy::Auto;
+    }
+
+    if (normalized == QStringLiteral("PreferMaterialColorUtilities")) {
+        if (ok) {
+            *ok = true;
+        }
+        return ColorBackendPolicy::PreferMaterialColorUtilities;
+    }
+
+    if (normalized == QStringLiteral("ForceMaterialColorUtilities")) {
+        if (ok) {
+            *ok = true;
+        }
+        return ColorBackendPolicy::ForceMaterialColorUtilities;
+    }
+
+    if (normalized == QStringLiteral("ForceFallback")) {
+        if (ok) {
+            *ok = true;
+        }
+        return ColorBackendPolicy::ForceFallback;
+    }
+
+    if (ok) {
+        *ok = false;
+    }
+    return ColorBackendPolicy::Auto;
+}
 
 template <typename Enum>
 using EnumNamePair = std::pair<Enum, const char*>;
@@ -1242,6 +1281,17 @@ Theme parseV2Theme(const QJsonObject& object, ThemeReadMode mode, bool* ok, QStr
         return Theme();
     }
 
+
+    if (source.contains(QStringLiteral("colorBackendPolicy"))) {
+        bool policyOk = false;
+        options.backendPolicy = colorBackendPolicyFromString(
+            source.value(QStringLiteral("colorBackendPolicy")).toString(),
+            &policyOk);
+        if (!policyOk) {
+            fail(ok, errorString, QStringLiteral("Invalid colorBackendPolicy in source."));
+            return Theme();
+        }
+    }
     Theme theme(options);
     theme.setMode(options.mode);
     theme.setContrastMode(options.contrast);
@@ -1385,6 +1435,26 @@ Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, bool* ok, QStri
 
 Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, ThemeReadMode mode, bool* ok, QString* errorString)
 {
+    const int inputFormatVersion = object.value(QStringLiteral("formatVersion")).toInt(kCurrentFormatVersion);
+    if (inputFormatVersion == 1) {
+        static const QSet<QString> allowedV1RootKeys = {
+            QStringLiteral("formatVersion"),
+            QStringLiteral("options"),
+            QStringLiteral("colorScheme"),
+        };
+
+        for (auto it = object.constBegin(); it != object.constEnd(); ++it) {
+            if (!allowedV1RootKeys.contains(it.key())) {
+                fail(ok, errorString, QStringLiteral("Unknown key '%1' in root.").arg(it.key()));
+                return Theme();
+            }
+        }
+
+        QJsonObject upgraded = object;
+        upgraded.insert(QStringLiteral("formatVersion"), kCurrentFormatVersion);
+        return fromJsonObject(upgraded, ThemeReadMode::Strict, ok, errorString);
+    }
+
     if (object.isEmpty()) {
         fail(ok, errorString, QStringLiteral("Theme JSON object is empty."));
         return Theme();

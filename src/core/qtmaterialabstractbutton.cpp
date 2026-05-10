@@ -349,7 +349,9 @@ void QtMaterialAbstractButton::changeEvent(QEvent* event)
         break;
 
     case QEvent::ToolTipChange:
+        contentChangedEvent();
         syncAccessibilityState();
+        update();
         break;
 
     default:
