@@ -1441,6 +1441,7 @@ Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, ThemeReadMode m
             QStringLiteral("formatVersion"),
             QStringLiteral("options"),
             QStringLiteral("colorScheme"),
+            QStringLiteral("metadata"),
         };
 
         for (auto it = object.constBegin(); it != object.constEnd(); ++it) {

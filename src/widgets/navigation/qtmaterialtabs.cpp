@@ -1001,12 +1001,14 @@ void QtMaterialTabs::tabRemoved(int index)
 void QtMaterialTabs::onCurrentTabChanged(int index)
 {
     ensureTabLoaded(index);
+
     syncControllersFromCurrentIndex(index);
+    syncNavigationModelSelectionFromCurrentTab();
+
     if (const TabDescriptor* d = descriptor(index)) {
         emit currentRouteChanged(d->route);
     }
 }
-
 QtMaterialTabs::TabDescriptor* QtMaterialTabs::descriptor(int index)
 {
     if (index < 0 || index >= d_ptr->descriptors.size()) {
@@ -1258,6 +1260,7 @@ void QtMaterialTabs::setNavigationModel(QtMaterialNavigationModel* model) {
             navigateTo(routePath);
             d_ptr->syncingNavigationModel = false;
         });
+
         connect(d_ptr->navigationModel, &QtMaterialNavigationModel::selectedIdChanged, this, [this](const QString& id) {
             if (d_ptr->syncingNavigationModel || id.isEmpty()) {
                 return;
@@ -1309,26 +1312,29 @@ void QtMaterialTabs::syncNavigationModelFromTabs() {
     d_ptr->syncingNavigationModel = false;
 }
 
-void QtMaterialTabs::syncNavigationModelSelectionFromCurrentTab() {
+void QtMaterialTabs::syncNavigationModelSelectionFromCurrentTab()
+{
     if (!d_ptr->navigationModel || d_ptr->syncingNavigationModel) {
         return;
     }
 
-    const int index = currentIndex();
-    if (index < 0) {
+    const TabDescriptor* d = descriptor(currentIndex());
+    if (!d) {
         return;
     }
 
     d_ptr->syncingNavigationModel = true;
-    const QString routePath = route(index).toString();
-    if (!routePath.isEmpty()) {
-        d_ptr->navigationModel->setSelectedRoute(routePath);
-    } else {
-        const QString id = tabId(index);
-        if (!id.isEmpty()) {
-            d_ptr->navigationModel->setSelectedId(id);
-        }
+
+    bool updated = false;
+
+    if (!d->route.path().isEmpty()) {
+        updated = d_ptr->navigationModel->setSelectedRoute(d->route.path());
     }
+
+    if (!updated && !d->id.isEmpty()) {
+        updated = d_ptr->navigationModel->setSelectedId(d->id);
+    }
+
     d_ptr->syncingNavigationModel = false;
 }
 

@@ -3,6 +3,7 @@
 #include <QEvent>
 #include <QFontMetrics>
 #include <QLabel>
+#include <QTimer>
 #include <QLineEdit>
 #include <QPainter>
 #include <QPainterPath>
@@ -27,12 +28,56 @@ constexpr int kMinimumAccessoryTextWidth = 24;
 } // namespace
 
 namespace QtMaterial {
+
+namespace {
+
+QChar qtm3InputMaskBlankCharacter(const QString& mask)
+{
+    const int separator = mask.lastIndexOf(QLatin1Char(';'));
+    if (separator >= 0 && separator + 1 < mask.size()) {
+        return mask.at(separator + 1);
+    }
+
+    return QLatin1Char(' ');
+}
+
+bool qtm3InputMaskHasUserInput(const QLineEdit* lineEdit)
+{
+    return lineEdit && !lineEdit->text().isEmpty();
+}
+
+bool qtm3InputMaskIsIncomplete(const QLineEdit* lineEdit)
+{
+    if (!lineEdit || lineEdit->inputMask().isEmpty()) {
+        return false;
+    }
+
+    if (!qtm3InputMaskHasUserInput(lineEdit)) {
+        return false;
+    }
+
+    if (!lineEdit->hasAcceptableInput()) {
+        return true;
+    }
+
+    const QChar blank = qtm3InputMaskBlankCharacter(lineEdit->inputMask());
+    return !blank.isNull() && lineEdit->displayText().contains(blank);
+}
+
+} // namespace
+
 struct QtMaterialOutlinedTextFieldPrivate {
 
     explicit QtMaterialOutlinedTextFieldPrivate(QtMaterialOutlinedTextField* q)
         : m_lineEdit(new QLineEdit(q))
+        , m_prefixLabel(new QLabel(q))
+        , m_suffixLabel(new QLabel(q))
+        , m_leadingIconLabel(new QLabel(q))
+        , m_trailingIconLabel(new QLabel(q))
+        , m_endActionButton(new QToolButton(q))
         , m_transition(new QtMaterialTransitionController(q))
-    {}
+    {
+    }
 
     mutable bool m_specDirty = true;
     mutable bool m_layoutDirty = true;
@@ -209,7 +254,13 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
     syncAccessoryWidgets();
 }
 
-QtMaterialOutlinedTextField::~QtMaterialOutlinedTextField() = default;
+QtMaterialOutlinedTextField::~QtMaterialOutlinedTextField()
+{
+    if (d_ptr && d_ptr->m_lineEdit) {
+        d_ptr->m_lineEdit->removeEventFilter(this);
+        d_ptr->m_lineEdit->disconnect(this);
+    }
+}
 
 QString QtMaterialOutlinedTextField::text() const
 {
@@ -218,11 +269,23 @@ QString QtMaterialOutlinedTextField::text() const
 
 void QtMaterialOutlinedTextField::setText(const QString& text)
 {
-    if (!d_ptr->m_lineEdit || d_ptr->m_lineEdit->text() == text) {
+    if (!d_ptr->m_lineEdit) {
+        return;
+    }
+
+    const bool sameText = d_ptr->m_lineEdit->text() == text;
+    const bool wasModified = d_ptr->m_lineEdit->isModified();
+
+    if (sameText && !wasModified) {
         return;
     }
 
     d_ptr->m_lineEdit->setText(text);
+
+    // QLineEdit::setText() resets QLineEdit::modified to false.
+    // Keep the wrapper's cached modified state and signal contract in sync.
+    updateModifiedStateFromLineEdit();
+
     syncCharacterCounterWidget();
 
     if (d_ptr->m_validationFeedbackMode == ValidationFeedbackMode::ValidatorOnEdit
@@ -232,6 +295,7 @@ void QtMaterialOutlinedTextField::setText(const QString& text)
     }
 
     syncAccessibilityState();
+
     invalidateLayoutCache();
     syncLineEditGeometry();
     updateGeometry();
@@ -541,8 +605,26 @@ void QtMaterialOutlinedTextField::setCharacterCounterEnabled(bool enabled)
     }
 
     m_characterCounterEnabled = enabled;
+
     invalidateLayoutCache();
     syncLineEditGeometry();
+    syncCharacterCounterWidget();
+
+    if (enabled) {
+        QTimer::singleShot(0, this, [this]() {
+            if (!m_characterCounterEnabled) {
+                syncCharacterCounterWidget();
+                return;
+            }
+
+            invalidateLayoutCache();
+            syncLineEditGeometry();
+            syncCharacterCounterWidget();
+            updateGeometry();
+            update();
+        });
+    }
+
     syncAccessibilityState();
     updateGeometry();
     update();
@@ -574,31 +656,21 @@ void QtMaterialOutlinedTextField::syncCharacterCounterWidget()
         return;
     }
 
-    ensureSpecResolved();
-    ensureLayoutResolved();
-
-    const bool shouldShow =
-        isVisible() &&
-        m_cachedCharacterCounterRect.isValid() &&
-        !m_cachedCharacterCounterRect.isEmpty();
-
-    if (!shouldShow) {
-        if (m_characterCounterLabel) {
-            m_characterCounterLabel->hide();
-        }
-        return;
-    }
-
     QLabel* counterLabel = m_characterCounterLabel;
     if (!counterLabel) {
         counterLabel = new QLabel(this);
         m_characterCounterLabel = counterLabel;
         counterLabel->setObjectName(QStringLiteral("qtmaterial_textfield_characterCounter"));
         counterLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        counterLabel->setAttribute(Qt::WA_NoSystemBackground, true);
+        counterLabel->setAutoFillBackground(false);
         counterLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
         counterLabel->setAccessibleName(QStringLiteral("Character count"));
         counterLabel->hide();
     }
+
+    ensureSpecResolved();
+    ensureLayoutResolved();
 
     QFont counterFont = font();
     if (counterFont.pointSizeF() > 0.0) {
@@ -614,6 +686,16 @@ void QtMaterialOutlinedTextField::syncCharacterCounterWidget()
         QPalette::WindowText,
         isEnabled() ? spec().supportingTextColor : spec().disabledLabelColor);
     counterLabel->setPalette(palette);
+
+    const bool shouldShow =
+        isVisible() &&
+        m_cachedCharacterCounterRect.isValid() &&
+        !m_cachedCharacterCounterRect.isEmpty();
+
+    if (!shouldShow) {
+        counterLabel->hide();
+        return;
+    }
 
     counterLabel->setGeometry(m_cachedCharacterCounterRect);
     counterLabel->show();
@@ -1144,16 +1226,18 @@ QtMaterialOutlinedTextField::currentValidationErrorKind() const
         return AutomaticValidationErrorKind::Required;
     }
 
+    if (!d_ptr->m_lineEdit->inputMask().isEmpty()) {
+        return qtm3InputMaskIsIncomplete(d_ptr->m_lineEdit)
+            ? AutomaticValidationErrorKind::InputMask
+            : AutomaticValidationErrorKind::None;
+    }
+
     if (d_ptr->m_lineEdit->text().isEmpty()) {
         return AutomaticValidationErrorKind::None;
     }
 
     if (d_ptr->m_lineEdit->hasAcceptableInput()) {
         return AutomaticValidationErrorKind::None;
-    }
-
-    if (!d_ptr->m_lineEdit->inputMask().isEmpty()) {
-        return AutomaticValidationErrorKind::InputMask;
     }
 
     if (d_ptr->m_lineEdit->validator()) {
