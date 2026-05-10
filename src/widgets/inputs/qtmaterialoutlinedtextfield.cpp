@@ -41,9 +41,130 @@ QChar qtm3InputMaskBlankCharacter(const QString& mask)
     return QLatin1Char(' ');
 }
 
+QString qtm3InputMaskBody(const QString& mask)
+{
+    const int separator = mask.lastIndexOf(QLatin1Char(';'));
+    return separator >= 0 ? mask.left(separator) : mask;
+}
+
+bool qtm3IsInputMaskSlot(const QChar ch)
+{
+    switch (ch.toLatin1()) {
+    case 'A':
+    case 'a':
+    case 'N':
+    case 'n':
+    case 'X':
+    case 'x':
+    case '9':
+    case '0':
+    case 'D':
+    case 'd':
+    case '#':
+    case 'H':
+    case 'h':
+    case 'B':
+    case 'b':
+        return true;
+    default:
+        return false;
+    }
+}
+
 bool qtm3InputMaskHasUserInput(const QLineEdit* lineEdit)
 {
-    return lineEdit && !lineEdit->text().isEmpty();
+    if (!lineEdit || lineEdit->inputMask().isEmpty()) {
+        return false;
+    }
+
+    if (!lineEdit->text().isEmpty()) {
+        return true;
+    }
+
+    const QString mask = qtm3InputMaskBody(lineEdit->inputMask());
+    const QString display = lineEdit->displayText();
+    const QChar blank = qtm3InputMaskBlankCharacter(lineEdit->inputMask());
+
+    int displayIndex = 0;
+    bool escaped = false;
+
+    for (int i = 0; i < mask.size() && displayIndex < display.size(); ++i) {
+        const QChar maskChar = mask.at(i);
+
+        if (escaped) {
+            ++displayIndex;
+            escaped = false;
+            continue;
+        }
+
+        if (maskChar == QLatin1Char('\\')) {
+            escaped = true;
+            continue;
+        }
+
+        if (maskChar == QLatin1Char('<')
+            || maskChar == QLatin1Char('>')
+            || maskChar == QLatin1Char('!')) {
+            continue;
+        }
+
+        if (qtm3IsInputMaskSlot(maskChar)) {
+            const QChar displayChar = display.at(displayIndex);
+            if (!displayChar.isSpace() && displayChar != blank) {
+                return true;
+            }
+        }
+
+        ++displayIndex;
+    }
+
+    return false;
+}
+
+bool qtm3InputMaskHasBlankSlot(const QLineEdit* lineEdit)
+{
+    if (!lineEdit || lineEdit->inputMask().isEmpty()) {
+        return false;
+    }
+
+    const QString mask = qtm3InputMaskBody(lineEdit->inputMask());
+    const QString display = lineEdit->displayText();
+    const QChar blank = qtm3InputMaskBlankCharacter(lineEdit->inputMask());
+
+    int displayIndex = 0;
+    bool escaped = false;
+
+    for (int i = 0; i < mask.size() && displayIndex < display.size(); ++i) {
+        const QChar maskChar = mask.at(i);
+
+        if (escaped) {
+            ++displayIndex;
+            escaped = false;
+            continue;
+        }
+
+        if (maskChar == QLatin1Char('\\')) {
+            escaped = true;
+            continue;
+        }
+
+        if (maskChar == QLatin1Char('<')
+            || maskChar == QLatin1Char('>')
+            || maskChar == QLatin1Char('!')) {
+            continue;
+        }
+
+        if (qtm3IsInputMaskSlot(maskChar)) {
+            const QChar displayChar = display.at(displayIndex);
+            if (displayChar == blank || displayChar.isSpace()) {
+                return true;
+            }
+        }
+
+        ++displayIndex;
+    }
+
+    return false;
 }
 
 bool qtm3InputMaskIsIncomplete(const QLineEdit* lineEdit)
@@ -56,15 +177,11 @@ bool qtm3InputMaskIsIncomplete(const QLineEdit* lineEdit)
         return false;
     }
 
-    if (!lineEdit->hasAcceptableInput()) {
-        return true;
-    }
-
-    const QChar blank = qtm3InputMaskBlankCharacter(lineEdit->inputMask());
-    return !blank.isNull() && lineEdit->displayText().contains(blank);
+    return !lineEdit->hasAcceptableInput() || qtm3InputMaskHasBlankSlot(lineEdit);
 }
 
 } // namespace
+
 
 struct QtMaterialOutlinedTextFieldPrivate {
 
@@ -212,6 +329,8 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
 
     if (d_ptr->m_lineEdit) {
         d_ptr->m_lineEdit->setFrame(false);
+
+        setFocusProxy(d_ptr->m_lineEdit);
         d_ptr->m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
         d_ptr->m_lineEdit->setClearButtonEnabled(false);
         d_ptr->m_lineEdit->setEchoMode(d_ptr->m_configuredEchoMode);
@@ -1205,6 +1324,7 @@ bool QtMaterialOutlinedTextField::isRequiredValidationError() const
     }
 
     const QString value = d_ptr->m_lineEdit->text();
+
     switch (m_requiredValidationMode) {
     case RequiredValidationMode::NonEmpty:
         return value.isEmpty();
@@ -1256,7 +1376,7 @@ QString QtMaterialOutlinedTextField::effectiveErrorText() const
     if (d_ptr->m_automaticValidationError) {
         switch (m_automaticValidationErrorKind) {
         case AutomaticValidationErrorKind::Required:
-            return m_requiredText.isEmpty() ? tr("Required") : m_requiredText;
+            return requiredText();
         case AutomaticValidationErrorKind::InputMask:
             if (!m_inputMaskErrorText.isEmpty()) {
                 return m_inputMaskErrorText;
@@ -1282,78 +1402,38 @@ QString QtMaterialOutlinedTextField::effectiveErrorText() const
 
 bool QtMaterialOutlinedTextField::currentValidationError() const
 {
-    if (!d_ptr->m_lineEdit || !isEnabled()) {
-        return false;
-    }
-
-    if (isRequiredValidationError()) {
-        return true;
-    }
-
-    if (d_ptr->m_lineEdit->text().isEmpty()) {
-        return false;
-    }
-
-    return !d_ptr->m_lineEdit->hasAcceptableInput();
+    return currentValidationErrorKind() != AutomaticValidationErrorKind::None;
 }
 
 void QtMaterialOutlinedTextField::refreshValidationState(bool commit)
 {
-    const auto resolveAutomaticValidationErrorKind = [this]() -> AutomaticValidationErrorKind {
-        if (!d_ptr->m_lineEdit || !isEnabled()) {
-            return AutomaticValidationErrorKind::None;
-        }
-
-        if (isRequiredValidationError()) {
-            return AutomaticValidationErrorKind::Required;
-        }
-
-        if (d_ptr->m_lineEdit->text().isEmpty()) {
-            return AutomaticValidationErrorKind::None;
-        }
-
-        if (d_ptr->m_lineEdit->hasAcceptableInput()) {
-            return AutomaticValidationErrorKind::None;
-        }
-
-        if (!d_ptr->m_lineEdit->inputMask().isEmpty()) {
-            return AutomaticValidationErrorKind::InputMask;
-        }
-
-        if (d_ptr->m_lineEdit->validator()) {
-            return AutomaticValidationErrorKind::Validator;
-        }
-
-        return AutomaticValidationErrorKind::Validator;
-    };
+    AutomaticValidationErrorKind errorKind = AutomaticValidationErrorKind::None;
 
     switch (d_ptr->m_validationFeedbackMode) {
     case ValidationFeedbackMode::ManualOnly:
         d_ptr->m_validationCommitted = false;
-        d_ptr->m_automaticValidationError = false;
-        m_automaticValidationErrorKind = AutomaticValidationErrorKind::None;
         break;
     case ValidationFeedbackMode::ValidatorOnEdit:
         d_ptr->m_validationCommitted = true;
-        m_automaticValidationErrorKind = resolveAutomaticValidationErrorKind();
-        d_ptr->m_automaticValidationError = m_automaticValidationErrorKind != AutomaticValidationErrorKind::None;
+        errorKind = currentValidationErrorKind();
         break;
     case ValidationFeedbackMode::ValidatorOnCommit:
         if (commit) {
             d_ptr->m_validationCommitted = true;
         }
         if (d_ptr->m_validationCommitted) {
-            m_automaticValidationErrorKind = resolveAutomaticValidationErrorKind();
-            d_ptr->m_automaticValidationError = m_automaticValidationErrorKind != AutomaticValidationErrorKind::None;
-        } else {
-            d_ptr->m_automaticValidationError = false;
-            m_automaticValidationErrorKind = AutomaticValidationErrorKind::None;
+            errorKind = currentValidationErrorKind();
         }
         break;
     }
 
+    m_automaticValidationErrorKind = errorKind;
+    d_ptr->m_automaticValidationError =
+        errorKind != AutomaticValidationErrorKind::None;
+
     syncEffectiveErrorState();
     syncEffectiveErrorVisibility();
+    emitValidationStateSignalsIfChanged();
 }
 
 void QtMaterialOutlinedTextField::syncEffectiveErrorState()

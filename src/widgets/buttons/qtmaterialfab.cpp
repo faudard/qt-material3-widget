@@ -194,7 +194,7 @@ void QtMaterialFab::syncFabAccessibility()
     const QString currentName = accessibleName().trimmed();
     const QString previousAutoName = property(autoAccessibleNameProperty).toString().trimmed();
     const bool currentNameIsAuto = currentName.isEmpty()
-        || (!previousAutoName.isEmpty() && currentName == previousAutoName);
+                                   || (!previousAutoName.isEmpty() && currentName == previousAutoName);
 
     if (!effectiveName.isEmpty()) {
         if (currentNameIsAuto) {

@@ -64,10 +64,10 @@ void tst_IconFabAccessibility::iconButtonUsesTooltipAccessibleFallback()
 {
     QtMaterial::QtMaterialIconButton button(contractIcon());
     button.setToolTip(QStringLiteral("Search"));
-
     QVERIFY(button.requiresAccessibleName());
-    QVERIFY(!button.hasUsableAccessibleName());
-    QVERIFY(button.effectiveAccessibleName().isEmpty());
+    QVERIFY(button.hasUsableAccessibleName());
+    QCOMPARE(button.effectiveAccessibleName(), QStringLiteral("Search"));
+    QCOMPARE(button.accessibleName(), QStringLiteral("Search"));
 }
 
 void tst_IconFabAccessibility::iconButtonCanUseFallbacksWhenRequirementIsDisabled()
@@ -119,10 +119,10 @@ void tst_IconFabAccessibility::fabUsesTooltipAccessibleFallback()
 {
     QtMaterial::QtMaterialFab button(contractIcon());
     button.setToolTip(QStringLiteral("Create"));
-
     QVERIFY(button.requiresAccessibleName());
-    QVERIFY(!button.hasUsableAccessibleName());
-    QVERIFY(button.effectiveAccessibleName().isEmpty());
+    QVERIFY(button.hasUsableAccessibleName());
+    QCOMPARE(button.effectiveAccessibleName(), QStringLiteral("Create"));
+    QCOMPARE(button.accessibleName(), QStringLiteral("Create"));
 }
 
 void tst_IconFabAccessibility::extendedFabUsesVisibleTextAsAccessibleName()

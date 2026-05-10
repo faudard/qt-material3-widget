@@ -112,7 +112,10 @@ void AccessibilityHelper::applyInputAccessibility(
     const QString& errorText,
     const bool hasErrorState)
 {
-    const QString description = effectiveDescription(supportingText, errorText, hasErrorState);
+    const QString shellDescription =
+        effectiveDescription(supportingText, errorText, hasErrorState);
+    const QString editorDescription =
+        hasErrorState && !errorText.isEmpty() ? errorText : supportingText;
 
     if (shell) {
         if (shell->focusPolicy() == Qt::NoFocus) {
@@ -121,14 +124,14 @@ void AccessibilityHelper::applyInputAccessibility(
         if (shell->accessibleName().isEmpty() && !label.isEmpty()) {
             shell->setAccessibleName(label);
         }
-        shell->setAccessibleDescription(description);
+        shell->setAccessibleDescription(shellDescription);
     }
 
     if (editor) {
         if (editor->accessibleName().isEmpty() && !label.isEmpty()) {
             editor->setAccessibleName(label);
         }
-        editor->setAccessibleDescription(description);
+        editor->setAccessibleDescription(editorDescription);
     }
 }
 
