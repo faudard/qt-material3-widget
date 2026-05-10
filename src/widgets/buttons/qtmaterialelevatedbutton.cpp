@@ -53,7 +53,23 @@ QColor elevatedShadowColor(const QtMaterialElevatedButton& button, qreal progres
 QtMaterialElevatedButton::QtMaterialElevatedButton(QWidget* parent)
     : QtMaterialFilledButton(parent)
 {
+    setMaterialComponent(QStringLiteral("button"));
+    setMaterialVariant(QStringLiteral("elevated"));
+    setMaterialRole(QStringLiteral("action"));
 }
+
+QtMaterialElevatedButton::QtMaterialElevatedButton(const QString& text, QWidget* parent)
+    : QtMaterialElevatedButton(parent)
+{
+    setText(text);
+}
+
+QtMaterialElevatedButton::QtMaterialElevatedButton(const QIcon& icon, const QString& text, QWidget* parent)
+    : QtMaterialElevatedButton(text, parent)
+{
+    setIcon(icon);
+}
+
 
 QtMaterialElevatedButton::~QtMaterialElevatedButton() = default;
 

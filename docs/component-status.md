@@ -9,14 +9,14 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `button.elevated` | Elevated Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h` | `ButtonSpec` | `tst_elevatedbutton` | `docs/public-api/buttons.md` | `/buttons/elevated` |
-| `button.extended-fab` | Extended Floating Action Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialextendedfab.h` | `FabSpec` | `tst_extendedfab` | `docs/public-api/buttons.md` | `/buttons/extended-fab` |
-| `button.fab` | Floating Action Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialfab.h` | `FabSpec` | `tst_fab` | `docs/public-api/buttons.md` | `/buttons/fab` |
-| `button.filled` | Filled Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialfilledbutton.h` | `ButtonSpec` | `tst_filledbutton` | `docs/public-api/buttons.md` | `/buttons/filled` |
-| `button.filled-tonal` | Filled Tonal Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h` | `ButtonSpec` | `tst_filledtonalbutton` | `docs/public-api/buttons.md` | `/buttons/filled-tonal` |
-| `button.icon` | Icon Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialiconbutton.h` | `IconButtonSpec` | `tst_iconbutton` | `docs/public-api/buttons.md` | `/buttons/icon` |
-| `button.outlined` | Outlined Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h` | `ButtonSpec` | `tst_outlinedbutton` | `docs/public-api/buttons.md` | `/buttons/outlined` |
-| `button.text` | Text Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialtextbutton.h` | `ButtonSpec` | `tst_textbutton` | `docs/public-api/buttons.md` | `/buttons/text` |
+| `button.elevated` | Elevated Button | `complete` | `qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h` | `ButtonSpec` | `tst_elevatedbutton` | `docs/public-api/buttons.md` | `/buttons/elevated` |
+| `button.extended-fab` | Extended Floating Action Button | `complete` | `qtmaterial/widgets/buttons/qtmaterialextendedfab.h` | `FabSpec` | `tst_extendedfab` | `docs/public-api/buttons.md` | `/buttons/extended-fab` |
+| `button.fab` | Floating Action Button | `complete` | `qtmaterial/widgets/buttons/qtmaterialfab.h` | `FabSpec` | `tst_fab` | `docs/public-api/buttons.md` | `/buttons/fab` |
+| `button.filled` | Filled Button | `complete` | `qtmaterial/widgets/buttons/qtmaterialfilledbutton.h` | `ButtonSpec` | `tst_filledbutton` | `docs/public-api/buttons.md` | `/buttons/filled` |
+| `button.filled-tonal` | Filled Tonal Button | `complete` | `qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h` | `ButtonSpec` | `tst_filledtonalbutton` | `docs/public-api/buttons.md` | `/buttons/filled-tonal` |
+| `button.icon` | Icon Button | `complete` | `qtmaterial/widgets/buttons/qtmaterialiconbutton.h` | `IconButtonSpec` | `tst_iconbutton` | `docs/public-api/buttons.md` | `/buttons/icon` |
+| `button.outlined` | Outlined Button | `complete` | `qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h` | `ButtonSpec` | `tst_outlinedbutton` | `docs/public-api/buttons.md` | `/buttons/outlined` |
+| `button.text` | Text Button | `complete` | `qtmaterial/widgets/buttons/qtmaterialtextbutton.h` | `ButtonSpec` | `tst_textbutton` | `docs/public-api/buttons.md` | `/buttons/text` |
 
 ## Compact controls
 

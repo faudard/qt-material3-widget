@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
-Run the local Buttons maturity checks.
-
-This wrapper is designed for developer machines and CI.
-It can run purely static checks, or include CTest when a build directory is available.
+Run local Buttons maturity checks.
 
 Usage:
   python scripts/run_buttons_maturity_checks.py
@@ -17,6 +14,9 @@ Static checks:
 
 CTest checks, when requested:
   - tst_button_contracts;
+  - tst_outlinedbutton_rendering;
+  - tst_elevatedbutton_shadow;
+  - tst_icon_fab_accessibility;
   - existing button/FAB tests matching tst_.*button or tst_.*fab.
 """
 
@@ -29,6 +29,14 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+BUTTON_CTEST_REGEX = (
+    "tst_button_contracts|"
+    "tst_outlinedbutton_rendering|"
+    "tst_elevatedbutton_shadow|"
+    "tst_icon_fab_accessibility|"
+    "tst_.*button|"
+    "tst_.*fab"
+)
 
 
 def run(command: list[str], *, cwd: Path = ROOT) -> int:
@@ -40,7 +48,7 @@ def run(command: list[str], *, cwd: Path = ROOT) -> int:
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run Buttons maturity checks.")
     parser.add_argument("--build-dir", type=Path, default=None, help="build directory for CTest")
-    parser.add_argument("--run-ctest", action="store_true", help="run focused Buttons CTest suite")
+    parser.add_argument("--run-ctest", action="store_true", help="run focused Buttons CTest suite through the promotion audit")
     parser.add_argument("--strict", action="store_true", help="run generator in strict mode")
     return parser.parse_args(argv)
 
@@ -61,12 +69,19 @@ def main(argv: list[str]) -> int:
         "scripts/promote_buttons_maturity.py",
         "--dry-run",
         "--fail-on-blockers",
+        "--run-generator-check",
     ]
 
     if args.run_ctest:
         if args.build_dir is None:
             print("error: --run-ctest requires --build-dir", file=sys.stderr)
             return 2
+
+        build_dir = args.build_dir if args.build_dir.is_absolute() else ROOT / args.build_dir
+        if not build_dir.exists():
+            print(f"error: build directory does not exist: {build_dir}", file=sys.stderr)
+            return 2
+
         promotion_cmd.extend(["--build-dir", str(args.build_dir), "--run-ctest"])
 
     rc = run(promotion_cmd)
@@ -74,21 +89,7 @@ def main(argv: list[str]) -> int:
         return rc
 
     if args.run_ctest:
-        build_dir = args.build_dir if args.build_dir.is_absolute() else ROOT / args.build_dir
-        if not build_dir.exists():
-            print(f"error: build directory does not exist: {build_dir}", file=sys.stderr)
-            return 2
-
-        rc = run([
-            "ctest",
-            "--test-dir",
-            str(build_dir),
-            "-R",
-            "tst_button_contracts|tst_.*button|tst_.*fab",
-            "--output-on-failure",
-        ])
-        if rc != 0:
-            return rc
+        print(f"Buttons CTest regex: {BUTTON_CTEST_REGEX}")
 
     print("Buttons maturity checks passed.")
     return 0

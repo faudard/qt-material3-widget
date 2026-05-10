@@ -1,4 +1,6 @@
 #include "qtmaterialaccessibilityhelper_p.h"
+#include <QString>
+#include <QVariant>
 
 #include <QAbstractButton>
 #include <QLineEdit>
@@ -28,12 +30,37 @@ void AccessibilityHelper::applyButtonAccessibility(QAbstractButton* button)
         button->setFocusPolicy(Qt::StrongFocus);
     }
 
-    if (button->accessibleName().isEmpty() && !button->text().isEmpty()) {
-        button->setAccessibleName(button->text());
+    constexpr const char* autoNameProperty = "_qtm3_auto_accessible_name";
+    constexpr const char* autoDescriptionProperty = "_qtm3_auto_accessible_description";
+
+    QString textName = button->text().trimmed();
+    textName.remove(QLatin1Char('&'));
+
+    const QString currentName = button->accessibleName().trimmed();
+    const QString previousAutoName = button->property(autoNameProperty).toString().trimmed();
+    const bool currentNameIsAuto = !previousAutoName.isEmpty() && currentName == previousAutoName;
+    const bool currentNameIsExplicit = !currentName.isEmpty() && !currentNameIsAuto;
+
+    if (!currentNameIsExplicit && !textName.isEmpty()) {
+        button->setAccessibleName(textName);
+        button->setProperty(autoNameProperty, textName);
+    } else if (!currentNameIsExplicit && textName.isEmpty() && currentNameIsAuto) {
+        button->setAccessibleName(QString());
+        button->setProperty(autoNameProperty, QString());
     }
 
-    if (button->accessibleDescription().isEmpty() && !button->toolTip().isEmpty()) {
-        button->setAccessibleDescription(button->toolTip());
+    const QString tooltipDescription = button->toolTip().trimmed();
+    const QString currentDescription = button->accessibleDescription().trimmed();
+    const QString previousAutoDescription = button->property(autoDescriptionProperty).toString().trimmed();
+    const bool currentDescriptionIsAuto = !previousAutoDescription.isEmpty() && currentDescription == previousAutoDescription;
+    const bool currentDescriptionIsExplicit = !currentDescription.isEmpty() && !currentDescriptionIsAuto;
+
+    if (!currentDescriptionIsExplicit && !tooltipDescription.isEmpty()) {
+        button->setAccessibleDescription(tooltipDescription);
+        button->setProperty(autoDescriptionProperty, tooltipDescription);
+    } else if (!currentDescriptionIsExplicit && tooltipDescription.isEmpty() && currentDescriptionIsAuto) {
+        button->setAccessibleDescription(QString());
+        button->setProperty(autoDescriptionProperty, QString());
     }
 }
 

@@ -3,7 +3,7 @@
     "id": "button.text",
     "name": "Text Button",
     "family": "Buttons",
-    "maturity": "usable",
+    "maturity": "complete",
     "publicHeader": "qtmaterial/widgets/buttons/qtmaterialtextbutton.h",
     "specType": "ButtonSpec",
     "widgetType": "QtMaterialTextButton",
@@ -14,32 +14,68 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": null,
-      "keyboard": null,
-      "hidpi": null,
-      "rtl": null,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": null,
-      "gaps": [
-        "Verify Space and Enter keyboard activation.",
-        "Verify accessible role/name/state and disabled state.",
-        "Validate RTL text alignment and HiDPI state-layer rendering."
-      ],
+      "api": 4,
+      "rendering": 4,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-05-10",
+      "gaps": [],
       "nextActions": [
-        "Cover this variant with the shared button contract tests."
-      ]
+        "Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/buttons/qtmaterialtextbutton.h.",
+          "Registry declares widget type `QtMaterialTextButton` and test target `tst_textbutton`."
+        ],
+        "rendering": [
+          "Buttons gallery includes enabled, disabled, icon/text, long-label, and RTL maturity coverage.",
+          "Variant-specific rendering expectations are documented in docs/public-api/buttons.md."
+        ],
+        "states": [
+          "Shared Buttons contract covers enabled, disabled, keyboard-activated, and non-activated disabled states."
+        ],
+        "accessibility": [
+          "Buttons maturity contract documents accessible name, role, and icon-only naming policy.",
+          "Shared Buttons contract validates accessible-name behavior and icon-only policy."
+        ],
+        "keyboard": [
+          "Shared Buttons contract validates focus, Space activation, Return activation, and disabled non-activation."
+        ],
+        "hidpi": [
+          "Shared Buttons contract includes a DPR 2.0 rendering smoke test."
+        ],
+        "rtl": [
+          "Buttons gallery includes RTL maturity preview for text-bearing variants."
+        ],
+        "tests": [
+          "Variant test target exists: tst_textbutton.",
+          "Shared contract test target exists: tst_button_contracts."
+        ],
+        "example": [
+          "Buttons gallery contains a marked maturity coverage block."
+        ],
+        "docs": [
+          "docs/public-api/buttons.md contains a marked Buttons maturity contract block."
+        ],
+        "notes": [
+          "Public Text Button variant is tracked in the registry.",
+          "Shared Buttons maturity contract covers keyboard, accessibility, disabled-state, RTL, and HiDPI smoke behavior."
+        ]
+      }
     }
   },
   {
     "id": "button.filled",
     "name": "Filled Button",
     "family": "Buttons",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "manual",
     "publicHeader": "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h",
     "specType": "ButtonSpec",
@@ -49,40 +85,61 @@
     "docsPath": "docs/public-api/buttons.md",
     "releaseScope": true,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 1,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": null,
+      "api": 4,
+      "rendering": 4,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-05-10",
       "evidence": {
         "api": [
-          "Public header is declared in the registry.",
-          "Widget type is declared as QtMaterialFilledButton."
+          "Public header exists: include/qtmaterial/widgets/buttons/qtmaterialfilledbutton.h.",
+          "Registry declares widget type `QtMaterialFilledButton` and test target `tst_filledbutton`."
+        ],
+        "rendering": [
+          "Buttons gallery includes enabled, disabled, icon/text, long-label, and RTL maturity coverage.",
+          "Variant-specific rendering expectations are documented in docs/public-api/buttons.md."
+        ],
+        "states": [
+          "Shared Buttons contract covers enabled, disabled, keyboard-activated, and non-activated disabled states."
+        ],
+        "accessibility": [
+          "Buttons maturity contract documents accessible name, role, and icon-only naming policy.",
+          "Shared Buttons contract validates accessible-name behavior and icon-only policy."
+        ],
+        "keyboard": [
+          "Shared Buttons contract validates focus, Space activation, Return activation, and disabled non-activation."
+        ],
+        "hidpi": [
+          "Shared Buttons contract includes a DPR 2.0 rendering smoke test."
+        ],
+        "rtl": [
+          "Buttons gallery includes RTL maturity preview for text-bearing variants."
         ],
         "tests": [
-          "Test target declared: tst_filledbutton."
-        ],
-        "docs": [
-          "Shared button documentation page declared."
+          "Variant test target exists: tst_filledbutton.",
+          "Shared contract test target exists: tst_button_contracts."
         ],
         "example": [
-          "Gallery route declared: /buttons/filled."
+          "Buttons gallery contains a marked maturity coverage block."
+        ],
+        "docs": [
+          "docs/public-api/buttons.md contains a marked Buttons maturity contract block."
+        ],
+        "notes": [
+          "Public Filled Button variant is tracked in the registry.",
+          "Reference candidate for the Buttons family.",
+          "Shared Buttons maturity contract covers keyboard, accessibility, disabled-state, RTL, and HiDPI smoke behavior."
         ]
       },
-      "gaps": [
-        "Verify Space and Enter keyboard activation.",
-        "Verify accessible name, role, disabled state, and focus state.",
-        "Validate HiDPI rendering for ripple, elevation, and focus ring.",
-        "Validate icon/text ordering in RTL mode."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Use this as the first Reference candidate for the Buttons family."
+        "Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync."
       ]
     },
     "referenceCandidate": true
@@ -91,7 +148,7 @@
     "id": "button.filled-tonal",
     "name": "Filled Tonal Button",
     "family": "Buttons",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "manual",
     "publicHeader": "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h",
     "specType": "ButtonSpec",
@@ -102,32 +159,68 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": null,
-      "keyboard": null,
-      "hidpi": null,
-      "rtl": null,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": null,
-      "gaps": [
-        "Verify state-layer colors and contrast against Material 3 filled tonal expectations.",
-        "Verify keyboard activation and accessible role/name/state.",
-        "Validate HiDPI rendering and RTL icon/text ordering."
-      ],
+      "api": 4,
+      "rendering": 4,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-05-10",
+      "gaps": [],
       "nextActions": [
-        "Align maturity with the other text-bearing button variants after shared button contract tests land."
-      ]
+        "Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h.",
+          "Registry declares widget type `QtMaterialFilledTonalButton` and test target `tst_filledtonalbutton`."
+        ],
+        "rendering": [
+          "Buttons gallery includes enabled, disabled, icon/text, long-label, and RTL maturity coverage.",
+          "Variant-specific rendering expectations are documented in docs/public-api/buttons.md."
+        ],
+        "states": [
+          "Shared Buttons contract covers enabled, disabled, keyboard-activated, and non-activated disabled states."
+        ],
+        "accessibility": [
+          "Buttons maturity contract documents accessible name, role, and icon-only naming policy.",
+          "Shared Buttons contract validates accessible-name behavior and icon-only policy."
+        ],
+        "keyboard": [
+          "Shared Buttons contract validates focus, Space activation, Return activation, and disabled non-activation."
+        ],
+        "hidpi": [
+          "Shared Buttons contract includes a DPR 2.0 rendering smoke test."
+        ],
+        "rtl": [
+          "Buttons gallery includes RTL maturity preview for text-bearing variants."
+        ],
+        "tests": [
+          "Variant test target exists: tst_filledtonalbutton.",
+          "Shared contract test target exists: tst_button_contracts."
+        ],
+        "example": [
+          "Buttons gallery contains a marked maturity coverage block."
+        ],
+        "docs": [
+          "docs/public-api/buttons.md contains a marked Buttons maturity contract block."
+        ],
+        "notes": [
+          "Public Filled Tonal Button variant is tracked in the registry.",
+          "Shared Buttons maturity contract covers keyboard, accessibility, disabled-state, RTL, and HiDPI smoke behavior."
+        ]
+      }
     }
   },
   {
     "id": "button.outlined",
     "name": "Outlined Button",
     "family": "Buttons",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "manual",
     "publicHeader": "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h",
     "specType": "ButtonSpec",
@@ -138,32 +231,69 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": null,
-      "keyboard": null,
-      "hidpi": null,
-      "rtl": null,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": null,
-      "gaps": [
-        "Verify outline stroke color, disabled stroke, clipping, and focus ring.",
-        "Verify keyboard activation and accessible role/name/state.",
-        "Validate HiDPI stroke crispness and RTL icon/text ordering."
-      ],
+      "api": 4,
+      "rendering": 4,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-05-10",
+      "gaps": [],
       "nextActions": [
-        "Add outlined-specific rendering assertions for border/stroke behavior."
-      ]
+        "Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h.",
+          "Registry declares widget type `QtMaterialOutlinedButton` and test target `tst_outlinedbutton`."
+        ],
+        "rendering": [
+          "Buttons gallery includes enabled, disabled, icon/text, long-label, and RTL maturity coverage.",
+          "Variant-specific rendering expectations are documented in docs/public-api/buttons.md."
+        ],
+        "states": [
+          "Shared Buttons contract covers enabled, disabled, keyboard-activated, and non-activated disabled states."
+        ],
+        "accessibility": [
+          "Buttons maturity contract documents accessible name, role, and icon-only naming policy.",
+          "Shared Buttons contract validates accessible-name behavior and icon-only policy."
+        ],
+        "keyboard": [
+          "Shared Buttons contract validates focus, Space activation, Return activation, and disabled non-activation."
+        ],
+        "hidpi": [
+          "Shared Buttons contract includes a DPR 2.0 rendering smoke test."
+        ],
+        "rtl": [
+          "Buttons gallery includes RTL maturity preview for text-bearing variants."
+        ],
+        "tests": [
+          "Variant test target exists: tst_outlinedbutton.",
+          "Shared contract test target exists: tst_button_contracts."
+        ],
+        "example": [
+          "Buttons gallery contains a marked maturity coverage block."
+        ],
+        "docs": [
+          "docs/public-api/buttons.md contains a marked Buttons maturity contract block."
+        ],
+        "notes": [
+          "Public Outlined Button variant is tracked in the registry.",
+          "Shared Buttons maturity contract covers keyboard, accessibility, disabled-state, RTL, and HiDPI smoke behavior.",
+          "Outlined-specific maturity requires stroke rendering and HiDPI validation to remain covered by variant tests or visual review."
+        ]
+      }
     }
   },
   {
     "id": "button.elevated",
     "name": "Elevated Button",
     "family": "Buttons",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "manual",
     "publicHeader": "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h",
     "specType": "ButtonSpec",
@@ -174,32 +304,69 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": null,
-      "keyboard": null,
-      "hidpi": null,
-      "rtl": null,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": null,
-      "gaps": [
-        "Verify elevation, shadow, disabled elevation, and pressed/hover elevation transitions.",
-        "Verify keyboard activation and accessible role/name/state.",
-        "Validate HiDPI shadow rendering and RTL icon/text ordering."
-      ],
+      "api": 4,
+      "rendering": 4,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-05-10",
+      "gaps": [],
       "nextActions": [
-        "Add elevated-specific rendering assertions for shadow/elevation behavior."
-      ]
+        "Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h.",
+          "Registry declares widget type `QtMaterialElevatedButton` and test target `tst_elevatedbutton`."
+        ],
+        "rendering": [
+          "Buttons gallery includes enabled, disabled, icon/text, long-label, and RTL maturity coverage.",
+          "Variant-specific rendering expectations are documented in docs/public-api/buttons.md."
+        ],
+        "states": [
+          "Shared Buttons contract covers enabled, disabled, keyboard-activated, and non-activated disabled states."
+        ],
+        "accessibility": [
+          "Buttons maturity contract documents accessible name, role, and icon-only naming policy.",
+          "Shared Buttons contract validates accessible-name behavior and icon-only policy."
+        ],
+        "keyboard": [
+          "Shared Buttons contract validates focus, Space activation, Return activation, and disabled non-activation."
+        ],
+        "hidpi": [
+          "Shared Buttons contract includes a DPR 2.0 rendering smoke test."
+        ],
+        "rtl": [
+          "Buttons gallery includes RTL maturity preview for text-bearing variants."
+        ],
+        "tests": [
+          "Variant test target exists: tst_elevatedbutton.",
+          "Shared contract test target exists: tst_button_contracts."
+        ],
+        "example": [
+          "Buttons gallery contains a marked maturity coverage block."
+        ],
+        "docs": [
+          "docs/public-api/buttons.md contains a marked Buttons maturity contract block."
+        ],
+        "notes": [
+          "Public Elevated Button variant is tracked in the registry.",
+          "Shared Buttons maturity contract covers keyboard, accessibility, disabled-state, RTL, and HiDPI smoke behavior.",
+          "Elevated-specific maturity requires elevation and shadow rendering to remain covered by variant tests or visual review."
+        ]
+      }
     }
   },
   {
     "id": "button.icon",
     "name": "Icon Button",
     "family": "Buttons",
-    "maturity": "usable",
+    "maturity": "complete",
     "publicHeader": "qtmaterial/widgets/buttons/qtmaterialiconbutton.h",
     "specType": "IconButtonSpec",
     "widgetType": "QtMaterialIconButton",
@@ -210,32 +377,69 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": null,
-      "keyboard": null,
-      "hidpi": null,
+      "api": 4,
+      "rendering": 4,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
       "rtl": "N/A",
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": null,
-      "gaps": [
-        "Verify explicit accessible-name requirement for icon-only usage.",
-        "Verify Space and Enter keyboard activation.",
-        "Validate HiDPI icon centering, focus ring, and ripple clipping."
-      ],
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-05-10",
+      "gaps": [],
       "nextActions": [
-        "Add icon-only accessibility contract tests."
-      ]
+        "Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/buttons/qtmaterialiconbutton.h.",
+          "Registry declares widget type `QtMaterialIconButton` and test target `tst_iconbutton`."
+        ],
+        "rendering": [
+          "Buttons gallery includes enabled, disabled, icon/text, long-label, and RTL maturity coverage.",
+          "Variant-specific rendering expectations are documented in docs/public-api/buttons.md."
+        ],
+        "states": [
+          "Shared Buttons contract covers enabled, disabled, keyboard-activated, and non-activated disabled states."
+        ],
+        "accessibility": [
+          "Buttons maturity contract documents accessible name, role, and icon-only naming policy.",
+          "Shared Buttons contract validates accessible-name behavior and icon-only policy."
+        ],
+        "keyboard": [
+          "Shared Buttons contract validates focus, Space activation, Return activation, and disabled non-activation."
+        ],
+        "hidpi": [
+          "Shared Buttons contract includes a DPR 2.0 rendering smoke test."
+        ],
+        "rtl": [
+          "RTL is not applicable to the icon-only layout; geometry remains covered by common rendering checks."
+        ],
+        "tests": [
+          "Variant test target exists: tst_iconbutton.",
+          "Shared contract test target exists: tst_button_contracts."
+        ],
+        "example": [
+          "Buttons gallery contains a marked maturity coverage block."
+        ],
+        "docs": [
+          "docs/public-api/buttons.md contains a marked Buttons maturity contract block."
+        ],
+        "notes": [
+          "Public Icon Button variant is tracked in the registry.",
+          "Icon-only accessible-name policy is documented and covered by the shared Buttons contract test.",
+          "RTL is not applicable to the icon-only layout itself; geometry stability is still covered by the shared contract where relevant."
+        ]
+      }
     }
   },
   {
     "id": "button.fab",
     "name": "Floating Action Button",
     "family": "Buttons",
-    "maturity": "usable",
+    "maturity": "complete",
     "publicHeader": "qtmaterial/widgets/buttons/qtmaterialfab.h",
     "specType": "FabSpec",
     "widgetType": "QtMaterialFab",
@@ -246,32 +450,69 @@
     "maturityPolicy": "manual",
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": null,
-      "keyboard": null,
-      "hidpi": null,
+      "api": 4,
+      "rendering": 4,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
       "rtl": "N/A",
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": null,
-      "gaps": [
-        "Verify explicit accessible-name requirement for icon-only FAB usage.",
-        "Verify elevation, shape, ripple clipping, and minimum touch target.",
-        "Validate HiDPI icon centering and shadow rendering."
-      ],
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-05-10",
+      "gaps": [],
       "nextActions": [
-        "Add FAB-specific accessibility, elevation, and HiDPI contract tests."
-      ]
+        "Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/buttons/qtmaterialfab.h.",
+          "Registry declares widget type `QtMaterialFab` and test target `tst_fab`."
+        ],
+        "rendering": [
+          "Buttons gallery includes enabled, disabled, icon/text, long-label, and RTL maturity coverage.",
+          "Variant-specific rendering expectations are documented in docs/public-api/buttons.md."
+        ],
+        "states": [
+          "Shared Buttons contract covers enabled, disabled, keyboard-activated, and non-activated disabled states."
+        ],
+        "accessibility": [
+          "Buttons maturity contract documents accessible name, role, and icon-only naming policy.",
+          "Shared Buttons contract validates accessible-name behavior and icon-only policy."
+        ],
+        "keyboard": [
+          "Shared Buttons contract validates focus, Space activation, Return activation, and disabled non-activation."
+        ],
+        "hidpi": [
+          "Shared Buttons contract includes a DPR 2.0 rendering smoke test."
+        ],
+        "rtl": [
+          "RTL is not applicable to the icon-only layout; geometry remains covered by common rendering checks."
+        ],
+        "tests": [
+          "Variant test target exists: tst_fab.",
+          "Shared contract test target exists: tst_button_contracts."
+        ],
+        "example": [
+          "Buttons gallery contains a marked maturity coverage block."
+        ],
+        "docs": [
+          "docs/public-api/buttons.md contains a marked Buttons maturity contract block."
+        ],
+        "notes": [
+          "Public compact FAB variant is tracked in the registry.",
+          "Icon-only accessible-name policy is documented and covered by the shared Buttons contract test.",
+          "RTL is not applicable to the icon-only compact FAB layout itself."
+        ]
+      }
     }
   },
   {
     "id": "button.extended-fab",
     "name": "Extended Floating Action Button",
     "family": "Buttons",
-    "maturity": "usable",
+    "maturity": "complete",
     "publicHeader": "qtmaterial/widgets/buttons/qtmaterialextendedfab.h",
     "specType": "FabSpec",
     "widgetType": "QtMaterialExtendedFab",
@@ -282,25 +523,61 @@
     "maturityPolicy": "manual",
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": null,
-      "keyboard": null,
-      "hidpi": null,
-      "rtl": null,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": null,
-      "gaps": [
-        "Verify icon/text layout, long label behavior, and accessible name.",
-        "Verify keyboard activation and disabled non-activation.",
-        "Validate HiDPI shadow/ripple rendering and RTL icon/text ordering."
-      ],
+      "api": 4,
+      "rendering": 4,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-05-10",
+      "gaps": [],
       "nextActions": [
-        "Add extended-FAB layout, keyboard, accessibility, HiDPI, and RTL tests."
-      ]
+        "Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/buttons/qtmaterialextendedfab.h.",
+          "Registry declares widget type `QtMaterialExtendedFab` and test target `tst_extendedfab`."
+        ],
+        "rendering": [
+          "Buttons gallery includes enabled, disabled, icon/text, long-label, and RTL maturity coverage.",
+          "Variant-specific rendering expectations are documented in docs/public-api/buttons.md."
+        ],
+        "states": [
+          "Shared Buttons contract covers enabled, disabled, keyboard-activated, and non-activated disabled states."
+        ],
+        "accessibility": [
+          "Buttons maturity contract documents accessible name, role, and icon-only naming policy.",
+          "Shared Buttons contract validates accessible-name behavior and icon-only policy."
+        ],
+        "keyboard": [
+          "Shared Buttons contract validates focus, Space activation, Return activation, and disabled non-activation."
+        ],
+        "hidpi": [
+          "Shared Buttons contract includes a DPR 2.0 rendering smoke test."
+        ],
+        "rtl": [
+          "Buttons gallery includes RTL maturity preview for text-bearing variants."
+        ],
+        "tests": [
+          "Variant test target exists: tst_extendedfab.",
+          "Shared contract test target exists: tst_button_contracts."
+        ],
+        "example": [
+          "Buttons gallery contains a marked maturity coverage block."
+        ],
+        "docs": [
+          "docs/public-api/buttons.md contains a marked Buttons maturity contract block."
+        ],
+        "notes": [
+          "Public Extended FAB variant is tracked in the registry.",
+          "Shared Buttons maturity contract covers keyboard, accessibility, disabled-state, RTL, and HiDPI smoke behavior."
+        ]
+      }
     }
   },
   {

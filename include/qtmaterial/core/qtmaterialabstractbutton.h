@@ -43,6 +43,7 @@ public:
 
     void setText(const QString& text);
     void setIcon(const QIcon& icon);
+    void setIconSize(const QSize& size);
     void setCheckable(bool checkable);
     void setDown(bool down);
 

@@ -1,4 +1,5 @@
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
+#include <QtGlobal>
 #include "qtmaterial/core/qtmaterialautomation.h"
 
 #include <QFocusEvent>
@@ -168,6 +169,20 @@ void QtMaterialAbstractButton::setIcon(const QIcon& icon)
     updateGeometry();
     update();
 }
+void QtMaterialAbstractButton::setIconSize(const QSize& size)
+{
+    if (QAbstractButton::iconSize() == size) {
+        return;
+    }
+
+    QAbstractButton::setIconSize(size);
+    invalidateResolvedSpec();
+    contentChangedEvent();
+    updateGeometry();
+    update();
+    syncAccessibilityState();
+}
+
 
 void QtMaterialAbstractButton::setCheckable(bool checkable)
 {
@@ -309,8 +324,36 @@ void QtMaterialAbstractButton::changeEvent(QEvent* event)
 {
     QAbstractButton::changeEvent(event);
 
-    if (event->type() == QEvent::EnabledChange) {
+    switch (event->type()) {
+    case QEvent::EnabledChange:
         syncAndNotifyIfChanged();
+        invalidateResolvedSpec();
+        contentChangedEvent();
+        updateGeometry();
+        update();
+        break;
+
+    case QEvent::FontChange:
+    case QEvent::LayoutDirectionChange:
+    case QEvent::PaletteChange:
+    case QEvent::StyleChange:
+    case QEvent::ApplicationPaletteChange:
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+    case QEvent::DevicePixelRatioChange:
+#endif
+        invalidateResolvedSpec();
+        contentChangedEvent();
+        updateGeometry();
+        update();
+        syncAndNotifyIfChanged();
+        break;
+
+    case QEvent::ToolTipChange:
+        syncAccessibilityState();
+        break;
+
+    default:
+        break;
     }
 
     syncAccessibilityState();

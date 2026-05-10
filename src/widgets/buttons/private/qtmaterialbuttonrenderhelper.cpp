@@ -1,4 +1,5 @@
 #include "qtmaterialbuttonrenderhelper_p.h"
+#include <QtGlobal>
 
 #include <QAbstractButton>
 #include <QFontMetrics>
@@ -17,9 +18,10 @@ QString tintedIconCacheKey(const QPixmap& base, const QColor& color)
         return {};
     }
 
-    return QStringLiteral("QtMaterial::ButtonTint:%1:%2")
+    return QStringLiteral("QtMaterial::ButtonTint:%1:%2:%3")
         .arg(qulonglong(base.cacheKey()))
-        .arg(quint32(color.rgba()), 0, 16);
+        .arg(quint32(color.rgba()), 0, 16)
+        .arg(qRound(base.devicePixelRatio() * 1000.0));
 }
 
 
@@ -30,13 +32,13 @@ QPixmap tintPixmap(const QPixmap& source, const QColor& color)
     }
 
     QPixmap tinted(source.size());
+    tinted.setDevicePixelRatio(source.devicePixelRatio());
     tinted.fill(Qt::transparent);
 
     QPainter painter(&tinted);
     painter.drawPixmap(0, 0, source);
     painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
     painter.fillRect(tinted.rect(), color);
-
     return tinted;
 }
 } // namespace
@@ -97,42 +99,49 @@ ContentLayout layoutContent(
     const QString& text)
 {
     ContentLayout layout;
+
     const int left = containerRect.left() + spec.horizontalPadding;
     const int right = containerRect.right() - spec.horizontalPadding;
     const int availableWidth = qMax(0, right - left + 1);
-
-    const bool hasIcon = !button->icon().isNull();
+    const bool hasIcon = button && !button->icon().isNull();
+    const bool rtl = button && button->layoutDirection() == Qt::RightToLeft;
     layout.hasIcon = hasIcon;
 
     QFontMetrics metrics(font);
-    int textWidthBudget = availableWidth;
-    int iconBlockWidth = 0;
 
+    int iconBlockWidth = 0;
     if (hasIcon) {
         iconBlockWidth = spec.iconSize;
         if (!text.isEmpty()) {
             iconBlockWidth += spec.iconSpacing;
         }
-        textWidthBudget = qMax(0, availableWidth - iconBlockWidth);
     }
 
+    const int textWidthBudget = qMax(0, availableWidth - iconBlockWidth);
     layout.elidedText = metrics.elidedText(text, Qt::ElideRight, textWidthBudget);
+
     const int textWidth = metrics.horizontalAdvance(layout.elidedText);
     const int textHeight = metrics.height();
-    const int contentWidth = textWidth + iconBlockWidth;
+    const bool hasVisibleText = !layout.elidedText.isEmpty();
+    const int spacing = (hasIcon && hasVisibleText) ? spec.iconSpacing : 0;
+    const int contentWidth = textWidth + (hasIcon ? spec.iconSize : 0) + spacing;
     const int contentLeft = containerRect.left() + qMax(0, (containerRect.width() - contentWidth) / 2);
     const int contentCenterY = containerRect.center().y();
 
     int x = contentLeft;
-    if (hasIcon) {
+    if (hasIcon && rtl) {
+        layout.textRect = QRect(x, contentCenterY - textHeight / 2, textWidth, textHeight);
+        x += textWidth + spacing;
         layout.iconRect = QRect(x, contentCenterY - spec.iconSize / 2, spec.iconSize, spec.iconSize);
-        x += spec.iconSize;
-        if (!text.isEmpty()) {
-            x += spec.iconSpacing;
-        }
+        return layout;
     }
 
-    layout.textRect = QRect(x, contentCenterY - textHeight / 2, qMax(textWidthBudget, textWidth), textHeight);
+    if (hasIcon) {
+        layout.iconRect = QRect(x, contentCenterY - spec.iconSize / 2, spec.iconSize, spec.iconSize);
+        x += spec.iconSize + spacing;
+    }
+
+    layout.textRect = QRect(x, contentCenterY - textHeight / 2, textWidth, textHeight);
     return layout;
 }
 

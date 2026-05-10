@@ -41,12 +41,28 @@ QtMaterialTextButton::QtMaterialTextButton(QWidget* parent)
 {
  setMinimumHeight(40);
  d->stateLayerTransition->setProgress(0.0);
+ setMaterialComponent(QStringLiteral("button"));
+ setMaterialVariant(QStringLiteral("text"));
+ setMaterialRole(QStringLiteral("action"));
  QObject::connect(
   d->stateLayerTransition,
   &QtMaterialTransitionController::progressChanged,
   this,
   [this](qreal) { update(); });
 }
+
+QtMaterialTextButton::QtMaterialTextButton(const QString& text, QWidget* parent)
+    : QtMaterialTextButton(parent)
+{
+    setText(text);
+}
+
+QtMaterialTextButton::QtMaterialTextButton(const QIcon& icon, const QString& text, QWidget* parent)
+    : QtMaterialTextButton(text, parent)
+{
+    setIcon(icon);
+}
+
 
 QtMaterialTextButton::~QtMaterialTextButton() = default;
 
@@ -100,7 +116,8 @@ QSize QtMaterialTextButton::sizeHint() const
   QRect(0, 0, 4000, spec.touchTarget.height()),
   resolvedFont,
   text());
- const int contentRight = layout.textRect.right();
+ const int contentRight = layout.hasIcon ? qMax(layout.iconRect.right(), layout.textRect.right())
+                                    : layout.textRect.right();
  const int contentLeft = layout.hasIcon ? qMin(layout.iconRect.left(), layout.textRect.left())
                                         : layout.textRect.left();
  const int contentWidth = qMax(0, contentRight - contentLeft + 1);

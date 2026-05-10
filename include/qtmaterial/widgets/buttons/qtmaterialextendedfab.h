@@ -3,7 +3,7 @@
 #include <QIcon>
 #include <QString>
 
-#include "qtmaterial/widgets/buttons/qtmaterialfab.h"
+#include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 
 class QEvent;
 
@@ -25,18 +25,16 @@ public:
     QString effectiveAccessibleName() const;
     bool hasUsableAccessibleName() const;
     QString accessibilitySummary() const;
-    QtMaterialFabVariant fabVariant() const noexcept;
-    void setFabVariant(QtMaterialFabVariant variant);
 
 protected:
     ButtonSpec resolveButtonSpec() const override;
-    void contentChangedEvent() override;
     void changeEvent(QEvent* event) override;
+    void contentChangedEvent() override;
     void syncAccessibilityState() override;
 
 private:
     void initializeExtendedFab();
-    QtMaterialFabVariant m_fabVariant = QtMaterialFabVariant::Primary;
+    void syncExtendedFabAccessibility();
 };
 
 } // namespace QtMaterial

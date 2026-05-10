@@ -1,4 +1,6 @@
 #pragma once
+#include <QString>
+#include <QIcon>
 
 
 #include <memory>
@@ -16,6 +18,8 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialOutlinedButton : public QtMaterialTex
  Q_OBJECT
 public:
  explicit QtMaterialOutlinedButton(QWidget* parent = nullptr);
+    explicit QtMaterialOutlinedButton(const QString& text, QWidget* parent = nullptr);
+    QtMaterialOutlinedButton(const QIcon& icon, const QString& text, QWidget* parent = nullptr);
  ~QtMaterialOutlinedButton() override;
 
 protected:

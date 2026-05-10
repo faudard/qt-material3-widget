@@ -10,6 +10,7 @@ namespace QtMaterial {
 namespace {
 
 constexpr const char* kAutoAccessibleNameProperty = "_qtm3_auto_accessible_name";
+constexpr const char* kAutoAccessibleDescriptionProperty = "_qtm3_auto_accessible_description";
 
 ButtonSpec extendedFabToButtonSpec(const FabSpec& fab)
 {
@@ -32,6 +33,13 @@ ButtonSpec extendedFabToButtonSpec(const FabSpec& fab)
     return spec;
 }
 
+QString normalizedButtonText(QString value)
+{
+    value = value.trimmed();
+    value.remove(QLatin1Char('&'));
+    return value;
+}
+
 } // namespace
 
 QtMaterialExtendedFab::QtMaterialExtendedFab(QWidget* parent)
@@ -50,7 +58,7 @@ QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& t
     initializeExtendedFab();
     setIcon(icon);
     setText(text);
-    syncAccessibilityState();
+    syncExtendedFabAccessibility();
 }
 
 QtMaterialExtendedFab::~QtMaterialExtendedFab() = default;
@@ -73,9 +81,9 @@ QString QtMaterialExtendedFab::effectiveAccessibleName() const
         return explicitName;
     }
 
-    const QString visibleText = text().trimmed();
-    if (!visibleText.isEmpty()) {
-        return visibleText;
+    const QString visibleName = normalizedButtonText(text());
+    if (!visibleName.isEmpty()) {
+        return visibleName;
     }
 
     const QString tooltipName = toolTip().trimmed();
@@ -101,49 +109,75 @@ QString QtMaterialExtendedFab::accessibilitySummary() const
     return QStringLiteral("Extended floating action button requires visible text or an accessible name");
 }
 
+void QtMaterialExtendedFab::syncExtendedFabAccessibility()
+{
+    const QString currentName = accessibleName().trimmed();
+    const QString previousAutoName = property(kAutoAccessibleNameProperty).toString().trimmed();
+    const bool currentNameIsAuto = !previousAutoName.isEmpty() && currentName == previousAutoName;
+    const bool currentNameIsExplicit = !currentName.isEmpty() && !currentNameIsAuto;
+    const QString desiredAutoName = normalizedButtonText(text());
+
+    if (!currentNameIsExplicit && !desiredAutoName.isEmpty()) {
+        setAccessibleName(desiredAutoName);
+        setProperty(kAutoAccessibleNameProperty, desiredAutoName);
+    } else if (!currentNameIsExplicit && desiredAutoName.isEmpty() && currentNameIsAuto) {
+        setAccessibleName(QString());
+        setProperty(kAutoAccessibleNameProperty, QString());
+    }
+
+    const QString currentDescription = accessibleDescription().trimmed();
+    const QString previousAutoDescription = property(kAutoAccessibleDescriptionProperty).toString().trimmed();
+    const bool currentDescriptionIsAuto = !previousAutoDescription.isEmpty() && currentDescription == previousAutoDescription;
+    const bool currentDescriptionIsExplicit = !currentDescription.isEmpty() && !currentDescriptionIsAuto;
+    const QString tooltipDescription = toolTip().trimmed();
+
+    if (!currentDescriptionIsExplicit && !tooltipDescription.isEmpty()) {
+        setAccessibleDescription(tooltipDescription);
+        setProperty(kAutoAccessibleDescriptionProperty, tooltipDescription);
+    } else if (!currentDescriptionIsExplicit && tooltipDescription.isEmpty() && currentDescriptionIsAuto) {
+        setAccessibleDescription(QString());
+        setProperty(kAutoAccessibleDescriptionProperty, QString());
+    }
+
+    if (!hasUsableAccessibleName() && accessibleDescription().trimmed().isEmpty()) {
+        setAccessibleDescription(QStringLiteral(
+            "Extended floating action button requires visible text or an accessible name for assistive technologies"));
+    }
+}
+
 void QtMaterialExtendedFab::syncAccessibilityState()
 {
     QtMaterialFilledButton::syncAccessibilityState();
-
-    const QString desiredAutoName = effectiveAccessibleName();
-    const QString previousAutoName = property(kAutoAccessibleNameProperty).toString();
-    const QString currentName = accessibleName();
-    const bool currentNameIsAuto = !previousAutoName.isEmpty() && currentName == previousAutoName;
-
-    if (desiredAutoName.isEmpty()) {
-        if (currentNameIsAuto) {
-            QWidget::setAccessibleName(QString());
-        }
-        setProperty(kAutoAccessibleNameProperty, QString());
-        setAccessibleDescription(QStringLiteral(
-            "Extended floating action button requires visible text or an accessible name for assistive technologies"));
-        return;
-    }
-
-    if (currentName.trimmed().isEmpty() || currentNameIsAuto) {
-        QWidget::setAccessibleName(desiredAutoName);
-        setProperty(kAutoAccessibleNameProperty, desiredAutoName);
-    }
-
-    setAccessibleDescription(QStringLiteral("Extended floating action button"));
+    syncExtendedFabAccessibility();
 }
 
 void QtMaterialExtendedFab::contentChangedEvent()
 {
     QtMaterialFilledButton::contentChangedEvent();
-    syncAccessibilityState();
+    syncExtendedFabAccessibility();
 }
 
 void QtMaterialExtendedFab::changeEvent(QEvent* event)
 {
-    if (event->type() == QEvent::ToolTipChange || event->type() == QEvent::EnabledChange) {
-        syncAccessibilityState();
-    }
-
     QtMaterialFilledButton::changeEvent(event);
+
+    switch (event->type()) {
+    case QEvent::ToolTipChange:
+    case QEvent::AccessibleNameChange:
+    case QEvent::AccessibleDescriptionChange:
+    case QEvent::EnabledChange:
+        syncExtendedFabAccessibility();
+        break;
+    default:
+        break;
+    }
 }
 
-
+ButtonSpec QtMaterialExtendedFab::resolveButtonSpec() const
+{
+    SpecFactory factory;
+    return extendedFabToButtonSpec(factory.extendedFabSpec(theme(), density()));
+}
 
 QSize QtMaterialExtendedFab::sizeHint() const
 {
@@ -159,61 +193,6 @@ QSize QtMaterialExtendedFab::sizeHint() const
 QSize QtMaterialExtendedFab::minimumSizeHint() const
 {
     return sizeHint();
-}
-
-static void applyFabVariant(FabSpec* spec, const Theme& theme, QtMaterialFabVariant variant)
-{
-    if (!spec) {
-        return;
-    }
-
-    switch (variant) {
-    case QtMaterialFabVariant::Primary:
-        spec->containerColor = theme.colorScheme().color(ColorRole::PrimaryContainer);
-        spec->iconColor = theme.colorScheme().color(ColorRole::OnPrimaryContainer);
-        break;
-
-    case QtMaterialFabVariant::Secondary:
-        spec->containerColor = theme.colorScheme().color(ColorRole::SecondaryContainer);
-        spec->iconColor = theme.colorScheme().color(ColorRole::OnSecondaryContainer);
-        break;
-
-    case QtMaterialFabVariant::Tertiary:
-        spec->containerColor = theme.colorScheme().color(ColorRole::TertiaryContainer);
-        spec->iconColor = theme.colorScheme().color(ColorRole::OnTertiaryContainer);
-        break;
-
-    case QtMaterialFabVariant::Surface:
-        spec->containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-        spec->iconColor = theme.colorScheme().color(ColorRole::Primary);
-        break;
-    }
-
-    spec->stateLayerColor = spec->iconColor;
-}
-
-QtMaterialFabVariant QtMaterialExtendedFab::fabVariant() const noexcept
-{
-    return m_fabVariant;
-}
-
-void QtMaterialExtendedFab::setFabVariant(QtMaterialFabVariant variant)
-{
-    if (m_fabVariant == variant) {
-        return;
-    }
-
-    m_fabVariant = variant;
-    updateGeometry();
-    update();
-}
-
-ButtonSpec QtMaterialExtendedFab::resolveButtonSpec() const
-{
-    SpecFactory factory;
-    FabSpec spec = factory.extendedFabSpec(theme(), density());
-    applyFabVariant(&spec, theme(), m_fabVariant);
-    return extendedFabToButtonSpec(spec);
 }
 
 } // namespace QtMaterial

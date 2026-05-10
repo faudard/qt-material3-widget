@@ -7,6 +7,9 @@ namespace QtMaterial {
 QtMaterialFilledTonalButton::QtMaterialFilledTonalButton(QWidget* parent)
     : QtMaterialFilledButton(parent)
 {
+    setMaterialComponent(QStringLiteral("button"));
+    setMaterialVariant(QStringLiteral("filled-tonal"));
+    setMaterialRole(QStringLiteral("action"));
 }
 
 QtMaterialFilledTonalButton::QtMaterialFilledTonalButton(const QString& text, QWidget* parent)
@@ -14,6 +17,13 @@ QtMaterialFilledTonalButton::QtMaterialFilledTonalButton(const QString& text, QW
 {
     setText(text);
 }
+
+QtMaterialFilledTonalButton::QtMaterialFilledTonalButton(const QIcon& icon, const QString& text, QWidget* parent)
+    : QtMaterialFilledTonalButton(text, parent)
+{
+    setIcon(icon);
+}
+
 
 QtMaterialFilledTonalButton::~QtMaterialFilledTonalButton() = default;
 

@@ -31,8 +31,17 @@ qtm3_add_test(tst_shadowrenderer effects/tst_shadowrenderer.cpp qtmaterial3_effe
 qtm3_add_test(tst_transitioncontroller effects/tst_transitioncontroller.cpp qtmaterial3_effects)
 
 qtm3_add_test(tst_textbutton widgets/buttons/tst_textbutton.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_button_text_layout widgets/buttons/tst_button_text_layout.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_button_render_helper_layout widgets/buttons/tst_button_render_helper_layout.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_button_icon_hidpi widgets/buttons/tst_button_icon_hidpi.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_button_change_events widgets/buttons/tst_button_change_events.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_button_keyboard_activation widgets/buttons/tst_button_keyboard_activation.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_button_touch_target widgets/buttons/tst_button_touch_target.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_button_text_accessibility widgets/buttons/tst_button_text_accessibility.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_button_constructor_api widgets/buttons/tst_button_constructor_api.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_filledbutton widgets/buttons/tst_filledbutton.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_iconbutton widgets/buttons/tst_iconbutton.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_icon_fab_accessibility widgets/buttons/tst_icon_fab_accessibility.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_filledtonalbutton widgets/buttons/tst_filledtonalbutton.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_outlinedbutton widgets/buttons/tst_outlinedbutton.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_outlinedbutton_rendering widgets/buttons/tst_outlinedbutton_rendering.cpp qtmaterial3_widgets)
@@ -40,6 +49,7 @@ qtm3_add_test(tst_elevatedbutton widgets/buttons/tst_elevatedbutton.cpp qtmateri
 qtm3_add_test(tst_elevatedbutton_shadow widgets/buttons/tst_elevatedbutton_shadow.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_fab widgets/buttons/tst_fab.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_extendedfab widgets/buttons/tst_extendedfab.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_extendedfab_maturity widgets/buttons/tst_extendedfab_maturity.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_button_contracts widgets/buttons/tst_button_contracts.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_checkbox widgets/selection/tst_checkbox.cpp qtmaterial3_widgets)
@@ -272,3 +282,5 @@ qtm3_add_test(
     qtmaterial3_widgets
 )
 
+
+qtm3_add_test(tst_button_icon_size_api widgets/buttons/tst_button_icon_size_api.cpp qtmaterial3_widgets)

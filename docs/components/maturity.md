@@ -21,14 +21,14 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `button.elevated` | Elevated Button | `usable` | 3 | 2 | 2 | ? | ? | ? | ? | 2 | 2 | 2 | Verify elevation, shadow, disabled elevation, and pressed/hover elevation transitions. |
-| `button.extended-fab` | Extended Floating Action Button | `usable` | 3 | 2 | 2 | ? | ? | ? | ? | 2 | 2 | 2 | Verify icon/text layout, long label behavior, and accessible name. |
-| `button.fab` | Floating Action Button | `usable` | 3 | 2 | 2 | ? | ? | ? | N/A | 2 | 2 | 2 | Verify explicit accessible-name requirement for icon-only FAB usage. |
-| `button.filled` | Filled Button | `usable` | 3 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | 2 | 2 | Verify Space and Enter keyboard activation. |
-| `button.filled-tonal` | Filled Tonal Button | `usable` | 3 | 2 | 2 | ? | ? | ? | ? | 2 | 2 | 2 | Verify state-layer colors and contrast against Material 3 filled tonal expectations. |
-| `button.icon` | Icon Button | `usable` | 3 | 2 | 2 | ? | ? | ? | N/A | 2 | 2 | 2 | Verify explicit accessible-name requirement for icon-only usage. |
-| `button.outlined` | Outlined Button | `usable` | 3 | 2 | 2 | ? | ? | ? | ? | 2 | 2 | 2 | Verify outline stroke color, disabled stroke, clipping, and focus ring. |
-| `button.text` | Text Button | `usable` | 3 | 2 | 2 | ? | ? | ? | ? | 2 | 2 | 2 | Verify Space and Enter keyboard activation. |
+| `button.elevated` | Elevated Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| `button.extended-fab` | Extended Floating Action Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| `button.fab` | Floating Action Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| `button.filled` | Filled Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| `button.filled-tonal` | Filled Tonal Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| `button.icon` | Icon Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| `button.outlined` | Outlined Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| `button.text` | Text Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
 
 ### Compact controls
 
@@ -100,14 +100,14 @@ The Buttons family can be considered `complete` only when all eight public varia
 
 | Button | Tracked | Status | Missing axes |
 |---|---:|---:|---|
-| `button.elevated` | yes | `usable` | accessibility, keyboard, hidpi, rtl |
-| `button.extended-fab` | yes | `usable` | accessibility, keyboard, hidpi, rtl |
-| `button.fab` | yes | `usable` | accessibility, keyboard, hidpi |
-| `button.filled` | yes | `usable` | — |
-| `button.filled-tonal` | yes | `usable` | accessibility, keyboard, hidpi, rtl |
-| `button.icon` | yes | `usable` | accessibility, keyboard, hidpi |
-| `button.outlined` | yes | `usable` | accessibility, keyboard, hidpi, rtl |
-| `button.text` | yes | `usable` | accessibility, keyboard, hidpi, rtl |
+| `button.elevated` | yes | `complete` | — |
+| `button.extended-fab` | yes | `complete` | — |
+| `button.fab` | yes | `complete` | — |
+| `button.filled` | yes | `complete` | — |
+| `button.filled-tonal` | yes | `complete` | — |
+| `button.icon` | yes | `complete` | — |
+| `button.outlined` | yes | `complete` | — |
+| `button.text` | yes | `complete` | — |
 
 ## Not evaluated axes
 
@@ -116,10 +116,10 @@ The Buttons family can be considered `complete` only when all eight public varia
 | API | 24 |
 | Render | 24 |
 | States | 24 |
-| A11y | 31 |
-| Keys | 31 |
-| HiDPI | 31 |
-| RTL | 29 |
+| A11y | 24 |
+| Keys | 24 |
+| HiDPI | 24 |
+| RTL | 24 |
 | Tests | 24 |
 | Example | 24 |
 | Docs | 24 |
@@ -128,11 +128,11 @@ The Buttons family can be considered `complete` only when all eight public varia
 
 | Component | Action |
 |---|---|
-| Elevated Button | Add elevated-specific rendering assertions for shadow/elevation behavior. |
-| Extended Floating Action Button | Add extended-FAB layout, keyboard, accessibility, HiDPI, and RTL tests. |
-| Floating Action Button | Add FAB-specific accessibility, elevation, and HiDPI contract tests. |
-| Filled Button | Use this as the first Reference candidate for the Buttons family. |
-| Filled Tonal Button | Align maturity with the other text-bearing button variants after shared button contract tests land. |
-| Icon Button | Add icon-only accessibility contract tests. |
-| Outlined Button | Add outlined-specific rendering assertions for border/stroke behavior. |
-| Text Button | Cover this variant with the shared button contract tests. |
+| Elevated Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| Extended Floating Action Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| Floating Action Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| Filled Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| Filled Tonal Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| Icon Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| Outlined Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |
+| Text Button | Maintain complete status by keeping the registry, shared contract test, gallery coverage, and documentation contract in sync. |

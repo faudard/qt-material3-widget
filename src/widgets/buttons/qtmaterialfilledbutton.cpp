@@ -19,6 +19,9 @@ QtMaterialFilledButton::QtMaterialFilledButton(QWidget* parent)
  : QtMaterialTextButton(parent)
  , d(std::make_unique<QtMaterialFilledButtonPrivate>(this))
 {
+ setMaterialComponent(QStringLiteral("button"));
+ setMaterialVariant(QStringLiteral("filled"));
+ setMaterialRole(QStringLiteral("action"));
  d->elevationTransition->setProgress(0.0);
  QObject::connect(
   d->elevationTransition,
@@ -26,6 +29,19 @@ QtMaterialFilledButton::QtMaterialFilledButton(QWidget* parent)
   this,
   [this](qreal) { update(); });
 }
+
+QtMaterialFilledButton::QtMaterialFilledButton(const QString& text, QWidget* parent)
+    : QtMaterialFilledButton(parent)
+{
+    setText(text);
+}
+
+QtMaterialFilledButton::QtMaterialFilledButton(const QIcon& icon, const QString& text, QWidget* parent)
+    : QtMaterialFilledButton(text, parent)
+{
+    setIcon(icon);
+}
+
 
 QtMaterialFilledButton::~QtMaterialFilledButton() = default;
 

@@ -51,3 +51,6 @@ jobs:
 
       - name: Run local maturity wrapper without CTest
         run: python scripts/run_buttons_maturity_checks.py
+
+      - name: Check Buttons maturity score synchronization
+        run: python scripts/check_buttons_maturity_sync.py

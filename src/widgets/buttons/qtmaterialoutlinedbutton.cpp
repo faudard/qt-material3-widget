@@ -18,7 +18,23 @@ QtMaterialOutlinedButton::QtMaterialOutlinedButton(QWidget* parent)
  : QtMaterialTextButton(parent)
  , d(std::make_unique<QtMaterialOutlinedButtonPrivate>())
 {
+ setMaterialComponent(QStringLiteral("button"));
+ setMaterialVariant(QStringLiteral("outlined"));
+ setMaterialRole(QStringLiteral("action"));
 }
+
+QtMaterialOutlinedButton::QtMaterialOutlinedButton(const QString& text, QWidget* parent)
+    : QtMaterialOutlinedButton(parent)
+{
+    setText(text);
+}
+
+QtMaterialOutlinedButton::QtMaterialOutlinedButton(const QIcon& icon, const QString& text, QWidget* parent)
+    : QtMaterialOutlinedButton(text, parent)
+{
+    setIcon(icon);
+}
+
 
 QtMaterialOutlinedButton::~QtMaterialOutlinedButton() = default;
 

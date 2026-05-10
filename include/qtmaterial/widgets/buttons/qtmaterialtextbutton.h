@@ -1,4 +1,6 @@
 #pragma once
+#include <QString>
+#include <QIcon>
 
 
 #include <memory>
@@ -22,6 +24,8 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTextButton : public QtMaterialAbstrac
  Q_OBJECT
 public:
  explicit QtMaterialTextButton(QWidget* parent = nullptr);
+    explicit QtMaterialTextButton(const QString& text, QWidget* parent = nullptr);
+    QtMaterialTextButton(const QIcon& icon, const QString& text, QWidget* parent = nullptr);
  ~QtMaterialTextButton() override;
 
  QSize sizeHint() const override;
