@@ -163,8 +163,6 @@ void QtMaterialExtendedFab::changeEvent(QEvent* event)
 
     switch (event->type()) {
     case QEvent::ToolTipChange:
-    case QEvent::AccessibleNameChange:
-    case QEvent::AccessibleDescriptionChange:
     case QEvent::EnabledChange:
         syncExtendedFabAccessibility();
         break;

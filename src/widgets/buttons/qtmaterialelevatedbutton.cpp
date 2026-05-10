@@ -11,41 +11,16 @@ namespace QtMaterial {
 
 namespace {
 
-qreal elevatedShadowProgress(const QtMaterialElevatedButton& button)
+int scaledShadowBlur(const QWidget& widget, qreal progress)
 {
-    if (!button.isEnabled()) {
-        return 0.0;
-    }
-
-    const QtMaterialInteractionState state = button.interactionState();
-    if (state.isPressed()) {
-        return 0.65;
-    }
-
-    if (state.isHovered() || state.isFocused()) {
-        return 1.0;
-    }
-
-    return 0.45;
-}
-
-int scaledShadowBlur(const QtMaterialElevatedButton& button, qreal progress)
-{
-    const qreal dpr = qMax<qreal>(button.devicePixelRatioF(), 1.0);
+    const qreal dpr = qMax<qreal>(widget.devicePixelRatioF(), 1.0);
     return qMax(1, qRound((4.0 + progress * 6.0) * dpr));
 }
 
-int scaledShadowOffset(const QtMaterialElevatedButton& button, qreal progress)
+int scaledShadowOffset(const QWidget& widget, qreal progress)
 {
-    const qreal dpr = qMax<qreal>(button.devicePixelRatioF(), 1.0);
+    const qreal dpr = qMax<qreal>(widget.devicePixelRatioF(), 1.0);
     return qMax(1, qRound((1.0 + progress * 2.0) * dpr));
-}
-
-QColor elevatedShadowColor(const QtMaterialElevatedButton& button, qreal progress)
-{
-    QColor color = button.theme().colorScheme().color(ColorRole::Shadow);
-    color.setAlpha(qBound(0, qRound(28.0 + progress * 40.0), 96));
-    return color;
 }
 
 } // namespace
@@ -70,7 +45,6 @@ QtMaterialElevatedButton::QtMaterialElevatedButton(const QIcon& icon, const QStr
     setIcon(icon);
 }
 
-
 QtMaterialElevatedButton::~QtMaterialElevatedButton() = default;
 
 ButtonSpec QtMaterialElevatedButton::resolveButtonSpec() const
@@ -84,11 +58,25 @@ void QtMaterialElevatedButton::paintEvent(QPaintEvent* event)
     ensurePolished();
     ensureSpecResolved();
 
-    const qreal progress = elevatedShadowProgress(*this);
+    qreal progress = 0.0;
+    if (isEnabled()) {
+        const QtMaterialInteractionState state = interactionState();
+        if (state.isHovered() || state.isFocused()) {
+            progress = 1.0;
+        } else if (state.isPressed()) {
+            progress = 0.65;
+        } else {
+            progress = 0.45;
+        }
+    }
+
     if (progress > 0.0) {
         const ButtonSpec& spec = currentButtonSpec();
         const QRectF visualRect = ButtonRenderHelper::containerRect(rect(), spec).adjusted(1, 1, -1, -1);
         const qreal radius = ButtonRenderHelper::cornerRadius(theme(), spec, visualRect);
+
+        QColor shadowColor = theme().colorScheme().color(ColorRole::Shadow);
+        shadowColor.setAlpha(qBound(0, qRound(28.0 + progress * 40.0), 96));
 
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing, true);
@@ -97,7 +85,7 @@ void QtMaterialElevatedButton::paintEvent(QPaintEvent* event)
             &painter,
             visualRect,
             radius,
-            elevatedShadowColor(*this, progress),
+            shadowColor,
             scaledShadowBlur(*this, progress),
             scaledShadowOffset(*this, progress));
     }
