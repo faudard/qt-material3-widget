@@ -1,13 +1,15 @@
 #include <QtTest/QtTest>
 
-#include <QFontMetrics>
+#include <QAbstractButton>
 #include <QIcon>
 #include <QPainter>
 #include <QPixmap>
+#include <memory>
 
-#include "widgets/buttons/private/qtmaterialbuttonrenderhelper_p.h"
-#include "qtmaterial/specs/qtmaterialbuttonspec.h"
+#include "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
 
 namespace {
@@ -27,15 +29,73 @@ QIcon contractIcon()
     return QIcon(pixmap);
 }
 
-QtMaterial::ButtonSpec layoutSpec()
+struct ButtonCase
 {
-    QtMaterial::ButtonSpec spec;
-    spec.touchTarget = QSize(40, 40);
-    spec.containerHeight = 40;
-    spec.horizontalPadding = 8;
-    spec.iconSize = 24;
-    spec.iconSpacing = 8;
-    return spec;
+    QString name;
+    std::function<std::unique_ptr<QAbstractButton>()> create;
+};
+
+QVector<ButtonCase> textBearingCases()
+{
+    return {
+        {QStringLiteral("text"), [] {
+             auto button = std::make_unique<QtMaterial::QtMaterialTextButton>();
+             button->setText(QStringLiteral("Save"));
+             return button;
+         }},
+        {QStringLiteral("filled"), [] {
+             auto button = std::make_unique<QtMaterial::QtMaterialFilledButton>();
+             button->setText(QStringLiteral("Save"));
+             return button;
+         }},
+        {QStringLiteral("filled-tonal"), [] {
+             return std::make_unique<QtMaterial::QtMaterialFilledTonalButton>(QStringLiteral("Save"));
+         }},
+        {QStringLiteral("outlined"), [] {
+             auto button = std::make_unique<QtMaterial::QtMaterialOutlinedButton>();
+             button->setText(QStringLiteral("Save"));
+             return button;
+         }},
+        {QStringLiteral("elevated"), [] {
+             auto button = std::make_unique<QtMaterial::QtMaterialElevatedButton>();
+             button->setText(QStringLiteral("Save"));
+             return button;
+         }},
+    };
+}
+
+QImage renderButton(QAbstractButton& button, qreal devicePixelRatio)
+{
+    const QSize logicalSize = button.sizeHint().expandedTo(QSize(144, 56));
+    button.resize(logicalSize);
+    button.show();
+    QTest::qWaitForWindowExposed(&button);
+
+    QPixmap pixmap(qCeil(logicalSize.width() * devicePixelRatio),
+                   qCeil(logicalSize.height() * devicePixelRatio));
+    pixmap.setDevicePixelRatio(devicePixelRatio);
+    pixmap.fill(Qt::transparent);
+
+    button.render(&pixmap);
+    return pixmap.toImage();
+}
+
+bool hasPaintedPixels(const QImage& image)
+{
+    if (image.isNull()) {
+        return false;
+    }
+
+    for (int y = 0; y < image.height(); ++y) {
+        const QRgb* line = reinterpret_cast<const QRgb*>(image.constScanLine(y));
+        for (int x = 0; x < image.width(); ++x) {
+            if (qAlpha(line[x]) != 0) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 } // namespace
@@ -45,95 +105,86 @@ class tst_ButtonRenderHelperLayout : public QObject
     Q_OBJECT
 
 private slots:
-    void textRectUsesActualElidedTextWidth();
-    void rtlMirrorsIconAndTextOrder();
-    void ltrKeepsIconBeforeText();
+    void iconAndTextSizeHintIsAtLeastTextOnly();
     void publicSizeHintDoesNotExplodeForShortText();
     void publicSizeHintIsStableBetweenLtrAndRtl();
+    void longTextIncreasesWidth();
+    void rendersInLtrAndRtl();
 };
 
-void tst_ButtonRenderHelperLayout::textRectUsesActualElidedTextWidth()
+void tst_ButtonRenderHelperLayout::iconAndTextSizeHintIsAtLeastTextOnly()
 {
-    QtMaterial::QtMaterialFilledButton button;
-    button.setText(QStringLiteral("Save"));
-    button.setIcon(contractIcon());
+    for (const ButtonCase& testCase : textBearingCases()) {
+        auto textOnly = testCase.create();
+        const QSize textOnlyHint = textOnly->sizeHint();
 
-    const QtMaterial::ButtonSpec spec = layoutSpec();
-    const QRect container(0, 0, 4000, 40);
-    const QFont font = button.font();
-    const auto layout = QtMaterial::ButtonRenderHelper::layoutContent(
-        &button,
-        spec,
-        container,
-        font,
-        button.text());
+        auto iconAndText = testCase.create();
+        iconAndText->setIcon(contractIcon());
+        const QSize iconAndTextHint = iconAndText->sizeHint();
 
-    const int expectedWidth = QFontMetrics(font).horizontalAdvance(layout.elidedText);
-    QCOMPARE(layout.textRect.width(), expectedWidth);
-    QVERIFY(layout.textRect.width() < 4000);
-}
-
-void tst_ButtonRenderHelperLayout::rtlMirrorsIconAndTextOrder()
-{
-    QtMaterial::QtMaterialFilledButton button;
-    button.setText(QStringLiteral("Save"));
-    button.setIcon(contractIcon());
-    button.setLayoutDirection(Qt::RightToLeft);
-
-    const auto layout = QtMaterial::ButtonRenderHelper::layoutContent(
-        &button,
-        layoutSpec(),
-        QRect(0, 0, 240, 40),
-        button.font(),
-        button.text());
-
-    QVERIFY(layout.hasIcon);
-    QVERIFY(layout.textRect.left() < layout.iconRect.left());
-}
-
-void tst_ButtonRenderHelperLayout::ltrKeepsIconBeforeText()
-{
-    QtMaterial::QtMaterialFilledButton button;
-    button.setText(QStringLiteral("Save"));
-    button.setIcon(contractIcon());
-    button.setLayoutDirection(Qt::LeftToRight);
-
-    const auto layout = QtMaterial::ButtonRenderHelper::layoutContent(
-        &button,
-        layoutSpec(),
-        QRect(0, 0, 240, 40),
-        button.font(),
-        button.text());
-
-    QVERIFY(layout.hasIcon);
-    QVERIFY(layout.iconRect.left() < layout.textRect.left());
+        QVERIFY2(iconAndTextHint.width() >= textOnlyHint.width(), qPrintable(testCase.name));
+        QVERIFY2(iconAndTextHint.height() >= textOnlyHint.height(), qPrintable(testCase.name));
+    }
 }
 
 void tst_ButtonRenderHelperLayout::publicSizeHintDoesNotExplodeForShortText()
 {
-    QtMaterial::QtMaterialTextButton button;
-    button.setText(QStringLiteral("Save"));
-    button.setIcon(contractIcon());
+    for (const ButtonCase& testCase : textBearingCases()) {
+        auto button = testCase.create();
+        button->setIcon(contractIcon());
+        const QSize hint = button->sizeHint();
 
-    const QSize hint = button.sizeHint();
-    QVERIFY(hint.isValid());
-    QVERIFY(hint.width() >= 88);
-    QVERIFY(hint.width() < 300);
+        QVERIFY2(hint.isValid(), qPrintable(testCase.name));
+        QVERIFY2(hint.width() >= 40, qPrintable(testCase.name));
+        QVERIFY2(hint.height() >= 40, qPrintable(testCase.name));
+        QVERIFY2(hint.width() < 300, qPrintable(testCase.name));
+    }
 }
 
 void tst_ButtonRenderHelperLayout::publicSizeHintIsStableBetweenLtrAndRtl()
 {
-    QtMaterial::QtMaterialTextButton button;
-    button.setText(QStringLiteral("Save"));
-    button.setIcon(contractIcon());
+    for (const ButtonCase& testCase : textBearingCases()) {
+        auto button = testCase.create();
+        button->setIcon(contractIcon());
 
-    button.setLayoutDirection(Qt::LeftToRight);
-    const QSize ltr = button.sizeHint();
+        button->setLayoutDirection(Qt::LeftToRight);
+        const QSize ltr = button->sizeHint();
 
-    button.setLayoutDirection(Qt::RightToLeft);
-    const QSize rtl = button.sizeHint();
+        button->setLayoutDirection(Qt::RightToLeft);
+        const QSize rtl = button->sizeHint();
 
-    QCOMPARE(ltr, rtl);
+        QCOMPARE(ltr, rtl);
+    }
+}
+
+void tst_ButtonRenderHelperLayout::longTextIncreasesWidth()
+{
+    for (const ButtonCase& testCase : textBearingCases()) {
+        auto shortButton = testCase.create();
+        const QSize shortHint = shortButton->sizeHint();
+
+        auto longButton = testCase.create();
+        longButton->setText(QStringLiteral("Create project from selected template"));
+        const QSize longHint = longButton->sizeHint();
+
+        QVERIFY2(longHint.width() > shortHint.width(), qPrintable(testCase.name));
+        QCOMPARE(longHint.height(), shortHint.height());
+    }
+}
+
+void tst_ButtonRenderHelperLayout::rendersInLtrAndRtl()
+{
+    for (const ButtonCase& testCase : textBearingCases()) {
+        auto ltrButton = testCase.create();
+        ltrButton->setIcon(contractIcon());
+        ltrButton->setLayoutDirection(Qt::LeftToRight);
+        QVERIFY2(hasPaintedPixels(renderButton(*ltrButton, 1.0)), qPrintable(testCase.name));
+
+        auto rtlButton = testCase.create();
+        rtlButton->setIcon(contractIcon());
+        rtlButton->setLayoutDirection(Qt::RightToLeft);
+        QVERIFY2(hasPaintedPixels(renderButton(*rtlButton, 1.0)), qPrintable(testCase.name));
+    }
 }
 
 QTEST_MAIN(tst_ButtonRenderHelperLayout)

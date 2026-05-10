@@ -148,9 +148,9 @@ void tst_IconFabAccessibility::accessibleInterfacesExposeButtonRole()
 
     QtMaterial::QtMaterialExtendedFab extendedFab(contractIcon(), QStringLiteral("Create"));
 
-    std::unique_ptr<QAccessibleInterface> iconIface(QAccessible::queryAccessibleInterface(&iconButton));
-    std::unique_ptr<QAccessibleInterface> fabIface(QAccessible::queryAccessibleInterface(&fab));
-    std::unique_ptr<QAccessibleInterface> extendedIface(QAccessible::queryAccessibleInterface(&extendedFab));
+    QAccessibleInterface* iconIface = QAccessible::queryAccessibleInterface(&iconButton);
+    QAccessibleInterface* fabIface = QAccessible::queryAccessibleInterface(&fab);
+    QAccessibleInterface* extendedIface = QAccessible::queryAccessibleInterface(&extendedFab);
 
     QVERIFY(iconIface != nullptr);
     QVERIFY(fabIface != nullptr);

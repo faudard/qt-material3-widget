@@ -90,25 +90,14 @@ if(QTMATERIAL3_USE_MCU)
         list(FILTER QTMATERIAL3_MCU_SOURCES EXCLUDE REGEX ".*(_test|test)\\.(cc|cpp)$")
 
         if(QTMATERIAL3_MCU_SOURCES)
-            add_library(qtm3_material_color_utilities STATIC
-                ${QTMATERIAL3_MCU_SOURCES}
+            target_sources(
+                qtmaterial3_theme
+                PRIVATE ${QTMATERIAL3_MCU_SOURCES}
             )
-
-            target_compile_features(qtm3_material_color_utilities
-                PUBLIC
-                    cxx_std_17
+            target_include_directories(
+                qtmaterial3_theme
+                PRIVATE "${QTMATERIAL3_MCU_ROOT}"
             )
-
-            target_include_directories(qtm3_material_color_utilities
-                PUBLIC
-                    "${QTMATERIAL3_MCU_ROOT}"
-            )
-
-            set_target_properties(qtm3_material_color_utilities
-                PROPERTIES
-                    POSITION_INDEPENDENT_CODE ON
-            )
-
             set(QTMATERIAL3_HAS_MCU ON)
         else()
             message(WARNING
@@ -129,18 +118,6 @@ target_compile_definitions(qtmaterial3_theme
         QTMATERIAL3_USE_MCU=$<BOOL:${QTMATERIAL3_USE_MCU}>
         QTMATERIAL3_HAS_MCU=$<BOOL:${QTMATERIAL3_HAS_MCU}>
 )
-
-if(TARGET qtm3_material_color_utilities)
-    target_link_libraries(qtmaterial3_theme
-        PRIVATE
-            qtm3_material_color_utilities
-    )
-
-    target_include_directories(qtmaterial3_theme
-        PRIVATE
-            "${QTMATERIAL3_MCU_ROOT}"
-    )
-endif()
 
 target_link_libraries(qtmaterial3_theme
     PUBLIC

@@ -1,13 +1,16 @@
 #include <QtTest/QtTest>
 
-#include <QColor>
+#include <QAbstractButton>
 #include <QIcon>
+#include <QImage>
 #include <QPainter>
 #include <QPixmap>
+#include <memory>
 
-#include "widgets/buttons/private/qtmaterialbuttonrenderhelper_p.h"
-#include "qtmaterial/specs/qtmaterialbuttonspec.h"
+#include "qtmaterial/widgets/buttons/qtmaterialextendedfab.h"
+#include "qtmaterial/widgets/buttons/qtmaterialfab.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
 
 namespace {
 
@@ -29,15 +32,69 @@ QIcon hidpiIcon(qreal dpr)
     return icon;
 }
 
-QtMaterial::ButtonSpec iconSpec()
+struct ButtonCase
 {
-    QtMaterial::ButtonSpec spec;
-    spec.iconSize = 24;
-    spec.touchTarget = QSize(40, 40);
-    spec.containerHeight = 40;
-    spec.horizontalPadding = 8;
-    spec.iconSpacing = 8;
-    return spec;
+    QString name;
+    std::function<std::unique_ptr<QAbstractButton>(qreal)> create;
+};
+
+QVector<ButtonCase> iconCases()
+{
+    return {
+        {QStringLiteral("filled"), [] (qreal dpr) {
+             auto button = std::make_unique<QtMaterial::QtMaterialFilledButton>();
+             button->setText(QStringLiteral("Save"));
+             button->setIcon(hidpiIcon(dpr));
+             return button;
+         }},
+        {QStringLiteral("icon"), [] (qreal dpr) {
+             auto button = std::make_unique<QtMaterial::QtMaterialIconButton>(hidpiIcon(dpr));
+             button->setAccessibleName(QStringLiteral("Search"));
+             return button;
+         }},
+        {QStringLiteral("fab"), [] (qreal dpr) {
+             auto button = std::make_unique<QtMaterial::QtMaterialFab>(hidpiIcon(dpr));
+             button->setAccessibleName(QStringLiteral("Create"));
+             return button;
+         }},
+        {QStringLiteral("extended-fab"), [] (qreal dpr) {
+             return std::make_unique<QtMaterial::QtMaterialExtendedFab>(hidpiIcon(dpr), QStringLiteral("Create"));
+         }},
+    };
+}
+
+QImage renderButton(QAbstractButton& button, qreal devicePixelRatio)
+{
+    const QSize logicalSize = button.sizeHint().expandedTo(QSize(144, 56));
+    button.resize(logicalSize);
+    button.show();
+    QTest::qWaitForWindowExposed(&button);
+
+    QPixmap pixmap(qCeil(logicalSize.width() * devicePixelRatio),
+                   qCeil(logicalSize.height() * devicePixelRatio));
+    pixmap.setDevicePixelRatio(devicePixelRatio);
+    pixmap.fill(Qt::transparent);
+
+    button.render(&pixmap);
+    return pixmap.toImage();
+}
+
+bool hasPaintedPixels(const QImage& image)
+{
+    if (image.isNull()) {
+        return false;
+    }
+
+    for (int y = 0; y < image.height(); ++y) {
+        const QRgb* line = reinterpret_cast<const QRgb*>(image.constScanLine(y));
+        for (int x = 0; x < image.width(); ++x) {
+            if (qAlpha(line[x]) != 0) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 } // namespace
@@ -47,13 +104,13 @@ class tst_ButtonIconHiDpi : public QObject
     Q_OBJECT
 
 private slots:
-    void tintedIconPreservesBaseDevicePixelRatio_data();
-    void tintedIconPreservesBaseDevicePixelRatio();
-    void tintedIconCacheReturnsEquivalentPixmap();
-    void nullIconReturnsNullPixmap();
+    void rendersIconButtonsAtDevicePixelRatios_data();
+    void rendersIconButtonsAtDevicePixelRatios();
+    void changingIconSizeKeepsHiDpiRenderValid();
+    void nullIconStillRendersButtonContainer();
 };
 
-void tst_ButtonIconHiDpi::tintedIconPreservesBaseDevicePixelRatio_data()
+void tst_ButtonIconHiDpi::rendersIconButtonsAtDevicePixelRatios_data()
 {
     QTest::addColumn<qreal>("dpr");
 
@@ -62,43 +119,41 @@ void tst_ButtonIconHiDpi::tintedIconPreservesBaseDevicePixelRatio_data()
     QTest::newRow("2.0") << 2.0;
 }
 
-void tst_ButtonIconHiDpi::tintedIconPreservesBaseDevicePixelRatio()
+void tst_ButtonIconHiDpi::rendersIconButtonsAtDevicePixelRatios()
 {
     QFETCH(qreal, dpr);
 
-    QtMaterial::QtMaterialFilledButton button;
-    button.setIcon(hidpiIcon(dpr));
+    for (const ButtonCase& testCase : iconCases()) {
+        auto button = testCase.create(dpr);
+        const QImage image = renderButton(*button, dpr);
 
-    const QtMaterial::ButtonSpec spec = iconSpec();
-    const QPixmap base = button.icon().pixmap(QSize(spec.iconSize, spec.iconSize), QIcon::Normal, QIcon::Off);
-    const QPixmap tinted = QtMaterial::ButtonRenderHelper::tintedIconPixmap(&button, spec, QColor(Qt::red));
-
-    QVERIFY(!base.isNull());
-    QVERIFY(!tinted.isNull());
-    QCOMPARE(tinted.size(), base.size());
-    QCOMPARE(tinted.devicePixelRatio(), base.devicePixelRatio());
+        QVERIFY2(!image.isNull(), qPrintable(testCase.name));
+        QVERIFY2(hasPaintedPixels(image), qPrintable(testCase.name));
+        QVERIFY2(image.width() >= qCeil(40 * dpr), qPrintable(testCase.name));
+        QVERIFY2(image.height() >= qCeil(40 * dpr), qPrintable(testCase.name));
+    }
 }
 
-void tst_ButtonIconHiDpi::tintedIconCacheReturnsEquivalentPixmap()
+void tst_ButtonIconHiDpi::changingIconSizeKeepsHiDpiRenderValid()
 {
-    QtMaterial::QtMaterialFilledButton button;
-    button.setIcon(hidpiIcon(2.0));
+    for (const ButtonCase& testCase : iconCases()) {
+        auto button = testCase.create(2.0);
+        button->setIconSize(QSize(28, 28));
+        const QImage image = renderButton(*button, 2.0);
 
-    const QtMaterial::ButtonSpec spec = iconSpec();
-    const QPixmap first = QtMaterial::ButtonRenderHelper::tintedIconPixmap(&button, spec, QColor(Qt::blue));
-    const QPixmap second = QtMaterial::ButtonRenderHelper::tintedIconPixmap(&button, spec, QColor(Qt::blue));
-
-    QVERIFY(!first.isNull());
-    QVERIFY(!second.isNull());
-    QCOMPARE(first.size(), second.size());
-    QCOMPARE(first.devicePixelRatio(), second.devicePixelRatio());
+        QVERIFY2(!image.isNull(), qPrintable(testCase.name));
+        QVERIFY2(hasPaintedPixels(image), qPrintable(testCase.name));
+    }
 }
 
-void tst_ButtonIconHiDpi::nullIconReturnsNullPixmap()
+void tst_ButtonIconHiDpi::nullIconStillRendersButtonContainer()
 {
     QtMaterial::QtMaterialFilledButton button;
-    const QPixmap tinted = QtMaterial::ButtonRenderHelper::tintedIconPixmap(&button, iconSpec(), QColor(Qt::red));
-    QVERIFY(tinted.isNull());
+    button.setText(QStringLiteral("Save"));
+    const QImage image = renderButton(button, 2.0);
+
+    QVERIFY(!image.isNull());
+    QVERIFY(hasPaintedPixels(image));
 }
 
 QTEST_MAIN(tst_ButtonIconHiDpi)

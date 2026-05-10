@@ -1,4 +1,5 @@
 #pragma once
+#include <QtGlobal>
 
 #include <QIcon>
 #include <QString>
@@ -9,6 +10,15 @@ class QEvent;
 
 namespace QtMaterial {
 
+enum class QtMaterialFabVariant
+{
+    Primary,
+    Secondary,
+    Tertiary,
+    Surface,
+};
+
+
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialFab : public QtMaterialFilledButton
 {
     Q_OBJECT
@@ -17,6 +27,9 @@ public:
     explicit QtMaterialFab(QWidget* parent = nullptr);
     explicit QtMaterialFab(const QIcon& icon, QWidget* parent = nullptr);
     ~QtMaterialFab() override;
+
+    QtMaterialFabVariant fabVariant() const noexcept;
+    void setFabVariant(QtMaterialFabVariant variant);
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
@@ -47,6 +60,8 @@ private:
     QString m_iconAccessibleName;
     QString m_lastAccessibilitySummary;
     bool m_requiresAccessibleName = true;
+
+    QtMaterialFabVariant m_fabVariant = QtMaterialFabVariant::Primary;
 };
 
 } // namespace QtMaterial

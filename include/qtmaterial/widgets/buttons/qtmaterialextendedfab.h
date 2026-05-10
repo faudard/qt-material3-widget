@@ -1,4 +1,5 @@
 #pragma once
+#include "qtmaterial/widgets/buttons/qtmaterialfab.h"
 
 #include <QIcon>
 #include <QString>
@@ -19,6 +20,9 @@ public:
     QtMaterialExtendedFab(const QIcon& icon, const QString& text, QWidget* parent = nullptr);
     ~QtMaterialExtendedFab() override;
 
+    QtMaterialFabVariant fabVariant() const noexcept;
+    void setFabVariant(QtMaterialFabVariant variant);
+
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
@@ -35,6 +39,8 @@ protected:
 private:
     void initializeExtendedFab();
     void syncExtendedFabAccessibility();
+
+    QtMaterialFabVariant m_fabVariant = QtMaterialFabVariant::Primary;
 };
 
 } // namespace QtMaterial
