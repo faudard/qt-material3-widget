@@ -1,0 +1,57 @@
+set(QTMATERIAL3_CORE_SOURCES
+    qtmaterialwidget.cpp
+    qtmaterialinteractionstate.cpp
+    qtmaterialcontrol.cpp
+    qtmaterialsurface.cpp
+    qtmaterialoverlaysurface.cpp
+    qtmaterialabstractbutton.cpp
+    qtmaterialselectioncontrol.cpp
+    qtmaterialinputcontrol.cpp
+    private/qtmaterialaccessibilityhelper.cpp
+    qtmaterialcomponentregistry.cpp
+    qtmaterialasyncstate.cpp
+    qtmaterialformfieldcontrol.cpp
+    qtmaterialnavigationmodel.cpp
+    qtmaterialpaletteadapter.cpp
+    qtmaterialproxystyle.cpp
+    qtmaterialpaintcache.cpp
+    qtmaterialautomation.cpp
+)
+
+set(QTMATERIAL3_CORE_HEADERS
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialdensity.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialwidget.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialinteractionstate.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialeventcompat.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialcontrol.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialsurface.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialoverlaysurface.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialabstractbutton.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialselectioncontrol.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialinputcontrol.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialcomponentregistry.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialasyncstate.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialformfieldcontrol.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialnavigationmodel.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialpaletteadapter.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialproxystyle.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialpaintcache.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialautomation.h
+)
+
+qtm3_add_module(
+    qtmaterial3_core
+    Core
+    QtMaterial3Core
+    QTMATERIAL3_CORE_LIBRARY
+    ${QTMATERIAL3_CORE_SOURCES}
+    ${QTMATERIAL3_CORE_HEADERS}
+)
+
+target_link_libraries(qtmaterial3_core
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Widgets
+        qtmaterial3_theme
+)

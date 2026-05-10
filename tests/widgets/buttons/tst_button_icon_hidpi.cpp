@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QPixmap>
 
-#include "private/qtmaterialbuttonrenderhelper_p.h"
+#include "widgets/buttons/private/qtmaterialbuttonrenderhelper_p.h"
 #include "qtmaterial/specs/qtmaterialbuttonspec.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 

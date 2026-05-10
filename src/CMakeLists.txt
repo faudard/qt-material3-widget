@@ -1,0 +1,5 @@
+add_subdirectory(theme)
+add_subdirectory(core)
+add_subdirectory(specs)
+add_subdirectory(effects)
+add_subdirectory(widgets)

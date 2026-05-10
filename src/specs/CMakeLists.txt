@@ -1,0 +1,77 @@
+set(QTMATERIAL3_SPECS_SOURCES
+    qtmaterialspecfactory.cpp
+    qtmaterialcomponenttokenapplier.cpp
+    qtmaterialbuttonspec.cpp
+    qtmaterialiconbuttonspec.cpp
+    qtmaterialcheckboxspec.cpp
+    qtmaterialradiobuttonspec.cpp
+    qtmaterialswitchspec.cpp
+    qtmaterialdialogspec.cpp
+    qtmaterialtextfieldspec.cpp
+    qtmaterialfabspec.cpp
+    qtmaterialcardspec.cpp
+    qtmaterialnavigationdrawerspec.cpp
+    qtmaterialbottomsheetspec.cpp
+    qtmaterialbannerspec.cpp
+    qtmaterialappbarspec.cpp
+    qtmateriallistitemspec.cpp
+    qtmaterialdividerspec.cpp
+    qtmaterialautocompletepopupspec.cpp
+    qtmaterialdatefieldspec.cpp
+    qtmaterialtabsspec.cpp
+    qtmaterialsnackbarspec.cpp
+    qtmaterialprogressindicatorspec.cpp
+    qtmaterialcomponentfamilyspecs.cpp
+    qtmaterialdatacomponentspecs.cpp
+    qtmaterialspecfactory_data_components.cpp
+    qtmaterialspecvalidation.cpp
+)
+
+set(QTMATERIAL3_SPECS_HEADERS
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbuttonspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialiconbuttonspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialcheckboxspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialradiobuttonspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialswitchspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdialogspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtextfieldspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialfabspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialcardspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationdrawerspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbottomsheetspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbannerspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialappbarspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmateriallistitemspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdividerspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletepopupspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatefieldspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtabsspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspecfactory.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsnackbarspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialprogressindicatorspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialchipspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsegmentedbuttonspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationrailspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialmenuspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletespec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatacomponentspecs.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspeccontext.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspecvalidation.h
+)
+
+qtm3_add_module(
+    qtmaterial3_specs
+    Specs
+    QtMaterial3Specs
+    QTMATERIAL3_SPECS_LIBRARY
+    ${QTMATERIAL3_SPECS_SOURCES}
+    ${QTMATERIAL3_SPECS_HEADERS}
+)
+
+target_link_libraries(qtmaterial3_specs
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        qtmaterial3_theme
+        qtmaterial3_core
+)

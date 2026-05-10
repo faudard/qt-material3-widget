@@ -1,0 +1,112 @@
+set(QTMATERIAL3_WIDGETS_SOURCES
+    buttons/private/qtmaterialbuttonrenderhelper.cpp
+    buttons/qtmaterialtextbutton.cpp
+    buttons/qtmaterialfilledbutton.cpp
+    buttons/qtmaterialiconbutton.cpp
+    buttons/qtmaterialfilledtonalbutton.cpp
+    buttons/qtmaterialoutlinedbutton.cpp
+    buttons/qtmaterialelevatedbutton.cpp
+    buttons/qtmaterialfab.cpp
+    buttons/qtmaterialextendedfab.cpp
+    selection/private/qtmaterialselectionrenderhelper.cpp
+    surfaces/private/qtmaterialsurfacerenderhelper.cpp
+    inputs/private/qtmaterialtextfieldshellhelper_p.cpp
+    selection/qtmaterialcheckbox.cpp
+    selection/qtmaterialswitch.cpp
+    selection/qtmaterialradiobutton.cpp
+    surfaces/qtmaterialdialog.cpp
+    surfaces/qtmaterialnavigationdrawer.cpp
+    surfaces/qtmaterialbottomsheet.cpp
+    surfaces/qtmaterialbanner.cpp
+    surfaces/qtmaterialcard.cpp
+    surfaces/qtmaterialtopappbar.cpp
+    surfaces/qtmaterialbottomappbar.cpp
+    inputs/qtmaterialoutlinedtextfield.cpp
+    inputs/qtmaterialfilledtextfield.cpp
+    inputs/qtmaterialtextfieldvalidationgroup.cpp
+    inputs/qtmaterialautocompletepopup.cpp
+    inputs/qtmaterialdatefield.cpp
+    data/qtmateriallistitem.cpp
+    data/qtmateriallist.cpp
+    data/qtmaterialdivider.cpp
+    navigation/qtmaterialtabs.cpp
+    surfaces/qtmaterialsnackbar.cpp
+    surfaces/qtmaterialsnackbarhost.cpp
+    progress/qtmateriallinearprogressindicator.cpp
+    progress/qtmaterialcircularprogressindicator.cpp
+    selection/qtmaterialchip.cpp
+    selection/qtmaterialsegmentedbutton.cpp
+    navigation/qtmaterialnavigationrail.cpp
+    navigation/qtmaterialnavigationcontroller.cpp
+    navigation/qtmaterialmenu.cpp
+    inputs/qtmaterialautocomplete.cpp
+    qtmaterialdatepicker.cpp
+    qtmaterialwidget_datacomponent_spec_defaults.cpp
+    data/qtmaterialtable.cpp
+    data/qtmaterialgridlist.cpp
+    data/qtmaterialcarousel.cpp
+)
+
+set(QTMATERIAL3_WIDGETS_HEADERS
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialtextbutton.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialfilledbutton.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialiconbutton.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialfab.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialextendedfab.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/selection/qtmaterialcheckbox.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/selection/qtmaterialswitch.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/selection/qtmaterialradiobutton.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialdialog.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialbanner.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialcard.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialtopappbar.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialtextfieldvalidationgroup.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialdatefield.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmateriallistitem.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmateriallist.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialtabs.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialdivider.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/selection/qtmaterialchip.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationrail.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialmenu.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialautocomplete.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/qtmaterialdatepicker.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialtable.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialgridlist.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialcarousel.h
+)
+
+qtm3_add_module(
+    qtmaterial3_widgets
+    Widgets
+    QtMaterial3Widgets
+    QTMATERIAL3_WIDGETS_LIBRARY
+    ${QTMATERIAL3_WIDGETS_SOURCES}
+    ${QTMATERIAL3_WIDGETS_HEADERS}
+)
+
+target_link_libraries(qtmaterial3_widgets
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Widgets
+        qtmaterial3_theme
+        qtmaterial3_core
+        qtmaterial3_specs
+        qtmaterial3_effects
+)
