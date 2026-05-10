@@ -2,6 +2,32 @@
 
 namespace QtMaterial {
 
+
+namespace {
+
+QString qtm3CanonicalNavigationRoute(QString route)
+{
+    route = route.trimmed();
+
+    while (route.startsWith(QLatin1Char('/'))) {
+        route.remove(0, 1);
+    }
+
+    while (route.endsWith(QLatin1Char('/'))) {
+        route.chop(1);
+    }
+
+    return route.isEmpty() ? QString() : QLatin1Char('/') + route;
+}
+
+QtMaterialNavigationItem qtm3CanonicalNavigationItem(QtMaterialNavigationItem item)
+{
+    item.route = qtm3CanonicalNavigationRoute(item.route);
+    return item;
+}
+
+} // namespace
+
 QtMaterialNavigationModel::QtMaterialNavigationModel(QObject* parent)
     : QAbstractListModel(parent)
 {
@@ -83,7 +109,7 @@ void QtMaterialNavigationModel::addItem(const QtMaterialNavigationItem& item)
 QtMaterialNavigationItem QtMaterialNavigationModel::itemAt(int row) const
 {
     if (row < 0 || row >= m_items.size()) return QtMaterialNavigationItem();
-    return m_items.at(row);
+    return qtm3CanonicalNavigationItem(m_items.at(row));
 }
 
 QString QtMaterialNavigationModel::selectedId() const
@@ -109,6 +135,8 @@ bool QtMaterialNavigationModel::setSelectedId(const QString& id)
 
 bool QtMaterialNavigationModel::setSelectedRoute(const QString& route)
 {
+    const QString normalizedRoute = qtm3CanonicalNavigationRoute(route);
+
     return setSelectedRow(findRowByRoute(route));
 }
 
@@ -123,7 +151,7 @@ int QtMaterialNavigationModel::findRowById(const QString& id) const
 int QtMaterialNavigationModel::findRowByRoute(const QString& route) const
 {
     for (int i = 0; i < m_items.size(); ++i) {
-        if (m_items.at(i).route == route) return i;
+        if (m_items.at(i).route == qtm3CanonicalNavigationRoute(route)) return i;
     }
     return -1;
 }

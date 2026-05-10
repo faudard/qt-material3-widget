@@ -121,11 +121,12 @@ void tst_ButtonChangeEvents::tooltipChangeRefreshesIconButtonAccessibility()
     QVERIFY(!button.hasUsableAccessibleName());
 
     button.setToolTip(QStringLiteral("Search"));
-    QVERIFY(!button.hasUsableAccessibleName());
-
-    button.setAccessibleName(QStringLiteral("Search"));
     QVERIFY(button.hasUsableAccessibleName());
     QCOMPARE(button.effectiveAccessibleName(), QStringLiteral("Search"));
+
+    button.setAccessibleName(QStringLiteral("Explicit Search"));
+    QVERIFY(button.hasUsableAccessibleName());
+    QCOMPARE(button.effectiveAccessibleName(), QStringLiteral("Explicit Search"));
 }
 
 void tst_ButtonChangeEvents::paletteChangeKeepsRenderValid()

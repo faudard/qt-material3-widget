@@ -128,13 +128,19 @@ bool jsonToColor(const QJsonValue& value, QColor* outColor)
 bool rejectUnknownKeys(const QJsonObject& object, const QSet<QString>& allowedKeys, const QString& path, QString* errorString)
 {
     for (auto it = object.constBegin(); it != object.constEnd(); ++it) {
+        if (path == QStringLiteral("root") && it.key() == QStringLiteral("resolved")) {
+            continue;
+        }
+
         if (!allowedKeys.contains(it.key())) {
             if (errorString) {
-                *errorString = QStringLiteral("Unknown key '%1' in %2.").arg(it.key(), path);
+                *errorString = QStringLiteral("Unknown key '%1' in %2.")
+                    .arg(it.key(), path);
             }
             return false;
         }
     }
+
     return true;
 }
 
