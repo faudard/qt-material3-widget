@@ -74,6 +74,57 @@ void qtm3SyncAutoAccessibleDescription(QAbstractButton* button)
     }
 }
 
+
+void qtm3SyncAutoAccessibleName(QWidget* widget, const QString& candidate)
+{
+    if (!widget) {
+        return;
+    }
+
+    const QString trimmedCandidate = candidate.trimmed();
+    const QString previousAuto =
+        widget->property(kAutoAccessibleNameProperty).toString();
+    const QString current = widget->accessibleName();
+
+    if (trimmedCandidate.isEmpty()) {
+        if (!previousAuto.isEmpty() && current == previousAuto) {
+            widget->setAccessibleName(QString());
+        }
+        widget->setProperty(kAutoAccessibleNameProperty, QString());
+        return;
+    }
+
+    if (current.isEmpty() || current == previousAuto) {
+        widget->setAccessibleName(trimmedCandidate);
+        widget->setProperty(kAutoAccessibleNameProperty, trimmedCandidate);
+    }
+}
+
+void qtm3SyncAutoAccessibleDescription(QWidget* widget, const QString& candidate)
+{
+    if (!widget) {
+        return;
+    }
+
+    const QString trimmedCandidate = candidate.trimmed();
+    const QString previousAuto =
+        widget->property(kAutoAccessibleDescriptionProperty).toString();
+    const QString current = widget->accessibleDescription();
+
+    if (trimmedCandidate.isEmpty()) {
+        if (!previousAuto.isEmpty() && current == previousAuto) {
+            widget->setAccessibleDescription(QString());
+        }
+        widget->setProperty(kAutoAccessibleDescriptionProperty, QString());
+        return;
+    }
+
+    if (current.isEmpty() || current == previousAuto) {
+        widget->setAccessibleDescription(trimmedCandidate);
+        widget->setProperty(kAutoAccessibleDescriptionProperty, trimmedCandidate);
+    }
+}
+
 } // namespace
 
 namespace QtMaterial {
@@ -121,17 +172,14 @@ void AccessibilityHelper::applyInputAccessibility(
         if (shell->focusPolicy() == Qt::NoFocus) {
             shell->setFocusPolicy(Qt::StrongFocus);
         }
-        if (shell->accessibleName().isEmpty() && !label.isEmpty()) {
-            shell->setAccessibleName(label);
-        }
-        shell->setAccessibleDescription(shellDescription);
+
+        qtm3SyncAutoAccessibleName(shell, label);
+        qtm3SyncAutoAccessibleDescription(shell, shellDescription);
     }
 
     if (editor) {
-        if (editor->accessibleName().isEmpty() && !label.isEmpty()) {
-            editor->setAccessibleName(label);
-        }
-        editor->setAccessibleDescription(editorDescription);
+        qtm3SyncAutoAccessibleName(editor, label);
+        qtm3SyncAutoAccessibleDescription(editor, editorDescription);
     }
 }
 

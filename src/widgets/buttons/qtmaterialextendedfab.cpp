@@ -157,11 +157,14 @@ QString QtMaterialExtendedFab::accessibilitySummary() const
         return name;
     }
 
-    return QStringLiteral("Extended floating action button requires visible text or an accessible name");
+    return QStringLiteral("Extended floating action button requires text or an accessible name");
 }
 
 void QtMaterialExtendedFab::syncExtendedFabAccessibility()
 {
+    constexpr const char* missingAccessibilityDescription =
+        "Extended floating action button requires text or an accessible name for assistive technologies";
+
     const QString currentName = accessibleName().trimmed();
     const QString previousAutoName = property(kAutoAccessibleNameProperty).toString().trimmed();
     const bool currentNameIsAuto = !previousAutoName.isEmpty() && currentName == previousAutoName;
@@ -178,21 +181,32 @@ void QtMaterialExtendedFab::syncExtendedFabAccessibility()
 
     const QString currentDescription = accessibleDescription().trimmed();
     const QString previousAutoDescription = property(kAutoAccessibleDescriptionProperty).toString().trimmed();
-    const bool currentDescriptionIsAuto = !previousAutoDescription.isEmpty() && currentDescription == previousAutoDescription;
-    const bool currentDescriptionIsExplicit = !currentDescription.isEmpty() && !currentDescriptionIsAuto;
+    const bool currentDescriptionIsPreviousAuto = !previousAutoDescription.isEmpty()
+        && currentDescription == previousAutoDescription;
+    const bool currentDescriptionIsLegacyAutoWarning =
+        currentDescription == QStringLiteral("Extended floating action button requires visible text or an accessible name for assistive technologies")
+        || currentDescription == QString::fromLatin1(missingAccessibilityDescription);
+    const bool currentDescriptionIsAuto = currentDescription.isEmpty()
+        || currentDescriptionIsPreviousAuto
+        || currentDescriptionIsLegacyAutoWarning;
     const QString tooltipDescription = toolTip().trimmed();
 
-    if (!currentDescriptionIsExplicit && !tooltipDescription.isEmpty()) {
-        setAccessibleDescription(tooltipDescription);
-        setProperty(kAutoAccessibleDescriptionProperty, tooltipDescription);
-    } else if (!currentDescriptionIsExplicit && tooltipDescription.isEmpty() && currentDescriptionIsAuto) {
+    if (!tooltipDescription.isEmpty()) {
+        if (currentDescriptionIsAuto) {
+            setAccessibleDescription(tooltipDescription);
+            setProperty(kAutoAccessibleDescriptionProperty, tooltipDescription);
+        }
+    } else if (currentDescriptionIsPreviousAuto) {
+        setAccessibleDescription(QString());
+        setProperty(kAutoAccessibleDescriptionProperty, QString());
+    } else if (currentDescriptionIsLegacyAutoWarning && hasUsableAccessibleName()) {
         setAccessibleDescription(QString());
         setProperty(kAutoAccessibleDescriptionProperty, QString());
     }
 
     if (!hasUsableAccessibleName() && accessibleDescription().trimmed().isEmpty()) {
-        setAccessibleDescription(QStringLiteral(
-            "Extended floating action button requires visible text or an accessible name for assistive technologies"));
+        setAccessibleDescription(QString::fromLatin1(missingAccessibilityDescription));
+        setProperty(kAutoAccessibleDescriptionProperty, QString::fromLatin1(missingAccessibilityDescription));
     }
 }
 
@@ -213,9 +227,10 @@ void QtMaterialExtendedFab::changeEvent(QEvent* event)
     QtMaterialFilledButton::changeEvent(event);
 
     switch (event->type()) {
-    case QEvent::ToolTipChange:
     case QEvent::EnabledChange:
+    case QEvent::ToolTipChange:
         syncExtendedFabAccessibility();
+        update();
         break;
     default:
         break;

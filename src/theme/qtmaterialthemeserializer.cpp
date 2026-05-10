@@ -1445,6 +1445,10 @@ Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, ThemeReadMode m
         };
 
         for (auto it = object.constBegin(); it != object.constEnd(); ++it) {
+            if (it->toString() == QStringLiteral("resolved")) {
+                continue;
+            }
+
             if (!allowedV1RootKeys.contains(it.key())) {
                 fail(ok, errorString, QStringLiteral("Unknown key '%1' in root.").arg(it.key()));
                 return Theme();

@@ -4,6 +4,7 @@
 
 #include <QLineEdit>
 #include <memory>
+#include <QMetaType>
 
 namespace QtMaterial {
 struct QtMaterialTextFieldValidationGroupPrivate {
@@ -30,6 +31,8 @@ QtMaterialTextFieldValidationGroup::QtMaterialTextFieldValidationGroup(QObject* 
     : QObject(parent)
     , d_ptr(std::make_unique<QtMaterialTextFieldValidationGroupPrivate>())
 {
+    qRegisterMetaType<QtMaterial::QtMaterialOutlinedTextField*>(
+        "QtMaterial::QtMaterialOutlinedTextField*");
 }
 
 QtMaterialTextFieldValidationGroup::~QtMaterialTextFieldValidationGroup() = default;
@@ -43,15 +46,25 @@ void QtMaterialTextFieldValidationGroup::addField(QtMaterialOutlinedTextField* f
     d_ptr->m_fields.append(QPointer<QtMaterialOutlinedTextField>(field));
 
     connect(field, &QObject::destroyed, this, [this, field]() {
+        for (int i = d_ptr->m_fields.size() - 1; i >= 0; --i) {
+            const auto& candidate = d_ptr->m_fields.at(i);
+            if (!candidate || candidate.data() == field) {
+                d_ptr->m_fields.removeAt(i);
+            }
+        }
+
         d_ptr->m_fieldLabels.remove(field);
         d_ptr->m_fieldErrorMessages.remove(field);
-        d_ptr->removeNullFields();
+
         d_ptr->refreshAcceptable(this);
         d_ptr->refreshValidationSummary(this);
     });
 
-    connect(field, &QtMaterialOutlinedTextField::acceptableInputChanged,
-            this, [this](bool) {
+    connect(field,
+            &QtMaterialOutlinedTextField::acceptableInputChanged,
+            this,
+            [this](bool) {
+                d_ptr->removeNullFields();
                 d_ptr->refreshAcceptable(this);
                 d_ptr->refreshValidationSummary(this);
             });
@@ -377,15 +390,29 @@ QStringList QtMaterialTextFieldValidationGroupPrivate::computeValidationSummary(
     const QtMaterialTextFieldValidationGroup* q) const
 {
     QStringList result;
-    for (QtMaterialOutlinedTextField* field : q->invalidFields()) {
+
+    for (QtMaterialOutlinedTextField* field : q->fields()) {
+        if (!field) {
+            continue;
+        }
+
+        const bool shouldSummarize =
+            field->hasAutomaticValidationError() || field->hasErrorState();
+
+        if (!shouldSummarize) {
+            continue;
+        }
+
         const QString label = effectiveFieldLabel(q, field);
         const QString message = effectiveFieldErrorMessage(field);
+
         if (message.isEmpty()) {
             result.append(label);
         } else {
             result.append(QStringLiteral("%1: %2").arg(label, message));
         }
     }
+
     return result;
 }
 
