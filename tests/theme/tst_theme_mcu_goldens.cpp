@@ -98,15 +98,15 @@ void tst_ThemeMcuGoldens::mcuSeedGoldens_data()
     QTest::addColumn<QString>("seed");
     QTest::addColumn<ThemeMode>("mode");
     QTest::addColumn<ContrastMode>("contrast");
-    QTest::addColumn<bool>("expressive");
+    QTest::addColumn<ThemeVariant>("expressive");
 
-    QTest::newRow("6750A4-light-standard-tonalspot") << QStringLiteral("#6750A4") << ThemeMode::Light << ContrastMode::Standard << false;
-    QTest::newRow("6750A4-dark-standard-tonalspot") << QStringLiteral("#6750A4") << ThemeMode::Dark << ContrastMode::Standard << false;
-    QTest::newRow("00639B-light-standard-tonalspot") << QStringLiteral("#00639B") << ThemeMode::Light << ContrastMode::Standard << false;
-    QTest::newRow("00639B-dark-standard-tonalspot") << QStringLiteral("#00639B") << ThemeMode::Dark << ContrastMode::Standard << false;
-    QTest::newRow("FF0000-light-high-tonalspot") << QStringLiteral("#FF0000") << ThemeMode::Light << ContrastMode::High << false;
-    QTest::newRow("6750A4-dark-medium-tonalspot") << QStringLiteral("#6750A4") << ThemeMode::Dark << ContrastMode::Medium << false;
-    QTest::newRow("6750A4-light-standard-expressive") << QStringLiteral("#6750A4") << ThemeMode::Light << ContrastMode::Standard << true;
+    QTest::newRow("6750A4-light-standard-tonalspot") << QStringLiteral("#6750A4") << ThemeMode::Light << ContrastMode::Standard << ThemeVariant::TonalSpot;
+    QTest::newRow("6750A4-dark-standard-tonalspot") << QStringLiteral("#6750A4") << ThemeMode::Dark << ContrastMode::Standard << ThemeVariant::TonalSpot;
+    QTest::newRow("00639B-light-standard-tonalspot") << QStringLiteral("#00639B") << ThemeMode::Light << ContrastMode::Standard << ThemeVariant::TonalSpot;
+    QTest::newRow("00639B-dark-standard-tonalspot") << QStringLiteral("#00639B") << ThemeMode::Dark << ContrastMode::Standard << ThemeVariant::TonalSpot;
+    QTest::newRow("FF0000-light-high-tonalspot") << QStringLiteral("#FF0000") << ThemeMode::Light << ContrastMode::High << ThemeVariant::TonalSpot;
+    QTest::newRow("6750A4-dark-medium-tonalspot") << QStringLiteral("#6750A4") << ThemeMode::Dark << ContrastMode::Medium << ThemeVariant::TonalSpot;
+    QTest::newRow("6750A4-light-standard-expressive") << QStringLiteral("#6750A4") << ThemeMode::Light << ContrastMode::Standard << ThemeVariant::Expressive;
 }
 
 void tst_ThemeMcuGoldens::mcuSeedGoldens()

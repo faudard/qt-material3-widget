@@ -100,6 +100,22 @@ QString qtm3TabsNavigationModelRoutePath(const QString& routePath)
     return QLatin1Char('/') + value;
 }
 
+
+QString qtm3NavigationModelRoutePath(const QString& route)
+{
+    QString value = route.trimmed();
+
+    while (value.startsWith(QLatin1Char('/'))) {
+        value.remove(0, 1);
+    }
+
+    while (value.endsWith(QLatin1Char('/'))) {
+        value.chop(1);
+    }
+
+    return value.isEmpty() ? QString() : QStringLiteral("/") + value;
+}
+
 } // namespace
 
 class QtMaterialTabsBar final : public QTabBar {

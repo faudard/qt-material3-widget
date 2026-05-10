@@ -164,11 +164,14 @@ void QtMaterialExtendedFab::syncExtendedFabAccessibility()
 {
     constexpr const char* missingAccessibilityDescription =
         "Extended floating action button requires text or an accessible name for assistive technologies";
+    constexpr const char* defaultAccessibilityDescription =
+        "Extended floating action button";
 
     const QString currentName = accessibleName().trimmed();
     const QString previousAutoName = property(kAutoAccessibleNameProperty).toString().trimmed();
     const bool currentNameIsAuto = !previousAutoName.isEmpty() && currentName == previousAutoName;
     const bool currentNameIsExplicit = !currentName.isEmpty() && !currentNameIsAuto;
+
     const QString desiredAutoName = normalizedButtonText(text());
 
     if (!currentNameIsExplicit && !desiredAutoName.isEmpty()) {
@@ -180,33 +183,37 @@ void QtMaterialExtendedFab::syncExtendedFabAccessibility()
     }
 
     const QString currentDescription = accessibleDescription().trimmed();
-    const QString previousAutoDescription = property(kAutoAccessibleDescriptionProperty).toString().trimmed();
-    const bool currentDescriptionIsPreviousAuto = !previousAutoDescription.isEmpty()
-        && currentDescription == previousAutoDescription;
-    const bool currentDescriptionIsLegacyAutoWarning =
-        currentDescription == QStringLiteral("Extended floating action button requires visible text or an accessible name for assistive technologies")
-        || currentDescription == QString::fromLatin1(missingAccessibilityDescription);
-    const bool currentDescriptionIsAuto = currentDescription.isEmpty()
-        || currentDescriptionIsPreviousAuto
-        || currentDescriptionIsLegacyAutoWarning;
-    const QString tooltipDescription = toolTip().trimmed();
+    const QString previousAutoDescription =
+        property(kAutoAccessibleDescriptionProperty).toString().trimmed();
 
+    const bool currentDescriptionIsPreviousAuto =
+        !previousAutoDescription.isEmpty() && currentDescription == previousAutoDescription;
+    const bool currentDescriptionIsLegacyAutoWarning =
+        currentDescription == QStringLiteral(
+            "Extended floating action button requires visible text or an accessible name for assistive technologies")
+        || currentDescription == QString::fromLatin1(missingAccessibilityDescription);
+    const bool currentDescriptionIsDefaultAuto =
+        currentDescription == QString::fromLatin1(defaultAccessibilityDescription);
+
+    const bool currentDescriptionIsAuto =
+        currentDescription.isEmpty()
+        || currentDescriptionIsPreviousAuto
+        || currentDescriptionIsLegacyAutoWarning
+        || currentDescriptionIsDefaultAuto;
+
+    QString desiredDescription;
+    const QString tooltipDescription = toolTip().trimmed();
     if (!tooltipDescription.isEmpty()) {
-        if (currentDescriptionIsAuto) {
-            setAccessibleDescription(tooltipDescription);
-            setProperty(kAutoAccessibleDescriptionProperty, tooltipDescription);
-        }
-    } else if (currentDescriptionIsPreviousAuto) {
-        setAccessibleDescription(QString());
-        setProperty(kAutoAccessibleDescriptionProperty, QString());
-    } else if (currentDescriptionIsLegacyAutoWarning && hasUsableAccessibleName()) {
-        setAccessibleDescription(QString());
-        setProperty(kAutoAccessibleDescriptionProperty, QString());
+        desiredDescription = tooltipDescription;
+    } else if (hasUsableAccessibleName()) {
+        desiredDescription = QString::fromLatin1(defaultAccessibilityDescription);
+    } else {
+        desiredDescription = QString::fromLatin1(missingAccessibilityDescription);
     }
 
-    if (!hasUsableAccessibleName() && accessibleDescription().trimmed().isEmpty()) {
-        setAccessibleDescription(QString::fromLatin1(missingAccessibilityDescription));
-        setProperty(kAutoAccessibleDescriptionProperty, QString::fromLatin1(missingAccessibilityDescription));
+    if (currentDescriptionIsAuto && currentDescription != desiredDescription) {
+        setAccessibleDescription(desiredDescription);
+        setProperty(kAutoAccessibleDescriptionProperty, desiredDescription);
     }
 }
 

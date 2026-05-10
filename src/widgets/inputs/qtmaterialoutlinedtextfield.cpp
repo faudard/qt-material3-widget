@@ -414,6 +414,8 @@ void QtMaterialOutlinedTextField::setText(const QString& text)
         refreshValidationState(false);
     }
 
+    emitValidationStateSignalsIfChanged();
+
     syncAccessibilityState();
 
     invalidateLayoutCache();
