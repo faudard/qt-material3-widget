@@ -61,6 +61,7 @@ protected:
     virtual void syncAccessibilityState();
     virtual void contentChangedEvent();
 
+    bool event(QEvent* event) override;
     void enterEvent(EnterEvent* event) override;
     void leaveEvent(QEvent* event) override;
     void focusInEvent(QFocusEvent* event) override;

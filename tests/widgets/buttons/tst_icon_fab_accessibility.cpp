@@ -36,12 +36,12 @@ class tst_IconFabAccessibility : public QObject
 
 private slots:
     void iconButtonRequiresExplicitAccessibleName();
-    void iconButtonDoesNotTreatTooltipAsStrictAccessibleName();
+    void iconButtonUsesTooltipAccessibleFallback();
     void iconButtonCanUseFallbacksWhenRequirementIsDisabled();
     void fabRequiresExplicitAccessibleName();
     void fabUsesIconAccessibleName();
     void fabPrefersAccessibleNameOverIconAccessibleName();
-    void fabDoesNotTreatTooltipAsStrictAccessibleName();
+    void fabUsesTooltipAccessibleFallback();
     void extendedFabUsesVisibleTextAsAccessibleName();
     void accessibleInterfacesExposeButtonRole();
 };
@@ -60,7 +60,7 @@ void tst_IconFabAccessibility::iconButtonRequiresExplicitAccessibleName()
     QCOMPARE(button.effectiveAccessibleName(), QStringLiteral("Search"));
 }
 
-void tst_IconFabAccessibility::iconButtonDoesNotTreatTooltipAsStrictAccessibleName()
+void tst_IconFabAccessibility::iconButtonUsesTooltipAccessibleFallback()
 {
     QtMaterial::QtMaterialIconButton button(contractIcon());
     button.setToolTip(QStringLiteral("Search"));
@@ -115,7 +115,7 @@ void tst_IconFabAccessibility::fabPrefersAccessibleNameOverIconAccessibleName()
     QCOMPARE(button.effectiveAccessibleName(), QStringLiteral("Create project"));
 }
 
-void tst_IconFabAccessibility::fabDoesNotTreatTooltipAsStrictAccessibleName()
+void tst_IconFabAccessibility::fabUsesTooltipAccessibleFallback()
 {
     QtMaterial::QtMaterialFab button(contractIcon());
     button.setToolTip(QStringLiteral("Create"));

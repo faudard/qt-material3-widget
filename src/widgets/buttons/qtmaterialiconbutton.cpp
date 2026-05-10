@@ -183,22 +183,25 @@ void QtMaterialIconButton::setRequiresAccessibleName(bool required)
 
 QString QtMaterialIconButton::effectiveAccessibleName() const
 {
-    const QString explicitName = accessibleName().trimmed();
-    if (!explicitName.isEmpty()) {
-        return explicitName;
+    constexpr const char* autoAccessibleNameProperty = "_qtm3_auto_accessible_name";
+
+    const QString currentName = accessibleName().trimmed();
+    const QString previousAutoName = property(autoAccessibleNameProperty).toString().trimmed();
+    if (!currentName.isEmpty() && currentName != previousAutoName) {
+        return currentName;
+    }
+
+    const QString textName = QAbstractButton::text().trimmed();
+    if (!textName.isEmpty()) {
+        return textName;
+    }
+
+    const QString tooltipName = toolTip().trimmed();
+    if (!tooltipName.isEmpty()) {
+        return tooltipName;
     }
 
     if (!requiresAccessibleName()) {
-        const QString textName = QAbstractButton::text().trimmed();
-        if (!textName.isEmpty()) {
-            return textName;
-        }
-
-        const QString tooltipName = toolTip().trimmed();
-        if (!tooltipName.isEmpty()) {
-            return tooltipName;
-        }
-
         return QStringLiteral("Icon button");
     }
 
@@ -228,18 +231,30 @@ void QtMaterialIconButton::syncAccessibilityState()
 
 void QtMaterialIconButton::syncIconButtonAccessibility()
 {
+    constexpr const char* autoAccessibleNameProperty = "_qtm3_auto_accessible_name";
+
     const QString name = effectiveAccessibleName();
+    const QString currentName = accessibleName().trimmed();
+    const QString previousAutoName = property(autoAccessibleNameProperty).toString().trimmed();
+    const bool currentNameIsAuto = currentName.isEmpty()
+        || (!previousAutoName.isEmpty() && currentName == previousAutoName);
 
     if (!name.isEmpty()) {
-        if (accessibleName().trimmed().isEmpty() && !requiresAccessibleName()) {
+        if (currentNameIsAuto) {
             QWidget::setAccessibleName(name);
+            setProperty(autoAccessibleNameProperty, name);
         }
         setAccessibleDescription(QStringLiteral("Icon button"));
         return;
     }
 
+    if (currentNameIsAuto && !previousAutoName.isEmpty()) {
+        QWidget::setAccessibleName(QString());
+        setProperty(autoAccessibleNameProperty, QString());
+    }
+
     setAccessibleDescription(QStringLiteral(
-        "Icon button requires an explicit accessible name for assistive technologies"));
+        "Icon button requires an accessible name, tooltip, or fallback label for assistive technologies"));
 }
 
 void QtMaterialIconButton::mousePressEvent(QMouseEvent* event)

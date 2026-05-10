@@ -260,6 +260,17 @@ void QtMaterialAbstractButton::syncAccessibilityState()
 
 void QtMaterialAbstractButton::contentChangedEvent() {}
 
+bool QtMaterialAbstractButton::event(QEvent* event)
+{
+    const bool handled = QAbstractButton::event(event);
+
+    if (event && event->type() == QEvent::ToolTipChange) {
+        syncAccessibilityState();
+    }
+
+    return handled;
+}
+
 void QtMaterialAbstractButton::enterEvent(EnterEvent* event)
 {
     const auto before = snapshotOf(m_state);

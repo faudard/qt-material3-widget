@@ -141,21 +141,24 @@ void QtMaterialFab::setIconAccessibleName(const QString& name)
 
 QString QtMaterialFab::effectiveAccessibleName() const
 {
-    const QString explicitName = accessibleName().trimmed();
-    if (!explicitName.isEmpty()) {
-        return explicitName;
+    constexpr const char* autoAccessibleNameProperty = "_qtm3_auto_accessible_name";
+
+    const QString currentName = accessibleName().trimmed();
+    const QString previousAutoName = property(autoAccessibleNameProperty).toString().trimmed();
+    if (!currentName.isEmpty() && currentName != previousAutoName) {
+        return currentName;
     }
 
     if (!m_iconAccessibleName.trimmed().isEmpty()) {
         return m_iconAccessibleName.trimmed();
     }
 
-    if (!requiresAccessibleName()) {
-        const QString tooltipName = toolTip().trimmed();
-        if (!tooltipName.isEmpty()) {
-            return tooltipName;
-        }
+    const QString tooltipName = toolTip().trimmed();
+    if (!tooltipName.isEmpty()) {
+        return tooltipName;
+    }
 
+    if (!requiresAccessibleName()) {
         return QStringLiteral("Floating action button");
     }
 
@@ -179,6 +182,8 @@ QString QtMaterialFab::accessibilitySummary() const
 
 void QtMaterialFab::syncFabAccessibility()
 {
+    constexpr const char* autoAccessibleNameProperty = "_qtm3_auto_accessible_name";
+
     const QString summary = accessibilitySummary();
     if (m_lastAccessibilitySummary != summary) {
         m_lastAccessibilitySummary = summary;
@@ -186,16 +191,27 @@ void QtMaterialFab::syncFabAccessibility()
     }
 
     const QString effectiveName = effectiveAccessibleName();
+    const QString currentName = accessibleName().trimmed();
+    const QString previousAutoName = property(autoAccessibleNameProperty).toString().trimmed();
+    const bool currentNameIsAuto = currentName.isEmpty()
+        || (!previousAutoName.isEmpty() && currentName == previousAutoName);
+
     if (!effectiveName.isEmpty()) {
-        if (accessibleName().trimmed().isEmpty() && !requiresAccessibleName()) {
+        if (currentNameIsAuto) {
             QWidget::setAccessibleName(effectiveName);
+            setProperty(autoAccessibleNameProperty, effectiveName);
         }
         setAccessibleDescription(QStringLiteral("Floating action button"));
         return;
     }
 
+    if (currentNameIsAuto && !previousAutoName.isEmpty()) {
+        QWidget::setAccessibleName(QString());
+        setProperty(autoAccessibleNameProperty, QString());
+    }
+
     setAccessibleDescription(QStringLiteral(
-        "Floating action button requires an explicit accessible name for assistive technologies"));
+        "Floating action button requires an accessible name, tooltip, or icon accessible name for assistive technologies"));
 }
 
 void QtMaterialFab::syncAccessibilityState()
