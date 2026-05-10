@@ -158,10 +158,9 @@ void QtMaterialDateFieldPrivate::setParseError(QtMaterialDateField& q, bool hasE
 void QtMaterialDateFieldPrivate::notifyDateAcceptabilityIfChanged(QtMaterialDateField& q,
                                                                   bool previousAcceptable)
 {
-    const bool nowAcceptable = q.isDateAcceptable();
-    if (previousAcceptable != nowAcceptable) {
-        emit q.dateAcceptableChanged(nowAcceptable);
-    }
+    Q_UNUSED(previousAcceptable);
+
+    q.notifyDateAcceptableIfChanged();
 }
 
 

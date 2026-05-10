@@ -22,7 +22,20 @@ QtMaterialTransitionController::QtMaterialTransitionController(QObject* parent)
         setProgress(value.toReal());
     });
 
-    connect(m_animation, &QVariantAnimation::finished, this, &QtMaterialTransitionController::finished);
+    connect(m_animation, &QVariantAnimation::finished, this, [this]() {
+        if (m_animation) {
+            const qreal target = qBound(0.0, m_animation->endValue().toReal(), 1.0);
+
+            if (!qFuzzyCompare(m_progress + 1.0, target + 1.0)) {
+                m_progress = target;
+                emit progressChanged(m_progress);
+            } else {
+                m_progress = target;
+            }
+        }
+
+        emit finished();
+    });
 }
 
 QtMaterialTransitionController::~QtMaterialTransitionController() = default;

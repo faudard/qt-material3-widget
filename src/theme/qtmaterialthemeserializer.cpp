@@ -138,6 +138,45 @@ bool rejectUnknownKeys(const QJsonObject& object, const QSet<QString>& allowedKe
     return true;
 }
 
+QJsonObject normalizeThemeRootForRead(QJsonObject root)
+{
+    const QJsonValue resolvedValue = root.value(QStringLiteral("resolved"));
+    if (!resolvedValue.isObject()) {
+        return root;
+    }
+
+    const QJsonObject resolved = resolvedValue.toObject();
+
+    const char* const resolvedKeys[] = {
+        "colorScheme",
+        "typographyScale",
+        "shapeScale",
+        "elevationScale",
+        "motionTokens",
+        "stateLayer",
+        "accessibility",
+        "interactions",
+        "density",
+        "iconSizes",
+        "componentOverrides",
+    };
+
+    for (const char* keyName : resolvedKeys) {
+        const QString key = QString::fromLatin1(keyName);
+        if (!root.contains(key) && resolved.contains(key)) {
+            root.insert(key, resolved.value(key));
+        }
+    }
+
+    // Keep Strict mode strict for the legacy reader below:
+    // after flattening the v2 resolved block into the legacy root-level keys,
+    // "resolved" itself must not be seen as an unknown root key.
+    root.remove(QStringLiteral("resolved"));
+
+    return root;
+}
+
+
 bool requireObjectMember(const QJsonObject& object, const QString& key, QJsonObject* outObject, QString* errorString)
 {
     if (!object.contains(key) || !object.value(key).isObject()) {

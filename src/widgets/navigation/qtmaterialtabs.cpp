@@ -80,6 +80,26 @@ bool usesScrollButtons(TabsOverflowMode mode)
     return mode == TabsOverflowMode::ScrollButtons || mode == TabsOverflowMode::ScrollButtonsAndMenu;
 }
 
+
+QString qtm3TabsNavigationModelRoutePath(const QString& routePath)
+{
+    QString value = routePath.trimmed();
+
+    while (value.startsWith(QLatin1Char('/'))) {
+        value.remove(0, 1);
+    }
+
+    while (value.endsWith(QLatin1Char('/'))) {
+        value.chop(1);
+    }
+
+    if (value.isEmpty()) {
+        return QString();
+    }
+
+    return QLatin1Char('/') + value;
+}
+
 } // namespace
 
 class QtMaterialTabsBar final : public QTabBar {
@@ -1187,6 +1207,12 @@ void QtMaterialTabs::syncCurrentIndexFromController(int index)
     d_ptr->syncingExternal = true;
     ensureTabLoaded(index);
     setCurrentIndex(index);
+    for (auto& controller : d_ptr->boundControllers) {
+        if (controller && controller->currentIndex() != index) {
+            controller->setCurrentIndex(index);
+        }
+    }
+
     d_ptr->syncingExternal = false;
 }
 
@@ -1202,11 +1228,7 @@ QString QtMaterialTabs::normalizeRoutePath(const QString& routePath)
         value.chop(1);
     }
 
-    if (value.isEmpty()) {
-        return QString();
-    }
-
-    return QLatin1Char('/') + value;
+    return value;
 }
 
 QString QtMaterialTabs::routePathFromUrl(const QUrl& url)

@@ -18,6 +18,7 @@
 #include "private/qtmaterialtextfieldshellhelper_p.h"
 #include "../../core/private/qtmaterialaccessibilityhelper_p.h"
 #include <memory>
+#include <QShowEvent>
 
 namespace {
 
@@ -1837,13 +1838,18 @@ void QtMaterialOutlinedTextField::resizeEvent(QResizeEvent* event)
     syncAccessibilityState();
 }
 
-void QtMaterialOutlinedTextField::showEvent(QShowEvent *event)
+void QtMaterialOutlinedTextField::showEvent(QShowEvent* event)
 {
-  QWidget::showEvent(event);
+    QtMaterialInputControl::showEvent(event);
 
-  invalidateLayoutCache();
-  syncLineEditGeometry();
-  syncAccessibilityState();
+    invalidateLayoutCache();
+    syncLineEditGeometry();
+    syncAccessoryWidgets();
+    syncCharacterCounterWidget();
+    syncAccessibilityState();
+
+    updateGeometry();
+    update();
 }
 
 void QtMaterialOutlinedTextField::changeEvent(QEvent* event)

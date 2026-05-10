@@ -165,8 +165,10 @@ void AccessibilityHelper::applyInputAccessibility(
 {
     const QString shellDescription =
         effectiveDescription(supportingText, errorText, hasErrorState);
-    const QString editorDescription =
+    const QString compactEditorDescription =
         hasErrorState && !errorText.isEmpty() ? errorText : supportingText;
+    const QString editorDescription =
+        shell && shell->isVisible() ? shellDescription : compactEditorDescription;
 
     if (shell) {
         if (shell->focusPolicy() == Qt::NoFocus) {
