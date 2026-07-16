@@ -69,8 +69,6 @@ public:
     MenuSpec menuSpec(const Theme& theme, Density density = Density::Default) const;
     AutocompleteSpec autocompleteSpec(const Theme& theme, Density density = Density::Default) const;
 
-private:
-    int buttonHeightForDensity(Density density) const;
 };
 
 } // namespace QtMaterial

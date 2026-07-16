@@ -10,7 +10,7 @@
 #include "private/qtmaterialoutlinedbutton_p.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 
 namespace QtMaterial {
 
@@ -140,7 +140,7 @@ void QtMaterialOutlinedButton::changeEvent(QEvent* event)
 
 ButtonSpec QtMaterialOutlinedButton::resolveButtonSpec() const
 {
- SpecFactory factory;
+ ButtonSpecResolver factory;
  return factory.outlinedButtonSpec(theme(), density());
 }
 

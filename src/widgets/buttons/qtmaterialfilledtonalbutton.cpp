@@ -1,6 +1,6 @@
 #include "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h"
 
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 
 namespace QtMaterial {
 
@@ -29,7 +29,7 @@ QtMaterialFilledTonalButton::~QtMaterialFilledTonalButton() = default;
 
 ButtonSpec QtMaterialFilledTonalButton::resolveButtonSpec() const
 {
-    SpecFactory factory;
+    ButtonSpecResolver factory;
     return factory.filledTonalButtonSpec(theme(), density());
 }
 

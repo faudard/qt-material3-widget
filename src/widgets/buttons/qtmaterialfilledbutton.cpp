@@ -11,7 +11,7 @@
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 
 namespace QtMaterial {
 
@@ -140,7 +140,7 @@ void QtMaterialFilledButton::changeEvent(QEvent* event)
 
 ButtonSpec QtMaterialFilledButton::resolveButtonSpec() const
 {
- SpecFactory factory;
+ ButtonSpecResolver factory;
  return factory.filledButtonSpec(theme(), density());
 }
 

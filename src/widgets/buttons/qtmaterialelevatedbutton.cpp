@@ -5,7 +5,7 @@
 
 #include "private/qtmaterialbuttonrenderhelper_p.h"
 #include "qtmaterial/effects/qtmaterialshadowrenderer.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 
 namespace QtMaterial {
 
@@ -49,7 +49,7 @@ QtMaterialElevatedButton::~QtMaterialElevatedButton() = default;
 
 ButtonSpec QtMaterialElevatedButton::resolveButtonSpec() const
 {
-    SpecFactory factory;
+    ButtonSpecResolver factory;
     return factory.elevatedButtonSpec(theme(), density());
 }
 

@@ -2,6 +2,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialspecfactory.cpp
     qtmaterialcomponenttokenapplier.cpp
     qtmaterialbuttonspec.cpp
+    qtmaterialbuttonspecresolver.cpp
     qtmaterialiconbuttonspec.cpp
     qtmaterialcheckboxspec.cpp
     qtmaterialradiobuttonspec.cpp
@@ -29,6 +30,7 @@ set(QTMATERIAL3_SPECS_SOURCES
 
 set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbuttonspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbuttonspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialiconbuttonspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialcheckboxspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialradiobuttonspec.h

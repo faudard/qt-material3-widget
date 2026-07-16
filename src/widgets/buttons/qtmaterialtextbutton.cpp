@@ -10,7 +10,7 @@
 #include "qtmaterial/core/qtmaterialeventcompat.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 
 namespace QtMaterial {
 namespace {
@@ -80,7 +80,7 @@ void QtMaterialTextButton::invalidateResolvedSpec()
 
 ButtonSpec QtMaterialTextButton::resolveButtonSpec() const
 {
- SpecFactory factory;
+ ButtonSpecResolver factory;
  return factory.textButtonSpec(theme(), density());
 }
 
