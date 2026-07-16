@@ -1,4 +1,5 @@
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
 #include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 #include "qtmaterialcomponenttokenapplier_p.h"
 
@@ -80,60 +81,25 @@ IconButtonSpec SpecFactory::iconButtonSpec(const Theme& theme, Density) const
   return spec;
 }
 
-CheckboxSpec SpecFactory::checkboxSpec(const Theme& theme, Density density) const
+CheckboxSpec SpecFactory::checkboxSpec(
+    const Theme& theme,
+    Density density) const
 {
-    CheckboxSpec spec;
-    spec.selectedContainerColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.selectedIconColor = theme.colorScheme().color(ColorRole::OnPrimary);
-    spec.unselectedOutlineColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.disabledSelectedContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    spec.disabledUnselectedOutlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
-    spec.labelColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    if (density == Density::Compact) spec.spacing = 8;
-    if (density == Density::Comfortable) spec.spacing = 14;
-    applyCheckboxComponentTokens(theme, QStringList{QStringLiteral("selection"), QStringLiteral("checkbox"), QStringLiteral("Checkbox")}, &spec);
-  return spec;
+    return SelectionSpecResolver().checkboxSpec(theme, density);
 }
 
-RadioButtonSpec SpecFactory::radioButtonSpec(const Theme& theme, Density density) const
+RadioButtonSpec SpecFactory::radioButtonSpec(
+    const Theme& theme,
+    Density density) const
 {
-    RadioButtonSpec spec;
-    spec.selectedColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.unselectedOutlineColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.disabledColor = theme.colorScheme().color(ColorRole::OutlineVariant);
-    spec.labelColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    if (density == Density::Compact) spec.spacing = 8;
-    if (density == Density::Comfortable) spec.spacing = 14;
-    applyRadioButtonComponentTokens(theme, QStringList{QStringLiteral("selection"), QStringLiteral("radioButton"), QStringLiteral("RadioButton")}, &spec);
-  return spec;
+    return SelectionSpecResolver().radioButtonSpec(theme, density);
 }
 
-SwitchSpec SpecFactory::switchSpec(const Theme& theme, Density density) const
+SwitchSpec SpecFactory::switchSpec(
+    const Theme& theme,
+    Density density) const
 {
-    SwitchSpec spec;
-    spec.selectedTrackColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.selectedHandleColor = theme.colorScheme().color(ColorRole::OnPrimary);
-    spec.unselectedTrackColor = theme.colorScheme().color(ColorRole::SurfaceVariant);
-    spec.unselectedHandleColor = theme.colorScheme().color(ColorRole::Outline);
-    spec.disabledSelectedTrackColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    spec.disabledSelectedHandleColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.disabledUnselectedTrackColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    spec.disabledUnselectedHandleColor = theme.colorScheme().color(ColorRole::OutlineVariant);
-    spec.iconColor = theme.colorScheme().color(ColorRole::OnPrimary);
-    spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.labelColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    if (density == Density::Compact) spec.spacing = 8;
-    if (density == Density::Comfortable) spec.spacing = 14;
-    applySwitchComponentTokens(theme, QStringList{QStringLiteral("selection"), QStringLiteral("switch"), QStringLiteral("Switch")}, &spec);
-  return spec;
+    return SelectionSpecResolver().switchSpec(theme, density);
 }
 
 DialogSpec SpecFactory::dialogSpec(const Theme& theme) const

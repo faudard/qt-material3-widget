@@ -6,6 +6,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialiconbuttonspec.cpp
     qtmaterialcheckboxspec.cpp
     qtmaterialradiobuttonspec.cpp
+    qtmaterialselectionspecresolver.cpp
     qtmaterialswitchspec.cpp
     qtmaterialdialogspec.cpp
     qtmaterialtextfieldspec.cpp
@@ -34,6 +35,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialiconbuttonspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialcheckboxspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialradiobuttonspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialselectionspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialswitchspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdialogspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtextfieldspec.h

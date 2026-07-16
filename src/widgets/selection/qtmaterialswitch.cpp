@@ -16,7 +16,7 @@
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialswitchspec.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
 #include "qtmaterial/core/qtmaterialeventcompat.h"
 
 namespace QtMaterial {
@@ -129,7 +129,7 @@ void QtMaterialSwitch::resolveSpecIfNeeded() const
         return;
     }
 
-    SpecFactory factory;
+    SelectionSpecResolver factory;
     d->m_spec = factory.switchSpec(theme(), density());
     if (d->m_transition && theme().motion().contains(d->m_spec.motionToken)) {
         const MotionStyle motion = theme().motion().style(d->m_spec.motionToken);

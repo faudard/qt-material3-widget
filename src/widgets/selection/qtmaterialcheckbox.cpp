@@ -10,7 +10,7 @@
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialcheckboxspec.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
 
 namespace QtMaterial {
 
@@ -154,7 +154,7 @@ void QtMaterialCheckbox::resolveSpecIfNeeded() const
         return;
     }
 
-    SpecFactory factory;
+    SelectionSpecResolver factory;
     d->m_spec = factory.checkboxSpec(theme(), density());
     const_cast<QtMaterialCheckbox*>(this)->setSpacing(d->m_spec.spacing);
 

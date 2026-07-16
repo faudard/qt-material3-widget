@@ -12,7 +12,7 @@
 #include "private/qtmaterialselectionrenderhelper_p.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
 #include "qtmaterial/specs/qtmaterialradiobuttonspec.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/core/qtmaterialeventcompat.h"
@@ -125,7 +125,7 @@ void QtMaterialRadioButton::resolveSpecIfNeeded() const
         return;
     }
 
-    SpecFactory factory;
+    SelectionSpecResolver factory;
     d->spec = factory.radioButtonSpec(theme(), density());
     const_cast<QtMaterialRadioButton*>(this)->setSpacing(d->spec.spacing);
     if (d->transition && theme().motion().contains(d->spec.motionToken)) {
