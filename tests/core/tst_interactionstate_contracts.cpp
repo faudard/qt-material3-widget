@@ -1,5 +1,8 @@
 #include <QtTest/QtTest>
 
+#include <QObject>
+
+#include "qtmaterial/core/qtmaterialautomation.h"
 #include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 
 class tst_InteractionStateContracts : public QObject
@@ -9,7 +12,7 @@ class tst_InteractionStateContracts : public QObject
 private slots:
     void disabledClearsTransientState();
     void checkableGuardsCheckedAndIndeterminate();
-    void propertyStringUsesStableVocabulary();
+    void automationPropertyUsesStableVocabulary();
 };
 
 void tst_InteractionStateContracts::disabledClearsTransientState()
@@ -34,16 +37,15 @@ void tst_InteractionStateContracts::disabledClearsTransientState()
 void tst_InteractionStateContracts::checkableGuardsCheckedAndIndeterminate()
 {
     QtMaterial::QtMaterialInteractionState state;
+
     state.setChecked(true);
     state.setIndeterminate(true);
-
     QVERIFY(!state.isChecked());
     QVERIFY(!state.isIndeterminate());
 
     state.setCheckable(true);
     state.setChecked(true);
     state.setIndeterminate(true);
-
     QVERIFY(state.isChecked());
     QVERIFY(state.isIndeterminate());
 
@@ -52,20 +54,21 @@ void tst_InteractionStateContracts::checkableGuardsCheckedAndIndeterminate()
     QVERIFY(!state.isIndeterminate());
 }
 
-void tst_InteractionStateContracts::propertyStringUsesStableVocabulary()
+void tst_InteractionStateContracts::automationPropertyUsesStableVocabulary()
 {
+    QObject object;
     QtMaterial::QtMaterialInteractionState state;
+
     state.setCheckable(true);
     state.setChecked(true);
     state.setError(true);
     state.setReadOnly(true);
 
-    const QString value = state.toPropertyString();
-    QVERIFY(value.contains(QStringLiteral("enabled")));
-    QVERIFY(value.contains(QStringLiteral("checkable")));
-    QVERIFY(value.contains(QStringLiteral("checked")));
-    QVERIFY(value.contains(QStringLiteral("error")));
-    QVERIFY(value.contains(QStringLiteral("readOnly")));
+    QtMaterial::QtMaterialAutomation::syncState(&object, state);
+
+    QCOMPARE(
+        QtMaterial::QtMaterialAutomation::state(&object),
+        QStringLiteral("enabled checkable checked error readOnly"));
 }
 
 QTEST_MAIN(tst_InteractionStateContracts)

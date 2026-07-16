@@ -4,7 +4,9 @@
 #include <QVariant>
 
 namespace QtMaterial {
+
 namespace {
+
 QString propertyString(const QObject* object, const char* name)
 {
     return object ? object->property(name).toString() : QString();
@@ -15,22 +17,97 @@ void setStringProperty(QObject* object, const char* name, const QString& value)
     if (!object) {
         return;
     }
+
     object->setProperty(name, value);
 }
+
+QString interactionStatePropertyString(const QtMaterialInteractionState& state)
+{
+    QStringList names;
+    names.reserve(14);
+
+    names << (state.isEnabled()
+                  ? QStringLiteral("enabled")
+                  : QStringLiteral("disabled"));
+
+    if (state.isHovered()) {
+        names << QStringLiteral("hovered");
+    }
+    if (state.isFocused()) {
+        names << QStringLiteral("focused");
+    }
+    if (state.isPressed()) {
+        names << QStringLiteral("pressed");
+    }
+    if (state.isCheckable()) {
+        names << QStringLiteral("checkable");
+    }
+    if (state.isChecked()) {
+        names << QStringLiteral("checked");
+    }
+    if (state.isSelected()) {
+        names << QStringLiteral("selected");
+    }
+    if (state.hasError()) {
+        names << QStringLiteral("error");
+    }
+    if (state.isReadOnly()) {
+        names << QStringLiteral("readOnly");
+    }
+    if (state.isIndeterminate()) {
+        names << QStringLiteral("indeterminate");
+    }
+    if (state.isDragged()) {
+        names << QStringLiteral("dragged");
+    }
+    if (state.isBusy()) {
+        names << QStringLiteral("busy");
+    }
+    if (state.isExpanded()) {
+        names << QStringLiteral("expanded");
+    }
+    if (state.isInvalid()) {
+        names << QStringLiteral("invalid");
+    }
+
+    return names.join(QLatin1Char(' '));
+}
+
 } // namespace
 
-const char* QtMaterialAutomation::componentPropertyName() noexcept { return "materialComponent"; }
-const char* QtMaterialAutomation::variantPropertyName() noexcept { return "materialVariant"; }
-const char* QtMaterialAutomation::rolePropertyName() noexcept { return "materialRole"; }
-const char* QtMaterialAutomation::testIdPropertyName() noexcept { return "materialTestId"; }
-const char* QtMaterialAutomation::statePropertyName() noexcept { return "materialState"; }
+const char* QtMaterialAutomation::componentPropertyName() noexcept
+{
+    return "materialComponent";
+}
 
-void QtMaterialAutomation::setComponent(QObject* object, const QString& component)
+const char* QtMaterialAutomation::variantPropertyName() noexcept
+{
+    return "materialVariant";
+}
+
+const char* QtMaterialAutomation::rolePropertyName() noexcept
+{
+    return "materialRole";
+}
+
+const char* QtMaterialAutomation::testIdPropertyName() noexcept
+{
+    return "materialTestId";
+}
+
+const char* QtMaterialAutomation::statePropertyName() noexcept
+{
+    return "materialState";
+}
+
+void QtMaterialAutomation::setComponent(QObject* object,
+                                        const QString& component)
 {
     setStringProperty(object, componentPropertyName(), component);
 }
 
-void QtMaterialAutomation::setVariant(QObject* object, const QString& variant)
+void QtMaterialAutomation::setVariant(QObject* object,
+                                      const QString& variant)
 {
     setStringProperty(object, variantPropertyName(), variant);
 }
@@ -40,7 +117,8 @@ void QtMaterialAutomation::setRole(QObject* object, const QString& role)
     setStringProperty(object, rolePropertyName(), role);
 }
 
-void QtMaterialAutomation::setTestId(QObject* object, const QString& testId)
+void QtMaterialAutomation::setTestId(QObject* object,
+                                     const QString& testId)
 {
     setStringProperty(object, testIdPropertyName(), testId);
 }
@@ -50,9 +128,11 @@ void QtMaterialAutomation::setState(QObject* object, const QString& state)
     setStringProperty(object, statePropertyName(), state);
 }
 
-void QtMaterialAutomation::syncState(QObject* object, const QtMaterialInteractionState& state)
+void QtMaterialAutomation::syncState(
+    QObject* object,
+    const QtMaterialInteractionState& state)
 {
-    setState(object, state.toPropertyString());
+    setState(object, interactionStatePropertyString(state));
 }
 
 QString QtMaterialAutomation::component(const QObject* object)

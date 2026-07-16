@@ -25,6 +25,7 @@ QFont appFont(int pointSizeDelta = 0, int weight = QFont::Normal)
 
     return font;
 }
+}
 
 DatePickerSpec defaultDatePickerSpec()
 {
