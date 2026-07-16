@@ -11,7 +11,7 @@
 #include <QRectF>
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialsnackbarspec.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 #include <memory>
 
@@ -21,7 +21,8 @@ namespace QtMaterial {
 class QtMaterialSnackbarPrivate {
 public:
  mutable bool specDirty = true;
- mutable QtMaterial::SnackbarSpec* specPtr = nullptr;
+ mutable QtMaterial::SnackbarSpec spec;
+    mutable QtMaterial::SnackbarSpec* specPtr = nullptr;
  SnackbarRequest request;
  SnackbarDismissReason pendingDismissReason = SnackbarDismissReason::Manual;
  QtMaterialSnackbar::State state = QtMaterialSnackbar::State::Hidden;
@@ -535,11 +536,9 @@ void QtMaterialSnackbar::ensureSpecResolved() const
         return;
     }
 
-    static QtMaterial::SpecFactory factory;
-    static QtMaterial::SnackbarSpec spec;
-    spec = factory.snackbarSpec(theme());
-
-    d_ptr->specPtr = &spec;
+    const QtMaterial::SurfaceSpecResolver resolver;
+    d_ptr->spec = resolver.snackbarSpec(theme());
+    d_ptr->specPtr = &d_ptr->spec;
     d_ptr->specDirty = false;
 }
 

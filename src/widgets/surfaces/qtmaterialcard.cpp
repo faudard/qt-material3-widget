@@ -1,8 +1,7 @@
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
 #include <memory>
 
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
-#include "qtmaterial/theme/qtmaterialthememanager.h"
+#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
 #include <QEvent>
 #include <QFont>
 #include <QFontMetrics>
@@ -13,6 +12,7 @@
 #include <QResizeEvent>
 
 #include <QPainterPath>
+#include "qtmaterial/theme/qtmaterialthemecontext.h"
 namespace {
 
 constexpr int kDefaultMinimumWidth = 120;
@@ -59,15 +59,20 @@ public:
 // Tranche 35: QtMaterialCard private helpers moved out of the public header.
 namespace {
 
-void ensureSpecResolved(const QtMaterialCard* self, QtMaterialCardPrivate* d)
+void ensureSpecResolved(
+    const QtMaterialCard* self,
+    QtMaterialCardPrivate* d)
 {
-    Q_UNUSED(self);
     if (!d->specDirty) {
         return;
     }
 
-    QtMaterial::SpecFactory factory;
-    d->spec = factory.cardSpec(QtMaterial::ThemeManager::instance().theme());
+    QtMaterial::ThemeContext* context =
+        self->effectiveThemeContext();
+    Q_ASSERT(context);
+
+    const QtMaterial::SurfaceSpecResolver resolver;
+    d->spec = resolver.cardSpec(context->theme());
     d->specDirty = false;
     d->layoutDirty = true;
 }

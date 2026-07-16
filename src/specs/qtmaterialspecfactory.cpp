@@ -2,6 +2,7 @@
 #include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
 #include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 #include "qtmaterialcomponenttokenapplier_p.h"
+#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
 
 namespace QtMaterial {
 SpecFactory::SpecFactory() = default;
@@ -131,24 +132,16 @@ BottomSheetSpec SpecFactory::bottomSheetSpec(const Theme& theme) const
     return spec;
 }
 
-BannerSpec SpecFactory::bannerSpec(const Theme& theme) const
+BannerSpec SpecFactory::bannerSpec(
+    const Theme& theme) const
 {
-    BannerSpec spec;
-    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
-    spec.headlineColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.supportingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.actionColor = theme.colorScheme().color(ColorRole::Primary);
-    return spec;
+    return SurfaceSpecResolver().bannerSpec(theme);
 }
 
-CardSpec SpecFactory::cardSpec(const Theme& theme) const
+CardSpec SpecFactory::cardSpec(
+    const Theme& theme) const
 {
-    CardSpec spec;
-    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
-    spec.outlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
-    spec.contentColor = theme.colorScheme().color(ColorRole::OnSurface);
-    applyCardComponentTokens(theme, QStringList{QStringLiteral("surface"), QStringLiteral("card"), QStringLiteral("Card")}, &spec);
-  return spec;
+    return SurfaceSpecResolver().cardSpec(theme);
 }
 
 AppBarSpec SpecFactory::topAppBarSpec(const Theme& theme) const
@@ -243,21 +236,10 @@ ListItemSpec SpecFactory::listItemSpec(const Theme& theme) const
     return spec;
 }
 
-SnackbarSpec SpecFactory::snackbarSpec(const Theme& theme) const
+SnackbarSpec SpecFactory::snackbarSpec(
+    const Theme& theme) const
 {
-    SnackbarSpec spec;
-
-    spec.containerColor   = theme.colorScheme().color(ColorRole::InverseSurface);
-    spec.textColor        = theme.colorScheme().color(ColorRole::InverseOnSurface);
-    spec.actionColor      = theme.colorScheme().color(ColorRole::InversePrimary);
-    spec.dismissIconColor = theme.colorScheme().color(ColorRole::InverseOnSurface);
-
-    spec.shapeRole = ShapeRole::Small;
-    spec.elevationRole = ElevationRole::Level3;
-    spec.enterMotion = MotionToken::Medium2;
-    spec.exitMotion = MotionToken::Short4;
-
-    return spec;
+    return SurfaceSpecResolver().snackbarSpec(theme);
 }
 
 DividerSpec SpecFactory::dividerSpec(const Theme& theme) const

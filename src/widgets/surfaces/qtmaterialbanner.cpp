@@ -11,7 +11,7 @@
 #include <QToolButton>
 
 #include "qtmaterial/specs/qtmaterialbannerspec.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
 
 #include <memory>
 #include <QPainterPath>
@@ -339,9 +339,11 @@ void QtMaterialBanner::ensureSpecResolved() const
     if (!d->m_specDirty) {
         return;
     }
-    QtMaterial::SpecFactory factory;
-    Q_UNUSED(factory);
+
+    const QtMaterial::SurfaceSpecResolver resolver;
+    d->m_spec = resolver.bannerSpec(theme());
     d->m_specDirty = false;
+    d->m_layoutDirty = true;
 }
 
 void QtMaterialBanner::ensureLayoutResolved() const
