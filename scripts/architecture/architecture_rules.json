@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "layer_rules": [
+    {
+      "name": "foundation-is-dependency-free",
+      "paths": [
+        "include/qtmaterial/foundation",
+        "src/foundation"
+      ],
+      "forbidden_include_prefixes": [
+        "qtmaterial/theme/",
+        "qtmaterial/specs/",
+        "qtmaterial/core/",
+        "qtmaterial/effects/",
+        "qtmaterial/widgets/"
+      ],
+      "forbidden_includes": [
+        "QWidget",
+        "QApplication",
+        "QStyle",
+        "QAbstractButton"
+      ]
+    },
+    {
+      "name": "theme-does-not-depend-on-runtime-layers",
+      "paths": [
+        "include/qtmaterial/theme",
+        "src/theme"
+      ],
+      "forbidden_include_prefixes": [
+        "qtmaterial/core/",
+        "qtmaterial/specs/",
+        "qtmaterial/effects/",
+        "qtmaterial/widgets/"
+      ],
+      "forbidden_includes": [
+        "QWidget",
+        "QApplication",
+        "QAbstractButton"
+      ]
+    },
+    {
+      "name": "specs-do-not-depend-on-widget-runtime",
+      "paths": [
+        "include/qtmaterial/specs",
+        "src/specs"
+      ],
+      "forbidden_include_prefixes": [
+        "qtmaterial/core/",
+        "qtmaterial/effects/",
+        "qtmaterial/widgets/"
+      ],
+      "forbidden_includes": [
+        "QWidget",
+        "QApplication",
+        "QStyle",
+        "QAbstractButton",
+        "QLineEdit",
+        "QDialog",
+        "QMainWindow"
+      ]
+    }
+  ],
+  "file_rules": [
+    {
+      "name": "standard-buttons-use-dedicated-resolver",
+      "files": [
+        "src/widgets/buttons/qtmaterialtextbutton.cpp",
+        "src/widgets/buttons/qtmaterialfilledbutton.cpp",
+        "src/widgets/buttons/qtmaterialfilledtonalbutton.cpp",
+        "src/widgets/buttons/qtmaterialoutlinedbutton.cpp",
+        "src/widgets/buttons/qtmaterialelevatedbutton.cpp"
+      ],
+      "forbidden_regex": [
+        "qtmaterial/specs/qtmaterialspecfactory\\.h",
+        "\\bSpecFactory\\b",
+        "ThemeManager::instance\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\(",
+        "button\\s*\\.\\s*theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\("
+      ],
+      "required_regex": [
+        "\\bButtonSpecResolver\\b"
+      ]
+    },
+    {
+      "name": "selection-controls-use-dedicated-resolver",
+      "files": [
+        "src/widgets/selection/qtmaterialcheckbox.cpp",
+        "src/widgets/selection/qtmaterialradiobutton.cpp",
+        "src/widgets/selection/qtmaterialswitch.cpp"
+      ],
+      "forbidden_regex": [
+        "qtmaterial/specs/qtmaterialspecfactory\\.h",
+        "\\bSpecFactory\\b",
+        "ThemeManager::instance\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\(",
+        "SelectionRenderHelper::stateLayerOpacity\\s*\\(\\s*theme\\s*\\(",
+        "SelectionRenderHelper::labelFont\\s*\\(\\s*theme\\s*\\("
+      ],
+      "required_regex": [
+        "\\bSelectionSpecResolver\\b",
+        "SelectionRenderHelper::configureMotion\\s*\\("
+      ]
+    }
+  ],
+  "text_rules": [
+    {
+      "name": "specs-cmake-is-widget-free",
+      "file": "src/specs/CMakeLists.txt",
+      "forbidden_regex": [
+        "\\bqtmaterial3_core\\b",
+        "Qt(?:\\$\\{QT_VERSION_MAJOR\\}|5|6)?::Widgets"
+      ],
+      "required_regex": [
+        "\\bqtmaterial3_foundation\\b",
+        "\\bqtmaterial3_theme\\b"
+      ]
+    },
+    {
+      "name": "spec-factory-delegates-migrated-families",
+      "file": "src/specs/qtmaterialspecfactory.cpp",
+      "forbidden_regex": [
+        "\\bapplyButtonComponentTokens\\s*\\(",
+        "\\bapplyCheckboxComponentTokens\\s*\\(",
+        "\\bapplyRadioButtonComponentTokens\\s*\\(",
+        "\\bapplySwitchComponentTokens\\s*\\("
+      ],
+      "required_regex": [
+        "ButtonSpecResolver\\s*\\(\\s*\\)\\s*\\.",
+        "SelectionSpecResolver\\s*\\(\\s*\\)\\s*\\."
+      ]
+    },
+    {
+      "name": "theme-manager-has-single-theme-storage",
+      "file": "include/qtmaterial/theme/qtmaterialthememanager.h",
+      "forbidden_regex": [
+        "\\bTheme\\s+m_theme\\s*;"
+      ],
+      "required_regex": [
+        "ThemeContext\\s*\\*\\s*m_defaultContext\\s*;",
+        "defaultContext\\s*\\("
+      ]
+    },
+    {
+      "name": "widgets-connect-through-theme-context",
+      "file": "src/core/qtmaterialwidget.cpp",
+      "forbidden_regex": [
+        "&\\s*ThemeManager::themeChanged"
+      ],
+      "required_regex": [
+        "effectiveThemeContext\\s*\\(",
+        "defaultContext\\s*\\("
+      ]
+    },
+    {
+      "name": "button-spec-is-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialbuttonspec.h",
+      "required_regex": [
+        "\\bQFont\\s+labelFont\\s*;",
+        "\\bMotionStyle\\s+motionStyle\\s*;",
+        "\\bElevationStyle\\s+elevationStyle\\s*;",
+        "\\bqreal\\s+cornerRadius\\b",
+        "\\bqreal\\s+pressStateLayerOpacity\\b"
+      ]
+    },
+    {
+      "name": "selection-spec-is-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialselectionruntimespec.h",
+      "required_regex": [
+        "\\bQFont\\s+labelFont\\s*;",
+        "\\bMotionStyle\\s+motionStyle\\s*;",
+        "\\bqreal\\s+pressStateLayerOpacity\\b"
+      ]
+    },
+    {
+      "name": "button-elevation-is-centralized",
+      "file": "src/widgets/buttons/qtmaterialfilledbutton.cpp",
+      "forbidden_regex": [
+        "\\bQColor\\s+ambientShadow\\s*\\(",
+        "\\bQColor\\s+keyShadow\\s*\\(",
+        "containerPath\\s*\\.\\s*translated\\s*\\("
+      ],
+      "required_regex": [
+        "QtMaterialElevationRenderer::paintInterpolatedPathElevation\\s*\\("
+      ]
+    },
+    {
+      "name": "elevated-button-has-no-second-shadow-pass",
+      "file": "src/widgets/buttons/qtmaterialelevatedbutton.cpp",
+      "forbidden_regex": [
+        "QtMaterialElevatedButton::paintEvent\\s*\\(",
+        "\\bQtMaterialShadowRenderer\\b"
+      ]
+    }
+  ]
+}

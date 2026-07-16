@@ -136,6 +136,14 @@ if(QTMATERIAL3_BUILD_TESTS)
     endif()
 endif()
 
+
+if(QTMATERIAL3_BUILD_TESTS)
+    include(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3ArchitectureChecks.cmake"
+    )
+    qtmaterial3_add_architecture_checks()
+endif()
+
 if(QTMATERIAL3_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
