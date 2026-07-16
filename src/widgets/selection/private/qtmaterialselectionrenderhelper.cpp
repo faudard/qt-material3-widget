@@ -1,8 +1,56 @@
 #include "qtmaterialselectionrenderhelper_p.h"
 
 #include <QFontMetrics>
+#include "qtmaterial/effects/qtmaterialripplecontroller.h"
+#include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 
 namespace QtMaterial::SelectionRenderHelper {
+
+
+qreal stateLayerOpacity(
+    const SelectionRuntimeSpec& spec,
+    const QtMaterialInteractionState& state)
+{
+    if (!state.isEnabled()) {
+        return 0.0;
+    }
+    if (state.isPressed()) {
+        return spec.pressStateLayerOpacity;
+    }
+    if (state.isFocused()) {
+        return spec.focusStateLayerOpacity;
+    }
+    if (state.isHovered()) {
+        return spec.hoverStateLayerOpacity;
+    }
+    return 0.0;
+}
+
+QFont resolvedLabelFont(
+    const QFont& fallback,
+    const SelectionRuntimeSpec& spec)
+{
+    return spec.hasResolvedLabelFont ? spec.labelFont : fallback;
+}
+
+void configureMotion(
+    const SelectionRuntimeSpec& spec,
+    QtMaterialTransitionController* transition,
+    QtMaterialRippleController* ripple)
+{
+    if (spec.hasResolvedMotionStyle) {
+        if (transition) {
+            transition->applyMotionStyle(spec.motionStyle);
+        }
+        if (ripple && spec.motionStyle.durationMs > 0) {
+            ripple->setDuration(spec.motionStyle.durationMs);
+        }
+    }
+
+    if (ripple) {
+        ripple->setBaseOpacity(spec.pressStateLayerOpacity);
+    }
+}
 
 qreal stateLayerOpacity(const Theme& theme, const QtMaterialInteractionState& state)
 {

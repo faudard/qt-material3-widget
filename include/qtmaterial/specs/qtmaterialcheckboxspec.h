@@ -3,8 +3,10 @@
 #include <QSize>
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include "qtmaterial/specs/qtmaterialselectionruntimespec.h"
 namespace QtMaterial {
-struct QTMATERIAL3_SPECS_EXPORT CheckboxSpec {
+struct QTMATERIAL3_SPECS_EXPORT CheckboxSpec : SelectionRuntimeSpec
+{
     QColor selectedContainerColor;
     QColor selectedIconColor;
     QColor unselectedOutlineColor;

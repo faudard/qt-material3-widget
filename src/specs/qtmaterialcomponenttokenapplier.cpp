@@ -434,122 +434,396 @@ void applyIconButtonComponentTokens(const Theme& theme, const QStringList& compo
     readInt(tokens.custom, "iconSize", &spec->iconSize);
 }
 
-void applyCheckboxComponentTokens(const Theme& theme, const QStringList& componentNames, CheckboxSpec* spec)
+
+template <typename SpecT>
+void resolveSelectionRuntimeTokens(
+    const Theme& theme,
+    const ComponentTokenOverride& tokens,
+    SpecT* spec)
 {
-    if (!spec) return;
-    const ComponentTokenOverride tokens = mergedComponentOverride(theme, componentNames);
-    if (tokens.isEmpty()) return;
+    if (!spec) {
+        return;
+    }
 
-    applyColor(&spec->selectedContainerColor, tokens, ColorRole::Primary);
-    applyColor(&spec->selectedIconColor, tokens, ColorRole::OnPrimary);
-    applyColor(&spec->unselectedOutlineColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->disabledSelectedContainerColor, tokens, ColorRole::SurfaceContainerHigh);
-    applyColor(&spec->disabledUnselectedOutlineColor, tokens, ColorRole::OutlineVariant);
-    applyColor(&spec->labelColor, tokens, ColorRole::OnSurface);
-    applyColor(&spec->disabledLabelColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->stateLayerColor, tokens, ColorRole::Primary);
-    applyColor(&spec->focusRingColor, tokens, ColorRole::Primary);
+    spec->hasResolvedLabelFont = false;
+    if (tokens.typography.contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            tokens.typography.value(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    } else if (theme.typography().contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            theme.typography().style(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    }
 
-    applyCustomColor(&spec->selectedContainerColor, tokens, "selectedContainerColor");
-    applyCustomColor(&spec->selectedIconColor, tokens, "selectedIconColor");
-    applyCustomColor(&spec->unselectedOutlineColor, tokens, "unselectedOutlineColor");
-    applyCustomColor(&spec->disabledSelectedContainerColor, tokens, "disabledSelectedContainerColor");
-    applyCustomColor(&spec->disabledUnselectedOutlineColor, tokens, "disabledUnselectedOutlineColor");
-    applyCustomColor(&spec->labelColor, tokens, "labelColor");
-    applyCustomColor(&spec->disabledLabelColor, tokens, "disabledLabelColor");
-    applyCustomColor(&spec->stateLayerColor, tokens, "stateLayerColor");
-    applyCustomColor(&spec->focusRingColor, tokens, "focusRingColor");
+    spec->hasResolvedMotionStyle = false;
+    if (tokens.motion.contains(spec->motionToken)) {
+        spec->motionStyle =
+            tokens.motion.value(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    } else if (theme.motion().contains(spec->motionToken)) {
+        spec->motionStyle =
+            theme.motion().style(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    }
 
-    applyTouchTarget(&spec->touchTarget, tokens);
-    spec->indicatorSize = iconSizeFromTokens(tokens, IconSizeRole::Small, spec->indicatorSize);
-    if (tokens.motion.contains(MotionToken::Short3)) spec->motionToken = MotionToken::Short3;
-    readInt(tokens.custom, "indicatorSize", &spec->indicatorSize);
-    readInt(tokens.custom, "spacing", &spec->spacing);
-    readInt(tokens.custom, "outlineWidth", &spec->outlineWidth);
-    if (tokens.custom.contains(QStringLiteral("motionToken"))) {
-        spec->motionToken = parseMotionToken(tokens.custom.value(QStringLiteral("motionToken")).toString(), spec->motionToken);
+    const StateLayer& stateLayer =
+        tokens.hasStateLayer ? tokens.stateLayer : theme.stateLayer();
+    spec->hoverStateLayerOpacity = stateLayer.hoverOpacity;
+    spec->focusStateLayerOpacity = stateLayer.focusOpacity;
+    spec->pressStateLayerOpacity = stateLayer.pressOpacity;
+    spec->dragStateLayerOpacity = stateLayer.dragOpacity;
+
+    if (!tokens.isEmpty()) {
+        readReal(
+            tokens.custom,
+            "hoverStateLayerOpacity",
+            &spec->hoverStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "focusStateLayerOpacity",
+            &spec->focusStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "pressStateLayerOpacity",
+            &spec->pressStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "dragStateLayerOpacity",
+            &spec->dragStateLayerOpacity);
     }
 }
 
-void applyRadioButtonComponentTokens(const Theme& theme, const QStringList& componentNames, RadioButtonSpec* spec)
+void applyCheckboxComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    CheckboxSpec* spec)
 {
-    if (!spec) return;
-    const ComponentTokenOverride tokens = mergedComponentOverride(theme, componentNames);
-    if (tokens.isEmpty()) return;
-
-    applyColor(&spec->selectedColor, tokens, ColorRole::Primary);
-    applyColor(&spec->unselectedOutlineColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->disabledColor, tokens, ColorRole::OutlineVariant);
-    applyColor(&spec->labelColor, tokens, ColorRole::OnSurface);
-    applyColor(&spec->disabledLabelColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->stateLayerColor, tokens, ColorRole::Primary);
-    applyColor(&spec->focusRingColor, tokens, ColorRole::Primary);
-
-    applyCustomColor(&spec->selectedColor, tokens, "selectedColor");
-    applyCustomColor(&spec->unselectedOutlineColor, tokens, "unselectedOutlineColor");
-    applyCustomColor(&spec->disabledColor, tokens, "disabledColor");
-    applyCustomColor(&spec->labelColor, tokens, "labelColor");
-    applyCustomColor(&spec->disabledLabelColor, tokens, "disabledLabelColor");
-    applyCustomColor(&spec->stateLayerColor, tokens, "stateLayerColor");
-    applyCustomColor(&spec->focusRingColor, tokens, "focusRingColor");
-
-    applyTouchTarget(&spec->touchTarget, tokens);
-    spec->indicatorSize = iconSizeFromTokens(tokens, IconSizeRole::Small, spec->indicatorSize);
-    if (tokens.motion.contains(MotionToken::Short3)) spec->motionToken = MotionToken::Short3;
-    readInt(tokens.custom, "indicatorSize", &spec->indicatorSize);
-    readInt(tokens.custom, "dotSize", &spec->dotSize);
-    readInt(tokens.custom, "spacing", &spec->spacing);
-    readInt(tokens.custom, "outlineWidth", &spec->outlineWidth);
-    if (tokens.custom.contains(QStringLiteral("motionToken"))) {
-        spec->motionToken = parseMotionToken(tokens.custom.value(QStringLiteral("motionToken")).toString(), spec->motionToken);
+    if (!spec) {
+        return;
     }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->selectedContainerColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->selectedIconColor,
+            tokens,
+            ColorRole::OnPrimary);
+        applyColor(
+            &spec->unselectedOutlineColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->disabledSelectedContainerColor,
+            tokens,
+            ColorRole::SurfaceContainerHigh);
+        applyColor(
+            &spec->disabledUnselectedOutlineColor,
+            tokens,
+            ColorRole::OutlineVariant);
+        applyColor(&spec->labelColor, tokens, ColorRole::OnSurface);
+        applyColor(
+            &spec->disabledLabelColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->stateLayerColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->focusRingColor,
+            tokens,
+            ColorRole::Primary);
+
+        applyCustomColor(
+            &spec->selectedContainerColor,
+            tokens,
+            "selectedContainerColor");
+        applyCustomColor(
+            &spec->selectedIconColor,
+            tokens,
+            "selectedIconColor");
+        applyCustomColor(
+            &spec->unselectedOutlineColor,
+            tokens,
+            "unselectedOutlineColor");
+        applyCustomColor(
+            &spec->disabledSelectedContainerColor,
+            tokens,
+            "disabledSelectedContainerColor");
+        applyCustomColor(
+            &spec->disabledUnselectedOutlineColor,
+            tokens,
+            "disabledUnselectedOutlineColor");
+        applyCustomColor(&spec->labelColor, tokens, "labelColor");
+        applyCustomColor(
+            &spec->disabledLabelColor,
+            tokens,
+            "disabledLabelColor");
+        applyCustomColor(
+            &spec->stateLayerColor,
+            tokens,
+            "stateLayerColor");
+        applyCustomColor(
+            &spec->focusRingColor,
+            tokens,
+            "focusRingColor");
+
+        applyTouchTarget(&spec->touchTarget, tokens);
+        spec->indicatorSize = iconSizeFromTokens(
+            tokens,
+            IconSizeRole::Small,
+            spec->indicatorSize);
+
+        readInt(tokens.custom, "indicatorSize", &spec->indicatorSize);
+        readInt(tokens.custom, "spacing", &spec->spacing);
+        readInt(tokens.custom, "outlineWidth", &spec->outlineWidth);
+        readInt(tokens.custom, "cornerRadius", &spec->cornerRadius);
+        readInt(
+            tokens.custom,
+            "checkmarkStrokeWidth",
+            &spec->checkmarkStrokeWidth);
+        readInt(tokens.custom, "stateLayerSize", &spec->stateLayerSize);
+
+        if (tokens.custom.contains(QStringLiteral("motionToken"))) {
+            spec->motionToken = parseMotionToken(
+                tokens.custom
+                    .value(QStringLiteral("motionToken"))
+                    .toString(),
+                spec->motionToken);
+        }
+    }
+
+    resolveSelectionRuntimeTokens(theme, tokens, spec);
 }
 
-void applySwitchComponentTokens(const Theme& theme, const QStringList& componentNames, SwitchSpec* spec)
+void applyRadioButtonComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    RadioButtonSpec* spec)
 {
-    if (!spec) return;
-    const ComponentTokenOverride tokens = mergedComponentOverride(theme, componentNames);
-    if (tokens.isEmpty()) return;
-
-    applyColor(&spec->selectedTrackColor, tokens, ColorRole::Primary);
-    applyColor(&spec->selectedHandleColor, tokens, ColorRole::OnPrimary);
-    applyColor(&spec->unselectedTrackColor, tokens, ColorRole::SurfaceVariant);
-    applyColor(&spec->unselectedHandleColor, tokens, ColorRole::Outline);
-    applyColor(&spec->disabledSelectedTrackColor, tokens, ColorRole::SurfaceContainerHigh);
-    applyColor(&spec->disabledSelectedHandleColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->disabledUnselectedTrackColor, tokens, ColorRole::SurfaceContainerHigh);
-    applyColor(&spec->disabledUnselectedHandleColor, tokens, ColorRole::OutlineVariant);
-    applyColor(&spec->iconColor, tokens, ColorRole::OnPrimary);
-    applyColor(&spec->stateLayerColor, tokens, ColorRole::Primary);
-    applyColor(&spec->focusRingColor, tokens, ColorRole::Primary);
-    applyColor(&spec->labelColor, tokens, ColorRole::OnSurface);
-    applyColor(&spec->disabledLabelColor, tokens, ColorRole::OnSurfaceVariant);
-
-    applyCustomColor(&spec->selectedTrackColor, tokens, "selectedTrackColor");
-    applyCustomColor(&spec->selectedHandleColor, tokens, "selectedHandleColor");
-    applyCustomColor(&spec->unselectedTrackColor, tokens, "unselectedTrackColor");
-    applyCustomColor(&spec->unselectedHandleColor, tokens, "unselectedHandleColor");
-    applyCustomColor(&spec->disabledSelectedTrackColor, tokens, "disabledSelectedTrackColor");
-    applyCustomColor(&spec->disabledSelectedHandleColor, tokens, "disabledSelectedHandleColor");
-    applyCustomColor(&spec->disabledUnselectedTrackColor, tokens, "disabledUnselectedTrackColor");
-    applyCustomColor(&spec->disabledUnselectedHandleColor, tokens, "disabledUnselectedHandleColor");
-    applyCustomColor(&spec->iconColor, tokens, "iconColor");
-    applyCustomColor(&spec->stateLayerColor, tokens, "stateLayerColor");
-    applyCustomColor(&spec->focusRingColor, tokens, "focusRingColor");
-    applyCustomColor(&spec->labelColor, tokens, "labelColor");
-    applyCustomColor(&spec->disabledLabelColor, tokens, "disabledLabelColor");
-
-    applyTouchTarget(&spec->touchTarget, tokens);
-    if (tokens.motion.contains(MotionToken::Short3)) spec->motionToken = MotionToken::Short3;
-    readInt(tokens.custom, "trackWidth", &spec->trackWidth);
-    readInt(tokens.custom, "trackHeight", &spec->trackHeight);
-    readInt(tokens.custom, "handleDiameter", &spec->handleDiameter);
-    readInt(tokens.custom, "selectedHandleDiameter", &spec->selectedHandleDiameter);
-    readInt(tokens.custom, "spacing", &spec->spacing);
-    readInt(tokens.custom, "stateLayerSize", &spec->stateLayerSize);
-    if (tokens.custom.contains(QStringLiteral("motionToken"))) {
-        spec->motionToken = parseMotionToken(tokens.custom.value(QStringLiteral("motionToken")).toString(), spec->motionToken);
+    if (!spec) {
+        return;
     }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->selectedColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->unselectedOutlineColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->disabledColor,
+            tokens,
+            ColorRole::OutlineVariant);
+        applyColor(&spec->labelColor, tokens, ColorRole::OnSurface);
+        applyColor(
+            &spec->disabledLabelColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->stateLayerColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->focusRingColor,
+            tokens,
+            ColorRole::Primary);
+
+        applyCustomColor(
+            &spec->selectedColor,
+            tokens,
+            "selectedColor");
+        applyCustomColor(
+            &spec->unselectedOutlineColor,
+            tokens,
+            "unselectedOutlineColor");
+        applyCustomColor(
+            &spec->disabledColor,
+            tokens,
+            "disabledColor");
+        applyCustomColor(&spec->labelColor, tokens, "labelColor");
+        applyCustomColor(
+            &spec->disabledLabelColor,
+            tokens,
+            "disabledLabelColor");
+        applyCustomColor(
+            &spec->stateLayerColor,
+            tokens,
+            "stateLayerColor");
+        applyCustomColor(
+            &spec->focusRingColor,
+            tokens,
+            "focusRingColor");
+
+        applyTouchTarget(&spec->touchTarget, tokens);
+        spec->indicatorSize = iconSizeFromTokens(
+            tokens,
+            IconSizeRole::Small,
+            spec->indicatorSize);
+
+        readInt(tokens.custom, "indicatorSize", &spec->indicatorSize);
+        readInt(tokens.custom, "dotSize", &spec->dotSize);
+        readInt(tokens.custom, "spacing", &spec->spacing);
+        readInt(tokens.custom, "outlineWidth", &spec->outlineWidth);
+        readInt(tokens.custom, "stateLayerSize", &spec->stateLayerSize);
+
+        if (tokens.custom.contains(QStringLiteral("motionToken"))) {
+            spec->motionToken = parseMotionToken(
+                tokens.custom
+                    .value(QStringLiteral("motionToken"))
+                    .toString(),
+                spec->motionToken);
+        }
+    }
+
+    resolveSelectionRuntimeTokens(theme, tokens, spec);
+}
+
+void applySwitchComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    SwitchSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->selectedTrackColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->selectedHandleColor,
+            tokens,
+            ColorRole::OnPrimary);
+        applyColor(
+            &spec->unselectedTrackColor,
+            tokens,
+            ColorRole::SurfaceVariant);
+        applyColor(
+            &spec->unselectedHandleColor,
+            tokens,
+            ColorRole::Outline);
+        applyColor(
+            &spec->disabledSelectedTrackColor,
+            tokens,
+            ColorRole::SurfaceContainerHigh);
+        applyColor(
+            &spec->disabledSelectedHandleColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->disabledUnselectedTrackColor,
+            tokens,
+            ColorRole::SurfaceContainerHigh);
+        applyColor(
+            &spec->disabledUnselectedHandleColor,
+            tokens,
+            ColorRole::OutlineVariant);
+        applyColor(&spec->iconColor, tokens, ColorRole::OnPrimary);
+        applyColor(
+            &spec->stateLayerColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->focusRingColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(&spec->labelColor, tokens, ColorRole::OnSurface);
+        applyColor(
+            &spec->disabledLabelColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+
+        applyCustomColor(
+            &spec->selectedTrackColor,
+            tokens,
+            "selectedTrackColor");
+        applyCustomColor(
+            &spec->selectedHandleColor,
+            tokens,
+            "selectedHandleColor");
+        applyCustomColor(
+            &spec->unselectedTrackColor,
+            tokens,
+            "unselectedTrackColor");
+        applyCustomColor(
+            &spec->unselectedHandleColor,
+            tokens,
+            "unselectedHandleColor");
+        applyCustomColor(
+            &spec->disabledSelectedTrackColor,
+            tokens,
+            "disabledSelectedTrackColor");
+        applyCustomColor(
+            &spec->disabledSelectedHandleColor,
+            tokens,
+            "disabledSelectedHandleColor");
+        applyCustomColor(
+            &spec->disabledUnselectedTrackColor,
+            tokens,
+            "disabledUnselectedTrackColor");
+        applyCustomColor(
+            &spec->disabledUnselectedHandleColor,
+            tokens,
+            "disabledUnselectedHandleColor");
+        applyCustomColor(&spec->iconColor, tokens, "iconColor");
+        applyCustomColor(
+            &spec->stateLayerColor,
+            tokens,
+            "stateLayerColor");
+        applyCustomColor(
+            &spec->focusRingColor,
+            tokens,
+            "focusRingColor");
+        applyCustomColor(&spec->labelColor, tokens, "labelColor");
+        applyCustomColor(
+            &spec->disabledLabelColor,
+            tokens,
+            "disabledLabelColor");
+
+        applyTouchTarget(&spec->touchTarget, tokens);
+
+        readInt(tokens.custom, "trackWidth", &spec->trackWidth);
+        readInt(tokens.custom, "trackHeight", &spec->trackHeight);
+        readInt(
+            tokens.custom,
+            "handleDiameter",
+            &spec->handleDiameter);
+        readInt(
+            tokens.custom,
+            "selectedHandleDiameter",
+            &spec->selectedHandleDiameter);
+        readInt(tokens.custom, "spacing", &spec->spacing);
+        readInt(tokens.custom, "stateLayerSize", &spec->stateLayerSize);
+
+        if (tokens.custom.contains(QStringLiteral("motionToken"))) {
+            spec->motionToken = parseMotionToken(
+                tokens.custom
+                    .value(QStringLiteral("motionToken"))
+                    .toString(),
+                spec->motionToken);
+        }
+    }
+
+    resolveSelectionRuntimeTokens(theme, tokens, spec);
 }
 
 void applyTextFieldComponentTokens(const Theme& theme, const QStringList& componentNames, TextFieldSpec* spec)

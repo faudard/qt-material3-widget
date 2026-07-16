@@ -131,13 +131,11 @@ void QtMaterialSwitch::resolveSpecIfNeeded() const
 
     SelectionSpecResolver factory;
     d->m_spec = factory.switchSpec(theme(), density());
-    if (d->m_transition && theme().motion().contains(d->m_spec.motionToken)) {
-        const MotionStyle motion = theme().motion().style(d->m_spec.motionToken);
-        if (motion.durationMs > 0) {
-            d->m_transition->setDuration(motion.durationMs);
-        }
-        d->m_transition->setEasingCurve(motion.easing);
-    }
+    const_cast<QtMaterialSwitch*>(this)->setSpacing(d->m_spec.spacing);
+    SelectionRenderHelper::configureMotion(
+        d->m_spec,
+        d->m_transition,
+        d->m_ripple);
     d->m_specDirty = false;
     d->m_layoutDirty = true;
 }
@@ -239,11 +237,7 @@ void QtMaterialSwitch::resolveLayoutIfNeeded() const
         d->m_cachedFocusRingRect.height() / 2.0
         );
 
-    d->m_cachedLabelFont = SelectionRenderHelper::labelFont(
-        theme(),
-        d->m_spec.labelTypeRole,
-        font()
-        );
+    d->m_cachedLabelFont = SelectionRenderHelper::resolvedLabelFont(font(), d->m_spec);
 
     const QFontMetrics metrics(d->m_cachedLabelFont);
     d->m_cachedElidedText = metrics.elidedText(
@@ -287,7 +281,7 @@ QSize QtMaterialSwitch::sizeHint() const
 {
     const_cast<QtMaterialSwitch*>(this)->resolveSpecIfNeeded();
 
-    const QFont labelFont = SelectionRenderHelper::labelFont(theme(), d->m_spec.labelTypeRole, font());
+    const QFont labelFont = SelectionRenderHelper::resolvedLabelFont(font(), d->m_spec);
     const QFontMetrics metrics(labelFont);
     const int labelWidth = text().isEmpty() ? 0 : (metrics.horizontalAdvance(text()) + spacing());
     const int width = qMax(d->m_spec.touchTarget.width(), d->m_spec.trackWidth) + labelWidth;
@@ -350,7 +344,7 @@ void QtMaterialSwitch::paintEvent(QPaintEvent*)
 
     const bool enabled = isEnabled();
     const qreal progress = d->m_transition ? d->m_transition->progress() : (isChecked() ? 1.0 : 0.0);
-    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(theme(), interactionState());
+    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(d->m_spec, interactionState());
 
     const QColor offTrack = enabled
                                 ? d->m_spec.unselectedTrackColor

@@ -128,13 +128,10 @@ void QtMaterialRadioButton::resolveSpecIfNeeded() const
     SelectionSpecResolver factory;
     d->spec = factory.radioButtonSpec(theme(), density());
     const_cast<QtMaterialRadioButton*>(this)->setSpacing(d->spec.spacing);
-    if (d->transition && theme().motion().contains(d->spec.motionToken)) {
-        const MotionStyle motion = theme().motion().style(d->spec.motionToken);
-        if (motion.durationMs > 0) {
-            d->transition->setDuration(motion.durationMs);
-        }
-        d->transition->setEasingCurve(motion.easing);
-    }
+    SelectionRenderHelper::configureMotion(
+        d->spec,
+        d->transition,
+        d->ripple);
     d->specDirty = false;
     d->layoutDirty = true;
 }
@@ -226,11 +223,7 @@ void QtMaterialRadioButton::resolveLayoutIfNeeded() const
     d->cachedRippleClipPath = QPainterPath();
     d->cachedRippleClipPath.addEllipse(d->cachedStateLayerRect);
 
-    const QFont labelFont = SelectionRenderHelper::labelFont(
-        theme(),
-        d->spec.labelTypeRole,
-        font()
-        );
+    const QFont labelFont = SelectionRenderHelper::resolvedLabelFont(font(), d->spec);
 
     const QFontMetrics metrics(labelFont);
 
@@ -247,7 +240,7 @@ QSize QtMaterialRadioButton::sizeHint() const
 {
     const_cast<QtMaterialRadioButton*>(this)->resolveSpecIfNeeded();
 
-    const QFont labelFont = SelectionRenderHelper::labelFont(theme(), d->spec.labelTypeRole, font());
+    const QFont labelFont = SelectionRenderHelper::resolvedLabelFont(font(), d->spec);
     const QFontMetrics metrics(labelFont);
     const int labelWidth = text().isEmpty() ? 0 : (metrics.horizontalAdvance(text()) + spacing());
     const int width = qMax(d->spec.touchTarget.width(), d->spec.indicatorSize) + labelWidth;
@@ -292,7 +285,7 @@ void QtMaterialRadioButton::paintEvent(QPaintEvent*)
 
     const bool enabled = isEnabled();
     const qreal progress = d->transition ? d->transition->progress() : (isChecked() ? 1.0 : 0.0);
-    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(theme(), interactionState());
+    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(d->spec, interactionState());
 
     SelectionRenderHelper::paintCircularStateLayer(
         &painter,
@@ -332,7 +325,7 @@ void QtMaterialRadioButton::paintEvent(QPaintEvent*)
     }
 
     if (!d->cachedElidedText.isEmpty()) {
-        const QFont labelFont = SelectionRenderHelper::labelFont(theme(), d->spec.labelTypeRole, font());
+        const QFont labelFont = SelectionRenderHelper::resolvedLabelFont(font(), d->spec);
         const QColor labelColor = enabled ? d->spec.labelColor : d->spec.disabledColor;
 
         SelectionRenderHelper::paintLabel(

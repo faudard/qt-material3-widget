@@ -158,13 +158,10 @@ void QtMaterialCheckbox::resolveSpecIfNeeded() const
     d->m_spec = factory.checkboxSpec(theme(), density());
     const_cast<QtMaterialCheckbox*>(this)->setSpacing(d->m_spec.spacing);
 
-    if (d->m_transition && theme().motion().contains(d->m_spec.motionToken)) {
-        const MotionStyle motion = theme().motion().style(d->m_spec.motionToken);
-        if (motion.durationMs > 0) {
-            d->m_transition->setDuration(motion.durationMs);
-        }
-        d->m_transition->setEasingCurve(motion.easing);
-    }
+    SelectionRenderHelper::configureMotion(
+        d->m_spec,
+        d->m_transition,
+        d->m_ripple);
 
     d->m_specDirty = false;
 }
@@ -213,7 +210,7 @@ void QtMaterialCheckbox::paintEvent(QPaintEvent*)
     const QRectF stateLayerRect =
         SelectionRenderHelper::centeredStateLayerRect(box, d->m_spec.stateLayerSize);
     const qreal stateOpacity =
-        SelectionRenderHelper::stateLayerOpacity(theme(), interactionState());
+        SelectionRenderHelper::stateLayerOpacity(d->m_spec, interactionState());
     const qreal progress =
         d->m_transition ? d->m_transition->progress() : targetTransitionProgress();
 
@@ -280,7 +277,7 @@ void QtMaterialCheckbox::paintEvent(QPaintEvent*)
     painter.restore();
 
     const QFont labelFont =
-        SelectionRenderHelper::labelFont(theme(), d->m_spec.labelTypeRole, font());
+        SelectionRenderHelper::resolvedLabelFont(font(), d->m_spec);
     const QColor labelColor =
         enabled ? d->m_spec.labelColor : d->m_spec.disabledLabelColor;
 
