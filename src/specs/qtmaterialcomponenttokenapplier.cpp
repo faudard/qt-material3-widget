@@ -507,23 +507,128 @@ void applyTextFieldComponentTokens(const Theme& theme, const QStringList& compon
     readBool(tokens.custom, "reserveSupportingLine", &spec->reserveSupportingLine);
 }
 
-void applyCardComponentTokens(const Theme& theme, const QStringList& componentNames, CardSpec* spec)
+void applyCardComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    CardSpec* spec)
 {
-    if (!spec) return;
-    const ComponentTokenOverride tokens = mergedComponentOverride(theme, componentNames);
-    if (tokens.isEmpty()) return;
+    if (!spec) {
+        return;
+    }
 
-    applyColor(&spec->containerColor, tokens, ColorRole::SurfaceContainerLow);
-    applyColor(&spec->outlineColor, tokens, ColorRole::OutlineVariant);
-    applyColor(&spec->contentColor, tokens, ColorRole::OnSurface);
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
 
-    applyCustomColor(&spec->containerColor, tokens, "containerColor");
-    applyCustomColor(&spec->outlineColor, tokens, "outlineColor");
-    applyCustomColor(&spec->contentColor, tokens, "contentColor");
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->containerColor,
+            tokens,
+            ColorRole::SurfaceContainerLow);
+        applyColor(
+            &spec->outlineColor,
+            tokens,
+            ColorRole::OutlineVariant);
+        applyColor(
+            &spec->contentColor,
+            tokens,
+            ColorRole::OnSurface);
 
-    MotionToken unusedMotion = MotionToken::Short4;
-    applyShapeMotionElevation(tokens, &spec->shapeRole, &spec->elevationRole, &unusedMotion);
-    readMargins(tokens.custom, &spec->contentPadding);
+        applyCustomColor(
+            &spec->containerColor,
+            tokens,
+            "containerColor");
+        applyCustomColor(
+            &spec->outlineColor,
+            tokens,
+            "outlineColor");
+        applyCustomColor(
+            &spec->contentColor,
+            tokens,
+            "contentColor");
+        applyCustomColor(
+            &spec->shadowColor,
+            tokens,
+            "shadowColor");
+
+        MotionToken unusedMotion = MotionToken::Short4;
+        applyShapeMotionElevation(
+            tokens,
+            &spec->shapeRole,
+            &spec->elevationRole,
+            &unusedMotion);
+
+        readMargins(tokens.custom, &spec->contentPadding);
+    }
+
+    spec->shadowColor =
+        spec->shadowColor.isValid()
+        ? spec->shadowColor
+        : theme.colorScheme().color(ColorRole::Shadow);
+
+    spec->hasResolvedTitleFont = false;
+    if (tokens.typography.contains(spec->titleTypeRole)) {
+        spec->titleFont =
+            tokens.typography.value(spec->titleTypeRole).font;
+        spec->hasResolvedTitleFont = true;
+    } else if (theme.typography().contains(spec->titleTypeRole)) {
+        spec->titleFont =
+            theme.typography().style(spec->titleTypeRole).font;
+        spec->hasResolvedTitleFont = true;
+    }
+
+    spec->hasResolvedBodyFont = false;
+    if (tokens.typography.contains(spec->bodyTypeRole)) {
+        spec->bodyFont =
+            tokens.typography.value(spec->bodyTypeRole).font;
+        spec->hasResolvedBodyFont = true;
+    } else if (theme.typography().contains(spec->bodyTypeRole)) {
+        spec->bodyFont =
+            theme.typography().style(spec->bodyTypeRole).font;
+        spec->hasResolvedBodyFont = true;
+    }
+
+    if (spec->shapeRole == ShapeRole::Full) {
+        spec->cornerRadius = -1.0;
+    } else if (tokens.shapes.contains(spec->shapeRole)) {
+        spec->cornerRadius =
+            qMax<qreal>(0.0, tokens.shapes.value(spec->shapeRole));
+    } else if (theme.shapes().contains(spec->shapeRole)) {
+        spec->cornerRadius =
+            qMax<qreal>(0.0, theme.shapes().radius(spec->shapeRole));
+    }
+
+    spec->hasResolvedElevationStyle = false;
+    if (tokens.elevations.contains(spec->elevationRole)) {
+        spec->elevationStyle =
+            tokens.elevations.value(spec->elevationRole);
+        spec->hasResolvedElevationStyle = true;
+    } else if (theme.elevations().contains(spec->elevationRole)) {
+        spec->elevationStyle =
+            theme.elevations().style(spec->elevationRole);
+        spec->hasResolvedElevationStyle = true;
+    }
+
+    const StateLayer& layer =
+        tokens.hasStateLayer ? tokens.stateLayer : theme.stateLayer();
+    spec->hoverStateLayerOpacity = layer.hoverOpacity;
+    spec->focusStateLayerOpacity = layer.focusOpacity;
+    spec->pressStateLayerOpacity = layer.pressOpacity;
+
+    if (!tokens.isEmpty()) {
+        readReal(tokens.custom, "cornerRadius", &spec->cornerRadius);
+        readReal(
+            tokens.custom,
+            "hoverStateLayerOpacity",
+            &spec->hoverStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "focusStateLayerOpacity",
+            &spec->focusStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "pressStateLayerOpacity",
+            &spec->pressStateLayerOpacity);
+    }
 }
 
 void applyDialogComponentTokens(const Theme& theme, const QStringList& componentNames, DialogSpec* spec)

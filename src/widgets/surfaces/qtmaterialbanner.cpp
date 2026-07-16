@@ -235,35 +235,41 @@ void QtMaterialBanner::paintEvent(QPaintEvent*)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-
-    QStyleOption opt;
-    opt.initFrom(this);
-    const QColor baseColor = opt.palette.color(QPalette::Window);
-    const QColor textColor = opt.palette.color(QPalette::WindowText);
-    const QColor outlineColor = opt.palette.color(QPalette::Mid);
-
-    painter.setPen(QPen(outlineColor, 1));
-    painter.setBrush(baseColor);
+    painter.setPen(QPen(d->m_spec.outlineColor, 1));
+    painter.setBrush(d->m_spec.containerColor);
     painter.drawPath(d->m_containerPath);
 
     if (!d->m_leadingIcon.isNull() && d->m_iconRect.isValid()) {
-        const QPixmap pix = d->m_leadingIcon.pixmap(d->m_iconRect.size());
+        const QPixmap pix =
+            d->m_leadingIcon.pixmap(d->m_iconRect.size());
         painter.drawPixmap(d->m_iconRect, pix);
     }
 
-    painter.setPen(textColor);
-    QFont titleFont = font();
-    titleFont.setBold(true);
-    painter.setFont(titleFont);
-    painter.drawText(d->m_titleRect, Qt::AlignLeft | Qt::AlignVCenter, d->m_elidedTitle);
+    const QFont headlineFont =
+        d->m_spec.hasResolvedHeadlineFont
+        ? d->m_spec.headlineFont : font();
+    const QFont supportingFont =
+        d->m_spec.hasResolvedSupportingFont
+        ? d->m_spec.supportingFont : font();
+
+    painter.setPen(d->m_spec.headlineColor);
+    painter.setFont(headlineFont);
+    painter.drawText(
+        d->m_titleRect,
+        Qt::AlignLeft | Qt::AlignVCenter,
+        d->m_elidedTitle);
 
     if (!d->m_bodyText.isEmpty()) {
-        painter.setFont(font());
-        painter.drawText(d->m_bodyRect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, d->m_elidedBody);
+        painter.setPen(d->m_spec.supportingColor);
+        painter.setFont(supportingFont);
+        painter.drawText(
+            d->m_bodyRect,
+            Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap,
+            d->m_elidedBody);
     }
 
     if (hasFocus()) {
-        QPen focusPen(opt.palette.color(QPalette::Highlight), 2);
+        QPen focusPen(d->m_spec.focusRingColor, 2);
         focusPen.setStyle(Qt::DashLine);
         painter.setPen(focusPen);
         painter.setBrush(Qt::NoBrush);
@@ -357,7 +363,7 @@ void QtMaterialBanner::ensureLayoutResolved() const
         : QRect(0, 0, kDefaultMinWidth, kDefaultMinHeight);
 
     d->m_visualRect = bounds;
-    d->m_contentRect = bounds.adjusted(kHorizontalPadding, kVerticalPadding, -kHorizontalPadding, -kVerticalPadding);
+    d->m_contentRect = bounds.marginsRemoved(d->m_spec.padding);
 
     int leading = d->m_contentRect.left();
     int trailing = d->m_contentRect.right();
@@ -387,10 +393,12 @@ void QtMaterialBanner::ensureLayoutResolved() const
     reserveButton(d->m_secondaryActionButton);
 
     const int textWidth = qMax(0, trailing - leading + 1);
-    QFont titleFont = font();
-    titleFont.setBold(true);
+    const QFont titleFont = d->m_spec.hasResolvedHeadlineFont
+        ? d->m_spec.headlineFont : font();
+    const QFont bodyFont = d->m_spec.hasResolvedSupportingFont
+        ? d->m_spec.supportingFont : font();
     const QFontMetrics titleFm(titleFont);
-    const QFontMetrics bodyFm(font());
+    const QFontMetrics bodyFm(bodyFont);
 
     d->m_titleRect = QRect(leading, d->m_contentRect.top(), textWidth, titleFm.height());
     d->m_elidedTitle = titleFm.elidedText(d->m_titleText, Qt::ElideRight, textWidth);
@@ -405,7 +413,10 @@ void QtMaterialBanner::ensureLayoutResolved() const
     }
 
     d->m_containerPath = QPainterPath();
-    d->m_containerPath.addRoundedRect(QRectF(d->m_visualRect), kCornerRadius, kCornerRadius);
+    d->m_containerPath.addRoundedRect(
+        QRectF(d->m_visualRect),
+        d->m_spec.cornerRadius,
+        d->m_spec.cornerRadius);
     d->m_layoutDirty = false;
 }
 

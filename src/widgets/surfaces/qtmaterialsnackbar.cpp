@@ -14,6 +14,7 @@
 #include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 #include <memory>
+#include "qtmaterial/effects/qtmaterialelevationrenderer.h"
 
 namespace QtMaterial {
 
@@ -92,7 +93,12 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
     d_ptr->timer->setSingleShot(true);
 
     d_ptr->transition = new QtMaterialTransitionController(this);
-    d_ptr->transition->applyMotionToken(theme(), MotionToken::Medium2);
+    ensureSpecResolved();
+    if (d_ptr->specPtr
+        && d_ptr->specPtr->hasResolvedEnterMotion) {
+        d_ptr->transition->applyMotionStyle(
+            d_ptr->specPtr->enterMotionStyle);
+    }
 
     connect(d_ptr->timer, &QTimer::timeout, this, [this]() {
         dismiss(SnackbarDismissReason::Timeout);
@@ -215,7 +221,8 @@ void QtMaterialSnackbar::showSnackbar()
 
     ensureSpecResolved();
     if (d_ptr->specPtr) {
-        d_ptr->transition->applyMotionToken(theme(), d_ptr->specPtr->enterMotion);
+        d_ptr->transition->applyMotionStyle(
+            d_ptr->specPtr->enterMotionStyle);
     }
 
     applyResolvedTheme();
@@ -242,7 +249,8 @@ void QtMaterialSnackbar::dismiss(SnackbarDismissReason reason)
 
     ensureSpecResolved();
     if (d_ptr->specPtr) {
-        d_ptr->transition->applyMotionToken(theme(), d_ptr->specPtr->exitMotion);
+        d_ptr->transition->applyMotionStyle(
+            d_ptr->specPtr->exitMotionStyle);
     }
 
     d_ptr->state = State::Leaving;
@@ -271,37 +279,16 @@ QSize QtMaterialSnackbar::minimumSizeHint() const
     return QSize(200, d_ptr->specPtr ? d_ptr->specPtr->minHeight : 48);
 }
 
-qreal QtMaterialSnackbar::resolvedCornerRadius() const noexcept
+qreal QtMaterialSnackbar::resolvedCornerRadius()
+    const noexcept
 {
     if (!d_ptr || !d_ptr->specPtr) {
         return 0.0;
     }
-
-    const ShapeRole role = d_ptr->specPtr->shapeRole;
-    const int themeRadius = theme().shapes().radius(role);
-
-    if (themeRadius > 0 || role == ShapeRole::None) {
-        return themeRadius;
-    }
-
-    switch (role) {
-    case ShapeRole::None:
-        return 0.0;
-    case ShapeRole::ExtraSmall:
-        return 4.0;
-    case ShapeRole::Small:
-        return 8.0;
-    case ShapeRole::Medium:
-        return 12.0;
-    case ShapeRole::Large:
-        return 16.0;
-    case ShapeRole::ExtraLarge:
-        return 28.0;
-    case ShapeRole::Full:
+    if (d_ptr->specPtr->cornerRadius < 0.0) {
         return qMin(width(), height()) / 2.0;
     }
-
-    return 0.0;
+    return d_ptr->specPtr->cornerRadius;
 }
 
 void QtMaterialSnackbar::paintEvent(QPaintEvent*)
@@ -313,16 +300,29 @@ void QtMaterialSnackbar::paintEvent(QPaintEvent*)
 
     const qreal p = progress();
     const qreal radius = resolvedCornerRadius();
+    const QRectF bounds = snackbarContainerRect(*this);
 
-    QColor fill = d_ptr->specPtr->containerColor;
-    fill.setAlphaF(fill.alphaF() * p);
+    QPainterPath containerPath;
+    containerPath.addRoundedRect(bounds, radius, radius);
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
+    if (d_ptr->specPtr->hasResolvedElevationStyle) {
+        QColor shadow = d_ptr->specPtr->shadowColor;
+        shadow.setAlphaF(shadow.alphaF() * p);
+        QtMaterialElevationRenderer::paintPathElevation(
+            &painter,
+            containerPath,
+            shadow,
+            d_ptr->specPtr->elevationStyle);
+    }
+
+    QColor fill = d_ptr->specPtr->containerColor;
+    fill.setAlphaF(fill.alphaF() * p);
     painter.setPen(Qt::NoPen);
     painter.setBrush(fill);
-    painter.drawRoundedRect(snackbarContainerRect(*this), radius, radius);
+    painter.drawPath(containerPath);
 }
 
 void QtMaterialSnackbar::resizeEvent(QResizeEvent* event)
@@ -503,6 +503,13 @@ void QtMaterialSnackbar::syncGeometryToHost()
 
     d_ptr->layout->setContentsMargins(d_ptr->specPtr->contentPadding);
     d_ptr->layout->setSpacing(d_ptr->specPtr->actionSpacing);
+    if (d_ptr->specPtr->hasResolvedTextFont) {
+        d_ptr->label->setFont(d_ptr->specPtr->textFont);
+    }
+    if (d_ptr->specPtr->hasResolvedActionFont) {
+        d_ptr->actionButton->setFont(
+            d_ptr->specPtr->actionFont);
+    }
 
     const QMargins margins = d_ptr->specPtr->outerMargins;
     const int maxWidth = qMin(d_ptr->specPtr->maxWidth,

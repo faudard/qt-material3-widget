@@ -13,6 +13,7 @@
 
 #include <QPainterPath>
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
+#include "qtmaterial/effects/qtmaterialelevationrenderer.h"
 namespace {
 
 constexpr int kDefaultMinimumWidth = 120;
@@ -96,7 +97,9 @@ void ensureLayoutResolved(const QtMaterialCard* self, QtMaterialCardPrivate* d)
 
     d->cachedVisualRect = visualRect(self);
     d->cachedContentRect = contentRectForPaint(self, d);
-    d->cachedCornerRadius = kDefaultCornerRadius;
+    d->cachedCornerRadius = d->spec.cornerRadius < 0.0
+        ? d->cachedVisualRect.height() / 2.0
+        : d->spec.cornerRadius;
     d->cachedContainerPath = qtMaterialCardContainerPath(d->cachedVisualRect, d->cachedCornerRadius);
     d->layoutDirty = false;
 }
@@ -294,6 +297,14 @@ void QtMaterialCard::paintEvent(QPaintEvent* event)
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     const QColor container = resolvedContainerColor(this, d.get());
+    if (d->variant == Variant::Elevated
+        && d->spec.hasResolvedElevationStyle) {
+        QtMaterialElevationRenderer::paintPathElevation(
+            &painter,
+            d->cachedContainerPath,
+            d->spec.shadowColor,
+            d->spec.elevationStyle);
+    }
     painter.fillPath(d->cachedContainerPath, container);
 
     if (d->variant == Variant::Outlined) {
@@ -305,14 +316,18 @@ void QtMaterialCard::paintEvent(QPaintEvent* event)
     }
 
     if (d->interactive && (d->hovered || d->pressed)) {
-        const int alpha = d->pressed ? 30 : 18;
+        const qreal opacity = d->pressed
+            ? d->spec.pressStateLayerOpacity
+            : d->spec.hoverStateLayerOpacity;
+        const int alpha = qRound(255.0 * opacity);
         painter.fillPath(d->cachedContainerPath, withAlpha(resolvedContentColor(this, d.get()), alpha));
     }
 
     QRect textRect = d->cachedContentRect;
-    const QFont baseFont = font();
-    QFont titleFont = baseFont;
-    titleFont.setBold(true);
+    const QFont baseFont = d->spec.hasResolvedBodyFont
+        ? d->spec.bodyFont : font();
+    QFont titleFont = d->spec.hasResolvedTitleFont
+        ? d->spec.titleFont : font();
 
     if (!d->titleText.isEmpty()) {
         painter.setFont(titleFont);

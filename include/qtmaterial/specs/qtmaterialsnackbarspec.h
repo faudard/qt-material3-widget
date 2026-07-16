@@ -5,6 +5,9 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include <QFont>
+#include "qtmaterial/theme/qtmaterialelevationscale.h"
+#include "qtmaterial/theme/qtmaterialmotiontokens.h"
 
 namespace QtMaterial {
 
@@ -14,6 +17,23 @@ struct QTMATERIAL3_SPECS_EXPORT SnackbarSpec
     QColor textColor;
     QColor actionColor;
     QColor dismissIconColor;
+    QColor shadowColor;
+
+    TypeRole textTypeRole = TypeRole::BodyMedium;
+    TypeRole actionTypeRole = TypeRole::LabelLarge;
+    QFont textFont;
+    QFont actionFont;
+
+    qreal cornerRadius = 8.0;
+    ElevationStyle elevationStyle;
+    MotionStyle enterMotionStyle;
+    MotionStyle exitMotionStyle;
+
+    bool hasResolvedTextFont = false;
+    bool hasResolvedActionFont = false;
+    bool hasResolvedElevationStyle = false;
+    bool hasResolvedEnterMotion = false;
+    bool hasResolvedExitMotion = false;
 
     ShapeRole shapeRole = ShapeRole::Small;
     ElevationRole elevationRole = ElevationRole::Level3;
