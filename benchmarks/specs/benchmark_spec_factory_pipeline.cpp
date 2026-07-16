@@ -1,7 +1,7 @@
 #include <QtTest/QtTest>
 #include <QColor>
 
-#include "qtmaterial/core/qtmaterialdensity.h"
+#include "qtmaterial/foundation/qtmaterialdensity.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 

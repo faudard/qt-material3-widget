@@ -4,7 +4,7 @@
 #include <QRect>
 #include <QString>
 
-#include "qtmaterial/core/qtmaterialinteractionstate.h"
+#include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include "qtmaterial/specs/qtmaterialtextfieldspec.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 

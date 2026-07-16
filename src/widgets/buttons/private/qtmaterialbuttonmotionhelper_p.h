@@ -2,7 +2,7 @@
 
 #include <QColor>
 
-#include "qtmaterial/core/qtmaterialinteractionstate.h"
+#include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"

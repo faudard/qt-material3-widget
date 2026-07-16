@@ -1,6 +1,5 @@
 set(QTMATERIAL3_CORE_SOURCES
     qtmaterialwidget.cpp
-    qtmaterialinteractionstate.cpp
     qtmaterialcontrol.cpp
     qtmaterialsurface.cpp
     qtmaterialoverlaysurface.cpp
@@ -50,6 +49,7 @@ qtm3_add_module(
 
 target_link_libraries(qtmaterial3_core
     PUBLIC
+        qtmaterial3_foundation
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
         Qt${QT_VERSION_MAJOR}::Widgets

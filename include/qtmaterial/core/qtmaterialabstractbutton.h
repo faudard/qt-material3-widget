@@ -10,8 +10,8 @@ class QMouseEvent;
 #include <QString>
 
 #include "qtmaterial/core/qtmaterialeventcompat.h"
-#include "qtmaterial/core/qtmaterialdensity.h"
-#include "qtmaterial/core/qtmaterialinteractionstate.h"
+#include "qtmaterial/foundation/qtmaterialdensity.h"
+#include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include <QString>
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qtmaterial/core/qtmaterialdensity.h"
+#include "qtmaterial/foundation/qtmaterialdensity.h"
 #include "qtmaterial/specs/qtmaterialautocompletepopupspec.h"
 #include "qtmaterial/specs/qtmaterialautocompletespec.h"
 #include "qtmaterial/specs/qtmaterialappbarspec.h"

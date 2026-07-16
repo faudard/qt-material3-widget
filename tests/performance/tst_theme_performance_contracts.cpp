@@ -4,7 +4,7 @@
 #include <QElapsedTimer>
 #include <QProcessEnvironment>
 
-#include "qtmaterial/core/qtmaterialdensity.h"
+#include "qtmaterial/foundation/qtmaterialdensity.h"
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"

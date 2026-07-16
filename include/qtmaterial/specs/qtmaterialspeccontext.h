@@ -3,8 +3,8 @@
 #include <QString>
 #include <QStringList>
 
-#include "qtmaterial/core/qtmaterialdensity.h"
-#include "qtmaterial/core/qtmaterialinteractionstate.h"
+#include "qtmaterial/foundation/qtmaterialdensity.h"
+#include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {

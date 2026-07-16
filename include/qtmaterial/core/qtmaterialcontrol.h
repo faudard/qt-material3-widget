@@ -1,8 +1,8 @@
 #pragma once
 
-#include "qtmaterial/core/qtmaterialdensity.h"
+#include "qtmaterial/foundation/qtmaterialdensity.h"
 #include "qtmaterial/core/qtmaterialeventcompat.h"
-#include "qtmaterial/core/qtmaterialinteractionstate.h"
+#include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include "qtmaterial/core/qtmaterialwidget.h"
 
 class QEvent;

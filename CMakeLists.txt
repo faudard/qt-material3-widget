@@ -54,6 +54,7 @@ endif()
 add_subdirectory(src)
 
 set(QTMATERIAL3_INSTALL_TARGETS
+    qtmaterial3_foundation
     qtmaterial3_theme
     qtmaterial3_core
     qtmaterial3_specs

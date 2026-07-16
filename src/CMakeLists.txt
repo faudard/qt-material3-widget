@@ -1,3 +1,4 @@
+add_subdirectory(foundation)
 add_subdirectory(theme)
 add_subdirectory(core)
 add_subdirectory(specs)

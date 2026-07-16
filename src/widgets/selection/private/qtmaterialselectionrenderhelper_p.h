@@ -8,7 +8,7 @@
 #include <QRectF>
 #include <QString>
 
-#include "qtmaterial/core/qtmaterialinteractionstate.h"
+#include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include "qtmaterial/specs/qtmaterialcheckboxspec.h"
 #include "qtmaterial/specs/qtmaterialradiobuttonspec.h"
 #include "qtmaterial/specs/qtmaterialswitchspec.h"

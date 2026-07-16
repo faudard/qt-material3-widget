@@ -7,7 +7,7 @@
 #include <QSize>
 
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
-#include "qtmaterial/core/qtmaterialinteractionstate.h"
+#include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 
 namespace {
 

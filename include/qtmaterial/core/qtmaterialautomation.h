@@ -3,7 +3,7 @@
 #include <QString>
 #include <QStringList>
 
-#include "qtmaterial/core/qtmaterialinteractionstate.h"
+#include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 class QObject;

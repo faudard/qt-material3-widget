@@ -68,10 +68,11 @@ qtm3_add_module(
     ${QTMATERIAL3_SPECS_HEADERS}
 )
 
+# Architecture boundary: Specs may depend on Foundation and Theme, but not Core/QtWidgets.
 target_link_libraries(qtmaterial3_specs
     PUBLIC
+        qtmaterial3_foundation
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
         qtmaterial3_theme
-        qtmaterial3_core
 )

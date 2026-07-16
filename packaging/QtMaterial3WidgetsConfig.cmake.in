@@ -11,6 +11,7 @@ set(QtMaterial3Widgets_VERSION "@PROJECT_VERSION@")
 set(QtMaterial3Widgets_QT_VERSION_MAJOR "@QT_VERSION_MAJOR@")
 
 set(_QtMaterial3Widgets_supported_components
+    Foundation
     Theme
     Core
     Specs

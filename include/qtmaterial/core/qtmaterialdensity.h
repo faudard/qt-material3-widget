@@ -1,4 +1,5 @@
 #pragma once
-namespace QtMaterial {
-enum class Density { Default, Comfortable, Compact };
-} // namespace QtMaterial
+
+// Compatibility include retained for existing consumers.
+// New code should include qtmaterial/foundation/qtmaterialdensity.h.
+#include "qtmaterial/foundation/qtmaterialdensity.h"

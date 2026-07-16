@@ -1,5 +1,5 @@
 #include <QtTest>
-#include "qtmaterial/core/qtmaterialinteractionstate.h"
+#include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 
 class tst_InteractionState : public QObject
 {
