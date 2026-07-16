@@ -15,24 +15,6 @@
 namespace QtMaterial {
 namespace {
 
-qreal targetStateLayerOpacity(const Theme& theme, const QtMaterialInteractionState& state)
-{
- if (!state.isEnabled()) {
-  return 0.0;
- }
- const auto& layer = theme.stateLayer();
- if (state.isPressed()) {
-  return layer.pressOpacity;
- }
- if (state.isFocused()) {
-  return layer.focusOpacity;
- }
- if (state.isHovered()) {
-  return layer.hoverOpacity;
- }
- return 0.0;
-}
-
 } // namespace
 
 QtMaterialTextButton::QtMaterialTextButton(QWidget* parent)
@@ -90,8 +72,7 @@ void QtMaterialTextButton::ensureSpecResolved() const
   return;
  }
  d->spec = resolveButtonSpec();
- ButtonMotionHelper::configureMotion(
-  theme(), d->spec, d->stateLayerTransition, d->ripple);
+ ButtonMotionHelper::configureMotion(d->spec, d->stateLayerTransition, d->ripple);
  d->specDirty = false;
 }
 
@@ -105,10 +86,7 @@ QSize QtMaterialTextButton::sizeHint() const
  ensureSpecResolved();
  const ButtonSpec& spec = currentButtonSpec();
 
- QFont resolvedFont = font();
- if (theme().typography().contains(spec.labelTypeRole)) {
-  resolvedFont = theme().typography().style(spec.labelTypeRole).font;
- }
+ const QFont resolvedFont = ButtonRenderHelper::resolvedLabelFont(font(), spec);
 
  const auto layout = ButtonRenderHelper::layoutContent(
   this,
@@ -146,14 +124,13 @@ void QtMaterialTextButton::stateChangedEvent()
 void QtMaterialTextButton::syncStateLayerAnimation()
 {
  ensureSpecResolved();
- ButtonMotionHelper::syncStateLayerTransition(
-  theme(), interactionState(), d->stateLayerTransition);
+ ButtonMotionHelper::syncStateLayerTransition(currentButtonSpec(), interactionState(), d->stateLayerTransition);
 }
 
 qreal QtMaterialTextButton::animatedStateLayerOpacity() const noexcept
 {
  if (!d->stateLayerTransition) {
-  return targetStateLayerOpacity(theme(), interactionState());
+  return ButtonMotionHelper::targetStateLayerOpacity(currentButtonSpec(), interactionState());
  }
  return d->stateLayerTransition->progress();
 }
@@ -188,8 +165,8 @@ void QtMaterialTextButton::paintEvent(QPaintEvent*)
  painter.setRenderHint(QPainter::Antialiasing, true);
 
  const QRectF visualRect = ButtonRenderHelper::containerRect(rect(), spec).adjusted(1, 1, -1, -1);
- const qreal radius = ButtonRenderHelper::cornerRadius(theme(), spec, visualRect);
- const QPainterPath path = ButtonRenderHelper::containerPath(theme(), spec, visualRect);
+ const qreal radius = ButtonRenderHelper::cornerRadius(spec, visualRect);
+ const QPainterPath path = ButtonRenderHelper::containerPath(spec, visualRect);
 
  const qreal layerOpacity = animatedStateLayerOpacity();
  if (layerOpacity > 0.0) {
@@ -199,10 +176,7 @@ void QtMaterialTextButton::paintEvent(QPaintEvent*)
  setRippleClipPath(path);
  paintRipple(&painter, spec.stateLayerColor);
 
- QFont resolvedFont = font();
- if (theme().typography().contains(spec.labelTypeRole)) {
-  resolvedFont = theme().typography().style(spec.labelTypeRole).font;
- }
+ const QFont resolvedFont = ButtonRenderHelper::resolvedLabelFont(font(), spec);
 
  const QColor contentColor = isEnabled() ? spec.labelColor : spec.disabledLabelColor;
  ButtonRenderHelper::paintContent(

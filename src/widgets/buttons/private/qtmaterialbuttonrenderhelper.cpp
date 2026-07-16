@@ -51,6 +51,50 @@ QRectF containerRect(const QRectF& widgetRect, const ButtonSpec& spec)
     return QRectF(widgetRect.left(), top, widgetRect.width(), containerHeight);
 }
 
+
+QFont resolvedLabelFont(const QFont& fallback, const ButtonSpec& spec)
+{
+    return spec.hasResolvedLabelFont ? spec.labelFont : fallback;
+}
+
+
+qreal cornerRadius(const ButtonSpec& spec, const QRectF& bounds)
+{
+    if (spec.cornerRadius < 0.0) {
+        return bounds.height() / 2.0;
+    }
+    return qMin(spec.cornerRadius, bounds.height() / 2.0);
+}
+
+QPainterPath containerPath(
+    const ButtonSpec& spec,
+    const QRectF& bounds)
+{
+    QPainterPath path;
+    const qreal radius = cornerRadius(spec, bounds);
+    path.addRoundedRect(bounds, radius, radius);
+    return path;
+}
+
+qreal stateLayerOpacity(
+    const ButtonSpec& spec,
+    const QtMaterialInteractionState& state)
+{
+    if (!state.isEnabled()) {
+        return 0.0;
+    }
+    if (state.isPressed()) {
+        return spec.pressStateLayerOpacity;
+    }
+    if (state.isFocused()) {
+        return spec.focusStateLayerOpacity;
+    }
+    if (state.isHovered()) {
+        return spec.hoverStateLayerOpacity;
+    }
+    return 0.0;
+}
+
 qreal cornerRadius(const Theme& theme, const ButtonSpec& spec, const QRectF& bounds)
 {
     if (spec.shapeRole == ShapeRole::Full) {

@@ -53,17 +53,14 @@ void QtMaterialOutlinedButtonPrivate::ensureLayoutResolved(const QtMaterialOutli
     }
 
     const ButtonSpec& spec = button.currentButtonSpec();
-    QFont resolvedFont = button.font();
-    if (button.theme().typography().contains(spec.labelTypeRole)) {
-        resolvedFont = button.theme().typography().style(spec.labelTypeRole).font;
-    }
+    const QFont resolvedFont = ButtonRenderHelper::resolvedLabelFont(button.font(), spec);
 
     const qreal strokeInset = qMax<qreal>(resolvedOutlineStrokeWidth(button), 1.0);
     layout.visualRect = ButtonRenderHelper::containerRect(button.rect(), spec)
                             .adjusted(strokeInset, strokeInset, -strokeInset, -strokeInset)
                             .toAlignedRect();
-    layout.cornerRadius = ButtonRenderHelper::cornerRadius(button.theme(), spec, layout.visualRect);
-    layout.containerPath = ButtonRenderHelper::containerPath(button.theme(), spec, layout.visualRect);
+    layout.cornerRadius = ButtonRenderHelper::cornerRadius(spec, layout.visualRect);
+    layout.containerPath = ButtonRenderHelper::containerPath(spec, layout.visualRect);
 
     const auto contentLayout = ButtonRenderHelper::layoutContent(
         &button,
@@ -151,15 +148,12 @@ void QtMaterialOutlinedButton::paintEvent(QPaintEvent*)
     d->ensureLayoutResolved(*this);
 
     const ButtonSpec& spec = currentButtonSpec();
-    QFont resolvedFont = font();
-    if (theme().typography().contains(spec.labelTypeRole)) {
-        resolvedFont = theme().typography().style(spec.labelTypeRole).font;
-    }
+    const QFont resolvedFont = ButtonRenderHelper::resolvedLabelFont(font(), spec);
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const qreal layerOpacity = ButtonRenderHelper::stateLayerOpacity(theme(), interactionState());
+    const qreal layerOpacity = ButtonRenderHelper::stateLayerOpacity(spec, interactionState());
     if (layerOpacity > 0.0) {
         QtMaterialStateLayerPainter::paintPath(
             &painter,

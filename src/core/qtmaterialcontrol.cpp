@@ -102,7 +102,9 @@ void QtMaterialControl::changeEvent(QEvent* event)
 
 void QtMaterialControl::syncAutomationState()
 {
-    m_state.syncFromWidget(this);
+    m_state.setEnabled(isEnabled());
+    m_state.setFocused(hasFocus());
+
     QtMaterialAutomation::syncState(this, m_state);
 }
 

@@ -2,22 +2,41 @@
 
 #include <QColor>
 
-#include "qtmaterial/foundation/qtmaterialinteractionstate.h"
+#include "qtmaterial/core/qtmaterialinteractionstate.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
+#include "qtmaterial/specs/qtmaterialbuttonspec.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
 namespace QtMaterial::ButtonMotionHelper {
 
-inline qreal targetStateLayerOpacity(const Theme& theme,
-                                     const QtMaterialInteractionState& state)
+inline qreal targetStateLayerOpacity(
+    const ButtonSpec& spec,
+    const QtMaterialInteractionState& state)
 {
     if (!state.isEnabled()) {
         return 0.0;
     }
+    if (state.isPressed()) {
+        return spec.pressStateLayerOpacity;
+    }
+    if (state.isFocused()) {
+        return spec.focusStateLayerOpacity;
+    }
+    if (state.isHovered()) {
+        return spec.hoverStateLayerOpacity;
+    }
+    return 0.0;
+}
 
+inline qreal targetStateLayerOpacity(
+    const Theme& theme,
+    const QtMaterialInteractionState& state)
+{
+    if (!state.isEnabled()) {
+        return 0.0;
+    }
     const auto& layer = theme.stateLayer();
-
     if (state.isPressed()) {
         return layer.pressOpacity;
     }
@@ -27,44 +46,77 @@ inline qreal targetStateLayerOpacity(const Theme& theme,
     if (state.isHovered()) {
         return layer.hoverOpacity;
     }
-
     return 0.0;
 }
 
+inline void configureTransition(
+    const ButtonSpec& spec,
+    QtMaterialTransitionController* transition)
+{
+    if (!transition || !spec.hasResolvedMotionStyle) {
+        return;
+    }
+    transition->applyMotionStyle(spec.motionStyle);
+}
+
+inline void configureMotion(
+    const ButtonSpec& spec,
+    QtMaterialTransitionController* stateLayerTransition,
+    QtMaterialRippleController* ripple)
+{
+    configureTransition(spec, stateLayerTransition);
+
+    if (ripple) {
+        if (spec.hasResolvedMotionStyle && spec.motionStyle.durationMs > 0) {
+            ripple->setDuration(spec.motionStyle.durationMs);
+        }
+        ripple->setBaseOpacity(spec.pressStateLayerOpacity);
+    }
+}
+
 template <typename SpecT>
-inline void configureMotion(const Theme& theme,
-                            const SpecT& spec,
-                            QtMaterialTransitionController* stateLayerTransition,
-                            QtMaterialRippleController* ripple)
+inline void configureMotion(
+    const Theme& theme,
+    const SpecT& spec,
+    QtMaterialTransitionController* stateLayerTransition,
+    QtMaterialRippleController* ripple)
 {
     if (theme.motion().contains(spec.motionToken)) {
         const MotionStyle motion = theme.motion().style(spec.motionToken);
-
         if (stateLayerTransition) {
             if (motion.durationMs > 0) {
                 stateLayerTransition->setDuration(motion.durationMs);
             }
             stateLayerTransition->setEasingCurve(motion.easing);
         }
-
         if (ripple && motion.durationMs > 0) {
             ripple->setDuration(motion.durationMs);
         }
     }
-
     if (ripple) {
         ripple->setBaseOpacity(theme.stateLayer().pressOpacity);
     }
 }
 
-inline void syncStateLayerTransition(const Theme& theme,
-                                     const QtMaterialInteractionState& state,
-                                     QtMaterialTransitionController* transition)
+inline void syncStateLayerTransition(
+    const ButtonSpec& spec,
+    const QtMaterialInteractionState& state,
+    QtMaterialTransitionController* transition)
 {
     if (!transition) {
         return;
     }
+    transition->startTo(targetStateLayerOpacity(spec, state));
+}
 
+inline void syncStateLayerTransition(
+    const Theme& theme,
+    const QtMaterialInteractionState& state,
+    QtMaterialTransitionController* transition)
+{
+    if (!transition) {
+        return;
+    }
     transition->startTo(targetStateLayerOpacity(theme, state));
 }
 

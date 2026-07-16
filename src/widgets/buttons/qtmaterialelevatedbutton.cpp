@@ -53,42 +53,34 @@ ButtonSpec QtMaterialElevatedButton::resolveButtonSpec() const
     return factory.elevatedButtonSpec(theme(), density());
 }
 
-void QtMaterialElevatedButton::paintEvent(QPaintEvent* event)
+
+void QtMaterialElevatedButton::paintEvent(
+    QPaintEvent* event)
 {
-    ensurePolished();
     ensureSpecResolved();
 
-    qreal progress = 0.0;
-    if (isEnabled()) {
-        const QtMaterialInteractionState state = interactionState();
-        if (state.isHovered() || state.isFocused()) {
-            progress = 1.0;
-        } else if (state.isPressed()) {
-            progress = 0.65;
-        } else {
-            progress = 0.45;
-        }
-    }
+    QPainter painter(this);
+    painter.setRenderHint(
+        QPainter::Antialiasing,
+        true);
 
-    if (progress > 0.0) {
-        const ButtonSpec& spec = currentButtonSpec();
-        const QRectF visualRect = ButtonRenderHelper::containerRect(rect(), spec).adjusted(1, 1, -1, -1);
-        const qreal radius = ButtonRenderHelper::cornerRadius(theme(), spec, visualRect);
+    const QRectF visualRect =
+        ButtonRenderHelper::containerRect(
+            rect(),
+            m_spec)
+            .adjusted(1, 1, -1, -1);
+    const qreal radius =
+        ButtonRenderHelper::cornerRadius(
+            m_spec,
+            visualRect);
 
-        QColor shadowColor = theme().colorScheme().color(ColorRole::Shadow);
-        shadowColor.setAlpha(qBound(0, qRound(28.0 + progress * 40.0), 96));
-
-        QPainter painter(this);
-        painter.setRenderHint(QPainter::Antialiasing, true);
-
-        QtMaterialShadowRenderer::paintRoundedShadow(
-            &painter,
-            visualRect,
-            radius,
-            shadowColor,
-            scaledShadowBlur(*this, progress),
-            scaledShadowOffset(*this, progress));
-    }
+    QtMaterialShadowRenderer::paintRoundedShadow(
+        &painter,
+        visualRect,
+        radius,
+        m_spec.shadowColor,
+        6,
+        1);
 
     QtMaterialFilledButton::paintEvent(event);
 }

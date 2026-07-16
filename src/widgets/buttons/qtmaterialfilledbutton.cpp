@@ -12,6 +12,7 @@
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
+#include "private/qtmaterialbuttonmotionhelper_p.h"
 
 namespace QtMaterial {
 
@@ -79,14 +80,11 @@ void QtMaterialFilledButtonPrivate::ensureLayoutResolved(const QtMaterialFilledB
  }
 
  const ButtonSpec& spec = button.currentButtonSpec();
- QFont resolvedFont = button.font();
- if (button.theme().typography().contains(spec.labelTypeRole)) {
-  resolvedFont = button.theme().typography().style(spec.labelTypeRole).font;
- }
+ const QFont resolvedFont = ButtonRenderHelper::resolvedLabelFont(button.font(), spec);
 
  layout.visualRect = ButtonRenderHelper::containerRect(button.rect(), spec).adjusted(1, 1, -1, -1).toAlignedRect();
- layout.cornerRadius = ButtonRenderHelper::cornerRadius(button.theme(), spec, layout.visualRect);
- layout.containerPath = ButtonRenderHelper::containerPath(button.theme(), spec, layout.visualRect);
+ layout.cornerRadius = ButtonRenderHelper::cornerRadius(spec, layout.visualRect);
+ layout.containerPath = ButtonRenderHelper::containerPath(spec, layout.visualRect);
 
  const auto contentLayout = ButtonRenderHelper::layoutContent(
   &button,
@@ -106,7 +104,7 @@ void QtMaterialFilledButton::themeChangedEvent(const Theme& theme)
  QtMaterialTextButton::themeChangedEvent(theme);
  d->invalidateLayout(*this);
  ensureSpecResolved();
- d->elevationTransition->applyMotionToken(theme, currentButtonSpec().motionToken);
+ ButtonMotionHelper::configureTransition(currentButtonSpec(), d->elevationTransition);
  d->elevationTransition->startTo(d->targetElevationProgress(*this));
 }
 
@@ -115,7 +113,7 @@ void QtMaterialFilledButton::invalidateResolvedSpec()
  QtMaterialTextButton::invalidateResolvedSpec();
  d->invalidateLayout(*this);
  ensureSpecResolved();
- d->elevationTransition->applyMotionToken(theme(), currentButtonSpec().motionToken);
+ ButtonMotionHelper::configureTransition(currentButtonSpec(), d->elevationTransition);
  d->elevationTransition->startTo(d->targetElevationProgress(*this));
 }
 
@@ -148,7 +146,7 @@ void QtMaterialFilledButton::stateChangedEvent()
 {
  QtMaterialTextButton::stateChangedEvent();
  ensureSpecResolved();
- d->elevationTransition->applyMotionToken(theme(), currentButtonSpec().motionToken);
+ ButtonMotionHelper::configureTransition(currentButtonSpec(), d->elevationTransition);
  d->elevationTransition->startTo(d->targetElevationProgress(*this));
 }
 
@@ -159,10 +157,7 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
  d->ensureLayoutResolved(*this);
  const ButtonSpec& spec = currentButtonSpec();
 
- QFont resolvedFont = font();
- if (theme().typography().contains(spec.labelTypeRole)) {
-  resolvedFont = theme().typography().style(spec.labelTypeRole).font;
- }
+ const QFont resolvedFont = ButtonRenderHelper::resolvedLabelFont(font(), spec);
 
  QPainter painter(this);
  painter.setRenderHint(QPainter::Antialiasing, true);

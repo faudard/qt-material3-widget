@@ -16,6 +16,11 @@ class QAbstractButton;
 namespace QtMaterial::ButtonRenderHelper {
 
 QRectF containerRect(const QRectF& widgetRect, const ButtonSpec& spec);
+QFont resolvedLabelFont(const QFont& fallback, const ButtonSpec& spec);
+
+qreal cornerRadius(const ButtonSpec& spec, const QRectF& bounds);
+QPainterPath containerPath(const ButtonSpec& spec, const QRectF& bounds);
+qreal stateLayerOpacity(const ButtonSpec& spec, const QtMaterialInteractionState& state);
 qreal cornerRadius(const Theme& theme, const ButtonSpec& spec, const QRectF& bounds);
 QPainterPath containerPath(const Theme& theme, const ButtonSpec& spec, const QRectF& bounds);
 qreal stateLayerOpacity(const Theme& theme, const QtMaterialInteractionState& state);
