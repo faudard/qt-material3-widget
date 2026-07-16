@@ -3,9 +3,13 @@
 #include <QString>
 #include <QWidget>
 
+#include <QEvent>
+#include <QMetaObject>
+#include <QPointer>
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
+#include "qtmaterial/theme/qtmaterialthemecontext.h"
 namespace QtMaterial {
 
 class QTMATERIAL3_CORE_EXPORT QtMaterialWidget : public QWidget
@@ -21,6 +25,10 @@ public:
     explicit QtMaterialWidget(QWidget* parent = nullptr);
     ~QtMaterialWidget() override;
 
+    void setThemeContext(ThemeContext* context);
+    ThemeContext* themeContext() const noexcept;
+    ThemeContext* effectiveThemeContext() const noexcept;
+
     QString materialComponent() const;
     QString materialVariant() const;
     QString materialRole() const;
@@ -35,13 +43,16 @@ public slots:
     void setMaterialState(const QString& value);
 
 signals:
+    void effectiveThemeContextChanged(QtMaterial::ThemeContext* context);
     void materialMetadataChanged();
 
 protected:
+    bool event(QEvent* event) override;
     const QtMaterial::Theme& theme() const;
     virtual void themeChangedEvent(const QtMaterial::Theme& theme);
 
 private slots:
+    void handleThemeContextDestroyed();
     void handleThemeChanged(const QtMaterial::Theme& theme);
 
 private:
@@ -52,6 +63,16 @@ private:
     QString m_materialRole;
     QString m_materialTestId;
     QString m_materialState;
+
+
+private:
+    bool refreshThemeContextConnection();
+    void notifyDescendantThemeContextChange();
+
+    QPointer<ThemeContext> m_themeContext;
+    QPointer<ThemeContext> m_effectiveThemeContext;
+    QMetaObject::Connection m_themeChangedConnection;
+    QMetaObject::Connection m_themeDestroyedConnection;
 };
 
 } // namespace QtMaterial

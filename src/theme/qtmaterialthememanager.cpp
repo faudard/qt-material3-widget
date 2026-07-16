@@ -15,7 +15,7 @@ ThemeManager& ThemeManager::instance()
 ThemeManager::ThemeManager(QObject* parent)
     : QObject(parent)
     , m_options()
-    , m_theme()
+    , m_defaultContext(nullptr)
     , m_themeFingerprint()
     , m_builder()
     , m_applyingTheme(false)
@@ -24,13 +24,24 @@ ThemeManager::ThemeManager(QObject* parent)
     qRegisterMetaType<QtMaterial::Theme>("QtMaterial::Theme");
     qRegisterMetaType<QtMaterial::ThemeChangeReason>("QtMaterial::ThemeChangeReason");
 
-    m_theme = m_builder.build(m_options);
-    m_themeFingerprint = stableFingerprint(m_theme);
+    const Theme initialTheme = m_builder.build(m_options);
+    m_defaultContext = new ThemeContext(initialTheme, this);
+    m_themeFingerprint = stableFingerprint(initialTheme);
 }
 
 const Theme& ThemeManager::theme() const noexcept
 {
-    return m_theme;
+    return m_defaultContext->theme();
+}
+
+ThemeContext* ThemeManager::defaultContext() noexcept
+{
+    return m_defaultContext;
+}
+
+const ThemeContext* ThemeManager::defaultContext() const noexcept
+{
+    return m_defaultContext;
 }
 
 const ThemeOptions& ThemeManager::options() const noexcept
@@ -109,14 +120,14 @@ bool ThemeManager::applySeedColor(const QColor& seed, ThemeMode mode)
 
 QByteArray ThemeManager::exportThemeJson(QJsonDocument::JsonFormat format) const
 {
-    return ThemeSerializer::toJson(m_theme, format);
+    return ThemeSerializer::toJson(theme(), format);
 }
 
 bool ThemeManager::exportThemeToFile(const QString& filePath,
                                      QString* errorString,
                                      QJsonDocument::JsonFormat format) const
 {
-    return ThemeSerializer::writeToFile(m_theme, filePath, errorString, format);
+    return ThemeSerializer::writeToFile(theme(), filePath, errorString, format);
 }
 
 bool ThemeManager::importThemeJson(const QByteArray& json,
@@ -175,14 +186,16 @@ bool ThemeManager::applyResolvedTheme(const Theme& theme,
 
     QScopedValueRollback<bool> applyingGuard(m_applyingTheme, true);
 
-    m_theme = theme;
     m_options = options;
     m_themeFingerprint = nextFingerprint;
     ++m_revision;
 
-    emit themeChanged(m_theme);
-    emit themeChangedWithReason(m_theme, reason);
-    emit themeRepolishRequested(m_theme, reason);
+    m_defaultContext->setTheme(theme);
+    const Theme& appliedTheme = m_defaultContext->theme();
+
+    emit themeChanged(appliedTheme);
+    emit themeChangedWithReason(appliedTheme, reason);
+    emit themeRepolishRequested(appliedTheme, reason);
 
     return true;
 }

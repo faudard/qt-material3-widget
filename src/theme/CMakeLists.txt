@@ -1,4 +1,5 @@
 set(QTMATERIAL3_THEME_SOURCES
+    qtmaterialthemecontext.cpp
     qtmaterialcolorscheme.cpp
     qtmaterialthemeoptions.cpp
     qtmaterialtheme.cpp
@@ -23,6 +24,7 @@ set(QTMATERIAL3_THEME_SOURCES
 )
 
 set(QTMATERIAL3_THEME_HEADERS
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemecontext.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/qtmaterialglobal.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialcolortoken.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialcolorbackend.h

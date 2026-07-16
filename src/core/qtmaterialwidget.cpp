@@ -10,13 +10,120 @@ QtMaterialWidget::QtMaterialWidget(QWidget* parent)
 {
     setMaterialComponent(QStringLiteral("Widget"));
 
-    QObject::connect(&ThemeManager::instance(),
-                     &ThemeManager::themeChanged,
-                     this,
-                     &QtMaterialWidget::handleThemeChanged);
+    refreshThemeContextConnection();
 }
 
 QtMaterialWidget::~QtMaterialWidget() = default;
+
+void QtMaterialWidget::setThemeContext(ThemeContext* context)
+{
+    if (m_themeContext.data() == context) {
+        return;
+    }
+
+    m_themeContext = context;
+    if (!refreshThemeContextConnection()) {
+        return;
+    }
+
+    emit effectiveThemeContextChanged(effectiveThemeContext());
+    themeChangedEvent(theme());
+    notifyDescendantThemeContextChange();
+}
+
+ThemeContext* QtMaterialWidget::themeContext() const noexcept
+{
+    return m_themeContext.data();
+}
+
+ThemeContext* QtMaterialWidget::effectiveThemeContext() const noexcept
+{
+    if (m_themeContext) {
+        return m_themeContext.data();
+    }
+
+    QWidget* ancestor = parentWidget();
+    while (ancestor) {
+        if (auto* materialParent = qobject_cast<QtMaterialWidget*>(ancestor)) {
+            return materialParent->effectiveThemeContext();
+        }
+        ancestor = ancestor->parentWidget();
+    }
+
+    return ThemeManager::instance().defaultContext();
+}
+
+bool QtMaterialWidget::event(QEvent* event)
+{
+    const bool handled = QWidget::event(event);
+
+    if (event && event->type() == QEvent::ParentChange
+        && refreshThemeContextConnection()) {
+        emit effectiveThemeContextChanged(effectiveThemeContext());
+        themeChangedEvent(theme());
+        notifyDescendantThemeContextChange();
+    }
+
+    return handled;
+}
+
+bool QtMaterialWidget::refreshThemeContextConnection()
+{
+    ThemeContext* nextContext = effectiveThemeContext();
+    if (m_effectiveThemeContext.data() == nextContext) {
+        return false;
+    }
+
+    QObject::disconnect(m_themeChangedConnection);
+    QObject::disconnect(m_themeDestroyedConnection);
+
+    m_effectiveThemeContext = nextContext;
+
+    if (nextContext) {
+        m_themeChangedConnection = QObject::connect(
+            nextContext,
+            &ThemeContext::themeChanged,
+            this,
+            &QtMaterialWidget::handleThemeChanged);
+
+        m_themeDestroyedConnection = QObject::connect(
+            nextContext,
+            &QObject::destroyed,
+            this,
+            &QtMaterialWidget::handleThemeContextDestroyed);
+    }
+
+    return true;
+}
+
+void QtMaterialWidget::notifyDescendantThemeContextChange()
+{
+    const auto descendants = findChildren<QtMaterialWidget*>();
+    for (QtMaterialWidget* descendant : descendants) {
+        if (!descendant || !descendant->refreshThemeContextConnection()) {
+            continue;
+        }
+
+        emit descendant->effectiveThemeContextChanged(
+            descendant->effectiveThemeContext());
+        descendant->themeChangedEvent(descendant->theme());
+    }
+}
+
+void QtMaterialWidget::handleThemeContextDestroyed()
+{
+    m_themeContext.clear();
+    m_effectiveThemeContext.clear();
+
+    if (!refreshThemeContextConnection()) {
+        return;
+    }
+
+    emit effectiveThemeContextChanged(effectiveThemeContext());
+    themeChangedEvent(theme());
+    notifyDescendantThemeContextChange();
+}
+
 
 QString QtMaterialWidget::materialComponent() const { return m_materialComponent; }
 QString QtMaterialWidget::materialVariant() const { return m_materialVariant; }
@@ -77,7 +184,9 @@ void QtMaterialWidget::setMaterialState(const QString& value)
 
 const Theme& QtMaterialWidget::theme() const
 {
-    return ThemeManager::instance().theme();
+    ThemeContext* context = effectiveThemeContext();
+    Q_ASSERT(context);
+    return context->theme();
 }
 
 void QtMaterialWidget::themeChangedEvent(const Theme&)

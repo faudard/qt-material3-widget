@@ -9,6 +9,7 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
+#include "qtmaterial/theme/qtmaterialthemecontext.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
 
@@ -27,6 +28,9 @@ class QTMATERIAL3_THEME_EXPORT ThemeManager : public QObject {
     Q_OBJECT
 public:
     static ThemeManager& instance();
+
+    ThemeContext* defaultContext() noexcept;
+    const ThemeContext* defaultContext() const noexcept;
 
     const Theme& theme() const noexcept;
     const ThemeOptions& options() const noexcept;
@@ -70,7 +74,7 @@ private:
     QByteArray stableFingerprint(const Theme& theme) const;
 
     ThemeOptions m_options;
-    Theme m_theme;
+    ThemeContext* m_defaultContext;
     QByteArray m_themeFingerprint;
     ThemeBuilder m_builder;
     bool m_applyingTheme;
