@@ -3,6 +3,7 @@ set(QTMATERIAL3_EFFECTS_SOURCES
     qtmaterialstatelayerpainter.cpp
     qtmaterialfocusindicator.cpp
     qtmaterialshadowrenderer.cpp
+    qtmaterialelevationrenderer.cpp
     qtmaterialshadowcache.cpp
     qtmaterialtransitioncontroller.cpp
     qtmaterialscrimwidget.cpp
@@ -13,6 +14,7 @@ set(QTMATERIAL3_EFFECTS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialstatelayerpainter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialfocusindicator.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialshadowrenderer.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialelevationrenderer.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialshadowcache.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialtransitioncontroller.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialscrimwidget.h

@@ -13,6 +13,7 @@
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 #include "private/qtmaterialbuttonmotionhelper_p.h"
+#include "qtmaterial/effects/qtmaterialelevationrenderer.h"
 
 namespace QtMaterial {
 
@@ -46,18 +47,26 @@ QtMaterialFilledButton::QtMaterialFilledButton(const QIcon& icon, const QString&
 
 QtMaterialFilledButton::~QtMaterialFilledButton() = default;
 
-qreal QtMaterialFilledButtonPrivate::targetElevationProgress(const QtMaterialFilledButton& button) const noexcept
+qreal QtMaterialFilledButtonPrivate::targetElevationProgress(
+    const QtMaterialFilledButton& button) const noexcept
 {
- if (!button.interactionState().isEnabled()) {
-  return 0.0;
- }
- if (button.interactionState().isPressed()) {
-  return 1.0;
- }
- if (button.interactionState().isHovered() || button.interactionState().isFocused()) {
-  return 0.65;
- }
- return 0.0;
+    button.ensureSpecResolved();
+    const ButtonSpec& spec = button.currentButtonSpec();
+    const QtMaterialInteractionState state = button.interactionState();
+
+    if (!state.isEnabled()) {
+        return spec.disabledElevationProgress;
+    }
+    if (state.isPressed()) {
+        return spec.pressElevationProgress;
+    }
+    if (state.isFocused()) {
+        return spec.focusElevationProgress;
+    }
+    if (state.isHovered()) {
+        return spec.hoverElevationProgress;
+    }
+    return spec.restingElevationProgress;
 }
 
 qreal QtMaterialFilledButtonPrivate::animatedElevationProgress(const QtMaterialFilledButton& button) const noexcept
@@ -162,21 +171,24 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
  QPainter painter(this);
  painter.setRenderHint(QPainter::Antialiasing, true);
 
- const qreal elevationProgress = d->animatedElevationProgress(*this);
- if (isEnabled() && elevationProgress > 0.0 && !d->layout.containerPath.isEmpty()
-  && spec.elevationRole != ElevationRole::Level0) {
-  painter.save();
-  painter.setPen(Qt::NoPen);
+    const qreal elevationProgress =
+        d->animatedElevationProgress(*this);
 
-  QColor ambientShadow(0, 0, 0, qRound(14.0 + 18.0 * elevationProgress));
-  painter.setBrush(ambientShadow);
-  painter.drawPath(d->layout.containerPath.translated(0.0, 1.0 + elevationProgress));
+    if (
+        isEnabled()
+        && spec.hasResolvedElevationStyle
+        && elevationProgress > 0.0
+        && !d->layout.containerPath.isEmpty()) {
+        QtMaterialElevationRenderer::
+            paintInterpolatedPathElevation(
+                &painter,
+                d->layout.containerPath,
+                spec.shadowColor,
+                ElevationStyle{},
+                spec.elevationStyle,
+                elevationProgress);
+    }
 
-  QColor keyShadow(0, 0, 0, qRound(10.0 + 24.0 * elevationProgress));
-  painter.setBrush(keyShadow);
-  painter.drawPath(d->layout.containerPath.translated(0.0, 2.0 + 2.0 * elevationProgress));
-  painter.restore();
- }
 
  painter.save();
  painter.setPen(Qt::NoPen);

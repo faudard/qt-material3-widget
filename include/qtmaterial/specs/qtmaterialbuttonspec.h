@@ -5,6 +5,7 @@
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 #include <QFont>
 #include "qtmaterial/theme/qtmaterialmotiontokens.h"
+#include "qtmaterial/theme/qtmaterialelevationscale.h"
 namespace QtMaterial {
 struct QTMATERIAL3_SPECS_EXPORT ButtonSpec {
     QColor containerColor;
@@ -24,6 +25,13 @@ struct QTMATERIAL3_SPECS_EXPORT ButtonSpec {
     QFont labelFont;
     MotionStyle motionStyle;
     QColor shadowColor;
+    ElevationStyle elevationStyle;
+    qreal restingElevationProgress = 0.0;
+    qreal hoverElevationProgress = 0.0;
+    qreal focusElevationProgress = 0.0;
+    qreal pressElevationProgress = 0.0;
+    qreal disabledElevationProgress = 0.0;
+    bool hasResolvedElevationStyle = false;
     qreal cornerRadius = -1.0;
     qreal hoverStateLayerOpacity = 0.08;
     qreal focusStateLayerOpacity = 0.12;

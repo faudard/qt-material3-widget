@@ -1,23 +1,30 @@
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
 
-#include <QApplication>
+#include <QCoreApplication>
+#include <QGuiApplication>
 
 namespace QtMaterial {
 namespace {
 QFont appFont(int pointSizeDelta = 0, int weight = QFont::Normal)
 {
-    QFont font = qApp ? qApp->font() : QFont();
+    const auto *guiApplication =
+        qobject_cast<QGuiApplication *>(QCoreApplication::instance());
+
+    QFont font =
+        guiApplication ? QGuiApplication::font() : QFont();
+
     if (font.pointSize() > 0 && pointSizeDelta != 0) {
         font.setPointSize(qMax(1, font.pointSize() + pointSizeDelta));
     }
+
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     font.setWeight(static_cast<QFont::Weight>(weight));
 #else
     font.setWeight(weight);
-#endif    
+#endif
+
     return font;
 }
-} // namespace
 
 DatePickerSpec defaultDatePickerSpec()
 {

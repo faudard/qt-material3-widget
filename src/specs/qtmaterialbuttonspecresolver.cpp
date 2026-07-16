@@ -84,6 +84,12 @@ ButtonSpec ButtonSpecResolver::filledButtonSpec(
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.elevationRole = ElevationRole::Level1;
 
+    spec.restingElevationProgress = 0.0;
+    spec.hoverElevationProgress = 0.65;
+    spec.focusElevationProgress = 0.65;
+    spec.pressElevationProgress = 1.0;
+    spec.disabledElevationProgress = 0.0;
+
     applyButtonComponentTokens(
         theme,
         QStringList{
@@ -163,6 +169,12 @@ ButtonSpec ButtonSpecResolver::elevatedButtonSpec(
     spec.stateLayerColor = spec.labelColor;
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.elevationRole = ElevationRole::Level1;
+
+    spec.restingElevationProgress = 0.45;
+    spec.hoverElevationProgress = 1.0;
+    spec.focusElevationProgress = 1.0;
+    spec.pressElevationProgress = 0.65;
+    spec.disabledElevationProgress = 0.0;
 
     applyButtonComponentTokens(
         theme,

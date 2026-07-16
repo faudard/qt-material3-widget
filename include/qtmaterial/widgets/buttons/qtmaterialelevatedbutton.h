@@ -12,7 +12,6 @@ public:
     QtMaterialElevatedButton(const QIcon& icon, const QString& text, QWidget* parent = nullptr);
     ~QtMaterialElevatedButton() override;
 protected:
-    void paintEvent(QPaintEvent* event) override;
-    ButtonSpec resolveButtonSpec() const override;
+ButtonSpec resolveButtonSpec() const override;
 };
 } // namespace QtMaterial
