@@ -1,0 +1,120 @@
+{
+  "required_targets": [
+    "qtmaterial3_foundation",
+    "qtmaterial3_theme_model",
+    "qtmaterial3_theme_io",
+    "qtmaterial3_specs",
+    "qtmaterial3_core",
+    "qtmaterial3_widgets"
+  ],
+  "target_forbidden_links": {
+    "qtmaterial3_foundation": [
+      "Qt5::Widgets",
+      "Qt6::Widgets",
+      "Qt${QT_VERSION_MAJOR}::Widgets",
+      "qtmaterial3_core",
+      "qtmaterial3_specs",
+      "qtmaterial3_widgets"
+    ],
+    "qtmaterial3_theme_model": [
+      "Qt5::Widgets",
+      "Qt6::Widgets",
+      "Qt${QT_VERSION_MAJOR}::Widgets",
+      "qtmaterial3_core",
+      "qtmaterial3_specs",
+      "qtmaterial3_widgets"
+    ],
+    "qtmaterial3_specs": [
+      "qtmaterial3_core",
+      "QtMaterial3::Core",
+      "qtmaterial3_widgets",
+      "QtMaterial3::Widgets",
+      "Qt5::Widgets",
+      "Qt6::Widgets",
+      "Qt${QT_VERSION_MAJOR}::Widgets"
+    ]
+  },
+  "layers": {
+    "foundation": [
+      "include/qtmaterial/foundation/**",
+      "src/foundation/**"
+    ],
+    "theme_model": [
+      "include/qtmaterial/theme/model/**",
+      "src/theme/model/**",
+      "include/qtmaterial/theme/qtmaterialcolortoken.h",
+      "include/qtmaterial/theme/qtmaterialcolorbackend.h",
+      "include/qtmaterial/theme/qtmaterialcolorscheme.h",
+      "include/qtmaterial/theme/qtmaterialthemeoptions.h",
+      "include/qtmaterial/theme/qtmaterialtheme.h",
+      "include/qtmaterial/theme/qtmaterialthemebuilder.h",
+      "include/qtmaterial/theme/qtmaterialthemevalidation.h",
+      "include/qtmaterial/theme/qtmaterialtypographyscale.h",
+      "include/qtmaterial/theme/qtmaterialshapescale.h",
+      "include/qtmaterial/theme/qtmaterialelevationscale.h",
+      "include/qtmaterial/theme/qtmaterialmotiontokens.h",
+      "include/qtmaterial/theme/qtmaterialstatelayer.h",
+      "include/qtmaterial/theme/qtmaterialdensitytokens.h",
+      "include/qtmaterial/theme/qtmaterialiconsizetokens.h",
+      "include/qtmaterial/theme/qtmaterialcomponenttokens.h",
+      "include/qtmaterial/theme/qtmaterialaccessibilitytokens.h",
+      "src/theme/qtmaterialcolorbackend.cpp",
+      "src/theme/qtmaterialcolorscheme.cpp",
+      "src/theme/qtmaterialthemeoptions.cpp",
+      "src/theme/qtmaterialtheme.cpp",
+      "src/theme/qtmaterialthemebuilder.cpp",
+      "src/theme/qtmaterialthemevalidation.cpp",
+      "src/theme/qtmaterialtypographyscale.cpp",
+      "src/theme/qtmaterialshapescale.cpp",
+      "src/theme/qtmaterialelevationscale.cpp",
+      "src/theme/qtmaterialmotiontokens.cpp",
+      "src/theme/qtmaterialstatelayer.cpp",
+      "src/theme/qtmaterialdensitytokens.cpp",
+      "src/theme/qtmaterialiconsizetokens.cpp",
+      "src/theme/qtmaterialcomponenttokens.cpp",
+      "src/theme/qtmaterialaccessibilitytokens.cpp"
+    ],
+    "theme_io": [
+      "include/qtmaterial/theme/io/**",
+      "src/theme/io/**",
+      "include/qtmaterial/theme/qtmaterialthemeserializer.h",
+      "include/qtmaterial/theme/qtmaterialxmlthemeadapter.h",
+      "src/theme/qtmaterialthemeserializer.cpp",
+      "src/theme/qtmaterialxmlthemeadapter.cpp"
+    ],
+    "specs": [
+      "include/qtmaterial/specs/**",
+      "src/specs/**"
+    ],
+    "core": [
+      "include/qtmaterial/core/**",
+      "src/core/**"
+    ],
+    "widgets": [
+      "include/qtmaterial/widgets/**",
+      "src/widgets/**"
+    ],
+    "renderers": [
+      "src/**/*render*.cpp",
+      "src/**/*renderer*.cpp",
+      "src/**/*renderhelper*.cpp",
+      "src/**/renderers/**"
+    ]
+  },
+  "theme_resolution_allow": [
+    "src/widgets/resolution/**",
+    "src/widgets/**/*specresolver*.cpp",
+    "src/widgets/**/*specresolver*.h",
+    "src/widgets/qtmaterialwidget_datacomponent_spec_defaults.cpp"
+  ],
+  "textual_key_scope": [
+    "include/qtmaterial/theme/**",
+    "src/theme/**",
+    "include/qtmaterial/specs/**",
+    "src/specs/**",
+    "include/qtmaterial/widgets/**",
+    "src/widgets/**",
+    "include/qtmaterial/core/**",
+    "src/core/**"
+  ]
+}
