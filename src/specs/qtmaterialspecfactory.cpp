@@ -9,6 +9,7 @@
 #include "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h"
 #include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
 #include "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h"
+#include "qtmaterial/specs/qtmaterialdatefieldspecresolver.h"
 
 namespace QtMaterial {
 SpecFactory::SpecFactory() = default;
@@ -173,13 +174,11 @@ SpecFactory::autocompletePopupSpec(
         .autocompletePopupSpec(theme);
 }
 
-DateFieldSpec SpecFactory::dateFieldSpec(const Theme& theme) const
+DateFieldSpec SpecFactory::dateFieldSpec(
+    const Theme& theme) const
 {
-    DateFieldSpec spec;
-    spec.leadingIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.trailingIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.placeholderColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    return spec;
+    return DateFieldSpecResolver()
+        .dateFieldSpec(theme);
 }
 
 ListItemSpec SpecFactory::listItemSpec(const Theme& theme) const

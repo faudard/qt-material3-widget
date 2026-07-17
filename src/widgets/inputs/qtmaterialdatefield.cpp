@@ -4,6 +4,89 @@
 #include <QLineEdit>
 #include <QToolButton>
 #include <memory>
+#include <QEvent>
+#include <QGraphicsOpacityEffect>
+#include <QPainter>
+#include <QPalette>
+#include <QPropertyAnimation>
+#include <QPixmap>
+#include <QPointer>
+#include "qtmaterial/specs/qtmaterialdatefieldspecresolver.h"
+
+
+namespace {
+
+QIcon makeCalendarIcon(
+    const QColor& color,
+    int extent)
+{
+    const int size = qMax(12, extent);
+    QPixmap pixmap(size, size);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setRenderHint(
+        QPainter::Antialiasing,
+        true);
+
+    QPen pen(color, 1.7);
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
+    painter.setPen(pen);
+    painter.setBrush(Qt::NoBrush);
+
+    const QRectF frame(
+        2.5,
+        4.0,
+        size - 5.0,
+        size - 6.5);
+    painter.drawRoundedRect(
+        frame,
+        2.0,
+        2.0);
+    painter.drawLine(
+        QPointF(frame.left(), frame.top() + 4.0),
+        QPointF(frame.right(), frame.top() + 4.0));
+    painter.drawLine(
+        QPointF(frame.left() + 4.0, 2.5),
+        QPointF(frame.left() + 4.0, 6.0));
+    painter.drawLine(
+        QPointF(frame.right() - 4.0, 2.5),
+        QPointF(frame.right() - 4.0, 6.0));
+
+    return QIcon(pixmap);
+}
+
+QIcon makeClearIcon(
+    const QColor& color,
+    int extent)
+{
+    const int size = qMax(12, extent);
+    QPixmap pixmap(size, size);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setRenderHint(
+        QPainter::Antialiasing,
+        true);
+
+    QPen pen(color, 1.9);
+    pen.setCapStyle(Qt::RoundCap);
+    painter.setPen(pen);
+
+    const qreal inset =
+        qMax<qreal>(3.5, size * 0.25);
+    painter.drawLine(
+        QPointF(inset, inset),
+        QPointF(size - inset, size - inset));
+    painter.drawLine(
+        QPointF(size - inset, inset),
+        QPointF(inset, size - inset));
+
+    return QIcon(pixmap);
+}
+
+} // namespace
 
 struct QtMaterialDateFieldPrivate {
 
@@ -15,8 +98,12 @@ struct QtMaterialDateFieldPrivate {
     QString m_placeholderTextForDate;
     bool m_clearable = false;
     bool m_parseError = false;
-    QToolButton* m_calendarButton = nullptr;
-    QToolButton* m_clearButton = nullptr;
+    mutable bool m_specDirty = true;
+    mutable QtMaterial::DateFieldSpec m_spec;
+    bool m_showingClearAction = false;
+    QPointer<QToolButton> m_actionButton;
+    QPointer<QGraphicsOpacityEffect> m_actionOpacity;
+    QPointer<QPropertyAnimation> m_actionAnimation;
     void syncEditorFromDate(QtMaterialDateField& q);
     void syncDateFromEditor(QtMaterialDateField& q);
     void updateTrailingAffordances(QtMaterialDateField& q);
@@ -29,16 +116,72 @@ struct QtMaterialDateFieldPrivate {
 };
 
 
-QtMaterialDateField::QtMaterialDateField(QWidget* parent)
+QtMaterialDateField::QtMaterialDateField(
+    QWidget* parent)
     : QtMaterialOutlinedTextField(parent)
-    , d_ptr(std::make_unique<QtMaterialDateFieldPrivate>())
+    , d_ptr(
+          std::make_unique<QtMaterialDateFieldPrivate>())
 {
-    // Future integration direction:
-    // - create trailing calendar button
-    // - optional clear button
-    // - reuse prefix/suffix shell path instead of bespoke layout
-    // - parse/format through QLocale or strategy helper
-    // - keep date picker optional and externally triggered
+    setEndActionMode(
+        EndActionMode::CustomTrailingAction);
+    setTrailingActionVisibleWhenEmpty(true);
+
+    d_ptr->m_actionButton =
+        findChild<QToolButton*>(
+            QStringLiteral("endActionButton"));
+
+    if (d_ptr->m_actionButton) {
+        d_ptr->m_actionButton->setAutoRaise(true);
+
+        d_ptr->m_actionOpacity =
+            new QGraphicsOpacityEffect(
+                d_ptr->m_actionButton);
+        d_ptr->m_actionButton->setGraphicsEffect(
+            d_ptr->m_actionOpacity);
+
+        d_ptr->m_actionAnimation =
+            new QPropertyAnimation(
+                d_ptr->m_actionOpacity,
+                "opacity",
+                d_ptr->m_actionButton);
+        d_ptr->m_actionAnimation->setStartValue(0.0);
+        d_ptr->m_actionAnimation->setEndValue(1.0);
+    }
+
+    QObject::connect(
+        this,
+        &QtMaterialOutlinedTextField::
+            trailingActionTriggered,
+        this,
+        [this]() {
+            if (d_ptr->m_showingClearAction) {
+                handleClearButtonClicked();
+            } else {
+                handleCalendarButtonClicked();
+            }
+        });
+
+    if (lineEdit()) {
+        QObject::connect(
+            lineEdit(),
+            &QLineEdit::editingFinished,
+            this,
+            &QtMaterialDateField::
+                handleEditorEditingFinished);
+
+        QObject::connect(
+            lineEdit(),
+            &QLineEdit::textChanged,
+            this,
+            [this]() {
+                d_ptr->updateTrailingAffordances(
+                    *this);
+            });
+    }
+
+    ensureDateFieldSpecResolved();
+    d_ptr->updateTrailingAffordances(*this);
+    d_ptr->updateAccessibilityMetadata(*this);
 }
 
 QtMaterialDateField::QtMaterialDateField(const QString& labelText, QWidget* parent)
@@ -63,40 +206,133 @@ void QtMaterialDateFieldPrivate::syncEditorFromDate(QtMaterialDateField& q)
     }
 }
 
-void QtMaterialDateFieldPrivate::syncDateFromEditor(QtMaterialDateField& q)
+void QtMaterialDateFieldPrivate::
+syncDateFromEditor(
+    QtMaterialDateField& q)
 {
     if (!q.lineEdit()) {
         return;
     }
 
-    const QString text = q.lineEdit()->text().trimmed();
+    const QString text =
+        q.lineEdit()->text().trimmed();
+
     if (text.isEmpty()) {
         q.setDate(QDate());
         setParseError(q, false);
         return;
     }
 
-    const QDate parsed = QDate::fromString(text, m_displayFormat);
+    const QDate parsed =
+        QDate::fromString(
+            text,
+            m_displayFormat);
+
     if (!parsed.isValid()) {
         setParseError(q, true);
+        updateTrailingAffordances(q);
         updateAccessibilityMetadata(q);
         return;
     }
 
+    const bool wasAcceptable =
+        q.isDateAcceptable();
+    const bool dateChanged =
+        m_date != parsed;
+
     m_date = parsed;
-    setParseError(q, !isDateInRange(parsed));
-    emit q.dateChanged(m_date);
+    setParseError(
+        q,
+        !isDateInRange(parsed));
+
+    if (dateChanged) {
+        emit q.dateChanged(m_date);
+    }
+
+    notifyDateAcceptabilityIfChanged(
+        q,
+        wasAcceptable);
     updateTrailingAffordances(q);
     updateAccessibilityMetadata(q);
 }
 
-void QtMaterialDateFieldPrivate::updateTrailingAffordances(QtMaterialDateField& q)
+void QtMaterialDateFieldPrivate::
+updateTrailingAffordances(
+    QtMaterialDateField& q)
 {
-    Q_UNUSED(q);
-    // Integration direction:
-    // - route trailing icon/button through shared prefix/suffix shell
-    // - sync icon tint from resolved text-field spec
-    // - keep the date shell visually aligned with outlined/filled variants
+    q.ensureDateFieldSpecResolved();
+
+    const bool hasEditorText =
+        q.lineEdit()
+        && !q.lineEdit()->text().trimmed().isEmpty();
+    const bool showClear =
+        m_spec.preferClearAction
+        && m_clearable
+        && hasEditorText
+        && !q.isReadOnly();
+
+    m_showingClearAction = showClear;
+
+    const QColor actionColor =
+        q.isEnabled()
+        ? (
+            showClear
+            ? m_spec.clearIconColor
+            : m_spec.trailingIconColor)
+        : m_spec.disabledIconColor;
+
+    q.setTrailingActionVisibleWhenEmpty(
+        m_spec.calendarVisibleWhenEmpty);
+    q.setTrailingActionText(QString());
+    q.setTrailingActionIcon(
+        showClear
+        ? makeClearIcon(
+            actionColor,
+            m_spec.actionIconSize)
+        : makeCalendarIcon(
+            actionColor,
+            m_spec.actionIconSize));
+    q.setTrailingActionToolTip(
+        showClear
+        ? q.tr("Clear date")
+        : q.tr("Open calendar"));
+
+    if (m_actionButton) {
+        m_actionButton->setIconSize(
+            QSize(
+                m_spec.actionIconSize,
+                m_spec.actionIconSize));
+        m_actionButton->setMinimumSize(
+            m_spec.actionButtonExtent,
+            m_spec.actionButtonExtent);
+        m_actionButton->setAccessibleName(
+            showClear
+            ? q.tr("Clear date")
+            : q.tr("Open calendar"));
+    }
+
+    if (q.lineEdit()) {
+        QPalette editorPalette =
+            q.lineEdit()->palette();
+        editorPalette.setColor(
+            QPalette::PlaceholderText,
+            m_spec.placeholderColor);
+        q.lineEdit()->setPalette(editorPalette);
+    }
+
+    if (m_actionAnimation
+        && m_actionOpacity
+        && m_spec.hasResolvedMotionStyle) {
+        m_actionAnimation->stop();
+        m_actionAnimation->setDuration(
+            qMax(
+                0,
+                m_spec.motionStyle.durationMs));
+        m_actionAnimation->setEasingCurve(
+            m_spec.motionStyle.easing);
+        m_actionOpacity->setOpacity(0.0);
+        m_actionAnimation->start();
+    }
 }
 
 void QtMaterialDateFieldPrivate::updateAccessibilityMetadata(QtMaterialDateField& q)
@@ -243,10 +479,36 @@ void QtMaterialDateField::contentChangedEvent()
     d_ptr->updateAccessibilityMetadata(*this);
 }
 
-void QtMaterialDateField::themeChangedEvent(const QtMaterial::Theme& theme)
+void QtMaterialDateField::themeChangedEvent(
+    const QtMaterial::Theme& theme)
 {
-    QtMaterialOutlinedTextField::themeChangedEvent(theme);
+    QtMaterialOutlinedTextField::
+        themeChangedEvent(theme);
+
+    d_ptr->m_specDirty = true;
+    ensureDateFieldSpecResolved();
     d_ptr->updateTrailingAffordances(*this);
+}
+
+void QtMaterialDateField::changeEvent(
+    QEvent* event)
+{
+    QtMaterialOutlinedTextField::changeEvent(event);
+
+    if (!event) {
+        return;
+    }
+
+    switch (event->type()) {
+    case QEvent::EnabledChange:
+    case QEvent::PaletteChange:
+    case QEvent::StyleChange:
+        d_ptr->updateTrailingAffordances(*this);
+        break;
+
+    default:
+        break;
+    }
 }
 
 void QtMaterialDateField::notifyDateAcceptableIfChanged()
@@ -270,22 +532,19 @@ void QtMaterialDateField::handleCalendarButtonClicked()
     emit calendarRequested();
 }
 
-void QtMaterialDateField::handleClearButtonClicked()
+void QtMaterialDateField::
+handleClearButtonClicked()
 {
     setDate(QDate());
+
     if (lineEdit()) {
         lineEdit()->clear();
+        lineEdit()->setFocus();
     }
-    emit parseErrorChanged(false);
+
+    d_ptr->setParseError(*this, false);
+    d_ptr->updateTrailingAffordances(*this);
 }
-
-
-
-
-
-
-
-
 
 QDate QtMaterialDateField::minimumDate() const noexcept
 {
@@ -349,6 +608,26 @@ bool QtMaterialDateField::isDateAcceptable() const noexcept
 bool QtMaterialDateField::hasParseError() const noexcept
 {
     return d_ptr->m_parseError;
+}
+
+const QtMaterial::DateFieldSpec&
+QtMaterialDateField::resolvedDateFieldSpec() const
+{
+    ensureDateFieldSpecResolved();
+    return d_ptr->m_spec;
+}
+
+void QtMaterialDateField::
+ensureDateFieldSpecResolved() const
+{
+    if (!d_ptr->m_specDirty) {
+        return;
+    }
+
+    const QtMaterial::DateFieldSpecResolver resolver;
+    d_ptr->m_spec =
+        resolver.dateFieldSpec(theme());
+    d_ptr->m_specDirty = false;
 }
 
 QString QtMaterialDateField::accessibilitySummary() const

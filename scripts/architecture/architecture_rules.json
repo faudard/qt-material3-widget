@@ -236,6 +236,26 @@
         "QtMaterialElevationRenderer::paintPathElevation\\s*\\(",
         "\\brefreshPopupVisibility\\s*\\("
       ]
+    },
+    {
+      "name": "date-field-uses-resolved-affordance-spec",
+      "files": [
+        "src/widgets/inputs/qtmaterialdatefield.cpp"
+      ],
+      "forbidden_regex": [
+        "\\bm_calendarButton\\b",
+        "\\bm_clearButton\\b",
+        "\\bSpecFactory\\b",
+        "emit\\s+parseErrorChanged\\s*\\(\\s*false\\s*\\)",
+        "Future integration direction"
+      ],
+      "required_regex": [
+        "\\bDateFieldSpecResolver\\b",
+        "EndActionMode::CustomTrailingAction",
+        "&QLineEdit::editingFinished",
+        "\\bsetTrailingActionIcon\\s*\\(",
+        "\\bresolvedDateFieldSpec\\s*\\("
+      ]
     }
   ],
   "text_rules": [
@@ -272,7 +292,8 @@
         "DialogSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "ActionButtonSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "TextFieldSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "AutocompletePopupSpecResolver\\s*\\(\\s*\\)\\s*\\."
+        "AutocompletePopupSpecResolver\\s*\\(\\s*\\)\\s*\\.",
+        "DateFieldSpecResolver\\s*\\(\\s*\\)\\s*\\."
       ]
     },
     {
@@ -412,6 +433,16 @@
         "\\bElevationStyle\\s+elevationStyle\\s*;",
         "\\bMotionStyle\\s+motionStyle\\s*;",
         "\\bqreal\\s+pressStateLayerOpacity\\s*="
+      ]
+    },
+    {
+      "name": "date-field-spec-is-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialdatefieldspec.h",
+      "required_regex": [
+        "\\bMotionStyle\\s+motionStyle\\s*;",
+        "\\bint\\s+actionIconSize\\s*=",
+        "\\bQColor\\s+clearIconColor\\s*;",
+        "\\bbool\\s+hasResolvedMotionStyle\\s*="
       ]
     }
   ]

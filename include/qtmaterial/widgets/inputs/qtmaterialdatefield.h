@@ -7,6 +7,7 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
+#include "qtmaterial/specs/qtmaterialdatefieldspec.h"
 
 
 class QtMaterialDateFieldPrivate;
@@ -52,6 +53,8 @@ public:
 
   QString accessibilitySummary() const;
 
+    const QtMaterial::DateFieldSpec& resolvedDateFieldSpec() const;
+
 signals:
     void dateChanged(const QDate& date);
     void displayFormatChanged(const QString& format);
@@ -68,6 +71,7 @@ signals:
 protected:
     void contentChangedEvent() override;
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
+    void changeEvent(QEvent* event) override;
 
 private slots:
     void handleEditorEditingFinished();
@@ -76,6 +80,7 @@ private slots:
 
 private:
     void notifyDateAcceptableIfChanged();
+    void ensureDateFieldSpecResolved() const;
     friend class QtMaterialDateFieldPrivate;
     std::unique_ptr<QtMaterialDateFieldPrivate> d_ptr;
 

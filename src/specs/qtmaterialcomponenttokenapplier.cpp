@@ -1379,6 +1379,109 @@ void applyAutocompletePopupComponentTokens(
 }
 
 
+void applyDateFieldComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    DateFieldSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->leadingIconColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->trailingIconColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->clearIconColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->placeholderColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->disabledIconColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+
+        applyCustomColor(
+            &spec->leadingIconColor,
+            tokens,
+            "leadingIconColor");
+        applyCustomColor(
+            &spec->trailingIconColor,
+            tokens,
+            "trailingIconColor");
+        applyCustomColor(
+            &spec->clearIconColor,
+            tokens,
+            "clearIconColor");
+        applyCustomColor(
+            &spec->placeholderColor,
+            tokens,
+            "placeholderColor");
+        applyCustomColor(
+            &spec->disabledIconColor,
+            tokens,
+            "disabledIconColor");
+
+        if (tokens.custom.contains(
+                QStringLiteral("motionToken"))) {
+            spec->motionToken = parseMotionToken(
+                tokens.custom
+                    .value(QStringLiteral("motionToken"))
+                    .toString(),
+                spec->motionToken);
+        }
+
+        readInt(
+            tokens.custom,
+            "actionIconSize",
+            &spec->actionIconSize);
+        readInt(
+            tokens.custom,
+            "actionButtonExtent",
+            &spec->actionButtonExtent);
+        readBool(
+            tokens.custom,
+            "calendarVisibleWhenEmpty",
+            &spec->calendarVisibleWhenEmpty);
+        readBool(
+            tokens.custom,
+            "preferClearAction",
+            &spec->preferClearAction);
+    }
+
+    spec->actionIconSize =
+        qMax(12, spec->actionIconSize);
+    spec->actionButtonExtent =
+        qMax(
+            spec->actionIconSize,
+            spec->actionButtonExtent);
+
+    spec->hasResolvedMotionStyle = false;
+    if (tokens.motion.contains(spec->motionToken)) {
+        spec->motionStyle =
+            tokens.motion.value(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    } else if (
+        theme.motion().contains(spec->motionToken)) {
+        spec->motionStyle =
+            theme.motion().style(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    }
+}
+
+
 void applyTextFieldComponentTokens(
     const Theme& theme,
     const QStringList& componentNames,
