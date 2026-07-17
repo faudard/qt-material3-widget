@@ -818,6 +818,185 @@ void applyGridListOverrides(
     readInt(custom, "minimumCellWidth", &spec->minimumCellWidth);
 }
 
+void applyCarouselOverrides(
+    const Theme& theme,
+    CarouselSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(
+            theme,
+            QStringList{
+                QStringLiteral("data"),
+                QStringLiteral("carousel"),
+                QStringLiteral("Carousel")
+            });
+
+    if (tokens.isEmpty()) {
+        return;
+    }
+
+    applyTokenColor(
+        &spec->backgroundColor,
+        tokens,
+        ColorRole::Surface);
+    applyTokenColor(
+        &spec->foregroundColor,
+        tokens,
+        ColorRole::OnSurface);
+    applyTokenColor(
+        &spec->itemBackgroundColor,
+        tokens,
+        ColorRole::SurfaceContainerLow);
+    applyTokenColor(
+        &spec->itemSelectedColor,
+        tokens,
+        ColorRole::SecondaryContainer);
+    applyTokenColor(
+        &spec->itemSelectedTextColor,
+        tokens,
+        ColorRole::OnSecondaryContainer);
+    applyTokenColor(
+        &spec->supportingTextColor,
+        tokens,
+        ColorRole::OnSurfaceVariant);
+    applyTokenColor(
+        &spec->outlineColor,
+        tokens,
+        ColorRole::OutlineVariant);
+    applyTokenColor(
+        &spec->selectedOutlineColor,
+        tokens,
+        ColorRole::Primary);
+    applyTokenColor(
+        &spec->focusRingColor,
+        tokens,
+        ColorRole::Primary);
+    applyTokenColor(
+        &spec->navigationButtonColor,
+        tokens,
+        ColorRole::Primary);
+    applyTokenColor(
+        &spec->navigationButtonTextColor,
+        tokens,
+        ColorRole::OnPrimary);
+
+    const QVariantMap& custom = tokens.custom;
+
+    readColor(custom, "backgroundColor", &spec->backgroundColor);
+    readColor(custom, "foregroundColor", &spec->foregroundColor);
+    readColor(custom, "pageIndicatorColor", &spec->pageIndicatorColor);
+    readColor(custom, "activePageIndicatorColor", &spec->activePageIndicatorColor);
+    readColor(custom, "navigationButtonColor", &spec->navigationButtonColor);
+    readColor(custom, "navigationButtonTextColor", &spec->navigationButtonTextColor);
+    readColor(custom, "focusRingColor", &spec->focusRingColor);
+    readColor(custom, "itemBackgroundColor", &spec->itemBackgroundColor);
+    readColor(custom, "itemHoverColor", &spec->itemHoverColor);
+    readColor(custom, "itemPressedColor", &spec->itemPressedColor);
+    readColor(custom, "itemSelectedColor", &spec->itemSelectedColor);
+    readColor(custom, "itemSelectedTextColor", &spec->itemSelectedTextColor);
+    readColor(custom, "supportingTextColor", &spec->supportingTextColor);
+    readColor(custom, "disabledTextColor", &spec->disabledTextColor);
+    readColor(custom, "outlineColor", &spec->outlineColor);
+    readColor(custom, "selectedOutlineColor", &spec->selectedOutlineColor);
+    readColor(custom, "iconColor", &spec->iconColor);
+    readColor(custom, "selectedIconColor", &spec->selectedIconColor);
+
+    if (tokens.typography.contains(TypeRole::TitleMedium)) {
+        spec->labelFont =
+            tokens.typography
+                .value(TypeRole::TitleMedium)
+                .font;
+    }
+    if (tokens.typography.contains(TypeRole::BodyMedium)) {
+        spec->supportingFont =
+            tokens.typography
+                .value(TypeRole::BodyMedium)
+                .font;
+    }
+
+    spec->shapeRole =
+        overriddenShapeRole(
+            tokens,
+            spec->shapeRole);
+
+    int itemWidth = spec->itemSize.width();
+    int itemHeight = spec->itemSize.height();
+    bool itemSizeChanged = false;
+    itemSizeChanged =
+        readInt(custom, "itemWidth", &itemWidth)
+        || itemSizeChanged;
+    itemSizeChanged =
+        readInt(custom, "itemHeight", &itemHeight)
+        || itemSizeChanged;
+    if (itemSizeChanged) {
+        spec->itemSize = QSize(itemWidth, itemHeight);
+    }
+
+    int minimumWidth = spec->minimumItemSize.width();
+    int minimumHeight = spec->minimumItemSize.height();
+    bool minimumChanged = false;
+    minimumChanged =
+        readInt(custom, "minimumItemWidth", &minimumWidth)
+        || minimumChanged;
+    minimumChanged =
+        readInt(custom, "minimumItemHeight", &minimumHeight)
+        || minimumChanged;
+    if (minimumChanged) {
+        spec->minimumItemSize =
+            QSize(minimumWidth, minimumHeight);
+    }
+
+    int outerLeft = spec->outerMargins.left();
+    int outerTop = spec->outerMargins.top();
+    int outerRight = spec->outerMargins.right();
+    int outerBottom = spec->outerMargins.bottom();
+    bool outerChanged = false;
+    outerChanged = readInt(custom, "outerMarginLeft", &outerLeft) || outerChanged;
+    outerChanged = readInt(custom, "outerMarginTop", &outerTop) || outerChanged;
+    outerChanged = readInt(custom, "outerMarginRight", &outerRight) || outerChanged;
+    outerChanged = readInt(custom, "outerMarginBottom", &outerBottom) || outerChanged;
+    if (outerChanged) {
+        spec->outerMargins =
+            QMargins(
+                outerLeft,
+                outerTop,
+                outerRight,
+                outerBottom);
+    }
+
+    int contentLeft = spec->contentMargins.left();
+    int contentTop = spec->contentMargins.top();
+    int contentRight = spec->contentMargins.right();
+    int contentBottom = spec->contentMargins.bottom();
+    bool contentChanged = false;
+    contentChanged = readInt(custom, "contentMarginLeft", &contentLeft) || contentChanged;
+    contentChanged = readInt(custom, "contentMarginTop", &contentTop) || contentChanged;
+    contentChanged = readInt(custom, "contentMarginRight", &contentRight) || contentChanged;
+    contentChanged = readInt(custom, "contentMarginBottom", &contentBottom) || contentChanged;
+    if (contentChanged) {
+        spec->contentMargins =
+            QMargins(
+                contentLeft,
+                contentTop,
+                contentRight,
+                contentBottom);
+    }
+
+    readReal(custom, "cornerRadius", &spec->cornerRadius);
+    readInt(custom, "pageSpacing", &spec->pageSpacing);
+    readInt(custom, "indicatorSize", &spec->indicatorSize);
+    readInt(custom, "focusRingWidth", &spec->focusRingWidth);
+    readInt(custom, "outlineWidth", &spec->outlineWidth);
+    readInt(custom, "selectedOutlineWidth", &spec->selectedOutlineWidth);
+    readInt(custom, "iconSize", &spec->iconSize);
+    readInt(custom, "iconSpacing", &spec->iconSpacing);
+    readInt(custom, "supportingTopSpacing", &spec->supportingTopSpacing);
+}
+
 } // namespace
 
 
@@ -997,6 +1176,200 @@ GridListSpec DataSpecResolver::gridListSpec(
 
     if (spec.titleFont.family().isEmpty()) {
         spec.titleFont =
+            fontFor(
+                theme,
+                TypeRole::TitleMedium,
+                fallback);
+    }
+    if (spec.supportingFont.family().isEmpty()) {
+        spec.supportingFont =
+            fontFor(
+                theme,
+                TypeRole::BodyMedium,
+                fallback);
+    }
+
+    return spec;
+}
+
+CarouselSpec DataSpecResolver::carouselSpec(
+    const Theme& theme,
+    Density density) const
+{
+    CarouselSpec spec =
+        defaultCarouselSpec();
+
+    spec.backgroundColor =
+        roleOr(
+            theme,
+            ColorRole::Surface,
+            spec.backgroundColor);
+    spec.foregroundColor =
+        roleOr(
+            theme,
+            ColorRole::OnSurface,
+            spec.foregroundColor);
+    spec.pageIndicatorColor =
+        roleOr(
+            theme,
+            ColorRole::OutlineVariant,
+            spec.pageIndicatorColor);
+    spec.activePageIndicatorColor =
+        roleOr(
+            theme,
+            ColorRole::Primary,
+            spec.activePageIndicatorColor);
+    spec.navigationButtonColor =
+        roleOr(
+            theme,
+            ColorRole::Primary,
+            spec.navigationButtonColor);
+    spec.navigationButtonTextColor =
+        roleOr(
+            theme,
+            ColorRole::OnPrimary,
+            spec.navigationButtonTextColor);
+    spec.focusRingColor =
+        roleOr(
+            theme,
+            ColorRole::Primary,
+            spec.focusRingColor);
+
+    spec.itemBackgroundColor =
+        roleOr(
+            theme,
+            ColorRole::SurfaceContainerLow,
+            spec.itemBackgroundColor);
+    spec.itemSelectedColor =
+        roleOr(
+            theme,
+            ColorRole::SecondaryContainer,
+            spec.itemSelectedColor);
+    spec.itemSelectedTextColor =
+        roleOr(
+            theme,
+            ColorRole::OnSecondaryContainer,
+            spec.itemSelectedTextColor);
+    spec.supportingTextColor =
+        roleOr(
+            theme,
+            ColorRole::OnSurfaceVariant,
+            spec.supportingTextColor);
+    spec.outlineColor =
+        roleOr(
+            theme,
+            ColorRole::OutlineVariant,
+            spec.outlineColor);
+    spec.selectedOutlineColor =
+        roleOr(
+            theme,
+            ColorRole::Primary,
+            spec.selectedOutlineColor);
+    spec.iconColor =
+        spec.supportingTextColor;
+    spec.selectedIconColor =
+        spec.itemSelectedTextColor;
+
+    const StateLayer& stateLayer =
+        theme.stateLayer();
+
+    spec.itemHoverColor =
+        withOpacity(
+            spec.foregroundColor,
+            stateLayer.hoverOpacity);
+    spec.itemPressedColor =
+        withOpacity(
+            spec.foregroundColor,
+            stateLayer.pressOpacity);
+    spec.disabledTextColor =
+        withOpacity(
+            spec.foregroundColor,
+            0.38);
+
+    const QFont fallback =
+        applicationFont();
+    spec.labelFont =
+        fontFor(
+            theme,
+            TypeRole::TitleMedium,
+            fallback);
+    spec.supportingFont =
+        fontFor(
+            theme,
+            TypeRole::BodyMedium,
+            fallback);
+
+    spec.shapeRole = ShapeRole::Large;
+    spec.cornerRadius = -1.0;
+
+    switch (density) {
+    case Density::Compact:
+        spec.itemSize = QSize(160, 112);
+        spec.outerMargins = QMargins(12, 12, 12, 12);
+        spec.contentMargins = QMargins(12, 10, 12, 10);
+        spec.pageSpacing = 8;
+        spec.iconSize = 24;
+        spec.iconSpacing = 8;
+        spec.supportingTopSpacing = 4;
+        break;
+    case Density::Comfortable:
+        spec.itemSize = QSize(192, 144);
+        spec.outerMargins = QMargins(20, 20, 20, 20);
+        spec.contentMargins = QMargins(16, 14, 16, 14);
+        spec.pageSpacing = 16;
+        spec.iconSize = 32;
+        spec.iconSpacing = 12;
+        spec.supportingTopSpacing = 8;
+        break;
+    case Density::Default:
+    default:
+        break;
+    }
+
+    applyCarouselOverrides(
+        theme,
+        &spec);
+
+    spec.itemSize =
+        QSize(
+            qMax(48, spec.itemSize.width()),
+            qMax(48, spec.itemSize.height()));
+    spec.minimumItemSize =
+        QSize(
+            qMax(48, spec.minimumItemSize.width()),
+            qMax(48, spec.minimumItemSize.height()));
+    spec.outerMargins =
+        QMargins(
+            qMax(0, spec.outerMargins.left()),
+            qMax(0, spec.outerMargins.top()),
+            qMax(0, spec.outerMargins.right()),
+            qMax(0, spec.outerMargins.bottom()));
+    spec.contentMargins =
+        QMargins(
+            qMax(0, spec.contentMargins.left()),
+            qMax(0, spec.contentMargins.top()),
+            qMax(0, spec.contentMargins.right()),
+            qMax(0, spec.contentMargins.bottom()));
+    spec.pageSpacing = qMax(0, spec.pageSpacing);
+    spec.indicatorSize = qMax(1, spec.indicatorSize);
+    spec.focusRingWidth = qMax(0, spec.focusRingWidth);
+    spec.outlineWidth = qMax(0, spec.outlineWidth);
+    spec.selectedOutlineWidth = qMax(0, spec.selectedOutlineWidth);
+    spec.iconSize = qMax(1, spec.iconSize);
+    spec.iconSpacing = qMax(0, spec.iconSpacing);
+    spec.supportingTopSpacing = qMax(0, spec.supportingTopSpacing);
+
+    if (spec.cornerRadius < 0.0) {
+        spec.cornerRadius =
+            radiusFor(
+                theme,
+                spec.shapeRole,
+                18.0,
+                spec.itemSize.height());
+    }
+
+    if (spec.labelFont.family().isEmpty()) {
+        spec.labelFont =
             fontFor(
                 theme,
                 TypeRole::TitleMedium,

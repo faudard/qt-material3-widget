@@ -139,6 +139,9 @@ qtm3_add_test(tst_list widgets/data/tst_list.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_table widgets/data/tst_table.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_gridlist widgets/data/tst_gridlist.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_carousel widgets/data/tst_carousel.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_datacarouselresolver specs/tst_datacarouselresolver.cpp qtmaterial3_theme qtmaterial3_specs)
+qtm3_add_test(tst_carousel_resolvedspec widgets/data/tst_carousel_resolvedspec.cpp qtmaterial3_widgets)
+
 qtm3_add_test(tst_divider widgets/data/tst_divider.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_filledtextfield_render render/inputs/tst_filledtextfield_render.cpp qtmaterial3_widgets)
 

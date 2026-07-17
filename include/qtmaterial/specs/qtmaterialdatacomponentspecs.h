@@ -5,6 +5,8 @@
 #include <QMargins>
 #include <QSize>
 
+#include "qtmaterial/theme/qtmaterialcolortoken.h"
+
 namespace QtMaterial {
 
 struct DatePickerSpec
@@ -73,6 +75,7 @@ struct GridListSpec
 
 struct CarouselSpec
 {
+    // Legacy page-carousel tokens retained for source compatibility.
     QColor backgroundColor;
     QColor foregroundColor;
     QColor pageIndicatorColor;
@@ -82,10 +85,40 @@ struct CarouselSpec
     QColor focusRingColor;
     QFont labelFont;
     QSize preferredPageSize = QSize(360, 220);
-    int cornerRadius = 28;
-    int pageSpacing = 12;
     int indicatorSize = 8;
+
+    // Resolved item-carousel tokens used by QtMaterialCarousel.
+    QColor itemBackgroundColor;
+    QColor itemHoverColor;
+    QColor itemPressedColor;
+    QColor itemSelectedColor;
+    QColor itemSelectedTextColor;
+    QColor supportingTextColor;
+    QColor disabledTextColor;
+    QColor outlineColor;
+    QColor selectedOutlineColor;
+    QColor iconColor;
+    QColor selectedIconColor;
+
+    QFont supportingFont;
+
+    QSize itemSize = QSize(176, 128);
+    QSize minimumItemSize = QSize(72, 72);
+
+    QMargins outerMargins = QMargins(16, 16, 16, 16);
+    QMargins contentMargins = QMargins(14, 12, 14, 12);
+
+    ShapeRole shapeRole = ShapeRole::Large;
+
+    qreal cornerRadius = -1.0;
+
+    int pageSpacing = 12;
     int focusRingWidth = 2;
+    int outlineWidth = 1;
+    int selectedOutlineWidth = 2;
+    int iconSize = 28;
+    int iconSpacing = 10;
+    int supportingTopSpacing = 6;
 };
 
 DatePickerSpec defaultDatePickerSpec();

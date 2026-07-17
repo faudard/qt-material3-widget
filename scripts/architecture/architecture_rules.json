@@ -439,6 +439,49 @@
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
         "\\bdefaultGridListSpec\\s*\\("
       ]
+    },
+    {
+      "name": "data-carousel-resolver-owns-theme-resolution",
+      "files": [
+        "include/qtmaterial/specs/qtmaterialdataspecresolver.h",
+        "src/specs/qtmaterialdataspecresolver.cpp"
+      ],
+      "required_regex": [
+        "\\bCarouselSpec\\s+carouselSpec\\s*\\(",
+        "DataSpecResolver\\s*::\\s*carouselSpec\\s*\\(",
+        "mergedComponentOverride\\s*\\([\\s\\S]*?QStringLiteral\\s*\\(\\s*\"carousel\"\\s*\\)",
+        "\\bstateLayer\\s*\\.\\s*hoverOpacity\\b",
+        "\\bstateLayer\\s*\\.\\s*pressOpacity\\b"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "carousel-uses-resolved-data-spec",
+      "files": [
+        "include/qtmaterial/widgets/data/qtmaterialcarousel.h",
+        "src/widgets/data/qtmaterialcarousel.cpp"
+      ],
+      "required_regex": [
+        "public\\s+QtMaterialControl",
+        "\\bconst\\s+CarouselSpec\\s*&\\s*resolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bensureSpecResolved\\s*\\(\\s*\\)",
+        "\\bDataSpecResolver\\b",
+        "QtMaterialFocusIndicator\\s*::\\s*paintRectFocusRing\\s*\\(",
+        "\\bthemeChangedEvent\\s*\\(",
+        "\\bstateChangedEvent\\s*\\("
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "\\bQPalette\\b",
+        "\\bpalette\\s*\\(",
+        "\\bdefaultCarouselSpec\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
+        "\\bkDefaultCardWidth\\b",
+        "\\bkDefaultCardHeight\\b",
+        "\\bkGap\\b",
+        "\\bkPadding\\b",
+        "\\bkRadius\\b"
+      ]
     }
   ],
   "text_rules": [

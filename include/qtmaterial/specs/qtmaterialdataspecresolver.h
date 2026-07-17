@@ -33,6 +33,10 @@ public:
     GridListSpec gridListSpec(
         const Theme& theme,
         Density density = Density::Default) const;
+
+    CarouselSpec carouselSpec(
+        const Theme& theme,
+        Density density = Density::Default) const;
 };
 
 } // namespace QtMaterial

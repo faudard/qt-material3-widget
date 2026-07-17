@@ -80,6 +80,7 @@ GridListSpec defaultGridListSpec()
 CarouselSpec defaultCarouselSpec()
 {
     CarouselSpec spec;
+
     spec.backgroundColor = QColor("#FFFBFE");
     spec.foregroundColor = QColor("#1D1B20");
     spec.pageIndicatorColor = QColor("#CAC4D0");
@@ -88,6 +89,36 @@ CarouselSpec defaultCarouselSpec()
     spec.navigationButtonTextColor = QColor("#FFFFFF");
     spec.focusRingColor = QColor("#6750A4");
     spec.labelFont = appFont(0, QFont::DemiBold);
+
+    spec.itemBackgroundColor = QColor("#F7F2FA");
+    spec.itemHoverColor = QColor(0x1D, 0x1B, 0x20, 0x14);
+    spec.itemPressedColor = QColor(0x1D, 0x1B, 0x20, 0x1F);
+    spec.itemSelectedColor = QColor("#E8DEF8");
+    spec.itemSelectedTextColor = QColor("#1D192B");
+    spec.supportingTextColor = QColor("#49454F");
+    spec.disabledTextColor = QColor(0x1D, 0x1B, 0x20, 0x61);
+    spec.outlineColor = QColor("#CAC4D0");
+    spec.selectedOutlineColor = QColor("#6750A4");
+    spec.iconColor = QColor("#49454F");
+    spec.selectedIconColor = QColor("#1D192B");
+    spec.supportingFont = appFont(-1);
+
+    spec.preferredPageSize = QSize(360, 220);
+    spec.itemSize = QSize(176, 128);
+    spec.minimumItemSize = QSize(72, 72);
+    spec.outerMargins = QMargins(16, 16, 16, 16);
+    spec.contentMargins = QMargins(14, 12, 14, 12);
+    spec.shapeRole = ShapeRole::Large;
+    spec.cornerRadius = 18.0;
+    spec.pageSpacing = 12;
+    spec.indicatorSize = 8;
+    spec.focusRingWidth = 2;
+    spec.outlineWidth = 1;
+    spec.selectedOutlineWidth = 2;
+    spec.iconSize = 28;
+    spec.iconSpacing = 10;
+    spec.supportingTopSpacing = 6;
+
     return spec;
 }
 
