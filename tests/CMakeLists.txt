@@ -23,6 +23,7 @@ qtm3_add_test(tst_thememanager_runtime theme/tst_thememanager_runtime.cpp qtmate
 qtm3_add_test(tst_interactionstate core/tst_interactionstate.cpp qtmaterial3_core)
 qtm3_add_test(tst_widget_themecontext core/tst_widget_themecontext.cpp qtmaterial3_core)
 qtm3_add_test(tst_specfactory specs/tst_specfactory.cpp qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
+qtm3_add_test(tst_dataspecresolver specs/tst_dataspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_surfacespecresolver specs/tst_surfacespecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_surfaceresolvedspec specs/tst_surfaceresolvedspec.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_progressspecresolver specs/tst_progressspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
@@ -133,6 +134,7 @@ qtm3_add_test(tst_datefield widgets/inputs/tst_datefield.cpp qtmaterial3_widgets
 qtm3_add_test(tst_datefield_affordances widgets/inputs/tst_datefield_affordances.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_listitem widgets/data/tst_listitem.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_data_resolved_widgets widgets/data/tst_data_resolved_widgets.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_list widgets/data/tst_list.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_table widgets/data/tst_table.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_gridlist widgets/data/tst_gridlist.cpp qtmaterial3_widgets)

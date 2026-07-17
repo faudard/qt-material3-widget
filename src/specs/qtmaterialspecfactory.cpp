@@ -1,4 +1,5 @@
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 #include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
 #include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 #include "qtmaterialcomponenttokenapplier_p.h"
@@ -190,16 +191,10 @@ DateFieldSpec SpecFactory::dateFieldSpec(
         .dateFieldSpec(theme);
 }
 
-ListItemSpec SpecFactory::listItemSpec(const Theme& theme) const
+ListItemSpec SpecFactory::listItemSpec(
+    const Theme& theme) const
 {
-    ListItemSpec spec;
-    spec.containerColor = Qt::transparent;
-    spec.headlineColor = theme.colorScheme().color(ColorRole::OnSurface);
-    // spec.supportingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    // spec.leadingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    // spec.trailingColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnSurface);
-    return spec;
+    return DataSpecResolver().listItemSpec(theme);
 }
 
 SnackbarSpec SpecFactory::snackbarSpec(
@@ -208,17 +203,9 @@ SnackbarSpec SpecFactory::snackbarSpec(
     return SurfaceSpecResolver().snackbarSpec(theme);
 }
 
-DividerSpec SpecFactory::dividerSpec(const Theme& theme) const
+DividerSpec SpecFactory::dividerSpec(
+    const Theme& theme) const
 {
-    DividerSpec spec;
-    spec.color = theme.colorScheme().color(ColorRole::OutlineVariant);
-    spec.insetColor = spec.color;
-    spec.shapeRole = ShapeRole::None;
-    spec.orientation = Qt::Horizontal;
-    spec.margins = QMargins(0, 0, 0, 0);
-    spec.thickness = 1;
-    spec.leadingInset = 0;
-    spec.trailingInset = 0;
-    return spec;
+    return DataSpecResolver().dividerSpec(theme);
 }
 } // namespace QtMaterial

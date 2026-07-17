@@ -333,6 +333,56 @@
         "\\bensureCharacterCounterLabel\\s*\\(",
         "reserveSupportingLine\\s*=[^;]*m_characterCounterEnabled"
       ]
+    },
+    {
+      "name": "data-spec-resolver-owns-listitem-divider",
+      "files": [
+        "include/qtmaterial/specs/qtmaterialdataspecresolver.h",
+        "src/specs/qtmaterialdataspecresolver.cpp",
+        "src/specs/qtmaterialspecfactory.cpp"
+      ],
+      "required_regex": [
+        "class\\s+QTMATERIAL3_SPECS_EXPORT\\s+DataSpecResolver",
+        "ListItemSpec\\s+listItemSpec\\s*\\(",
+        "DividerSpec\\s+dividerSpec\\s*\\(",
+        "DataSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*listItemSpec",
+        "DataSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*dividerSpec"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "list-item-uses-resolved-data-spec",
+      "files": [
+        "include/qtmaterial/widgets/data/qtmateriallistitem.h",
+        "src/widgets/data/qtmateriallistitem.cpp"
+      ],
+      "required_regex": [
+        "DataSpecResolver",
+        "ensureSpecResolved\\s*\\(",
+        "resolvedSpec\\s*\\(\\s*\\)\\s*const"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "\\bQPalette\\b",
+        "\\bpalette\\s*\\("
+      ]
+    },
+    {
+      "name": "divider-uses-resolved-data-spec",
+      "files": [
+        "include/qtmaterial/widgets/data/qtmaterialdivider.h",
+        "src/widgets/data/qtmaterialdivider.cpp"
+      ],
+      "required_regex": [
+        "DataSpecResolver",
+        "ensureSpecResolved\\s*\\(",
+        "resolvedSpec\\s*\\(\\s*\\)\\s*const"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "\\bQPalette\\b",
+        "\\bpalette\\s*\\("
+      ]
     }
   ],
   "text_rules": [

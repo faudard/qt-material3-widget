@@ -23,7 +23,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialappbarspec.cpp
     qtmaterialappbarspecresolver.cpp
     qtmateriallistitemspec.cpp
-    qtmaterialdividerspec.cpp
+    qtmaterialdividerspec.cpp qtmaterialdataspecresolver.cpp
     qtmaterialautocompletepopupspec.cpp
     qtmaterialautocompletepopupspecresolver.cpp
     qtmaterialdatefieldspec.cpp
@@ -63,7 +63,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialappbarspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialappbarspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmateriallistitemspec.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdividerspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdividerspec.h ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdataspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletepopupspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatefieldspec.h

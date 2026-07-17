@@ -1,210 +1,243 @@
 #include "qtmaterial/widgets/data/qtmaterialdivider.h"
 
+#include <QEvent>
 #include <QPainter>
-#include <QPalette>
 #include <QSizePolicy>
-#include <QtGlobal>
-#include <memory>
-#include <qcoreevent.h>
+
+#include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 
 namespace QtMaterial {
 
-struct QtMaterialDividerPrivate
+class QtMaterialDividerPrivate
 {
-    Qt::Orientation m_orientation = Qt::Horizontal;
-    int m_leadingInset = 0;
-    int m_trailingInset = 0;
-    int m_thickness = 1;
-    QColor m_color;
-    bool m_decorative = true;
-    QString m_accessibilityLabel;
-    QString m_lastAccessibilitySummary;
+public:
+    Qt::Orientation orientation =
+        Qt::Horizontal;
+
+    int leadingInset = 0;
+    int trailingInset = 0;
+    int thickness = 1;
+
+    bool leadingInsetExplicit = false;
+    bool trailingInsetExplicit = false;
+    bool thicknessExplicit = false;
+
+    QColor color;
+
+    bool decorative = true;
+    QString accessibilityLabel;
+    QString lastAccessibilitySummary;
+
+    mutable DividerSpec resolvedSpec;
+    mutable bool specDirty = true;
 };
-
-
 
 namespace {
 
-QString orientationText(Qt::Orientation orientation)
+QString orientationText(
+    Qt::Orientation orientation)
 {
     return orientation == Qt::Horizontal
         ? QStringLiteral("Horizontal separator")
         : QStringLiteral("Vertical separator");
 }
 
-QColor resolvedColor(const QtMaterialDivider* self, const QtMaterialDividerPrivate* d)
-{
-    if (d->m_color.isValid()) {
-        return d->m_color;
-    }
-    return self->palette().color(QPalette::Mid);
-}
-
-void syncAccessibility(QtMaterialDivider* self, QtMaterialDividerPrivate* d)
-{
-    const QString summary = self->accessibilitySummary();
-    if (d->m_decorative) {
-        self->setAccessibleName(QString());
-        self->setAccessibleDescription(QString());
-    } else {
-        const QString label = !d->m_accessibilityLabel.trimmed().isEmpty()
-            ? d->m_accessibilityLabel.trimmed()
-            : orientationText(d->m_orientation);
-        self->setAccessibleName(label);
-        self->setAccessibleDescription(summary);
-    }
-
-    if (d->m_lastAccessibilitySummary != summary) {
-        d->m_lastAccessibilitySummary = summary;
-        Q_EMIT self->accessibilitySummaryChanged(summary);
-    }
-}
-
-
 } // namespace
 
-QtMaterialDivider::QtMaterialDivider(QWidget *parent)
-    : QWidget(parent)
+QtMaterialDivider::QtMaterialDivider(
+    QWidget* parent)
+    : QtMaterialDivider(
+          Qt::Horizontal,
+          parent)
 {
-    d_ptr = std::make_unique<QtMaterialDividerPrivate>();
+}
 
-    setAttribute(Qt::WA_TransparentForMouseEvents);
-    setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_TranslucentBackground);
+QtMaterialDivider::QtMaterialDivider(
+    Qt::Orientation orientation,
+    QWidget* parent)
+    : QtMaterialWidget(parent)
+    , d_ptr(
+          std::make_unique<
+              QtMaterialDividerPrivate>())
+{
+    setMaterialComponent(
+        QStringLiteral("Divider"));
+
+    setAttribute(
+        Qt::WA_TransparentForMouseEvents);
+    setAttribute(
+        Qt::WA_NoSystemBackground);
+    setAttribute(
+        Qt::WA_TranslucentBackground);
     setAutoFillBackground(false);
     setFocusPolicy(Qt::NoFocus);
-    setOrientation(Qt::Horizontal);
-    syncAccessibility(this, d_ptr.get());
+
+    d_ptr->orientation = orientation;
+    updateMinimumExtent();
+    syncAccessibility();
 }
 
-QtMaterialDivider::QtMaterialDivider(Qt::Orientation orientation, QWidget *parent)
-    : QWidget(parent)
-{
-    d_ptr = std::make_unique<QtMaterialDividerPrivate>();
+QtMaterialDivider::~QtMaterialDivider() =
+    default;
 
-    setAttribute(Qt::WA_TransparentForMouseEvents);
-    setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_TranslucentBackground);
-    setAutoFillBackground(false);
-    setFocusPolicy(Qt::NoFocus);
-    setOrientation(orientation);
-    syncAccessibility(this, d_ptr.get());
+QtMaterialDivider* QtMaterialDivider::horizontal(
+    QWidget* parent)
+{
+    return new QtMaterialDivider(
+        Qt::Horizontal,
+        parent);
 }
 
-QtMaterialDivider::~QtMaterialDivider() = default;
-
-QtMaterialDivider *QtMaterialDivider::horizontal(QWidget *parent)
+QtMaterialDivider* QtMaterialDivider::vertical(
+    QWidget* parent)
 {
-    return new QtMaterialDivider(Qt::Horizontal, parent);
+    return new QtMaterialDivider(
+        Qt::Vertical,
+        parent);
 }
 
-QtMaterialDivider *QtMaterialDivider::vertical(QWidget *parent)
+Qt::Orientation
+QtMaterialDivider::orientation() const noexcept
 {
-    return new QtMaterialDivider(Qt::Vertical, parent);
+    return d_ptr->orientation;
 }
 
-Qt::Orientation QtMaterialDivider::orientation() const noexcept
+void QtMaterialDivider::setOrientation(
+    Qt::Orientation orientation)
 {
-    return d_ptr->m_orientation;
-}
-
-void QtMaterialDivider::setOrientation(Qt::Orientation orientation)
-{
-    if (d_ptr->m_orientation == orientation) {
+    if (d_ptr->orientation == orientation) {
         return;
     }
 
-    d_ptr->m_orientation = orientation;
+    d_ptr->orientation = orientation;
+    invalidateResolvedSpec();
+    updateMinimumExtent();
 
-    if (d_ptr->m_orientation == Qt::Horizontal) {
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        setMinimumSize(0, d_ptr->m_thickness);
-    } else {
-        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-        setMinimumSize(d_ptr->m_thickness, 0);
-    }
+    Q_EMIT orientationChanged(orientation);
 
-    emit orientationChanged(d_ptr->m_orientation);
     updateGeometry();
-    syncAccessibility(this, d_ptr.get());
+    syncAccessibility();
     update();
 }
 
 int QtMaterialDivider::leadingInset() const noexcept
 {
-    return d_ptr->m_leadingInset;
+    return d_ptr->leadingInset;
 }
 
-void QtMaterialDivider::setLeadingInset(int value)
+void QtMaterialDivider::setLeadingInset(
+    int value)
 {
-    const int normalized = qMax(0, value);
-    if (d_ptr->m_leadingInset == normalized) {
+    const int normalized =
+        qMax(0, value);
+
+    const bool valueChanged =
+        d_ptr->leadingInset
+        != normalized;
+    const bool explicitChanged =
+        !d_ptr->leadingInsetExplicit;
+
+    if (!valueChanged && !explicitChanged) {
         return;
     }
 
-    d_ptr->m_leadingInset = normalized;
-    emit leadingInsetChanged(d_ptr->m_leadingInset);
-    syncAccessibility(this, d_ptr.get());
+    d_ptr->leadingInset = normalized;
+    d_ptr->leadingInsetExplicit = true;
+    invalidateResolvedSpec();
+
+    if (valueChanged) {
+        Q_EMIT leadingInsetChanged(normalized);
+    }
+
+    syncAccessibility();
     update();
 }
 
 int QtMaterialDivider::trailingInset() const noexcept
 {
-    return d_ptr->m_trailingInset;
+    return d_ptr->trailingInset;
 }
 
-void QtMaterialDivider::setTrailingInset(int value)
+void QtMaterialDivider::setTrailingInset(
+    int value)
 {
-    const int normalized = qMax(0, value);
-    if (d_ptr->m_trailingInset == normalized) {
+    const int normalized =
+        qMax(0, value);
+
+    const bool valueChanged =
+        d_ptr->trailingInset
+        != normalized;
+    const bool explicitChanged =
+        !d_ptr->trailingInsetExplicit;
+
+    if (!valueChanged && !explicitChanged) {
         return;
     }
 
-    d_ptr->m_trailingInset = normalized;
-    emit trailingInsetChanged(d_ptr->m_trailingInset);
-    syncAccessibility(this, d_ptr.get());
+    d_ptr->trailingInset = normalized;
+    d_ptr->trailingInsetExplicit = true;
+    invalidateResolvedSpec();
+
+    if (valueChanged) {
+        Q_EMIT trailingInsetChanged(normalized);
+    }
+
+    syncAccessibility();
     update();
 }
 
 int QtMaterialDivider::thickness() const noexcept
 {
-    return d_ptr->m_thickness;
+    return d_ptr->thickness;
 }
 
-void QtMaterialDivider::setThickness(int value)
+void QtMaterialDivider::setThickness(
+    int value)
 {
-    const int normalized = qMax(1, value);
-    if (d_ptr->m_thickness == normalized) {
+    const int normalized =
+        qMax(1, value);
+
+    const bool valueChanged =
+        d_ptr->thickness
+        != normalized;
+    const bool explicitChanged =
+        !d_ptr->thicknessExplicit;
+
+    if (!valueChanged && !explicitChanged) {
         return;
     }
 
-    d_ptr->m_thickness = normalized;
+    d_ptr->thickness = normalized;
+    d_ptr->thicknessExplicit = true;
+    invalidateResolvedSpec();
+    updateMinimumExtent();
 
-    if (d_ptr->m_orientation == Qt::Horizontal) {
-        setMinimumSize(0, d_ptr->m_thickness);
-    } else {
-        setMinimumSize(d_ptr->m_thickness, 0);
+    if (valueChanged) {
+        Q_EMIT thicknessChanged(normalized);
     }
 
-    emit thicknessChanged(d_ptr->m_thickness);
     updateGeometry();
-    syncAccessibility(this, d_ptr.get());
+    syncAccessibility();
     update();
 }
 
 QColor QtMaterialDivider::color() const noexcept
 {
-    return d_ptr->m_color;
+    return d_ptr->color;
 }
 
-void QtMaterialDivider::setColor(const QColor &color)
+void QtMaterialDivider::setColor(
+    const QColor& color)
 {
-    if (d_ptr->m_color == color) {
+    if (d_ptr->color == color) {
         return;
     }
 
-    d_ptr->m_color = color;
-    emit colorChanged(d_ptr->m_color);
+    d_ptr->color = color;
+    invalidateResolvedSpec();
+
+    Q_EMIT colorChanged(color);
+
     update();
 }
 
@@ -215,52 +248,76 @@ void QtMaterialDivider::resetColor()
 
 bool QtMaterialDivider::isDecorative() const noexcept
 {
-    return d_ptr->m_decorative;
+    return d_ptr->decorative;
 }
 
-void QtMaterialDivider::setDecorative(bool decorative)
+void QtMaterialDivider::setDecorative(
+    bool decorative)
 {
-    if (d_ptr->m_decorative == decorative) {
+    if (d_ptr->decorative == decorative) {
         return;
     }
 
-    d_ptr->m_decorative = decorative;
-    emit decorativeChanged(d_ptr->m_decorative);
-    syncAccessibility(this, d_ptr.get());
+    d_ptr->decorative = decorative;
+
+    Q_EMIT decorativeChanged(decorative);
+
+    syncAccessibility();
 }
 
 QString QtMaterialDivider::accessibilityLabel() const
 {
-    return d_ptr->m_accessibilityLabel;
+    return d_ptr->accessibilityLabel;
 }
 
-void QtMaterialDivider::setAccessibilityLabel(const QString &label)
+void QtMaterialDivider::setAccessibilityLabel(
+    const QString& label)
 {
-    if (d_ptr->m_accessibilityLabel == label) {
+    if (
+        d_ptr->accessibilityLabel
+        == label) {
         return;
     }
 
-    d_ptr->m_accessibilityLabel = label;
-    emit accessibilityLabelChanged(d_ptr->m_accessibilityLabel);
-    syncAccessibility(this, d_ptr.get());
+    d_ptr->accessibilityLabel = label;
+
+    Q_EMIT accessibilityLabelChanged(label);
+
+    syncAccessibility();
 }
 
-QString QtMaterialDivider::accessibilitySummary() const
+QString
+QtMaterialDivider::accessibilitySummary() const
 {
-    if (d_ptr->m_decorative) {
+    if (d_ptr->decorative) {
         return QString();
     }
 
-    if (!d_ptr->m_accessibilityLabel.trimmed().isEmpty()) {
-        return d_ptr->m_accessibilityLabel.trimmed();
+    const QString explicitLabel =
+        d_ptr->accessibilityLabel.trimmed();
+
+    if (!explicitLabel.isEmpty()) {
+        return explicitLabel;
     }
 
-    QString summary = orientationText(d_ptr->m_orientation);
-    if (d_ptr->m_leadingInset > 0 || d_ptr->m_trailingInset > 0) {
+    ensureSpecResolved();
+    const DividerSpec& spec =
+        d_ptr->resolvedSpec;
+
+    QString summary =
+        orientationText(
+            spec.orientation);
+
+    if (
+        spec.leadingInset > 0
+        || spec.trailingInset > 0) {
         summary += QStringLiteral(", inset");
     }
-    if (d_ptr->m_thickness > 1) {
-        summary += QStringLiteral(", %1 px thick").arg(d_ptr->m_thickness);
+
+    if (spec.thickness > 1) {
+        summary +=
+            QStringLiteral(", %1 px thick")
+                .arg(spec.thickness);
     }
 
     return summary;
@@ -268,56 +325,267 @@ QString QtMaterialDivider::accessibilitySummary() const
 
 QRect QtMaterialDivider::lineRect() const
 {
-    const int lineThickness = qMax(1, d_ptr->m_thickness);
+    ensureSpecResolved();
 
-    if (d_ptr->m_orientation == Qt::Horizontal) {
-        const int leading = qMax(0, d_ptr->m_leadingInset);
-        const int trailing = qMax(0, d_ptr->m_trailingInset);
-        const int x = layoutDirection() == Qt::RightToLeft ? trailing : leading;
-        const int w = qMax(0, width() - leading - trailing);
-        const int y = qMax(0, (height() - lineThickness) / 2);
-        return QRect(x, y, w, lineThickness);
+    const DividerSpec& spec =
+        d_ptr->resolvedSpec;
+
+    const int lineThickness =
+        qMax(1, spec.thickness);
+
+    if (
+        spec.orientation
+        == Qt::Horizontal) {
+        const int leading =
+            qMax(0, spec.leadingInset);
+        const int trailing =
+            qMax(0, spec.trailingInset);
+
+        const int x =
+            layoutDirection()
+                == Qt::RightToLeft
+            ? trailing
+            : leading;
+
+        const int widthValue =
+            qMax(
+                0,
+                width()
+                    - leading
+                    - trailing);
+
+        const int y =
+            qMax(
+                0,
+                (height() - lineThickness) / 2);
+
+        return QRect(
+            x,
+            y,
+            widthValue,
+            lineThickness);
     }
 
-    const int y = qMax(0, d_ptr->m_leadingInset);
-    const int trailing = qMax(0, d_ptr->m_trailingInset);
-    const int h = qMax(0, height() - y - trailing);
-    const int x = qMax(0, (width() - lineThickness) / 2);
-    return QRect(x, y, lineThickness, h);
+    const int top =
+        qMax(0, spec.leadingInset);
+    const int bottom =
+        qMax(0, spec.trailingInset);
+    const int heightValue =
+        qMax(
+            0,
+            height()
+                - top
+                - bottom);
+    const int x =
+        qMax(
+            0,
+            (width() - lineThickness) / 2);
+
+    return QRect(
+        x,
+        top,
+        lineThickness,
+        heightValue);
+}
+
+const DividerSpec&
+QtMaterialDivider::resolvedSpec() const
+{
+    ensureSpecResolved();
+    return d_ptr->resolvedSpec;
 }
 
 QSize QtMaterialDivider::sizeHint() const
 {
-    return (d_ptr->m_orientation == Qt::Horizontal) ? QSize(64, d_ptr->m_thickness) : QSize(d_ptr->m_thickness, 64);
+    ensureSpecResolved();
+
+    const int thicknessValue =
+        d_ptr->resolvedSpec.thickness;
+
+    return (
+        d_ptr->resolvedSpec.orientation
+        == Qt::Horizontal)
+        ? QSize(64, thicknessValue)
+        : QSize(thicknessValue, 64);
 }
 
 QSize QtMaterialDivider::minimumSizeHint() const
 {
-    return (d_ptr->m_orientation == Qt::Horizontal) ? QSize(0, d_ptr->m_thickness) : QSize(d_ptr->m_thickness, 0);
+    ensureSpecResolved();
+
+    const int thicknessValue =
+        d_ptr->resolvedSpec.thickness;
+
+    return (
+        d_ptr->resolvedSpec.orientation
+        == Qt::Horizontal)
+        ? QSize(0, thicknessValue)
+        : QSize(thicknessValue, 0);
 }
 
-void QtMaterialDivider::paintEvent(QPaintEvent *)
+void QtMaterialDivider::paintEvent(
+    QPaintEvent*)
 {
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, false);
-    painter.fillRect(lineRect(), resolvedColor(this, d_ptr.get()));
-}
+    ensureSpecResolved();
 
-void QtMaterialDivider::changeEvent(QEvent *event)
-{
-    QWidget::changeEvent(event);
+    const DividerSpec& spec =
+        d_ptr->resolvedSpec;
+    const QRect geometry =
+        lineRect();
 
-    switch (event->type()) {
-    case QEvent::PaletteChange:
-    case QEvent::StyleChange:
-        update();
-        break;
-    case QEvent::LayoutDirectionChange:
-        update();
-        break;
-    default:
-        break;
+    if (
+        geometry.isEmpty()
+        || !spec.color.isValid()) {
+        return;
     }
+
+    QPainter painter(this);
+    painter.setRenderHint(
+        QPainter::Antialiasing,
+        spec.cornerRadius > 0.0);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(
+        (
+            spec.leadingInset > 0
+            || spec.trailingInset > 0)
+            && spec.insetColor.isValid()
+        ? spec.insetColor
+        : spec.color);
+
+    if (spec.cornerRadius > 0.0) {
+        painter.drawRoundedRect(
+            QRectF(geometry),
+            spec.cornerRadius,
+            spec.cornerRadius);
+    } else {
+        painter.drawRect(geometry);
+    }
+}
+
+void QtMaterialDivider::changeEvent(
+    QEvent* event)
+{
+    QtMaterialWidget::changeEvent(event);
+
+    if (
+        event
+        && event->type()
+            == QEvent::LayoutDirectionChange) {
+        update();
+    }
+}
+
+void QtMaterialDivider::themeChangedEvent(
+    const QtMaterial::Theme& theme)
+{
+    QtMaterialWidget::themeChangedEvent(theme);
+    invalidateResolvedSpec();
+    updateMinimumExtent();
+    updateGeometry();
+    update();
+}
+
+void QtMaterialDivider::ensureSpecResolved() const
+{
+    if (!d_ptr->specDirty) {
+        return;
+    }
+
+    const DataSpecResolver resolver;
+    DividerSpec spec =
+        resolver.dividerSpec(theme());
+
+    spec.orientation =
+        d_ptr->orientation;
+
+    if (d_ptr->leadingInsetExplicit) {
+        spec.leadingInset =
+            d_ptr->leadingInset;
+    }
+    if (d_ptr->trailingInsetExplicit) {
+        spec.trailingInset =
+            d_ptr->trailingInset;
+    }
+    if (d_ptr->thicknessExplicit) {
+        spec.thickness =
+            d_ptr->thickness;
+    }
+
+    if (d_ptr->color.isValid()) {
+        spec.color =
+            d_ptr->color;
+        spec.insetColor =
+            d_ptr->color;
+    }
+
+    d_ptr->resolvedSpec = spec;
+    d_ptr->specDirty = false;
+}
+
+void QtMaterialDivider::invalidateResolvedSpec()
+{
+    d_ptr->specDirty = true;
+}
+
+void QtMaterialDivider::updateMinimumExtent()
+{
+    ensureSpecResolved();
+
+    const int thicknessValue =
+        qMax(
+            1,
+            d_ptr->resolvedSpec.thickness);
+
+    if (
+        d_ptr->resolvedSpec.orientation
+        == Qt::Horizontal) {
+        setSizePolicy(
+            QSizePolicy::Expanding,
+            QSizePolicy::Fixed);
+        setMinimumSize(
+            0,
+            thicknessValue);
+    } else {
+        setSizePolicy(
+            QSizePolicy::Fixed,
+            QSizePolicy::Expanding);
+        setMinimumSize(
+            thicknessValue,
+            0);
+    }
+}
+
+void QtMaterialDivider::syncAccessibility()
+{
+    const QString summary =
+        accessibilitySummary();
+
+    if (d_ptr->decorative) {
+        setAccessibleName(QString());
+        setAccessibleDescription(QString());
+    } else {
+        const QString explicitLabel =
+            d_ptr->accessibilityLabel.trimmed();
+
+        setAccessibleName(
+            explicitLabel.isEmpty()
+                ? orientationText(
+                      d_ptr->orientation)
+                : explicitLabel);
+        setAccessibleDescription(summary);
+    }
+
+    if (
+        d_ptr->lastAccessibilitySummary
+        == summary) {
+        return;
+    }
+
+    d_ptr->lastAccessibilitySummary =
+        summary;
+
+    Q_EMIT accessibilitySummaryChanged(
+        summary);
 }
 
 } // namespace QtMaterial

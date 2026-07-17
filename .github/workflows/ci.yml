@@ -38,7 +38,7 @@ jobs:
 
           - name: macos-qt6
             os: macos-latest
-            qt-version: "6.7.3"
+            qt-version: "6.8.4"
             qt-arch: clang_64
             use-mcu: "OFF"
             build-extra-examples: "OFF"
