@@ -256,6 +256,27 @@
         "\\bsetTrailingActionIcon\\s*\\(",
         "\\bresolvedDateFieldSpec\\s*\\("
       ]
+    },
+    {
+      "name": "bottom-sheet-drag-is-stateful-and-cancellable",
+      "files": [
+        "src/widgets/surfaces/qtmaterialbottomsheet.cpp"
+      ],
+      "forbidden_regex": [
+        "_qtm3_drag_start_local_y",
+        "\\bdragStartGlobalPos\\b",
+        "qAbs\\s*\\(\\s*globalDeltaY\\s*\\)"
+      ],
+      "required_regex": [
+        "\\bQElapsedTimer\\b",
+        "\\bBottomSheetDragReleaseAction\\b",
+        "\\bresolveDragRelease\\s*\\(",
+        "\\bcancelActiveDrag\\s*\\(",
+        "\\bgrabMouse\\s*\\(\\s*\\)",
+        "\\breleaseMouse\\s*\\(\\s*\\)",
+        "\\bdragVelocityY\\b",
+        "d_ptr->state\\s*!=\\s*SheetState::Open"
+      ]
     }
   ],
   "text_rules": [

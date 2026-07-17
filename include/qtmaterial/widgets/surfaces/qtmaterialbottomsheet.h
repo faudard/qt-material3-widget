@@ -10,6 +10,7 @@
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
 
 class QEvent;
+class QHideEvent;
 class QKeyEvent;
 class QMouseEvent;
 class QPaintEvent;
@@ -120,6 +121,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent* event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -136,6 +138,7 @@ private:
     void applySheetMask();
     void focusFirstChild();
     void syncAccessibility();
+    void cancelActiveDrag(bool refreshGeometry);
     void setState(SheetState state);
     QRect sheetVisualRect() const;
     QRect contentRect() const;

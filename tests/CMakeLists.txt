@@ -78,6 +78,7 @@ qtm3_add_test(tst_segmentedbutton widgets/selection/tst_segmentedbutton.cpp qtma
 qtm3_add_test(tst_dialog widgets/surfaces/tst_dialog.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_navigationdrawer widgets/surfaces/tst_navigationdrawer.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_bottomsheet widgets/surfaces/tst_bottomsheet.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_bottomsheet_drag_robustness widgets/surfaces/tst_bottomsheet_drag_robustness.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_banner widgets/surfaces/tst_banner.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_card widgets/surfaces/tst_card.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_topappbar widgets/surfaces/tst_topappbar.cpp qtmaterial3_widgets)

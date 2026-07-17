@@ -19,6 +19,8 @@
 #include <QVariant>
 #include "qtmaterial/effects/qtmaterialelevationrenderer.h"
 #include "qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h"
+#include <QElapsedTimer>
+#include <QHideEvent>
 
 namespace QtMaterial {
 
@@ -45,9 +47,15 @@ public:
  bool dragToDismissEnabled = true;
  bool restoreFocusOnClose = true;
  bool dragging = false;
+ bool dragStartedExpanded = true;
+ int dragStartGlobalY = 0;
+ int dragLastGlobalY = 0;
+ qint64 dragLastTimestampMs = 0;
+ qreal dragOffsetY = 0.0;
+ qreal dragVelocityY = 0.0;
+ QElapsedTimer dragTimer;
  int expandedHeight = 320;
  int collapsedHeight = 80;
- QPoint dragStartGlobalPos;
  QString titleText;
  QString supportingText;
  QString lastAccessibilitySummary;
@@ -88,6 +96,69 @@ QPoint globalMousePosition(const QMouseEvent *event)
 #else
     return event->globalPos();
 #endif
+}
+
+
+enum class BottomSheetDragReleaseAction
+{
+    SnapBack,
+    Expand,
+    Collapse,
+    Dismiss
+};
+
+constexpr qreal kVelocityThreshold = 900.0;
+constexpr qreal kVelocitySmoothing = 0.35;
+
+int boundedDownThreshold(int sheetHeight)
+{
+    return qBound(40, sheetHeight / 4, 120);
+}
+
+int boundedExpandThreshold(
+    int expandedHeight,
+    int collapsedHeight)
+{
+    return qBound(
+        40,
+        qMax(1, expandedHeight - collapsedHeight) / 3,
+        120);
+}
+
+BottomSheetDragReleaseAction resolveDragRelease(
+    bool startedExpanded,
+    int deltaY,
+    qreal velocityY,
+    int expandedHeight,
+    int collapsedHeight)
+{
+    if (startedExpanded) {
+        if (
+            deltaY >= boundedDownThreshold(expandedHeight)
+            || velocityY >= kVelocityThreshold) {
+            return collapsedHeight < expandedHeight
+                ? BottomSheetDragReleaseAction::Collapse
+                : BottomSheetDragReleaseAction::Dismiss;
+        }
+
+        return BottomSheetDragReleaseAction::SnapBack;
+    }
+
+    if (
+        -deltaY >= boundedExpandThreshold(
+            expandedHeight,
+            collapsedHeight)
+        || velocityY <= -kVelocityThreshold) {
+        return BottomSheetDragReleaseAction::Expand;
+    }
+
+    if (
+        deltaY >= boundedDownThreshold(collapsedHeight)
+        || velocityY >= kVelocityThreshold) {
+        return BottomSheetDragReleaseAction::Dismiss;
+    }
+
+    return BottomSheetDragReleaseAction::SnapBack;
 }
 
 } // namespace
@@ -206,15 +277,26 @@ void QtMaterialBottomSheet::open()
 
 void QtMaterialBottomSheet::close()
 {
-    if (d_ptr->state == SheetState::Closing || d_ptr->state == SheetState::Closed) {
+    if (
+        d_ptr->state == SheetState::Closing
+        || d_ptr->state == SheetState::Closed) {
         return;
     }
 
+    cancelActiveDrag(true);
     ensureSpecResolved();
-    if (d_ptr->specPtr) {
+
+    if (
+        d_ptr->specPtr
+        && d_ptr->specPtr->hasResolvedMotionStyle) {
         d_ptr->transition->applyMotionStyle(
             d_ptr->specPtr->motionStyle);
     }
+
+    d_ptr->invalidateCachedGeometry();
+    syncContainerGeometry();
+    applySheetMask();
+    syncScrim();
 
     setState(SheetState::Closing);
     emit dismissed();
@@ -362,12 +444,18 @@ bool QtMaterialBottomSheet::dismissOnScrim() const noexcept
     return d_ptr->dismissOnScrim;
 }
 
-void QtMaterialBottomSheet::setDragToDismissEnabled(bool enabled)
+void QtMaterialBottomSheet::setDragToDismissEnabled(
+    bool enabled)
 {
     if (d_ptr->dragToDismissEnabled == enabled) {
         return;
     }
+
     d_ptr->dragToDismissEnabled = enabled;
+    if (!enabled) {
+        cancelActiveDrag(true);
+    }
+
     emit dragToDismissEnabledChanged(enabled);
 }
 
@@ -474,6 +562,7 @@ bool QtMaterialBottomSheet::eventFilter(QObject *watched, QEvent *event)
         case QEvent::Move:
         case QEvent::Show:
         case QEvent::WindowStateChange:
+            cancelActiveDrag(true);
             syncToHost();
             syncScrim();
             update();
@@ -531,8 +620,10 @@ void QtMaterialBottomSheet::paintEvent(QPaintEvent*)
     painter.drawPath(d_ptr->cachedContainerPath);
 }
 
-void QtMaterialBottomSheet::resizeEvent(QResizeEvent *event)
+void QtMaterialBottomSheet::resizeEvent(
+    QResizeEvent* event)
 {
+    cancelActiveDrag(true);
     QtMaterialOverlaySurface::resizeEvent(event);
     d_ptr->invalidateCachedGeometry();
     syncToHost();
@@ -545,6 +636,13 @@ void QtMaterialBottomSheet::showEvent(QShowEvent *event)
     syncToHost();
     applySheetMask();
     syncScrim();
+}
+
+void QtMaterialBottomSheet::hideEvent(
+    QHideEvent* event)
+{
+    cancelActiveDrag(true);
+    QtMaterialOverlaySurface::hideEvent(event);
 }
 
 void QtMaterialBottomSheet::keyPressEvent(QKeyEvent *event)
@@ -583,65 +681,157 @@ void QtMaterialBottomSheet::keyPressEvent(QKeyEvent *event)
     QtMaterialOverlaySurface::keyPressEvent(event);
 }
 
-void QtMaterialBottomSheet::mousePressEvent(QMouseEvent *event)
+void QtMaterialBottomSheet::mousePressEvent(
+    QMouseEvent* event)
 {
-    if (d_ptr->dragToDismissEnabled && event->button() == Qt::LeftButton && isOpen()) {
-        ensureGeometryResolved();
-
-        const QRect targetVisualRect(
-            0,
-            qMax(0, height() - d_ptr->effectiveSheetHeight()),
-            width(),
-            qMin(d_ptr->effectiveSheetHeight(), height()));
-        const bool pressInsideCurrentSheet = d_ptr->cachedVisualRect.contains(event->pos());
-        const bool pressInsideTargetSheet = targetVisualRect.contains(event->pos());
-
-        if (pressInsideCurrentSheet || pressInsideTargetSheet) {
-            d_ptr->dragging = true;
-            d_ptr->dragStartGlobalPos = globalMousePosition(event);
-            setProperty("_qtm3_drag_start_local_y", event->pos().y());
-            event->accept();
-            return;
-        }
-    }
-
-    QtMaterialOverlaySurface::mousePressEvent(event);
-}
-
-void QtMaterialBottomSheet::mouseMoveEvent(QMouseEvent *event)
-{
-    if (d_ptr->dragging) {
-        event->accept();
+    if (
+        !event
+        || !d_ptr->dragToDismissEnabled
+        || event->button() != Qt::LeftButton
+        || d_ptr->state != SheetState::Open) {
+        QtMaterialOverlaySurface::mousePressEvent(event);
         return;
     }
-    QtMaterialOverlaySurface::mouseMoveEvent(event);
+
+    ensureGeometryResolved();
+    if (!d_ptr->cachedVisualRect.contains(event->pos())) {
+        QtMaterialOverlaySurface::mousePressEvent(event);
+        return;
+    }
+
+    const QPoint globalPosition =
+        globalMousePosition(event);
+
+    d_ptr->dragging = true;
+    d_ptr->dragStartedExpanded = d_ptr->expanded;
+    d_ptr->dragStartGlobalY = globalPosition.y();
+    d_ptr->dragLastGlobalY = globalPosition.y();
+    d_ptr->dragLastTimestampMs = 0;
+    d_ptr->dragOffsetY = 0.0;
+    d_ptr->dragVelocityY = 0.0;
+    d_ptr->dragTimer.restart();
+
+    grabMouse();
+    event->accept();
 }
 
-void QtMaterialBottomSheet::mouseReleaseEvent(QMouseEvent *event)
+void QtMaterialBottomSheet::mouseMoveEvent(
+    QMouseEvent* event)
 {
-    if (d_ptr->dragging) {
-        const int globalDeltaY = globalMousePosition(event).y() - d_ptr->dragStartGlobalPos.y();
-        const int dragStartLocalY = property("_qtm3_drag_start_local_y").toInt();
-        const int localDeltaY = event->pos().y() - dragStartLocalY;
-        const int deltaY = qAbs(globalDeltaY) >= qAbs(localDeltaY) ? globalDeltaY : localDeltaY;
-        d_ptr->dragging = false;
-        setProperty("_qtm3_drag_start_local_y", QVariant());
+    if (!d_ptr->dragging || !event) {
+        QtMaterialOverlaySurface::mouseMoveEvent(event);
+        return;
+    }
 
-        const int dragDownThreshold = qBound(32, d_ptr->effectiveSheetHeight() / 5, 96);
-        if (deltaY >= dragDownThreshold) {
-            if (d_ptr->expanded && d_ptr->collapsedHeight < d_ptr->expandedHeight) {
-                collapse();
-            } else {
-                close();
-            }
-        } else if (deltaY <= -32) {
+    const QPoint globalPosition =
+        globalMousePosition(event);
+    const qint64 timestampMs =
+        d_ptr->dragTimer.isValid()
+        ? d_ptr->dragTimer.elapsed()
+        : 0;
+    const qint64 elapsedMs =
+        timestampMs - d_ptr->dragLastTimestampMs;
+
+    if (elapsedMs > 0) {
+        const qreal instantaneousVelocity =
+            qreal(
+                globalPosition.y()
+                - d_ptr->dragLastGlobalY)
+            * 1000.0
+            / qreal(elapsedMs);
+
+        d_ptr->dragVelocityY =
+            d_ptr->dragVelocityY
+                * (1.0 - kVelocitySmoothing)
+            + instantaneousVelocity
+                * kVelocitySmoothing;
+    }
+
+    d_ptr->dragLastGlobalY = globalPosition.y();
+    d_ptr->dragLastTimestampMs = timestampMs;
+    d_ptr->dragOffsetY =
+        globalPosition.y() - d_ptr->dragStartGlobalY;
+
+    d_ptr->invalidateCachedGeometry();
+    syncContainerGeometry();
+    applySheetMask();
+    syncScrim();
+    update();
+
+    event->accept();
+}
+
+void QtMaterialBottomSheet::mouseReleaseEvent(
+    QMouseEvent* event)
+{
+    if (!d_ptr->dragging || !event) {
+        QtMaterialOverlaySurface::mouseReleaseEvent(event);
+        return;
+    }
+
+    const QPoint globalPosition =
+        globalMousePosition(event);
+    const int deltaY =
+        globalPosition.y() - d_ptr->dragStartGlobalY;
+
+    const qint64 timestampMs =
+        d_ptr->dragTimer.isValid()
+        ? d_ptr->dragTimer.elapsed()
+        : 0;
+    const qint64 elapsedMs =
+        timestampMs - d_ptr->dragLastTimestampMs;
+
+    qreal releaseVelocity = d_ptr->dragVelocityY;
+    if (elapsedMs > 0) {
+        const qreal finalVelocity =
+            qreal(
+                globalPosition.y()
+                - d_ptr->dragLastGlobalY)
+            * 1000.0
+            / qreal(elapsedMs);
+        releaseVelocity =
+            releaseVelocity
+                * (1.0 - kVelocitySmoothing)
+            + finalVelocity
+                * kVelocitySmoothing;
+    }
+
+    const bool startedExpanded =
+        d_ptr->dragStartedExpanded;
+    const BottomSheetDragReleaseAction action =
+        resolveDragRelease(
+            startedExpanded,
+            deltaY,
+            releaseVelocity,
+            d_ptr->expandedHeight,
+            d_ptr->collapsedHeight);
+
+    cancelActiveDrag(true);
+
+    switch (action) {
+    case BottomSheetDragReleaseAction::Expand:
+        expand();
+        break;
+
+    case BottomSheetDragReleaseAction::Collapse:
+        collapse();
+        break;
+
+    case BottomSheetDragReleaseAction::Dismiss:
+        close();
+        break;
+
+    case BottomSheetDragReleaseAction::SnapBack:
+    default:
+        if (startedExpanded) {
             expand();
+        } else {
+            collapse();
         }
-        event->accept();
-        return;
+        break;
     }
 
-    QtMaterialOverlaySurface::mouseReleaseEvent(event);
+    event->accept();
 }
 
 void QtMaterialBottomSheet::themeChangedEvent(const QtMaterial::Theme &theme)
@@ -689,22 +879,88 @@ void QtMaterialBottomSheet::ensureGeometryResolved() const
         return;
     }
 
-    const int minHeight = qMax(120, minimumSizeHint().height());
-    const int sheetHeight = qMin(qMax(d_ptr->effectiveSheetHeight(), minHeight), hostRect.height());
-    const qreal progressValue = d_ptr->transition ? d_ptr->transition->progress() : 1.0;
-    const qreal p = qBound(0.0, progressValue, 1.0);
-    const int hiddenY = hostRect.height();
-    const int y = hiddenY - qRound(sheetHeight * p);
+    const int minHeight =
+        qMax(120, minimumSizeHint().height());
+    int sheetHeight =
+        qMin(
+            qMax(d_ptr->effectiveSheetHeight(), minHeight),
+            hostRect.height());
 
-    d_ptr->cachedVisualRect = QRect(0, y, hostRect.width(), sheetHeight);
-    d_ptr->cachedContentRect = d_ptr->cachedVisualRect.adjusted(0, d_ptr->specPtr->topPadding, 0, 0);
+    const qreal progressValue =
+        d_ptr->transition
+        ? d_ptr->transition->progress()
+        : 1.0;
+    const qreal progress =
+        qBound(0.0, progressValue, 1.0);
+
+    const int hiddenY = hostRect.height();
+    int y = hiddenY - qRound(sheetHeight * progress);
+
+    if (
+        d_ptr->dragging
+        && d_ptr->state == SheetState::Open) {
+        const int dragDelta =
+            qRound(d_ptr->dragOffsetY);
+
+        if (d_ptr->dragStartedExpanded) {
+            sheetHeight =
+                qMin(
+                    qMax(d_ptr->expandedHeight, minHeight),
+                    hostRect.height());
+            y =
+                hiddenY
+                - sheetHeight
+                + qBound(0, dragDelta, sheetHeight);
+        } else if (dragDelta < 0) {
+            const int collapsedHeight =
+                qMin(
+                    qMax(d_ptr->collapsedHeight, minHeight),
+                    hostRect.height());
+            const int expandedHeight =
+                qMin(
+                    qMax(
+                        d_ptr->expandedHeight,
+                        collapsedHeight),
+                    hostRect.height());
+
+            sheetHeight =
+                qBound(
+                    collapsedHeight,
+                    collapsedHeight - dragDelta,
+                    expandedHeight);
+            y = hiddenY - sheetHeight;
+        } else {
+            sheetHeight =
+                qMin(
+                    qMax(d_ptr->collapsedHeight, minHeight),
+                    hostRect.height());
+            y =
+                hiddenY
+                - sheetHeight
+                + qBound(0, dragDelta, sheetHeight);
+        }
+    }
+
+    d_ptr->cachedVisualRect =
+        QRect(0, y, hostRect.width(), sheetHeight);
+    d_ptr->cachedContentRect =
+        d_ptr->cachedVisualRect.adjusted(
+            0,
+            d_ptr->specPtr->topPadding,
+            0,
+            0);
 
     const qreal resolvedRadius =
         d_ptr->specPtr->cornerRadius < 0.0
         ? sheetHeight / 2.0
         : d_ptr->specPtr->cornerRadius;
-    d_ptr->cachedCornerRadius = qMin(resolvedRadius, sheetHeight / 2.0);
-    d_ptr->cachedContainerPath = topRoundedSheetPath(QRectF(d_ptr->cachedVisualRect), d_ptr->cachedCornerRadius);
+
+    d_ptr->cachedCornerRadius =
+        qMin(resolvedRadius, sheetHeight / 2.0);
+    d_ptr->cachedContainerPath =
+        topRoundedSheetPath(
+            QRectF(d_ptr->cachedVisualRect),
+            d_ptr->cachedCornerRadius);
     d_ptr->geometryDirty = false;
 }
 
@@ -734,25 +990,54 @@ void QtMaterialBottomSheet::syncScrim()
         return;
     }
 
-    if (!d_ptr->modal || d_ptr->state == SheetState::Closed) {
+    if (
+        !d_ptr->modal
+        || d_ptr->state == SheetState::Closed) {
         d_ptr->scrim->hide();
         return;
     }
 
     ensureSpecResolved();
+    ensureGeometryResolved();
+
     if (!d_ptr->specPtr) {
         return;
     }
 
     QColor scrim = d_ptr->specPtr->scrimColor;
-    const qreal progressValue = d_ptr->transition ? d_ptr->transition->progress() : 1.0;
-    const qreal p = qBound(0.0, progressValue, 1.0);
-    scrim.setAlphaF(qBound(0.0, scrim.alphaF() * p, 1.0));
+    const qreal progressValue =
+        d_ptr->transition
+        ? d_ptr->transition->progress()
+        : 1.0;
+    qreal visibilityProgress =
+        qBound(0.0, progressValue, 1.0);
+
+    if (
+        d_ptr->dragging
+        && d_ptr->dragOffsetY > 0.0
+        && d_ptr->cachedVisualRect.height() > 0) {
+        const qreal dragFraction =
+            qBound(
+                0.0,
+                d_ptr->dragOffsetY
+                    / qreal(d_ptr->cachedVisualRect.height()),
+                1.0);
+        visibilityProgress *= 1.0 - dragFraction;
+    }
+
+    scrim.setAlphaF(
+        qBound(
+            0.0,
+            scrim.alphaF() * visibilityProgress,
+            1.0));
+
     d_ptr->scrim->setGeometry(rect());
     d_ptr->scrim->setScrimColor(scrim);
+
     if (!d_ptr->scrim->isVisible()) {
         d_ptr->scrim->show();
     }
+
     d_ptr->scrim->raise();
 }
 
@@ -831,6 +1116,33 @@ void QtMaterialBottomSheet::focusFirstChild()
     }
 
     setFocus(Qt::OtherFocusReason);
+}
+
+void QtMaterialBottomSheet::cancelActiveDrag(
+    bool refreshGeometry)
+{
+    if (!d_ptr->dragging && qFuzzyIsNull(d_ptr->dragOffsetY)) {
+        return;
+    }
+
+    d_ptr->dragging = false;
+    d_ptr->dragOffsetY = 0.0;
+    d_ptr->dragVelocityY = 0.0;
+    d_ptr->dragTimer.invalidate();
+    d_ptr->dragLastTimestampMs = 0;
+
+    if (mouseGrabber() == this) {
+        releaseMouse();
+    }
+
+    d_ptr->invalidateCachedGeometry();
+
+    if (refreshGeometry) {
+        syncContainerGeometry();
+        applySheetMask();
+        syncScrim();
+        update();
+    }
 }
 
 void QtMaterialBottomSheet::syncAccessibility()
