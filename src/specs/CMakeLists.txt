@@ -12,6 +12,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialdialogspec.cpp
     qtmaterialdialogspecresolver.cpp
     qtmaterialtextfieldspec.cpp
+    qtmaterialtextfieldspecresolver.cpp
     qtmaterialfabspec.cpp
     qtmaterialcardspec.cpp
     qtmaterialnavigationdrawerspec.cpp
@@ -48,6 +49,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdialogspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdialogspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtextfieldspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtextfieldspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialfabspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialcardspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationdrawerspec.h

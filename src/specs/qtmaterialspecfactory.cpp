@@ -7,6 +7,7 @@
 #include "qtmaterial/specs/qtmaterialappbarspecresolver.h"
 #include "qtmaterial/specs/qtmaterialdialogspecresolver.h"
 #include "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h"
+#include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
 
 namespace QtMaterial {
 SpecFactory::SpecFactory() = default;
@@ -145,49 +146,22 @@ AppBarSpec SpecFactory::bottomAppBarSpec(
     return AppBarSpecResolver().bottomAppBarSpec(theme);
 }
 
-TextFieldSpec SpecFactory::outlinedTextFieldSpec(const Theme& theme, Density density) const
+TextFieldSpec
+SpecFactory::outlinedTextFieldSpec(
+    const Theme& theme,
+    Density density) const
 {
-    TextFieldSpec spec;
-    spec.containerColor = Qt::transparent;
-    spec.activeIndicatorColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.outlineColor = theme.colorScheme().color(ColorRole::Outline);
-    spec.focusedOutlineColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.disabledOutlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
-    spec.inputTextColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.disabledInputTextColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.labelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.supportingTextColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.disabledSupportingTextColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.cursorColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.errorColor = theme.colorScheme().color(ColorRole::Error);
-    spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    switch (density) {
-    case Density::Compact:
-        spec.minHeight = 52;
-        spec.horizontalPadding = 12;
-        spec.verticalPadding = 6;
-        break;
-    case Density::Comfortable:
-        spec.minHeight = 60;
-        spec.horizontalPadding = 18;
-        spec.verticalPadding = 10;
-        break;
-    case Density::Default:
-    default:
-        break;
-    }
-    applyTextFieldComponentTokens(theme, QStringList{QStringLiteral("input"), QStringLiteral("textField"), QStringLiteral("textField.outlined"), QStringLiteral("OutlinedTextField")}, &spec);
-  return spec;
+    return TextFieldSpecResolver()
+        .outlinedTextFieldSpec(theme, density);
 }
 
-TextFieldSpec SpecFactory::filledTextFieldSpec(const Theme& theme, Density density) const
+TextFieldSpec
+SpecFactory::filledTextFieldSpec(
+    const Theme& theme,
+    Density density) const
 {
-    TextFieldSpec spec = outlinedTextFieldSpec(theme, density);
-    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHighest);
-    applyTextFieldComponentTokens(theme, QStringList{QStringLiteral("input"), QStringLiteral("textField"), QStringLiteral("textField.filled"), QStringLiteral("FilledTextField")}, &spec);
-  return spec;
+    return TextFieldSpecResolver()
+        .filledTextFieldSpec(theme, density);
 }
 
 AutocompletePopupSpec SpecFactory::autocompletePopupSpec(const Theme& theme) const

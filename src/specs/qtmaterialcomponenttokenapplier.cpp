@@ -1133,61 +1133,316 @@ void applySwitchComponentTokens(
     resolveSelectionRuntimeTokens(theme, tokens, spec);
 }
 
-void applyTextFieldComponentTokens(const Theme& theme, const QStringList& componentNames, TextFieldSpec* spec)
+void applyTextFieldComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    TextFieldSpec* spec)
 {
-    if (!spec) return;
-    const ComponentTokenOverride tokens = mergedComponentOverride(theme, componentNames);
-    if (tokens.isEmpty()) return;
+    if (!spec) {
+        return;
+    }
 
-    applyColor(&spec->containerColor, tokens, ColorRole::SurfaceContainerHighest);
-    applyColor(&spec->activeIndicatorColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->outlineColor, tokens, ColorRole::Outline);
-    applyColor(&spec->focusedOutlineColor, tokens, ColorRole::Primary);
-    applyColor(&spec->disabledOutlineColor, tokens, ColorRole::OutlineVariant);
-    applyColor(&spec->inputTextColor, tokens, ColorRole::OnSurface);
-    applyColor(&spec->disabledInputTextColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->labelColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->disabledLabelColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->supportingTextColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->disabledSupportingTextColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->errorTextColor, tokens, ColorRole::Error);
-    applyColor(&spec->cursorColor, tokens, ColorRole::Primary);
-    applyColor(&spec->errorColor, tokens, ColorRole::Error);
-    applyColor(&spec->stateLayerColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->disabledErrorTextColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->focusRingColor, tokens, ColorRole::Primary);
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
 
-    applyCustomColor(&spec->containerColor, tokens, "containerColor");
-    applyCustomColor(&spec->activeIndicatorColor, tokens, "activeIndicatorColor");
-    applyCustomColor(&spec->outlineColor, tokens, "outlineColor");
-    applyCustomColor(&spec->focusedOutlineColor, tokens, "focusedOutlineColor");
-    applyCustomColor(&spec->disabledOutlineColor, tokens, "disabledOutlineColor");
-    applyCustomColor(&spec->inputTextColor, tokens, "inputTextColor");
-    applyCustomColor(&spec->disabledInputTextColor, tokens, "disabledInputTextColor");
-    applyCustomColor(&spec->labelColor, tokens, "labelColor");
-    applyCustomColor(&spec->disabledLabelColor, tokens, "disabledLabelColor");
-    applyCustomColor(&spec->supportingTextColor, tokens, "supportingTextColor");
-    applyCustomColor(&spec->disabledSupportingTextColor, tokens, "disabledSupportingTextColor");
-    applyCustomColor(&spec->errorTextColor, tokens, "errorTextColor");
-    applyCustomColor(&spec->cursorColor, tokens, "cursorColor");
-    applyCustomColor(&spec->errorColor, tokens, "errorColor");
-    applyCustomColor(&spec->stateLayerColor, tokens, "stateLayerColor");
-    applyCustomColor(&spec->disabledErrorTextColor, tokens, "disabledErrorTextColor");
-    applyCustomColor(&spec->focusRingColor, tokens, "focusRingColor");
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->containerColor,
+            tokens,
+            ColorRole::SurfaceContainerHighest);
+        applyColor(
+            &spec->activeIndicatorColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->outlineColor,
+            tokens,
+            ColorRole::Outline);
+        applyColor(
+            &spec->focusedOutlineColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->disabledOutlineColor,
+            tokens,
+            ColorRole::OutlineVariant);
+        applyColor(
+            &spec->inputTextColor,
+            tokens,
+            ColorRole::OnSurface);
+        applyColor(
+            &spec->disabledInputTextColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->labelColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->disabledLabelColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->supportingTextColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->disabledSupportingTextColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->errorTextColor,
+            tokens,
+            ColorRole::Error);
+        applyColor(
+            &spec->cursorColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->errorColor,
+            tokens,
+            ColorRole::Error);
+        applyColor(
+            &spec->stateLayerColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->disabledErrorTextColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->focusRingColor,
+            tokens,
+            ColorRole::Primary);
 
-    ElevationRole unusedElevation = ElevationRole::Level0;
-    applyShapeMotionElevation(tokens, &spec->shapeRole, &unusedElevation, &spec->motionToken);
-    readInt(tokens.custom, "minHeight", &spec->minHeight);
-    readInt(tokens.custom, "horizontalPadding", &spec->horizontalPadding);
-    readInt(tokens.custom, "verticalPadding", &spec->verticalPadding);
-    readInt(tokens.custom, "supportingTopSpacing", &spec->supportingTopSpacing);
-    readInt(tokens.custom, "topLabelHeight", &spec->topLabelHeight);
-    readInt(tokens.custom, "supportingHeight", &spec->supportingHeight);
-    readInt(tokens.custom, "outlineWidth", &spec->outlineWidth);
-    readInt(tokens.custom, "focusedOutlineWidth", &spec->focusedOutlineWidth);
-    readReal(tokens.custom, "focusRingWidth", &spec->focusRingWidth);
-    readInt(tokens.custom, "supportingLineHeight", &spec->supportingLineHeight);
-    readBool(tokens.custom, "reserveSupportingLine", &spec->reserveSupportingLine);
+        applyCustomColor(
+            &spec->containerColor,
+            tokens,
+            "containerColor");
+        applyCustomColor(
+            &spec->activeIndicatorColor,
+            tokens,
+            "activeIndicatorColor");
+        applyCustomColor(
+            &spec->outlineColor,
+            tokens,
+            "outlineColor");
+        applyCustomColor(
+            &spec->focusedOutlineColor,
+            tokens,
+            "focusedOutlineColor");
+        applyCustomColor(
+            &spec->disabledOutlineColor,
+            tokens,
+            "disabledOutlineColor");
+        applyCustomColor(
+            &spec->inputTextColor,
+            tokens,
+            "inputTextColor");
+        applyCustomColor(
+            &spec->disabledInputTextColor,
+            tokens,
+            "disabledInputTextColor");
+        applyCustomColor(
+            &spec->labelColor,
+            tokens,
+            "labelColor");
+        applyCustomColor(
+            &spec->disabledLabelColor,
+            tokens,
+            "disabledLabelColor");
+        applyCustomColor(
+            &spec->supportingTextColor,
+            tokens,
+            "supportingTextColor");
+        applyCustomColor(
+            &spec->disabledSupportingTextColor,
+            tokens,
+            "disabledSupportingTextColor");
+        applyCustomColor(
+            &spec->errorTextColor,
+            tokens,
+            "errorTextColor");
+        applyCustomColor(
+            &spec->cursorColor,
+            tokens,
+            "cursorColor");
+        applyCustomColor(
+            &spec->errorColor,
+            tokens,
+            "errorColor");
+        applyCustomColor(
+            &spec->stateLayerColor,
+            tokens,
+            "stateLayerColor");
+        applyCustomColor(
+            &spec->disabledErrorTextColor,
+            tokens,
+            "disabledErrorTextColor");
+        applyCustomColor(
+            &spec->focusRingColor,
+            tokens,
+            "focusRingColor");
+
+        ElevationRole unusedElevation =
+            ElevationRole::Level0;
+        applyShapeMotionElevation(
+            tokens,
+            &spec->shapeRole,
+            &unusedElevation,
+            &spec->motionToken);
+
+        readInt(
+            tokens.custom,
+            "minHeight",
+            &spec->minHeight);
+        readInt(
+            tokens.custom,
+            "horizontalPadding",
+            &spec->horizontalPadding);
+        readInt(
+            tokens.custom,
+            "verticalPadding",
+            &spec->verticalPadding);
+        readInt(
+            tokens.custom,
+            "supportingTopSpacing",
+            &spec->supportingTopSpacing);
+        readInt(
+            tokens.custom,
+            "topLabelHeight",
+            &spec->topLabelHeight);
+        readInt(
+            tokens.custom,
+            "supportingHeight",
+            &spec->supportingHeight);
+        readInt(
+            tokens.custom,
+            "outlineWidth",
+            &spec->outlineWidth);
+        readInt(
+            tokens.custom,
+            "focusedOutlineWidth",
+            &spec->focusedOutlineWidth);
+        readReal(
+            tokens.custom,
+            "focusRingWidth",
+            &spec->focusRingWidth);
+        readInt(
+            tokens.custom,
+            "supportingLineHeight",
+            &spec->supportingLineHeight);
+        readBool(
+            tokens.custom,
+            "reserveSupportingLine",
+            &spec->reserveSupportingLine);
+    }
+
+    spec->hasResolvedInputFont = false;
+    if (tokens.typography.contains(spec->inputTypeRole)) {
+        spec->inputFont =
+            tokens.typography.value(
+                spec->inputTypeRole).font;
+        spec->hasResolvedInputFont = true;
+    } else if (
+        theme.typography().contains(
+            spec->inputTypeRole)) {
+        spec->inputFont =
+            theme.typography().style(
+                spec->inputTypeRole).font;
+        spec->hasResolvedInputFont = true;
+    }
+
+    spec->hasResolvedLabelFont = false;
+    if (tokens.typography.contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            tokens.typography.value(
+                spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    } else if (
+        theme.typography().contains(
+            spec->labelTypeRole)) {
+        spec->labelFont =
+            theme.typography().style(
+                spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    }
+
+    spec->hasResolvedSupportingFont = false;
+    if (tokens.typography.contains(
+            spec->supportingTextRole)) {
+        spec->supportingFont =
+            tokens.typography.value(
+                spec->supportingTextRole).font;
+        spec->hasResolvedSupportingFont = true;
+    } else if (
+        theme.typography().contains(
+            spec->supportingTextRole)) {
+        spec->supportingFont =
+            theme.typography().style(
+                spec->supportingTextRole).font;
+        spec->hasResolvedSupportingFont = true;
+    }
+
+    if (spec->shapeRole == ShapeRole::Full) {
+        spec->cornerRadius = -1.0;
+    } else if (tokens.shapes.contains(
+                   spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                tokens.shapes.value(spec->shapeRole)));
+    } else if (
+        theme.shapes().contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                theme.shapes().radius(
+                    spec->shapeRole)));
+    }
+
+    spec->hasResolvedMotionStyle = false;
+    if (tokens.motion.contains(spec->motionToken)) {
+        spec->motionStyle =
+            tokens.motion.value(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    } else if (
+        theme.motion().contains(spec->motionToken)) {
+        spec->motionStyle =
+            theme.motion().style(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    }
+
+    const StateLayer& stateLayer =
+        tokens.hasStateLayer
+        ? tokens.stateLayer
+        : theme.stateLayer();
+
+    spec->hoverStateLayerOpacity =
+        stateLayer.hoverOpacity;
+    spec->focusStateLayerOpacity =
+        stateLayer.focusOpacity;
+    spec->pressStateLayerOpacity =
+        stateLayer.pressOpacity;
+
+    if (!tokens.isEmpty()) {
+        readReal(
+            tokens.custom,
+            "cornerRadius",
+            &spec->cornerRadius);
+        readReal(
+            tokens.custom,
+            "hoverStateLayerOpacity",
+            &spec->hoverStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "focusStateLayerOpacity",
+            &spec->focusStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "pressStateLayerOpacity",
+            &spec->pressStateLayerOpacity);
+    }
 }
 
 void applyCardComponentTokens(

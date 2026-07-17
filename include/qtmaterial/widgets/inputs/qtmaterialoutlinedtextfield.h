@@ -194,7 +194,7 @@ protected:
     void contentChangedEvent() override;
     virtual ShellVariant shellVariant() const;
     void syncAccessibilityState() override;
-    virtual TextFieldSpec resolveTextFieldSpec(const SpecFactory& factory) const;
+    virtual TextFieldSpec resolveTextFieldSpec() const;
 
     void ensureSpecResolved() const;
     const TextFieldSpec& spec() const;

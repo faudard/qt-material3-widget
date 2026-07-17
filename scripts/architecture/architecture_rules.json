@@ -200,6 +200,24 @@
       "required_regex": [
         "\\bActionButtonSpecResolver\\b"
       ]
+    },
+    {
+      "name": "text-fields-use-dedicated-resolver",
+      "files": [
+        "src/widgets/inputs/qtmaterialoutlinedtextfield.cpp",
+        "src/widgets/inputs/qtmaterialfilledtextfield.cpp",
+        "src/widgets/inputs/private/qtmaterialtextfieldshellhelper_p.cpp"
+      ],
+      "forbidden_regex": [
+        "qtmaterial/specs/qtmaterialspecfactory\\.h",
+        "\\bSpecFactory\\b",
+        "theme\\.shapes\\s*\\(",
+        "theme\\.stateLayer\\s*\\(",
+        "const\\s+Theme\\s*&\\s*theme"
+      ],
+      "required_regex": [
+        "\\bTextFieldSpecResolver\\b"
+      ]
     }
   ],
   "text_rules": [
@@ -225,7 +243,8 @@
         "\\bapplySwitchComponentTokens\\s*\\(",
         "\\bapplyDialogComponentTokens\\s*\\(",
         "\\bapplyFabComponentTokens\\s*\\(",
-        "\\bapplyIconButtonComponentTokens\\s*\\("
+        "\\bapplyIconButtonComponentTokens\\s*\\(",
+        "\\bapplyTextFieldComponentTokens\\s*\\("
       ],
       "required_regex": [
         "ButtonSpecResolver\\s*\\(\\s*\\)\\s*\\.",
@@ -233,7 +252,8 @@
         "OverlaySurfaceSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "AppBarSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "DialogSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "ActionButtonSpecResolver\\s*\\(\\s*\\)\\s*\\."
+        "ActionButtonSpecResolver\\s*\\(\\s*\\)\\s*\\.",
+        "TextFieldSpecResolver\\s*\\(\\s*\\)\\s*\\."
       ]
     },
     {
@@ -349,6 +369,18 @@
         "\\bQFont\\s+labelFont\\s*;",
         "\\bMotionStyle\\s+motionStyle\\s*;",
         "\\bElevationStyle\\s+elevationStyle\\s*;",
+        "\\bqreal\\s+cornerRadius\\s*=",
+        "\\bqreal\\s+pressStateLayerOpacity\\s*="
+      ]
+    },
+    {
+      "name": "text-field-spec-is-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialtextfieldspec.h",
+      "required_regex": [
+        "\\bQFont\\s+inputFont\\s*;",
+        "\\bQFont\\s+labelFont\\s*;",
+        "\\bQFont\\s+supportingFont\\s*;",
+        "\\bMotionStyle\\s+motionStyle\\s*;",
         "\\bqreal\\s+cornerRadius\\s*=",
         "\\bqreal\\s+pressStateLayerOpacity\\s*="
       ]

@@ -1,6 +1,6 @@
 #include "qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h"
+#include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
 
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 
 namespace QtMaterial {
 
@@ -22,9 +22,13 @@ QtMaterialOutlinedTextField::ShellVariant QtMaterialFilledTextField::shellVarian
     return ShellVariant::Filled;
 }
 
-TextFieldSpec QtMaterialFilledTextField::resolveTextFieldSpec(const SpecFactory& factory) const
+TextFieldSpec
+QtMaterialFilledTextField::resolveTextFieldSpec() const
 {
-    return factory.filledTextFieldSpec(theme(), density());
+    return TextFieldSpecResolver()
+        .filledTextFieldSpec(
+            theme(),
+            density());
 }
 
 } // namespace QtMaterial

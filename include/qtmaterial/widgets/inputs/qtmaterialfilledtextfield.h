@@ -17,7 +17,7 @@ public:
 
 protected:
     ShellVariant shellVariant() const override;
-    TextFieldSpec resolveTextFieldSpec(const SpecFactory& factory) const override;
+    TextFieldSpec resolveTextFieldSpec() const override;
 };
 
 } // namespace QtMaterial

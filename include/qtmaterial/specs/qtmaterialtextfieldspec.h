@@ -4,6 +4,9 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include <QFont>
+#include <QtGlobal>
+#include "qtmaterial/theme/qtmaterialmotiontokens.h"
 
 namespace QtMaterial {
 
@@ -25,6 +28,21 @@ struct QTMATERIAL3_SPECS_EXPORT TextFieldSpec {
     QColor stateLayerColor;
     QColor disabledErrorTextColor;
     QColor focusRingColor;
+
+    QFont inputFont;
+    QFont labelFont;
+    QFont supportingFont;
+    MotionStyle motionStyle;
+
+    qreal cornerRadius = 4.0;
+    qreal hoverStateLayerOpacity = 0.08;
+    qreal focusStateLayerOpacity = 0.12;
+    qreal pressStateLayerOpacity = 0.12;
+
+    bool hasResolvedInputFont = false;
+    bool hasResolvedLabelFont = false;
+    bool hasResolvedSupportingFont = false;
+    bool hasResolvedMotionStyle = false;
 
     ShapeRole shapeRole = ShapeRole::ExtraSmall;
     TypeRole inputTypeRole = TypeRole::BodyLarge;

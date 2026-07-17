@@ -14,11 +14,11 @@
 #include <QtGlobal>
 
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "private/qtmaterialtextfieldshellhelper_p.h"
 #include "../../core/private/qtmaterialaccessibilityhelper_p.h"
 #include <memory>
 #include <QShowEvent>
+#include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
 
 namespace {
 
@@ -1112,9 +1112,13 @@ void QtMaterialOutlinedTextField::syncAccessibilityState()
         isEffectiveErrorVisible());
 }
 
-TextFieldSpec QtMaterialOutlinedTextField::resolveTextFieldSpec(const SpecFactory& factory) const
+TextFieldSpec
+QtMaterialOutlinedTextField::resolveTextFieldSpec() const
 {
-    return factory.outlinedTextFieldSpec(theme(), density());
+    return TextFieldSpecResolver()
+        .outlinedTextFieldSpec(
+            theme(),
+            density());
 }
 
 void QtMaterialOutlinedTextField::ensureSpecResolved() const
@@ -1123,8 +1127,7 @@ void QtMaterialOutlinedTextField::ensureSpecResolved() const
         return;
     }
 
-    SpecFactory factory;
-    d_ptr->m_spec = resolveTextFieldSpec(factory);
+    d_ptr->m_spec = resolveTextFieldSpec();
     d_ptr->m_specDirty = false;
 }
 

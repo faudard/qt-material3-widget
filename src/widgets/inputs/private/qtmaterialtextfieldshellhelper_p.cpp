@@ -95,7 +95,6 @@ static QRect placeTrailing(bool rtl,
 QtMaterialTextFieldShellHelper::Layout QtMaterialTextFieldShellHelper::layoutFor(
     const QRect& bounds,
     const TextFieldSpec& spec,
-    const Theme& theme,
     Variant variant,
     const Accessories& accessories,
     const QFont& font)
@@ -122,7 +121,11 @@ QtMaterialTextFieldShellHelper::Layout QtMaterialTextFieldShellHelper::layoutFor
                                   spec.supportingHeight - 2);
 
     layout.focusRect = layout.containerRect.adjusted(-2, -2, 2, 2);
-    layout.radius = theme.shapes().radius(spec.shapeRole);
+    layout.radius = spec.cornerRadius < 0.0
+        ? layout.containerRect.height() / 2.0
+        : qMin(
+            spec.cornerRadius,
+            layout.containerRect.height() / 2.0);
 
     if (variant == Variant::Filled) {
         layout.editorRect.adjust(0, 4, 0, 0);
@@ -300,7 +303,6 @@ QColor QtMaterialTextFieldShellHelper::effectiveSupportingColor(const TextFieldS
 
 void QtMaterialTextFieldShellHelper::paintShell(QPainter* painter,
                                                 const Layout& layout,
-                                                const Theme& theme,
                                                 const TextFieldSpec& spec,
                                                 const QtMaterialInteractionState& state,
                                                 Variant variant,
@@ -329,9 +331,10 @@ void QtMaterialTextFieldShellHelper::paintShell(QPainter* painter,
 
         if (enabled && (state.isHovered() || focused || state.isPressed())) {
             const qreal opacity = state.isPressed()
-            ? theme.stateLayer().pressOpacity
-            : (focused ? theme.stateLayer().focusOpacity
-                       : theme.stateLayer().hoverOpacity);
+            ? spec.pressStateLayerOpacity
+            : (focused
+                ? spec.focusStateLayerOpacity
+                : spec.hoverStateLayerOpacity);
 
             QtMaterialStateLayerPainter::paintRect(painter,
                                                    layout.containerRect,
@@ -354,9 +357,10 @@ void QtMaterialTextFieldShellHelper::paintShell(QPainter* painter,
 
         if (enabled && (state.isHovered() || focused || state.isPressed())) {
             const qreal opacity = state.isPressed()
-            ? theme.stateLayer().pressOpacity
-            : (focused ? theme.stateLayer().focusOpacity
-                       : theme.stateLayer().hoverOpacity);
+            ? spec.pressStateLayerOpacity
+            : (focused
+                ? spec.focusStateLayerOpacity
+                : spec.hoverStateLayerOpacity);
 
             QtMaterialStateLayerPainter::paintRect(painter,
                                                    layout.containerRect,

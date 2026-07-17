@@ -6,7 +6,6 @@
 
 #include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include "qtmaterial/specs/qtmaterialtextfieldspec.h"
-#include "qtmaterial/theme/qtmaterialtheme.h"
 
 class QFont;
 class QPainter;
@@ -75,7 +74,6 @@ public:
 
     static Layout layoutFor(const QRect& bounds,
                             const TextFieldSpec& spec,
-                            const Theme& theme,
                             Variant variant,
                             const Accessories& accessories,
                             const QFont& font);
@@ -90,7 +88,6 @@ public:
 
     static void paintShell(QPainter* painter,
                            const Layout& layout,
-                           const Theme& theme,
                            const TextFieldSpec& spec,
                            const QtMaterialInteractionState& state,
                            Variant variant,
