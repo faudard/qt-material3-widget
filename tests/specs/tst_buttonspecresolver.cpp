@@ -11,6 +11,7 @@ class tst_ButtonSpecResolver : public QObject
     Q_OBJECT
 
 private slots:
+    void variantOverridesDoNotLeak();
     void resolvesAllVariants();
     void resolvesDensity();
     void remainsCompatibleWithSpecFactory();
@@ -87,6 +88,33 @@ void tst_ButtonSpecResolver::remainsCompatibleWithSpecFactory()
         static_cast<int>(legacy.elevationRole));
 }
 
+void tst_ButtonSpecResolver::variantOverridesDoNotLeak()
+{
+    ThemeBuilder builder;
+    Theme theme = builder.buildLightFromSeed(
+        QColor(QStringLiteral("#6750A4")));
+
+    const QColor textOnlyColor(QStringLiteral("#B3261E"));
+    ComponentTokenOverride textTokens;
+    textTokens.custom.insert(
+        QStringLiteral("containerColor"),
+        textOnlyColor);
+    theme.componentOverrides().setOverride(
+        QStringLiteral("button.text"),
+        textTokens);
+
+    ButtonSpecResolver resolver;
+    const ButtonSpec text = resolver.textButtonSpec(theme);
+    const ButtonSpec filled = resolver.filledButtonSpec(theme);
+
+    QCOMPARE(text.containerColor, textOnlyColor);
+    QCOMPARE(
+        filled.containerColor,
+        theme.colorScheme().color(ColorRole::Primary));
+    QVERIFY(filled.containerColor != textOnlyColor);
+}
+
 QTEST_MAIN(tst_ButtonSpecResolver)
 
 #include "tst_buttonspecresolver.moc"
+#include "qtmaterial/theme/qtmaterialcomponenttokens.h"

@@ -52,6 +52,7 @@ public:
         Density density = Density::Default) const;
 
 private:
+    static ButtonSpec baseButtonSpec(Density density) noexcept;
     static int buttonHeightForDensity(Density density) noexcept;
 };
 

@@ -6,6 +6,17 @@
 
 namespace QtMaterial {
 
+ButtonSpec ButtonSpecResolver::baseButtonSpec(
+    Density density) noexcept
+{
+    ButtonSpec spec;
+    spec.containerColor = Qt::transparent;
+    spec.outlineColor = Qt::transparent;
+    spec.disabledOutlineColor = Qt::transparent;
+    spec.containerHeight = buttonHeightForDensity(density);
+    return spec;
+}
+
 int ButtonSpecResolver::buttonHeightForDensity(Density density) noexcept
 {
     switch (density) {
@@ -44,8 +55,7 @@ ButtonSpec ButtonSpecResolver::textButtonSpec(
     const Theme& theme,
     Density density) const
 {
-    ButtonSpec spec;
-    spec.containerColor = Qt::transparent;
+    ButtonSpec spec = baseButtonSpec(density);
     spec.labelColor = theme.colorScheme().color(ColorRole::Primary);
     spec.iconColor = spec.labelColor;
     spec.disabledContainerColor = Qt::transparent;
@@ -53,9 +63,6 @@ ButtonSpec ButtonSpecResolver::textButtonSpec(
         theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.outlineColor = Qt::transparent;
-    spec.disabledOutlineColor = Qt::transparent;
-    spec.containerHeight = buttonHeightForDensity(density);
 
     applyButtonComponentTokens(
         theme,
@@ -64,7 +71,6 @@ ButtonSpec ButtonSpecResolver::textButtonSpec(
             QStringLiteral("button.text"),
             QStringLiteral("TextButton")},
         &spec);
-
     return spec;
 }
 
@@ -72,7 +78,7 @@ ButtonSpec ButtonSpecResolver::filledButtonSpec(
     const Theme& theme,
     Density density) const
 {
-    ButtonSpec spec = textButtonSpec(theme, density);
+    ButtonSpec spec = baseButtonSpec(density);
     spec.containerColor = theme.colorScheme().color(ColorRole::Primary);
     spec.labelColor = theme.colorScheme().color(ColorRole::OnPrimary);
     spec.iconColor = spec.labelColor;
@@ -84,12 +90,6 @@ ButtonSpec ButtonSpecResolver::filledButtonSpec(
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.elevationRole = ElevationRole::Level1;
 
-    spec.restingElevationProgress = 0.0;
-    spec.hoverElevationProgress = 0.65;
-    spec.focusElevationProgress = 0.65;
-    spec.pressElevationProgress = 1.0;
-    spec.disabledElevationProgress = 0.0;
-
     applyButtonComponentTokens(
         theme,
         QStringList{
@@ -97,7 +97,6 @@ ButtonSpec ButtonSpecResolver::filledButtonSpec(
             QStringLiteral("button.filled"),
             QStringLiteral("FilledButton")},
         &spec);
-
     return spec;
 }
 
@@ -105,7 +104,7 @@ ButtonSpec ButtonSpecResolver::filledTonalButtonSpec(
     const Theme& theme,
     Density density) const
 {
-    ButtonSpec spec = textButtonSpec(theme, density);
+    ButtonSpec spec = baseButtonSpec(density);
     spec.containerColor =
         theme.colorScheme().color(ColorRole::SecondaryContainer);
     spec.labelColor =
@@ -125,7 +124,6 @@ ButtonSpec ButtonSpecResolver::filledTonalButtonSpec(
             QStringLiteral("button.filledTonal"),
             QStringLiteral("FilledTonalButton")},
         &spec);
-
     return spec;
 }
 
@@ -133,12 +131,17 @@ ButtonSpec ButtonSpecResolver::outlinedButtonSpec(
     const Theme& theme,
     Density density) const
 {
-    ButtonSpec spec = textButtonSpec(theme, density);
-    spec.containerColor = Qt::transparent;
+    ButtonSpec spec = baseButtonSpec(density);
+    spec.labelColor = theme.colorScheme().color(ColorRole::Primary);
+    spec.iconColor = spec.labelColor;
+    spec.disabledContainerColor = Qt::transparent;
+    spec.disabledLabelColor =
+        theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
+    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.outlineColor = theme.colorScheme().color(ColorRole::Outline);
     spec.disabledOutlineColor =
         theme.colorScheme().color(ColorRole::OutlineVariant);
-    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
 
     applyButtonComponentTokens(
         theme,
@@ -147,7 +150,6 @@ ButtonSpec ButtonSpecResolver::outlinedButtonSpec(
             QStringLiteral("button.outlined"),
             QStringLiteral("OutlinedButton")},
         &spec);
-
     return spec;
 }
 
@@ -155,11 +157,9 @@ ButtonSpec ButtonSpecResolver::elevatedButtonSpec(
     const Theme& theme,
     Density density) const
 {
-    ButtonSpec spec = textButtonSpec(theme, density);
+    ButtonSpec spec = baseButtonSpec(density);
     spec.containerColor =
         theme.colorScheme().color(ColorRole::SurfaceContainerLow);
-    spec.outlineColor = Qt::transparent;
-    spec.disabledOutlineColor = Qt::transparent;
     spec.labelColor = theme.colorScheme().color(ColorRole::Primary);
     spec.iconColor = spec.labelColor;
     spec.disabledContainerColor =
@@ -170,12 +170,6 @@ ButtonSpec ButtonSpecResolver::elevatedButtonSpec(
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.elevationRole = ElevationRole::Level1;
 
-    spec.restingElevationProgress = 0.45;
-    spec.hoverElevationProgress = 1.0;
-    spec.focusElevationProgress = 1.0;
-    spec.pressElevationProgress = 0.65;
-    spec.disabledElevationProgress = 0.0;
-
     applyButtonComponentTokens(
         theme,
         QStringList{
@@ -183,7 +177,6 @@ ButtonSpec ButtonSpecResolver::elevatedButtonSpec(
             QStringLiteral("button.elevated"),
             QStringLiteral("ElevatedButton")},
         &spec);
-
     return spec;
 }
 

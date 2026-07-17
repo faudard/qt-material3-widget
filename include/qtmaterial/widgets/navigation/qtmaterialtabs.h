@@ -22,6 +22,7 @@ class QStackedWidget;
 QT_END_NAMESPACE
 
 namespace QtMaterial {
+class Theme;
 
 class QtMaterialTabsPrivate;
 class QtMaterialNavigationController;
