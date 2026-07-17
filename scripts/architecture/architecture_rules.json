@@ -121,6 +121,26 @@
         "\\bensureSpecResolved\\s*\\(",
         "\\b(?:m_)?resolvedSpec\\b"
       ]
+    },
+    {
+      "name": "overlay-surfaces-use-resolved-specs",
+      "files": [
+        "src/widgets/surfaces/qtmaterialnavigationdrawer.cpp",
+        "src/widgets/surfaces/qtmaterialbottomsheet.cpp"
+      ],
+      "forbidden_regex": [
+        "qtmaterial/specs/qtmaterialspecfactory\\.h",
+        "\\bSpecFactory\\b",
+        "\\bQPalette\\b",
+        "\\bpalette\\s*\\(\\s*\\)",
+        "static\\s+QtMaterial::BottomSheetSpec\\s+spec\\s*;",
+        "theme\\s*\\(\\s*\\)\\s*\\.shapes\\s*\\(",
+        "applyMotionToken\\s*\\(\\s*(?:this->)?theme\\s*\\("
+      ],
+      "required_regex": [
+        "\\bOverlaySurfaceSpecResolver\\b",
+        "\\bensureSpecResolved\\s*\\("
+      ]
     }
   ],
   "text_rules": [
@@ -147,7 +167,8 @@
       ],
       "required_regex": [
         "ButtonSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "SelectionSpecResolver\\s*\\(\\s*\\)\\s*\\."
+        "SelectionSpecResolver\\s*\\(\\s*\\)\\s*\\.",
+        "OverlaySurfaceSpecResolver\\s*\\(\\s*\\)\\s*\\."
       ]
     },
     {
@@ -220,6 +241,16 @@
         "\\bShapeRole\\s+shapeRole\\b",
         "\\bColorRole\\s+activeColorRole\\b",
         "\\bColorRole\\s+trackColorRole\\b"
+      ]
+    },
+    {
+      "name": "overlay-surface-specs-are-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialbottomsheetspec.h",
+      "required_regex": [
+        "\\bqreal\\s+cornerRadius\\b",
+        "\\bElevationStyle\\s+elevationStyle\\b",
+        "\\bMotionStyle\\s+motionStyle\\b",
+        "\\bqreal\\s+scrimOpacity\\b"
       ]
     }
   ]

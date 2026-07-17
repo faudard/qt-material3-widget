@@ -3,6 +3,7 @@
 #include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 #include "qtmaterialcomponenttokenapplier_p.h"
 #include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
+#include "qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h"
 
 namespace QtMaterial {
 SpecFactory::SpecFactory() = default;
@@ -114,22 +115,19 @@ DialogSpec SpecFactory::dialogSpec(const Theme& theme) const
   return spec;
 }
 
-NavigationDrawerSpec SpecFactory::navigationDrawerSpec(const Theme& theme) const
+NavigationDrawerSpec
+SpecFactory::navigationDrawerSpec(
+    const Theme& theme) const
 {
-    NavigationDrawerSpec spec;
-    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
-    spec.contentColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.scrimColor = theme.colorScheme().color(ColorRole::Scrim);
-    return spec;
+    return OverlaySurfaceSpecResolver()
+        .navigationDrawerSpec(theme);
 }
 
-BottomSheetSpec SpecFactory::bottomSheetSpec(const Theme& theme) const
+BottomSheetSpec SpecFactory::bottomSheetSpec(
+    const Theme& theme) const
 {
-    BottomSheetSpec spec;
-    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    spec.contentColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.scrimColor = theme.colorScheme().color(ColorRole::Scrim);
-    return spec;
+    return OverlaySurfaceSpecResolver()
+        .bottomSheetSpec(theme);
 }
 
 BannerSpec SpecFactory::bannerSpec(

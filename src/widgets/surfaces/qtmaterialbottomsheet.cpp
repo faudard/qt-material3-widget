@@ -15,9 +15,10 @@
 #include "qtmaterial/effects/qtmaterialscrimwidget.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialbottomsheetspec.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include <memory>
 #include <QVariant>
+#include "qtmaterial/effects/qtmaterialelevationrenderer.h"
+#include "qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h"
 
 namespace QtMaterial {
 
@@ -25,7 +26,8 @@ class QtMaterialBottomSheetPrivate {
 public:
  mutable bool specDirty = true;
  mutable bool geometryDirty = true;
- mutable QtMaterial::BottomSheetSpec* specPtr = nullptr;
+ mutable QtMaterial::BottomSheetSpec spec;
+    mutable QtMaterial::BottomSheetSpec* specPtr = nullptr;
  mutable QRect cachedVisualRect;
  mutable QRect cachedContentRect;
  mutable QPainterPath cachedContainerPath;
@@ -106,7 +108,12 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
     d_ptr->container->hide();
 
     d_ptr->transition = new QtMaterialTransitionController(this);
-    d_ptr->transition->applyMotionToken(theme(), MotionToken::Medium2);
+    ensureSpecResolved();
+    if (d_ptr->specPtr
+        && d_ptr->specPtr->hasResolvedMotionStyle) {
+        d_ptr->transition->applyMotionStyle(
+            d_ptr->specPtr->motionStyle);
+    }
 
     d_ptr->scrim = new QtMaterialScrimWidget(parent ? parent : this);
     if (d_ptr->scrim) {
@@ -172,7 +179,8 @@ void QtMaterialBottomSheet::open()
     d_ptr->lastFocusBeforeOpen = QApplication::focusWidget();
     ensureSpecResolved();
     if (d_ptr->specPtr) {
-        d_ptr->transition->applyMotionToken(theme(), d_ptr->specPtr->motionToken);
+        d_ptr->transition->applyMotionStyle(
+            d_ptr->specPtr->motionStyle);
     }
 
     syncToHost();
@@ -204,7 +212,8 @@ void QtMaterialBottomSheet::close()
 
     ensureSpecResolved();
     if (d_ptr->specPtr) {
-        d_ptr->transition->applyMotionToken(theme(), d_ptr->specPtr->motionToken);
+        d_ptr->transition->applyMotionStyle(
+            d_ptr->specPtr->motionStyle);
     }
 
     setState(SheetState::Closing);
@@ -496,16 +505,27 @@ bool QtMaterialBottomSheet::eventFilter(QObject *watched, QEvent *event)
     return QtMaterialOverlaySurface::eventFilter(watched, event);
 }
 
-void QtMaterialBottomSheet::paintEvent(QPaintEvent *)
+void QtMaterialBottomSheet::paintEvent(QPaintEvent*)
 {
     ensureSpecResolved();
     ensureGeometryResolved();
-    if (!d_ptr->specPtr || d_ptr->cachedVisualRect.isEmpty()) {
+
+    if (!d_ptr->specPtr
+        || d_ptr->cachedVisualRect.isEmpty()) {
         return;
     }
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
+
+    if (d_ptr->specPtr->hasResolvedElevationStyle) {
+        QtMaterialElevationRenderer::paintPathElevation(
+            &painter,
+            d_ptr->cachedContainerPath,
+            d_ptr->specPtr->shadowColor,
+            d_ptr->specPtr->elevationStyle);
+    }
+
     painter.setPen(Qt::NoPen);
     painter.setBrush(d_ptr->specPtr->containerColor);
     painter.drawPath(d_ptr->cachedContainerPath);
@@ -631,7 +651,8 @@ void QtMaterialBottomSheet::themeChangedEvent(const QtMaterial::Theme &theme)
     d_ptr->invalidateCachedGeometry();
     ensureSpecResolved();
     if (d_ptr->specPtr) {
-        d_ptr->transition->applyMotionToken(this->theme(), d_ptr->specPtr->motionToken);
+        d_ptr->transition->applyMotionStyle(
+            d_ptr->specPtr->motionStyle);
     }
     syncContainerGeometry();
     applySheetMask();
@@ -645,10 +666,10 @@ void QtMaterialBottomSheet::ensureSpecResolved() const
         return;
     }
 
-    static QtMaterial::SpecFactory factory;
-    static QtMaterial::BottomSheetSpec spec;
-    spec = factory.bottomSheetSpec(theme());
-    d_ptr->specPtr = &spec;
+    const OverlaySurfaceSpecResolver resolver;
+    d_ptr->spec =
+        resolver.bottomSheetSpec(theme());
+    d_ptr->specPtr = &d_ptr->spec;
     d_ptr->specDirty = false;
 }
 
@@ -678,8 +699,10 @@ void QtMaterialBottomSheet::ensureGeometryResolved() const
     d_ptr->cachedVisualRect = QRect(0, y, hostRect.width(), sheetHeight);
     d_ptr->cachedContentRect = d_ptr->cachedVisualRect.adjusted(0, d_ptr->specPtr->topPadding, 0, 0);
 
-    const int specRadius = theme().shapes().radius(d_ptr->specPtr->shapeRole);
-    const qreal resolvedRadius = specRadius > 0 ? qreal(specRadius) : 28.0;
+    const qreal resolvedRadius =
+        d_ptr->specPtr->cornerRadius < 0.0
+        ? sheetHeight / 2.0
+        : d_ptr->specPtr->cornerRadius;
     d_ptr->cachedCornerRadius = qMin(resolvedRadius, sheetHeight / 2.0);
     d_ptr->cachedContainerPath = topRoundedSheetPath(QRectF(d_ptr->cachedVisualRect), d_ptr->cachedCornerRadius);
     d_ptr->geometryDirty = false;

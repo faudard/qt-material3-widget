@@ -13,6 +13,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialfabspec.cpp
     qtmaterialcardspec.cpp
     qtmaterialnavigationdrawerspec.cpp
+    qtmaterialoverlaysurfacespecresolver.cpp
     qtmaterialbottomsheetspec.cpp
     qtmaterialbannerspec.cpp
     qtmaterialappbarspec.cpp
@@ -45,6 +46,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialfabspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialcardspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationdrawerspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbottomsheetspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbannerspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialappbarspec.h

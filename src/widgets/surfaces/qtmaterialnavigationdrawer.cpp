@@ -10,6 +10,7 @@
 #include <memory>
 #include <QPainterPath>
 #include "qtmaterial/specs/qtmaterialnavigationdrawerspec.h"
+#include "qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h"
 
 namespace QtMaterial {
 
@@ -31,14 +32,6 @@ public:
 };
 
 namespace {
-
-void ensureNavigationDrawerSpecResolved(const QtMaterialNavigationDrawerPrivate* d)
-{
-    if (!d) {
-        return;
-    }
-    d->specDirty = false;
-}
 
 void ensureNavigationDrawerLayoutResolved(const QtMaterialNavigationDrawerPrivate* d)
 {
@@ -97,8 +90,13 @@ QtMaterialNavigationDrawer::~QtMaterialNavigationDrawer() = default;
 
 QSize QtMaterialNavigationDrawer::sizeHint() const
 {
-    const QWidget* host = hostWidget() ? hostWidget() : parentWidget();
-    return QSize(360, host ? host->height() : 640);
+    ensureSpecResolved();
+
+    const QWidget* host =
+        hostWidget() ? hostWidget() : parentWidget();
+    return QSize(
+        d_ptr->spec.preferredWidth,
+        host ? host->height() : 640);
 }
 
 QSize QtMaterialNavigationDrawer::minimumSizeHint() const
@@ -143,8 +141,63 @@ bool QtMaterialNavigationDrawer::isOpen() const noexcept
 
 void QtMaterialNavigationDrawer::paintEvent(QPaintEvent*)
 {
+    ensureSpecResolved();
+
+    const QRectF bounds(rect());
+    if (!bounds.isValid()) {
+        return;
+    }
+
+    const qreal radius =
+        d_ptr->spec.cornerRadius < 0.0
+        ? bounds.height() / 2.0
+        : qMin(
+            d_ptr->spec.cornerRadius,
+            bounds.height() / 2.0);
+
+    QPainterPath path;
+    if (d_ptr->edge == Edge::Left) {
+        path.moveTo(bounds.left(), bounds.top());
+        path.lineTo(bounds.right() - radius, bounds.top());
+        path.quadTo(
+            bounds.right(),
+            bounds.top(),
+            bounds.right(),
+            bounds.top() + radius);
+        path.lineTo(
+            bounds.right(),
+            bounds.bottom() - radius);
+        path.quadTo(
+            bounds.right(),
+            bounds.bottom(),
+            bounds.right() - radius,
+            bounds.bottom());
+        path.lineTo(bounds.left(), bounds.bottom());
+    } else {
+        path.moveTo(bounds.right(), bounds.top());
+        path.lineTo(bounds.left() + radius, bounds.top());
+        path.quadTo(
+            bounds.left(),
+            bounds.top(),
+            bounds.left(),
+            bounds.top() + radius);
+        path.lineTo(
+            bounds.left(),
+            bounds.bottom() - radius);
+        path.quadTo(
+            bounds.left(),
+            bounds.bottom(),
+            bounds.left() + radius,
+            bounds.bottom());
+        path.lineTo(bounds.right(), bounds.bottom());
+    }
+    path.closeSubpath();
+
     QPainter painter(this);
-    painter.fillRect(rect(), palette().window());
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(d_ptr->spec.containerColor);
+    painter.drawPath(path);
 }
 
 void QtMaterialNavigationDrawer::resizeEvent(QResizeEvent* event)
@@ -182,9 +235,14 @@ void QtMaterialNavigationDrawer::keyPressEvent(QKeyEvent* event)
     QWidget::keyPressEvent(event);
 }
 
-void QtMaterialNavigationDrawer::themeChangedEvent(const QtMaterial::Theme&)
+void QtMaterialNavigationDrawer::themeChangedEvent(
+    const QtMaterial::Theme& changedTheme)
 {
+    QtMaterialOverlaySurface::themeChangedEvent(changedTheme);
     d_ptr->specDirty = true;
+    d_ptr->layoutDirty = true;
+    ensureSpecResolved();
+    updateGeometry();
     update();
 }
 
@@ -193,5 +251,18 @@ void QtMaterialNavigationDrawer::invalidateResolvedSpec()
     d_ptr->specDirty = true;
     update();
 }
+
+void QtMaterialNavigationDrawer::ensureSpecResolved() const
+{
+    if (!d_ptr->specDirty) {
+        return;
+    }
+
+    const OverlaySurfaceSpecResolver resolver;
+    d_ptr->spec =
+        resolver.navigationDrawerSpec(theme());
+    d_ptr->specDirty = false;
+}
+
 
 } // namespace QtMaterial
