@@ -482,6 +482,42 @@
         "\\bkPadding\\b",
         "\\bkRadius\\b"
       ]
+    },
+    {
+      "name": "data-table-resolver-owns-theme-resolution",
+      "files": [
+        "include/qtmaterial/specs/qtmaterialdataspecresolver.h",
+        "src/specs/qtmaterialdataspecresolver.cpp",
+        "src/specs/qtmaterialspecfactory_data_components.cpp"
+      ],
+      "required_regex": [
+        "\\bTableSpec\\s+tableSpec\\s*\\(",
+        "DataSpecResolver\\s*::\\s*tableSpec\\s*\\(",
+        "mergedComponentOverride\\s*\\([\\s\\S]*?QStringLiteral\\s*\\(\\s*\\\"table\\\"\\s*\\)",
+        "makeTableSpec\\s*\\([\\s\\S]*?DataSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*tableSpec"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "table-uses-resolved-data-spec",
+      "files": [
+        "include/qtmaterial/widgets/data/qtmaterialtable.h",
+        "src/widgets/data/qtmaterialtable.cpp"
+      ],
+      "required_regex": [
+        "\\bconst\\s+TableSpec\\s*&\\s*resolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bensureSpecResolved\\s*\\(\\s*\\)",
+        "\\bapplyResolvedSpec\\s*\\(\\s*\\)",
+        "DataSpecResolver",
+        "effectiveThemeContextChanged",
+        "QtMaterialFocusIndicator\\s*::\\s*paintRectFocusRing",
+        "resolvedPalette\\s*\\.\\s*setColor"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
+        "\\bmakeTableSpec\\s*\\("
+      ]
     }
   ],
   "text_rules": [

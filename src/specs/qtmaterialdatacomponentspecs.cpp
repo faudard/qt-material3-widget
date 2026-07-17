@@ -47,17 +47,32 @@ DatePickerSpec defaultDatePickerSpec()
 TableSpec defaultTableSpec()
 {
     TableSpec spec;
-    spec.backgroundColor = QColor("#FFFBFE");
-    spec.foregroundColor = QColor("#1D1B20");
-    spec.headerBackgroundColor = QColor("#F7F2FA");
-    spec.headerForegroundColor = QColor("#49454F");
-    spec.gridColor = QColor("#CAC4D0");
-    spec.rowHoverColor = QColor(0x67, 0x50, 0xA4, 0x0F);
-    spec.rowSelectedColor = QColor(0x67, 0x50, 0xA4, 0x1F);
-    spec.rowSelectedTextColor = QColor("#1D1B20");
-    spec.focusRingColor = QColor("#6750A4");
-    spec.headerFont = appFont(0, QFont::DemiBold);
-    spec.bodyFont = appFont();
+    spec.backgroundColor =
+        QColor(QStringLiteral("#FFFBFE"));
+    spec.foregroundColor =
+        QColor(QStringLiteral("#1D1B20"));
+    spec.headerBackgroundColor =
+        QColor(QStringLiteral("#F7F2FA"));
+    spec.headerForegroundColor =
+        QColor(QStringLiteral("#49454F"));
+    spec.gridColor =
+        QColor(QStringLiteral("#CAC4D0"));
+    spec.rowHoverColor =
+        QColor(0x1D, 0x1B, 0x20, 0x14);
+    spec.rowPressedColor =
+        QColor(0x1D, 0x1B, 0x20, 0x1F);
+    spec.rowSelectedColor =
+        QColor(QStringLiteral("#E8DEF8"));
+    spec.rowSelectedTextColor =
+        QColor(QStringLiteral("#1D1B20"));
+    spec.disabledTextColor =
+        QColor(0x1D, 0x1B, 0x20, 0x61);
+    spec.focusRingColor =
+        QColor(QStringLiteral("#6750A4"));
+    spec.headerFont =
+        appFont(0, QFont::DemiBold);
+    spec.bodyFont =
+        appFont();
     return spec;
 }
 

@@ -37,16 +37,29 @@ struct TableSpec
     QColor headerForegroundColor;
     QColor gridColor;
     QColor rowHoverColor;
+    QColor rowPressedColor;
     QColor rowSelectedColor;
     QColor rowSelectedTextColor;
+    QColor disabledTextColor;
     QColor focusRingColor;
+
     QFont headerFont;
     QFont bodyFont;
+
+    TypeRole headerTypeRole = TypeRole::LabelLarge;
+    TypeRole bodyTypeRole = TypeRole::BodyMedium;
+    ShapeRole shapeRole = ShapeRole::Medium;
+
     int rowHeight = 48;
+    int denseRowHeight = 36;
     int headerHeight = 56;
-    int cornerRadius = 12;
     int gridWidth = 1;
     int focusRingWidth = 2;
+    int cellHorizontalPadding = 12;
+    int headerHorizontalPadding = 12;
+    int minimumColumnWidth = 72;
+
+    qreal cornerRadius = -1.0;
 };
 
 struct GridListSpec

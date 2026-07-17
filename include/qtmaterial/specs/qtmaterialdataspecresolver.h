@@ -30,6 +30,10 @@ public:
     DividerSpec dividerSpec(
         const Theme& theme) const;
 
+    TableSpec tableSpec(
+        const Theme& theme,
+        Density density = Density::Default) const;
+
     GridListSpec gridListSpec(
         const Theme& theme,
         Density density = Density::Default) const;

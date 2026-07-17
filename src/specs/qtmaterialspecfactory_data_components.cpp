@@ -2,6 +2,7 @@
 
 #include "qtmaterial/theme/qtmaterialtheme.h"
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 
 namespace QtMaterial {
 namespace {
@@ -50,34 +51,7 @@ DatePickerSpec makeDatePickerSpec(const Theme& theme)
 
 TableSpec makeTableSpec(const Theme& theme)
 {
-    TableSpec spec = defaultTableSpec();
-
-    spec.backgroundColor =
-        roleOr(theme, ColorRole::Surface, spec.backgroundColor);
-    spec.foregroundColor =
-        roleOr(theme, ColorRole::OnSurface, spec.foregroundColor);
-    spec.headerBackgroundColor =
-        roleOr(theme, ColorRole::SurfaceContainer, spec.headerBackgroundColor);
-    spec.headerForegroundColor =
-        roleOr(theme, ColorRole::OnSurfaceVariant, spec.headerForegroundColor);
-    spec.gridColor =
-        roleOr(theme, ColorRole::OutlineVariant, spec.gridColor);
-    spec.rowSelectedColor =
-        roleOr(theme, ColorRole::SecondaryContainer, spec.rowSelectedColor);
-    spec.rowSelectedTextColor =
-        roleOr(theme, ColorRole::OnSecondaryContainer, spec.rowSelectedTextColor);
-
-    spec.rowHoverColor =
-        roleOr(theme, ColorRole::Primary, spec.rowHoverColor);
-    spec.rowHoverColor.setAlpha(15);
-
-    spec.focusRingColor =
-        roleOr(theme, ColorRole::Primary, spec.focusRingColor);
-
-    spec.headerFont = theme.typography().labelLarge;
-    spec.bodyFont = theme.typography().bodyMedium;
-
-    return spec;
+    return DataSpecResolver().tableSpec(theme);
 }
 
 GridListSpec makeGridListSpec(const Theme& theme)

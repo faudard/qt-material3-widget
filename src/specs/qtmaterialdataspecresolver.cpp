@@ -695,6 +695,191 @@ void applyListOverrides(
         &spec->cornerRadius);
 }
 
+
+void applyTableOverrides(
+    const Theme& theme,
+    TableSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(
+            theme,
+            QStringList{
+                QStringLiteral("data"),
+                QStringLiteral("table"),
+                QStringLiteral("Table")
+            });
+
+    if (tokens.isEmpty()) {
+        return;
+    }
+
+    applyTokenColor(
+        &spec->backgroundColor,
+        tokens,
+        ColorRole::Surface);
+    applyTokenColor(
+        &spec->foregroundColor,
+        tokens,
+        ColorRole::OnSurface);
+    applyTokenColor(
+        &spec->headerBackgroundColor,
+        tokens,
+        ColorRole::SurfaceContainer);
+    applyTokenColor(
+        &spec->headerForegroundColor,
+        tokens,
+        ColorRole::OnSurfaceVariant);
+    applyTokenColor(
+        &spec->gridColor,
+        tokens,
+        ColorRole::OutlineVariant);
+    applyTokenColor(
+        &spec->rowSelectedColor,
+        tokens,
+        ColorRole::SecondaryContainer);
+    applyTokenColor(
+        &spec->rowSelectedTextColor,
+        tokens,
+        ColorRole::OnSecondaryContainer);
+    applyTokenColor(
+        &spec->focusRingColor,
+        tokens,
+        ColorRole::Primary);
+
+    const QVariantMap& custom =
+        tokens.custom;
+
+    readColor(
+        custom,
+        "backgroundColor",
+        &spec->backgroundColor);
+    readColor(
+        custom,
+        "foregroundColor",
+        &spec->foregroundColor);
+    readColor(
+        custom,
+        "headerBackgroundColor",
+        &spec->headerBackgroundColor);
+    readColor(
+        custom,
+        "headerForegroundColor",
+        &spec->headerForegroundColor);
+    readColor(
+        custom,
+        "gridColor",
+        &spec->gridColor);
+    readColor(
+        custom,
+        "rowHoverColor",
+        &spec->rowHoverColor);
+    readColor(
+        custom,
+        "rowPressedColor",
+        &spec->rowPressedColor);
+    readColor(
+        custom,
+        "rowSelectedColor",
+        &spec->rowSelectedColor);
+    readColor(
+        custom,
+        "rowSelectedTextColor",
+        &spec->rowSelectedTextColor);
+    readColor(
+        custom,
+        "disabledTextColor",
+        &spec->disabledTextColor);
+    readColor(
+        custom,
+        "focusRingColor",
+        &spec->focusRingColor);
+
+    spec->shapeRole =
+        overriddenShapeRole(
+            tokens,
+            spec->shapeRole);
+
+    if (
+        tokens.typography.contains(
+            spec->headerTypeRole)) {
+        spec->headerFont =
+            tokens.typography
+                .value(spec->headerTypeRole)
+                .font;
+    }
+    if (
+        tokens.typography.contains(
+            spec->bodyTypeRole)) {
+        spec->bodyFont =
+            tokens.typography
+                .value(spec->bodyTypeRole)
+                .font;
+    }
+
+    const StateLayer& stateLayer =
+        tokens.hasStateLayer
+        ? tokens.stateLayer
+        : theme.stateLayer();
+
+    if (
+        !custom.contains(
+            QStringLiteral("rowHoverColor"))) {
+        spec->rowHoverColor =
+            withOpacity(
+                spec->foregroundColor,
+                stateLayer.hoverOpacity);
+    }
+    if (
+        !custom.contains(
+            QStringLiteral("rowPressedColor"))) {
+        spec->rowPressedColor =
+            withOpacity(
+                spec->foregroundColor,
+                stateLayer.pressOpacity);
+    }
+
+    readInt(
+        custom,
+        "rowHeight",
+        &spec->rowHeight);
+    readInt(
+        custom,
+        "denseRowHeight",
+        &spec->denseRowHeight);
+    readInt(
+        custom,
+        "headerHeight",
+        &spec->headerHeight);
+    readInt(
+        custom,
+        "gridWidth",
+        &spec->gridWidth);
+    readInt(
+        custom,
+        "focusRingWidth",
+        &spec->focusRingWidth);
+    readInt(
+        custom,
+        "cellHorizontalPadding",
+        &spec->cellHorizontalPadding);
+    readInt(
+        custom,
+        "headerHorizontalPadding",
+        &spec->headerHorizontalPadding);
+    readInt(
+        custom,
+        "minimumColumnWidth",
+        &spec->minimumColumnWidth);
+    readReal(
+        custom,
+        "cornerRadius",
+        &spec->cornerRadius);
+}
+
 void applyGridListOverrides(
     const Theme& theme,
     GridListSpec* spec)
@@ -1066,6 +1251,155 @@ ListSpec DataSpecResolver::listSpec(
                 spec.shapeRole,
                 16.0,
                 spec.minimumViewportSize.height());
+    }
+
+    return spec;
+}
+
+
+TableSpec DataSpecResolver::tableSpec(
+    const Theme& theme,
+    Density density) const
+{
+    TableSpec spec =
+        defaultTableSpec();
+
+    spec.backgroundColor =
+        roleOr(
+            theme,
+            ColorRole::Surface,
+            spec.backgroundColor);
+    spec.foregroundColor =
+        roleOr(
+            theme,
+            ColorRole::OnSurface,
+            spec.foregroundColor);
+    spec.headerBackgroundColor =
+        roleOr(
+            theme,
+            ColorRole::SurfaceContainer,
+            spec.headerBackgroundColor);
+    spec.headerForegroundColor =
+        roleOr(
+            theme,
+            ColorRole::OnSurfaceVariant,
+            spec.headerForegroundColor);
+    spec.gridColor =
+        roleOr(
+            theme,
+            ColorRole::OutlineVariant,
+            spec.gridColor);
+    spec.rowSelectedColor =
+        roleOr(
+            theme,
+            ColorRole::SecondaryContainer,
+            spec.rowSelectedColor);
+    spec.rowSelectedTextColor =
+        roleOr(
+            theme,
+            ColorRole::OnSecondaryContainer,
+            spec.rowSelectedTextColor);
+    spec.focusRingColor =
+        roleOr(
+            theme,
+            ColorRole::Primary,
+            spec.focusRingColor);
+
+    const StateLayer& stateLayer =
+        theme.stateLayer();
+
+    spec.rowHoverColor =
+        withOpacity(
+            spec.foregroundColor,
+            stateLayer.hoverOpacity);
+    spec.rowPressedColor =
+        withOpacity(
+            spec.foregroundColor,
+            stateLayer.pressOpacity);
+    spec.disabledTextColor =
+        withOpacity(
+            spec.foregroundColor,
+            0.38);
+
+    const QFont fallback =
+        applicationFont();
+
+    spec.headerFont =
+        fontFor(
+            theme,
+            spec.headerTypeRole,
+            fallback);
+    spec.bodyFont =
+        fontFor(
+            theme,
+            spec.bodyTypeRole,
+            fallback);
+
+    switch (density) {
+    case Density::Compact:
+        spec.rowHeight =
+            spec.denseRowHeight;
+        spec.headerHeight = 48;
+        spec.cellHorizontalPadding = 8;
+        spec.headerHorizontalPadding = 8;
+        spec.minimumColumnWidth = 64;
+        break;
+    case Density::Comfortable:
+        spec.rowHeight = 56;
+        spec.denseRowHeight = 44;
+        spec.headerHeight = 64;
+        spec.cellHorizontalPadding = 16;
+        spec.headerHorizontalPadding = 16;
+        spec.minimumColumnWidth = 88;
+        break;
+    case Density::Default:
+    default:
+        break;
+    }
+
+    applyTableOverrides(
+        theme,
+        &spec);
+
+    spec.rowHeight =
+        qMax(24, spec.rowHeight);
+    spec.denseRowHeight =
+        qMax(24, spec.denseRowHeight);
+    spec.headerHeight =
+        qMax(24, spec.headerHeight);
+    spec.gridWidth =
+        qMax(0, spec.gridWidth);
+    spec.focusRingWidth =
+        qMax(0, spec.focusRingWidth);
+    spec.cellHorizontalPadding =
+        qMax(0, spec.cellHorizontalPadding);
+    spec.headerHorizontalPadding =
+        qMax(0, spec.headerHorizontalPadding);
+    spec.minimumColumnWidth =
+        qMax(24, spec.minimumColumnWidth);
+
+    if (spec.cornerRadius < 0.0) {
+        spec.cornerRadius =
+            radiusFor(
+                theme,
+                spec.shapeRole,
+                12.0,
+                spec.headerHeight);
+    }
+
+    if (spec.headerFont.family().isEmpty()) {
+        spec.headerFont =
+            fontFor(
+                theme,
+                spec.headerTypeRole,
+                fallback);
+    }
+    if (spec.bodyFont.family().isEmpty()) {
+        spec.bodyFont =
+            fontFor(
+                theme,
+                spec.bodyTypeRole,
+                fallback);
     }
 
     return spec;
