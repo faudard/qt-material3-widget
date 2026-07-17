@@ -207,6 +207,7 @@ private:
     void syncLineEditGeometry();
     void syncAccessoryWidgets();
 
+    void ensureCharacterCounterLabel();
     void syncCharacterCounterWidget();
     QString effectiveCharacterCounterText() const;
     void syncLineEditPalette();

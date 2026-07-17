@@ -314,6 +314,25 @@
         "&\\s*ThemeContext::themeChanged",
         "\\brefreshThemeContextConnection\\s*\\("
       ]
+    },
+    {
+      "name": "text-field-validation-and-counter-are-non-reentrant",
+      "files": [
+        "src/widgets/inputs/qtmaterialoutlinedtextfield.cpp"
+      ],
+      "forbidden_regex": [
+        "QTimer::singleShot\\s*\\([^;]*m_characterCounterEnabled",
+        "syncEffectiveErrorState\\s*\\(\\s*\\)\\s*;\\s*emitValidationStateSignalsIfChanged\\s*\\(\\s*\\)\\s*;"
+      ],
+      "required_regex": [
+        "\\bQScopedValueRollback\\b",
+        "\\bm_resolvingLayout\\b",
+        "\\bm_syncingGeometry\\b",
+        "\\bm_syncingCounter\\b",
+        "\\bm_refreshingValidation\\b",
+        "\\bensureCharacterCounterLabel\\s*\\(",
+        "reserveSupportingLine\\s*=[^;]*m_characterCounterEnabled"
+      ]
     }
   ],
   "text_rules": [
