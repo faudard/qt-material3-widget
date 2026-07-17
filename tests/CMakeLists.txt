@@ -27,6 +27,7 @@ qtm3_add_test(tst_surfacespecresolver specs/tst_surfacespecresolver.cpp qtmateri
 qtm3_add_test(tst_surfaceresolvedspec specs/tst_surfaceresolvedspec.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_progressspecresolver specs/tst_progressspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_tabsspecresolver specs/tst_tabsspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
+qtm3_add_test(tst_navigationrailspecresolver specs/tst_navigationrailspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_overlaysurfacespecresolver specs/tst_overlaysurfacespecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_appbarspecresolver specs/tst_appbarspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_dialogspecresolver specs/tst_dialogspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
@@ -168,6 +169,7 @@ qtm3_add_test(tst_tabs widgets/navigation/tst_tabs.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_tabs_themecontext widgets/navigation/tst_tabs_themecontext.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_tabs_route_robustness widgets/navigation/tst_tabs_route_robustness.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_navigationrail widgets/navigation/tst_navigationrail.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_navigationrail_resolvedspec widgets/navigation/tst_navigationrail_resolvedspec.cpp qtmaterial3_widgets)
 
 #qtm3_add_test(tst_data_component_specs specs/tst_data_component_specs.cpp qtmaterial3_specs) # TODO
 #qtm3_add_test(tst_data_components widgets/tst_data_components.cpp qtmaterial3_widgets) #TODO

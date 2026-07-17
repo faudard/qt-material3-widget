@@ -9,6 +9,7 @@
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
 #include "qtmaterial/qtmaterialglobal.h"
+#include "qtmaterial/specs/qtmaterialnavigationrailspec.h"
 
 namespace QtMaterial {
 
@@ -45,6 +46,7 @@ public:
     bool labelsVisible() const noexcept;
     void setLabelsVisible(bool visible);
 
+    const NavigationRailSpec& resolvedSpec() const;
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
@@ -56,6 +58,9 @@ signals:
     void accessibilitySummaryChanged(const QString& summary);
 
 protected:
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void leaveEvent(QEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
@@ -63,6 +68,7 @@ protected:
     void invalidateResolvedSpec() override;
 
 private:
+    void ensureSpecResolved() const;
     std::unique_ptr<QtMaterialNavigationRailPrivate> d_ptr;
 
 };

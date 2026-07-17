@@ -8,8 +8,10 @@
 #include <QtGlobal>
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include <memory>
+#include <QEvent>
+#include <QPixmap>
+#include "qtmaterial/specs/qtmaterialnavigationrailspecresolver.h"
 
 namespace QtMaterial {
 
@@ -24,44 +26,43 @@ struct QtMaterialNavigationRailPrivate
 
     QVector<Destination> m_destinations;
     int m_currentIndex = -1;
+    int m_hoveredIndex = -1;
+    int m_pressedIndex = -1;
     bool m_labelsVisible = true;
     QString m_lastAccessibilitySummary;
     mutable bool m_specDirty = true;
     mutable NavigationRailSpec m_spec;
 
-
-    void ensureSpecResolved(const Theme& theme) const
+    QRect itemRect(int index) const
     {
-        if (!m_specDirty) {
-            return;
-        }
-
-        SpecFactory factory;
-        m_spec = factory.navigationRailSpec(theme);
-        m_specDirty = false;
+        const int y =
+            m_spec.topPadding
+            + index
+                * (m_spec.itemHeight + m_spec.itemSpacing);
+        return QRect(
+            0,
+            y,
+            m_spec.railWidth,
+            m_spec.itemHeight);
     }
 
-    QRect itemRect(const Theme& theme, int index) const
+    QRect indicatorRect(const QRect& item) const
     {
-        ensureSpecResolved(theme);
-        const int y = m_spec.topPadding + index * (m_spec.itemHeight + m_spec.itemSpacing);
-        return QRect(0, y, m_spec.railWidth, m_spec.itemHeight);
+        return QRect(
+            item.center().x()
+                - m_spec.indicatorSize.width() / 2,
+            item.top() + m_spec.indicatorTopOffset,
+            m_spec.indicatorSize.width(),
+            m_spec.indicatorSize.height());
     }
 
-    QRect indicatorRect(const Theme& theme, const QRect& item) const
+    int indexAt(const QPoint& position) const
     {
-        ensureSpecResolved(theme);
-        return QRect(item.center().x() - m_spec.indicatorSize.width() / 2,
-                     item.top() + 4,
-                     m_spec.indicatorSize.width(),
-                     m_spec.indicatorSize.height());
-    }
-
-    int indexAt(const Theme& theme, const QPoint& pos) const
-    {
-        for (int i = 0; i < m_destinations.size(); ++i) {
-            if (itemRect(theme, i).contains(pos)) {
-                return i;
+        for (int index = 0;
+             index < m_destinations.size();
+             ++index) {
+            if (itemRect(index).contains(position)) {
+                return index;
             }
         }
         return -1;
@@ -69,9 +70,11 @@ struct QtMaterialNavigationRailPrivate
 
     int firstEnabledIndex() const noexcept
     {
-        for (int i = 0; i < m_destinations.size(); ++i) {
-            if (m_destinations.at(i).enabled) {
-                return i;
+        for (int index = 0;
+             index < m_destinations.size();
+             ++index) {
+            if (m_destinations.at(index).enabled) {
+                return index;
             }
         }
         return -1;
@@ -79,9 +82,11 @@ struct QtMaterialNavigationRailPrivate
 
     int lastEnabledIndex() const noexcept
     {
-        for (int i = m_destinations.size() - 1; i >= 0; --i) {
-            if (m_destinations.at(i).enabled) {
-                return i;
+        for (int index = m_destinations.size() - 1;
+             index >= 0;
+             --index) {
+            if (m_destinations.at(index).enabled) {
+                return index;
             }
         }
         return -1;
@@ -98,8 +103,12 @@ struct QtMaterialNavigationRailPrivate
             index = step > 0 ? -1 : m_destinations.size();
         }
 
-        for (int attempts = 0; attempts < m_destinations.size(); ++attempts) {
-            index = (index + step + m_destinations.size()) % m_destinations.size();
+        for (int attempts = 0;
+             attempts < m_destinations.size();
+             ++attempts) {
+            index =
+                (index + step + m_destinations.size())
+                % m_destinations.size();
             if (m_destinations.at(index).enabled) {
                 return index;
             }
@@ -111,11 +120,45 @@ struct QtMaterialNavigationRailPrivate
 void syncAccessibility(QtMaterialNavigationRail* rail, QtMaterialNavigationRailPrivate* d);
 
 namespace {
-QColor disabledColor(QColor color)
+QColor withOpacity(QColor color, qreal opacity)
 {
-    color.setAlphaF(color.alphaF() * 0.38);
+    color.setAlphaF(
+        qBound<qreal>(
+            0.0,
+            color.alphaF() * opacity,
+            1.0));
     return color;
 }
+
+void paintTintedIcon(
+    QPainter* painter,
+    const QIcon& icon,
+    const QRect& target,
+    const QColor& color,
+    bool enabled)
+{
+    if (!painter || icon.isNull() || !target.isValid()) {
+        return;
+    }
+
+    QPixmap pixmap =
+        icon.pixmap(
+            target.size(),
+            enabled ? QIcon::Normal : QIcon::Disabled,
+            QIcon::Off);
+    if (pixmap.isNull()) {
+        return;
+    }
+
+    QPainter tintPainter(&pixmap);
+    tintPainter.setCompositionMode(
+        QPainter::CompositionMode_SourceIn);
+    tintPainter.fillRect(pixmap.rect(), color);
+    tintPainter.end();
+
+    painter->drawPixmap(target, pixmap);
+}
+
 } // namespace
 
 QtMaterialNavigationRail::QtMaterialNavigationRail(QWidget* parent)
@@ -126,6 +169,8 @@ QtMaterialNavigationRail::QtMaterialNavigationRail(QWidget* parent)
     setFocusPolicy(Qt::StrongFocus);
     setAccessibleName(tr("Navigation rail"));
     syncAccessibility(this, d_ptr.get());
+
+    setMouseTracking(true);
 }
 
 QtMaterialNavigationRail::~QtMaterialNavigationRail() = default;
@@ -320,10 +365,14 @@ void QtMaterialNavigationRail::setLabelsVisible(bool visible)
     syncAccessibility(this, d_ptr.get());
 }
 
-void QtMaterialNavigationRail::themeChangedEvent(const Theme& theme)
+void QtMaterialNavigationRail::themeChangedEvent(
+    const Theme& theme)
 {
     QtMaterialControl::themeChangedEvent(theme);
     invalidateResolvedSpec();
+    ensureSpecResolved();
+    updateGeometry();
+    update();
 }
 
 void QtMaterialNavigationRail::invalidateResolvedSpec()
@@ -342,25 +391,64 @@ void syncAccessibility(QtMaterialNavigationRail* rail, QtMaterialNavigationRailP
     }
 }
 
+void QtMaterialNavigationRail::ensureSpecResolved() const
+{
+    if (!d_ptr->m_specDirty) {
+        return;
+    }
+
+    const NavigationRailSpecResolver resolver;
+    d_ptr->m_spec =
+        resolver.navigationRailSpec(theme());
+    d_ptr->m_specDirty = false;
+}
+
+const NavigationRailSpec&
+QtMaterialNavigationRail::resolvedSpec() const
+{
+    ensureSpecResolved();
+    return d_ptr->m_spec;
+}
+
 QSize QtMaterialNavigationRail::sizeHint() const
 {
-    d_ptr->ensureSpecResolved(theme());
-    const int height = d_ptr->m_spec.topPadding + d_ptr->m_spec.bottomPadding
-        + d_ptr->m_destinations.size() * d_ptr->m_spec.itemHeight
-        + qMax(0, d_ptr->m_destinations.size() - 1) * d_ptr->m_spec.itemSpacing;
-    return QSize(d_ptr->m_spec.railWidth, qMax(120, height));
+    ensureSpecResolved();
+
+    const int height =
+        d_ptr->m_spec.topPadding
+        + d_ptr->m_spec.bottomPadding
+        + d_ptr->m_destinations.size()
+            * d_ptr->m_spec.itemHeight
+        + qMax(
+            0,
+            d_ptr->m_destinations.size() - 1)
+            * d_ptr->m_spec.itemSpacing;
+
+    return QSize(
+        d_ptr->m_spec.railWidth,
+        qMax(120, height));
 }
 
 QSize QtMaterialNavigationRail::minimumSizeHint() const
 {
-    d_ptr->ensureSpecResolved(theme());
+    ensureSpecResolved();
     return QSize(d_ptr->m_spec.railWidth, 120);
 }
 
-void QtMaterialNavigationRail::mousePressEvent(QMouseEvent* event)
+void QtMaterialNavigationRail::mousePressEvent(
+    QMouseEvent* event)
 {
-    const int index = d_ptr->indexAt(theme(), event->pos());
+    if (!event) {
+        return;
+    }
+
+    ensureSpecResolved();
+    const int index =
+        d_ptr->indexAt(event->pos());
+
     if (index >= 0 && isDestinationEnabled(index)) {
+        d_ptr->m_pressedIndex = index;
+        update();
         setCurrentIndex(index);
         emit destinationActivated(index);
         event->accept();
@@ -368,6 +456,45 @@ void QtMaterialNavigationRail::mousePressEvent(QMouseEvent* event)
     }
 
     QtMaterialControl::mousePressEvent(event);
+}
+
+void QtMaterialNavigationRail::mouseMoveEvent(
+    QMouseEvent* event)
+{
+    if (!event) {
+        return;
+    }
+
+    ensureSpecResolved();
+    const int hovered =
+        d_ptr->indexAt(event->pos());
+
+    if (d_ptr->m_hoveredIndex != hovered) {
+        d_ptr->m_hoveredIndex = hovered;
+        update();
+    }
+
+    QtMaterialControl::mouseMoveEvent(event);
+}
+
+void QtMaterialNavigationRail::mouseReleaseEvent(
+    QMouseEvent* event)
+{
+    if (d_ptr->m_pressedIndex >= 0) {
+        d_ptr->m_pressedIndex = -1;
+        update();
+    }
+
+    QtMaterialControl::mouseReleaseEvent(event);
+}
+
+void QtMaterialNavigationRail::leaveEvent(
+    QEvent* event)
+{
+    d_ptr->m_hoveredIndex = -1;
+    d_ptr->m_pressedIndex = -1;
+    update();
+    QtMaterialControl::leaveEvent(event);
 }
 
 void QtMaterialNavigationRail::keyPressEvent(QKeyEvent* event)
@@ -405,71 +532,155 @@ void QtMaterialNavigationRail::keyPressEvent(QKeyEvent* event)
 
 void QtMaterialNavigationRail::paintEvent(QPaintEvent*)
 {
-    d_ptr->ensureSpecResolved(theme());
+    ensureSpecResolved();
+    const NavigationRailSpec& spec = d_ptr->m_spec;
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.fillRect(rect(), d_ptr->m_spec.containerColor);
+    painter.fillRect(rect(), spec.containerColor);
 
-    QFont labelFont = font();
-    if (theme().typography().contains(d_ptr->m_spec.labelTypeRole)) {
-        labelFont = theme().typography().style(d_ptr->m_spec.labelTypeRole).font;
+    if (spec.showDivider && spec.dividerWidth > 0) {
+        painter.fillRect(
+            QRect(
+                width() - spec.dividerWidth,
+                0,
+                spec.dividerWidth,
+                height()),
+            spec.dividerColor);
     }
-    painter.setFont(labelFont);
 
-    const qreal indicatorRadius = theme().shapes().contains(d_ptr->m_spec.indicatorShapeRole)
-        ? theme().shapes().radius(d_ptr->m_spec.indicatorShapeRole)
-        : d_ptr->m_spec.indicatorSize.height() / 2.0;
+    painter.setFont(
+        spec.hasResolvedLabelFont
+        ? spec.labelFont
+        : font());
 
-    for (int i = 0; i < d_ptr->m_destinations.size(); ++i) {
-        const QRect item = d_ptr->itemRect(theme(), i);
-        const bool selected = i == d_ptr->m_currentIndex;
-        const bool destinationEnabled = d_ptr->m_destinations.at(i).enabled && isEnabled();
+    const qreal radius =
+        spec.indicatorRadius < 0.0
+        ? spec.indicatorSize.height() / 2.0
+        : qMin(
+            spec.indicatorRadius,
+            spec.indicatorSize.height() / 2.0);
+
+    for (int index = 0;
+         index < d_ptr->m_destinations.size();
+         ++index) {
+        const QRect item = d_ptr->itemRect(index);
+        const QRect indicatorRect =
+            d_ptr->indicatorRect(item);
+        const bool selected =
+            index == d_ptr->m_currentIndex;
+        const bool enabled =
+            d_ptr->m_destinations.at(index).enabled
+            && isEnabled();
+
+        QPainterPath indicatorPath;
+        indicatorPath.addRoundedRect(
+            QRectF(indicatorRect),
+            radius,
+            radius);
 
         if (selected) {
-            QPainterPath indicator;
-            indicator.addRoundedRect(QRectF(d_ptr->indicatorRect(theme(), item)), indicatorRadius, indicatorRadius);
-            painter.fillPath(indicator, d_ptr->m_spec.indicatorColor);
+            painter.fillPath(
+                indicatorPath,
+                spec.indicatorColor);
         }
 
-        QColor iconColor = selected ? d_ptr->m_spec.selectedIconColor : d_ptr->m_spec.unselectedIconColor;
-        QColor textColor = selected ? d_ptr->m_spec.selectedLabelColor : d_ptr->m_spec.unselectedLabelColor;
-        if (!destinationEnabled) {
-            iconColor = disabledColor(iconColor);
-            textColor = disabledColor(textColor);
+        qreal stateOpacity = 0.0;
+        if (enabled) {
+            if (index == d_ptr->m_pressedIndex) {
+                stateOpacity =
+                    spec.pressStateLayerOpacity;
+            } else if (index == d_ptr->m_hoveredIndex) {
+                stateOpacity =
+                    spec.hoverStateLayerOpacity;
+            } else if (
+                hasFocus()
+                && index == d_ptr->m_currentIndex) {
+                stateOpacity =
+                    spec.focusStateLayerOpacity;
+            }
         }
 
-        const QRect iconRect(item.center().x() - d_ptr->m_spec.iconSize / 2,
-                             item.top() + 8,
-                             d_ptr->m_spec.iconSize,
-                             d_ptr->m_spec.iconSize);
+        if (stateOpacity > 0.0) {
+            painter.fillPath(
+                indicatorPath,
+                withOpacity(
+                    spec.stateLayerColor,
+                    stateOpacity));
+        }
 
-        if (!d_ptr->m_destinations.at(i).icon.isNull()) {
-            d_ptr->m_destinations.at(i).icon.paint(&painter,
-                                            iconRect,
-                                            Qt::AlignCenter,
-                                            destinationEnabled ? QIcon::Normal : QIcon::Disabled);
+        QColor iconColor =
+            selected
+            ? spec.selectedIconColor
+            : spec.unselectedIconColor;
+        QColor labelColor =
+            selected
+            ? spec.selectedLabelColor
+            : spec.unselectedLabelColor;
+
+        if (!enabled) {
+            iconColor =
+                withOpacity(
+                    iconColor,
+                    spec.disabledOpacity);
+            labelColor =
+                withOpacity(
+                    labelColor,
+                    spec.disabledOpacity);
+        }
+
+        const QRect iconRect(
+            item.center().x() - spec.iconSize / 2,
+            item.top() + spec.iconTopOffset,
+            spec.iconSize,
+            spec.iconSize);
+
+        const QIcon& icon =
+            d_ptr->m_destinations.at(index).icon;
+        if (!icon.isNull()) {
+            paintTintedIcon(
+                &painter,
+                icon,
+                iconRect,
+                iconColor,
+                enabled);
         } else {
             painter.setPen(Qt::NoPen);
             painter.setBrush(iconColor);
-            painter.drawEllipse(iconRect.adjusted(4, 4, -4, -4));
+            painter.drawEllipse(
+                iconRect.adjusted(4, 4, -4, -4));
         }
 
         if (d_ptr->m_labelsVisible) {
-            painter.setPen(textColor);
-            painter.drawText(QRect(item.left() + 4, item.top() + 36, item.width() - 8, 22),
-                             Qt::AlignCenter,
-                             d_ptr->m_destinations.at(i).text);
+            painter.setPen(labelColor);
+            painter.drawText(
+                QRect(
+                    item.left() + 4,
+                    item.top() + spec.labelTopOffset,
+                    item.width() - 8,
+                    spec.labelHeight),
+                Qt::AlignCenter,
+                d_ptr->m_destinations.at(index).text);
         }
     }
 
     if (hasFocus() && d_ptr->m_currentIndex >= 0) {
+        const QRect item =
+            d_ptr->itemRect(d_ptr->m_currentIndex);
+        const QRect indicator =
+            d_ptr->indicatorRect(item);
+
         QPainterPath focusPath;
-        const QRect focusItem = d_ptr->itemRect(theme(), d_ptr->m_currentIndex);
-        focusPath.addRoundedRect(QRectF(d_ptr->indicatorRect(theme(), focusItem)).adjusted(-2, -2, 2, 2),
-                                  indicatorRadius,
-                                  indicatorRadius);
-        QtMaterialFocusIndicator::paintPathFocusRing(&painter, focusPath, d_ptr->m_spec.focusRingColor, 2.0);
+        focusPath.addRoundedRect(
+            QRectF(indicator).adjusted(-2, -2, 2, 2),
+            radius,
+            radius);
+
+        QtMaterialFocusIndicator::paintPathFocusRing(
+            &painter,
+            focusPath,
+            spec.focusRingColor,
+            spec.focusRingWidth);
     }
 }
 

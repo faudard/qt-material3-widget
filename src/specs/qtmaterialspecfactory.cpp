@@ -10,6 +10,7 @@
 #include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
 #include "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h"
 #include "qtmaterial/specs/qtmaterialdatefieldspecresolver.h"
+#include "qtmaterial/specs/qtmaterialnavigationrailspecresolver.h"
 
 namespace QtMaterial {
 SpecFactory::SpecFactory() = default;
@@ -107,6 +108,14 @@ SwitchSpec SpecFactory::switchSpec(
 DialogSpec SpecFactory::dialogSpec(const Theme& theme) const
 {
     return DialogSpecResolver().dialogSpec(theme);
+}
+
+NavigationRailSpec
+SpecFactory::navigationRailSpec(
+    const Theme& theme) const
+{
+    return NavigationRailSpecResolver()
+        .navigationRailSpec(theme);
 }
 
 NavigationDrawerSpec

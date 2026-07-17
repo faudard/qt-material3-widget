@@ -1,4 +1,5 @@
 set(QTMATERIAL3_SPECS_SOURCES
+    qtmaterialnavigationrailspecresolver.cpp
     qtmaterialspecfactory.cpp
     qtmaterialcomponenttokenapplier.cpp
     qtmaterialbuttonspec.cpp
@@ -77,6 +78,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialchipspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsegmentedbuttonspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationrailspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationrailspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialmenuspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletespec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatacomponentspecs.h
