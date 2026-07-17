@@ -78,12 +78,12 @@ void TestQtMaterialTabs::keepsDescriptorMetadataStableAcrossInsertRemove()
     QCOMPARE(tabs.tabId(0), QStringLiteral("id.a"));
     QCOMPARE(tabs.tabId(1), QStringLiteral("id.inserted"));
     QCOMPARE(tabs.tabId(2), QStringLiteral("id.b"));
-    QCOMPARE(tabs.route(2).path(), QStringLiteral("route/b"));
+    QCOMPARE(tabs.route(2).path(), QStringLiteral("/route/b"));
 
     tabs.removeTab(1);
     QCOMPARE(tabs.tabId(0), QStringLiteral("id.a"));
     QCOMPARE(tabs.tabId(1), QStringLiteral("id.b"));
-    QCOMPARE(tabs.route(1).path(), QStringLiteral("route/b"));
+    QCOMPARE(tabs.route(1).path(), QStringLiteral("/route/b"));
     QCOMPARE(tabs.tabTestId(1), QStringLiteral("qa.b"));
 }
 
@@ -179,7 +179,7 @@ void TestQtMaterialTabs::supportsRoutesAndUrlNavigation()
 
     QVERIFY(tabs.navigateToUrl(QUrl(QStringLiteral("app://settings/security"))));
     QCOMPARE(tabs.currentIndex(), 1);
-    QCOMPARE(tabs.route(tabs.currentIndex()).path(), QStringLiteral("settings/security"));
+    QCOMPARE(tabs.route(tabs.currentIndex()).path(), QStringLiteral("/settings/security"));
 }
 
 void TestQtMaterialTabs::exposesAutomationProperties()
@@ -194,7 +194,7 @@ void TestQtMaterialTabs::exposesAutomationProperties()
     QVERIFY(page != nullptr);
     QCOMPARE(page->property("materialTabId").toString(), QStringLiteral("settings.profile"));
     QCOMPARE(page->property("materialTabTestId").toString(), QStringLiteral("settings.profile.tab"));
-    QCOMPARE(page->property("materialTabRoute").toString(), QStringLiteral("settings/profile"));
+    QCOMPARE(page->property("materialTabRoute").toString(), QStringLiteral("/settings/profile"));
     QVERIFY(tabs.findChild<QTabBar*>(QStringLiteral("qtmaterial_tabs_bar")) != nullptr);
 }
 

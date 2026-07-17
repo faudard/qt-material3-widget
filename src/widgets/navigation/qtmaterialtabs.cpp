@@ -50,6 +50,7 @@ public:
  bool syncingExternal = false;
  bool syncingNavigationModel = false;
  QString lastAccessibilitySummary;
+ QString lastEmittedCurrentRoutePath;
 };
 
 namespace {
@@ -81,39 +82,25 @@ bool usesScrollButtons(TabsOverflowMode mode)
 }
 
 
-QString qtm3TabsNavigationModelRoutePath(const QString& routePath)
+QString canonicalTabsRoutePath(
+    const QString& routePath)
 {
-    QString value = routePath.trimmed();
-
-    while (value.startsWith(QLatin1Char('/'))) {
-        value.remove(0, 1);
-    }
-
-    while (value.endsWith(QLatin1Char('/'))) {
-        value.chop(1);
-    }
-
-    if (value.isEmpty()) {
-        return QString();
-    }
-
-    return QLatin1Char('/') + value;
+    return QtMaterialRoute::normalizedPath(
+        routePath);
 }
 
-
-QString qtm3NavigationModelRoutePath(const QString& route)
+QString qtm3TabsNavigationModelRoutePath(
+    const QString& routePath)
 {
-    QString value = route.trimmed();
+    return canonicalTabsRoutePath(
+        routePath);
+}
 
-    while (value.startsWith(QLatin1Char('/'))) {
-        value.remove(0, 1);
-    }
-
-    while (value.endsWith(QLatin1Char('/'))) {
-        value.chop(1);
-    }
-
-    return value.isEmpty() ? QString() : QStringLiteral("/") + value;
+QString qtm3NavigationModelRoutePath(
+    const QString& routePath)
+{
+    return canonicalTabsRoutePath(
+        routePath);
 }
 
 } // namespace
@@ -765,16 +752,34 @@ int QtMaterialTabs::indexOfTabTestId(const QString& testId) const
     return -1;
 }
 
-void QtMaterialTabs::setRoute(int index, const QtMaterialRoute& value)
+void QtMaterialTabs::setRoute(
+    int index,
+    const QtMaterialRoute& value)
 {
-    if (TabDescriptor* d = descriptor(index)) {
-        d->route = QtMaterialRoute(normalizeRoutePath(value.path()));
-        updateAutomationMetadata(index);
-        emit routeChanged(index, d->route);
-        if (index == currentIndex()) {
-            emit currentRouteChanged(d->route);
-        }
+    TabDescriptor* tab = descriptor(index);
+    if (!tab) {
+        return;
     }
+
+    const QtMaterialRoute normalized(
+        value.path());
+
+    if (tab->route == normalized) {
+        return;
+    }
+
+    tab->route = normalized;
+    updateAutomationMetadata(index);
+
+    emit routeChanged(
+        index,
+        tab->route);
+
+    if (index == currentIndex()) {
+        emitCurrentRouteIfChanged();
+    }
+
+    syncNavigationModelFromTabs();
 }
 
 void QtMaterialTabs::setRoute(int index, const QString& routePath)
@@ -793,14 +798,28 @@ int QtMaterialTabs::indexOfRoute(const QtMaterialRoute& value) const
     return indexOfRoute(value.path());
 }
 
-int QtMaterialTabs::indexOfRoute(const QString& routePath) const
+int QtMaterialTabs::indexOfRoute(
+    const QString& routePath) const
 {
-    const QString normalized = normalizeRoutePath(routePath);
-    for (int i = 0; i < d_ptr->descriptors.size(); ++i) {
-        if (d_ptr->descriptors.at(i).route.path() == normalized) {
-            return i;
+    const QString normalized =
+        normalizeRoutePath(routePath);
+
+    if (normalized.isEmpty()) {
+        return -1;
+    }
+
+    for (
+        int index = 0;
+        index < d_ptr->descriptors.size();
+        ++index) {
+        if (
+            d_ptr->descriptors.at(index)
+                .route.path()
+            == normalized) {
+            return index;
         }
     }
+
     return -1;
 }
 
@@ -809,14 +828,31 @@ bool QtMaterialTabs::navigateTo(const QtMaterialRoute& value)
     return navigateTo(value.path());
 }
 
-bool QtMaterialTabs::navigateTo(const QString& routePath)
+bool QtMaterialTabs::navigateTo(
+    const QString& routePath)
 {
-    const int index = indexOfRoute(routePath);
+    const QString normalized =
+        normalizeRoutePath(routePath);
+
+    if (normalized.isEmpty()) {
+        return false;
+    }
+
+    const int index =
+        indexOfRoute(normalized);
+
     if (index < 0) {
         return false;
     }
+
     ensureTabLoaded(index);
-    setCurrentIndex(index);
+
+    if (currentIndex() != index) {
+        setCurrentIndex(index);
+    } else {
+        emitCurrentRouteIfChanged();
+    }
+
     return true;
 }
 
@@ -1021,6 +1057,8 @@ void QtMaterialTabs::tabInserted(int index)
         }
     }
     updateAllAutomationMetadata();
+
+    emitCurrentRouteIfChanged();
 }
 
 void QtMaterialTabs::tabRemoved(int index)
@@ -1032,19 +1070,41 @@ void QtMaterialTabs::tabRemoved(int index)
         d_ptr->descriptors.removeLast();
     }
     updateAllAutomationMetadata();
+
+    emitCurrentRouteIfChanged();
 }
 
-void QtMaterialTabs::onCurrentTabChanged(int index)
+void QtMaterialTabs::emitCurrentRouteIfChanged()
 {
-    ensureTabLoaded(index);
+    const QtMaterialRoute current =
+        route(currentIndex());
+    const QString path =
+        current.path();
+
+    if (
+        d_ptr->lastEmittedCurrentRoutePath
+        == path) {
+        return;
+    }
+
+    d_ptr->lastEmittedCurrentRoutePath =
+        path;
+    emit currentRouteChanged(current);
+}
+
+void QtMaterialTabs::onCurrentTabChanged(
+    int index)
+{
+    if (index >= 0) {
+        ensureTabLoaded(index);
+    }
 
     syncControllersFromCurrentIndex(index);
     syncNavigationModelSelectionFromCurrentTab();
-
-    if (const TabDescriptor* d = descriptor(index)) {
-        emit currentRouteChanged(d->route);
-    }
+    syncAccessibilityState();
+    emitCurrentRouteIfChanged();
 }
+
 QtMaterialTabs::TabDescriptor* QtMaterialTabs::descriptor(int index)
 {
     if (index < 0 || index >= d_ptr->descriptors.size()) {
@@ -1232,40 +1292,39 @@ void QtMaterialTabs::syncCurrentIndexFromController(int index)
     d_ptr->syncingExternal = false;
 }
 
-QString QtMaterialTabs::normalizeRoutePath(const QString& routePath)
+QString QtMaterialTabs::normalizeRoutePath(
+    const QString& routePath)
 {
-    QString value = routePath.trimmed();
-
-    while (value.startsWith(QLatin1Char('/'))) {
-        value.remove(0, 1);
-    }
-
-    while (value.endsWith(QLatin1Char('/'))) {
-        value.chop(1);
-    }
-
-    return value;
+    return QtMaterialRoute::normalizedPath(
+        routePath);
 }
 
-QString QtMaterialTabs::routePathFromUrl(const QUrl& url)
+QString QtMaterialTabs::routePathFromUrl(
+    const QUrl& url)
 {
     if (!url.isValid()) {
         return QString();
     }
 
-    QString path;
+    QString routePath;
+
     if (!url.host().isEmpty()) {
-        path += url.host();
+        routePath +=
+            QLatin1Char('/')
+            + url.host(QUrl::FullyDecoded);
     }
 
-    if (!url.path().isEmpty()) {
-        if (!path.isEmpty() && !url.path().startsWith(QLatin1Char('/'))) {
-            path += QLatin1Char('/');
-        }
-        path += url.path();
+    routePath +=
+        url.path(QUrl::FullyDecoded);
+
+    if (routePath.isEmpty()) {
+        routePath =
+            url.toString(
+                QUrl::RemoveQuery
+                | QUrl::RemoveFragment);
     }
 
-    return normalizeRoutePath(path);
+    return normalizeRoutePath(routePath);
 }
 
 QtMaterialTabsBar* QtMaterialTabs::materialTabBar() const

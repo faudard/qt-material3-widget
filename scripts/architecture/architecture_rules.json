@@ -277,6 +277,25 @@
         "\\bdragVelocityY\\b",
         "d_ptr->state\\s*!=\\s*SheetState::Open"
       ]
+    },
+    {
+      "name": "tabs-routes-are-canonical-and-signal-safe",
+      "files": [
+        "include/qtmaterial/widgets/navigation/qtmaterialtabs.h",
+        "src/widgets/navigation/qtmaterialtabs.cpp"
+      ],
+      "forbidden_regex": [
+        "emit\\s+currentRouteChanged\\s*\\(\\s*d->route\\s*\\)",
+        "return\\s+QLatin1Char\\(\\s*'/'\\s*\\)\\s*\\+\\s*value",
+        "QStringLiteral\\(\\s*\\\"/\\\"\\s*\\)\\s*\\+\\s*value"
+      ],
+      "required_regex": [
+        "\\bQtMaterialRoute::normalizedPath\\s*\\(",
+        "\\bcanonicalTabsRoutePath\\s*\\(",
+        "\\bemitCurrentRouteIfChanged\\s*\\(",
+        "\\blastEmittedCurrentRoutePath\\b",
+        "if\\s*\\(\\s*tab->route\\s*==\\s*normalized\\s*\\)"
+      ]
     }
   ],
   "text_rules": [
