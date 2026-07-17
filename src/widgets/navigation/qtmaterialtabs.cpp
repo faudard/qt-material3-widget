@@ -18,10 +18,6 @@
 #include <QVariantAnimation>
 #include <QVBoxLayout>
 
-#include "qtmaterial/theme/qtmaterialcolorscheme.h"
-#include "qtmaterial/theme/qtmaterialcolortoken.h"
-#include "qtmaterial/theme/qtmaterialstatelayer.h"
-#include "qtmaterial/theme/qtmaterialtheme.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h"
 #include <memory>
@@ -42,6 +38,11 @@ class QtMaterialTabsPrivate {
 public:
  TabsSpec authoredSpec;
  TabsSpec resolvedSpec;
+ QPointer<ThemeContext> themeContext;
+ QPointer<ThemeContext> effectiveThemeContext;
+ QMetaObject::Connection themeChangedConnection;
+ QMetaObject::Connection themeDestroyedConnection;
+ QMetaObject::Connection ancestorContextConnection;
  QVector<QtMaterialTabs::TabDescriptor> descriptors;
  QVector<QPointer<QtMaterialNavigationController>> boundControllers;
  QPointer<QStackedWidget> boundStack;
@@ -59,11 +60,6 @@ QColor withAlpha(QColor color, qreal opacity)
 {
     color.setAlphaF(qBound<qreal>(0.0, opacity, 1.0));
     return color;
-}
-
-QColor roleOrFallback(const ColorScheme& scheme, ColorRole role, const QColor& fallback)
-{
-    return scheme.contains(role) ? scheme.color(role) : fallback;
 }
 
 int resolvedHeight(const TabsSpec& spec)
@@ -514,12 +510,7 @@ QtMaterialTabs::QtMaterialTabs(const TabsSpec& spec, QWidget* parent)
     }
 
     connect(this, &QTabWidget::currentChanged, this, &QtMaterialTabs::onCurrentTabChanged);
-    connect(&ThemeManager::instance(), &ThemeManager::themeChanged, this, [this](const Theme&) {
-        if (d_ptr->authoredSpec.useGlobalTheme) {
-            refreshTheme();
-        }
-    });
-
+    refreshThemeContextConnection();
     resolveSpecFromTheme();
     applyResolvedSpec();
 }
@@ -1121,76 +1112,193 @@ const QtMaterialTabs::TabDescriptor* QtMaterialTabs::descriptor(int index) const
     return &d_ptr->descriptors[index];
 }
 
-void QtMaterialTabs::resolveSpecFromTheme()
-{
-    d_ptr->resolvedSpec = d_ptr->authoredSpec;
 
-    if (!d_ptr->authoredSpec.useGlobalTheme) {
+void QtMaterialTabs::setThemeContext(ThemeContext* context)
+{
+    if (d_ptr->themeContext.data() == context) {
         return;
     }
 
-    const QPalette palette = this->palette();
-    const Theme& theme = ThemeManager::instance().theme();
-    const ColorScheme& scheme = theme.colorScheme();
-    const StateLayer& stateLayer = theme.stateLayer();
+    d_ptr->themeContext = context;
+    const bool effectiveChanged =
+        refreshThemeContextConnection();
 
-    const QColor primary = roleOrFallback(scheme, ColorRole::Primary, palette.color(QPalette::Highlight));
-    const QColor onSurface = roleOrFallback(scheme, ColorRole::OnSurface, palette.color(QPalette::WindowText));
-    const QColor onSurfaceVariant = roleOrFallback(scheme, ColorRole::OnSurfaceVariant, palette.color(QPalette::WindowText));
-    const QColor surface = roleOrFallback(scheme, ColorRole::Surface, Qt::transparent);
-    const QColor outline = roleOrFallback(scheme, ColorRole::Outline, palette.color(QPalette::Mid));
-    const QColor error = roleOrFallback(scheme, ColorRole::Error, QColor(QStringLiteral("#B3261E")));
-    const QColor onError = roleOrFallback(scheme, ColorRole::OnError, Qt::white);
-
-    if (!d_ptr->resolvedSpec.containerColor.isValid()) {
-        d_ptr->resolvedSpec.containerColor = surface;
-    }
-    if (!d_ptr->resolvedSpec.inactiveLabelColor.isValid()) {
-        d_ptr->resolvedSpec.inactiveLabelColor = onSurfaceVariant;
-    }
-    if (!d_ptr->resolvedSpec.activeLabelColor.isValid()) {
-        d_ptr->resolvedSpec.activeLabelColor = (d_ptr->authoredSpec.variant == TabsVariant::Primary) ? primary : onSurface;
-    }
-    if (!d_ptr->resolvedSpec.activeIndicatorColor.isValid()) {
-        d_ptr->resolvedSpec.activeIndicatorColor = primary;
-    }
-    if (!d_ptr->resolvedSpec.stateLayerColor.isValid()) {
-        d_ptr->resolvedSpec.stateLayerColor = d_ptr->resolvedSpec.activeLabelColor;
-    }
-    if (!d_ptr->resolvedSpec.hoverStateLayerColor.isValid()) {
-        d_ptr->resolvedSpec.hoverStateLayerColor = stateLayer.color.isValid() ? stateLayer.color : d_ptr->resolvedSpec.stateLayerColor;
-    }
-    if (!d_ptr->resolvedSpec.focusedStateLayerColor.isValid()) {
-        d_ptr->resolvedSpec.focusedStateLayerColor = stateLayer.color.isValid() ? stateLayer.color : d_ptr->resolvedSpec.stateLayerColor;
-    }
-    if (!d_ptr->resolvedSpec.pressedStateLayerColor.isValid()) {
-        d_ptr->resolvedSpec.pressedStateLayerColor = stateLayer.color.isValid() ? stateLayer.color : d_ptr->resolvedSpec.stateLayerColor;
-    }
-    if (!d_ptr->resolvedSpec.focusRingColor.isValid()) {
-        d_ptr->resolvedSpec.focusRingColor = outline;
-    }
-    if (!d_ptr->resolvedSpec.disabledLabelColor.isValid()) {
-        d_ptr->resolvedSpec.disabledLabelColor = palette.color(QPalette::Disabled, QPalette::WindowText);
-    }
-    if (!d_ptr->resolvedSpec.badgeColor.isValid()) {
-        d_ptr->resolvedSpec.badgeColor = error;
-    }
-    if (!d_ptr->resolvedSpec.badgeLabelColor.isValid()) {
-        d_ptr->resolvedSpec.badgeLabelColor = onError;
-    }
-    if (!d_ptr->resolvedSpec.overflowButtonColor.isValid()) {
-        d_ptr->resolvedSpec.overflowButtonColor = onSurfaceVariant;
+    emit themeContextChanged(context);
+    if (effectiveChanged) {
+        emit effectiveThemeContextChanged(
+            effectiveThemeContext());
     }
 
-    if (d_ptr->resolvedSpec.hoverOpacity < 0.0) {
-        d_ptr->resolvedSpec.hoverOpacity = stateLayer.hoverOpacity;
+    if (d_ptr->authoredSpec.useGlobalTheme) {
+        refreshTheme();
     }
-    if (d_ptr->resolvedSpec.focusOpacity < 0.0) {
-        d_ptr->resolvedSpec.focusOpacity = stateLayer.focusOpacity;
+}
+
+ThemeContext* QtMaterialTabs::themeContext() const noexcept
+{
+    return d_ptr->themeContext.data();
+}
+
+ThemeContext* QtMaterialTabs::effectiveThemeContext() const noexcept
+{
+    if (d_ptr->themeContext) {
+        return d_ptr->themeContext.data();
     }
-    if (d_ptr->resolvedSpec.pressedOpacity < 0.0) {
-        d_ptr->resolvedSpec.pressedOpacity = stateLayer.pressOpacity;
+
+    QWidget* ancestor = parentWidget();
+    while (ancestor) {
+        if (auto* tabsParent =
+                qobject_cast<QtMaterialTabs*>(ancestor)) {
+            return tabsParent->effectiveThemeContext();
+        }
+        if (auto* materialParent =
+                qobject_cast<QtMaterialWidget*>(ancestor)) {
+            return materialParent->effectiveThemeContext();
+        }
+        ancestor = ancestor->parentWidget();
     }
+
+    return ThemeManager::instance().defaultContext();
+}
+
+bool QtMaterialTabs::event(QEvent* event)
+{
+    const bool handled = QTabWidget::event(event);
+
+    if (event
+        && event->type() == QEvent::ParentChange
+        && refreshThemeContextConnection()) {
+        emit effectiveThemeContextChanged(
+            effectiveThemeContext());
+
+        if (d_ptr->authoredSpec.useGlobalTheme) {
+            refreshTheme();
+        }
+    }
+
+    return handled;
+}
+
+bool QtMaterialTabs::refreshThemeContextConnection()
+{
+    ThemeContext* nextContext = effectiveThemeContext();
+    const bool effectiveChanged =
+        d_ptr->effectiveThemeContext.data() != nextContext;
+
+    QObject::disconnect(d_ptr->themeChangedConnection);
+    QObject::disconnect(d_ptr->themeDestroyedConnection);
+    QObject::disconnect(d_ptr->ancestorContextConnection);
+
+    d_ptr->effectiveThemeContext = nextContext;
+
+    if (!d_ptr->themeContext) {
+        QWidget* ancestor = parentWidget();
+        while (ancestor) {
+            if (auto* tabsParent =
+                    qobject_cast<QtMaterialTabs*>(ancestor)) {
+                d_ptr->ancestorContextConnection =
+                    QObject::connect(
+                        tabsParent,
+                        &QtMaterialTabs::
+                            effectiveThemeContextChanged,
+                        this,
+                        &QtMaterialTabs::
+                            handleInheritedThemeContextChanged);
+                break;
+            }
+
+            if (auto* materialParent =
+                    qobject_cast<QtMaterialWidget*>(ancestor)) {
+                d_ptr->ancestorContextConnection =
+                    QObject::connect(
+                        materialParent,
+                        &QtMaterialWidget::
+                            effectiveThemeContextChanged,
+                        this,
+                        &QtMaterialTabs::
+                            handleInheritedThemeContextChanged);
+                break;
+            }
+
+            ancestor = ancestor->parentWidget();
+        }
+    }
+
+    if (nextContext) {
+        d_ptr->themeChangedConnection = QObject::connect(
+            nextContext,
+            &ThemeContext::themeChanged,
+            this,
+            &QtMaterialTabs::handleThemeChanged);
+
+        const bool explicitContext =
+            nextContext == d_ptr->themeContext.data();
+        d_ptr->themeDestroyedConnection = QObject::connect(
+            nextContext,
+            &QObject::destroyed,
+            this,
+            [this, explicitContext]() {
+                handleThemeContextDestroyed(explicitContext);
+            });
+    }
+
+    return effectiveChanged;
+}
+
+void QtMaterialTabs::handleThemeChanged(const Theme&)
+{
+    if (d_ptr->authoredSpec.useGlobalTheme) {
+        refreshTheme();
+    }
+}
+
+void QtMaterialTabs::handleInheritedThemeContextChanged(
+    ThemeContext*)
+{
+    if (refreshThemeContextConnection()) {
+        emit effectiveThemeContextChanged(
+            effectiveThemeContext());
+    }
+
+    if (d_ptr->authoredSpec.useGlobalTheme) {
+        refreshTheme();
+    }
+}
+
+void QtMaterialTabs::handleThemeContextDestroyed(
+    bool explicitContext)
+{
+    if (explicitContext) {
+        d_ptr->themeContext.clear();
+        emit themeContextChanged(nullptr);
+    }
+
+    d_ptr->effectiveThemeContext.clear();
+    refreshThemeContextConnection();
+
+    emit effectiveThemeContextChanged(
+        effectiveThemeContext());
+
+    if (d_ptr->authoredSpec.useGlobalTheme) {
+        refreshTheme();
+    }
+}
+
+void QtMaterialTabs::resolveSpecFromTheme()
+{
+    if (!d_ptr->authoredSpec.useGlobalTheme) {
+        d_ptr->resolvedSpec = d_ptr->authoredSpec;
+        return;
+    }
+
+    ThemeContext* context = effectiveThemeContext();
+    Q_ASSERT(context);
+
+    const TabsSpecResolver resolver;
+    d_ptr->resolvedSpec =
+        resolver.resolve(
+            context->theme(),
+            d_ptr->authoredSpec);
 }
 
 void QtMaterialTabs::applyResolvedSpec()
@@ -1506,3 +1614,7 @@ QString QtMaterial::QtMaterialTabs::currentTabAccessibleText() const
 } // namespace QtMaterial
 
 #include "qtmaterialtabs.moc"
+#include "qtmaterial/core/qtmaterialwidget.h"
+#include "qtmaterial/specs/qtmaterialtabsspecresolver.h"
+#include "qtmaterial/theme/qtmaterialthemecontext.h"
+#include <QMetaObject>

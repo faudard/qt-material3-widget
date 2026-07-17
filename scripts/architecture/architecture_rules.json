@@ -296,6 +296,24 @@
         "\\blastEmittedCurrentRoutePath\\b",
         "if\\s*\\(\\s*tab->route\\s*==\\s*normalized\\s*\\)"
       ]
+    },
+    {
+      "name": "tabs-use-dedicated-resolver-and-theme-context",
+      "files": [
+        "src/widgets/navigation/qtmaterialtabs.cpp"
+      ],
+      "forbidden_regex": [
+        "ThemeManager::instance\\s*\\(\\s*\\)\\s*\\.\\s*theme\\s*\\(",
+        "&\\s*ThemeManager::themeChanged",
+        "\\broleOrFallback\\s*\\(",
+        "\\bSpecFactory\\b"
+      ],
+      "required_regex": [
+        "\\bTabsSpecResolver\\b",
+        "\\beffectiveThemeContext\\s*\\(",
+        "&\\s*ThemeContext::themeChanged",
+        "\\brefreshThemeContextConnection\\s*\\("
+      ]
     }
   ],
   "text_rules": [
@@ -483,6 +501,15 @@
         "\\bint\\s+actionIconSize\\s*=",
         "\\bQColor\\s+clearIconColor\\s*;",
         "\\bbool\\s+hasResolvedMotionStyle\\s*="
+      ]
+    },
+    {
+      "name": "tabs-spec-has-theme-inheritance-contract",
+      "file": "include/qtmaterial/specs/qtmaterialtabsspec.h",
+      "required_regex": [
+        "\\bbool\\s+useGlobalTheme\\s*=",
+        "\\bqreal\\s+hoverOpacity\\s*=",
+        "\\bQColor\\s+activeIndicatorColor\\s*;"
       ]
     }
   ]

@@ -28,6 +28,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialdatefieldspec.cpp
     qtmaterialdatefieldspecresolver.cpp
     qtmaterialtabsspec.cpp
+    qtmaterialtabsspecresolver.cpp
     qtmaterialsnackbarspec.cpp
     qtmaterialsurfacespecresolver.cpp
     qtmaterialprogressindicatorspec.cpp
@@ -67,6 +68,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatefieldspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatefieldspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtabsspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtabsspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspecfactory.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsnackbarspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsurfacespecresolver.h

@@ -22,6 +22,8 @@ class QStackedWidget;
 QT_END_NAMESPACE
 
 namespace QtMaterial {
+
+class ThemeContext;
 class Theme;
 
 class QtMaterialTabsPrivate;
@@ -129,6 +131,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTabs : public QTabWidget {
     Q_PROPERTY(int indicatorHeight READ indicatorHeight WRITE setIndicatorHeight NOTIFY indicatorHeightChanged)
     Q_PROPERTY(TabsOverflowMode overflowMode READ overflowMode WRITE setOverflowMode NOTIFY overflowModeChanged)
     Q_PROPERTY(bool useGlobalTheme READ usesGlobalTheme WRITE setUseGlobalTheme NOTIFY useGlobalThemeChanged)
+    Q_PROPERTY(QtMaterial::ThemeContext* themeContext READ themeContext WRITE setThemeContext NOTIFY themeContextChanged)
     Q_PROPERTY(bool wrapNavigation READ wrapNavigation WRITE setWrapNavigation NOTIFY wrapNavigationChanged)
     Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
     Q_PROPERTY(bool lazyLoading READ lazyLoading WRITE setLazyLoading NOTIFY lazyLoadingChanged)
@@ -165,6 +168,9 @@ public:
     bool usesGlobalTheme() const;
     void setUseGlobalTheme(bool enabled);
     void refreshTheme();
+    void setThemeContext(QtMaterial::ThemeContext* context);
+    QtMaterial::ThemeContext* themeContext() const noexcept;
+    QtMaterial::ThemeContext* effectiveThemeContext() const noexcept;
 
     bool wrapNavigation() const;
     void setWrapNavigation(bool enabled);
@@ -222,6 +228,8 @@ signals:
     void indicatorHeightChanged(int height);
     void overflowModeChanged(QtMaterial::TabsOverflowMode mode);
     void useGlobalThemeChanged(bool enabled);
+    void themeContextChanged(QtMaterial::ThemeContext* context);
+    void effectiveThemeContextChanged(QtMaterial::ThemeContext* context);
     void wrapNavigationChanged(bool enabled);
     void accessibilitySummaryChanged(const QString& summary);
     void lazyLoadingChanged(bool enabled);
@@ -237,6 +245,7 @@ signals:
 
 protected:
     void changeEvent(QEvent* event) override;
+    bool event(QEvent* event) override;
     void tabInserted(int index) override;
     void tabRemoved(int index) override;
 
@@ -253,6 +262,10 @@ private:
  const TabDescriptor* descriptor(int index) const;
 
  void resolveSpecFromTheme();
+    bool refreshThemeContextConnection();
+    void handleThemeChanged(const QtMaterial::Theme& theme);
+    void handleInheritedThemeContextChanged(QtMaterial::ThemeContext* context);
+    void handleThemeContextDestroyed(bool explicitContext);
 
  void applyResolvedSpec();
 
