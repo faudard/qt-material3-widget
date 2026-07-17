@@ -24,6 +24,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmateriallistitemspec.cpp
     qtmaterialdividerspec.cpp
     qtmaterialautocompletepopupspec.cpp
+    qtmaterialautocompletepopupspecresolver.cpp
     qtmaterialdatefieldspec.cpp
     qtmaterialtabsspec.cpp
     qtmaterialsnackbarspec.cpp
@@ -61,6 +62,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmateriallistitemspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdividerspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletepopupspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatefieldspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtabsspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspecfactory.h

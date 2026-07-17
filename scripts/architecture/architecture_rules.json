@@ -218,6 +218,24 @@
       "required_regex": [
         "\\bTextFieldSpecResolver\\b"
       ]
+    },
+    {
+      "name": "autocomplete-popup-uses-resolved-spec",
+      "files": [
+        "src/widgets/inputs/qtmaterialautocompletepopup.cpp"
+      ],
+      "forbidden_regex": [
+        "qtmaterial/specs/qtmaterialspecfactory\\.h",
+        "\\bSpecFactory\\b",
+        "ThemeManager::instance\\s*\\(\\s*\\)\\s*\\.\\s*theme\\s*\\(",
+        "\\bQtMaterialShadowRenderer\\b"
+      ],
+      "required_regex": [
+        "\\bAutocompletePopupSpecResolver\\b",
+        "\\beffectiveThemeContext\\s*\\(",
+        "QtMaterialElevationRenderer::paintPathElevation\\s*\\(",
+        "\\brefreshPopupVisibility\\s*\\("
+      ]
     }
   ],
   "text_rules": [
@@ -253,7 +271,8 @@
         "AppBarSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "DialogSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "ActionButtonSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "TextFieldSpecResolver\\s*\\(\\s*\\)\\s*\\."
+        "TextFieldSpecResolver\\s*\\(\\s*\\)\\s*\\.",
+        "AutocompletePopupSpecResolver\\s*\\(\\s*\\)\\s*\\."
       ]
     },
     {
@@ -382,6 +401,16 @@
         "\\bQFont\\s+supportingFont\\s*;",
         "\\bMotionStyle\\s+motionStyle\\s*;",
         "\\bqreal\\s+cornerRadius\\s*=",
+        "\\bqreal\\s+pressStateLayerOpacity\\s*="
+      ]
+    },
+    {
+      "name": "autocomplete-popup-spec-is-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialautocompletepopupspec.h",
+      "required_regex": [
+        "\\bQFont\\s+itemFont\\s*;",
+        "\\bElevationStyle\\s+elevationStyle\\s*;",
+        "\\bMotionStyle\\s+motionStyle\\s*;",
         "\\bqreal\\s+pressStateLayerOpacity\\s*="
       ]
     }

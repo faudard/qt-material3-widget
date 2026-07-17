@@ -1133,6 +1133,252 @@ void applySwitchComponentTokens(
     resolveSelectionRuntimeTokens(theme, tokens, spec);
 }
 
+void applyAutocompletePopupComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    AutocompletePopupSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->containerColor,
+            tokens,
+            ColorRole::SurfaceContainerHigh);
+        applyColor(
+            &spec->textColor,
+            tokens,
+            ColorRole::OnSurface);
+        applyColor(
+            &spec->selectedTextColor,
+            tokens,
+            ColorRole::OnSecondaryContainer);
+        applyColor(
+            &spec->supportingTextColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->selectedContainerColor,
+            tokens,
+            ColorRole::SecondaryContainer);
+        applyColor(
+            &spec->stateLayerColor,
+            tokens,
+            ColorRole::OnSurface);
+        applyColor(
+            &spec->dividerColor,
+            tokens,
+            ColorRole::OutlineVariant);
+        applyColor(
+            &spec->focusRingColor,
+            tokens,
+            ColorRole::Primary);
+
+        applyCustomColor(
+            &spec->containerColor,
+            tokens,
+            "containerColor");
+        applyCustomColor(
+            &spec->textColor,
+            tokens,
+            "textColor");
+        applyCustomColor(
+            &spec->selectedTextColor,
+            tokens,
+            "selectedTextColor");
+        applyCustomColor(
+            &spec->supportingTextColor,
+            tokens,
+            "supportingTextColor");
+        applyCustomColor(
+            &spec->selectedContainerColor,
+            tokens,
+            "selectedContainerColor");
+        applyCustomColor(
+            &spec->stateLayerColor,
+            tokens,
+            "stateLayerColor");
+        applyCustomColor(
+            &spec->dividerColor,
+            tokens,
+            "dividerColor");
+        applyCustomColor(
+            &spec->focusRingColor,
+            tokens,
+            "focusRingColor");
+        applyCustomColor(
+            &spec->shadowColor,
+            tokens,
+            "shadowColor");
+
+        applyShapeMotionElevation(
+            tokens,
+            &spec->shapeRole,
+            &spec->elevationRole,
+            &spec->motionToken);
+
+        int minWidth = spec->minPopupSize.width();
+        int minHeight = spec->minPopupSize.height();
+        int maxWidth = spec->maxPopupSize.width();
+        int maxHeight = spec->maxPopupSize.height();
+        int iconWidth = spec->itemIconSize.width();
+        int iconHeight = spec->itemIconSize.height();
+        int itemMinWidth = spec->itemMinSize.width();
+        int itemMinHeight = spec->itemMinSize.height();
+
+        readInt(tokens.custom, "minPopupWidth", &minWidth);
+        readInt(tokens.custom, "minPopupHeight", &minHeight);
+        readInt(tokens.custom, "maxPopupWidth", &maxWidth);
+        readInt(tokens.custom, "maxPopupHeight", &maxHeight);
+        readInt(tokens.custom, "itemIconWidth", &iconWidth);
+        readInt(tokens.custom, "itemIconHeight", &iconHeight);
+        readInt(tokens.custom, "itemMinWidth", &itemMinWidth);
+        readInt(tokens.custom, "itemMinHeight", &itemMinHeight);
+
+        spec->minPopupSize = QSize(minWidth, minHeight);
+        spec->maxPopupSize = QSize(maxWidth, maxHeight);
+        spec->itemIconSize = QSize(iconWidth, iconHeight);
+        spec->itemMinSize = QSize(
+            itemMinWidth,
+            itemMinHeight);
+
+        readMargins(tokens.custom, &spec->contentMargins);
+        readInt(
+            tokens.custom,
+            "itemSpacing",
+            &spec->itemSpacing);
+        readInt(
+            tokens.custom,
+            "supportingTopSpacing",
+            &spec->supportingTopSpacing);
+        readInt(
+            tokens.custom,
+            "visibleItemCount",
+            &spec->visibleItemCount);
+        readInt(
+            tokens.custom,
+            "cornerRadius",
+            &spec->cornerRadius);
+        readInt(
+            tokens.custom,
+            "focusRingWidth",
+            &spec->focusRingWidth);
+        readBool(
+            tokens.custom,
+            "showDividers",
+            &spec->showDividers);
+    }
+
+    if (!spec->shadowColor.isValid()) {
+        spec->shadowColor =
+            theme.colorScheme().color(ColorRole::Shadow);
+    }
+
+    spec->hasResolvedItemFont = false;
+    if (tokens.typography.contains(spec->itemTypeRole)) {
+        spec->itemFont =
+            tokens.typography.value(
+                spec->itemTypeRole).font;
+        spec->hasResolvedItemFont = true;
+    } else if (
+        theme.typography().contains(spec->itemTypeRole)) {
+        spec->itemFont =
+            theme.typography().style(
+                spec->itemTypeRole).font;
+        spec->hasResolvedItemFont = true;
+    }
+
+    spec->hasResolvedSupportingFont = false;
+    if (tokens.typography.contains(
+            spec->supportingTypeRole)) {
+        spec->supportingFont =
+            tokens.typography.value(
+                spec->supportingTypeRole).font;
+        spec->hasResolvedSupportingFont = true;
+    } else if (
+        theme.typography().contains(
+            spec->supportingTypeRole)) {
+        spec->supportingFont =
+            theme.typography().style(
+                spec->supportingTypeRole).font;
+        spec->hasResolvedSupportingFont = true;
+    }
+
+    if (spec->shapeRole == ShapeRole::Full) {
+        spec->cornerRadius = -1;
+    } else if (tokens.shapes.contains(
+                   spec->shapeRole)) {
+        spec->cornerRadius = qMax(
+            0,
+            tokens.shapes.value(spec->shapeRole));
+    } else if (
+        theme.shapes().contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax(
+            0,
+            theme.shapes().radius(spec->shapeRole));
+    }
+
+    spec->hasResolvedElevationStyle = false;
+    if (tokens.elevations.contains(
+            spec->elevationRole)) {
+        spec->elevationStyle =
+            tokens.elevations.value(
+                spec->elevationRole);
+        spec->hasResolvedElevationStyle = true;
+    } else if (
+        theme.elevations().contains(
+            spec->elevationRole)) {
+        spec->elevationStyle =
+            theme.elevations().style(
+                spec->elevationRole);
+        spec->hasResolvedElevationStyle = true;
+    }
+
+    spec->hasResolvedMotionStyle = false;
+    if (tokens.motion.contains(spec->motionToken)) {
+        spec->motionStyle =
+            tokens.motion.value(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    } else if (
+        theme.motion().contains(spec->motionToken)) {
+        spec->motionStyle =
+            theme.motion().style(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    }
+
+    const StateLayer& stateLayer =
+        tokens.hasStateLayer
+        ? tokens.stateLayer
+        : theme.stateLayer();
+    spec->hoverStateLayerOpacity =
+        stateLayer.hoverOpacity;
+    spec->focusStateLayerOpacity =
+        stateLayer.focusOpacity;
+    spec->pressStateLayerOpacity =
+        stateLayer.pressOpacity;
+
+    if (!tokens.isEmpty()) {
+        readReal(
+            tokens.custom,
+            "hoverStateLayerOpacity",
+            &spec->hoverStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "focusStateLayerOpacity",
+            &spec->focusStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "pressStateLayerOpacity",
+            &spec->pressStateLayerOpacity);
+    }
+}
+
+
 void applyTextFieldComponentTokens(
     const Theme& theme,
     const QStringList& componentNames,

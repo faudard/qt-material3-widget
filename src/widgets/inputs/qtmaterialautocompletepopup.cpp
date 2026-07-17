@@ -13,11 +13,14 @@
 #include <QVBoxLayout>
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
-#include "qtmaterial/effects/qtmaterialshadowrenderer.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include <memory>
+#include "qtmaterial/core/qtmaterialwidget.h"
+#include "qtmaterial/effects/qtmaterialelevationrenderer.h"
+#include "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h"
+#include "qtmaterial/theme/qtmaterialthemecontext.h"
+#include <QMetaObject>
 
 struct QtMaterialAutocompletePopupPrivate {
 
@@ -30,6 +33,13 @@ struct QtMaterialAutocompletePopupPrivate {
     QListView* m_view = nullptr;
     QString m_filterText;
     bool m_popupVisible = false;
+
+    QPointer<QtMaterial::ThemeContext> m_themeContext;
+    QPointer<QtMaterial::ThemeContext> m_effectiveThemeContext;
+    QMetaObject::Connection m_themeChangedConnection;
+    QMetaObject::Connection m_themeDestroyedConnection;
+    QMetaObject::Connection m_ancestorContextConnection;
+    bool m_effectivePopupVisible = false;
 };
 
 
@@ -72,23 +82,241 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
         emit completionActivated(index.data(Qt::DisplayRole).toString());
         setPopupVisible(false);
     });
+
+    connect(
+        d_ptr->m_filterModel,
+        &QAbstractItemModel::rowsInserted,
+        this,
+        [this]() {
+            invalidatePopupLayout();
+            refreshPopupVisibility();
+        });
+    connect(
+        d_ptr->m_filterModel,
+        &QAbstractItemModel::rowsRemoved,
+        this,
+        [this]() {
+            invalidatePopupLayout();
+            refreshPopupVisibility();
+        });
+    connect(
+        d_ptr->m_filterModel,
+        &QAbstractItemModel::modelReset,
+        this,
+        [this]() {
+            invalidatePopupLayout();
+            refreshPopupVisibility();
+        });
+    connect(
+        d_ptr->m_filterModel,
+        &QAbstractItemModel::layoutChanged,
+        this,
+        [this]() {
+            invalidatePopupLayout();
+            refreshPopupVisibility();
+        });
+
+    refreshThemeContextConnection();
+    ensureSpecResolved();
+    updatePopupPalette();
 }
 
 QtMaterialAutocompletePopup::~QtMaterialAutocompletePopup() = default;
 
-void QtMaterialAutocompletePopup::setAnchorLineEdit(QLineEdit* lineEdit)
+
+void QtMaterialAutocompletePopup::setThemeContext(
+    ThemeContext* context)
 {
-    if (d_ptr->m_anchorLineEdit == lineEdit) {
+    if (d_ptr->m_themeContext.data() == context) {
         return;
     }
+
+    d_ptr->m_themeContext = context;
+    const bool changed =
+        refreshThemeContextConnection();
+
+    emit themeContextChanged(context);
+    if (changed) {
+        emit effectiveThemeContextChanged(
+            effectiveThemeContext());
+    }
+
+    d_ptr->m_specDirty = true;
+    ensureSpecResolved();
+    updatePopupPalette();
+    updateGeometry();
+    update();
+}
+
+ThemeContext*
+QtMaterialAutocompletePopup::themeContext() const noexcept
+{
+    return d_ptr->m_themeContext.data();
+}
+
+ThemeContext*
+QtMaterialAutocompletePopup::effectiveThemeContext() const noexcept
+{
+    if (d_ptr->m_themeContext) {
+        return d_ptr->m_themeContext.data();
+    }
+
+    QWidget* ancestor =
+        d_ptr->m_anchorLineEdit
+        ? d_ptr->m_anchorLineEdit->parentWidget()
+        : parentWidget();
+
+    while (ancestor) {
+        if (auto* materialParent =
+                qobject_cast<QtMaterialWidget*>(ancestor)) {
+            return materialParent->effectiveThemeContext();
+        }
+        ancestor = ancestor->parentWidget();
+    }
+
+    return ThemeManager::instance().defaultContext();
+}
+
+const AutocompletePopupSpec&
+QtMaterialAutocompletePopup::resolvedSpec() const
+{
+    ensureSpecResolved();
+    return d_ptr->m_spec;
+}
+
+bool QtMaterialAutocompletePopup::refreshThemeContextConnection()
+{
+    ThemeContext* nextContext =
+        effectiveThemeContext();
+    const bool changed =
+        d_ptr->m_effectiveThemeContext.data() != nextContext;
+
+    QObject::disconnect(d_ptr->m_themeChangedConnection);
+    QObject::disconnect(d_ptr->m_themeDestroyedConnection);
+    QObject::disconnect(d_ptr->m_ancestorContextConnection);
+
+    d_ptr->m_effectiveThemeContext = nextContext;
+
+    if (!d_ptr->m_themeContext) {
+        QWidget* ancestor =
+            d_ptr->m_anchorLineEdit
+            ? d_ptr->m_anchorLineEdit->parentWidget()
+            : parentWidget();
+
+        while (ancestor) {
+            if (auto* materialParent =
+                    qobject_cast<QtMaterialWidget*>(
+                        ancestor)) {
+                d_ptr->m_ancestorContextConnection =
+                    QObject::connect(
+                        materialParent,
+                        &QtMaterialWidget::
+                            effectiveThemeContextChanged,
+                        this,
+                        &QtMaterialAutocompletePopup::
+                            handleInheritedThemeContextChanged);
+                break;
+            }
+            ancestor = ancestor->parentWidget();
+        }
+    }
+
+    if (nextContext) {
+        d_ptr->m_themeChangedConnection =
+            QObject::connect(
+                nextContext,
+                &ThemeContext::themeChanged,
+                this,
+                &QtMaterialAutocompletePopup::
+                    handleThemeChanged);
+
+        const bool explicitContext =
+            nextContext == d_ptr->m_themeContext.data();
+        d_ptr->m_themeDestroyedConnection =
+            QObject::connect(
+                nextContext,
+                &QObject::destroyed,
+                this,
+                [this, explicitContext]() {
+                    handleThemeContextDestroyed(
+                        explicitContext);
+                });
+    }
+
+    return changed;
+}
+
+void QtMaterialAutocompletePopup::handleThemeChanged(
+    const Theme&)
+{
+    d_ptr->m_specDirty = true;
+    ensureSpecResolved();
+    updatePopupPalette();
+    updateGeometry();
+    update();
+}
+
+void QtMaterialAutocompletePopup::
+handleInheritedThemeContextChanged(
+    ThemeContext*)
+{
+    if (refreshThemeContextConnection()) {
+        emit effectiveThemeContextChanged(
+            effectiveThemeContext());
+    }
+
+    handleThemeChanged(
+        effectiveThemeContext()->theme());
+}
+
+void QtMaterialAutocompletePopup::
+handleThemeContextDestroyed(
+    bool explicitContext)
+{
+    if (explicitContext) {
+        d_ptr->m_themeContext.clear();
+        emit themeContextChanged(nullptr);
+    }
+
+    d_ptr->m_effectiveThemeContext.clear();
+    refreshThemeContextConnection();
+    emit effectiveThemeContextChanged(
+        effectiveThemeContext());
+
+    d_ptr->m_specDirty = true;
+    ensureSpecResolved();
+    updatePopupPalette();
+    updateGeometry();
+    update();
+}
+
+void QtMaterialAutocompletePopup::setAnchorLineEdit(
+    QLineEdit* lineEdit)
+{
+    if (d_ptr->m_anchorLineEdit == lineEdit) {
+        refreshPopupVisibility();
+        return;
+    }
+
     if (d_ptr->m_anchorLineEdit) {
         d_ptr->m_anchorLineEdit->removeEventFilter(this);
     }
+
     d_ptr->m_anchorLineEdit = lineEdit;
     if (d_ptr->m_anchorLineEdit) {
         d_ptr->m_anchorLineEdit->installEventFilter(this);
     }
+
+    if (refreshThemeContextConnection()) {
+        emit effectiveThemeContextChanged(
+            effectiveThemeContext());
+    }
+
+    d_ptr->m_specDirty = true;
+    ensureSpecResolved();
+    updatePopupPalette();
     updatePopupGeometry();
+    refreshPopupVisibility();
 }
 
 QLineEdit* QtMaterialAutocompletePopup::anchorLineEdit() const noexcept
@@ -126,42 +354,39 @@ QString QtMaterialAutocompletePopup::currentCompletion() const
     return index.isValid() ? index.data(Qt::DisplayRole).toString() : QString();
 }
 
-void QtMaterialAutocompletePopup::setPopupVisible(bool visible)
+void QtMaterialAutocompletePopup::setPopupVisible(
+    bool visible)
 {
-    if (d_ptr->m_popupVisible == visible && isVisible() == visible) {
-        return;
-    }
-
     d_ptr->m_popupVisible = visible;
-
-    if (visible) {
-        updatePopupGeometry();
-        show();
-        raise();
-        activateWindow();
-    } else {
-        hide();
-    }
-
-    emit popupVisibilityChanged(d_ptr->m_popupVisible && isVisible());
+    refreshPopupVisibility();
 }
 
-bool QtMaterialAutocompletePopup::isPopupVisible() const noexcept
+bool
+QtMaterialAutocompletePopup::isPopupVisible() const noexcept
 {
-    return d_ptr->m_popupVisible && isVisible();
+    return d_ptr->m_effectivePopupVisible;
 }
 
-void QtMaterialAutocompletePopup::setFilterText(const QString& text)
+void QtMaterialAutocompletePopup::setFilterText(
+    const QString& text)
 {
     if (d_ptr->m_filterText == text) {
+        refreshPopupVisibility();
         return;
     }
+
     d_ptr->m_filterText = text;
     d_ptr->m_filterModel->setFilterFixedString(text);
+
     if (d_ptr->m_filterModel->rowCount() > 0) {
-        d_ptr->m_view->setCurrentIndex(d_ptr->m_filterModel->index(0, 0));
+        d_ptr->m_view->setCurrentIndex(
+            d_ptr->m_filterModel->index(0, 0));
+    } else {
+        clearSelection();
     }
+
     invalidatePopupLayout();
+    refreshPopupVisibility();
 }
 
 QString QtMaterialAutocompletePopup::filterText() const
@@ -219,35 +444,95 @@ QSize QtMaterialAutocompletePopup::minimumSizeHint() const
     return d_ptr->m_spec.minPopupSize;
 }
 
-bool QtMaterialAutocompletePopup::eventFilter(QObject* watched, QEvent* event)
+bool QtMaterialAutocompletePopup::eventFilter(
+    QObject* watched,
+    QEvent* event)
 {
-    if (watched == d_ptr->m_anchorLineEdit) {
+    if (watched == d_ptr->m_anchorLineEdit && event) {
         switch (event->type()) {
         case QEvent::Move:
         case QEvent::Resize:
         case QEvent::Show:
             updatePopupGeometry();
+            refreshPopupVisibility();
             break;
+
+        case QEvent::ParentChange:
+            if (refreshThemeContextConnection()) {
+                emit effectiveThemeContextChanged(
+                    effectiveThemeContext());
+            }
+            d_ptr->m_specDirty = true;
+            ensureSpecResolved();
+            updatePopupPalette();
+            refreshPopupVisibility();
+            break;
+
         case QEvent::Hide:
             setPopupVisible(false);
             break;
+
         default:
             break;
         }
     }
+
     return QWidget::eventFilter(watched, event);
 }
 
-void QtMaterialAutocompletePopup::paintEvent(QPaintEvent*)
+void QtMaterialAutocompletePopup::paintEvent(
+    QPaintEvent*)
 {
     ensureSpecResolved();
-    QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing, true);
-    const QRectF visualRect = rect().adjusted(1, 1, -1, -1);
-    const qreal radius = d_ptr->m_spec.cornerRadius;
+
+    const QRectF visualRect =
+        QRectF(rect()).adjusted(1, 1, -1, -1);
+    if (!visualRect.isValid()) {
+        return;
+    }
+
+    const qreal radius =
+        d_ptr->m_spec.cornerRadius < 0
+        ? qMin(
+            visualRect.width(),
+            visualRect.height()) / 2.0
+        : qMin<qreal>(
+            d_ptr->m_spec.cornerRadius,
+            visualRect.height() / 2.0);
+
     QPainterPath path;
-    path.addRoundedRect(visualRect, radius, radius);
-    p.fillPath(path, d_ptr->m_spec.containerColor);
+    path.addRoundedRect(
+        visualRect,
+        radius,
+        radius);
+
+    QPainter painter(this);
+    painter.setRenderHint(
+        QPainter::Antialiasing,
+        true);
+
+    if (d_ptr->m_spec.hasResolvedElevationStyle) {
+        QtMaterialElevationRenderer::
+            paintPathElevation(
+                &painter,
+                path,
+                d_ptr->m_spec.shadowColor,
+                d_ptr->m_spec.elevationStyle);
+    }
+
+    painter.fillPath(
+        path,
+        d_ptr->m_spec.containerColor);
+
+    if (hasFocus()) {
+        QPen focusPen(
+            d_ptr->m_spec.focusRingColor,
+            d_ptr->m_spec.focusRingWidth);
+        focusPen.setStyle(Qt::DashLine);
+        painter.setPen(focusPen);
+        painter.setBrush(Qt::NoBrush);
+        painter.drawPath(path);
+    }
 }
 
 void QtMaterialAutocompletePopup::resizeEvent(QResizeEvent* event)
@@ -282,13 +567,21 @@ void QtMaterialAutocompletePopup::keyPressEvent(QKeyEvent* event)
     QWidget::keyPressEvent(event);
 }
 
-void QtMaterialAutocompletePopup::ensureSpecResolved() const
+void
+QtMaterialAutocompletePopup::ensureSpecResolved() const
 {
     if (!d_ptr->m_specDirty) {
         return;
     }
-    QtMaterial::SpecFactory factory;
-    d_ptr->m_spec = factory.autocompletePopupSpec(QtMaterial::ThemeManager::instance().theme());
+
+    ThemeContext* context =
+        effectiveThemeContext();
+    Q_ASSERT(context);
+
+    const AutocompletePopupSpecResolver resolver;
+    d_ptr->m_spec =
+        resolver.autocompletePopupSpec(
+            context->theme());
     d_ptr->m_specDirty = false;
 }
 
@@ -298,37 +591,148 @@ void QtMaterialAutocompletePopup::invalidatePopupLayout()
     update();
 }
 
-void QtMaterialAutocompletePopup::updatePopupGeometry()
+void
+QtMaterialAutocompletePopup::updatePopupGeometry()
 {
     syncToAnchorGeometry();
     updatePopupPalette();
 }
 
-void QtMaterialAutocompletePopup::updatePopupPalette()
+void
+QtMaterialAutocompletePopup::updatePopupPalette()
 {
     ensureSpecResolved();
-    QPalette pal = palette();
-    pal.setColor(QPalette::Base, d_ptr->m_spec.containerColor);
-    pal.setColor(QPalette::Text, d_ptr->m_spec.textColor);
-    setPalette(pal);
+
+    QPalette paletteValue = palette();
+    paletteValue.setColor(
+        QPalette::Window,
+        d_ptr->m_spec.containerColor);
+    paletteValue.setColor(
+        QPalette::Base,
+        d_ptr->m_spec.containerColor);
+    paletteValue.setColor(
+        QPalette::Text,
+        d_ptr->m_spec.textColor);
+    paletteValue.setColor(
+        QPalette::WindowText,
+        d_ptr->m_spec.textColor);
+    paletteValue.setColor(
+        QPalette::Highlight,
+        d_ptr->m_spec.selectedContainerColor);
+    paletteValue.setColor(
+        QPalette::HighlightedText,
+        d_ptr->m_spec.selectedTextColor);
+    paletteValue.setColor(
+        QPalette::Mid,
+        d_ptr->m_spec.dividerColor);
+
+    setPalette(paletteValue);
+
     if (d_ptr->m_view) {
-        d_ptr->m_view->setPalette(pal);
+        d_ptr->m_view->setPalette(paletteValue);
+        if (d_ptr->m_spec.hasResolvedItemFont) {
+            d_ptr->m_view->setFont(d_ptr->m_spec.itemFont);
+        }
     }
 }
 
-void QtMaterialAutocompletePopup::syncToAnchorGeometry()
+void
+QtMaterialAutocompletePopup::syncToAnchorGeometry()
 {
     if (!d_ptr->m_anchorLineEdit) {
         return;
     }
+
     ensureSpecResolved();
-    const QPoint globalBottomLeft = d_ptr->m_anchorLineEdit->mapToGlobal(QPoint(0, d_ptr->m_anchorLineEdit->height()));
-    const int visibleRows = qMin(d_ptr->m_spec.visibleItemCount, qMax(1, d_ptr->m_filterModel->rowCount()));
-    const int height = qMin(d_ptr->m_spec.maxPopupSize.height(), d_ptr->m_spec.itemMinSize.height() * visibleRows);
-    setGeometry(QRect(globalBottomLeft, QSize(qMax(d_ptr->m_anchorLineEdit->width(), d_ptr->m_spec.minPopupSize.width()), height)));
+
+    const QPoint globalBottomLeft =
+        d_ptr->m_anchorLineEdit->mapToGlobal(
+            QPoint(0, d_ptr->m_anchorLineEdit->height()));
+
+    const int visibleRows = qMin(
+        d_ptr->m_spec.visibleItemCount,
+        qMax(1, d_ptr->m_filterModel->rowCount()));
+    const int contentHeight =
+        d_ptr->m_spec.itemMinSize.height()
+        * visibleRows;
+    const int popupHeight = qBound(
+        d_ptr->m_spec.minPopupSize.height(),
+        contentHeight,
+        d_ptr->m_spec.maxPopupSize.height());
+    const int popupWidth = qBound(
+        d_ptr->m_spec.minPopupSize.width(),
+        qMax(
+            d_ptr->m_anchorLineEdit->width(),
+            d_ptr->m_spec.minPopupSize.width()),
+        d_ptr->m_spec.maxPopupSize.width());
+
+    setGeometry(
+        QRect(
+            globalBottomLeft,
+            QSize(popupWidth, popupHeight)));
 }
 
 void QtMaterialAutocompletePopup::syncSelectionFromCurrentIndex()
 {
     // Selection is synchronized directly through QListView currentIndex().
 }
+
+void QtMaterialAutocompletePopup::refreshPopupVisibility()
+{
+    const bool shouldShow = d_ptr->m_popupVisible;
+
+    if (shouldShow) {
+        updatePopupGeometry();
+        show();
+        raise();
+    } else {
+        hide();
+    }
+
+    setEffectivePopupVisible(
+        shouldShow && isVisible());
+}
+
+void QtMaterialAutocompletePopup::
+setEffectivePopupVisible(bool visible)
+{
+    if (d_ptr->m_effectivePopupVisible == visible) {
+        return;
+    }
+
+    d_ptr->m_effectivePopupVisible = visible;
+    emit popupVisibilityChanged(visible);
+}
+
+bool QtMaterialAutocompletePopup::event(QEvent* event)
+{
+    const bool handled = QWidget::event(event);
+
+    if (event) {
+        switch (event->type()) {
+        case QEvent::Show:
+            setEffectivePopupVisible(true);
+            break;
+
+        case QEvent::Hide:
+            setEffectivePopupVisible(false);
+            break;
+
+        case QEvent::ParentChange:
+            if (refreshThemeContextConnection()) {
+                emit effectiveThemeContextChanged(
+                    effectiveThemeContext());
+            }
+            d_ptr->m_specDirty = true;
+            ensureSpecResolved();
+            updatePopupPalette();
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    return handled;
+}
+

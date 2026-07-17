@@ -12,6 +12,7 @@
 #include "qtmaterial/specs/qtmaterialswitchspec.h"
 #include "qtmaterial/specs/qtmaterialtextfieldspec.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
+#include "qtmaterial/specs/qtmaterialautocompletepopupspec.h"
 
 namespace QtMaterial {
 
@@ -23,6 +24,7 @@ void applyIconButtonComponentTokens(const Theme& theme, const QStringList& compo
 void applyCheckboxComponentTokens(const Theme& theme, const QStringList& componentNames, CheckboxSpec* spec);
 void applyRadioButtonComponentTokens(const Theme& theme, const QStringList& componentNames, RadioButtonSpec* spec);
 void applySwitchComponentTokens(const Theme& theme, const QStringList& componentNames, SwitchSpec* spec);
+void applyAutocompletePopupComponentTokens(const Theme& theme, const QStringList& componentNames, AutocompletePopupSpec* spec);
 void applyTextFieldComponentTokens(const Theme& theme, const QStringList& componentNames, TextFieldSpec* spec);
 void applyCardComponentTokens(const Theme& theme, const QStringList& componentNames, CardSpec* spec);
 void applyDialogComponentTokens(const Theme& theme, const QStringList& componentNames, DialogSpec* spec);

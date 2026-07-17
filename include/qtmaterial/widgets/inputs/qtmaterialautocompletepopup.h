@@ -17,14 +17,26 @@ class QKeyEvent;
 class QPaintEvent;
 class QResizeEvent;
 
-namespace QtMaterial { class Theme; }
+namespace QtMaterial {
+class ThemeContext; class Theme; }
 
 class QtMaterialAutocompletePopupPrivate;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialAutocompletePopup : public QWidget {
+    Q_PROPERTY(QtMaterial::ThemeContext* themeContext READ themeContext WRITE setThemeContext NOTIFY themeContextChanged)
     Q_OBJECT
 public:
     explicit QtMaterialAutocompletePopup(QWidget* parent = nullptr);
     ~QtMaterialAutocompletePopup() override;
+
+    void setThemeContext(
+        QtMaterial::ThemeContext* context);
+    QtMaterial::ThemeContext*
+    themeContext() const noexcept;
+    QtMaterial::ThemeContext*
+    effectiveThemeContext() const noexcept;
+
+    const QtMaterial::AutocompletePopupSpec&
+    resolvedSpec() const;
 
     void setAnchorLineEdit(QLineEdit* lineEdit);
     QLineEdit* anchorLineEdit() const noexcept;
@@ -50,16 +62,30 @@ public:
     QSize minimumSizeHint() const override;
 
 signals:
+    void themeContextChanged(
+        QtMaterial::ThemeContext* context);
+    void effectiveThemeContextChanged(
+        QtMaterial::ThemeContext* context);
     void completionActivated(const QString& text);
     void popupVisibilityChanged(bool visible);
 
 protected:
+    bool event(QEvent* event) override;
     bool eventFilter(QObject* watched, QEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
+    bool refreshThemeContextConnection();
+    void handleThemeChanged(
+        const QtMaterial::Theme& theme);
+    void handleInheritedThemeContextChanged(
+        QtMaterial::ThemeContext* context);
+    void handleThemeContextDestroyed(
+        bool explicitContext);
+    void refreshPopupVisibility();
+    void setEffectivePopupVisible(bool visible);
     void ensureSpecResolved() const;
     void invalidatePopupLayout();
     void updatePopupGeometry();

@@ -5,6 +5,10 @@
 #include <QSize>
 
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include <QFont>
+#include <QtGlobal>
+#include "qtmaterial/theme/qtmaterialelevationscale.h"
+#include "qtmaterial/theme/qtmaterialmotiontokens.h"
 
 namespace QtMaterial {
 
@@ -19,6 +23,20 @@ struct AutocompletePopupSpec
     QColor dividerColor;
     QColor focusRingColor;
     QColor shadowColor;
+
+    QFont itemFont;
+    QFont supportingFont;
+    ElevationStyle elevationStyle;
+    MotionStyle motionStyle;
+
+    qreal hoverStateLayerOpacity = 0.08;
+    qreal focusStateLayerOpacity = 0.12;
+    qreal pressStateLayerOpacity = 0.12;
+
+    bool hasResolvedItemFont = false;
+    bool hasResolvedSupportingFont = false;
+    bool hasResolvedElevationStyle = false;
+    bool hasResolvedMotionStyle = false;
 
     ShapeRole shapeRole = ShapeRole::Large;
     ElevationRole elevationRole = ElevationRole::Level2;

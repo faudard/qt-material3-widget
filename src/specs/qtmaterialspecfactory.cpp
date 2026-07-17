@@ -8,6 +8,7 @@
 #include "qtmaterial/specs/qtmaterialdialogspecresolver.h"
 #include "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h"
 #include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
+#include "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h"
 
 namespace QtMaterial {
 SpecFactory::SpecFactory() = default;
@@ -164,13 +165,12 @@ SpecFactory::filledTextFieldSpec(
         .filledTextFieldSpec(theme, density);
 }
 
-AutocompletePopupSpec SpecFactory::autocompletePopupSpec(const Theme& theme) const
+AutocompletePopupSpec
+SpecFactory::autocompletePopupSpec(
+    const Theme& theme) const
 {
-    AutocompletePopupSpec spec;
-    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    spec.textColor = theme.colorScheme().color(ColorRole::OnSurface);
-    // spec.hoverColor = theme.colorScheme().color(ColorRole::SurfaceVariant);
-    return spec;
+    return AutocompletePopupSpecResolver()
+        .autocompletePopupSpec(theme);
 }
 
 DateFieldSpec SpecFactory::dateFieldSpec(const Theme& theme) const

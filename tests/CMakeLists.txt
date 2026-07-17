@@ -33,6 +33,7 @@ qtm3_add_test(tst_buttonspecresolver specs/tst_buttonspecresolver.cpp qtmaterial
 qtm3_add_test(tst_buttonresolvedspec specs/tst_buttonresolvedspec.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_actionbuttonspecresolver specs/tst_actionbuttonspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_textfieldspecresolver specs/tst_textfieldspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
+qtm3_add_test(tst_autocompletepopupspecresolver specs/tst_autocompletepopupspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_buttonelevationspec specs/tst_buttonelevationspec.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_selectionspecresolver specs/tst_selectionspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_selectionresolvedspec specs/tst_selectionresolvedspec.cpp qtmaterial3_theme qtmaterial3_specs)
@@ -122,6 +123,7 @@ qtm3_add_textfieldshellhelper_private_test(
 )
 
 qtm3_add_test(tst_autocompletepopup widgets/inputs/tst_autocompletepopup.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_autocompletepopup_themecontext widgets/inputs/tst_autocompletepopup_themecontext.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_datefield widgets/inputs/tst_datefield.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_listitem widgets/data/tst_listitem.cpp qtmaterial3_widgets)
