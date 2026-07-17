@@ -2,34 +2,12 @@
 #include "qtmaterial/theme/qtmaterialcolorscheme.h"
 
 #include <QEvent>
+#include "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h"
 
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 
 namespace QtMaterial {
 
 namespace {
-
-ButtonSpec fabToButtonSpec(const FabSpec& fab)
-{
-    ButtonSpec spec;
-    spec.containerColor = fab.containerColor;
-    spec.labelColor = fab.iconColor;
-    spec.iconColor = fab.iconColor;
-    spec.disabledContainerColor = fab.disabledContainerColor;
-    spec.disabledLabelColor = fab.disabledIconColor;
-    spec.stateLayerColor = fab.stateLayerColor;
-    spec.focusRingColor = fab.iconColor;
-    spec.shapeRole = fab.shapeRole;
-    spec.elevationRole = fab.elevationRole;
-    spec.motionToken = fab.motionToken;
-    spec.touchTarget = fab.touchTarget;
-    spec.containerHeight = fab.containerDiameter;
-    spec.horizontalPadding = 0;
-    spec.iconSize = fab.iconSize;
-    spec.iconSpacing = 0;
-    return spec;
-}
-
 
 void applyFabVariant(ButtonSpec& spec, const Theme& theme, QtMaterialFabVariant variant)
 {
@@ -243,10 +221,9 @@ void QtMaterialFab::changeEvent(QEvent* event)
 
 ButtonSpec QtMaterialFab::resolveButtonSpec() const
 {
-    SpecFactory factory;
-    ButtonSpec spec = fabToButtonSpec(factory.fabSpec(theme(), density()));
-    applyFabVariant(spec, theme(), m_fabVariant);
-    return spec;
+    return ActionButtonSpecResolver().fabButtonSpec(
+        theme(),
+        density());
 }
 
 QSize QtMaterialFab::sizeHint() const

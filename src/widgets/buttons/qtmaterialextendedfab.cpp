@@ -1,38 +1,33 @@
 #include "qtmaterial/widgets/buttons/qtmaterialextendedfab.h"
-#include "qtmaterial/theme/qtmaterialcolorscheme.h"
 
 #include <QEvent>
 #include <QFontMetrics>
+#include "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h"
 
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 
 namespace QtMaterial {
 
 namespace {
+FabColorVariant resolverVariant(
+    QtMaterialFabVariant variant)
+{
+    switch (variant) {
+    case QtMaterialFabVariant::Primary:
+        return FabColorVariant::Primary;
+    case QtMaterialFabVariant::Secondary:
+        return FabColorVariant::Secondary;
+    case QtMaterialFabVariant::Tertiary:
+        return FabColorVariant::Tertiary;
+    case QtMaterialFabVariant::Surface:
+        return FabColorVariant::Surface;
+    }
+
+    return FabColorVariant::Primary;
+}
+
 
 constexpr const char* kAutoAccessibleNameProperty = "_qtm3_auto_accessible_name";
 constexpr const char* kAutoAccessibleDescriptionProperty = "_qtm3_auto_accessible_description";
-
-ButtonSpec extendedFabToButtonSpec(const FabSpec& fab)
-{
-    ButtonSpec spec;
-    spec.containerColor = fab.containerColor;
-    spec.labelColor = fab.iconColor;
-    spec.iconColor = fab.iconColor;
-    spec.disabledContainerColor = fab.disabledContainerColor;
-    spec.disabledLabelColor = fab.disabledIconColor;
-    spec.stateLayerColor = fab.stateLayerColor;
-    spec.focusRingColor = fab.iconColor;
-    spec.shapeRole = fab.shapeRole;
-    spec.elevationRole = fab.elevationRole;
-    spec.motionToken = fab.motionToken;
-    spec.touchTarget = fab.touchTarget;
-    spec.containerHeight = fab.containerDiameter;
-    spec.horizontalPadding = 20;
-    spec.iconSize = fab.iconSize;
-    spec.iconSpacing = 12;
-    return spec;
-}
 
 QString normalizedButtonText(QString value)
 {
@@ -41,37 +36,6 @@ QString normalizedButtonText(QString value)
     return value;
 }
 
-
-void applyFabVariant(ButtonSpec& spec, const Theme& theme, QtMaterialFabVariant variant)
-{
-    const ColorScheme& colors = theme.colorScheme();
-
-    switch (variant) {
-    case QtMaterialFabVariant::Primary:
-        break;
-    case QtMaterialFabVariant::Secondary:
-        spec.containerColor = colors.color(ColorRole::SecondaryContainer);
-        spec.labelColor = colors.color(ColorRole::OnSecondaryContainer);
-        spec.iconColor = colors.color(ColorRole::OnSecondaryContainer);
-        spec.stateLayerColor = colors.color(ColorRole::OnSecondaryContainer);
-        spec.focusRingColor = colors.color(ColorRole::Secondary);
-        break;
-    case QtMaterialFabVariant::Tertiary:
-        spec.containerColor = colors.color(ColorRole::TertiaryContainer);
-        spec.labelColor = colors.color(ColorRole::OnTertiaryContainer);
-        spec.iconColor = colors.color(ColorRole::OnTertiaryContainer);
-        spec.stateLayerColor = colors.color(ColorRole::OnTertiaryContainer);
-        spec.focusRingColor = colors.color(ColorRole::Tertiary);
-        break;
-    case QtMaterialFabVariant::Surface:
-        spec.containerColor = colors.color(ColorRole::SurfaceContainerHigh);
-        spec.labelColor = colors.color(ColorRole::Primary);
-        spec.iconColor = colors.color(ColorRole::Primary);
-        spec.stateLayerColor = colors.color(ColorRole::Primary);
-        spec.focusRingColor = colors.color(ColorRole::Primary);
-        break;
-    }
-}
 
 } // namespace
 
@@ -246,16 +210,20 @@ void QtMaterialExtendedFab::changeEvent(QEvent* event)
 
 ButtonSpec QtMaterialExtendedFab::resolveButtonSpec() const
 {
-    SpecFactory factory;
-    ButtonSpec spec = extendedFabToButtonSpec(factory.extendedFabSpec(theme(), density()));
-    applyFabVariant(spec, theme(), m_fabVariant);
-    return spec;
+    return ActionButtonSpecResolver()
+        .extendedFabButtonSpec(
+            theme(),
+            density(),
+            resolverVariant(m_fabVariant));
 }
 
 QSize QtMaterialExtendedFab::sizeHint() const
 {
     const ButtonSpec spec = resolveButtonSpec();
-    const QFontMetrics fm(font());
+    const QFont labelFont = spec.hasResolvedLabelFont
+        ? spec.labelFont
+        : font();
+    const QFontMetrics fm(labelFont);
     const int textWidth = text().isEmpty() ? 0 : fm.horizontalAdvance(text());
     const int iconWidth = icon().isNull() ? 0 : spec.iconSize;
     const int spacing = (!icon().isNull() && !text().isEmpty()) ? spec.iconSpacing : 0;

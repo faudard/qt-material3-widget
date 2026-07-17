@@ -15,8 +15,8 @@
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "private/qtmaterialbuttonmotionhelper_p.h"
+#include "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h"
 
 namespace QtMaterial {
 
@@ -38,55 +38,34 @@ struct QtMaterialIconButtonPrivate
 
 namespace {
 
-QColor blendColor(const QColor& a, const QColor& b, qreal t)
-{
-    QColor out;
-    out.setRedF(a.redF() + (b.redF() - a.redF()) * t);
-    out.setGreenF(a.greenF() + (b.greenF() - a.greenF()) * t);
-    out.setBlueF(a.blueF() + (b.blueF() - a.blueF()) * t);
-    out.setAlphaF(a.alphaF() + (b.alphaF() - a.alphaF()) * t);
-    return out;
-}
-
 qreal radiusForSpec(const IconButtonSpec& spec)
 {
-    switch (spec.shapeRole) {
-    case ShapeRole::Full:
+    if (spec.cornerRadius < 0.0) {
         return spec.containerSize / 2.0;
-    case ShapeRole::ExtraLarge:
-        return 28.0;
-    case ShapeRole::Large:
-        return 20.0;
-    case ShapeRole::Medium:
-        return 16.0;
-    case ShapeRole::Small:
-        return 12.0;
-    case ShapeRole::ExtraSmall:
-        return 8.0;
-    case ShapeRole::None:
-    default:
-        return 0.0;
     }
+
+    return qMin(
+        spec.cornerRadius,
+        spec.containerSize / 2.0);
 }
 
-qreal stateLayerOpacityFor(const QtMaterialInteractionState& state, const Theme& theme, bool enabled)
+qreal stateLayerOpacityFor(
+    const QtMaterialInteractionState& state,
+    const IconButtonSpec& spec,
+    bool enabled)
 {
     if (!enabled) {
         return 0.0;
     }
-
-    const auto& layer = theme.stateLayer();
-
     if (state.isPressed()) {
-        return layer.pressOpacity;
+        return spec.pressStateLayerOpacity;
     }
     if (state.isFocused()) {
-        return layer.focusOpacity;
+        return spec.focusStateLayerOpacity;
     }
     if (state.isHovered()) {
-        return layer.hoverOpacity;
+        return spec.hoverStateLayerOpacity;
     }
-
     return 0.0;
 }
 
@@ -286,7 +265,7 @@ void QtMaterialIconButton::paintEvent(QPaintEvent* event)
                                  : d->m_spec.disabledIconColor;
 
     const qreal overlayOpacity =
-        ButtonMotionHelper::targetStateLayerOpacity(theme(), interactionState());
+        stateLayerOpacityFor(interactionState(), d->m_spec, isEnabled());
 
     painter.fillPath(d->m_cachedContainerPath, containerColor);
 
@@ -307,8 +286,8 @@ void QtMaterialIconButton::paintEvent(QPaintEvent* event)
         QtMaterialFocusIndicator::paintPathFocusRing(
             &painter,
             d->m_cachedContainerPath,
-            d->m_spec.stateLayerColor,
-            2.0);
+            d->m_spec.focusRingColor,
+            d->m_spec.focusRingWidth);
     }
 
     if (!icon().isNull()) {
@@ -371,10 +350,12 @@ void QtMaterialIconButton::contentChangedEvent()
     invalidateLayoutCache();
 }
 
-IconButtonSpec QtMaterialIconButton::resolveIconButtonSpec() const
+IconButtonSpec
+QtMaterialIconButton::resolveIconButtonSpec() const
 {
-    SpecFactory factory;
-    return factory.iconButtonSpec(theme(), density());
+    return ActionButtonSpecResolver().iconButtonSpec(
+        theme(),
+        density());
 }
 
 void QtMaterialIconButton::invalidateLayoutCache()
@@ -400,11 +381,16 @@ void QtMaterialIconButton::ensureSpecResolved() const
 
     d->m_spec = resolveIconButtonSpec();
 
-    ButtonMotionHelper::configureMotion(
-        theme(),
-        d->m_spec,
-        d->m_transition,
-        d->m_ripple);
+    if (d->m_spec.hasResolvedMotionStyle) {
+        d->m_transition->applyMotionStyle(
+            d->m_spec.motionStyle);
+        if (d->m_spec.motionStyle.durationMs > 0) {
+            d->m_ripple->setDuration(
+                d->m_spec.motionStyle.durationMs);
+        }
+    }
+    d->m_ripple->setBaseOpacity(
+        d->m_spec.pressStateLayerOpacity);
 
     d->m_specDirty = false;
     d->m_layoutDirty = true;

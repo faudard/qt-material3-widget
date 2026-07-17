@@ -382,58 +382,365 @@ void applyButtonComponentTokens(
     }
 }
 
-void applyFabComponentTokens(const Theme& theme, const QStringList& componentNames, FabSpec* spec)
+void applyFabComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    FabSpec* spec)
 {
-    if (!spec) return;
-    const ComponentTokenOverride tokens = mergedComponentOverride(theme, componentNames);
-    if (tokens.isEmpty()) return;
+    if (!spec) {
+        return;
+    }
 
-    applyColor(&spec->containerColor, tokens, ColorRole::PrimaryContainer);
-    applyColor(&spec->iconColor, tokens, ColorRole::OnPrimaryContainer);
-    applyColor(&spec->disabledContainerColor, tokens, ColorRole::SurfaceContainerHigh);
-    applyColor(&spec->disabledIconColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->stateLayerColor, tokens, ColorRole::SurfaceTint);
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
 
-    applyCustomColor(&spec->containerColor, tokens, "containerColor");
-    applyCustomColor(&spec->iconColor, tokens, "iconColor");
-    applyCustomColor(&spec->disabledContainerColor, tokens, "disabledContainerColor");
-    applyCustomColor(&spec->disabledIconColor, tokens, "disabledIconColor");
-    applyCustomColor(&spec->stateLayerColor, tokens, "stateLayerColor");
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->containerColor,
+            tokens,
+            ColorRole::PrimaryContainer);
+        applyColor(
+            &spec->iconColor,
+            tokens,
+            ColorRole::OnPrimaryContainer);
+        applyColor(
+            &spec->disabledContainerColor,
+            tokens,
+            ColorRole::SurfaceContainerHigh);
+        applyColor(
+            &spec->disabledIconColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->stateLayerColor,
+            tokens,
+            ColorRole::SurfaceTint);
+        applyColor(
+            &spec->focusRingColor,
+            tokens,
+            ColorRole::Primary);
 
-    applyShapeMotionElevation(tokens, &spec->shapeRole, &spec->elevationRole, &spec->motionToken);
-    applyTouchTarget(&spec->touchTarget, tokens);
-    spec->iconSize = iconSizeFromTokens(tokens, IconSizeRole::Medium, spec->iconSize);
-    readInt(tokens.custom, "containerDiameter", &spec->containerDiameter);
-    readInt(tokens.custom, "iconSize", &spec->iconSize);
+        applyCustomColor(
+            &spec->containerColor,
+            tokens,
+            "containerColor");
+        applyCustomColor(
+            &spec->iconColor,
+            tokens,
+            "iconColor");
+        applyCustomColor(
+            &spec->disabledContainerColor,
+            tokens,
+            "disabledContainerColor");
+        applyCustomColor(
+            &spec->disabledIconColor,
+            tokens,
+            "disabledIconColor");
+        applyCustomColor(
+            &spec->stateLayerColor,
+            tokens,
+            "stateLayerColor");
+        applyCustomColor(
+            &spec->focusRingColor,
+            tokens,
+            "focusRingColor");
+        applyCustomColor(
+            &spec->shadowColor,
+            tokens,
+            "shadowColor");
+
+        applyShapeMotionElevation(
+            tokens,
+            &spec->shapeRole,
+            &spec->elevationRole,
+            &spec->motionToken);
+        applyTouchTarget(&spec->touchTarget, tokens);
+        spec->iconSize = iconSizeFromTokens(
+            tokens,
+            IconSizeRole::Medium,
+            spec->iconSize);
+
+        readInt(
+            tokens.custom,
+            "containerDiameter",
+            &spec->containerDiameter);
+        readInt(
+            tokens.custom,
+            "iconSize",
+            &spec->iconSize);
+    }
+
+    if (!spec->focusRingColor.isValid()) {
+        spec->focusRingColor =
+            theme.colorScheme().color(ColorRole::Primary);
+    }
+    if (!spec->shadowColor.isValid()) {
+        spec->shadowColor =
+            theme.colorScheme().color(ColorRole::Shadow);
+    }
+
+    spec->hasResolvedLabelFont = false;
+    if (tokens.typography.contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            tokens.typography.value(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    } else if (
+        theme.typography().contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            theme.typography().style(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    }
+
+    if (spec->shapeRole == ShapeRole::Full) {
+        spec->cornerRadius = -1.0;
+    } else if (tokens.shapes.contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                tokens.shapes.value(spec->shapeRole)));
+    } else if (theme.shapes().contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                theme.shapes().radius(spec->shapeRole)));
+    }
+
+    spec->hasResolvedMotionStyle = false;
+    if (tokens.motion.contains(spec->motionToken)) {
+        spec->motionStyle =
+            tokens.motion.value(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    } else if (theme.motion().contains(spec->motionToken)) {
+        spec->motionStyle =
+            theme.motion().style(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    }
+
+    spec->hasResolvedElevationStyle = false;
+    if (tokens.elevations.contains(spec->elevationRole)) {
+        spec->elevationStyle =
+            tokens.elevations.value(spec->elevationRole);
+        spec->hasResolvedElevationStyle = true;
+    } else if (
+        theme.elevations().contains(spec->elevationRole)) {
+        spec->elevationStyle =
+            theme.elevations().style(spec->elevationRole);
+        spec->hasResolvedElevationStyle = true;
+    }
+
+    const StateLayer& stateLayer =
+        tokens.hasStateLayer
+        ? tokens.stateLayer
+        : theme.stateLayer();
+    spec->hoverStateLayerOpacity =
+        stateLayer.hoverOpacity;
+    spec->focusStateLayerOpacity =
+        stateLayer.focusOpacity;
+    spec->pressStateLayerOpacity =
+        stateLayer.pressOpacity;
+    spec->dragStateLayerOpacity =
+        stateLayer.dragOpacity;
+
+    if (!tokens.isEmpty()) {
+        readReal(
+            tokens.custom,
+            "cornerRadius",
+            &spec->cornerRadius);
+        readReal(
+            tokens.custom,
+            "hoverStateLayerOpacity",
+            &spec->hoverStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "focusStateLayerOpacity",
+            &spec->focusStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "pressStateLayerOpacity",
+            &spec->pressStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "dragStateLayerOpacity",
+            &spec->dragStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "restingElevationProgress",
+            &spec->restingElevationProgress);
+        readReal(
+            tokens.custom,
+            "hoverElevationProgress",
+            &spec->hoverElevationProgress);
+        readReal(
+            tokens.custom,
+            "focusElevationProgress",
+            &spec->focusElevationProgress);
+        readReal(
+            tokens.custom,
+            "pressElevationProgress",
+            &spec->pressElevationProgress);
+        readReal(
+            tokens.custom,
+            "disabledElevationProgress",
+            &spec->disabledElevationProgress);
+    }
 }
 
-void applyIconButtonComponentTokens(const Theme& theme, const QStringList& componentNames, IconButtonSpec* spec)
+void applyIconButtonComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    IconButtonSpec* spec)
 {
-    if (!spec) return;
-    const ComponentTokenOverride tokens = mergedComponentOverride(theme, componentNames);
-    if (tokens.isEmpty()) return;
+    if (!spec) {
+        return;
+    }
 
-    applyColor(&spec->containerColor, tokens, ColorRole::SurfaceContainerLow);
-    applyColor(&spec->iconColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->selectedContainerColor, tokens, ColorRole::PrimaryContainer);
-    applyColor(&spec->selectedIconColor, tokens, ColorRole::OnPrimaryContainer);
-    applyColor(&spec->disabledIconColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->stateLayerColor, tokens, ColorRole::SurfaceTint);
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
 
-    applyCustomColor(&spec->containerColor, tokens, "containerColor");
-    applyCustomColor(&spec->iconColor, tokens, "iconColor");
-    applyCustomColor(&spec->selectedContainerColor, tokens, "selectedContainerColor");
-    applyCustomColor(&spec->selectedIconColor, tokens, "selectedIconColor");
-    applyCustomColor(&spec->disabledIconColor, tokens, "disabledIconColor");
-    applyCustomColor(&spec->stateLayerColor, tokens, "stateLayerColor");
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->containerColor,
+            tokens,
+            ColorRole::SurfaceContainerLow);
+        applyColor(
+            &spec->iconColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->selectedContainerColor,
+            tokens,
+            ColorRole::PrimaryContainer);
+        applyColor(
+            &spec->selectedIconColor,
+            tokens,
+            ColorRole::OnPrimaryContainer);
+        applyColor(
+            &spec->disabledIconColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->stateLayerColor,
+            tokens,
+            ColorRole::SurfaceTint);
+        applyColor(
+            &spec->focusRingColor,
+            tokens,
+            ColorRole::Primary);
 
-    applyShapeMotionElevation(tokens, &spec->shapeRole, &spec->elevationRole, &spec->motionToken);
-    applyTouchTarget(&spec->touchTarget, tokens);
-    spec->iconSize = iconSizeFromTokens(tokens, IconSizeRole::Medium, spec->iconSize);
-    readInt(tokens.custom, "containerSize", &spec->containerSize);
-    readInt(tokens.custom, "iconSize", &spec->iconSize);
+        applyCustomColor(
+            &spec->containerColor,
+            tokens,
+            "containerColor");
+        applyCustomColor(
+            &spec->iconColor,
+            tokens,
+            "iconColor");
+        applyCustomColor(
+            &spec->selectedContainerColor,
+            tokens,
+            "selectedContainerColor");
+        applyCustomColor(
+            &spec->selectedIconColor,
+            tokens,
+            "selectedIconColor");
+        applyCustomColor(
+            &spec->disabledIconColor,
+            tokens,
+            "disabledIconColor");
+        applyCustomColor(
+            &spec->stateLayerColor,
+            tokens,
+            "stateLayerColor");
+        applyCustomColor(
+            &spec->focusRingColor,
+            tokens,
+            "focusRingColor");
+
+        applyShapeMotionElevation(
+            tokens,
+            &spec->shapeRole,
+            &spec->elevationRole,
+            &spec->motionToken);
+        applyTouchTarget(&spec->touchTarget, tokens);
+        spec->iconSize = iconSizeFromTokens(
+            tokens,
+            IconSizeRole::Medium,
+            spec->iconSize);
+
+        readInt(
+            tokens.custom,
+            "containerSize",
+            &spec->containerSize);
+        readInt(
+            tokens.custom,
+            "iconSize",
+            &spec->iconSize);
+        readReal(
+            tokens.custom,
+            "focusRingWidth",
+            &spec->focusRingWidth);
+    }
+
+    if (!spec->focusRingColor.isValid()) {
+        spec->focusRingColor =
+            theme.colorScheme().color(ColorRole::Primary);
+    }
+
+    if (spec->shapeRole == ShapeRole::Full) {
+        spec->cornerRadius = -1.0;
+    } else if (tokens.shapes.contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                tokens.shapes.value(spec->shapeRole)));
+    } else if (theme.shapes().contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                theme.shapes().radius(spec->shapeRole)));
+    }
+
+    spec->hasResolvedMotionStyle = false;
+    if (tokens.motion.contains(spec->motionToken)) {
+        spec->motionStyle =
+            tokens.motion.value(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    } else if (theme.motion().contains(spec->motionToken)) {
+        spec->motionStyle =
+            theme.motion().style(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    }
+
+    const StateLayer& stateLayer =
+        tokens.hasStateLayer
+        ? tokens.stateLayer
+        : theme.stateLayer();
+    spec->hoverStateLayerOpacity =
+        stateLayer.hoverOpacity;
+    spec->focusStateLayerOpacity =
+        stateLayer.focusOpacity;
+    spec->pressStateLayerOpacity =
+        stateLayer.pressOpacity;
+
+    if (!tokens.isEmpty()) {
+        readReal(
+            tokens.custom,
+            "cornerRadius",
+            &spec->cornerRadius);
+        readReal(
+            tokens.custom,
+            "hoverStateLayerOpacity",
+            &spec->hoverStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "focusStateLayerOpacity",
+            &spec->focusStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "pressStateLayerOpacity",
+            &spec->pressStateLayerOpacity);
+    }
 }
-
 
 template <typename SpecT>
 void resolveSelectionRuntimeTokens(

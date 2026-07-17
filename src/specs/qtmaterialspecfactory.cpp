@@ -6,6 +6,7 @@
 #include "qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h"
 #include "qtmaterial/specs/qtmaterialappbarspecresolver.h"
 #include "qtmaterial/specs/qtmaterialdialogspecresolver.h"
+#include "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h"
 
 namespace QtMaterial {
 SpecFactory::SpecFactory() = default;
@@ -52,37 +53,31 @@ ButtonSpec SpecFactory::elevatedButtonSpec(
 }
 
 
-FabSpec SpecFactory::fabSpec(const Theme& theme, Density) const
+FabSpec SpecFactory::fabSpec(
+    const Theme& theme,
+    Density density) const
 {
-    FabSpec spec;
-    spec.containerColor = theme.colorScheme().color(ColorRole::PrimaryContainer);
-    spec.iconColor = theme.colorScheme().color(ColorRole::OnPrimaryContainer);
-    spec.disabledContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    spec.disabledIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.stateLayerColor = spec.iconColor;
-    applyFabComponentTokens(theme, QStringList{QStringLiteral("fab"), QStringLiteral("Fab")}, &spec);
-  return spec;
+    return ActionButtonSpecResolver().fabSpec(
+        theme,
+        density);
 }
 
-FabSpec SpecFactory::extendedFabSpec(const Theme& theme, Density density) const
+FabSpec SpecFactory::extendedFabSpec(
+    const Theme& theme,
+    Density density) const
 {
-    FabSpec spec = fabSpec(theme, density);
-    spec.touchTarget = QSize(80, 56);
-    applyFabComponentTokens(theme, QStringList{QStringLiteral("fab"), QStringLiteral("fab.extended"), QStringLiteral("ExtendedFab")}, &spec);
-  return spec;
+    return ActionButtonSpecResolver().extendedFabSpec(
+        theme,
+        density);
 }
 
-IconButtonSpec SpecFactory::iconButtonSpec(const Theme& theme, Density) const
+IconButtonSpec SpecFactory::iconButtonSpec(
+    const Theme& theme,
+    Density density) const
 {
-    IconButtonSpec spec;
-    spec.containerColor = Qt::transparent;
-    spec.iconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.selectedContainerColor = theme.colorScheme().color(ColorRole::PrimaryContainer);
-    spec.selectedIconColor = theme.colorScheme().color(ColorRole::OnPrimaryContainer);
-    spec.disabledIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    applyIconButtonComponentTokens(theme, QStringList{QStringLiteral("iconButton"), QStringLiteral("IconButton")}, &spec);
-  return spec;
+    return ActionButtonSpecResolver().iconButtonSpec(
+        theme,
+        density);
 }
 
 CheckboxSpec SpecFactory::checkboxSpec(

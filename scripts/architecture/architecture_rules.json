@@ -181,6 +181,25 @@
         "applyMotionStyle\\s*\\(",
         "setScrimColor\\s*\\("
       ]
+    },
+    {
+      "name": "action-buttons-use-dedicated-resolver",
+      "files": [
+        "src/widgets/buttons/qtmaterialfab.cpp",
+        "src/widgets/buttons/qtmaterialextendedfab.cpp",
+        "src/widgets/buttons/qtmaterialiconbutton.cpp"
+      ],
+      "forbidden_regex": [
+        "qtmaterial/specs/qtmaterialspecfactory\\.h",
+        "\\bSpecFactory\\b",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
+        "ButtonMotionHelper::targetStateLayerOpacity\\s*\\(\\s*theme\\s*\\(",
+        "ButtonMotionHelper::configureMotion\\s*\\(\\s*theme\\s*\\(",
+        "case\\s+ShapeRole::ExtraLarge\\s*:"
+      ],
+      "required_regex": [
+        "\\bActionButtonSpecResolver\\b"
+      ]
     }
   ],
   "text_rules": [
@@ -204,14 +223,17 @@
         "\\bapplyCheckboxComponentTokens\\s*\\(",
         "\\bapplyRadioButtonComponentTokens\\s*\\(",
         "\\bapplySwitchComponentTokens\\s*\\(",
-        "\\bapplyDialogComponentTokens\\s*\\("
+        "\\bapplyDialogComponentTokens\\s*\\(",
+        "\\bapplyFabComponentTokens\\s*\\(",
+        "\\bapplyIconButtonComponentTokens\\s*\\("
       ],
       "required_regex": [
         "ButtonSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "SelectionSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "OverlaySurfaceSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "AppBarSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "DialogSpecResolver\\s*\\(\\s*\\)\\s*\\."
+        "DialogSpecResolver\\s*\\(\\s*\\)\\s*\\.",
+        "ActionButtonSpecResolver\\s*\\(\\s*\\)\\s*\\."
       ]
     },
     {
@@ -318,6 +340,17 @@
         "\\bMotionStyle\\s+exitMotionStyle\\s*;",
         "\\bqreal\\s+cornerRadius\\s*=",
         "\\bqreal\\s+scrimOpacity\\s*="
+      ]
+    },
+    {
+      "name": "action-button-specs-are-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialfabspec.h",
+      "required_regex": [
+        "\\bQFont\\s+labelFont\\s*;",
+        "\\bMotionStyle\\s+motionStyle\\s*;",
+        "\\bElevationStyle\\s+elevationStyle\\s*;",
+        "\\bqreal\\s+cornerRadius\\s*=",
+        "\\bqreal\\s+pressStateLayerOpacity\\s*="
       ]
     }
   ]
