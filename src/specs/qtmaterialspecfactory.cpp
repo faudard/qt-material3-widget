@@ -5,6 +5,7 @@
 #include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
 #include "qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h"
 #include "qtmaterial/specs/qtmaterialappbarspecresolver.h"
+#include "qtmaterial/specs/qtmaterialdialogspecresolver.h"
 
 namespace QtMaterial {
 SpecFactory::SpecFactory() = default;
@@ -107,13 +108,7 @@ SwitchSpec SpecFactory::switchSpec(
 
 DialogSpec SpecFactory::dialogSpec(const Theme& theme) const
 {
-    DialogSpec spec;
-    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    spec.headlineColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.bodyColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.scrimColor = theme.colorScheme().color(ColorRole::Scrim);
-    applyDialogComponentTokens(theme, QStringList{QStringLiteral("surface"), QStringLiteral("dialog"), QStringLiteral("Dialog")}, &spec);
-  return spec;
+    return DialogSpecResolver().dialogSpec(theme);
 }
 
 NavigationDrawerSpec

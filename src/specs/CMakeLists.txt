@@ -9,6 +9,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialselectionspecresolver.cpp
     qtmaterialswitchspec.cpp
     qtmaterialdialogspec.cpp
+    qtmaterialdialogspecresolver.cpp
     qtmaterialtextfieldspec.cpp
     qtmaterialfabspec.cpp
     qtmaterialcardspec.cpp
@@ -43,6 +44,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialselectionruntimespec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialswitchspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdialogspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdialogspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtextfieldspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialfabspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialcardspec.h

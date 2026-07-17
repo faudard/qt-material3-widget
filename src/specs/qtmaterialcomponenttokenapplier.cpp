@@ -1007,33 +1007,186 @@ void applyCardComponentTokens(
     }
 }
 
-void applyDialogComponentTokens(const Theme& theme, const QStringList& componentNames, DialogSpec* spec)
+void applyDialogComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    DialogSpec* spec)
 {
-    if (!spec) return;
-    const ComponentTokenOverride tokens = mergedComponentOverride(theme, componentNames);
-    if (tokens.isEmpty()) return;
-
-    applyColor(&spec->containerColor, tokens, ColorRole::SurfaceContainerHigh);
-    applyColor(&spec->headlineColor, tokens, ColorRole::OnSurface);
-    applyColor(&spec->bodyColor, tokens, ColorRole::OnSurfaceVariant);
-    applyColor(&spec->scrimColor, tokens, ColorRole::Scrim);
-
-    applyCustomColor(&spec->containerColor, tokens, "containerColor");
-    applyCustomColor(&spec->headlineColor, tokens, "headlineColor");
-    applyCustomColor(&spec->bodyColor, tokens, "bodyColor");
-    applyCustomColor(&spec->scrimColor, tokens, "scrimColor");
-
-    applyShapeMotionElevation(tokens, &spec->shapeRole, &spec->elevationRole, &spec->enterMotion);
-    if (tokens.custom.contains(QStringLiteral("enterMotion"))) {
-        spec->enterMotion = parseMotionToken(tokens.custom.value(QStringLiteral("enterMotion")).toString(), spec->enterMotion);
+    if (!spec) {
+        return;
     }
-    if (tokens.custom.contains(QStringLiteral("exitMotion"))) {
-        spec->exitMotion = parseMotionToken(tokens.custom.value(QStringLiteral("exitMotion")).toString(), spec->exitMotion);
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->containerColor,
+            tokens,
+            ColorRole::SurfaceContainerHigh);
+        applyColor(
+            &spec->headlineColor,
+            tokens,
+            ColorRole::OnSurface);
+        applyColor(
+            &spec->bodyColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->scrimColor,
+            tokens,
+            ColorRole::Scrim);
+
+        applyCustomColor(
+            &spec->containerColor,
+            tokens,
+            "containerColor");
+        applyCustomColor(
+            &spec->headlineColor,
+            tokens,
+            "headlineColor");
+        applyCustomColor(
+            &spec->bodyColor,
+            tokens,
+            "bodyColor");
+        applyCustomColor(
+            &spec->scrimColor,
+            tokens,
+            "scrimColor");
+        applyCustomColor(
+            &spec->shadowColor,
+            tokens,
+            "shadowColor");
+
+        applyShapeMotionElevation(
+            tokens,
+            &spec->shapeRole,
+            &spec->elevationRole,
+            &spec->enterMotion);
+
+        if (tokens.custom.contains(
+                QStringLiteral("enterMotion"))) {
+            spec->enterMotion = parseMotionToken(
+                tokens.custom
+                    .value(QStringLiteral("enterMotion"))
+                    .toString(),
+                spec->enterMotion);
+        }
+        if (tokens.custom.contains(
+                QStringLiteral("exitMotion"))) {
+            spec->exitMotion = parseMotionToken(
+                tokens.custom
+                    .value(QStringLiteral("exitMotion"))
+                    .toString(),
+                spec->exitMotion);
+        }
+
+        readInt(tokens.custom, "maxWidth", &spec->maxWidth);
+        readInt(tokens.custom, "padding", &spec->padding);
+        readInt(
+            tokens.custom,
+            "headlineBottomSpacing",
+            &spec->headlineBottomSpacing);
+        readInt(
+            tokens.custom,
+            "actionsTopSpacing",
+            &spec->actionsTopSpacing);
+        readReal(
+            tokens.custom,
+            "scrimOpacity",
+            &spec->scrimOpacity);
     }
-    readInt(tokens.custom, "maxWidth", &spec->maxWidth);
-    readInt(tokens.custom, "padding", &spec->padding);
-    readInt(tokens.custom, "headlineBottomSpacing", &spec->headlineBottomSpacing);
-    readInt(tokens.custom, "actionsTopSpacing", &spec->actionsTopSpacing);
+
+    if (!spec->shadowColor.isValid()) {
+        spec->shadowColor =
+            theme.colorScheme().color(ColorRole::Shadow);
+    }
+
+    spec->hasResolvedHeadlineFont = false;
+    if (tokens.typography.contains(spec->headlineTypeRole)) {
+        spec->headlineFont =
+            tokens.typography.value(spec->headlineTypeRole).font;
+        spec->hasResolvedHeadlineFont = true;
+    } else if (theme.typography().contains(spec->headlineTypeRole)) {
+        spec->headlineFont =
+            theme.typography().style(spec->headlineTypeRole).font;
+        spec->hasResolvedHeadlineFont = true;
+    }
+
+    spec->hasResolvedBodyFont = false;
+    if (tokens.typography.contains(spec->bodyTypeRole)) {
+        spec->bodyFont =
+            tokens.typography.value(spec->bodyTypeRole).font;
+        spec->hasResolvedBodyFont = true;
+    } else if (theme.typography().contains(spec->bodyTypeRole)) {
+        spec->bodyFont =
+            theme.typography().style(spec->bodyTypeRole).font;
+        spec->hasResolvedBodyFont = true;
+    }
+
+    if (spec->shapeRole == ShapeRole::Full) {
+        spec->cornerRadius = -1.0;
+    } else if (tokens.shapes.contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                tokens.shapes.value(spec->shapeRole)));
+    } else if (theme.shapes().contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                theme.shapes().radius(spec->shapeRole)));
+    }
+
+    spec->hasResolvedElevationStyle = false;
+    if (tokens.elevations.contains(spec->elevationRole)) {
+        spec->elevationStyle =
+            tokens.elevations.value(spec->elevationRole);
+        spec->hasResolvedElevationStyle = true;
+    } else if (theme.elevations().contains(spec->elevationRole)) {
+        spec->elevationStyle =
+            theme.elevations().style(spec->elevationRole);
+        spec->hasResolvedElevationStyle = true;
+    }
+
+    spec->hasResolvedEnterMotionStyle = false;
+    if (tokens.motion.contains(spec->enterMotion)) {
+        spec->enterMotionStyle =
+            tokens.motion.value(spec->enterMotion);
+        spec->hasResolvedEnterMotionStyle = true;
+    } else if (theme.motion().contains(spec->enterMotion)) {
+        spec->enterMotionStyle =
+            theme.motion().style(spec->enterMotion);
+        spec->hasResolvedEnterMotionStyle = true;
+    }
+
+    spec->hasResolvedExitMotionStyle = false;
+    if (tokens.motion.contains(spec->exitMotion)) {
+        spec->exitMotionStyle =
+            tokens.motion.value(spec->exitMotion);
+        spec->hasResolvedExitMotionStyle = true;
+    } else if (theme.motion().contains(spec->exitMotion)) {
+        spec->exitMotionStyle =
+            theme.motion().style(spec->exitMotion);
+        spec->hasResolvedExitMotionStyle = true;
+    }
+
+    if (!tokens.isEmpty()) {
+        readReal(
+            tokens.custom,
+            "cornerRadius",
+            &spec->cornerRadius);
+    }
+
+    spec->scrimOpacity = qBound<qreal>(
+        0.0,
+        spec->scrimOpacity,
+        1.0);
+    spec->scrimColor.setAlphaF(
+        qBound<qreal>(
+            0.0,
+            spec->scrimColor.alphaF() * spec->scrimOpacity,
+            1.0));
 }
 
 } // namespace QtMaterial

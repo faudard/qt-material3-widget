@@ -11,11 +11,11 @@
 #include <algorithm>
 
 #include "qtmaterial/effects/qtmaterialscrimwidget.h"
-#include "qtmaterial/effects/qtmaterialshadowrenderer.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include <memory>
 #include "qtmaterial/specs/qtmaterialdialogspec.h"
+#include "qtmaterial/effects/qtmaterialelevationrenderer.h"
+#include "qtmaterial/specs/qtmaterialdialogspecresolver.h"
 
 namespace QtMaterial {
 
@@ -187,13 +187,19 @@ QString QtMaterialDialog::accessibilitySummary() const
 
 void QtMaterialDialog::open()
 {
-    d_ptr->previousFocusWidget = QApplication::focusWidget();
+    d_ptr->previousFocusWidget =
+        QApplication::focusWidget();
 
     resolveSpecIfNeeded();
     syncChildGeometry();
 
     if (d_ptr->scrim) {
-        d_ptr->scrim->setGeometry(parentWidget() ? parentWidget()->rect() : rect());
+        d_ptr->scrim->setScrimColor(
+            d_ptr->spec.scrimColor);
+        d_ptr->scrim->setGeometry(
+            parentWidget()
+            ? parentWidget()->rect()
+            : rect());
         d_ptr->scrim->show();
         d_ptr->scrim->raise();
     }
@@ -203,6 +209,10 @@ void QtMaterialDialog::open()
     activateWindow();
 
     if (d_ptr->transition) {
+        if (d_ptr->spec.hasResolvedEnterMotionStyle) {
+            d_ptr->transition->applyMotionStyle(
+                d_ptr->spec.enterMotionStyle);
+        }
         d_ptr->transition->startForward();
     }
 
@@ -212,7 +222,13 @@ void QtMaterialDialog::open()
 
 void QtMaterialDialog::close()
 {
+    resolveSpecIfNeeded();
+
     if (d_ptr->transition) {
+        if (d_ptr->spec.hasResolvedExitMotionStyle) {
+            d_ptr->transition->applyMotionStyle(
+                d_ptr->spec.exitMotionStyle);
+        }
         d_ptr->transition->startBackward();
     }
 
@@ -222,8 +238,10 @@ void QtMaterialDialog::close()
         d_ptr->scrim->hide();
     }
 
-    if (d_ptr->restoreFocusOnClose && d_ptr->previousFocusWidget) {
-        d_ptr->previousFocusWidget->setFocus(Qt::OtherFocusReason);
+    if (d_ptr->restoreFocusOnClose
+        && d_ptr->previousFocusWidget) {
+        d_ptr->previousFocusWidget->setFocus(
+            Qt::OtherFocusReason);
     }
 
     Q_EMIT closed();
@@ -235,10 +253,15 @@ void QtMaterialDialog::reject()
     Q_EMIT rejected();
 }
 
-void QtMaterialDialog::themeChangedEvent(const Theme& theme)
+void QtMaterialDialog::themeChangedEvent(
+    const Theme& changedTheme)
 {
-    QtMaterialOverlaySurface::themeChangedEvent(theme);
+    QtMaterialOverlaySurface::themeChangedEvent(
+        changedTheme);
     d_ptr->specDirty = true;
+    resolveSpecIfNeeded();
+    updateGeometry();
+    update();
 }
 
 void QtMaterialDialog::invalidateResolvedSpec()
@@ -252,9 +275,22 @@ void QtMaterialDialog::resolveSpecIfNeeded() const
         return;
     }
 
-    SpecFactory factory;
-    d_ptr->spec = factory.dialogSpec(theme());
+    const DialogSpecResolver resolver;
+    d_ptr->spec = resolver.dialogSpec(theme());
     d_ptr->specDirty = false;
+
+    if (d_ptr->layout) {
+        d_ptr->layout->setContentsMargins(
+            d_ptr->spec.padding,
+            d_ptr->spec.padding,
+            d_ptr->spec.padding,
+            d_ptr->spec.padding);
+    }
+
+    if (d_ptr->scrim) {
+        d_ptr->scrim->setScrimColor(
+            d_ptr->spec.scrimColor);
+    }
 }
 
 void QtMaterialDialog::syncChildGeometry()
@@ -316,21 +352,41 @@ void QtMaterialDialog::paintEvent(QPaintEvent*)
     resolveSpecIfNeeded();
     syncChildGeometry();
 
+    const QRectF panel =
+        QRectF(rect()).adjusted(2, 2, -2, -2);
+    if (!panel.isValid()) {
+        return;
+    }
+
+    const qreal radius =
+        d_ptr->spec.cornerRadius < 0.0
+        ? panel.height() / 2.0
+        : qMin(
+            d_ptr->spec.cornerRadius,
+            panel.height() / 2.0);
+
+    QPainterPath panelPath;
+    panelPath.addRoundedRect(
+        panel,
+        radius,
+        radius);
+
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(
+        QPainter::Antialiasing,
+        true);
 
-    QRectF panel = rect().adjusted(2, 2, -2, -2);
-
-    QtMaterialShadowRenderer::paintRoundedShadow(&painter,
-                                                 panel,
-                                                 28.0,
-                                                 QColor(0, 0, 0, 80),
-                                                 12,
-                                                 4);
+    if (d_ptr->spec.hasResolvedElevationStyle) {
+        QtMaterialElevationRenderer::paintPathElevation(
+            &painter,
+            panelPath,
+            d_ptr->spec.shadowColor,
+            d_ptr->spec.elevationStyle);
+    }
 
     painter.setPen(Qt::NoPen);
     painter.setBrush(d_ptr->spec.containerColor);
-    painter.drawRoundedRect(panel, 28.0, 28.0);
+    painter.drawPath(panelPath);
 }
 
 void QtMaterialDialog::updateAccessibilityMetadata()

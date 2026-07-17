@@ -161,6 +161,26 @@
         "\\bensureSpecResolved\\s*\\(",
         "QtMaterialElevationRenderer::paintPathElevation\\s*\\("
       ]
+    },
+    {
+      "name": "dialog-uses-resolved-spec",
+      "files": [
+        "src/widgets/surfaces/qtmaterialdialog.cpp"
+      ],
+      "forbidden_regex": [
+        "qtmaterial/specs/qtmaterialspecfactory\\.h",
+        "\\bSpecFactory\\b",
+        "\\bQtMaterialShadowRenderer\\b",
+        "QColor\\s*\\(\\s*0\\s*,\\s*0\\s*,\\s*0\\s*,\\s*80\\s*\\)",
+        "drawRoundedRect\\s*\\([^;]*28\\.0",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:shapes|elevations|motion|colorScheme)\\s*\\("
+      ],
+      "required_regex": [
+        "\\bDialogSpecResolver\\b",
+        "QtMaterialElevationRenderer::paintPathElevation\\s*\\(",
+        "applyMotionStyle\\s*\\(",
+        "setScrimColor\\s*\\("
+      ]
     }
   ],
   "text_rules": [
@@ -183,13 +203,15 @@
         "\\bapplyButtonComponentTokens\\s*\\(",
         "\\bapplyCheckboxComponentTokens\\s*\\(",
         "\\bapplyRadioButtonComponentTokens\\s*\\(",
-        "\\bapplySwitchComponentTokens\\s*\\("
+        "\\bapplySwitchComponentTokens\\s*\\(",
+        "\\bapplyDialogComponentTokens\\s*\\("
       ],
       "required_regex": [
         "ButtonSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "SelectionSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "OverlaySurfaceSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "AppBarSpecResolver\\s*\\(\\s*\\)\\s*\\."
+        "AppBarSpecResolver\\s*\\(\\s*\\)\\s*\\.",
+        "DialogSpecResolver\\s*\\(\\s*\\)\\s*\\."
       ]
     },
     {
@@ -283,6 +305,19 @@
         "\\bQColor\\s+focusRingColor\\s*;",
         "\\bint\\s+actionSlot\\s*=",
         "\\bint\\s+betweenSpacing\\s*="
+      ]
+    },
+    {
+      "name": "dialog-spec-is-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialdialogspec.h",
+      "required_regex": [
+        "\\bQFont\\s+headlineFont\\s*;",
+        "\\bQFont\\s+bodyFont\\s*;",
+        "\\bElevationStyle\\s+elevationStyle\\s*;",
+        "\\bMotionStyle\\s+enterMotionStyle\\s*;",
+        "\\bMotionStyle\\s+exitMotionStyle\\s*;",
+        "\\bqreal\\s+cornerRadius\\s*=",
+        "\\bqreal\\s+scrimOpacity\\s*="
       ]
     }
   ]
