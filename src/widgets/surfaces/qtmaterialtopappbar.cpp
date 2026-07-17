@@ -7,12 +7,13 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QResizeEvent>
-#include <QStyle>
 #include <QToolButton>
-#include <qstyleoption.h>
 
 #include <memory>
 #include <QPainterPath>
+#include "qtmaterial/effects/qtmaterialelevationrenderer.h"
+#include "qtmaterial/specs/qtmaterialappbarspecresolver.h"
+#include "qtmaterial/specs/qtmaterialappbarspec.h"
 namespace {
 constexpr int kDefaultHeight = 64;
 constexpr int kMinimumWidth = 200;
@@ -43,6 +44,8 @@ struct QtMaterialTopAppBarPrivate
     bool m_elevated = false;
 
     mutable bool m_layoutDirty = true;
+    mutable QtMaterial::AppBarSpec m_spec;
+    mutable bool m_specDirty = true;
     mutable QRect m_visualRect;
     mutable QRect m_navRect;
     mutable QRect m_titleRect;
@@ -271,48 +274,83 @@ QString QtMaterialTopAppBar::accessibilitySummary() const
 
 QSize QtMaterialTopAppBar::sizeHint() const
 {
-    return QSize(kPreferredWidth, kDefaultHeight);
+    ensureSpecResolved();
+    const int extraHeight =
+        0;
+    return QSize(
+        d->m_spec.preferredWidth,
+        d->m_spec.preferredHeight + extraHeight);
 }
 
 QSize QtMaterialTopAppBar::minimumSizeHint() const
 {
-    return QSize(kMinimumWidth, kDefaultHeight);
+    ensureSpecResolved();
+    return QSize(
+        d->m_spec.minimumWidth,
+        d->m_spec.preferredHeight);
 }
 
-void QtMaterialTopAppBar::paintEvent(QPaintEvent* event)
+void QtMaterialTopAppBar::paintEvent(
+    QPaintEvent* event)
 {
     Q_UNUSED(event)
+
+    ensureSpecResolved();
     ensureLayoutResolved();
 
-    QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing, true);
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const QColor base = palette().color(QPalette::Window);
-    const QColor outline = palette().color(QPalette::Mid);
-    const QColor text = palette().color(QPalette::WindowText);
+    QPainterPath containerPath;
+    containerPath.addRect(QRectF(d->m_visualRect));
 
-    p.setPen(Qt::NoPen);
-    p.setBrush(base);
-    p.drawRect(d->m_visualRect);
-
-    if (d->m_elevated) {
-        p.setPen(outline);
-        p.drawLine(d->m_visualRect.bottomLeft(), d->m_visualRect.bottomRight());
+    if (d->m_elevated
+        && d->m_spec.hasResolvedElevatedElevationStyle) {
+        QtMaterialElevationRenderer::paintPathElevation(
+            &painter,
+            containerPath,
+            d->m_spec.shadowColor,
+            d->m_spec.elevatedElevationStyle);
     }
 
-    p.setPen(text);
-    QFont titleFont = font();
-    titleFont.setBold(true);
-    p.setFont(titleFont);
-    const QString elided = QFontMetrics(titleFont).elidedText(d->m_title, Qt::ElideRight, d->m_titleRect.width());
-    const int horizontalAlignment = d->m_centeredTitle ? Qt::AlignHCenter : (layoutDirection() == Qt::RightToLeft ? Qt::AlignRight : Qt::AlignLeft);
-    p.drawText(d->m_titleRect, Qt::AlignVCenter | horizontalAlignment, elided);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(d->m_spec.containerColor);
+    painter.drawPath(containerPath);
+
+    painter.setPen(d->m_spec.titleColor);
+    const QFont titleFont =
+        d->m_spec.hasResolvedTitleFont
+        ? d->m_spec.titleFont
+        : font();
+    painter.setFont(titleFont);
+
+    const QString elided =
+        QFontMetrics(titleFont).elidedText(
+            d->m_title,
+            Qt::ElideRight,
+            d->m_titleRect.width());
+    const int horizontalAlignment =
+        d->m_centeredTitle
+        ? Qt::AlignHCenter
+        : (
+            layoutDirection() == Qt::RightToLeft
+            ? Qt::AlignRight
+            : Qt::AlignLeft);
+
+    painter.drawText(
+        d->m_titleRect,
+        Qt::AlignVCenter | horizontalAlignment,
+        elided);
 
     if (hasFocus()) {
-        QStyleOptionFocusRect option;
-        option.initFrom(this);
-        option.rect = rect().adjusted(2, 2, -2, -2);
-        style()->drawPrimitive(QStyle::PE_FrameFocusRect, &option, &p, this);
+        QPen focusPen(
+            d->m_spec.focusRingColor,
+            d->m_spec.focusRingWidth);
+        focusPen.setStyle(Qt::DashLine);
+        painter.setPen(focusPen);
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRect(
+            QRectF(rect()).adjusted(2, 2, -2, -2));
     }
 }
 
@@ -357,11 +395,15 @@ void QtMaterialTopAppBar::keyPressEvent(QKeyEvent* event)
     QtMaterialSurface::keyPressEvent(event);
 }
 
-void QtMaterialTopAppBar::themeChangedEvent(const QtMaterial::Theme& theme)
+void QtMaterialTopAppBar::themeChangedEvent(
+    const QtMaterial::Theme& changedTheme)
 {
-    QtMaterialSurface::themeChangedEvent(theme);
-    Q_UNUSED(theme)
+    QtMaterialSurface::themeChangedEvent(changedTheme);
+    d->m_specDirty = true;
+    d->m_layoutDirty = true;
+    ensureSpecResolved();
     syncButtons();
+    updateGeometry();
     update();
 }
 
@@ -373,23 +415,24 @@ void QtMaterialTopAppBar::stateChangedEvent()
 
 void QtMaterialTopAppBar::ensureLayoutResolved() const
 {
+    ensureSpecResolved();
     if (!d->m_layoutDirty) {
         return;
     }
 
     d->m_visualRect = rect();
-    QRect content = d->m_visualRect.adjusted(kHorizontalPadding, 0, -kHorizontalPadding, 0);
-    const int top = d->m_visualRect.center().y() - kActionSlot / 2;
+    QRect content = d->m_visualRect.adjusted(d->m_spec.contentPadding.left(), 0, -d->m_spec.contentPadding.right(), 0);
+    const int top = d->m_visualRect.center().y() - d->m_spec.actionSlot / 2;
     const bool rtl = layoutDirection() == Qt::RightToLeft;
 
     d->m_navRect = QRect();
     if (d->m_navigationButton && !d->m_navigationIcon.isNull()) {
         if (rtl) {
-            d->m_navRect = QRect(content.right() - kActionSlot + 1, top, kActionSlot, kActionSlot);
-            content.setRight(d->m_navRect.left() - kBetweenPadding);
+            d->m_navRect = QRect(content.right() - d->m_spec.actionSlot + 1, top, d->m_spec.actionSlot, d->m_spec.actionSlot);
+            content.setRight(d->m_navRect.left() - d->m_spec.betweenSpacing);
         } else {
-            d->m_navRect = QRect(content.left(), top, kActionSlot, kActionSlot);
-            content.setLeft(d->m_navRect.right() + kBetweenPadding);
+            d->m_navRect = QRect(content.left(), top, d->m_spec.actionSlot, d->m_spec.actionSlot);
+            content.setLeft(d->m_navRect.right() + d->m_spec.betweenSpacing);
         }
     }
 
@@ -397,17 +440,17 @@ void QtMaterialTopAppBar::ensureLayoutResolved() const
     if (rtl) {
         int left = content.left();
         for (int i = 0; i < d->m_actionButtons.size(); ++i) {
-            QRect r(left, top, kActionSlot, kActionSlot);
+            QRect r(left, top, d->m_spec.actionSlot, d->m_spec.actionSlot);
             d->m_actionRects.push_back(r);
-            left = r.right() + kBetweenPadding;
+            left = r.right() + d->m_spec.betweenSpacing;
         }
         content.setLeft(left);
     } else {
         int right = content.right();
         for (int i = d->m_actionButtons.size() - 1; i >= 0; --i) {
-            QRect r(right - kActionSlot + 1, top, kActionSlot, kActionSlot);
+            QRect r(right - d->m_spec.actionSlot + 1, top, d->m_spec.actionSlot, d->m_spec.actionSlot);
             d->m_actionRects.prepend(r);
-            right = r.left() - kBetweenPadding;
+            right = r.left() - d->m_spec.betweenSpacing;
         }
         content.setRight(right);
     }
@@ -435,6 +478,7 @@ void QtMaterialTopAppBar::invalidateLayoutCache()
 
 void QtMaterialTopAppBar::syncButtons()
 {
+    ensureSpecResolved();
     if (!d->m_navigationIcon.isNull()) {
         if (!d->m_navigationButton) {
             auto* button = new QToolButton(this);
@@ -507,4 +551,22 @@ QRect QtMaterialTopAppBar::availableContentRect() const
 {
     ensureLayoutResolved();
     return d->m_titleRect;
+}
+
+void QtMaterialTopAppBar::ensureSpecResolved() const
+{
+    if (!d->m_specDirty) {
+        return;
+    }
+
+    const QtMaterial::AppBarSpecResolver resolver;
+    d->m_spec = resolver.topAppBarSpec(theme());
+    d->m_specDirty = false;
+}
+
+const QtMaterial::AppBarSpec&
+QtMaterialTopAppBar::resolvedSpec() const
+{
+    ensureSpecResolved();
+    return d->m_spec;
 }

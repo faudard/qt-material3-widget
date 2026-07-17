@@ -7,12 +7,13 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QResizeEvent>
-#include <QStyle>
 #include <QToolButton>
-#include <qstyleoption.h>
 
 #include <memory>
 #include <QPainterPath>
+#include "qtmaterial/effects/qtmaterialelevationrenderer.h"
+#include "qtmaterial/specs/qtmaterialappbarspecresolver.h"
+#include "qtmaterial/specs/qtmaterialappbarspec.h"
 namespace {
 constexpr int kDefaultHeight = 80;
 constexpr int kMinimumWidth = 240;
@@ -44,6 +45,8 @@ struct QtMaterialBottomAppBarPrivate
     bool m_fabAttached = false;
 
     mutable bool m_layoutDirty = true;
+    mutable QtMaterial::AppBarSpec m_spec;
+    mutable bool m_specDirty = true;
     mutable QRect m_visualRect;
     mutable QRect m_navRect;
     mutable QRect m_titleRect;
@@ -318,48 +321,80 @@ QString QtMaterialBottomAppBar::accessibilitySummary() const
 
 QSize QtMaterialBottomAppBar::sizeHint() const
 {
-    return QSize(kPreferredWidth, kDefaultHeight + (d->m_fabAttached ? 16 : 0));
+    ensureSpecResolved();
+    const int extraHeight =
+        d->m_fabAttached ? 16 : 0;
+    return QSize(
+        d->m_spec.preferredWidth,
+        d->m_spec.preferredHeight + extraHeight);
 }
 
 QSize QtMaterialBottomAppBar::minimumSizeHint() const
 {
-    return QSize(kMinimumWidth, kDefaultHeight);
+    ensureSpecResolved();
+    return QSize(
+        d->m_spec.minimumWidth,
+        d->m_spec.preferredHeight);
 }
 
-void QtMaterialBottomAppBar::paintEvent(QPaintEvent* event)
+void QtMaterialBottomAppBar::paintEvent(
+    QPaintEvent* event)
 {
     Q_UNUSED(event)
+
+    ensureSpecResolved();
     ensureLayoutResolved();
 
-    QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing, true);
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const QColor base = palette().color(QPalette::Window);
-    const QColor outline = palette().color(QPalette::Mid);
-    const QColor text = palette().color(QPalette::WindowText);
+    QPainterPath containerPath;
+    containerPath.addRect(QRectF(d->m_visualRect));
 
-    p.setPen(Qt::NoPen);
-    p.setBrush(base);
-    p.drawRect(d->m_visualRect);
-
-    if (d->m_elevated) {
-        p.setPen(outline);
-        p.drawLine(d->m_visualRect.topLeft(), d->m_visualRect.topRight());
+    if (d->m_elevated
+        && d->m_spec.hasResolvedElevatedElevationStyle) {
+        QtMaterialElevationRenderer::paintPathElevation(
+            &painter,
+            containerPath,
+            d->m_spec.shadowColor,
+            d->m_spec.elevatedElevationStyle);
     }
 
-    p.setPen(text);
-    QFont titleFont = font();
-    titleFont.setBold(true);
-    p.setFont(titleFont);
-    const QString elided = QFontMetrics(titleFont).elidedText(d->m_title, Qt::ElideRight, d->m_titleRect.width());
-    const int horizontalAlignment = layoutDirection() == Qt::RightToLeft ? Qt::AlignRight : Qt::AlignLeft;
-    p.drawText(d->m_titleRect, Qt::AlignVCenter | horizontalAlignment, elided);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(d->m_spec.containerColor);
+    painter.drawPath(containerPath);
+
+    painter.setPen(d->m_spec.titleColor);
+    const QFont titleFont =
+        d->m_spec.hasResolvedTitleFont
+        ? d->m_spec.titleFont
+        : font();
+    painter.setFont(titleFont);
+
+    const QString elided =
+        QFontMetrics(titleFont).elidedText(
+            d->m_title,
+            Qt::ElideRight,
+            d->m_titleRect.width());
+    const int horizontalAlignment =
+        layoutDirection() == Qt::RightToLeft
+        ? Qt::AlignRight
+        : Qt::AlignLeft;
+
+    painter.drawText(
+        d->m_titleRect,
+        Qt::AlignVCenter | horizontalAlignment,
+        elided);
 
     if (hasFocus()) {
-        QStyleOptionFocusRect option;
-        option.initFrom(this);
-        option.rect = rect().adjusted(2, 2, -2, -2);
-        style()->drawPrimitive(QStyle::PE_FrameFocusRect, &option, &p, this);
+        QPen focusPen(
+            d->m_spec.focusRingColor,
+            d->m_spec.focusRingWidth);
+        focusPen.setStyle(Qt::DashLine);
+        painter.setPen(focusPen);
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRect(
+            QRectF(rect()).adjusted(2, 2, -2, -2));
     }
 }
 
@@ -402,11 +437,15 @@ void QtMaterialBottomAppBar::keyPressEvent(QKeyEvent* event)
     QtMaterialSurface::keyPressEvent(event);
 }
 
-void QtMaterialBottomAppBar::themeChangedEvent(const QtMaterial::Theme& theme)
+void QtMaterialBottomAppBar::themeChangedEvent(
+    const QtMaterial::Theme& changedTheme)
 {
-    QtMaterialSurface::themeChangedEvent(theme);
-    Q_UNUSED(theme)
+    QtMaterialSurface::themeChangedEvent(changedTheme);
+    d->m_specDirty = true;
+    d->m_layoutDirty = true;
+    ensureSpecResolved();
     syncButtons();
+    updateGeometry();
     update();
 }
 
@@ -418,6 +457,7 @@ void QtMaterialBottomAppBar::stateChangedEvent()
 
 void QtMaterialBottomAppBar::ensureLayoutResolved() const
 {
+    ensureSpecResolved();
     if (!d->m_layoutDirty) {
         return;
     }
@@ -434,11 +474,11 @@ void QtMaterialBottomAppBar::ensureLayoutResolved() const
     d->m_navRect = QRect();
     if (d->m_navigationButton && d->m_navigationButton->isVisible()) {
         if (rtl) {
-            d->m_navRect = QRect(right - kActionSlot + 1, content.center().y() - kActionSlot / 2, kActionSlot, kActionSlot);
-            right = d->m_navRect.left() - kBetweenPadding;
+            d->m_navRect = QRect(right - d->m_spec.actionSlot + 1, content.center().y() - d->m_spec.actionSlot / 2, d->m_spec.actionSlot, d->m_spec.actionSlot);
+            right = d->m_navRect.left() - d->m_spec.betweenSpacing;
         } else {
-            d->m_navRect = QRect(left, content.center().y() - kActionSlot / 2, kActionSlot, kActionSlot);
-            left = d->m_navRect.right() + kBetweenPadding;
+            d->m_navRect = QRect(left, content.center().y() - d->m_spec.actionSlot / 2, d->m_spec.actionSlot, d->m_spec.actionSlot);
+            left = d->m_navRect.right() + d->m_spec.betweenSpacing;
         }
         d->m_navigationButton->setGeometry(d->m_navRect);
     }
@@ -447,9 +487,9 @@ void QtMaterialBottomAppBar::ensureLayoutResolved() const
     if (rtl) {
         int currentLeft = left;
         for (int i = 0; i < d->m_actionButtons.size(); ++i) {
-            QRect slot(currentLeft, content.center().y() - kActionSlot / 2, kActionSlot, kActionSlot);
+            QRect slot(currentLeft, content.center().y() - d->m_spec.actionSlot / 2, d->m_spec.actionSlot, d->m_spec.actionSlot);
             d->m_actionRects.push_back(slot);
-            currentLeft = slot.right() + kBetweenPadding;
+            currentLeft = slot.right() + d->m_spec.betweenSpacing;
             if (d->m_actionButtons[i].button) {
                 d->m_actionButtons[i].button->setGeometry(slot);
             }
@@ -458,9 +498,9 @@ void QtMaterialBottomAppBar::ensureLayoutResolved() const
     } else {
         int currentRight = right;
         for (int i = d->m_actionButtons.size() - 1; i >= 0; --i) {
-            QRect slot(currentRight - kActionSlot + 1, content.center().y() - kActionSlot / 2, kActionSlot, kActionSlot);
+            QRect slot(currentRight - d->m_spec.actionSlot + 1, content.center().y() - d->m_spec.actionSlot / 2, d->m_spec.actionSlot, d->m_spec.actionSlot);
             d->m_actionRects.prepend(slot);
-            currentRight = slot.left() - kBetweenPadding;
+            currentRight = slot.left() - d->m_spec.betweenSpacing;
             if (d->m_actionButtons[i].button) {
                 d->m_actionButtons[i].button->setGeometry(slot);
             }
@@ -470,10 +510,10 @@ void QtMaterialBottomAppBar::ensureLayoutResolved() const
 
     d->m_fabRect = QRect();
     if (d->m_fabAttached && d->m_fabButton) {
-        d->m_fabRect = QRect(content.center().x() - kFabSlot / 2, d->m_visualRect.top() - 20, kFabSlot, kFabSlot);
+        d->m_fabRect = QRect(content.center().x() - d->m_spec.fabSlot / 2, d->m_visualRect.top() - 20, d->m_spec.fabSlot, d->m_spec.fabSlot);
         d->m_fabButton->setGeometry(d->m_fabRect);
         d->m_fabButton->raise();
-        const int gap = (kFabSlot / 2) + kBetweenPadding;
+        const int gap = (d->m_spec.fabSlot / 2) + d->m_spec.betweenSpacing;
         if (left < d->m_fabRect.center().x() && d->m_fabRect.center().x() < right) {
             if (layoutDirection() == Qt::RightToLeft) {
                 left = std::max(left, d->m_fabRect.right() + gap);
@@ -496,6 +536,7 @@ void QtMaterialBottomAppBar::invalidateLayoutCache()
 
 void QtMaterialBottomAppBar::syncButtons()
 {
+    ensureSpecResolved();
     if (!d->m_navigationButton) {
         d->m_navigationButton = new QToolButton(this);
         d->m_navigationButton->setObjectName(QStringLiteral("qtmaterial_bottomAppBar_navigationButton"));
@@ -566,5 +607,23 @@ QString QtMaterialBottomAppBar::effectiveNavigationAccessibleName() const
 
 QRect QtMaterialBottomAppBar::availableContentRect() const
 {
-    return d->m_visualRect.adjusted(kHorizontalPadding, 8, -kHorizontalPadding, -8);
+    return d->m_visualRect.adjusted(d->m_spec.contentPadding.left(), 8, -d->m_spec.contentPadding.right(), -8);
+}
+
+void QtMaterialBottomAppBar::ensureSpecResolved() const
+{
+    if (!d->m_specDirty) {
+        return;
+    }
+
+    const QtMaterial::AppBarSpecResolver resolver;
+    d->m_spec = resolver.bottomAppBarSpec(theme());
+    d->m_specDirty = false;
+}
+
+const QtMaterial::AppBarSpec&
+QtMaterialBottomAppBar::resolvedSpec() const
+{
+    ensureSpecResolved();
+    return d->m_spec;
 }

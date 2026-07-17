@@ -17,6 +17,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialbottomsheetspec.cpp
     qtmaterialbannerspec.cpp
     qtmaterialappbarspec.cpp
+    qtmaterialappbarspecresolver.cpp
     qtmateriallistitemspec.cpp
     qtmaterialdividerspec.cpp
     qtmaterialautocompletepopupspec.cpp
@@ -50,6 +51,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbottomsheetspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbannerspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialappbarspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialappbarspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmateriallistitemspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdividerspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletepopupspec.h

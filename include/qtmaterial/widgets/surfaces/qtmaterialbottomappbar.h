@@ -86,6 +86,8 @@ protected:
 private:
     std::unique_ptr<QtMaterialBottomAppBarPrivate> d;
 
+    const QtMaterial::AppBarSpec& resolvedSpec() const;
+    void ensureSpecResolved() const;
     void ensureLayoutResolved() const;
     void invalidateLayoutCache();
     void syncButtons();

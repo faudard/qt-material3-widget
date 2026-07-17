@@ -141,6 +141,26 @@
         "\\bOverlaySurfaceSpecResolver\\b",
         "\\bensureSpecResolved\\s*\\("
       ]
+    },
+    {
+      "name": "app-bars-use-resolved-specs",
+      "files": [
+        "src/widgets/surfaces/qtmaterialtopappbar.cpp",
+        "src/widgets/surfaces/qtmaterialbottomappbar.cpp"
+      ],
+      "forbidden_regex": [
+        "\\bQPalette\\b",
+        "\\bpalette\\s*\\(\\s*\\)",
+        "\\bQStyleOptionFocusRect\\b",
+        "style\\s*\\(\\s*\\)\\s*->\\s*drawPrimitive",
+        "\\bSpecFactory\\b",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:colorScheme|typography|elevations)\\s*\\("
+      ],
+      "required_regex": [
+        "\\bAppBarSpecResolver\\b",
+        "\\bensureSpecResolved\\s*\\(",
+        "QtMaterialElevationRenderer::paintPathElevation\\s*\\("
+      ]
     }
   ],
   "text_rules": [
@@ -168,7 +188,8 @@
       "required_regex": [
         "ButtonSpecResolver\\s*\\(\\s*\\)\\s*\\.",
         "SelectionSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "OverlaySurfaceSpecResolver\\s*\\(\\s*\\)\\s*\\."
+        "OverlaySurfaceSpecResolver\\s*\\(\\s*\\)\\s*\\.",
+        "AppBarSpecResolver\\s*\\(\\s*\\)\\s*\\."
       ]
     },
     {
@@ -251,6 +272,17 @@
         "\\bElevationStyle\\s+elevationStyle\\b",
         "\\bMotionStyle\\s+motionStyle\\b",
         "\\bqreal\\s+scrimOpacity\\b"
+      ]
+    },
+    {
+      "name": "app-bar-spec-is-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialappbarspec.h",
+      "required_regex": [
+        "\\bQFont\\s+titleFont\\s*;",
+        "\\bElevationStyle\\s+elevatedElevationStyle\\s*;",
+        "\\bQColor\\s+focusRingColor\\s*;",
+        "\\bint\\s+actionSlot\\s*=",
+        "\\bint\\s+betweenSpacing\\s*="
       ]
     }
   ]

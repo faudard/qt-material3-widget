@@ -4,6 +4,7 @@
 #include "qtmaterialcomponenttokenapplier_p.h"
 #include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
 #include "qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h"
+#include "qtmaterial/specs/qtmaterialappbarspecresolver.h"
 
 namespace QtMaterial {
 SpecFactory::SpecFactory() = default;
@@ -142,21 +143,16 @@ CardSpec SpecFactory::cardSpec(
     return SurfaceSpecResolver().cardSpec(theme);
 }
 
-AppBarSpec SpecFactory::topAppBarSpec(const Theme& theme) const
+AppBarSpec SpecFactory::topAppBarSpec(
+    const Theme& theme) const
 {
-    AppBarSpec spec;
-    spec.containerColor = theme.colorScheme().color(ColorRole::Surface);
-    spec.titleColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.navigationIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.actionIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    return spec;
+    return AppBarSpecResolver().topAppBarSpec(theme);
 }
 
-AppBarSpec SpecFactory::bottomAppBarSpec(const Theme& theme) const
+AppBarSpec SpecFactory::bottomAppBarSpec(
+    const Theme& theme) const
 {
-    AppBarSpec spec = topAppBarSpec(theme);
-    spec.elevationRole = ElevationRole::Level2;
-    return spec;
+    return AppBarSpecResolver().bottomAppBarSpec(theme);
 }
 
 TextFieldSpec SpecFactory::outlinedTextFieldSpec(const Theme& theme, Density density) const
