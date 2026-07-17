@@ -6,6 +6,7 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include <QtGlobal>
 
 namespace QtMaterial {
 
@@ -24,6 +25,8 @@ struct QTMATERIAL3_SPECS_EXPORT ProgressIndicatorSpec {
     ColorRole activeColorRole = ColorRole::Primary;
     ColorRole trackColorRole = ColorRole::SurfaceVariant;
     ShapeRole shapeRole = ShapeRole::Full;
+    // Negative means a dynamic full/pill radius.
+    qreal cornerRadius = -1.0;
 
     QMargins margins = QMargins(0, 0, 0, 0);
     QSize circularSize = QSize(48, 48);

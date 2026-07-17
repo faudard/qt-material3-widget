@@ -93,12 +93,14 @@ Q_SIGNALS:
     void specChanged();
 
 protected:
+    void themeChangedEvent(const QtMaterial::Theme& theme) override;
     void paintEvent(QPaintEvent* event) override;
     void showEvent(QShowEvent* event) override;
     void hideEvent(QHideEvent* event) override;
     void changeEvent(QEvent* event) override;
 
 private:
+    void ensureSpecResolved() const;
     void init();
     void initAnimation();
     void updateAnimationState();

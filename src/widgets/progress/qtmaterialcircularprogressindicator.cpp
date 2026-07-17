@@ -3,12 +3,12 @@
 
 #include <QEvent>
 #include <QPainter>
-#include <QPalette>
 #include <QPen>
 #include <QVariantAnimation>
 #include <QtGlobal>
 
 #include <cmath>
+#include "qtmaterial/specs/qtmaterialprogressspecresolver.h"
 
 namespace QtMaterial {
 namespace {
@@ -21,35 +21,14 @@ qreal clampProgress(qreal value)
     return qBound(0.0, value, 1.0);
 }
 
-QColor fallbackActive(const QWidget* widget)
-{
-    return widget->palette().color(QPalette::Highlight);
-}
-
-QColor fallbackTrack(const QWidget* widget)
-{
-    QColor color = widget->palette().color(QPalette::Mid);
-    color.setAlpha(qMax(32, color.alpha() / 2));
-    return color;
-}
-
-
-QColor resolvedCircularActiveColor(const ProgressIndicatorSpec& spec, const QWidget* widget)
-{
-    return spec.activeColor.isValid() ? spec.activeColor : fallbackActive(widget);
-}
-
-QColor resolvedCircularTrackColor(const ProgressIndicatorSpec& spec, const QWidget* widget)
-{
-    return spec.trackColor.isValid() ? spec.trackColor : fallbackTrack(widget);
-}
-
 } // namespace
 
 class QtMaterialCircularProgressIndicatorPrivate
 {
 public:
     ProgressIndicatorSpec spec;
+    mutable ProgressIndicatorSpec resolvedSpec;
+    mutable bool specDirty = true;
     QtMaterialAsyncState asyncState;
     qreal value = 0.0;
     qreal phase = 0.0;
@@ -69,6 +48,7 @@ QtMaterialCircularProgressIndicator::QtMaterialCircularProgressIndicator(const P
     , d(std::make_unique<QtMaterialCircularProgressIndicatorPrivate>())
 {
     d->spec = spec;
+    d->specDirty = true;
     init();
 }
 
@@ -230,6 +210,7 @@ void QtMaterialCircularProgressIndicator::setActiveColor(const QColor& color)
         return;
     }
     d->spec.activeColor = color;
+    d->specDirty = true;
     emit specChanged();
     update();
 }
@@ -250,6 +231,7 @@ void QtMaterialCircularProgressIndicator::setTrackColor(const QColor& color)
         return;
     }
     d->spec.trackColor = color;
+    d->specDirty = true;
     emit specChanged();
     update();
 }
@@ -271,6 +253,7 @@ void QtMaterialCircularProgressIndicator::setTrackGap(int gap)
         return;
     }
     d->spec.trackGap = gap;
+    d->specDirty = true;
     emit specChanged();
     update();
 }
@@ -287,6 +270,7 @@ void QtMaterialCircularProgressIndicator::setStrokeWidth(int width)
         return;
     }
     d->spec.circularStrokeWidth = width;
+    d->specDirty = true;
     emit specChanged();
     updateGeometry();
     update();
@@ -300,6 +284,7 @@ ProgressIndicatorSpec QtMaterialCircularProgressIndicator::spec() const
 void QtMaterialCircularProgressIndicator::setSpec(const ProgressIndicatorSpec& spec)
 {
     d->spec = spec;
+    d->specDirty = true;
     initAnimation();
     emit specChanged();
     updateGeometry();
@@ -308,30 +293,33 @@ void QtMaterialCircularProgressIndicator::setSpec(const ProgressIndicatorSpec& s
 
 QSize QtMaterialCircularProgressIndicator::sizeHint() const
 {
-    return d->spec.circularSize.expandedTo(QSize(16, 16));
+    ensureSpecResolved();
+    return d->resolvedSpec.circularSize.expandedTo(QSize(16, 16));
 }
 
 QSize QtMaterialCircularProgressIndicator::minimumSizeHint() const
 {
+    ensureSpecResolved();
     return QSize(24, 24);
 }
 
 void QtMaterialCircularProgressIndicator::paintEvent(QPaintEvent*)
 {
+    ensureSpecResolved();
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const int stroke = qMax(1, d->spec.circularStrokeWidth);
+    const int stroke = qMax(1, d->resolvedSpec.circularStrokeWidth);
     QRectF arcRect = rect().adjusted(stroke, stroke, -stroke, -stroke);
     if (arcRect.isEmpty()) {
         return;
     }
 
-    QPen trackPen(resolvedCircularTrackColor(d->spec, this), stroke, Qt::SolidLine, Qt::RoundCap);
-    QPen activePen(resolvedCircularActiveColor(d->spec, this), stroke, Qt::SolidLine, Qt::RoundCap);
+    QPen trackPen(d->resolvedSpec.trackColor, stroke, Qt::SolidLine, Qt::RoundCap);
+    QPen activePen(d->resolvedSpec.activeColor, stroke, Qt::SolidLine, Qt::RoundCap);
 
     painter.setPen(trackPen);
-    const int gap16 = qMax(0, d->spec.trackGap) * 16;
+    const int gap16 = qMax(0, d->resolvedSpec.trackGap) * 16;
     painter.drawArc(arcRect, gap16, 360 * 16 - (2 * gap16));
 
     painter.setPen(activePen);
@@ -363,13 +351,15 @@ void QtMaterialCircularProgressIndicator::hideEvent(QHideEvent* event)
 void QtMaterialCircularProgressIndicator::changeEvent(QEvent* event)
 {
     QtMaterialWidget::changeEvent(event);
-    if (event->type() == QEvent::PaletteChange || event->type() == QEvent::StyleChange) {
+    if (event->type() == QEvent::StyleChange) {
+        updateGeometry();
         update();
     }
 }
 
 void QtMaterialCircularProgressIndicator::initAnimation()
 {
+    ensureSpecResolved();
     if (!d->animation) {
         d->animation = new QVariantAnimation(this);
         connect(d->animation, &QVariantAnimation::valueChanged, this, [this](const QVariant& value) {
@@ -380,7 +370,7 @@ void QtMaterialCircularProgressIndicator::initAnimation()
 
     d->animation->setStartValue(0.0);
     d->animation->setEndValue(1.0);
-    d->animation->setDuration(qMax(250, d->spec.animationDurationMs));
+    d->animation->setDuration(qMax(250, d->resolvedSpec.animationDurationMs));
     d->animation->setLoopCount(-1);
 }
 
@@ -435,5 +425,27 @@ void QtMaterialCircularProgressIndicator::syncAccessibleState()
     emit accessibilitySummaryChanged(summary);
 }
 
+
+
+void QtMaterialCircularProgressIndicator::ensureSpecResolved() const
+{
+    if (!d->specDirty) {
+        return;
+    }
+
+    const ProgressSpecResolver resolver;
+    d->resolvedSpec = resolver.resolve(theme(), d->spec);
+    d->specDirty = false;
+}
+
+void QtMaterialCircularProgressIndicator::themeChangedEvent(const Theme& changedTheme)
+{
+    QtMaterialWidget::themeChangedEvent(changedTheme);
+    d->specDirty = true;
+    ensureSpecResolved();
+    initAnimation();
+    updateGeometry();
+    update();
+}
 
 } // namespace QtMaterial

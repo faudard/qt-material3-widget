@@ -101,6 +101,26 @@
         "\\bSelectionSpecResolver\\b",
         "SelectionRenderHelper::configureMotion\\s*\\("
       ]
+    },
+    {
+      "name": "progress-indicators-use-resolved-specs",
+      "files": [
+        "src/widgets/progress/qtmateriallinearprogressindicator.cpp",
+        "src/widgets/progress/qtmaterialcircularprogressindicator.cpp"
+      ],
+      "forbidden_regex": [
+        "\\bQPalette\\b",
+        "\\bpalette\\s*\\(\\s*\\)",
+        "\\bfallbackActive\\s*\\(",
+        "\\bfallbackTrack\\s*\\(",
+        "\\bThemeManager::instance\\s*\\(",
+        "\\bSpecFactory\\b"
+      ],
+      "required_regex": [
+        "\\bProgressSpecResolver\\b",
+        "\\bensureSpecResolved\\s*\\(",
+        "\\b(?:m_)?resolvedSpec\\b"
+      ]
     }
   ],
   "text_rules": [
@@ -190,6 +210,16 @@
       "forbidden_regex": [
         "QtMaterialElevatedButton::paintEvent\\s*\\(",
         "\\bQtMaterialShadowRenderer\\b"
+      ]
+    },
+    {
+      "name": "progress-spec-is-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialprogressindicatorspec.h",
+      "required_regex": [
+        "\\bqreal\\s+cornerRadius\\b",
+        "\\bShapeRole\\s+shapeRole\\b",
+        "\\bColorRole\\s+activeColorRole\\b",
+        "\\bColorRole\\s+trackColorRole\\b"
       ]
     }
   ]

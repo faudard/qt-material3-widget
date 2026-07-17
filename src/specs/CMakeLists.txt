@@ -24,6 +24,7 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialsnackbarspec.cpp
     qtmaterialsurfacespecresolver.cpp
     qtmaterialprogressindicatorspec.cpp
+    qtmaterialprogressspecresolver.cpp
     qtmaterialcomponentfamilyspecs.cpp
     qtmaterialdatacomponentspecs.cpp
     qtmaterialspecfactory_data_components.cpp
@@ -56,6 +57,7 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsnackbarspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsurfacespecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialprogressindicatorspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialprogressspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialchipspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsegmentedbuttonspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationrailspec.h

@@ -4,13 +4,13 @@
 #include <QEvent>
 #include <QHideEvent>
 #include <QPainter>
-#include <QPalette>
 #include <QShowEvent>
 #include <QSizePolicy>
 #include <QStyle>
 #include <QVariantAnimation>
 #include <algorithm>
 #include <cmath>
+#include "qtmaterial/specs/qtmaterialprogressspecresolver.h"
 
 namespace QtMaterial {
 namespace {
@@ -21,39 +21,14 @@ qreal clampProgress(qreal value) {
     return qBound(0.0, value, 1.0);
 }
 
-QColor fallbackActive(const QWidget* widget) {
-    return widget->palette().color(QPalette::Highlight);
-}
-
-QColor fallbackTrack(const QWidget* widget) {
-    QColor color = widget->palette().color(QPalette::Mid);
-    color.setAlpha(qMax(32, color.alpha() / 2));
-    return color;
-}
-
-QColor resolvedLinearActiveColor(const ProgressIndicatorSpec& spec, const QWidget* widget)
-{
-    return spec.activeColor.isValid() ? spec.activeColor : fallbackActive(widget);
-}
-
-QColor resolvedLinearTrackColor(const ProgressIndicatorSpec& spec, const QWidget* widget)
-{
-    return spec.trackColor.isValid() ? spec.trackColor : fallbackTrack(widget);
-}
-
-QColor resolvedLinearStopColor(const ProgressIndicatorSpec& spec, const QWidget* widget)
-{
-    return spec.stopIndicatorColor.isValid()
-        ? spec.stopIndicatorColor
-        : resolvedLinearActiveColor(spec, widget);
-}
-
 } // namespace
 
 class QtMaterialLinearProgressIndicatorPrivate
 {
 public:
     ProgressIndicatorSpec spec;
+    mutable ProgressIndicatorSpec resolvedSpec;
+    mutable bool specDirty = true;
     QtMaterialAsyncState asyncState;
     qreal value = 0.0;
     qreal phase = 0.0;
@@ -78,6 +53,7 @@ QtMaterialLinearProgressIndicator::QtMaterialLinearProgressIndicator(const Progr
     , d(std::make_unique<QtMaterialLinearProgressIndicatorPrivate>())
 {
     d->spec = spec;
+    d->specDirty = true;
     setMaterialComponent(QStringLiteral("LinearProgressIndicator"));
     syncAsyncStateFromProgress();
     initAnimation();
@@ -185,6 +161,7 @@ QColor QtMaterialLinearProgressIndicator::activeColor() const { return d->spec.a
 void QtMaterialLinearProgressIndicator::setActiveColor(const QColor& color) {
     if (d->spec.activeColor == color) return;
     d->spec.activeColor = color;
+    d->specDirty = true;
     emit specChanged();
     update();
 }
@@ -196,6 +173,7 @@ QColor QtMaterialLinearProgressIndicator::trackColor() const { return d->spec.tr
 void QtMaterialLinearProgressIndicator::setTrackColor(const QColor& color) {
     if (d->spec.trackColor == color) return;
     d->spec.trackColor = color;
+    d->specDirty = true;
     emit specChanged();
     update();
 }
@@ -208,6 +186,7 @@ void QtMaterialLinearProgressIndicator::setTrackGap(int gap) {
     gap = qMax(0, gap);
     if (d->spec.trackGap == gap) return;
     d->spec.trackGap = gap;
+    d->specDirty = true;
     emit specChanged();
     update();
 }
@@ -218,6 +197,7 @@ void QtMaterialLinearProgressIndicator::setStopIndicatorSize(int size) {
     size = qMax(0, size);
     if (d->spec.stopIndicatorSize == size) return;
     d->spec.stopIndicatorSize = size;
+    d->specDirty = true;
     emit specChanged();
     updateGeometry();
     update();
@@ -227,6 +207,7 @@ ProgressIndicatorSpec QtMaterialLinearProgressIndicator::spec() const { return d
 
 void QtMaterialLinearProgressIndicator::setSpec(const ProgressIndicatorSpec& spec) {
     d->spec = spec;
+    d->specDirty = true;
     initAnimation();
     emit specChanged();
     updateGeometry();
@@ -244,18 +225,21 @@ QSize QtMaterialLinearProgressIndicator::minimumSizeHint() const {
 }
 
 void QtMaterialLinearProgressIndicator::paintEvent(QPaintEvent*) {
+    ensureSpecResolved();
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    QRectF r = rect().adjusted(d->spec.margins.left(), d->spec.margins.top(), -d->spec.margins.right(), -d->spec.margins.bottom());
-    const qreal h = qMax(1.0, static_cast<double>(d->spec.linearHeight));
+    QRectF r = rect().adjusted(d->resolvedSpec.margins.left(), d->resolvedSpec.margins.top(), -d->resolvedSpec.margins.right(), -d->resolvedSpec.margins.bottom());
+    const qreal h = qMax(1.0, static_cast<double>(d->resolvedSpec.linearHeight));
     QRectF track(r.left(), r.center().y() - h / 2.0, r.width(), h);
-    const qreal radius = h / 2.0;
+    const qreal radius = d->resolvedSpec.cornerRadius < 0.0
+        ? h / 2.0
+        : qMin(d->resolvedSpec.cornerRadius, h / 2.0);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(resolvedLinearTrackColor(d->spec, this));
+    painter.setBrush(d->resolvedSpec.trackColor);
     painter.drawRoundedRect(track, radius, radius);
-    painter.setBrush(resolvedLinearActiveColor(d->spec, this));
+    painter.setBrush(d->resolvedSpec.activeColor);
     if (d->mode == Mode::Determinate) {
-        const qreal gap = d->value > 0.0 && d->value < 1.0 ? qMin<qreal>(d->spec.trackGap, track.width()) : 0.0;
+        const qreal gap = d->value > 0.0 && d->value < 1.0 ? qMin<qreal>(d->resolvedSpec.trackGap, track.width()) : 0.0;
         const qreal w = qMax<qreal>(0.0, track.width() * d->value - gap);
         QRectF active = track;
         active.setWidth(w);
@@ -265,9 +249,9 @@ void QtMaterialLinearProgressIndicator::paintEvent(QPaintEvent*) {
         if (active.width() > 0.0) {
             painter.drawRoundedRect(active, radius, radius);
         }
-        if (d->spec.stopIndicatorSize > 0 && d->value > 0.0 && d->value < 1.0) {
-            painter.setBrush(resolvedLinearStopColor(d->spec, this));
-            const qreal s = qMin<qreal>(d->spec.stopIndicatorSize, h);
+        if (d->resolvedSpec.stopIndicatorSize > 0 && d->value > 0.0 && d->value < 1.0) {
+            painter.setBrush(d->resolvedSpec.stopIndicatorColor);
+            const qreal s = qMin<qreal>(d->resolvedSpec.stopIndicatorSize, h);
             const qreal x = (d->invertedAppearance || layoutDirection() == Qt::RightToLeft)
                 ? active.left() - gap / 2.0
                 : active.right() + gap / 2.0;
@@ -298,14 +282,17 @@ void QtMaterialLinearProgressIndicator::hideEvent(QHideEvent* event) {
     updateAnimationState();
 }
 
-void QtMaterialLinearProgressIndicator::changeEvent(QEvent* event) {
+void QtMaterialLinearProgressIndicator::changeEvent(QEvent* event)
+{
     QtMaterialWidget::changeEvent(event);
-    if (event->type() == QEvent::PaletteChange || event->type() == QEvent::StyleChange) {
+    if (event->type() == QEvent::StyleChange) {
+        updateGeometry();
         update();
     }
 }
 
 void QtMaterialLinearProgressIndicator::initAnimation() {
+    ensureSpecResolved();
     if (!d->animation) {
         d->animation = new QVariantAnimation(this);
         connect(d->animation, &QVariantAnimation::valueChanged, this, [this](const QVariant& value) {
@@ -315,7 +302,7 @@ void QtMaterialLinearProgressIndicator::initAnimation() {
     }
     d->animation->setStartValue(0.0);
     d->animation->setEndValue(1.0);
-    d->animation->setDuration(qMax(250, d->spec.animationDurationMs));
+    d->animation->setDuration(qMax(250, d->resolvedSpec.animationDurationMs));
     d->animation->setLoopCount(-1);
 }
 
@@ -363,6 +350,28 @@ void QtMaterial::QtMaterialLinearProgressIndicator::updateAccessibleState()
         setAccessibleName(tr("Progress indicator"));
     }
     setAccessibleDescription(accessibleValueText());
+}
+
+
+void QtMaterialLinearProgressIndicator::ensureSpecResolved() const
+{
+    if (!d->specDirty) {
+        return;
+    }
+
+    const ProgressSpecResolver resolver;
+    d->resolvedSpec = resolver.resolve(theme(), d->spec);
+    d->specDirty = false;
+}
+
+void QtMaterialLinearProgressIndicator::themeChangedEvent(const Theme& changedTheme)
+{
+    QtMaterialWidget::themeChangedEvent(changedTheme);
+    d->specDirty = true;
+    ensureSpecResolved();
+    initAnimation();
+    updateGeometry();
+    update();
 }
 
 } // namespace QtMaterial
