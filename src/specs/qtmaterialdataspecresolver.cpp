@@ -562,7 +562,456 @@ void applyDividerOverrides(
     }
 }
 
+
+void applyListOverrides(
+    const Theme& theme,
+    ListSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(
+            theme,
+            QStringList{
+                QStringLiteral("data"),
+                QStringLiteral("list"),
+                QStringLiteral("List")
+            });
+
+    if (tokens.isEmpty()) {
+        return;
+    }
+
+    applyTokenColor(
+        &spec->containerColor,
+        tokens,
+        ColorRole::Surface);
+    applyTokenColor(
+        &spec->focusRingColor,
+        tokens,
+        ColorRole::Primary);
+    applyTokenColor(
+        &spec->dividerColor,
+        tokens,
+        ColorRole::OutlineVariant);
+    applyTokenColor(
+        &spec->selectionOverlayColor,
+        tokens,
+        ColorRole::SecondaryContainer);
+
+    const QVariantMap& custom = tokens.custom;
+    readColor(
+        custom,
+        "containerColor",
+        &spec->containerColor);
+    readColor(
+        custom,
+        "focusRingColor",
+        &spec->focusRingColor);
+    readColor(
+        custom,
+        "dividerColor",
+        &spec->dividerColor);
+    readColor(
+        custom,
+        "selectionOverlayColor",
+        &spec->selectionOverlayColor);
+
+    spec->shapeRole =
+        overriddenShapeRole(
+            tokens,
+            spec->shapeRole);
+
+    readInt(
+        custom,
+        "itemSpacing",
+        &spec->itemSpacing);
+    readInt(
+        custom,
+        "dividerThickness",
+        &spec->dividerThickness);
+    readInt(
+        custom,
+        "focusRingWidth",
+        &spec->focusRingWidth);
+    readBool(
+        custom,
+        "showDividers",
+        &spec->showDividers);
+
+    int left = spec->contentMargins.left();
+    int top = spec->contentMargins.top();
+    int right = spec->contentMargins.right();
+    int bottom = spec->contentMargins.bottom();
+    bool marginsChanged = false;
+
+    marginsChanged =
+        readInt(custom, "marginLeft", &left)
+        || marginsChanged;
+    marginsChanged =
+        readInt(custom, "marginTop", &top)
+        || marginsChanged;
+    marginsChanged =
+        readInt(custom, "marginRight", &right)
+        || marginsChanged;
+    marginsChanged =
+        readInt(custom, "marginBottom", &bottom)
+        || marginsChanged;
+
+    if (marginsChanged) {
+        spec->contentMargins =
+            QMargins(left, top, right, bottom);
+    }
+
+    int minimumWidth =
+        spec->minimumViewportSize.width();
+    int minimumHeight =
+        spec->minimumViewportSize.height();
+    bool minimumChanged = false;
+
+    minimumChanged =
+        readInt(
+            custom,
+            "minimumViewportWidth",
+            &minimumWidth)
+        || minimumChanged;
+    minimumChanged =
+        readInt(
+            custom,
+            "minimumViewportHeight",
+            &minimumHeight)
+        || minimumChanged;
+
+    if (minimumChanged) {
+        spec->minimumViewportSize =
+            QSize(minimumWidth, minimumHeight);
+    }
+
+    readReal(
+        custom,
+        "cornerRadius",
+        &spec->cornerRadius);
+}
+
+void applyGridListOverrides(
+    const Theme& theme,
+    GridListSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(
+            theme,
+            QStringList{
+                QStringLiteral("data"),
+                QStringLiteral("gridList"),
+                QStringLiteral("GridList")
+            });
+
+    if (tokens.isEmpty()) {
+        return;
+    }
+
+    applyTokenColor(
+        &spec->backgroundColor,
+        tokens,
+        ColorRole::Surface);
+    applyTokenColor(
+        &spec->foregroundColor,
+        tokens,
+        ColorRole::OnSurface);
+    applyTokenColor(
+        &spec->itemBackgroundColor,
+        tokens,
+        ColorRole::SurfaceContainerLow);
+    applyTokenColor(
+        &spec->itemSelectedColor,
+        tokens,
+        ColorRole::SecondaryContainer);
+    applyTokenColor(
+        &spec->itemSelectedTextColor,
+        tokens,
+        ColorRole::OnSecondaryContainer);
+    applyTokenColor(
+        &spec->supportingTextColor,
+        tokens,
+        ColorRole::OnSurfaceVariant);
+    applyTokenColor(
+        &spec->focusRingColor,
+        tokens,
+        ColorRole::Primary);
+
+    const QVariantMap& custom = tokens.custom;
+    readColor(
+        custom,
+        "backgroundColor",
+        &spec->backgroundColor);
+    readColor(
+        custom,
+        "foregroundColor",
+        &spec->foregroundColor);
+    readColor(
+        custom,
+        "itemBackgroundColor",
+        &spec->itemBackgroundColor);
+    readColor(
+        custom,
+        "itemHoverColor",
+        &spec->itemHoverColor);
+    readColor(
+        custom,
+        "itemSelectedColor",
+        &spec->itemSelectedColor);
+    readColor(
+        custom,
+        "itemSelectedTextColor",
+        &spec->itemSelectedTextColor);
+    readColor(
+        custom,
+        "supportingTextColor",
+        &spec->supportingTextColor);
+    readColor(
+        custom,
+        "disabledTextColor",
+        &spec->disabledTextColor);
+    readColor(
+        custom,
+        "focusRingColor",
+        &spec->focusRingColor);
+
+    if (
+        tokens.typography.contains(
+            TypeRole::TitleMedium)) {
+        spec->titleFont =
+            tokens.typography
+                .value(TypeRole::TitleMedium)
+                .font;
+    }
+    if (
+        tokens.typography.contains(
+            TypeRole::BodyMedium)) {
+        spec->supportingFont =
+            tokens.typography
+                .value(TypeRole::BodyMedium)
+                .font;
+    }
+
+    int itemWidth = spec->itemSize.width();
+    int itemHeight = spec->itemSize.height();
+    const bool itemWidthChanged =
+        readInt(custom, "itemWidth", &itemWidth);
+    const bool itemHeightChanged =
+        readInt(custom, "itemHeight", &itemHeight);
+
+    if (itemWidthChanged || itemHeightChanged) {
+        spec->itemSize =
+            QSize(itemWidth, itemHeight);
+    }
+    readInt(custom, "itemRadius", &spec->itemRadius);
+    readInt(custom, "spacing", &spec->spacing);
+    readInt(custom, "focusRingWidth", &spec->focusRingWidth);
+    readInt(custom, "columns", &spec->columns);
+    readInt(custom, "minimumCellWidth", &spec->minimumCellWidth);
+}
+
 } // namespace
+
+
+ListSpec DataSpecResolver::listSpec(
+    const Theme& theme,
+    Density density) const
+{
+    ListSpec spec;
+
+    spec.containerColor =
+        roleOr(
+            theme,
+            ColorRole::Surface,
+            QColor(QStringLiteral("#FFFBFE")));
+    spec.focusRingColor =
+        roleOr(
+            theme,
+            ColorRole::Primary,
+            QColor(QStringLiteral("#6750A4")));
+    spec.dividerColor =
+        roleOr(
+            theme,
+            ColorRole::OutlineVariant,
+            QColor(QStringLiteral("#CAC4D0")));
+    spec.selectionOverlayColor =
+        roleOr(
+            theme,
+            ColorRole::SecondaryContainer,
+            QColor(QStringLiteral("#E8DEF8")));
+
+    switch (density) {
+    case Density::Compact:
+        spec.contentMargins =
+            QMargins(0, 4, 0, 4);
+        spec.minimumViewportSize =
+            QSize(220, 120);
+        break;
+    case Density::Comfortable:
+        spec.contentMargins =
+            QMargins(0, 12, 0, 12);
+        spec.minimumViewportSize =
+            QSize(260, 200);
+        spec.itemSpacing = 2;
+        break;
+    case Density::Default:
+    default:
+        break;
+    }
+
+    applyListOverrides(theme, &spec);
+
+    spec.itemSpacing =
+        qMax(0, spec.itemSpacing);
+    spec.dividerThickness =
+        qMax(1, spec.dividerThickness);
+    spec.focusRingWidth =
+        qMax(0, spec.focusRingWidth);
+    spec.minimumViewportSize =
+        QSize(
+            qMax(1, spec.minimumViewportSize.width()),
+            qMax(1, spec.minimumViewportSize.height()));
+
+    if (spec.cornerRadius < 0.0) {
+        spec.cornerRadius =
+            radiusFor(
+                theme,
+                spec.shapeRole,
+                16.0,
+                spec.minimumViewportSize.height());
+    }
+
+    return spec;
+}
+
+GridListSpec DataSpecResolver::gridListSpec(
+    const Theme& theme,
+    Density density) const
+{
+    GridListSpec spec =
+        defaultGridListSpec();
+
+    spec.backgroundColor =
+        roleOr(
+            theme,
+            ColorRole::Surface,
+            spec.backgroundColor);
+    spec.foregroundColor =
+        roleOr(
+            theme,
+            ColorRole::OnSurface,
+            spec.foregroundColor);
+    spec.itemBackgroundColor =
+        roleOr(
+            theme,
+            ColorRole::SurfaceContainerLow,
+            spec.itemBackgroundColor);
+    spec.itemSelectedColor =
+        roleOr(
+            theme,
+            ColorRole::SecondaryContainer,
+            spec.itemSelectedColor);
+    spec.itemSelectedTextColor =
+        roleOr(
+            theme,
+            ColorRole::OnSecondaryContainer,
+            spec.itemSelectedTextColor);
+    spec.supportingTextColor =
+        roleOr(
+            theme,
+            ColorRole::OnSurfaceVariant,
+            spec.supportingTextColor);
+    spec.focusRingColor =
+        roleOr(
+            theme,
+            ColorRole::Primary,
+            spec.focusRingColor);
+
+    const StateLayer& stateLayer =
+        theme.stateLayer();
+
+    spec.itemHoverColor =
+        withOpacity(
+            spec.foregroundColor,
+            stateLayer.hoverOpacity);
+    spec.disabledTextColor =
+        withOpacity(
+            spec.foregroundColor,
+            0.38);
+
+    const QFont fallback =
+        applicationFont();
+    spec.titleFont =
+        fontFor(
+            theme,
+            TypeRole::TitleMedium,
+            fallback);
+    spec.supportingFont =
+        fontFor(
+            theme,
+            TypeRole::BodyMedium,
+            fallback);
+
+    switch (density) {
+    case Density::Compact:
+        spec.itemSize = QSize(144, 120);
+        spec.spacing = 8;
+        spec.minimumCellWidth = 104;
+        break;
+    case Density::Comfortable:
+        spec.itemSize = QSize(176, 152);
+        spec.spacing = 16;
+        spec.minimumCellWidth = 136;
+        break;
+    case Density::Default:
+    default:
+        break;
+    }
+
+    applyGridListOverrides(
+        theme,
+        &spec);
+
+    spec.itemSize =
+        QSize(
+            qMax(48, spec.itemSize.width()),
+            qMax(48, spec.itemSize.height()));
+    spec.itemRadius =
+        qMax(0, spec.itemRadius);
+    spec.spacing =
+        qMax(0, spec.spacing);
+    spec.focusRingWidth =
+        qMax(0, spec.focusRingWidth);
+    spec.columns =
+        qMax(1, spec.columns);
+    spec.minimumCellWidth =
+        qMax(48, spec.minimumCellWidth);
+
+    if (spec.titleFont.family().isEmpty()) {
+        spec.titleFont =
+            fontFor(
+                theme,
+                TypeRole::TitleMedium,
+                fallback);
+    }
+    if (spec.supportingFont.family().isEmpty()) {
+        spec.supportingFont =
+            fontFor(
+                theme,
+                TypeRole::BodyMedium,
+                fallback);
+    }
+
+    return spec;
+}
 
 ListItemSpec DataSpecResolver::listItemSpec(
     const Theme& theme,

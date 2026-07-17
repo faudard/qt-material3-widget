@@ -319,3 +319,6 @@ include(
     "${CMAKE_SOURCE_DIR}/cmake/QtMaterial3ArchitectureGuard.cmake"
 )
 qtmaterial3_add_architecture_guard()
+
+qtm3_add_test(tst_datalistgridresolver specs/tst_datalistgridresolver.cpp qtmaterial3_theme qtmaterial3_specs)
+qtm3_add_test(tst_data_list_grid_resolved widgets/data/tst_data_list_grid_resolved.cpp qtmaterial3_widgets)

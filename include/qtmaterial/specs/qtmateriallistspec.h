@@ -21,8 +21,13 @@ struct QTMATERIAL3_WIDGETS_EXPORT ListSpec
 
     QMargins contentMargins = QMargins(0, 8, 0, 8);
     QSize minimumViewportSize = QSize(240, 160);
+
     int itemSpacing = 0;
     int dividerThickness = 1;
+    int focusRingWidth = 2;
+
+    qreal cornerRadius = -1.0;
+
     bool showDividers = false;
 };
 

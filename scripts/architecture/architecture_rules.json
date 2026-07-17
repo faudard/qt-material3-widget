@@ -383,6 +383,62 @@
         "\\bQPalette\\b",
         "\\bpalette\\s*\\("
       ]
+    },
+    {
+      "name": "data-list-grid-resolver-owns-theme-resolution",
+      "files": [
+        "include/qtmaterial/specs/qtmaterialdataspecresolver.h",
+        "src/specs/qtmaterialdataspecresolver.cpp"
+      ],
+      "required_regex": [
+        "\\bListSpec\\s+listSpec\\s*\\(",
+        "\\bGridListSpec\\s+gridListSpec\\s*\\(",
+        "DataSpecResolver\\s*::\\s*listSpec\\s*\\(",
+        "DataSpecResolver\\s*::\\s*gridListSpec\\s*\\(",
+        "mergedComponentOverride\\s*\\([\\s\\S]*?QStringLiteral\\s*\\(\\s*\\\"list\\\"\\s*\\)",
+        "mergedComponentOverride\\s*\\([\\s\\S]*?QStringLiteral\\s*\\(\\s*\\\"gridList\\\"\\s*\\)"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "list-uses-resolved-data-spec",
+      "files": [
+        "include/qtmaterial/widgets/data/qtmateriallist.h",
+        "src/widgets/data/qtmateriallist.cpp"
+      ],
+      "required_regex": [
+        "\\bconst\\s+ListSpec\\s*&\\s*resolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bensureSpecResolved\\s*\\(\\s*\\)",
+        "DataSpecResolver",
+        "\\bthemeChangedEvent\\s*\\(",
+        "\\bsetDividerVisible\\s*\\("
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "\\bQPalette\\b",
+        "\\bpalette\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\("
+      ]
+    },
+    {
+      "name": "grid-list-uses-resolved-data-spec",
+      "files": [
+        "include/qtmaterial/widgets/data/qtmaterialgridlist.h",
+        "src/widgets/data/qtmaterialgridlist.cpp"
+      ],
+      "required_regex": [
+        "\\bconst\\s+GridListSpec\\s*&\\s*resolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bensureSpecResolved\\s*\\(\\s*\\)",
+        "DataSpecResolver",
+        "\\bapplyResolvedSpec\\s*\\(\\s*\\)",
+        "effectiveThemeContextChanged",
+        "resolvedPalette\\s*\\.\\s*setColor"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
+        "\\bdefaultGridListSpec\\s*\\("
+      ]
     }
   ],
   "text_rules": [

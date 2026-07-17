@@ -7,7 +7,8 @@
 
 namespace QtMaterial {
 
-struct DatePickerSpec {
+struct DatePickerSpec
+{
     QColor backgroundColor;
     QColor foregroundColor;
     QColor headlineColor;
@@ -26,7 +27,8 @@ struct DatePickerSpec {
     QMargins contentMargins = QMargins(16, 16, 16, 16);
 };
 
-struct TableSpec {
+struct TableSpec
+{
     QColor backgroundColor;
     QColor foregroundColor;
     QColor headerBackgroundColor;
@@ -45,7 +47,8 @@ struct TableSpec {
     int focusRingWidth = 2;
 };
 
-struct GridListSpec {
+struct GridListSpec
+{
     QColor backgroundColor;
     QColor foregroundColor;
     QColor itemBackgroundColor;
@@ -53,16 +56,23 @@ struct GridListSpec {
     QColor itemSelectedColor;
     QColor itemSelectedTextColor;
     QColor supportingTextColor;
+    QColor disabledTextColor;
     QColor focusRingColor;
+
     QFont titleFont;
     QFont supportingFont;
+
     QSize itemSize = QSize(160, 144);
+
     int itemRadius = 16;
     int spacing = 12;
     int focusRingWidth = 2;
+    int columns = 3;
+    int minimumCellWidth = 120;
 };
 
-struct CarouselSpec {
+struct CarouselSpec
+{
     QColor backgroundColor;
     QColor foregroundColor;
     QColor pageIndicatorColor;
