@@ -159,7 +159,7 @@
       "required_regex": [
         "\\bAppBarSpecResolver\\b",
         "\\bensureSpecResolved\\s*\\(",
-        "QtMaterialElevationRenderer::paintPathElevation\\s*\\("
+        "QtMaterialElevationRenderer::\\s*paintPathElevation\\s*\\("
       ]
     },
     {
@@ -424,7 +424,7 @@
         "containerPath\\s*\\.\\s*translated\\s*\\("
       ],
       "required_regex": [
-        "QtMaterialElevationRenderer::paintInterpolatedPathElevation\\s*\\("
+        "QtMaterialElevationRenderer::\\s*paintInterpolatedPathElevation\\s*\\("
       ]
     },
     {
