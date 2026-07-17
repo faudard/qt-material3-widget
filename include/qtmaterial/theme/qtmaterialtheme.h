@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QMetaType>
+
 #include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 
 #include "qtmaterial/qtmaterialglobal.h"
@@ -84,3 +86,5 @@ private:
 };
 
 } // namespace QtMaterial
+
+Q_DECLARE_METATYPE(QtMaterial::Theme)

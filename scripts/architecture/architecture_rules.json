@@ -159,7 +159,7 @@
       "required_regex": [
         "\\bAppBarSpecResolver\\b",
         "\\bensureSpecResolved\\s*\\(",
-        "QtMaterialElevationRenderer::\\s*paintPathElevation\\s*\\("
+        "QtMaterialElevationRenderer\\s*::\\s*\\s*paintPathElevation\\s*\\("
       ]
     },
     {
@@ -177,7 +177,7 @@
       ],
       "required_regex": [
         "\\bDialogSpecResolver\\b",
-        "QtMaterialElevationRenderer::paintPathElevation\\s*\\(",
+        "QtMaterialElevationRenderer\\s*::\\s*paintPathElevation\\s*\\(",
         "applyMotionStyle\\s*\\(",
         "setScrimColor\\s*\\("
       ]
@@ -233,7 +233,7 @@
       "required_regex": [
         "\\bAutocompletePopupSpecResolver\\b",
         "\\beffectiveThemeContext\\s*\\(",
-        "QtMaterialElevationRenderer::paintPathElevation\\s*\\(",
+        "QtMaterialElevationRenderer\\s*::\\s*paintPathElevation\\s*\\(",
         "\\brefreshPopupVisibility\\s*\\("
       ]
     },
@@ -424,7 +424,7 @@
         "containerPath\\s*\\.\\s*translated\\s*\\("
       ],
       "required_regex": [
-        "QtMaterialElevationRenderer::\\s*paintInterpolatedPathElevation\\s*\\("
+        "QtMaterialElevationRenderer\\s*::\\s*\\s*paintInterpolatedPathElevation\\s*\\("
       ]
     },
     {

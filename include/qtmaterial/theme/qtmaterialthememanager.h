@@ -83,5 +83,4 @@ private:
 
 } // namespace QtMaterial
 
-Q_DECLARE_METATYPE(QtMaterial::Theme)
 Q_DECLARE_METATYPE(QtMaterial::ThemeChangeReason)
