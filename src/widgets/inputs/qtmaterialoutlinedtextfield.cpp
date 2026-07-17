@@ -2156,7 +2156,6 @@ void QtMaterialOutlinedTextField::paintEvent(QPaintEvent*)
     QtMaterialTextFieldShellHelper::paintShell(
         &painter,
         layout,
-        theme(),
         spec(),
         state,
         shellVariant() == ShellVariant::Filled

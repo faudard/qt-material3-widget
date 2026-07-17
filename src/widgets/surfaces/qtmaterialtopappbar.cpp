@@ -306,7 +306,7 @@ void QtMaterialTopAppBar::paintEvent(
 
     if (d->m_elevated
         && d->m_spec.hasResolvedElevatedElevationStyle) {
-        QtMaterialElevationRenderer::paintPathElevation(
+        QtMaterial::QtMaterialElevationRenderer::paintPathElevation(
             &painter,
             containerPath,
             d->m_spec.shadowColor,
@@ -564,9 +564,3 @@ void QtMaterialTopAppBar::ensureSpecResolved() const
     d->m_specDirty = false;
 }
 
-const QtMaterial::AppBarSpec&
-QtMaterialTopAppBar::resolvedSpec() const
-{
-    ensureSpecResolved();
-    return d->m_spec;
-}

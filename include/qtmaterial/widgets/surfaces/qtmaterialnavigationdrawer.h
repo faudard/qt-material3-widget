@@ -52,7 +52,7 @@ protected:
     void invalidateResolvedSpec() override;
 
 private:
-private:
+    void ensureSpecResolved() const;
     std::unique_ptr<QtMaterialNavigationDrawerPrivate> d_ptr;
 
 };

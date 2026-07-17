@@ -18,6 +18,10 @@ class QResizeEvent;
 class QToolButton;
 class QtMaterialTopAppBarPrivate;
 
+namespace QtMaterial {
+struct AppBarSpec;
+}
+
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTopAppBar : public QtMaterial::QtMaterialSurface
 {
     Q_OBJECT
@@ -81,7 +85,6 @@ protected:
 private:
     std::unique_ptr<QtMaterialTopAppBarPrivate> d;
 
-    const QtMaterial::AppBarSpec& resolvedSpec() const;
     void ensureSpecResolved() const;
     void ensureLayoutResolved() const;
     void invalidateLayoutCache();

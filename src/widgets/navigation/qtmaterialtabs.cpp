@@ -1,5 +1,12 @@
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
+
 #include "qtmaterial/core/qtmaterialnavigationmodel.h"
+#include "qtmaterial/core/qtmaterialwidget.h"
+#include "qtmaterial/specs/qtmaterialtabsspecresolver.h"
+#include "qtmaterial/theme/qtmaterialthemecontext.h"
+#include "qtmaterial/theme/qtmaterialthememanager.h"
+#include "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h"
+
 
 #include <QAction>
 #include <QApplication>
@@ -17,9 +24,6 @@
 #include <QToolButton>
 #include <QVariantAnimation>
 #include <QVBoxLayout>
-
-#include "qtmaterial/theme/qtmaterialthememanager.h"
-#include "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h"
 #include <memory>
 
 namespace QtMaterial {

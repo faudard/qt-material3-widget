@@ -49,7 +49,7 @@ QtMaterialTextFieldShellHelper::Layout layoutFor(
     int width = 360)
 {
     return QtMaterialTextFieldShellHelper::layoutFor(
-        Fixture::boundsFor(spec, width), spec, theme, variant, accessories, font);
+        Fixture::boundsFor(spec, width), spec, variant, accessories, font);
 }
 
 } // namespace

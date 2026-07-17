@@ -18,7 +18,13 @@ class QPaintEvent;
 class QResizeEvent;
 
 namespace QtMaterial {
-class ThemeContext; class Theme; }
+
+struct AutocompletePopupSpec;
+class Theme;
+class ThemeContext;
+
+} // namespace QtMaterial
+
 
 class QtMaterialAutocompletePopupPrivate;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialAutocompletePopup : public QWidget {

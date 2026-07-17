@@ -7,6 +7,7 @@
 #include <QtGlobal>
 #include "qtmaterial/theme/qtmaterialelevationscale.h"
 #include "qtmaterial/theme/qtmaterialtypographyscale.h"
+
 namespace QtMaterial {
 struct QTMATERIAL3_SPECS_EXPORT AppBarSpec {
     QColor containerColor;

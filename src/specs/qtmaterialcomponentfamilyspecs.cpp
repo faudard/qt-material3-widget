@@ -89,21 +89,6 @@ SegmentedButtonSpec SpecFactory::segmentedButtonSpec(const Theme& theme, Density
     return spec;
 }
 
-NavigationRailSpec SpecFactory::navigationRailSpec(const Theme& theme) const
-{
-    NavigationRailSpec spec;
-    spec.containerColor = theme.colorScheme().color(ColorRole::Surface);
-    spec.indicatorColor = theme.colorScheme().color(ColorRole::SecondaryContainer);
-    spec.selectedIconColor = theme.colorScheme().color(ColorRole::OnSecondaryContainer);
-    spec.selectedLabelColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.unselectedIconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.unselectedLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.dividerColor = theme.colorScheme().color(ColorRole::OutlineVariant);
-    return spec;
-}
-
 MenuSpec SpecFactory::menuSpec(const Theme& theme, Density density) const
 {
     MenuSpec spec;

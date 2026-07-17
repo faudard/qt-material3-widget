@@ -62,7 +62,6 @@ void tst_TextFieldShellHelperRtl::layoutStoresDirection()
     const auto layout = QtMaterialTextFieldShellHelper::layoutFor(
         QRect(0, 0, 320, 100),
         spec(),
-        theme(),
         QtMaterialTextFieldShellHelper::Variant::Outlined,
         accessories(Qt::RightToLeft),
         QFont());
@@ -75,7 +74,6 @@ void tst_TextFieldShellHelperRtl::rtlMirrorsLeadingAndTrailingAccessories()
     const auto ltr = QtMaterialTextFieldShellHelper::layoutFor(
         QRect(0, 0, 360, 100),
         spec(),
-        theme(),
         QtMaterialTextFieldShellHelper::Variant::Outlined,
         accessories(Qt::LeftToRight),
         QFont());
@@ -83,7 +81,6 @@ void tst_TextFieldShellHelperRtl::rtlMirrorsLeadingAndTrailingAccessories()
     const auto rtl = QtMaterialTextFieldShellHelper::layoutFor(
         QRect(0, 0, 360, 100),
         spec(),
-        theme(),
         QtMaterialTextFieldShellHelper::Variant::Outlined,
         accessories(Qt::RightToLeft),
         QFont());
@@ -116,7 +113,6 @@ void tst_TextFieldShellHelperRtl::editorRectNeverBecomesNegativeForDenseAccessor
     const auto layout = QtMaterialTextFieldShellHelper::layoutFor(
         QRect(0, 0, 180, 100),
         spec(),
-        theme(),
         QtMaterialTextFieldShellHelper::Variant::Outlined,
         a,
         QFont());

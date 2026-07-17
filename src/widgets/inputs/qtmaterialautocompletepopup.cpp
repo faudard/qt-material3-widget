@@ -22,6 +22,14 @@
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
 #include <QMetaObject>
 
+using QtMaterial::AutocompletePopupSpec;
+using QtMaterial::AutocompletePopupSpecResolver;
+using QtMaterial::QtMaterialElevationRenderer;
+using QtMaterial::QtMaterialWidget;
+using QtMaterial::Theme;
+using QtMaterial::ThemeContext;
+using QtMaterial::ThemeManager;
+
 struct QtMaterialAutocompletePopupPrivate {
 
     mutable bool m_specDirty = true;
