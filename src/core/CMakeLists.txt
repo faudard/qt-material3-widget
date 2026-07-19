@@ -13,7 +13,6 @@ set(QTMATERIAL3_CORE_SOURCES
     qtmaterialnavigationmodel.cpp
     qtmaterialpaletteadapter.cpp
     qtmaterialproxystyle.cpp
-    qtmaterialpaintcache.cpp
     qtmaterialautomation.cpp
 )
 
@@ -34,7 +33,6 @@ set(QTMATERIAL3_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialnavigationmodel.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialpaletteadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialproxystyle.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialpaintcache.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialautomation.h
 )
 

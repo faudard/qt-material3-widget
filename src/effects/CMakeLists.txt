@@ -5,6 +5,7 @@ set(QTMATERIAL3_EFFECTS_SOURCES
     qtmaterialshadowrenderer.cpp
     qtmaterialelevationrenderer.cpp
     qtmaterialshadowcache.cpp
+    qtmaterialpaintcache.cpp
     qtmaterialtransitioncontroller.cpp
     qtmaterialscrimwidget.cpp
 )
@@ -16,6 +17,7 @@ set(QTMATERIAL3_EFFECTS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialshadowrenderer.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialelevationrenderer.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialshadowcache.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialpaintcache.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialtransitioncontroller.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialscrimwidget.h
 )

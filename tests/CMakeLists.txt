@@ -54,6 +54,7 @@ qtm3_add_test(tst_statelayerpainter effects/tst_statelayerpainter.cpp qtmaterial
 qtm3_add_test(tst_ripplecontroller effects/tst_ripplecontroller.cpp qtmaterial3_effects)
 qtm3_add_test(tst_focusindicator effects/tst_focusindicator.cpp qtmaterial3_effects)
 qtm3_add_test(tst_shadowrenderer effects/tst_shadowrenderer.cpp qtmaterial3_effects)
+qtm3_add_test(tst_paintcache effects/tst_paintcache.cpp qtmaterial3_effects)
 qtm3_add_test(tst_elevationrenderer effects/tst_elevationrenderer.cpp qtmaterial3_effects)
 qtm3_add_test(tst_transitioncontroller effects/tst_transitioncontroller.cpp qtmaterial3_effects)
 

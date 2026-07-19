@@ -1,7 +1,7 @@
 #include <QtTest/QtTest>
 #include <QPixmap>
 
-#include "qtmaterial/core/qtmaterialpaintcache.h"
+#include "qtmaterial/effects/qtmaterialpaintcache.h"
 
 class BenchmarkPaintCache : public QObject {
     Q_OBJECT
