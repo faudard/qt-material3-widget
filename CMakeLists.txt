@@ -68,6 +68,7 @@ add_subdirectory(src)
 set(QTMATERIAL3_INSTALL_TARGETS
     qtmaterial3_foundation
     qtmaterial3_tooling
+    qtmaterial3_testing
     qtmaterial3_theme
     qtmaterial3_integration
     qtmaterial3_core

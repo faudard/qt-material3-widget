@@ -1,5 +1,6 @@
 add_subdirectory(foundation)
 add_subdirectory(tooling)
+add_subdirectory(testing)
 add_subdirectory(theme)
 add_subdirectory(integration)
 add_subdirectory(core)

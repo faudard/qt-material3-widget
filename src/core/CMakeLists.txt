@@ -9,7 +9,6 @@ set(QTMATERIAL3_CORE_SOURCES
     private/qtmaterialmetadata_p.h
     qtmaterialasyncstate.cpp
     qtmaterialproxystyle.cpp
-    qtmaterialautomation.cpp
 )
 
 set(QTMATERIAL3_CORE_HEADERS
@@ -25,7 +24,6 @@ set(QTMATERIAL3_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialselectioncontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialasyncstate.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialproxystyle.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialautomation.h
 )
 
 qtm3_add_module(
