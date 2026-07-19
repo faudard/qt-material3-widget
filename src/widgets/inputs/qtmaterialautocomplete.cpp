@@ -60,8 +60,12 @@ void updateChildGeometry(QtMaterialAutocomplete* q,
                          const Theme& theme)
 {
     ensureSpecResolved(d, theme);
-    constexpr int margin = 16;
-    d->m_lineEdit->setGeometry(q->rect().adjusted(margin, 4, -margin, -4));
+    d->m_lineEdit->setGeometry(
+        q->rect().adjusted(
+            d->m_spec.horizontalPadding,
+            d->m_spec.verticalInset,
+            -d->m_spec.horizontalPadding,
+            -d->m_spec.verticalInset));
 }
 
 void updatePaletteFromSpec(QtMaterialAutocompletePrivate* d, const Theme& theme)
@@ -73,6 +77,9 @@ void updatePaletteFromSpec(QtMaterialAutocompletePrivate* d, const Theme& theme)
     palette.setColor(QPalette::Text, d->m_spec.inputTextColor);
     palette.setColor(QPalette::PlaceholderText, d->m_spec.placeholderColor);
     d->m_lineEdit->setPalette(palette);
+    if (d->m_spec.hasResolvedInputFont) {
+        d->m_lineEdit->setFont(d->m_spec.inputFont);
+    }
 }
 
 void updateFilterText(QtMaterialAutocomplete* q, QtMaterialAutocompletePrivate* d)
@@ -180,6 +187,12 @@ void QtMaterialAutocomplete::themeChangedEvent(const Theme& theme)
     updatePaletteFromSpec(d_ptr.get(), theme);
 }
 
+const AutocompleteSpec& QtMaterialAutocomplete::resolvedSpec() const
+{
+    ensureSpecResolved(d_ptr.get(), theme());
+    return d_ptr->m_spec;
+}
+
 QSize QtMaterialAutocomplete::sizeHint() const
 {
     ensureSpecResolved(d_ptr.get(), theme());
@@ -243,17 +256,22 @@ void QtMaterialAutocomplete::paintEvent(QPaintEvent*)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const qreal radius = theme().shapes().contains(d_ptr->m_spec.inputShapeRole)
-        ? theme().shapes().radius(d_ptr->m_spec.inputShapeRole)
-        : 4.0;
+    const qreal radius = d_ptr->m_spec.inputCornerRadius;
     QPainterPath path;
     path.addRoundedRect(QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5), radius, radius);
     painter.fillPath(path, d_ptr->m_spec.inputContainerColor);
-    painter.setPen(QPen(d_ptr->m_lineEdit->hasFocus() ? d_ptr->m_spec.focusedOutlineColor : d_ptr->m_spec.outlineColor, d_ptr->m_lineEdit->hasFocus() ? 2 : 1));
+    painter.setPen(QPen(
+        d_ptr->m_lineEdit->hasFocus()
+            ? d_ptr->m_spec.focusedOutlineColor
+            : d_ptr->m_spec.outlineColor,
+        d_ptr->m_lineEdit->hasFocus()
+            ? d_ptr->m_spec.focusedOutlineWidth
+            : d_ptr->m_spec.outlineWidth));
     painter.drawPath(path);
 
     if (d_ptr->m_lineEdit->hasFocus()) {
-        QtMaterialFocusIndicator::paintPathFocusRing(&painter, path, d_ptr->m_spec.focusRingColor, 2.0);
+        QtMaterialFocusIndicator::paintPathFocusRing(&painter, path, d_ptr->m_spec.focusRingColor,
+            d_ptr->m_spec.focusRingWidth);
     }
 }
 

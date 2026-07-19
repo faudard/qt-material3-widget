@@ -5,6 +5,7 @@
 #include <QStringList>
 
 #include "qtmaterial/core/qtmaterialwidget.h"
+#include "qtmaterial/specs/qtmaterialautocompletespec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 QT_BEGIN_NAMESPACE
@@ -66,6 +67,7 @@ public:
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
+    const AutocompleteSpec& resolvedSpec() const;
 
 signals:
     void textChanged(const QString& text);

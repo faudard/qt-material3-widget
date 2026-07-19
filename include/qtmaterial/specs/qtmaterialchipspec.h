@@ -60,13 +60,6 @@ struct QTMATERIAL3_SPECS_EXPORT ChipSpec
     int iconSpacing = 8;
     int outlineWidth = 1;
 
-    QFont labelFont;
-    bool hasResolvedLabelFont = false;
-    qreal cornerRadius = 8.0;
-    qreal hoverStateLayerOpacity = 0.08;
-    qreal focusStateLayerOpacity = 0.10;
-    qreal pressStateLayerOpacity = 0.10;
-    qreal focusRingWidth = 2.0;
 };
 
 } // namespace QtMaterial
