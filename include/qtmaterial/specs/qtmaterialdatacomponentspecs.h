@@ -6,6 +6,7 @@
 #include <QSize>
 
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
 
@@ -134,9 +135,9 @@ struct CarouselSpec
     int supportingTopSpacing = 6;
 };
 
-DatePickerSpec defaultDatePickerSpec();
-TableSpec defaultTableSpec();
-GridListSpec defaultGridListSpec();
-CarouselSpec defaultCarouselSpec();
+QTMATERIAL3_SPECS_EXPORT DatePickerSpec defaultDatePickerSpec();
+QTMATERIAL3_SPECS_EXPORT TableSpec defaultTableSpec();
+QTMATERIAL3_SPECS_EXPORT GridListSpec defaultGridListSpec();
+QTMATERIAL3_SPECS_EXPORT CarouselSpec defaultCarouselSpec();
 
 } // namespace QtMaterial

@@ -1,6 +1,5 @@
 set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialnavigationrailspecresolver.cpp
-    qtmaterialspecfactory.cpp
     qtmaterialcomponenttokenapplier.cpp
     qtmaterialbuttonspec.cpp
     qtmaterialbuttonspecresolver.cpp
@@ -42,7 +41,6 @@ set(QTMATERIAL3_SPECS_SOURCES
     private/qtmaterialdensitymetrics_p.h
     qtmaterialdatacomponentspecs.cpp
     qtmaterialdatacomponentspecresolver.cpp
-    qtmaterialspecfactory_data_components.cpp
     qtmaterialspecvalidation.cpp
 )
 
@@ -77,7 +75,6 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatefieldspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtabsspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtabsspecresolver.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspecfactory.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsnackbarspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsurfacespecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialprogressindicatorspec.h

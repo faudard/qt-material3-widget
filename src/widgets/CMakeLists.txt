@@ -46,7 +46,6 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     navigation/qtmaterialmenu.cpp
     inputs/qtmaterialautocomplete.cpp
     qtmaterialdatepicker.cpp
-    qtmaterialwidget_datacomponent_spec_defaults.cpp
     data/qtmaterialtable.cpp
     data/qtmaterialgridlist.cpp
     data/qtmaterialcarousel.cpp
