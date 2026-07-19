@@ -15,6 +15,7 @@
 #include "qtmaterial/specs/qtmaterialtextfieldspec.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 #include "qtmaterial/specs/qtmaterialautocompletepopupspec.h"
+#include "qtmaterial/specs/qtmaterialautocompletespec.h"
 #include "qtmaterial/specs/qtmaterialdatefieldspec.h"
 #include "qtmaterial/specs/qtmaterialnavigationrailspec.h"
 
@@ -43,6 +44,12 @@ void applySegmentedButtonComponentTokens(
     const Theme& theme,
     const QStringList& componentNames,
     SegmentedButtonSpec* spec);
+
+void applyAutocompleteComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    AutocompleteSpec* spec);
+
 
 
 } // namespace QtMaterial

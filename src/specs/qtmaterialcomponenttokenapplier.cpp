@@ -2624,5 +2624,249 @@ void applySegmentedButtonComponentTokens(
     }
 }
 
+void applyAutocompleteComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    AutocompleteSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->inputContainerColor,
+            tokens,
+            ColorRole::SurfaceContainerHighest);
+        applyColor(
+            &spec->popupContainerColor,
+            tokens,
+            ColorRole::SurfaceContainerHigh);
+        applyColor(&spec->inputTextColor, tokens, ColorRole::OnSurface);
+        applyColor(
+            &spec->suggestionTextColor,
+            tokens,
+            ColorRole::OnSurface);
+        applyColor(
+            &spec->placeholderColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->selectedSuggestionContainerColor,
+            tokens,
+            ColorRole::SecondaryContainer);
+        applyColor(
+            &spec->selectedSuggestionTextColor,
+            tokens,
+            ColorRole::OnSecondaryContainer);
+        applyColor(
+            &spec->stateLayerColor,
+            tokens,
+            ColorRole::OnSurface);
+        applyColor(&spec->outlineColor, tokens, ColorRole::Outline);
+        applyColor(
+            &spec->focusedOutlineColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(&spec->focusRingColor, tokens, ColorRole::Primary);
+        applyColor(
+            &spec->disabledTextColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+
+        applyCustomColor(
+            &spec->inputContainerColor,
+            tokens,
+            "inputContainerColor");
+        applyCustomColor(
+            &spec->popupContainerColor,
+            tokens,
+            "popupContainerColor");
+        applyCustomColor(
+            &spec->inputTextColor,
+            tokens,
+            "inputTextColor");
+        applyCustomColor(
+            &spec->suggestionTextColor,
+            tokens,
+            "suggestionTextColor");
+        applyCustomColor(
+            &spec->placeholderColor,
+            tokens,
+            "placeholderColor");
+        applyCustomColor(
+            &spec->selectedSuggestionContainerColor,
+            tokens,
+            "selectedSuggestionContainerColor");
+        applyCustomColor(
+            &spec->selectedSuggestionTextColor,
+            tokens,
+            "selectedSuggestionTextColor");
+        applyCustomColor(
+            &spec->stateLayerColor,
+            tokens,
+            "stateLayerColor");
+        applyCustomColor(&spec->outlineColor, tokens, "outlineColor");
+        applyCustomColor(
+            &spec->focusedOutlineColor,
+            tokens,
+            "focusedOutlineColor");
+        applyCustomColor(
+            &spec->focusRingColor,
+            tokens,
+            "focusRingColor");
+        applyCustomColor(
+            &spec->disabledTextColor,
+            tokens,
+            "disabledTextColor");
+
+        if (tokens.custom.contains(QStringLiteral("inputShapeRole"))) {
+            spec->inputShapeRole = parseShapeRole(
+                tokens.custom.value(
+                    QStringLiteral("inputShapeRole")).toString(),
+                spec->inputShapeRole);
+        }
+        if (tokens.custom.contains(QStringLiteral("popupShapeRole"))) {
+            spec->popupShapeRole = parseShapeRole(
+                tokens.custom.value(
+                    QStringLiteral("popupShapeRole")).toString(),
+                spec->popupShapeRole);
+        }
+        if (tokens.custom.contains(QStringLiteral("popupElevationRole"))) {
+            spec->popupElevationRole = parseElevationRole(
+                tokens.custom.value(
+                    QStringLiteral("popupElevationRole")).toString(),
+                spec->popupElevationRole);
+        }
+        if (tokens.custom.contains(QStringLiteral("popupMotion"))) {
+            spec->popupMotion = parseMotionToken(
+                tokens.custom.value(
+                    QStringLiteral("popupMotion")).toString(),
+                spec->popupMotion);
+        }
+
+        readInt(tokens.custom, "inputMinHeight", &spec->inputMinHeight);
+        readInt(
+            tokens.custom,
+            "popupVisibleItemCount",
+            &spec->popupVisibleItemCount);
+        readInt(
+            tokens.custom,
+            "horizontalPadding",
+            &spec->horizontalPadding);
+        readInt(tokens.custom, "verticalInset", &spec->verticalInset);
+        readReal(tokens.custom, "outlineWidth", &spec->outlineWidth);
+        readReal(
+            tokens.custom,
+            "focusedOutlineWidth",
+            &spec->focusedOutlineWidth);
+        readReal(
+            tokens.custom,
+            "focusRingWidth",
+            &spec->focusRingWidth);
+    }
+
+    spec->hasResolvedInputFont = false;
+    if (tokens.typography.contains(spec->inputTypeRole)) {
+        spec->inputFont =
+            tokens.typography.value(spec->inputTypeRole).font;
+        spec->hasResolvedInputFont = true;
+    } else if (theme.typography().contains(spec->inputTypeRole)) {
+        spec->inputFont =
+            theme.typography().style(spec->inputTypeRole).font;
+        spec->hasResolvedInputFont = true;
+    }
+
+    spec->hasResolvedSuggestionFont = false;
+    if (tokens.typography.contains(spec->suggestionTypeRole)) {
+        spec->suggestionFont =
+            tokens.typography.value(spec->suggestionTypeRole).font;
+        spec->hasResolvedSuggestionFont = true;
+    } else if (theme.typography().contains(spec->suggestionTypeRole)) {
+        spec->suggestionFont =
+            theme.typography().style(spec->suggestionTypeRole).font;
+        spec->hasResolvedSuggestionFont = true;
+    }
+
+    if (tokens.shapes.contains(spec->inputShapeRole)) {
+        spec->inputCornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                tokens.shapes.value(spec->inputShapeRole)));
+    } else if (theme.shapes().contains(spec->inputShapeRole)) {
+        spec->inputCornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                theme.shapes().radius(spec->inputShapeRole)));
+    }
+
+    if (tokens.shapes.contains(spec->popupShapeRole)) {
+        spec->popupCornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                tokens.shapes.value(spec->popupShapeRole)));
+    } else if (theme.shapes().contains(spec->popupShapeRole)) {
+        spec->popupCornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(
+                theme.shapes().radius(spec->popupShapeRole)));
+    }
+
+    spec->hasResolvedPopupMotionStyle = false;
+    if (tokens.motion.contains(spec->popupMotion)) {
+        spec->popupMotionStyle =
+            tokens.motion.value(spec->popupMotion);
+        spec->hasResolvedPopupMotionStyle = true;
+    } else if (theme.motion().contains(spec->popupMotion)) {
+        spec->popupMotionStyle =
+            theme.motion().style(spec->popupMotion);
+        spec->hasResolvedPopupMotionStyle = true;
+    }
+
+    spec->hasResolvedPopupElevationStyle = false;
+    if (tokens.elevations.contains(spec->popupElevationRole)) {
+        spec->popupElevationStyle =
+            tokens.elevations.value(spec->popupElevationRole);
+        spec->hasResolvedPopupElevationStyle = true;
+    } else if (theme.elevations().contains(spec->popupElevationRole)) {
+        spec->popupElevationStyle =
+            theme.elevations().style(spec->popupElevationRole);
+        spec->hasResolvedPopupElevationStyle = true;
+    }
+
+    const StateLayer& stateLayer =
+        tokens.hasStateLayer ? tokens.stateLayer : theme.stateLayer();
+    spec->hoverStateLayerOpacity = stateLayer.hoverOpacity;
+    spec->focusStateLayerOpacity = stateLayer.focusOpacity;
+    spec->pressStateLayerOpacity = stateLayer.pressOpacity;
+
+    if (!tokens.isEmpty()) {
+        readReal(
+            tokens.custom,
+            "inputCornerRadius",
+            &spec->inputCornerRadius);
+        readReal(
+            tokens.custom,
+            "popupCornerRadius",
+            &spec->popupCornerRadius);
+        readReal(
+            tokens.custom,
+            "hoverStateLayerOpacity",
+            &spec->hoverStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "focusStateLayerOpacity",
+            &spec->focusStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "pressStateLayerOpacity",
+            &spec->pressStateLayerOpacity);
+    }
+}
+
+
 
 } // namespace QtMaterial

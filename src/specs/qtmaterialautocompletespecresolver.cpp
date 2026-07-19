@@ -1,4 +1,5 @@
 #include "qtmaterial/specs/qtmaterialautocompletespecresolver.h"
+#include "qtmaterialcomponenttokenapplier_p.h"
 
 #include "private/qtmaterialdensitymetrics_p.h"
 
@@ -35,6 +36,12 @@ AutocompleteSpec AutocompleteSpecResolver::autocompleteSpec(
         theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.inputMinHeight =
         SpecsPrivate::adjustedMetric(56, density, -8, 4);
+    applyAutocompleteComponentTokens(
+        theme,
+        QStringList{
+            QStringLiteral("autocomplete"),
+            QStringLiteral("Autocomplete")},
+        &spec);
     return spec;
 }
 
