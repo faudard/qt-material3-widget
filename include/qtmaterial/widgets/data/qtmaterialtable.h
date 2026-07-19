@@ -9,22 +9,23 @@
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
 
+#include "qtmaterial/theme/qtmaterialthemecontexthost.h"
 class QAbstractItemModel;
-class QEvent;
 class QFocusEvent;
 class QKeyEvent;
 class QPaintEvent;
 
 namespace QtMaterial {
 
-class Theme;
 class ThemeContext;
 class QtMaterialTablePrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTable
     : public QTableView
+    , public ThemeContextHost
 {
     Q_OBJECT
+    Q_INTERFACES(QtMaterial::ThemeContextHost)
     Q_PROPERTY(
         QtMaterial::ThemeContext* themeContext
         READ themeContext
@@ -47,8 +48,8 @@ public:
 
     void setThemeContext(
         ThemeContext* context);
-    ThemeContext* themeContext() const noexcept;
-    ThemeContext* effectiveThemeContext() const noexcept;
+    ThemeContext* themeContext() const noexcept override;
+    ThemeContext* effectiveThemeContext() const noexcept override;
 
     TableSpec spec() const;
     const TableSpec& resolvedSpec() const;
@@ -88,7 +89,6 @@ Q_SIGNALS:
     void rowActivated(int row);
 
 protected:
-    bool event(QEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
     void focusInEvent(QFocusEvent* event) override;
     void focusOutEvent(QFocusEvent* event) override;
@@ -98,15 +98,6 @@ protected:
         const QModelIndex& previous) override;
 
 private:
-    bool refreshThemeContextConnection();
-
-    void handleThemeChanged(
-        const Theme& theme);
-    void handleInheritedThemeContextChanged(
-        ThemeContext* context);
-    void handleThemeContextDestroyed(
-        bool explicitContext);
-
     void ensureSpecResolved() const;
     void applyResolvedSpec();
     void syncAccessibility();

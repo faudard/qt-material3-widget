@@ -1,26 +1,21 @@
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
 
+
+#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
 #include <QAbstractItemModel>
 #include <QAccessible>
-#include <QEvent>
 #include <QFocusEvent>
 #include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QKeyEvent>
-#include <QMetaObject>
 #include <QPainter>
 #include <QPalette>
-#include <QPointer>
 #include <QScrollBar>
 #include <QStyle>
 #include <QStyledItemDelegate>
 #include <QStyleOptionViewItem>
-
-#include "qtmaterial/core/qtmaterialwidget.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/specs/qtmaterialdataspecresolver.h"
-#include "qtmaterial/theme/qtmaterialthemecontext.h"
-#include "qtmaterial/theme/qtmaterialthememanager.h"
 
 namespace QtMaterial {
 namespace {
@@ -219,17 +214,9 @@ public:
 
     QString accessibilitySummary;
 
-    QPointer<ThemeContext> themeContext;
-    QPointer<ThemeContext> effectiveThemeContext;
 
-    QMetaObject::Connection
-        themeChangedConnection;
-    QMetaObject::Connection
-        themeDestroyedConnection;
-    QMetaObject::Connection
-        ancestorContextConnection;
-
-    MaterialTableDelegate* delegate = nullptr;
+    QtMaterialThemeContextBinding* themeBinding = nullptr;
+MaterialTableDelegate* delegate = nullptr;
 };
 
 QtMaterialTable::QtMaterialTable(
@@ -239,6 +226,27 @@ QtMaterialTable::QtMaterialTable(
         std::make_unique<
             QtMaterialTablePrivate>())
 {
+    d_ptr->themeBinding =
+        new QtMaterialThemeContextBinding(this, this);
+
+    connect(
+        d_ptr->themeBinding,
+        &QtMaterialThemeContextBinding::effectiveThemeContextChanged,
+        this,
+        &QtMaterialTable::effectiveThemeContextChanged);
+    connect(
+        d_ptr->themeBinding,
+        &QtMaterialThemeContextBinding::themeChanged,
+        this,
+        [this](const Theme&) {
+            if (d_ptr->explicitSpecSet) {
+                return;
+            }
+            d_ptr->specDirty = true;
+            ensureSpecResolved();
+            applyResolvedSpec();
+        });
+
     setObjectName(
         QStringLiteral("QtMaterialTable"));
     setAccessibleName(
@@ -263,8 +271,6 @@ QtMaterialTable::QtMaterialTable(
         ->setHighlightSections(false);
     verticalHeader()
         ->setVisible(false);
-
-    refreshThemeContextConnection();
     ensureSpecResolved();
     applyResolvedSpec();
 
@@ -284,64 +290,24 @@ QtMaterialTable::~QtMaterialTable() =
 void QtMaterialTable::setThemeContext(
     ThemeContext* context)
 {
-    if (
-        d_ptr->themeContext.data()
-        == context) {
+    if (d_ptr->themeBinding->themeContext() == context) {
         return;
     }
 
-    d_ptr->themeContext = context;
-
-    const bool changed =
-        refreshThemeContextConnection();
-
+    d_ptr->themeBinding->setThemeContext(context);
     Q_EMIT themeContextChanged(context);
-
-    if (changed) {
-        Q_EMIT effectiveThemeContextChanged(
-            effectiveThemeContext());
-    }
-
-    if (!d_ptr->explicitSpecSet) {
-        d_ptr->specDirty = true;
-        ensureSpecResolved();
-        applyResolvedSpec();
-    }
 }
 
 ThemeContext*
 QtMaterialTable::themeContext() const noexcept
 {
-    return d_ptr->themeContext.data();
+    return d_ptr->themeBinding->themeContext();
 }
 
 ThemeContext*
-QtMaterialTable::
-effectiveThemeContext() const noexcept
+QtMaterialTable::effectiveThemeContext() const noexcept
 {
-    if (d_ptr->themeContext) {
-        return d_ptr->themeContext.data();
-    }
-
-    QWidget* ancestor =
-        parentWidget();
-
-    while (ancestor) {
-        if (
-            auto* materialParent =
-                qobject_cast<
-                    QtMaterialWidget*>(
-                        ancestor)) {
-            return materialParent
-                ->effectiveThemeContext();
-        }
-
-        ancestor =
-            ancestor->parentWidget();
-    }
-
-    return ThemeManager::instance()
-        .defaultContext();
+    return d_ptr->themeBinding->effectiveThemeContext();
 }
 
 TableSpec QtMaterialTable::spec() const
@@ -526,33 +492,6 @@ activateCurrentRow()
         index.row());
 }
 
-bool QtMaterialTable::event(
-    QEvent* event)
-{
-    const bool handled =
-        QTableView::event(event);
-
-    if (
-        event
-        && event->type()
-            == QEvent::ParentChange) {
-        if (
-            refreshThemeContextConnection()) {
-            Q_EMIT
-                effectiveThemeContextChanged(
-                    effectiveThemeContext());
-        }
-
-        if (!d_ptr->explicitSpecSet) {
-            d_ptr->specDirty = true;
-            ensureSpecResolved();
-            applyResolvedSpec();
-        }
-    }
-
-    return handled;
-}
-
 void QtMaterialTable::paintEvent(
     QPaintEvent* event)
 {
@@ -697,130 +636,6 @@ void QtMaterialTable::currentChanged(
     syncAccessibility();
 }
 
-bool QtMaterialTable::
-refreshThemeContextConnection()
-{
-    ThemeContext* nextContext =
-        effectiveThemeContext();
-
-    const bool changed =
-        d_ptr->effectiveThemeContext.data()
-        != nextContext;
-
-    QObject::disconnect(
-        d_ptr->themeChangedConnection);
-    QObject::disconnect(
-        d_ptr->themeDestroyedConnection);
-    QObject::disconnect(
-        d_ptr->ancestorContextConnection);
-
-    d_ptr->effectiveThemeContext =
-        nextContext;
-
-    if (!d_ptr->themeContext) {
-        QWidget* ancestor =
-            parentWidget();
-
-        while (ancestor) {
-            if (
-                auto* materialParent =
-                    qobject_cast<
-                        QtMaterialWidget*>(
-                            ancestor)) {
-                d_ptr->ancestorContextConnection =
-                    QObject::connect(
-                        materialParent,
-                        &QtMaterialWidget::
-                            effectiveThemeContextChanged,
-                        this,
-                        &QtMaterialTable::
-                            handleInheritedThemeContextChanged);
-                break;
-            }
-
-            ancestor =
-                ancestor->parentWidget();
-        }
-    }
-
-    if (nextContext) {
-        d_ptr->themeChangedConnection =
-            QObject::connect(
-                nextContext,
-                &ThemeContext::themeChanged,
-                this,
-                &QtMaterialTable::
-                    handleThemeChanged);
-
-        const bool explicitContext =
-            nextContext
-            == d_ptr->themeContext.data();
-
-        d_ptr->themeDestroyedConnection =
-            QObject::connect(
-                nextContext,
-                &QObject::destroyed,
-                this,
-                [this, explicitContext]() {
-                    handleThemeContextDestroyed(
-                        explicitContext);
-                });
-    }
-
-    return changed;
-}
-
-void QtMaterialTable::handleThemeChanged(
-    const Theme&)
-{
-    if (d_ptr->explicitSpecSet) {
-        return;
-    }
-
-    d_ptr->specDirty = true;
-    ensureSpecResolved();
-    applyResolvedSpec();
-}
-
-void QtMaterialTable::
-handleInheritedThemeContextChanged(
-    ThemeContext*)
-{
-    if (
-        refreshThemeContextConnection()) {
-        Q_EMIT effectiveThemeContextChanged(
-            effectiveThemeContext());
-    }
-
-    if (!d_ptr->explicitSpecSet) {
-        d_ptr->specDirty = true;
-        ensureSpecResolved();
-        applyResolvedSpec();
-    }
-}
-
-void QtMaterialTable::
-handleThemeContextDestroyed(
-    bool explicitContext)
-{
-    if (explicitContext) {
-        d_ptr->themeContext.clear();
-        Q_EMIT themeContextChanged(nullptr);
-    }
-
-    d_ptr->effectiveThemeContext.clear();
-    refreshThemeContextConnection();
-
-    Q_EMIT effectiveThemeContextChanged(
-        effectiveThemeContext());
-
-    if (!d_ptr->explicitSpecSet) {
-        d_ptr->specDirty = true;
-        ensureSpecResolved();
-        applyResolvedSpec();
-    }
-}
-
 void QtMaterialTable::
 ensureSpecResolved() const
 {
@@ -835,15 +650,11 @@ ensureSpecResolved() const
         return;
     }
 
-    ThemeContext* context =
-        effectiveThemeContext();
-    Q_ASSERT(context);
-
     const DataSpecResolver resolver;
 
     d_ptr->spec =
         resolver.tableSpec(
-            context->theme(),
+            d_ptr->themeBinding->theme(),
             d_ptr->dense
             ? Density::Compact
             : Density::Default);
