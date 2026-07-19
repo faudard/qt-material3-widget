@@ -14,7 +14,7 @@
 
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "private/qtmaterialtextfieldshellhelper_p.h"
-#include "../../core/private/qtmaterialaccessibilityhelper_p.h"
+#include "../../../include/qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h"
 #include <memory>
 #include <QShowEvent>
 #include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"

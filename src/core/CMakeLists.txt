@@ -35,11 +35,15 @@ qtm3_add_module(
     ${QTMATERIAL3_CORE_HEADERS}
 )
 
-target_link_libraries(qtmaterial3_core
+target_link_libraries(
+    qtmaterial3_core
     PUBLIC
         qtmaterial3_foundation
+        qtmaterial3_theme
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
         Qt${QT_VERSION_MAJOR}::Widgets
-        qtmaterial3_theme
+    PRIVATE
+        qtmaterial3_integration
 )
+

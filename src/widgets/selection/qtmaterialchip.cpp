@@ -14,6 +14,7 @@
 namespace QtMaterial {
 namespace {
 
+
 qreal stateOpacity(
     const ChipSpec& spec,
     const QtMaterialInteractionState& state)

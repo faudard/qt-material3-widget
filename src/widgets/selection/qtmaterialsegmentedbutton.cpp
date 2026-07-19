@@ -375,14 +375,19 @@ void QtMaterialSegmentedButton::toggleIndex(int index)
     syncAccessibility();
 }
 
+const SegmentedButtonSpec& QtMaterialSegmentedButton::resolvedSpec() const
+{
+    ensureSegmentedButtonSpecResolved(theme(), *this, *d);
+    return d->spec;
+}
+
 QSize QtMaterialSegmentedButton::sizeHint() const
 {
     ensureSegmentedButtonSpecResolved(theme(), *this, *d);
     int width = 0;
-    QFont resolvedFont = font();
-    if (theme().typography().contains(d->spec.labelTypeRole)) {
-        resolvedFont = theme().typography().style(d->spec.labelTypeRole).font;
-    }
+    const QFont resolvedFont = d->spec.hasResolvedLabelFont
+        ? d->spec.labelFont
+        : font();
     const QFontMetrics fm(resolvedFont);
     for (const Segment& segment : d->segments) {
         int itemWidth = d->spec.horizontalPadding * 2 + fm.horizontalAdvance(segment.text);
@@ -457,14 +462,13 @@ void QtMaterialSegmentedButton::paintEvent(QPaintEvent*)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    QFont resolvedFont = font();
-    if (theme().typography().contains(d->spec.labelTypeRole)) {
-        resolvedFont = theme().typography().style(d->spec.labelTypeRole).font;
-    }
+    const QFont resolvedFont = d->spec.hasResolvedLabelFont
+        ? d->spec.labelFont
+        : font();
     painter.setFont(resolvedFont);
 
-    const qreal radius = theme().shapes().contains(d->spec.shapeRole)
-        ? theme().shapes().radius(d->spec.shapeRole)
+    const qreal radius = d->spec.cornerRadius >= 0.0
+        ? qMin(d->spec.cornerRadius, d->spec.segmentHeight / 2.0)
         : d->spec.segmentHeight / 2.0;
 
     for (int i = 0; i < d->segments.size(); ++i) {

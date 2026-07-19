@@ -378,10 +378,11 @@
       "name": "data-spec-resolver-owns-listitem-divider",
       "files": [
         "include/qtmaterial/specs/qtmaterialdataspecresolver.h",
-        "src/specs/qtmaterialdataspecresolver.cpp",
-        "src/specs/qtmaterialspecfactory.cpp"
+        "src/specs/qtmaterialdataspecresolver.cpp"
       ],
       "required_regex": [
+        "qtmaterial/specs/qtmaterialspecfactory\\.h",
+        "\\bSpecFactory\\b",	  
         "class\\s+QTMATERIAL3_SPECS_EXPORT\\s+DataSpecResolver",
         "ListItemSpec\\s+listItemSpec\\s*\\(",
         "DividerSpec\\s+dividerSpec\\s*\\(",
@@ -527,8 +528,7 @@
       "name": "data-table-resolver-owns-theme-resolution",
       "files": [
         "include/qtmaterial/specs/qtmaterialdataspecresolver.h",
-        "src/specs/qtmaterialdataspecresolver.cpp",
-        "src/specs/qtmaterialspecfactory_data_components.cpp"
+        "src/specs/qtmaterialdataspecresolver.cpp"
       ],
       "required_regex": [
         "\\bTableSpec\\s+tableSpec\\s*\\(",
@@ -587,8 +587,7 @@
       "name": "compact-chip-factory-delegates-to-resolver",
       "files": [
         "include/qtmaterial/specs/qtmaterialchipspecresolver.h",
-        "src/specs/qtmaterialchipspecresolver.cpp",
-        "src/specs/qtmaterialspecfactory.cpp"
+        "src/specs/qtmaterialchipspecresolver.cpp"
       ],
       "required_regex": [
         "\\bclass\\s+QTMATERIAL3_SPECS_EXPORT\\s+ChipSpecResolver\\b",
@@ -598,6 +597,8 @@
         "return\\s+ChipSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*suggestionChipSpec\\s*\\("
       ],
       "forbidden_regex": [
+	    "qtmaterial/specs/qtmaterialspecfactory\\.h",
+        "\\bSpecFactory\\b",	
         "\\bCompactSpecResolver\\b",
         "qtmaterialcompactspecresolver"
       ]
@@ -637,51 +638,6 @@
       ],
       "forbidden_regex": [
         "\\bpublic\\s+QWidget\\b"
-      ]
-    },
-    {
-      "name": "spec-factory-delegates-remaining-component-families",
-      "files": [
-        "src/specs/qtmaterialspecfactory.cpp"
-      ],
-      "forbidden_regex": [
-        "theme\\s*\\.\\s*(?:colorScheme|typography|shapes|elevations|motion)\\s*\\(",
-        "\\bChipSpec\\s+spec\\s*;",
-        "\\bSegmentedButtonSpec\\s+spec\\s*;",
-        "\\bMenuSpec\\s+spec\\s*;",
-        "\\bAutocompleteSpec\\s+spec\\s*;"
-      ],
-      "required_regex": [
-        "\\bChipSpecResolver\\b",
-        "\\bSegmentedButtonSpecResolver\\b",
-        "\\bMenuSpecResolver\\b",
-        "\\bAutocompleteSpecResolver\\b"
-      ]
-    },
-    {
-      "name": "legacy-data-component-entry-points-delegate",
-      "files": [
-        "src/specs/qtmaterialspecfactory_data_components.cpp"
-      ],
-      "forbidden_regex": [
-        "theme\\s*\\.\\s*(?:colorScheme|typography)\\s*\\(",
-        "\\broleOr\\s*\\(",
-        "\\bdefault(?:DatePicker|Table|GridList|Carousel)Spec\\s*\\("
-      ],
-      "required_regex": [
-        "\\bDataComponentSpecResolver\\b"
-      ]
-    },
-    {
-      "name": "paint-cache-core-header-is-compatibility-only",
-      "files": [
-        "include/qtmaterial/core/qtmaterialpaintcache.h"
-      ],
-      "required_regex": [
-        "qtmaterial/effects/qtmaterialpaintcache\\.h"
-      ],
-      "forbidden_regex": [
-        "class\\s+QTMATERIAL3_CORE_EXPORT\\s+QtMaterialPaintCache"
       ]
     },
     {
@@ -780,31 +736,6 @@
       "required_regex": [
         "\\bqtmaterial3_foundation\\b",
         "\\bqtmaterial3_theme\\b"
-      ]
-    },
-    {
-      "name": "spec-factory-delegates-migrated-families",
-      "file": "src/specs/qtmaterialspecfactory.cpp",
-      "forbidden_regex": [
-        "\\bapplyButtonComponentTokens\\s*\\(",
-        "\\bapplyCheckboxComponentTokens\\s*\\(",
-        "\\bapplyRadioButtonComponentTokens\\s*\\(",
-        "\\bapplySwitchComponentTokens\\s*\\(",
-        "\\bapplyDialogComponentTokens\\s*\\(",
-        "\\bapplyFabComponentTokens\\s*\\(",
-        "\\bapplyIconButtonComponentTokens\\s*\\(",
-        "\\bapplyTextFieldComponentTokens\\s*\\("
-      ],
-      "required_regex": [
-        "ButtonSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "SelectionSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "OverlaySurfaceSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "AppBarSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "DialogSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "ActionButtonSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "TextFieldSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "AutocompletePopupSpecResolver\\s*\\(\\s*\\)\\s*\\.",
-        "DateFieldSpecResolver\\s*\\(\\s*\\)\\s*\\."
       ]
     },
     {

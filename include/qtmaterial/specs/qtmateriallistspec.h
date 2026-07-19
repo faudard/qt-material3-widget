@@ -9,7 +9,7 @@
 
 namespace QtMaterial {
 
-struct QTMATERIAL3_WIDGETS_EXPORT ListSpec
+struct QTMATERIAL3_SPECS_EXPORT ListSpec
 {
     QColor containerColor;
     QColor focusRingColor;

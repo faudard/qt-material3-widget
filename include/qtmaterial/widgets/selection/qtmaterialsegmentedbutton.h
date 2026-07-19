@@ -5,6 +5,7 @@
 #include <QIcon>
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
+#include "qtmaterial/specs/qtmaterialsegmentedbuttonspec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
@@ -48,6 +49,7 @@ public:
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
+    const SegmentedButtonSpec& resolvedSpec() const;
 
 signals:
     void currentIndexChanged(int index);

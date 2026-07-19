@@ -86,6 +86,7 @@ qtm3_add_test(tst_checkbox widgets/selection/tst_checkbox.cpp qtmaterial3_widget
 qtm3_add_test(tst_switch widgets/selection/tst_switch.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_radiobutton widgets/selection/tst_radiobutton.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_segmentedbutton widgets/selection/tst_segmentedbutton.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_compactresolvedwidgets widgets/selection/tst_compactresolvedwidgets.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_dialog widgets/surfaces/tst_dialog.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_navigationdrawer widgets/surfaces/tst_navigationdrawer.cpp qtmaterial3_widgets)

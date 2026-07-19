@@ -42,14 +42,8 @@ struct QTMATERIAL3_SPECS_EXPORT ChipSpec
     MotionToken motionToken = MotionToken::Short4;
 
     // Concrete values resolved by the resolver boundary.
-    QFont labelFont;
     MotionStyle motionStyle;
-    qreal cornerRadius = -1.0;
-    qreal hoverStateLayerOpacity = 0.08;
-    qreal focusStateLayerOpacity = 0.12;
-    qreal pressStateLayerOpacity = 0.12;
     qreal dragStateLayerOpacity = 0.16;
-    bool hasResolvedLabelFont = false;
     bool hasResolvedMotionStyle = false;
 
     QSize touchTarget = QSize(48, 48);
@@ -60,6 +54,13 @@ struct QTMATERIAL3_SPECS_EXPORT ChipSpec
     int iconSpacing = 8;
     int outlineWidth = 1;
 
+    QFont labelFont;
+    bool hasResolvedLabelFont = false;
+    qreal cornerRadius = 8.0;
+    qreal hoverStateLayerOpacity = 0.08;
+    qreal focusStateLayerOpacity = 0.10;
+    qreal pressStateLayerOpacity = 0.10;
+    qreal focusRingWidth = 2.0;
 };
 
 } // namespace QtMaterial
