@@ -99,6 +99,25 @@
         "QApplication",
         "QAbstractButton"
       ]
+    },
+    {
+      "name": "theme-context-host-stays-runtime-neutral",
+      "paths": [
+        "include/qtmaterial/theme/qtmaterialthemecontexthost.h"
+      ],
+      "forbidden_include_prefixes": [
+        "qtmaterial/specs/",
+        "qtmaterial/core/",
+        "qtmaterial/effects/",
+        "qtmaterial/widgets/",
+        "qtmaterial/integration/",
+        "qtmaterial/tooling/",
+        "qtmaterial/testing/"
+      ],
+      "forbidden_includes": [
+        "QWidget",
+        "QApplication"
+      ]
     }
   ],
   "file_rules": [
@@ -382,7 +401,7 @@
       ],
       "required_regex": [
         "qtmaterial/specs/qtmaterialspecfactory\\.h",
-        "\\bSpecFactory\\b",	  
+        "\\bSpecFactory\\b",
         "class\\s+QTMATERIAL3_SPECS_EXPORT\\s+DataSpecResolver",
         "ListItemSpec\\s+listItemSpec\\s*\\(",
         "DividerSpec\\s+dividerSpec\\s*\\(",
@@ -597,8 +616,8 @@
         "return\\s+ChipSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*suggestionChipSpec\\s*\\("
       ],
       "forbidden_regex": [
-	    "qtmaterial/specs/qtmaterialspecfactory\\.h",
-        "\\bSpecFactory\\b",	
+        "qtmaterial/specs/qtmaterialspecfactory\\.h",
+        "\\bSpecFactory\\b",
         "\\bCompactSpecResolver\\b",
         "qtmaterialcompactspecresolver"
       ]
@@ -722,6 +741,65 @@
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\(",
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*stateLayer\\s*\\("
+      ]
+    },
+    {
+      "name": "qtmaterial-widget-is-a-theme-context-host",
+      "files": [
+        "include/qtmaterial/core/qtmaterialwidget.h",
+        "src/core/qtmaterialwidget.cpp"
+      ],
+      "required_regex": [
+        "\\bpublic\\s+ThemeContextHost\\b",
+        "Q_INTERFACES\\(QtMaterial::ThemeContextHost\\)",
+        "qobject_cast<ThemeContextHost\\s*\\*>",
+        "ThemeContextPropagation::eventType\\s*\\("
+      ],
+      "forbidden_regex": [
+        "findChildren\\s*<\\s*QtMaterialWidget"
+      ]
+    },
+    {
+      "name": "theme-context-binding-is-composition-only",
+      "files": [
+        "include/qtmaterial/core/qtmaterialthemecontextbinding.h",
+        "src/core/qtmaterialthemecontextbinding.cpp"
+      ],
+      "required_regex": [
+        "\\bQtMaterialThemeContextBinding\\b",
+        "explicit\\s+context\\s*->\\s*nearest\\s+ThemeContextHost",
+        "qobject_cast<ThemeContextHost\\s*\\*>",
+        "ThemeManager::instance\\(\\)\\.defaultContext\\(\\)",
+        "ThemeContextPropagation::notifyDescendants"
+      ],
+      "forbidden_regex": [
+        "class\\s+.*ThemeManager",
+        "\\bTheme\\s+m_theme\\b",
+        "qtmaterial/specs/",
+        "qtmaterial/widgets/"
+      ]
+    },
+    {
+      "name": "table-has-explicit-or-theme-resolved-spec-policy",
+      "files": [
+        "include/qtmaterial/widgets/data/qtmaterialtable.h",
+        "src/widgets/data/qtmaterialtable.cpp"
+      ],
+      "required_regex": [
+        "\\bpublic\\s+ThemeContextHost\\b",
+        "\\bQtMaterialThemeContextBinding\\b",
+        "\\bDataComponentSpecResolver\\b",
+        "\\bhasExplicitSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bresetSpec\\s*\\(",
+        "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bm_hasExplicitSpec\\b"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "ThemeManager::instance\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\("
       ]
     }
   ],
@@ -1043,6 +1121,24 @@
         "\\bapplySegmentedButtonComponentTokens\\s*\\(",
         "\\bapplyAutocompleteComponentTokens\\s*\\(",
         "tokens\\.hasStateLayer\\s*\\?"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "theme-module-exports-theme-context-host",
+      "file": "src/theme/CMakeLists.txt",
+      "required_regex": [
+        "qtmaterial/theme/qtmaterialthemecontexthost\\.h"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "core-builds-generic-theme-context-binding",
+      "file": "src/core/CMakeLists.txt",
+      "required_regex": [
+        "qtmaterialthemecontextbinding\\.cpp",
+        "qtmaterial/core/qtmaterialthemecontextbinding\\.h",
+        "private/qtmaterialthemecontextpropagation\\.cpp"
       ],
       "forbidden_regex": []
     }
