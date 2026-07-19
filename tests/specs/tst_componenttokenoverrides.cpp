@@ -2,6 +2,12 @@
 
 #include "qtmaterial/specs/qtmaterialbuttonspec.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
+#include "qtmaterial/specs/qtmaterialdialogspecresolver.h"
+#include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
+#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
+#include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
+
 
 using namespace QtMaterial;
 
@@ -125,9 +131,5 @@ void ComponentTokenOverridesTest::surfaceOverridesApplyToCardAndDialog()
 }
 
 QTEST_MAIN(ComponentTokenOverridesTest)
+
 #include "tst_componenttokenoverrides.moc"
-#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
-#include "qtmaterial/specs/qtmaterialdialogspecresolver.h"
-#include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
-#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
-#include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"

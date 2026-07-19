@@ -14,8 +14,11 @@ class ThemeContext;
  */
 class QTMATERIAL3_THEME_EXPORT ThemeContextHost
 {
+protected:
+    ThemeContextHost() noexcept;
+
 public:
-    virtual ~ThemeContextHost() = default;
+    virtual ~ThemeContextHost();
 
     virtual ThemeContext* themeContext() const noexcept = 0;
     virtual ThemeContext* effectiveThemeContext() const noexcept = 0;

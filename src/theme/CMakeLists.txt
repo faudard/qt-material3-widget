@@ -1,5 +1,6 @@
 set(QTMATERIAL3_THEME_SOURCES
     qtmaterialthemecontext.cpp
+    qtmaterialthemecontexthost.cpp
     qtmaterialcolorscheme.cpp
     qtmaterialthemeoptions.cpp
     qtmaterialtheme.cpp
