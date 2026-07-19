@@ -975,6 +975,57 @@
         "qtmaterial3_integration"
       ],
       "forbidden_regex": []
+    },
+    {
+      "name": "specs-cmake-does-not-build-spec-factory",
+      "file": "src/specs/CMakeLists.txt",
+      "forbidden_regex": [
+        "qtmaterialspecfactory"
+      ],
+      "required_regex": [
+        "qtmaterialdatacomponentspecresolver\\.cpp",
+        "qtmaterialdatacomponentspecs\\.cpp"
+      ]
+    },
+    {
+      "name": "widgets-do-not-duplicate-data-component-defaults",
+      "file": "src/widgets/CMakeLists.txt",
+      "forbidden_regex": [
+        "qtmaterialwidget_datacomponent_spec_defaults"
+      ],
+      "required_regex": [
+        "\\bqtmaterial3_specs\\b"
+      ]
+    },
+    {
+      "name": "data-component-defaults-are-exported",
+      "file": "include/qtmaterial/specs/qtmaterialdatacomponentspecs.h",
+      "forbidden_regex": [],
+      "required_regex": [
+        "QTMATERIAL3_SPECS_EXPORT\\s+DatePickerSpec\\s+defaultDatePickerSpec\\s*\\(",
+        "QTMATERIAL3_SPECS_EXPORT\\s+TableSpec\\s+defaultTableSpec\\s*\\(",
+        "QTMATERIAL3_SPECS_EXPORT\\s+GridListSpec\\s+defaultGridListSpec\\s*\\(",
+        "QTMATERIAL3_SPECS_EXPORT\\s+CarouselSpec\\s+defaultCarouselSpec\\s*\\("
+      ]
+    }
+  ],
+  "tree_rules": [
+    {
+      "name": "spec-factory-and-legacy-data-facades-are-removed",
+      "paths": [
+        "include",
+        "src",
+        "tests",
+        "examples",
+        "benchmarks",
+        "tools"
+      ],
+      "exclude_paths": [],
+      "forbidden_regex": [
+        "\\b(?:QtMaterial::)?SpecFactory\\b",
+        "qtmaterialspecfactory",
+        "\\bmake(?:DatePicker|Table|GridList|Carousel)Spec\\s*\\("
+      ]
     }
   ]
 }

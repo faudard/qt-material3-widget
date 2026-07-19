@@ -204,6 +204,46 @@ def check_file_rule(root: Path, rule: dict):
     return violations
 
 
+def check_tree_rule(root: Path, rule: dict):
+    name = str(rule.get("name", ""))
+    configured_paths = rule.get("paths", [])
+    excluded_values = rule.get("exclude_paths", [])
+    if not isinstance(configured_paths, list) or not configured_paths:
+        raise ConfigurationError(
+            f"{name}: tree rule must define a non-empty paths array"
+        )
+    if not isinstance(excluded_values, list):
+        raise ConfigurationError(f"{name}: exclude_paths must be an array")
+
+    excluded = {
+        str(value).replace("\\", "/")
+        for value in excluded_values
+    }
+    patterns = [
+        (str(expression), compile_regex(str(expression), name))
+        for expression in rule.get("forbidden_regex", [])
+    ]
+
+    violations = []
+    for configured in configured_paths:
+        directory = safe_path(root, str(configured))
+        for path in cpp_files(directory):
+            relative = path.relative_to(root).as_posix()
+            if relative in excluded:
+                continue
+            text = read_text(path)
+            for expression, pattern in patterns:
+                for match in pattern.finditer(text):
+                    violations.append(
+                        Violation(
+                            name,
+                            relative,
+                            line_of(text, match.start()),
+                            f"forbidden pattern matched: {expression}",
+                        )
+                    )
+    return violations
+
 def load_rules(path: Path):
     try:
         document = json.loads(read_text(path))
@@ -218,7 +258,7 @@ def load_rules(path: Path):
         raise ConfigurationError(
             "only architecture schema_version 1 is supported"
         )
-    for key in ("layer_rules", "file_rules", "text_rules"):
+    for key in ("layer_rules", "tree_rules", "file_rules", "text_rules"):
         if not isinstance(document.get(key, []), list):
             raise ConfigurationError(f"{key} must be an array")
     return document
@@ -226,7 +266,7 @@ def load_rules(path: Path):
 
 def rule_names(document: dict):
     names = []
-    for category in ("layer_rules", "file_rules", "text_rules"):
+    for category in ("layer_rules", "tree_rules", "file_rules", "text_rules"):
         for rule in document.get(category, []):
             names.append(str(rule.get("name", "<unnamed>")))
     return names
@@ -244,6 +284,9 @@ def run_checks(root: Path, document: dict, selected=None):
     for rule in document.get("layer_rules", []):
         if enabled(rule):
             violations.extend(check_layer(root, rule))
+    for rule in document.get("tree_rules", []):
+        if enabled(rule):
+            violations.extend(check_tree_rule(root, rule))
     for category in ("file_rules", "text_rules"):
         for rule in document.get(category, []):
             if enabled(rule):
