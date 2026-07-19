@@ -17,7 +17,27 @@ set(_QtMaterial3Widgets_supported_components
     Specs
     Effects
     Widgets
+    Integration
+    Tooling
+    Testing
 )
+
+foreach(_QtMaterial3Widgets_component IN LISTS QtMaterial3Widgets_FIND_COMPONENTS)
+    if(NOT _QtMaterial3Widgets_component IN_LIST _QtMaterial3Widgets_supported_components)
+        set(QtMaterial3Widgets_${_QtMaterial3Widgets_component}_FOUND FALSE)
+        set(QtMaterial3Widgets_NOT_FOUND_MESSAGE
+            "Unsupported QtMaterial3Widgets component: ${_QtMaterial3Widgets_component}"
+        )
+    elseif(TARGET QtMaterial3::${_QtMaterial3Widgets_component})
+        set(QtMaterial3Widgets_${_QtMaterial3Widgets_component}_FOUND TRUE)
+    else()
+        set(QtMaterial3Widgets_${_QtMaterial3Widgets_component}_FOUND FALSE)
+        set(QtMaterial3Widgets_NOT_FOUND_MESSAGE
+            "QtMaterial3Widgets component target is missing: QtMaterial3::${_QtMaterial3Widgets_component}"
+        )
+    endif()
+endforeach()
+
 
 foreach(_component IN LISTS _QtMaterial3Widgets_supported_components)
     if(TARGET QtMaterial3::${_component})
