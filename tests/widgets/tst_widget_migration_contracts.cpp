@@ -5,8 +5,8 @@
 
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
 #include "qtmaterial/core/qtmaterialautomation.h"
-#include "qtmaterial/core/qtmaterialformfieldcontrol.h"
-#include "qtmaterial/core/qtmaterialinputcontrol.h"
+#include "qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h"
+#include "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h"
 #include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"

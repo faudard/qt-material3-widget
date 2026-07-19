@@ -11,6 +11,8 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     selection/private/qtmaterialselectionrenderhelper.cpp
     surfaces/private/qtmaterialsurfacerenderhelper.cpp
     inputs/private/qtmaterialtextfieldshellhelper_p.cpp
+    inputs/common/qtmaterialformfieldcontrol.cpp
+    inputs/common/qtmaterialinputcontrol.cpp
     selection/qtmaterialcheckbox.cpp
     selection/qtmaterialswitch.cpp
     selection/qtmaterialradiobutton.cpp
@@ -74,6 +76,8 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialtextfieldvalidationgroup.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialdatefield.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmateriallistitem.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmateriallist.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h

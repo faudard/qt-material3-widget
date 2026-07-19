@@ -1,4 +1,4 @@
-#include "qtmaterialaccessibilityhelper_p.h"
+#include "qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h"
 #include <QString>
 #include <QVariant>
 

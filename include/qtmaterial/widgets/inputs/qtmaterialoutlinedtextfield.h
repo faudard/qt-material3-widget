@@ -7,7 +7,7 @@
 #include <QPointer>
 #include <QValidator>
 
-#include "qtmaterial/core/qtmaterialinputcontrol.h"
+#include "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h"
 #include "qtmaterial/specs/qtmaterialtextfieldspec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 

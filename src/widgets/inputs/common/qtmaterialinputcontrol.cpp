@@ -1,8 +1,8 @@
-#include "qtmaterial/core/qtmaterialinputcontrol.h"
+#include "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h"
 
 #include <algorithm>
 
-#include "private/qtmaterialaccessibilityhelper_p.h"
+#include "qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h"
 
 namespace {
 constexpr int kHorizontalPadding = 16;

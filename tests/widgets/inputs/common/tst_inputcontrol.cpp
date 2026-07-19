@@ -3,7 +3,7 @@
 #include <QRect>
 #include <QSize>
 
-#include "qtmaterial/core/qtmaterialinputcontrol.h"
+#include "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h"
 
 namespace {
 

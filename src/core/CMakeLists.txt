@@ -5,11 +5,9 @@ set(QTMATERIAL3_CORE_SOURCES
     qtmaterialoverlaysurface.cpp
     qtmaterialabstractbutton.cpp
     qtmaterialselectioncontrol.cpp
-    qtmaterialinputcontrol.cpp
     private/qtmaterialaccessibilityhelper.cpp
     private/qtmaterialmetadata_p.h
     qtmaterialasyncstate.cpp
-    qtmaterialformfieldcontrol.cpp
     qtmaterialproxystyle.cpp
     qtmaterialautomation.cpp
 )
@@ -19,14 +17,13 @@ set(QTMATERIAL3_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialwidget.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialinteractionstate.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialeventcompat.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialcontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialsurface.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialoverlaysurface.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialabstractbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialselectioncontrol.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialinputcontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialasyncstate.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialformfieldcontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialproxystyle.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialautomation.h
 )

@@ -1,6 +1,6 @@
 #include <QtTest/QtTest>
 
-#include "qtmaterial/core/qtmaterialformfieldcontrol.h"
+#include "qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h"
 
 class tst_FormFieldControl : public QObject {
     Q_OBJECT

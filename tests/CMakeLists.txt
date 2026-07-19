@@ -174,7 +174,7 @@ qtm3_add_test(tst_abstractbutton_state core/tst_abstractbutton_state.cpp qtmater
 
 # qtm3_add_test(tst_overlaysurface core/tst_overlaysurface.cpp qtmaterial3_core)
 #qtm3_add_test(tst_selectioncontrol_layout core/tst_selectioncontrol_layout.cpp qtmaterial3_core)
-qtm3_add_test(tst_inputcontrol core/tst_inputcontrol.cpp qtmaterial3_core)
+qtm3_add_test(tst_inputcontrol widgets/inputs/common/tst_inputcontrol.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_scrimwidget effects/tst_scrimwidget.cpp qtmaterial3_effects)
 # qtm3_add_test(tst_filledtonalbutton_render tests/render/buttons/tst_filledtonalbutton_render.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_progressindicators widgets/progress/tst_progressindicators.cpp qtmaterial3_widgets)
@@ -271,7 +271,7 @@ qtm3_add_test(tst_specvalidation specs/tst_specvalidation.cpp qtmaterial3_theme 
 qtm3_add_test(tst_componentregistry tooling/tst_componentregistry.cpp qtmaterial3_tooling)
 qtm3_add_test(tst_asyncstate core/tst_asyncstate.cpp qtmaterial3_core)
 qtm3_add_test(tst_navigationmodel widgets/navigation/model/tst_navigationmodel.cpp qtmaterial3_widgets)
-qtm3_add_test(tst_formfieldcontrol core/tst_formfieldcontrol.cpp qtmaterial3_core)
+qtm3_add_test(tst_formfieldcontrol widgets/inputs/common/tst_formfieldcontrol.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_paletteadapter integration/tst_paletteadapter.cpp qtmaterial3_integration)
 qtm3_add_test(tst_widget_migration_contracts widgets/tst_widget_migration_contracts.cpp qtmaterial3_widgets qtmaterial3_core)
 

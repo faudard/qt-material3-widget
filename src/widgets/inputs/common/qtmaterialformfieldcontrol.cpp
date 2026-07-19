@@ -1,4 +1,4 @@
-#include "qtmaterial/core/qtmaterialformfieldcontrol.h"
+#include "qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h"
 
 namespace QtMaterial {
 

@@ -9,7 +9,7 @@
 
 #include "qtmaterial/core/qtmaterialeventcompat.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
-#include "private/qtmaterialaccessibilityhelper_p.h"
+#include "qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h"
 
 namespace {
 
