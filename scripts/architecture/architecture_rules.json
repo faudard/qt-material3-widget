@@ -622,18 +622,21 @@
     {
       "name": "compact-chip-factory-delegates-to-resolver",
       "files": [
-        "include/qtmaterial/specs/qtmaterialcompactspecresolver.h",
-        "src/specs/qtmaterialcompactspecresolver.cpp",
-        "src/specs/qtmaterialcomponentfamilyspecs.cpp"
+        "include/qtmaterial/specs/qtmaterialchipspecresolver.h",
+        "src/specs/qtmaterialchipspecresolver.cpp",
+        "src/specs/qtmaterialspecfactory.cpp"
       ],
       "required_regex": [
-        "\\bclass\\s+QTMATERIAL3_SPECS_EXPORT\\s+CompactSpecResolver\\b",
-        "return\\s+CompactSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*assistChipSpec\\s*\\(",
-        "return\\s+CompactSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*filterChipSpec\\s*\\(",
-        "return\\s+CompactSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*inputChipSpec\\s*\\(",
-        "return\\s+CompactSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*suggestionChipSpec\\s*\\("
+        "\\bclass\\s+QTMATERIAL3_SPECS_EXPORT\\s+ChipSpecResolver\\b",
+        "return\\s+ChipSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*assistChipSpec\\s*\\(",
+        "return\\s+ChipSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*filterChipSpec\\s*\\(",
+        "return\\s+ChipSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*inputChipSpec\\s*\\(",
+        "return\\s+ChipSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*suggestionChipSpec\\s*\\("
       ],
-      "forbidden_regex": []
+      "forbidden_regex": [
+        "\\bCompactSpecResolver\\b",
+        "qtmaterialcompactspecresolver"
+      ]
     },
     {
       "name": "chip-uses-resolved-compact-spec",
