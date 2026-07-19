@@ -1,4 +1,4 @@
-#include "qtmaterial/core/qtmaterialcomponentregistry.h"
+#include "qtmaterial/tooling/qtmaterialcomponentregistry.h"
 
 #include <QStringList>
 

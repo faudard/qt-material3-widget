@@ -1,6 +1,6 @@
 #include <QtTest/QtTest>
 
-#include "qtmaterial/core/qtmaterialcomponentregistry.h"
+#include "qtmaterial/tooling/qtmaterialcomponentregistry.h"
 
 class tst_ComponentRegistry : public QObject {
     Q_OBJECT

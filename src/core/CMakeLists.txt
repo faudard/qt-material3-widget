@@ -7,7 +7,6 @@ set(QTMATERIAL3_CORE_SOURCES
     qtmaterialselectioncontrol.cpp
     qtmaterialinputcontrol.cpp
     private/qtmaterialaccessibilityhelper.cpp
-    qtmaterialcomponentregistry.cpp
     qtmaterialasyncstate.cpp
     qtmaterialformfieldcontrol.cpp
     qtmaterialnavigationmodel.cpp
@@ -26,7 +25,6 @@ set(QTMATERIAL3_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialabstractbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialselectioncontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialinputcontrol.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialcomponentregistry.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialasyncstate.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialformfieldcontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialnavigationmodel.h
