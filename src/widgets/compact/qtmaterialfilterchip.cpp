@@ -1,2 +1,22 @@
 #include "qtmaterial/widgets/compact/qtmaterialfilterchip.h"
-// Phase 6 skeleton placeholder.
+
+namespace QtMaterial {
+
+QtMaterialFilterChip::QtMaterialFilterChip(
+    QWidget* parent)
+    : QtMaterialChip(parent)
+{
+    setVariant(ChipVariant::Filter);
+}
+
+QtMaterialFilterChip::QtMaterialFilterChip(
+    const QString& text,
+    QWidget* parent)
+    : QtMaterialChip(text, parent)
+{
+    setVariant(ChipVariant::Filter);
+}
+
+QtMaterialFilterChip::~QtMaterialFilterChip() = default;
+
+} // namespace QtMaterial

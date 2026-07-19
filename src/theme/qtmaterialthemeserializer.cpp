@@ -125,17 +125,17 @@ bool jsonToColor(const QJsonValue& value, QColor* outColor)
     return true;
 }
 
-bool rejectUnknownKeys(const QJsonObject& object, const QSet<QString>& allowedKeys, const QString& path, QString* errorString)
+bool rejectUnknownKeys(const QJsonObject& object,
+                       const QSet<QString>& allowedKeys,
+                       const QString& path,
+                       QString* errorString)
 {
     for (auto it = object.constBegin(); it != object.constEnd(); ++it) {
-        if (path == QStringLiteral("root") && it.key() == QStringLiteral("resolved")) {
-            continue;
-        }
-
         if (!allowedKeys.contains(it.key())) {
             if (errorString) {
-                *errorString = QStringLiteral("Unknown key '%1' in %2.")
-                    .arg(it.key(), path);
+                *errorString =
+                    QStringLiteral("Unknown key '%1' in %2.")
+                        .arg(it.key(), path);
             }
             return false;
         }
@@ -1480,6 +1480,7 @@ Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, bool* ok, QStri
 
 Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, ThemeReadMode mode, bool* ok, QString* errorString)
 {
+    const QJsonObject root = normalizeThemeRootForRead(object);
     const int inputFormatVersion = object.value(QStringLiteral("formatVersion")).toInt(kCurrentFormatVersion);
     if (inputFormatVersion == 1) {
         static const QSet<QString> allowedV1RootKeys = {

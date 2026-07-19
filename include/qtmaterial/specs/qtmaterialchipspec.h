@@ -1,11 +1,14 @@
 #pragma once
 
 #include <QColor>
-#include <QMargins>
+#include <QFont>
 #include <QSize>
 
 #include "qtmaterial/qtmaterialglobal.h"
-#include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include "qtmaterial/theme/qtmaterialelevationscale.h"
+#include "qtmaterial/theme/qtmaterialmotiontokens.h"
+#include "qtmaterial/theme/qtmaterialshapescale.h"
+#include "qtmaterial/theme/qtmaterialtypographyscale.h"
 
 namespace QtMaterial {
 
@@ -16,7 +19,8 @@ enum class ChipVariant {
     Suggestion
 };
 
-struct QTMATERIAL3_SPECS_EXPORT ChipSpec {
+struct QTMATERIAL3_SPECS_EXPORT ChipSpec
+{
     ChipVariant variant = ChipVariant::Assist;
 
     QColor containerColor;
@@ -44,6 +48,14 @@ struct QTMATERIAL3_SPECS_EXPORT ChipSpec {
     int iconSize = 18;
     int iconSpacing = 8;
     int outlineWidth = 1;
+
+    QFont labelFont;
+    bool hasResolvedLabelFont = false;
+    qreal cornerRadius = 8.0;
+    qreal hoverStateLayerOpacity = 0.08;
+    qreal focusStateLayerOpacity = 0.10;
+    qreal pressStateLayerOpacity = 0.10;
+    qreal focusRingWidth = 2.0;
 };
 
 } // namespace QtMaterial

@@ -1,4 +1,5 @@
 #include "qtmaterial/specs/qtmaterialspecfactory.h"
+#include "qtmaterial/specs/qtmaterialcompactspecresolver.h"
 
 namespace QtMaterial {
 namespace {
@@ -18,58 +19,36 @@ int compactAdjusted(int value, Density density, int compactDelta, int comfortabl
 
 } // namespace
 
-ChipSpec SpecFactory::assistChipSpec(const Theme& theme, Density density) const
+ChipSpec SpecFactory::assistChipSpec(
+    const Theme& theme,
+    Density density) const
 {
-    ChipSpec spec;
-    spec.variant = ChipVariant::Assist;
-    spec.containerColor = theme.colorScheme().color(ColorRole::SurfaceContainerLow);
-    spec.selectedContainerColor = theme.colorScheme().color(ColorRole::SecondaryContainer);
-    spec.labelColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.selectedLabelColor = theme.colorScheme().color(ColorRole::OnSecondaryContainer);
-    spec.iconColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.selectedIconColor = spec.selectedLabelColor;
-    spec.outlineColor = theme.colorScheme().color(ColorRole::Outline);
-    spec.disabledContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    spec.disabledLabelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.disabledOutlineColor = theme.colorScheme().color(ColorRole::OutlineVariant);
-    spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnSurface);
-    spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.containerHeight = compactAdjusted(32, density, -4, 4);
-    spec.touchTarget = QSize(48, qMax(48, spec.containerHeight));
-    return spec;
+    return CompactSpecResolver()
+        .assistChipSpec(theme, density);
 }
 
-ChipSpec SpecFactory::filterChipSpec(const Theme& theme, Density density) const
+ChipSpec SpecFactory::filterChipSpec(
+    const Theme& theme,
+    Density density) const
 {
-    ChipSpec spec = assistChipSpec(theme, density);
-    spec.variant = ChipVariant::Filter;
-    spec.containerColor = Qt::transparent;
-    spec.selectedContainerColor = theme.colorScheme().color(ColorRole::SecondaryContainer);
-    spec.labelColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.selectedLabelColor = theme.colorScheme().color(ColorRole::OnSecondaryContainer);
-    spec.stateLayerColor = spec.labelColor;
-    return spec;
+    return CompactSpecResolver()
+        .filterChipSpec(theme, density);
 }
 
-ChipSpec SpecFactory::inputChipSpec(const Theme& theme, Density density) const
+ChipSpec SpecFactory::inputChipSpec(
+    const Theme& theme,
+    Density density) const
 {
-    ChipSpec spec = assistChipSpec(theme, density);
-    spec.variant = ChipVariant::Input;
-    spec.containerColor = Qt::transparent;
-    spec.selectedContainerColor = theme.colorScheme().color(ColorRole::SurfaceContainerHighest);
-    spec.iconColor = theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    return spec;
+    return CompactSpecResolver()
+        .inputChipSpec(theme, density);
 }
 
-ChipSpec SpecFactory::suggestionChipSpec(const Theme& theme, Density density) const
+ChipSpec SpecFactory::suggestionChipSpec(
+    const Theme& theme,
+    Density density) const
 {
-    ChipSpec spec = assistChipSpec(theme, density);
-    spec.variant = ChipVariant::Suggestion;
-    spec.containerColor = Qt::transparent;
-    spec.selectedContainerColor = theme.colorScheme().color(ColorRole::PrimaryContainer);
-    spec.selectedLabelColor = theme.colorScheme().color(ColorRole::OnPrimaryContainer);
-    spec.selectedIconColor = spec.selectedLabelColor;
-    return spec;
+    return CompactSpecResolver()
+        .suggestionChipSpec(theme, density);
 }
 
 SegmentedButtonSpec SpecFactory::segmentedButtonSpec(const Theme& theme, Density density) const

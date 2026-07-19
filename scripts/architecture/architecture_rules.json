@@ -518,6 +518,83 @@
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
         "\\bmakeTableSpec\\s*\\("
       ]
+    },
+    {
+      "name": "compact-chip-header-forwards-canonical-control",
+      "files": [
+        "include/qtmaterial/widgets/compact/qtmaterialchip.h"
+      ],
+      "required_regex": [
+        "qtmaterial/widgets/selection/qtmaterialchip\\.h"
+      ],
+      "forbidden_regex": [
+        "\\bclass\\s+[^;{]*\\bQtMaterialChip\\b"
+      ]
+    },
+    {
+      "name": "compact-segmented-header-forwards-canonical-control",
+      "files": [
+        "include/qtmaterial/widgets/compact/qtmaterialsegmentedbutton.h"
+      ],
+      "required_regex": [
+        "qtmaterial/widgets/selection/qtmaterialsegmentedbutton\\.h"
+      ],
+      "forbidden_regex": [
+        "\\bclass\\s+[^;{]*\\bQtMaterialSegmentedButton\\b"
+      ]
+    },
+    {
+      "name": "compact-chip-factory-delegates-to-resolver",
+      "files": [
+        "include/qtmaterial/specs/qtmaterialcompactspecresolver.h",
+        "src/specs/qtmaterialcompactspecresolver.cpp",
+        "src/specs/qtmaterialcomponentfamilyspecs.cpp"
+      ],
+      "required_regex": [
+        "\\bclass\\s+QTMATERIAL3_SPECS_EXPORT\\s+CompactSpecResolver\\b",
+        "return\\s+CompactSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*assistChipSpec\\s*\\(",
+        "return\\s+CompactSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*filterChipSpec\\s*\\(",
+        "return\\s+CompactSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*inputChipSpec\\s*\\(",
+        "return\\s+CompactSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*suggestionChipSpec\\s*\\("
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "chip-uses-resolved-compact-spec",
+      "files": [
+        "include/qtmaterial/widgets/selection/qtmaterialchip.h",
+        "src/widgets/selection/qtmaterialchip.cpp"
+      ],
+      "required_regex": [
+        "\\bconst\\s+ChipSpec\\s*&\\s*resolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bCompactSpecResolver\\b",
+        "\\bhoverStateLayerOpacity\\b",
+        "\\bfocusRingWidth\\b"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*stateLayer\\s*\\("
+      ]
+    },
+    {
+      "name": "compact-convenience-chips-use-canonical-chip",
+      "files": [
+        "include/qtmaterial/widgets/compact/qtmaterialfilterchip.h",
+        "include/qtmaterial/widgets/compact/qtmaterialinputchip.h",
+        "src/widgets/compact/qtmaterialfilterchip.cpp",
+        "src/widgets/compact/qtmaterialinputchip.cpp"
+      ],
+      "required_regex": [
+        "\\bQtMaterialFilterChip\\b[\\s\\S]*\\bpublic\\s+QtMaterialChip\\b",
+        "\\bQtMaterialInputChip\\b[\\s\\S]*\\bpublic\\s+QtMaterialChip\\b",
+        "setVariant\\s*\\(\\s*ChipVariant::Filter\\s*\\)",
+        "setVariant\\s*\\(\\s*ChipVariant::Input\\s*\\)"
+      ],
+      "forbidden_regex": [
+        "\\bpublic\\s+QWidget\\b"
+      ]
     }
   ],
   "text_rules": [
