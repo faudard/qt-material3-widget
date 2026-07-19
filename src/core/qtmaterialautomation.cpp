@@ -1,4 +1,5 @@
 #include "qtmaterial/core/qtmaterialautomation.h"
+#include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
 
 #include <QObject>
 #include <QVariant>
@@ -77,27 +78,27 @@ QString interactionStatePropertyString(const QtMaterialInteractionState& state)
 
 const char* QtMaterialAutomation::componentPropertyName() noexcept
 {
-    return "materialComponent";
+    return QtMaterialMetadataPropertyNames::component();
 }
 
 const char* QtMaterialAutomation::variantPropertyName() noexcept
 {
-    return "materialVariant";
+    return QtMaterialMetadataPropertyNames::variant();
 }
 
 const char* QtMaterialAutomation::rolePropertyName() noexcept
 {
-    return "materialRole";
+    return QtMaterialMetadataPropertyNames::role();
 }
 
 const char* QtMaterialAutomation::testIdPropertyName() noexcept
 {
-    return "materialTestId";
+    return QtMaterialMetadataPropertyNames::testId();
 }
 
 const char* QtMaterialAutomation::statePropertyName() noexcept
 {
-    return "materialState";
+    return QtMaterialMetadataPropertyNames::state();
 }
 
 void QtMaterialAutomation::setComponent(QObject* object,

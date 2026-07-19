@@ -1,6 +1,7 @@
 #include "qtmaterial/core/qtmaterialwidget.h"
 
-#include "qtmaterial/core/qtmaterialautomation.h"
+#include "private/qtmaterialmetadata_p.h"
+#include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 
 namespace QtMaterial {
@@ -138,7 +139,7 @@ void QtMaterialWidget::setMaterialComponent(const QString& value)
         return;
 
     m_materialComponent = value;
-    QtMaterialAutomation::setComponent(this, value);
+    MetadataPrivate::setStringProperty(this, QtMaterialMetadataPropertyNames::component(), value);
     emit materialMetadataChanged();
 }
 
@@ -148,7 +149,7 @@ void QtMaterialWidget::setMaterialVariant(const QString& value)
         return;
 
     m_materialVariant = value;
-    QtMaterialAutomation::setVariant(this, value);
+    MetadataPrivate::setStringProperty(this, QtMaterialMetadataPropertyNames::variant(), value);
     emit materialMetadataChanged();
 }
 
@@ -158,7 +159,7 @@ void QtMaterialWidget::setMaterialRole(const QString& value)
         return;
 
     m_materialRole = value;
-    QtMaterialAutomation::setRole(this, value);
+    MetadataPrivate::setStringProperty(this, QtMaterialMetadataPropertyNames::role(), value);
     emit materialMetadataChanged();
 }
 
@@ -168,7 +169,7 @@ void QtMaterialWidget::setMaterialTestId(const QString& value)
         return;
 
     m_materialTestId = value;
-    QtMaterialAutomation::setTestId(this, value);
+    MetadataPrivate::setStringProperty(this, QtMaterialMetadataPropertyNames::testId(), value);
     emit materialMetadataChanged();
 }
 
@@ -178,7 +179,7 @@ void QtMaterialWidget::setMaterialState(const QString& value)
         return;
 
     m_materialState = value;
-    QtMaterialAutomation::setState(this, value);
+    MetadataPrivate::setStringProperty(this, QtMaterialMetadataPropertyNames::state(), value);
     emit materialMetadataChanged();
 }
 

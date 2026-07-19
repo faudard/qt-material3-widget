@@ -3,7 +3,8 @@
 #include <QEvent>
 #include <QFocusEvent>
 
-#include "qtmaterial/core/qtmaterialautomation.h"
+#include "private/qtmaterialmetadata_p.h"
+#include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
 
 namespace QtMaterial {
 
@@ -105,7 +106,7 @@ void QtMaterialControl::syncAutomationState()
     m_state.setEnabled(isEnabled());
     m_state.setFocused(hasFocus());
 
-    QtMaterialAutomation::syncState(this, m_state);
+    MetadataPrivate::syncInteractionState(this, m_state);
 }
 
 } // namespace QtMaterial

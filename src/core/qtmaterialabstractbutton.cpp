@@ -1,6 +1,7 @@
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
 #include <QtGlobal>
-#include "qtmaterial/core/qtmaterialautomation.h"
+#include "private/qtmaterialmetadata_p.h"
+#include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
 
 #include <QFocusEvent>
 #include <QKeyEvent>
@@ -76,57 +77,57 @@ QtMaterialAbstractButton::~QtMaterialAbstractButton() = default;
 
 
 QString QtMaterialAbstractButton::materialComponent() const {
-    return QtMaterialAutomation::component(this);
+    return MetadataPrivate::stringProperty(this, QtMaterialMetadataPropertyNames::component());
 }
 
 QString QtMaterialAbstractButton::materialVariant() const {
-    return QtMaterialAutomation::variant(this);
+    return MetadataPrivate::stringProperty(this, QtMaterialMetadataPropertyNames::variant());
 }
 
 QString QtMaterialAbstractButton::materialRole() const {
-    return QtMaterialAutomation::role(this);
+    return MetadataPrivate::stringProperty(this, QtMaterialMetadataPropertyNames::role());
 }
 
 QString QtMaterialAbstractButton::materialTestId() const {
-    return QtMaterialAutomation::testId(this);
+    return MetadataPrivate::stringProperty(this, QtMaterialMetadataPropertyNames::testId());
 }
 
 QString QtMaterialAbstractButton::materialState() const {
-    return QtMaterialAutomation::state(this);
+    return MetadataPrivate::stringProperty(this, QtMaterialMetadataPropertyNames::state());
 }
 
 void QtMaterialAbstractButton::setMaterialComponent(const QString& value) {
     if (materialComponent() == value) return;
-    QtMaterialAutomation::setComponent(this, value);
+    MetadataPrivate::setStringProperty(this, QtMaterialMetadataPropertyNames::component(), value);
     emit materialMetadataChanged();
 }
 
 void QtMaterialAbstractButton::setMaterialVariant(const QString& value) {
     if (materialVariant() == value) return;
-    QtMaterialAutomation::setVariant(this, value);
+    MetadataPrivate::setStringProperty(this, QtMaterialMetadataPropertyNames::variant(), value);
     emit materialMetadataChanged();
 }
 
 void QtMaterialAbstractButton::setMaterialRole(const QString& value) {
     if (materialRole() == value) return;
-    QtMaterialAutomation::setRole(this, value);
+    MetadataPrivate::setStringProperty(this, QtMaterialMetadataPropertyNames::role(), value);
     emit materialMetadataChanged();
 }
 
 void QtMaterialAbstractButton::setMaterialTestId(const QString& value) {
     if (materialTestId() == value) return;
-    QtMaterialAutomation::setTestId(this, value);
+    MetadataPrivate::setStringProperty(this, QtMaterialMetadataPropertyNames::testId(), value);
     emit materialMetadataChanged();
 }
 
 void QtMaterialAbstractButton::setMaterialState(const QString& value) {
     if (materialState() == value) return;
-    QtMaterialAutomation::setState(this, value);
+    MetadataPrivate::setStringProperty(this, QtMaterialMetadataPropertyNames::state(), value);
     emit materialMetadataChanged();
 }
 
 void QtMaterialAbstractButton::syncAutomationState() {
-    QtMaterialAutomation::syncState(this, m_state);
+    MetadataPrivate::syncInteractionState(this, m_state);
 }
 
 Density QtMaterialAbstractButton::density() const noexcept

@@ -266,6 +266,7 @@ qtm3_add_test(tst_theme_performance_contracts performance/tst_theme_performance_
 # Release architecture cleanup tests.
 qtm3_add_test(tst_interactionstate_contracts core/tst_interactionstate_contracts.cpp qtmaterial3_core)
 qtm3_add_test(tst_automationmetadata core/tst_automationmetadata.cpp qtmaterial3_core)
+qtm3_add_test(tst_metadataruntime core/tst_metadataruntime.cpp qtmaterial3_core)
 qtm3_add_test(tst_specvalidation specs/tst_specvalidation.cpp qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
 qtm3_add_test(tst_componentregistry tooling/tst_componentregistry.cpp qtmaterial3_tooling)
 qtm3_add_test(tst_asyncstate core/tst_asyncstate.cpp qtmaterial3_core)

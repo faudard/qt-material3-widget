@@ -7,6 +7,7 @@ set(QTMATERIAL3_CORE_SOURCES
     qtmaterialselectioncontrol.cpp
     qtmaterialinputcontrol.cpp
     private/qtmaterialaccessibilityhelper.cpp
+    private/qtmaterialmetadata_p.h
     qtmaterialasyncstate.cpp
     qtmaterialformfieldcontrol.cpp
     qtmaterialnavigationmodel.cpp
