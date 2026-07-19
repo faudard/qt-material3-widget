@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QString>
+#include <qvariant.h>
 
 #include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include "qtmaterial/foundation/qtmaterialmetadataproperties.h"

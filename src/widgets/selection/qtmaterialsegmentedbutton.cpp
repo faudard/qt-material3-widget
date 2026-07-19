@@ -12,8 +12,8 @@
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/specs/qtmaterialsegmentedbuttonspec.h"
+#include "qtmaterial/specs/qtmaterialsegmentedbuttonspecresolver.h"
 
 namespace QtMaterial {
 
@@ -35,7 +35,6 @@ struct QtMaterialSegmentedButtonPrivate
 };
 
 using Segment = QtMaterialSegmentedButtonPrivate::Segment;
-
 
 QtMaterialSegmentedButton::QtMaterialSegmentedButton(QWidget* parent)
     : QtMaterialControl(parent)
@@ -175,7 +174,6 @@ void QtMaterialSegmentedButton::setMultiSelection(bool enabled)
     d->multiSelection = enabled;
     emit multiSelectionChanged(enabled);
 }
-
 
 bool QtMaterialSegmentedButton::isSegmentEnabled(int index) const
 {
@@ -325,8 +323,7 @@ void ensureSegmentedButtonSpecResolved(const Theme& theme,
         return;
     }
 
-    SpecFactory factory;
-    d.spec = factory.segmentedButtonSpec(theme, self.density());
+    d.spec = SegmentedButtonSpecResolver().segmentedButtonSpec(theme, self.density());
     d.specDirty = false;
 }
 

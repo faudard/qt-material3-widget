@@ -5,8 +5,6 @@
 
 namespace QtMaterial {
 
-class SpecFactory;
-
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialFilledTextField : public QtMaterialOutlinedTextField
 {
     Q_OBJECT

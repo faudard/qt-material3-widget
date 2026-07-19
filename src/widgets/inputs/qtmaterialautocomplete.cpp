@@ -10,9 +10,9 @@
 #include <QVBoxLayout>
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h"
 #include <memory>
+#include "qtmaterial/specs/qtmaterialautocompletespecresolver.h"
 
 namespace QtMaterial {
 struct QtMaterialAutocompletePrivate {
@@ -51,8 +51,7 @@ void ensureSpecResolved(QtMaterialAutocompletePrivate* d, const Theme& theme)
         return;
     }
 
-    SpecFactory factory;
-    d->m_spec = factory.autocompleteSpec(theme);
+    d->m_spec = AutocompleteSpecResolver().autocompleteSpec(theme);
     d->m_specDirty = false;
 }
 
@@ -108,8 +107,6 @@ void updateAccessibilityState(QtMaterialAutocomplete* q, QtMaterialAutocompleteP
 // End tranche 31 local helpers.
 
 } // namespace
-
-
 
 QtMaterialAutocomplete::QtMaterialAutocomplete(QWidget* parent)
     : QtMaterialWidget(parent)
@@ -182,11 +179,6 @@ void QtMaterialAutocomplete::themeChangedEvent(const Theme& theme)
     invalidateResolvedSpec(d_ptr.get());
     updatePaletteFromSpec(d_ptr.get(), theme);
 }
-
-
-
-
-
 
 QSize QtMaterialAutocomplete::sizeHint() const
 {
@@ -265,7 +257,6 @@ void QtMaterialAutocomplete::paintEvent(QPaintEvent*)
     }
 }
 
-
 int QtMaterialAutocomplete::maxVisibleCompletions() const noexcept {
     return d_ptr->m_maxVisibleCompletions;
 }
@@ -339,6 +330,5 @@ QString QtMaterialAutocomplete::accessibilitySummary() const {
     }
     return parts.join(QStringLiteral(". "));
 }
-
 
 } // namespace QtMaterial

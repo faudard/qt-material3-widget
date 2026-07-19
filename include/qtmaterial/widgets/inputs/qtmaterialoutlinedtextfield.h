@@ -21,7 +21,6 @@ namespace QtMaterial {
 class QtMaterialOutlinedTextFieldPrivate;
 
 class QtMaterialTransitionController;
-class SpecFactory;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialOutlinedTextField : public QtMaterialInputControl
 {
