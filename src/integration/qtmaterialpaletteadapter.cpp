@@ -1,4 +1,4 @@
-#include "qtmaterial/core/qtmaterialpaletteadapter.h"
+#include "qtmaterial/integration/qtmaterialpaletteadapter.h"
 
 namespace QtMaterial {
 

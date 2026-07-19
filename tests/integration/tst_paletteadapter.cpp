@@ -1,6 +1,6 @@
 #include <QtTest/QtTest>
 
-#include "qtmaterial/core/qtmaterialpaletteadapter.h"
+#include "qtmaterial/integration/qtmaterialpaletteadapter.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
 class tst_PaletteAdapter : public QObject {

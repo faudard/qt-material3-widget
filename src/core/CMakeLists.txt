@@ -11,7 +11,6 @@ set(QTMATERIAL3_CORE_SOURCES
     qtmaterialasyncstate.cpp
     qtmaterialformfieldcontrol.cpp
     qtmaterialnavigationmodel.cpp
-    qtmaterialpaletteadapter.cpp
     qtmaterialproxystyle.cpp
     qtmaterialautomation.cpp
 )
@@ -31,7 +30,6 @@ set(QTMATERIAL3_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialasyncstate.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialformfieldcontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialnavigationmodel.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialpaletteadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialproxystyle.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialautomation.h
 )

@@ -1,5 +1,6 @@
 add_subdirectory(foundation)
 add_subdirectory(theme)
+add_subdirectory(integration)
 add_subdirectory(core)
 add_subdirectory(specs)
 add_subdirectory(effects)
