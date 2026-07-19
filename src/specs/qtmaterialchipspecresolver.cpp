@@ -1,4 +1,5 @@
 #include "qtmaterial/specs/qtmaterialchipspecresolver.h"
+#include "qtmaterialcomponenttokenapplier_p.h"
 
 #include "private/qtmaterialdensitymetrics_p.h"
 
@@ -37,6 +38,13 @@ ChipSpec ChipSpecResolver::resolve(
 
     switch (variant) {
     case ChipVariant::Assist:
+        applyChipComponentTokens(
+            theme,
+            QStringList{
+                QStringLiteral("chip"),
+                QStringLiteral("chip.assist"),
+                QStringLiteral("AssistChip")},
+            &spec);
         break;
     case ChipVariant::Filter:
         spec.containerColor = Qt::transparent;
@@ -47,6 +55,13 @@ ChipSpec ChipSpecResolver::resolve(
         spec.selectedLabelColor =
             theme.colorScheme().color(ColorRole::OnSecondaryContainer);
         spec.stateLayerColor = spec.labelColor;
+        applyChipComponentTokens(
+            theme,
+            QStringList{
+                QStringLiteral("chip"),
+                QStringLiteral("chip.filter"),
+                QStringLiteral("FilterChip")},
+            &spec);
         break;
     case ChipVariant::Input:
         spec.containerColor = Qt::transparent;
@@ -54,6 +69,13 @@ ChipSpec ChipSpecResolver::resolve(
             theme.colorScheme().color(ColorRole::SurfaceContainerHighest);
         spec.iconColor =
             theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+        applyChipComponentTokens(
+            theme,
+            QStringList{
+                QStringLiteral("chip"),
+                QStringLiteral("chip.input"),
+                QStringLiteral("InputChip")},
+            &spec);
         break;
     case ChipVariant::Suggestion:
         spec.containerColor = Qt::transparent;
@@ -62,6 +84,13 @@ ChipSpec ChipSpecResolver::resolve(
         spec.selectedLabelColor =
             theme.colorScheme().color(ColorRole::OnPrimaryContainer);
         spec.selectedIconColor = spec.selectedLabelColor;
+        applyChipComponentTokens(
+            theme,
+            QStringList{
+                QStringLiteral("chip"),
+                QStringLiteral("chip.suggestion"),
+                QStringLiteral("SuggestionChip")},
+            &spec);
         break;
     }
 

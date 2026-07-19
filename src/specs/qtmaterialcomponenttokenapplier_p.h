@@ -4,11 +4,13 @@
 
 #include "qtmaterial/specs/qtmaterialbuttonspec.h"
 #include "qtmaterial/specs/qtmaterialcardspec.h"
+#include "qtmaterial/specs/qtmaterialchipspec.h"
 #include "qtmaterial/specs/qtmaterialcheckboxspec.h"
 #include "qtmaterial/specs/qtmaterialdialogspec.h"
 #include "qtmaterial/specs/qtmaterialfabspec.h"
 #include "qtmaterial/specs/qtmaterialiconbuttonspec.h"
 #include "qtmaterial/specs/qtmaterialradiobuttonspec.h"
+#include "qtmaterial/specs/qtmaterialsegmentedbuttonspec.h"
 #include "qtmaterial/specs/qtmaterialswitchspec.h"
 #include "qtmaterial/specs/qtmaterialtextfieldspec.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
@@ -32,5 +34,15 @@ void applyNavigationRailComponentTokens(const Theme& theme, const QStringList& c
 void applyTextFieldComponentTokens(const Theme& theme, const QStringList& componentNames, TextFieldSpec* spec);
 void applyCardComponentTokens(const Theme& theme, const QStringList& componentNames, CardSpec* spec);
 void applyDialogComponentTokens(const Theme& theme, const QStringList& componentNames, DialogSpec* spec);
+
+void applyChipComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    ChipSpec* spec);
+void applySegmentedButtonComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    SegmentedButtonSpec* spec);
+
 
 } // namespace QtMaterial

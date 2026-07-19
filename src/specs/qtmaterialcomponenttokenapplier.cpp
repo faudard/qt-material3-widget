@@ -2323,4 +2323,306 @@ void applyDialogComponentTokens(
             1.0));
 }
 
+void applyChipComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    ChipSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    if (!tokens.isEmpty()) {
+        applyColor(&spec->containerColor, tokens, ColorRole::SurfaceContainerLow);
+        applyColor(
+            &spec->selectedContainerColor,
+            tokens,
+            ColorRole::SecondaryContainer);
+        applyColor(&spec->labelColor, tokens, ColorRole::OnSurface);
+        applyColor(
+            &spec->selectedLabelColor,
+            tokens,
+            ColorRole::OnSecondaryContainer);
+        applyColor(&spec->iconColor, tokens, ColorRole::Primary);
+        applyColor(
+            &spec->selectedIconColor,
+            tokens,
+            ColorRole::OnSecondaryContainer);
+        applyColor(&spec->outlineColor, tokens, ColorRole::Outline);
+        applyColor(
+            &spec->disabledContainerColor,
+            tokens,
+            ColorRole::SurfaceContainerHigh);
+        applyColor(
+            &spec->disabledLabelColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->disabledOutlineColor,
+            tokens,
+            ColorRole::OutlineVariant);
+        applyColor(&spec->stateLayerColor, tokens, ColorRole::OnSurface);
+        applyColor(&spec->focusRingColor, tokens, ColorRole::Primary);
+
+        applyCustomColor(&spec->containerColor, tokens, "containerColor");
+        applyCustomColor(
+            &spec->selectedContainerColor,
+            tokens,
+            "selectedContainerColor");
+        applyCustomColor(&spec->labelColor, tokens, "labelColor");
+        applyCustomColor(
+            &spec->selectedLabelColor,
+            tokens,
+            "selectedLabelColor");
+        applyCustomColor(&spec->iconColor, tokens, "iconColor");
+        applyCustomColor(
+            &spec->selectedIconColor,
+            tokens,
+            "selectedIconColor");
+        applyCustomColor(&spec->outlineColor, tokens, "outlineColor");
+        applyCustomColor(
+            &spec->disabledContainerColor,
+            tokens,
+            "disabledContainerColor");
+        applyCustomColor(
+            &spec->disabledLabelColor,
+            tokens,
+            "disabledLabelColor");
+        applyCustomColor(
+            &spec->disabledOutlineColor,
+            tokens,
+            "disabledOutlineColor");
+        applyCustomColor(
+            &spec->stateLayerColor,
+            tokens,
+            "stateLayerColor");
+        applyCustomColor(
+            &spec->focusRingColor,
+            tokens,
+            "focusRingColor");
+
+        applyShapeMotionElevation(
+            tokens,
+            &spec->shapeRole,
+            &spec->elevationRole,
+            &spec->motionToken);
+        applyTouchTarget(&spec->touchTarget, tokens);
+        spec->iconSize =
+            iconSizeFromTokens(tokens, IconSizeRole::Small, spec->iconSize);
+        readInt(tokens.custom, "containerHeight", &spec->containerHeight);
+        readInt(tokens.custom, "minWidth", &spec->minWidth);
+        readInt(tokens.custom, "horizontalPadding", &spec->horizontalPadding);
+        readInt(tokens.custom, "iconSize", &spec->iconSize);
+        readInt(tokens.custom, "iconSpacing", &spec->iconSpacing);
+        readInt(tokens.custom, "outlineWidth", &spec->outlineWidth);
+    }
+
+    spec->hasResolvedLabelFont = false;
+    if (tokens.typography.contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            tokens.typography.value(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    } else if (theme.typography().contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            theme.typography().style(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    }
+
+    if (spec->shapeRole == ShapeRole::Full) {
+        spec->cornerRadius = -1.0;
+    } else if (tokens.shapes.contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(tokens.shapes.value(spec->shapeRole)));
+    } else if (theme.shapes().contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(theme.shapes().radius(spec->shapeRole)));
+    } else {
+        spec->cornerRadius = -1.0;
+    }
+
+    spec->hasResolvedMotionStyle = false;
+    if (tokens.motion.contains(spec->motionToken)) {
+        spec->motionStyle = tokens.motion.value(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    } else if (theme.motion().contains(spec->motionToken)) {
+        spec->motionStyle = theme.motion().style(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    }
+
+    const StateLayer& stateLayer =
+        tokens.hasStateLayer ? tokens.stateLayer : theme.stateLayer();
+    spec->hoverStateLayerOpacity = stateLayer.hoverOpacity;
+    spec->focusStateLayerOpacity = stateLayer.focusOpacity;
+    spec->pressStateLayerOpacity = stateLayer.pressOpacity;
+    spec->dragStateLayerOpacity = stateLayer.dragOpacity;
+
+    if (!tokens.isEmpty()) {
+        readReal(tokens.custom, "cornerRadius", &spec->cornerRadius);
+        readReal(
+            tokens.custom,
+            "hoverStateLayerOpacity",
+            &spec->hoverStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "focusStateLayerOpacity",
+            &spec->focusStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "pressStateLayerOpacity",
+            &spec->pressStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "dragStateLayerOpacity",
+            &spec->dragStateLayerOpacity);
+    }
+}
+
+void applySegmentedButtonComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    SegmentedButtonSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    if (!tokens.isEmpty()) {
+        applyColor(&spec->containerColor, tokens, ColorRole::Surface);
+        applyColor(
+            &spec->selectedContainerColor,
+            tokens,
+            ColorRole::SecondaryContainer);
+        applyColor(&spec->labelColor, tokens, ColorRole::OnSurface);
+        applyColor(
+            &spec->selectedLabelColor,
+            tokens,
+            ColorRole::OnSecondaryContainer);
+        applyColor(&spec->outlineColor, tokens, ColorRole::Outline);
+        applyColor(&spec->stateLayerColor, tokens, ColorRole::OnSurface);
+        applyColor(&spec->focusRingColor, tokens, ColorRole::Primary);
+        applyColor(
+            &spec->disabledLabelColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->disabledOutlineColor,
+            tokens,
+            ColorRole::OutlineVariant);
+
+        applyCustomColor(&spec->containerColor, tokens, "containerColor");
+        applyCustomColor(
+            &spec->selectedContainerColor,
+            tokens,
+            "selectedContainerColor");
+        applyCustomColor(&spec->labelColor, tokens, "labelColor");
+        applyCustomColor(
+            &spec->selectedLabelColor,
+            tokens,
+            "selectedLabelColor");
+        applyCustomColor(&spec->outlineColor, tokens, "outlineColor");
+        applyCustomColor(
+            &spec->stateLayerColor,
+            tokens,
+            "stateLayerColor");
+        applyCustomColor(
+            &spec->focusRingColor,
+            tokens,
+            "focusRingColor");
+        applyCustomColor(
+            &spec->disabledLabelColor,
+            tokens,
+            "disabledLabelColor");
+        applyCustomColor(
+            &spec->disabledOutlineColor,
+            tokens,
+            "disabledOutlineColor");
+
+        ElevationRole unusedElevation = ElevationRole::Level0;
+        applyShapeMotionElevation(
+            tokens,
+            &spec->shapeRole,
+            &unusedElevation,
+            &spec->motionToken);
+        applyTouchTarget(&spec->touchTarget, tokens);
+        spec->iconSize =
+            iconSizeFromTokens(tokens, IconSizeRole::Small, spec->iconSize);
+        readInt(tokens.custom, "segmentHeight", &spec->segmentHeight);
+        readInt(tokens.custom, "minSegmentWidth", &spec->minSegmentWidth);
+        readInt(tokens.custom, "horizontalPadding", &spec->horizontalPadding);
+        readInt(tokens.custom, "iconSize", &spec->iconSize);
+        readInt(tokens.custom, "iconSpacing", &spec->iconSpacing);
+        readInt(tokens.custom, "outlineWidth", &spec->outlineWidth);
+    }
+
+    spec->hasResolvedLabelFont = false;
+    if (tokens.typography.contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            tokens.typography.value(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    } else if (theme.typography().contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            theme.typography().style(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    }
+
+    if (spec->shapeRole == ShapeRole::Full) {
+        spec->cornerRadius = -1.0;
+    } else if (tokens.shapes.contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(tokens.shapes.value(spec->shapeRole)));
+    } else if (theme.shapes().contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            static_cast<qreal>(theme.shapes().radius(spec->shapeRole)));
+    } else {
+        spec->cornerRadius = -1.0;
+    }
+
+    spec->hasResolvedMotionStyle = false;
+    if (tokens.motion.contains(spec->motionToken)) {
+        spec->motionStyle = tokens.motion.value(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    } else if (theme.motion().contains(spec->motionToken)) {
+        spec->motionStyle = theme.motion().style(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    }
+
+    const StateLayer& stateLayer =
+        tokens.hasStateLayer ? tokens.stateLayer : theme.stateLayer();
+    spec->hoverStateLayerOpacity = stateLayer.hoverOpacity;
+    spec->focusStateLayerOpacity = stateLayer.focusOpacity;
+    spec->pressStateLayerOpacity = stateLayer.pressOpacity;
+    spec->dragStateLayerOpacity = stateLayer.dragOpacity;
+
+    if (!tokens.isEmpty()) {
+        readReal(tokens.custom, "cornerRadius", &spec->cornerRadius);
+        readReal(
+            tokens.custom,
+            "hoverStateLayerOpacity",
+            &spec->hoverStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "focusStateLayerOpacity",
+            &spec->focusStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "pressStateLayerOpacity",
+            &spec->pressStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "dragStateLayerOpacity",
+            &spec->dragStateLayerOpacity);
+    }
+}
+
+
 } // namespace QtMaterial

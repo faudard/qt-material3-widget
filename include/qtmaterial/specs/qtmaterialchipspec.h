@@ -41,6 +41,17 @@ struct QTMATERIAL3_SPECS_EXPORT ChipSpec
     ElevationRole elevationRole = ElevationRole::Level0;
     MotionToken motionToken = MotionToken::Short4;
 
+    // Concrete values resolved by the resolver boundary.
+    QFont labelFont;
+    MotionStyle motionStyle;
+    qreal cornerRadius = -1.0;
+    qreal hoverStateLayerOpacity = 0.08;
+    qreal focusStateLayerOpacity = 0.12;
+    qreal pressStateLayerOpacity = 0.12;
+    qreal dragStateLayerOpacity = 0.16;
+    bool hasResolvedLabelFont = false;
+    bool hasResolvedMotionStyle = false;
+
     QSize touchTarget = QSize(48, 48);
     int containerHeight = 32;
     int minWidth = 48;
