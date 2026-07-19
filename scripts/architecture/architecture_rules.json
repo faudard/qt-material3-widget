@@ -595,6 +595,39 @@
       "forbidden_regex": [
         "\\bpublic\\s+QWidget\\b"
       ]
+    },
+    {
+      "name": "spec-factory-delegates-remaining-component-families",
+      "files": [
+        "src/specs/qtmaterialspecfactory.cpp"
+      ],
+      "forbidden_regex": [
+        "theme\\s*\\.\\s*(?:colorScheme|typography|shapes|elevations|motion)\\s*\\(",
+        "\\bChipSpec\\s+spec\\s*;",
+        "\\bSegmentedButtonSpec\\s+spec\\s*;",
+        "\\bMenuSpec\\s+spec\\s*;",
+        "\\bAutocompleteSpec\\s+spec\\s*;"
+      ],
+      "required_regex": [
+        "\\bChipSpecResolver\\b",
+        "\\bSegmentedButtonSpecResolver\\b",
+        "\\bMenuSpecResolver\\b",
+        "\\bAutocompleteSpecResolver\\b"
+      ]
+    },
+    {
+      "name": "legacy-data-component-entry-points-delegate",
+      "files": [
+        "src/specs/qtmaterialspecfactory_data_components.cpp"
+      ],
+      "forbidden_regex": [
+        "theme\\s*\\.\\s*(?:colorScheme|typography)\\s*\\(",
+        "\\broleOr\\s*\\(",
+        "\\bdefault(?:DatePicker|Table|GridList|Carousel)Spec\\s*\\("
+      ],
+      "required_regex": [
+        "\\bDataComponentSpecResolver\\b"
+      ]
     }
   ],
   "text_rules": [

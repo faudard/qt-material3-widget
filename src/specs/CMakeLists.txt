@@ -35,8 +35,13 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialsurfacespecresolver.cpp
     qtmaterialprogressindicatorspec.cpp
     qtmaterialprogressspecresolver.cpp
-    qtmaterialcomponentfamilyspecs.cpp
+    qtmaterialchipspecresolver.cpp
+    qtmaterialsegmentedbuttonspecresolver.cpp
+    qtmaterialmenuspecresolver.cpp
+    qtmaterialautocompletespecresolver.cpp
+    private/qtmaterialdensitymetrics_p.h
     qtmaterialdatacomponentspecs.cpp
+    qtmaterialdatacomponentspecresolver.cpp
     qtmaterialspecfactory_data_components.cpp
     qtmaterialspecvalidation.cpp
 )
@@ -78,12 +83,17 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialprogressindicatorspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialprogressspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialchipspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialchipspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsegmentedbuttonspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsegmentedbuttonspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationrailspec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationrailspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialmenuspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialmenuspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletespec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletespecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatacomponentspecs.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatacomponentspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspeccontext.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspecvalidation.h
 )

@@ -2,6 +2,10 @@
 #include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 #include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
 #include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
+#include "qtmaterial/specs/qtmaterialchipspecresolver.h"
+#include "qtmaterial/specs/qtmaterialsegmentedbuttonspecresolver.h"
+#include "qtmaterial/specs/qtmaterialmenuspecresolver.h"
+#include "qtmaterial/specs/qtmaterialautocompletespecresolver.h"
 #include "qtmaterialcomponenttokenapplier_p.h"
 #include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
 #include "qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h"
@@ -208,4 +212,54 @@ DividerSpec SpecFactory::dividerSpec(
 {
     return DataSpecResolver().dividerSpec(theme);
 }
+
+ChipSpec SpecFactory::assistChipSpec(
+    const Theme& theme,
+    Density density) const
+{
+    return ChipSpecResolver().assistChipSpec(theme, density);
+}
+
+ChipSpec SpecFactory::filterChipSpec(
+    const Theme& theme,
+    Density density) const
+{
+    return ChipSpecResolver().filterChipSpec(theme, density);
+}
+
+ChipSpec SpecFactory::inputChipSpec(
+    const Theme& theme,
+    Density density) const
+{
+    return ChipSpecResolver().inputChipSpec(theme, density);
+}
+
+ChipSpec SpecFactory::suggestionChipSpec(
+    const Theme& theme,
+    Density density) const
+{
+    return ChipSpecResolver().suggestionChipSpec(theme, density);
+}
+
+SegmentedButtonSpec SpecFactory::segmentedButtonSpec(
+    const Theme& theme,
+    Density density) const
+{
+    return SegmentedButtonSpecResolver().segmentedButtonSpec(theme, density);
+}
+
+MenuSpec SpecFactory::menuSpec(
+    const Theme& theme,
+    Density density) const
+{
+    return MenuSpecResolver().menuSpec(theme, density);
+}
+
+AutocompleteSpec SpecFactory::autocompleteSpec(
+    const Theme& theme,
+    Density density) const
+{
+    return AutocompleteSpecResolver().autocompleteSpec(theme, density);
+}
+
 } // namespace QtMaterial
