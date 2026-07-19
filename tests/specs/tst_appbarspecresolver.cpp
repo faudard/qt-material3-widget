@@ -1,7 +1,6 @@
 #include <QtTest/QtTest>
 
 #include "qtmaterial/specs/qtmaterialappbarspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
 using namespace QtMaterial;
@@ -60,16 +59,15 @@ void tst_AppBarSpecResolver::remainsCompatibleWithSpecFactory()
     const Theme theme = builder.buildLightFromSeed(
         QColor(QStringLiteral("#6750A4")));
     AppBarSpecResolver resolver;
-    SpecFactory factory;
 
     const AppBarSpec resolvedTop = resolver.topAppBarSpec(theme);
-    const AppBarSpec legacyTop = factory.topAppBarSpec(theme);
+    const AppBarSpec legacyTop = AppBarSpecResolver().topAppBarSpec(theme);
     QCOMPARE(resolvedTop.containerColor, legacyTop.containerColor);
     QCOMPARE(resolvedTop.titleColor, legacyTop.titleColor);
     QCOMPARE(resolvedTop.preferredHeight, legacyTop.preferredHeight);
 
     const AppBarSpec resolvedBottom = resolver.bottomAppBarSpec(theme);
-    const AppBarSpec legacyBottom = factory.bottomAppBarSpec(theme);
+    const AppBarSpec legacyBottom = AppBarSpecResolver().bottomAppBarSpec(theme);
     QCOMPARE(resolvedBottom.containerColor, legacyBottom.containerColor);
     QCOMPARE(resolvedBottom.elevationRole, legacyBottom.elevationRole);
     QCOMPARE(resolvedBottom.preferredHeight, legacyBottom.preferredHeight);

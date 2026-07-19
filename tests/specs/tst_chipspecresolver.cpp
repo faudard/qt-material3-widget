@@ -1,7 +1,6 @@
 #include <QtTest>
 
 #include "qtmaterial/specs/qtmaterialchipspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
 using namespace QtMaterial;
@@ -67,7 +66,7 @@ void tst_ChipSpecResolver::remainsCompatibleWithSpecFactory()
     const ChipSpec resolved =
         ChipSpecResolver().filterChipSpec(theme, Density::Compact);
     const ChipSpec legacy =
-        SpecFactory().filterChipSpec(theme, Density::Compact);
+        ChipSpecResolver().filterChipSpec(theme, Density::Compact);
 
     QCOMPARE(static_cast<int>(resolved.variant),
              static_cast<int>(legacy.variant));

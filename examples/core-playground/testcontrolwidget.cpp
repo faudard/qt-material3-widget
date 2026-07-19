@@ -12,10 +12,10 @@
 #include <QWidget>
 #include <QGroupBox>
 
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialsnackbar.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h"
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 
 TestControlWidget::TestControlWidget(QWidget* parent)
     : QtMaterial::QtMaterialControl(parent)
@@ -49,8 +49,7 @@ void TestControlWidget::paintEvent(QPaintEvent* event)
 
 void TestControlWidget::invalidateResolvedSpec()
 {
-    QtMaterial::SpecFactory factory;
-    m_spec = factory.filledButtonSpec(theme(), density());
+    m_spec = ButtonSpecResolver().filledButtonSpec(theme(), density());
 }
 
 void TestControlWidget::buildUi()

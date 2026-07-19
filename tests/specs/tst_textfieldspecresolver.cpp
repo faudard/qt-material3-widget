@@ -1,6 +1,5 @@
 #include <QtTest/QtTest>
 
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
@@ -134,12 +133,11 @@ void tst_TextFieldSpecResolver::remainsCompatibleWithSpecFactory()
             QColor(QStringLiteral("#6750A4")));
 
     TextFieldSpecResolver resolver;
-    SpecFactory factory;
 
     const TextFieldSpec outlined =
         resolver.outlinedTextFieldSpec(theme);
     const TextFieldSpec legacyOutlined =
-        factory.outlinedTextFieldSpec(theme);
+        TextFieldSpecResolver().outlinedTextFieldSpec(theme);
     QCOMPARE(
         outlined.containerColor,
         legacyOutlined.containerColor);
@@ -150,7 +148,7 @@ void tst_TextFieldSpecResolver::remainsCompatibleWithSpecFactory()
     const TextFieldSpec filled =
         resolver.filledTextFieldSpec(theme);
     const TextFieldSpec legacyFilled =
-        factory.filledTextFieldSpec(theme);
+        TextFieldSpecResolver().filledTextFieldSpec(theme);
     QCOMPARE(
         filled.containerColor,
         legacyFilled.containerColor);

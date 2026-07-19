@@ -1,7 +1,6 @@
 #include <QtTest>
 
 #include "qtmaterial/specs/qtmaterialcompactspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
@@ -145,7 +144,6 @@ void tst_CompactSpecResolver::remainsCompatibleWithSpecFactory()
             QColor(QStringLiteral("#6750A4")));
 
     CompactSpecResolver resolver;
-    SpecFactory factory;
 
     const ChipSpec resolved =
         resolver.inputChipSpec(
@@ -153,7 +151,7 @@ void tst_CompactSpecResolver::remainsCompatibleWithSpecFactory()
             Density::Compact);
 
     const ChipSpec legacy =
-        factory.inputChipSpec(
+        ChipSpecResolver().inputChipSpec(
             theme,
             Density::Compact);
 
@@ -173,3 +171,4 @@ void tst_CompactSpecResolver::remainsCompatibleWithSpecFactory()
 
 QTEST_MAIN(tst_CompactSpecResolver)
 #include "tst_compactspecresolver.moc"
+#include "qtmaterial/specs/qtmaterialchipspecresolver.h"

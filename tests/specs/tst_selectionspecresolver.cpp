@@ -1,7 +1,6 @@
 #include <QtTest/QtTest>
 
 #include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
 using namespace QtMaterial;
@@ -68,12 +67,11 @@ void tst_SelectionSpecResolver::remainsCompatibleWithSpecFactory()
     const Theme theme =
         builder.buildDarkFromSeed(QColor(QStringLiteral("#6750A4")));
     SelectionSpecResolver resolver;
-    SpecFactory factory;
 
     const CheckboxSpec resolvedCheckbox =
         resolver.checkboxSpec(theme, Density::Compact);
     const CheckboxSpec legacyCheckbox =
-        factory.checkboxSpec(theme, Density::Compact);
+        SelectionSpecResolver().checkboxSpec(theme, Density::Compact);
 
     QCOMPARE(
         resolvedCheckbox.selectedContainerColor,
@@ -86,7 +84,7 @@ void tst_SelectionSpecResolver::remainsCompatibleWithSpecFactory()
     const RadioButtonSpec resolvedRadio =
         resolver.radioButtonSpec(theme, Density::Comfortable);
     const RadioButtonSpec legacyRadio =
-        factory.radioButtonSpec(theme, Density::Comfortable);
+        SelectionSpecResolver().radioButtonSpec(theme, Density::Comfortable);
 
     QCOMPARE(resolvedRadio.selectedColor, legacyRadio.selectedColor);
     QCOMPARE(
@@ -97,7 +95,7 @@ void tst_SelectionSpecResolver::remainsCompatibleWithSpecFactory()
     const SwitchSpec resolvedSwitch =
         resolver.switchSpec(theme, Density::Default);
     const SwitchSpec legacySwitch =
-        factory.switchSpec(theme, Density::Default);
+        SelectionSpecResolver().switchSpec(theme, Density::Default);
 
     QCOMPARE(
         resolvedSwitch.selectedTrackColor,

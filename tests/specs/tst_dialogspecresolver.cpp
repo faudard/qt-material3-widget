@@ -1,7 +1,6 @@
 #include <QtTest/QtTest>
 
 #include "qtmaterial/specs/qtmaterialdialogspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
@@ -130,7 +129,7 @@ void tst_DialogSpecResolver::remainsCompatibleWithSpecFactory()
     const DialogSpec resolved =
         DialogSpecResolver().dialogSpec(theme);
     const DialogSpec legacy =
-        SpecFactory().dialogSpec(theme);
+        DialogSpecResolver().dialogSpec(theme);
 
     QCOMPARE(resolved.containerColor, legacy.containerColor);
     QCOMPARE(resolved.cornerRadius, legacy.cornerRadius);

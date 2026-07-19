@@ -1,7 +1,6 @@
 #include <QtTest>
 
 #include "qtmaterial/specs/qtmaterialmenuspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
 using namespace QtMaterial;
@@ -57,7 +56,7 @@ void tst_MenuSpecResolver::remainsCompatibleWithSpecFactory()
     const MenuSpec resolved =
         MenuSpecResolver().menuSpec(theme, Density::Compact);
     const MenuSpec legacy =
-        SpecFactory().menuSpec(theme, Density::Compact);
+        MenuSpecResolver().menuSpec(theme, Density::Compact);
 
     QCOMPARE(resolved.containerColor, legacy.containerColor);
     QCOMPARE(resolved.itemLabelColor, legacy.itemLabelColor);

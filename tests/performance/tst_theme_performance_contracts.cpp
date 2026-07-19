@@ -5,7 +5,6 @@
 #include <QProcessEnvironment>
 
 #include "qtmaterial/foundation/qtmaterialdensity.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
 
@@ -104,14 +103,13 @@ private slots:
     {
         QtMaterial::ThemeBuilder builder;
         const auto theme = builder.buildLightFromSeed(QColor(QStringLiteral("#00639B")));
-        QtMaterial::SpecFactory factory;
 
         QElapsedTimer timer;
         timer.start();
         for (int iteration = 0; iteration < 10000; ++iteration) {
-            auto filled = factory.filledButtonSpec(theme, QtMaterial::Density::Default);
-            auto outlinedField = factory.outlinedTextFieldSpec(theme, QtMaterial::Density::Default);
-            auto card = factory.cardSpec(theme);
+            auto filled = ButtonSpecResolver().filledButtonSpec(theme, QtMaterial::Density::Default);
+            auto outlinedField = TextFieldSpecResolver().outlinedTextFieldSpec(theme, QtMaterial::Density::Default);
+            auto card = SurfaceSpecResolver().cardSpec(theme);
             Q_UNUSED(filled);
             Q_UNUSED(outlinedField);
             Q_UNUSED(card);
@@ -125,3 +123,6 @@ private slots:
 
 QTEST_MAIN(tst_ThemePerformanceContracts)
 #include "tst_theme_performance_contracts.moc"
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
+#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
+#include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"

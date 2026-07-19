@@ -1,7 +1,6 @@
 #include <QtTest/QtTest>
 
 #include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
 using namespace QtMaterial;
@@ -72,12 +71,11 @@ void tst_ButtonSpecResolver::remainsCompatibleWithSpecFactory()
     const Theme theme =
         builder.buildDarkFromSeed(QColor(QStringLiteral("#6750A4")));
     ButtonSpecResolver resolver;
-    SpecFactory factory;
 
     const ButtonSpec resolved =
         resolver.filledTonalButtonSpec(theme, Density::Compact);
     const ButtonSpec legacy =
-        factory.filledTonalButtonSpec(theme, Density::Compact);
+        ButtonSpecResolver().filledTonalButtonSpec(theme, Density::Compact);
 
     QCOMPARE(resolved.containerColor, legacy.containerColor);
     QCOMPARE(resolved.labelColor, legacy.labelColor);

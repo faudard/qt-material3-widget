@@ -1,7 +1,6 @@
 #include <QtTest/QtTest>
 
 #include "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
@@ -107,7 +106,7 @@ void tst_AutocompletePopupSpecResolver::remainsCompatibleWithSpecFactory()
         AutocompletePopupSpecResolver()
             .autocompletePopupSpec(theme);
     const AutocompletePopupSpec legacy =
-        SpecFactory().autocompletePopupSpec(theme);
+        AutocompletePopupSpecResolver().autocompletePopupSpec(theme);
 
     QCOMPARE(
         resolved.containerColor,

@@ -1,7 +1,6 @@
 #include <QtTest/QtTest>
 
 #include "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
@@ -139,10 +138,9 @@ void tst_ActionButtonSpecResolver::remainsCompatibleWithSpecFactory()
             QColor(QStringLiteral("#6750A4")));
 
     ActionButtonSpecResolver resolver;
-    SpecFactory factory;
 
     const FabSpec resolvedFab = resolver.fabSpec(theme);
-    const FabSpec legacyFab = factory.fabSpec(theme);
+    const FabSpec legacyFab = ActionButtonSpecResolver().fabSpec(theme);
     QCOMPARE(
         resolvedFab.containerColor,
         legacyFab.containerColor);
@@ -153,7 +151,7 @@ void tst_ActionButtonSpecResolver::remainsCompatibleWithSpecFactory()
     const IconButtonSpec resolvedIcon =
         resolver.iconButtonSpec(theme);
     const IconButtonSpec legacyIcon =
-        factory.iconButtonSpec(theme);
+        ActionButtonSpecResolver().iconButtonSpec(theme);
     QCOMPARE(
         resolvedIcon.iconColor,
         legacyIcon.iconColor);

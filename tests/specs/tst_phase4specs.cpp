@@ -1,15 +1,21 @@
-#include <QtTest/QtTest>
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
-class TestSpecFactory : public QObject
+#include <QtTest>
+
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
+
+class TestSpecResolver : public QObject
 {
     Q_OBJECT
+
 private slots:
     void constructs();
 };
-void TestSpecFactory::constructs()
+
+void TestSpecResolver::constructs()
 {
-    QtMaterial::SpecFactory factory;
+    const QtMaterial::ButtonSpecResolver resolver;
+    Q_UNUSED(resolver);
     QVERIFY(true);
 }
-QTEST_MAIN(TestSpecFactory)
+
+QTEST_MAIN(TestSpecResolver)
 #include "tst_phase4specs.moc"

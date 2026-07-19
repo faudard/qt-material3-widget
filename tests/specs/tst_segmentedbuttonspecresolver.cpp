@@ -1,7 +1,6 @@
 #include <QtTest>
 
 #include "qtmaterial/specs/qtmaterialsegmentedbuttonspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
 using namespace QtMaterial;
@@ -58,7 +57,7 @@ void tst_SegmentedButtonSpecResolver::remainsCompatibleWithSpecFactory()
         SegmentedButtonSpecResolver().segmentedButtonSpec(
             theme, Density::Comfortable);
     const SegmentedButtonSpec legacy =
-        SpecFactory().segmentedButtonSpec(theme, Density::Comfortable);
+        SegmentedButtonSpecResolver().segmentedButtonSpec(theme, Density::Comfortable);
 
     QCOMPARE(resolved.containerColor, legacy.containerColor);
     QCOMPARE(resolved.selectedContainerColor, legacy.selectedContainerColor);

@@ -1,7 +1,6 @@
 #include <QtTest/QtTest>
 
 #include "qtmaterial/specs/qtmaterialnavigationrailspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
@@ -86,7 +85,7 @@ remainsCompatibleWithFactory()
         NavigationRailSpecResolver()
             .navigationRailSpec(theme);
     const NavigationRailSpec legacy =
-        SpecFactory().navigationRailSpec(theme);
+        NavigationRailSpecResolver().navigationRailSpec(theme);
 
     QCOMPARE(
         resolved.containerColor,

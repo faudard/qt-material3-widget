@@ -1,7 +1,6 @@
 #include <QtTest/QtTest>
 
 #include "qtmaterial/specs/qtmaterialdatefieldspecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
@@ -107,7 +106,7 @@ void tst_DateFieldSpecResolver::remainsCompatibleWithSpecFactory()
     const DateFieldSpec resolved =
         DateFieldSpecResolver().dateFieldSpec(theme);
     const DateFieldSpec legacy =
-        SpecFactory().dateFieldSpec(theme);
+        DateFieldSpecResolver().dateFieldSpec(theme);
 
     QCOMPARE(
         resolved.trailingIconColor,

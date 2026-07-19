@@ -1,6 +1,5 @@
 #include <QtTest/QtTest>
 
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
@@ -46,22 +45,21 @@ void tst_SurfaceSpecResolver::remainsCompatibleWithSpecFactory()
     const Theme theme =
         builder.buildDarkFromSeed(QColor(QStringLiteral("#6750A4")));
     SurfaceSpecResolver resolver;
-    SpecFactory factory;
 
     const BannerSpec resolvedBanner = resolver.bannerSpec(theme);
-    const BannerSpec legacyBanner = factory.bannerSpec(theme);
+    const BannerSpec legacyBanner = SurfaceSpecResolver().bannerSpec(theme);
     QCOMPARE(resolvedBanner.containerColor, legacyBanner.containerColor);
     QCOMPARE(resolvedBanner.headlineColor, legacyBanner.headlineColor);
     QCOMPARE(resolvedBanner.padding, legacyBanner.padding);
 
     const CardSpec resolvedCard = resolver.cardSpec(theme);
-    const CardSpec legacyCard = factory.cardSpec(theme);
+    const CardSpec legacyCard = SurfaceSpecResolver().cardSpec(theme);
     QCOMPARE(resolvedCard.containerColor, legacyCard.containerColor);
     QCOMPARE(resolvedCard.outlineColor, legacyCard.outlineColor);
     QCOMPARE(resolvedCard.contentPadding, legacyCard.contentPadding);
 
     const SnackbarSpec resolvedSnackbar = resolver.snackbarSpec(theme);
-    const SnackbarSpec legacySnackbar = factory.snackbarSpec(theme);
+    const SnackbarSpec legacySnackbar = SurfaceSpecResolver().snackbarSpec(theme);
     QCOMPARE(
         resolvedSnackbar.containerColor,
         legacySnackbar.containerColor);

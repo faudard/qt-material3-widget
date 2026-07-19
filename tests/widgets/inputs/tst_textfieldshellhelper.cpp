@@ -3,13 +3,11 @@
 #include <QFont>
 #include <QRect>
 
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
 #include "qtmaterialtextfieldshellhelper_p.h"
 
 using QtMaterial::QtMaterialTextFieldShellHelper;
-using QtMaterial::SpecFactory;
 using QtMaterial::TextFieldSpec;
 using QtMaterial::Theme;
 
@@ -17,17 +15,16 @@ namespace {
 
 struct Fixture {
     Theme theme;
-    SpecFactory factory;
     QFont font;
 
     TextFieldSpec outlinedSpec() const
     {
-        return factory.outlinedTextFieldSpec(theme);
+        return TextFieldSpecResolver().outlinedTextFieldSpec(theme);
     }
 
     TextFieldSpec filledSpec() const
     {
-        return factory.filledTextFieldSpec(theme);
+        return TextFieldSpecResolver().filledTextFieldSpec(theme);
     }
 
     static QRect boundsFor(const TextFieldSpec& spec, int width = 360)
@@ -269,4 +266,5 @@ void tst_TextFieldShellHelper::filledVariantOffsetsEditorDown()
 
 QTEST_MAIN(tst_TextFieldShellHelper)
 #include "tst_textfieldshellhelper.moc"
+#include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
 

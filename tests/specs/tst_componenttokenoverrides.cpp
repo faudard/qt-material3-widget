@@ -1,6 +1,5 @@
 #include <QtTest/QtTest>
 
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
 using namespace QtMaterial;
@@ -33,7 +32,7 @@ void ComponentTokenOverridesTest::filledButtonOverrideWinsOverFamilyDefaults()
     filled.colors.insert(ColorRole::OnPrimary, QColor(QStringLiteral("#FAFAFA")));
     theme.componentOverrides().setOverride(QStringLiteral("button.filled"), filled);
 
-    const ButtonSpec spec = SpecFactory().filledButtonSpec(theme);
+    const ButtonSpec spec = ButtonSpecResolver().filledButtonSpec(theme);
     QCOMPARE(spec.containerColor, QColor(QStringLiteral("#010203")));
     QCOMPARE(spec.labelColor, QColor(QStringLiteral("#FAFAFA")));
     QCOMPARE(spec.iconColor, QColor(QStringLiteral("#FAFAFA")));
@@ -57,13 +56,13 @@ void ComponentTokenOverridesTest::selectionOverrideAppliesToCheckboxAndRadio()
     checkboxOnly.custom.insert(QStringLiteral("indicatorSize"), 24);
     theme.componentOverrides().setOverride(QStringLiteral("checkbox"), checkboxOnly);
 
-    const CheckboxSpec checkbox = SpecFactory().checkboxSpec(theme);
+    const CheckboxSpec checkbox = SelectionSpecResolver().checkboxSpec(theme);
     QCOMPARE(checkbox.selectedContainerColor, QColor(QStringLiteral("#112233")));
     QCOMPARE(checkbox.labelColor, QColor(QStringLiteral("#222222")));
     QCOMPARE(checkbox.spacing, 18);
     QCOMPARE(checkbox.indicatorSize, 24);
 
-    const RadioButtonSpec radio = SpecFactory().radioButtonSpec(theme);
+    const RadioButtonSpec radio = SelectionSpecResolver().radioButtonSpec(theme);
     QCOMPARE(radio.selectedColor, QColor(QStringLiteral("#112233")));
     QCOMPARE(radio.labelColor, QColor(QStringLiteral("#222222")));
     QCOMPARE(radio.spacing, 18);
@@ -81,7 +80,7 @@ void ComponentTokenOverridesTest::inputOverrideAppliesToTextFieldGeometry()
     textField.colors.insert(ColorRole::Primary, QColor(QStringLiteral("#335577")));
     theme.componentOverrides().setOverride(QStringLiteral("textField.outlined"), textField);
 
-    const TextFieldSpec spec = SpecFactory().outlinedTextFieldSpec(theme);
+    const TextFieldSpec spec = TextFieldSpecResolver().outlinedTextFieldSpec(theme);
     QCOMPARE(spec.minHeight, 64);
     QCOMPARE(spec.horizontalPadding, 20);
     QCOMPARE(spec.focusedOutlineWidth, 3);
@@ -106,7 +105,7 @@ void ComponentTokenOverridesTest::surfaceOverridesApplyToCardAndDialog()
     card.custom.insert(QStringLiteral("elevationRole"), QStringLiteral("Level2"));
     theme.componentOverrides().setOverride(QStringLiteral("card"), card);
 
-    const CardSpec cardSpec = SpecFactory().cardSpec(theme);
+    const CardSpec cardSpec = SurfaceSpecResolver().cardSpec(theme);
     QCOMPARE(cardSpec.contentColor, QColor(QStringLiteral("#111111")));
     QCOMPARE(cardSpec.contentPadding, QMargins(20, 21, 22, 23));
     QCOMPARE(cardSpec.elevationRole, ElevationRole::Level2);
@@ -117,7 +116,7 @@ void ComponentTokenOverridesTest::surfaceOverridesApplyToCardAndDialog()
     dialog.custom.insert(QStringLiteral("enterMotion"), QStringLiteral("Medium3"));
     theme.componentOverrides().setOverride(QStringLiteral("dialog"), dialog);
 
-    const DialogSpec dialogSpec = SpecFactory().dialogSpec(theme);
+    const DialogSpec dialogSpec = DialogSpecResolver().dialogSpec(theme);
     QCOMPARE(dialogSpec.bodyColor, QColor(QStringLiteral("#222222")));
     QCOMPARE(dialogSpec.maxWidth, 640);
     QCOMPARE(dialogSpec.padding, 32);
@@ -126,3 +125,8 @@ void ComponentTokenOverridesTest::surfaceOverridesApplyToCardAndDialog()
 
 QTEST_MAIN(ComponentTokenOverridesTest)
 #include "tst_componenttokenoverrides.moc"
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
+#include "qtmaterial/specs/qtmaterialdialogspecresolver.h"
+#include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
+#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
+#include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"

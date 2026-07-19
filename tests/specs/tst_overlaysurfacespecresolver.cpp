@@ -1,7 +1,6 @@
 #include <QtTest/QtTest>
 
 #include "qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h"
-#include "qtmaterial/specs/qtmaterialspecfactory.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
 using namespace QtMaterial;
@@ -99,12 +98,11 @@ void tst_OverlaySurfaceSpecResolver::remainsCompatibleWithSpecFactory()
             QColor(QStringLiteral("#6750A4")));
 
     OverlaySurfaceSpecResolver resolver;
-    SpecFactory factory;
 
     const NavigationDrawerSpec resolvedDrawer =
         resolver.navigationDrawerSpec(theme);
     const NavigationDrawerSpec legacyDrawer =
-        factory.navigationDrawerSpec(theme);
+        OverlaySurfaceSpecResolver().navigationDrawerSpec(theme);
 
     QCOMPARE(
         resolvedDrawer.containerColor,
@@ -119,7 +117,7 @@ void tst_OverlaySurfaceSpecResolver::remainsCompatibleWithSpecFactory()
     const BottomSheetSpec resolvedSheet =
         resolver.bottomSheetSpec(theme);
     const BottomSheetSpec legacySheet =
-        factory.bottomSheetSpec(theme);
+        OverlaySurfaceSpecResolver().bottomSheetSpec(theme);
 
     QCOMPARE(
         resolvedSheet.containerColor,
