@@ -1,5 +1,7 @@
 set(QTMATERIAL3_CORE_SOURCES
     qtmaterialwidget.cpp
+    qtmaterialthemecontextbinding.cpp
+    private/qtmaterialthemecontextpropagation.cpp
     qtmaterialcontrol.cpp
     qtmaterialsurface.cpp
     qtmaterialoverlaysurface.cpp
@@ -14,6 +16,7 @@ set(QTMATERIAL3_CORE_SOURCES
 set(QTMATERIAL3_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialdensity.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialwidget.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialthemecontextbinding.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialinteractionstate.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialeventcompat.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h

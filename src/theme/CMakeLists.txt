@@ -25,6 +25,7 @@ set(QTMATERIAL3_THEME_SOURCES
 
 set(QTMATERIAL3_THEME_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemecontext.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemecontexthost.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/qtmaterialglobal.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialcolortoken.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialcolorbackend.h

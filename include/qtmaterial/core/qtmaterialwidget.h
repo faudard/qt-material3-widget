@@ -10,11 +10,15 @@
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
+#include "qtmaterial/theme/qtmaterialthemecontexthost.h"
 namespace QtMaterial {
 
-class QTMATERIAL3_CORE_EXPORT QtMaterialWidget : public QWidget
+class QTMATERIAL3_CORE_EXPORT QtMaterialWidget
+    : public QWidget
+    , public ThemeContextHost
 {
     Q_OBJECT
+    Q_INTERFACES(QtMaterial::ThemeContextHost)
     Q_PROPERTY(QString materialComponent READ materialComponent WRITE setMaterialComponent NOTIFY materialMetadataChanged)
     Q_PROPERTY(QString materialVariant READ materialVariant WRITE setMaterialVariant NOTIFY materialMetadataChanged)
     Q_PROPERTY(QString materialRole READ materialRole WRITE setMaterialRole NOTIFY materialMetadataChanged)
@@ -26,8 +30,8 @@ public:
     ~QtMaterialWidget() override;
 
     void setThemeContext(ThemeContext* context);
-    ThemeContext* themeContext() const noexcept;
-    ThemeContext* effectiveThemeContext() const noexcept;
+    ThemeContext* themeContext() const noexcept override;
+    ThemeContext* effectiveThemeContext() const noexcept override;
 
     QString materialComponent() const;
     QString materialVariant() const;

@@ -1,8 +1,10 @@
 #include "qtmaterial/core/qtmaterialwidget.h"
+#include "private/qtmaterialthemecontextpropagation_p.h"
 
 #include "private/qtmaterialmetadata_p.h"
 #include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
+#include "qtmaterial/theme/qtmaterialthemecontexthost.h"
 
 namespace QtMaterial {
 
@@ -45,7 +47,7 @@ ThemeContext* QtMaterialWidget::effectiveThemeContext() const noexcept
 
     QWidget* ancestor = parentWidget();
     while (ancestor) {
-        if (auto* materialParent = qobject_cast<QtMaterialWidget*>(ancestor)) {
+        if (auto* materialParent = qobject_cast<ThemeContextHost*>(ancestor)) {
             return materialParent->effectiveThemeContext();
         }
         ancestor = ancestor->parentWidget();
@@ -58,7 +60,8 @@ bool QtMaterialWidget::event(QEvent* event)
 {
     const bool handled = QWidget::event(event);
 
-    if (event && event->type() == QEvent::ParentChange
+    if (event && (event->type() == QEvent::ParentChange
+         || event->type() == ThemeContextPropagation::eventType())
         && refreshThemeContextConnection()) {
         emit effectiveThemeContextChanged(effectiveThemeContext());
         themeChangedEvent(theme());
@@ -99,16 +102,7 @@ bool QtMaterialWidget::refreshThemeContextConnection()
 
 void QtMaterialWidget::notifyDescendantThemeContextChange()
 {
-    const auto descendants = findChildren<QtMaterialWidget*>();
-    for (QtMaterialWidget* descendant : descendants) {
-        if (!descendant || !descendant->refreshThemeContextConnection()) {
-            continue;
-        }
-
-        emit descendant->effectiveThemeContextChanged(
-            descendant->effectiveThemeContext());
-        descendant->themeChangedEvent(descendant->theme());
-    }
+    ThemeContextPropagation::notifyDescendants(this);
 }
 
 void QtMaterialWidget::handleThemeContextDestroyed()
@@ -125,13 +119,11 @@ void QtMaterialWidget::handleThemeContextDestroyed()
     notifyDescendantThemeContextChange();
 }
 
-
 QString QtMaterialWidget::materialComponent() const { return m_materialComponent; }
 QString QtMaterialWidget::materialVariant() const { return m_materialVariant; }
 QString QtMaterialWidget::materialRole() const { return m_materialRole; }
 QString QtMaterialWidget::materialTestId() const { return m_materialTestId; }
 QString QtMaterialWidget::materialState() const { return m_materialState; }
-
 
 void QtMaterialWidget::setMaterialComponent(const QString& value)
 {
