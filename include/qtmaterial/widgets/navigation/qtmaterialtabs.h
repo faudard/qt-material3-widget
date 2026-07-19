@@ -13,7 +13,7 @@
 #include <QVector>
 
 #include "qtmaterial/qtmaterialglobal.h"
-#include "qtmaterial/core/qtmaterialnavigationmodel.h"
+#include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
 #include "qtmaterial/specs/qtmaterialtabsspec.h"
 
 QT_BEGIN_NAMESPACE

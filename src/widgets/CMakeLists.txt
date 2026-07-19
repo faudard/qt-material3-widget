@@ -40,6 +40,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     selection/qtmaterialsegmentedbutton.cpp
     navigation/qtmaterialnavigationrail.cpp
     navigation/qtmaterialnavigationcontroller.cpp
+    navigation/model/qtmaterialnavigationmodel.cpp
     navigation/qtmaterialmenu.cpp
     inputs/qtmaterialautocomplete.cpp
     qtmaterialdatepicker.cpp
@@ -76,6 +77,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmateriallistitem.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmateriallist.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialtabs.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialdivider.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h

@@ -1,6 +1,6 @@
 #include <QtTest/QtTest>
 
-#include "qtmaterial/core/qtmaterialnavigationmodel.h"
+#include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
 
 class tst_NavigationModel : public QObject {
     Q_OBJECT

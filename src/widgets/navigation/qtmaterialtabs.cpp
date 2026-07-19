@@ -1,6 +1,6 @@
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
 
-#include "qtmaterial/core/qtmaterialnavigationmodel.h"
+#include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
 #include "qtmaterial/core/qtmaterialwidget.h"
 #include "qtmaterial/specs/qtmaterialtabsspecresolver.h"
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
