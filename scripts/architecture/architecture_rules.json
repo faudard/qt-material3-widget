@@ -708,6 +708,65 @@
         "QTMATERIAL3_CORE_EXPORT\\s+ComponentDescriptor",
         "QTMATERIAL3_CORE_EXPORT\\s+QVector"
       ]
+    },
+    {
+      "name": "chip-uses-complete-resolved-spec",
+      "files": [
+        "include/qtmaterial/widgets/selection/qtmaterialchip.h",
+        "src/widgets/selection/qtmaterialchip.cpp"
+      ],
+      "required_regex": [
+        "\\bChipSpecResolver\\b",
+        "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bhasResolvedLabelFont\\b",
+        "\\bcornerRadius\\b",
+        "\\bpressStateLayerOpacity\\b"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*stateLayer\\s*\\("
+      ]
+    },
+    {
+      "name": "segmented-button-uses-complete-resolved-spec",
+      "files": [
+        "include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h",
+        "src/widgets/selection/qtmaterialsegmentedbutton.cpp"
+      ],
+      "required_regex": [
+        "\\bSegmentedButtonSpecResolver\\b",
+        "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bhasResolvedLabelFont\\b",
+        "\\bcornerRadius\\b"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*stateLayer\\s*\\("
+      ]
+    },
+    {
+      "name": "autocomplete-uses-complete-resolved-spec",
+      "files": [
+        "include/qtmaterial/widgets/inputs/qtmaterialautocomplete.h",
+        "src/widgets/inputs/qtmaterialautocomplete.cpp"
+      ],
+      "required_regex": [
+        "\\bAutocompleteSpecResolver\\b",
+        "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\binputCornerRadius\\b",
+        "\\bfocusedOutlineWidth\\b",
+        "\\bhasResolvedInputFont\\b"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*stateLayer\\s*\\("
+      ]
     }
   ],
   "text_rules": [
@@ -1007,6 +1066,54 @@
         "QTMATERIAL3_SPECS_EXPORT\\s+GridListSpec\\s+defaultGridListSpec\\s*\\(",
         "QTMATERIAL3_SPECS_EXPORT\\s+CarouselSpec\\s+defaultCarouselSpec\\s*\\("
       ]
+    },
+    {
+      "name": "compact-control-specs-are-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialchipspec.h",
+      "required_regex": [
+        "\\bQFont\\s+labelFont\\s*;",
+        "\\bMotionStyle\\s+motionStyle\\s*;",
+        "\\bqreal\\s+cornerRadius\\b",
+        "\\bqreal\\s+pressStateLayerOpacity\\b",
+        "\\bbool\\s+hasResolvedLabelFont\\b"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "segmented-button-spec-is-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialsegmentedbuttonspec.h",
+      "required_regex": [
+        "\\bQFont\\s+labelFont\\s*;",
+        "\\bMotionStyle\\s+motionStyle\\s*;",
+        "\\bqreal\\s+cornerRadius\\b",
+        "\\bqreal\\s+pressStateLayerOpacity\\b",
+        "\\bbool\\s+hasResolvedLabelFont\\b"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "autocomplete-spec-is-runtime-resolved",
+      "file": "include/qtmaterial/specs/qtmaterialautocompletespec.h",
+      "required_regex": [
+        "\\bQFont\\s+inputFont\\s*;",
+        "\\bQFont\\s+suggestionFont\\s*;",
+        "\\bMotionStyle\\s+popupMotionStyle\\s*;",
+        "\\bElevationStyle\\s+popupElevationStyle\\s*;",
+        "\\bqreal\\s+inputCornerRadius\\b",
+        "\\bqreal\\s+focusedOutlineWidth\\b"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "component-token-applier-resolves-p4a-families",
+      "file": "src/specs/qtmaterialcomponenttokenapplier.cpp",
+      "required_regex": [
+        "\\bapplyChipComponentTokens\\s*\\(",
+        "\\bapplySegmentedButtonComponentTokens\\s*\\(",
+        "\\bapplyAutocompleteComponentTokens\\s*\\(",
+        "tokens\\.hasStateLayer\\s*\\?"
+      ],
+      "forbidden_regex": []
     }
   ],
   "tree_rules": [
