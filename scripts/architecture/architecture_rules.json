@@ -59,6 +59,46 @@
         "QDialog",
         "QMainWindow"
       ]
+    },
+    {
+      "name": "tooling-does-not-depend-on-runtime-layers",
+      "paths": [
+        "include/qtmaterial/tooling",
+        "src/tooling"
+      ],
+      "forbidden_include_prefixes": [
+        "qtmaterial/theme/",
+        "qtmaterial/specs/",
+        "qtmaterial/core/",
+        "qtmaterial/integration/",
+        "qtmaterial/effects/",
+        "qtmaterial/widgets/"
+      ],
+      "forbidden_includes": [
+        "QWidget",
+        "QApplication",
+        "QAbstractButton",
+        "QPalette"
+      ]
+    },
+    {
+      "name": "integration-does-not-depend-on-runtime-layers",
+      "paths": [
+        "include/qtmaterial/integration",
+        "src/integration"
+      ],
+      "forbidden_include_prefixes": [
+        "qtmaterial/specs/",
+        "qtmaterial/core/",
+        "qtmaterial/tooling/",
+        "qtmaterial/effects/",
+        "qtmaterial/widgets/"
+      ],
+      "forbidden_includes": [
+        "QWidget",
+        "QApplication",
+        "QAbstractButton"
+      ]
     }
   ],
   "file_rules": [
@@ -628,6 +668,43 @@
       "required_regex": [
         "\\bDataComponentSpecResolver\\b"
       ]
+    },
+    {
+      "name": "paint-cache-core-header-is-compatibility-only",
+      "files": [
+        "include/qtmaterial/core/qtmaterialpaintcache.h"
+      ],
+      "required_regex": [
+        "qtmaterial/effects/qtmaterialpaintcache\\.h"
+      ],
+      "forbidden_regex": [
+        "class\\s+QTMATERIAL3_CORE_EXPORT\\s+QtMaterialPaintCache"
+      ]
+    },
+    {
+      "name": "palette-adapter-core-header-is-compatibility-only",
+      "files": [
+        "include/qtmaterial/core/qtmaterialpaletteadapter.h"
+      ],
+      "required_regex": [
+        "qtmaterial/integration/qtmaterialpaletteadapter\\.h"
+      ],
+      "forbidden_regex": [
+        "class\\s+QTMATERIAL3_CORE_EXPORT\\s+QtMaterialPaletteAdapter"
+      ]
+    },
+    {
+      "name": "component-registry-core-header-is-compatibility-only",
+      "files": [
+        "include/qtmaterial/core/qtmaterialcomponentregistry.h"
+      ],
+      "required_regex": [
+        "qtmaterial/tooling/qtmaterialcomponentregistry\\.h"
+      ],
+      "forbidden_regex": [
+        "QTMATERIAL3_CORE_EXPORT\\s+ComponentDescriptor",
+        "QTMATERIAL3_CORE_EXPORT\\s+QVector"
+      ]
     }
   ],
   "text_rules": [
@@ -825,6 +902,76 @@
         "\\bqreal\\s+hoverOpacity\\s*=",
         "\\bQColor\\s+activeIndicatorColor\\s*;"
       ]
+    },
+    {
+      "name": "core-cmake-excludes-extracted-services",
+      "file": "src/core/CMakeLists.txt",
+      "forbidden_regex": [
+        "qtmaterialpaintcache",
+        "qtmaterialpaletteadapter",
+        "qtmaterialcomponentregistry"
+      ],
+      "required_regex": [
+        "qtmaterialwidget\\.cpp",
+        "qtmaterialcontrol\\.cpp"
+      ]
+    },
+    {
+      "name": "effects-owns-paint-cache",
+      "file": "src/effects/CMakeLists.txt",
+      "required_regex": [
+        "qtmaterialpaintcache\\.cpp",
+        "qtmaterial/effects/qtmaterialpaintcache\\.h"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "integration-owns-palette-adapter",
+      "file": "src/integration/CMakeLists.txt",
+      "required_regex": [
+        "qtmaterialpaletteadapter\\.cpp",
+        "qtmaterial/integration/qtmaterialpaletteadapter\\.h",
+        "qtmaterial3_theme"
+      ],
+      "forbidden_regex": [
+        "qtmaterial3_core",
+        "Qt(?:\\$\\{QT_VERSION_MAJOR\\}|5|6)?::Widgets"
+      ]
+    },
+    {
+      "name": "tooling-owns-component-registry",
+      "file": "src/tooling/CMakeLists.txt",
+      "required_regex": [
+        "qtmaterialcomponentregistry\\.cpp",
+        "qtmaterial/tooling/qtmaterialcomponentregistry\\.h"
+      ],
+      "forbidden_regex": [
+        "qtmaterial3_theme",
+        "qtmaterial3_core",
+        "qtmaterial3_specs",
+        "qtmaterial3_effects",
+        "qtmaterial3_widgets",
+        "Qt(?:\\$\\{QT_VERSION_MAJOR\\}|5|6)?::Gui",
+        "Qt(?:\\$\\{QT_VERSION_MAJOR\\}|5|6)?::Widgets"
+      ]
+    },
+    {
+      "name": "root-build-registers-cleanup-modules",
+      "file": "src/CMakeLists.txt",
+      "required_regex": [
+        "add_subdirectory\\(tooling\\)",
+        "add_subdirectory\\(integration\\)"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "package-installs-cleanup-modules",
+      "file": "CMakeLists.txt",
+      "required_regex": [
+        "qtmaterial3_tooling",
+        "qtmaterial3_integration"
+      ],
+      "forbidden_regex": []
     }
   ]
 }
