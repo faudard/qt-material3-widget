@@ -1,5 +1,6 @@
 #include <QtTest/QtTest>
 
+#include "qtmaterial/specs/qtmaterialbuttonspec.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
 using namespace QtMaterial;

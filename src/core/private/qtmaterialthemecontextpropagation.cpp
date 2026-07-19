@@ -1,4 +1,4 @@
-#include "private/qtmaterialthemecontextpropagation_p.h"
+#include "qtmaterialthemecontextpropagation_p.h"
 
 #include <QApplication>
 #include <QWidget>
