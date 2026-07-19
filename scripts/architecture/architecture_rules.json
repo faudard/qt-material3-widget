@@ -99,6 +99,42 @@
         "QApplication",
         "QAbstractButton"
       ]
+    },
+    {
+      "name": "core-runtime-does-not-depend-on-feature-modules",
+      "paths": [
+        "src/core"
+      ],
+      "forbidden_include_prefixes": [
+        "qtmaterial/specs/",
+        "qtmaterial/effects/",
+        "qtmaterial/widgets/",
+        "qtmaterial/integration/",
+        "qtmaterial/tooling/",
+        "qtmaterial/testing/"
+      ],
+      "forbidden_includes": []
+    },
+    {
+      "name": "testing-is-core-independent",
+      "paths": [
+        "include/qtmaterial/testing",
+        "src/testing"
+      ],
+      "forbidden_include_prefixes": [
+        "qtmaterial/theme/",
+        "qtmaterial/specs/",
+        "qtmaterial/core/",
+        "qtmaterial/effects/",
+        "qtmaterial/widgets/",
+        "qtmaterial/integration/",
+        "qtmaterial/tooling/"
+      ],
+      "forbidden_includes": [
+        "QWidget",
+        "QApplication",
+        "QAbstractButton"
+      ]
     }
   ],
   "file_rules": [
@@ -705,6 +741,70 @@
         "QTMATERIAL3_CORE_EXPORT\\s+ComponentDescriptor",
         "QTMATERIAL3_CORE_EXPORT\\s+QVector"
       ]
+    },
+    {
+      "name": "navigation-model-core-header-is-compatibility-only",
+      "files": [
+        "include/qtmaterial/core/qtmaterialnavigationmodel.h"
+      ],
+      "required_regex": [
+        "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel\\.h"
+      ],
+      "forbidden_regex": [
+        "class\\s+QTMATERIAL3_CORE_EXPORT\\s+QtMaterialNavigationModel"
+      ]
+    },
+    {
+      "name": "form-field-core-header-is-compatibility-only",
+      "files": [
+        "include/qtmaterial/core/qtmaterialformfieldcontrol.h"
+      ],
+      "required_regex": [
+        "qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol\\.h"
+      ],
+      "forbidden_regex": [
+        "class\\s+QTMATERIAL3_CORE_EXPORT\\s+QtMaterialFormFieldControl"
+      ]
+    },
+    {
+      "name": "input-control-core-header-is-compatibility-only",
+      "files": [
+        "include/qtmaterial/core/qtmaterialinputcontrol.h"
+      ],
+      "required_regex": [
+        "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol\\.h"
+      ],
+      "forbidden_regex": [
+        "class\\s+QTMATERIAL3_CORE_EXPORT\\s+QtMaterialInputControl"
+      ]
+    },
+    {
+      "name": "automation-core-header-is-compatibility-only",
+      "files": [
+        "include/qtmaterial/core/qtmaterialautomation.h"
+      ],
+      "required_regex": [
+        "qtmaterial/testing/qtmaterialautomation\\.h"
+      ],
+      "forbidden_regex": [
+        "class\\s+QTMATERIAL3_CORE_EXPORT\\s+QtMaterialAutomation"
+      ]
+    },
+    {
+      "name": "core-publishes-metadata-without-testing-module",
+      "files": [
+        "src/core/qtmaterialwidget.cpp",
+        "src/core/qtmaterialcontrol.cpp",
+        "src/core/qtmaterialabstractbutton.cpp"
+      ],
+      "required_regex": [
+        "qtmaterialmetadata_p\\.h",
+        "QtMaterialMetadataPropertyNames"
+      ],
+      "forbidden_regex": [
+        "QtMaterialAutomation",
+        "qtmaterial/testing/"
+      ]
     }
   ],
   "text_rules": [
@@ -970,6 +1070,61 @@
       "required_regex": [
         "qtmaterial3_tooling",
         "qtmaterial3_integration"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "core-cmake-excludes-navigation-input-and-automation",
+      "file": "src/core/CMakeLists.txt",
+      "forbidden_regex": [
+        "qtmaterialnavigationmodel",
+        "qtmaterialformfieldcontrol",
+        "qtmaterialinputcontrol",
+        "qtmaterialautomation"
+      ],
+      "required_regex": [
+        "qtmaterialwidget\\.cpp",
+        "qtmaterialcontrol\\.cpp",
+        "qtmaterialabstractbutton\\.cpp",
+        "private/qtmaterialmetadata_p\\.h"
+      ]
+    },
+    {
+      "name": "widgets-own-navigation-model-and-input-common",
+      "file": "src/widgets/CMakeLists.txt",
+      "required_regex": [
+        "navigation/model/qtmaterialnavigationmodel\\.cpp",
+        "widgets/navigation/model/qtmaterialnavigationmodel\\.h",
+        "inputs/common/qtmaterialformfieldcontrol\\.cpp",
+        "inputs/common/qtmaterialinputcontrol\\.cpp",
+        "widgets/inputs/common/qtmaterialformfieldcontrol\\.h",
+        "widgets/inputs/common/qtmaterialinputcontrol\\.h"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "testing-owns-automation",
+      "file": "src/testing/CMakeLists.txt",
+      "required_regex": [
+        "qtmaterialautomation\\.cpp",
+        "qtmaterial/testing/qtmaterialautomation\\.h",
+        "qtmaterial3_foundation"
+      ],
+      "forbidden_regex": [
+        "qtmaterial3_core",
+        "qtmaterial3_widgets",
+        "Qt(?:\\$\\{QT_VERSION_MAJOR\\}|5|6)?::Gui",
+        "Qt(?:\\$\\{QT_VERSION_MAJOR\\}|5|6)?::Widgets"
+      ]
+    },
+    {
+      "name": "package-exports-cleanup-components",
+      "file": "packaging/QtMaterial3WidgetsConfig.cmake.in",
+      "required_regex": [
+        "Foundation",
+        "Integration",
+        "Tooling",
+        "Testing"
       ],
       "forbidden_regex": []
     }
