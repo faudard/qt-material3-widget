@@ -15,18 +15,25 @@ struct DatePickerSpec
     QColor backgroundColor;
     QColor foregroundColor;
     QColor headlineColor;
+    QColor weekdayTextColor;
     QColor selectedDateColor;
     QColor selectedDateTextColor;
     QColor todayOutlineColor;
     QColor disabledTextColor;
     QColor hoverColor;
+    QColor navigationButtonTextColor;
     QColor focusRingColor;
     QFont headlineFont;
     QFont dayFont;
+    QFont weekdayFont;
     int cornerRadius = 28;
     int cellSize = 40;
     int headerHeight = 64;
     int focusRingWidth = 2;
+    int contentSpacing = 8;
+    int navigationButtonRadius = 16;
+    int navigationButtonPaddingHorizontal = 10;
+    int navigationButtonPaddingVertical = 6;
     QMargins contentMargins = QMargins(16, 16, 16, 16);
 };
 

@@ -33,14 +33,17 @@ DatePickerSpec defaultDatePickerSpec()
     spec.backgroundColor = QColor("#FFFBFE");
     spec.foregroundColor = QColor("#1D1B20");
     spec.headlineColor = QColor("#1D1B20");
+    spec.weekdayTextColor = QColor("#49454F");
     spec.selectedDateColor = QColor("#6750A4");
     spec.selectedDateTextColor = QColor("#FFFFFF");
     spec.todayOutlineColor = QColor("#6750A4");
     spec.disabledTextColor = QColor(0x1D, 0x1B, 0x20, 0x61);
     spec.hoverColor = QColor(0x67, 0x50, 0xA4, 0x14);
+    spec.navigationButtonTextColor = QColor("#1D1B20");
     spec.focusRingColor = QColor("#6750A4");
     spec.headlineFont = appFont(4, QFont::DemiBold);
     spec.dayFont = appFont(0, QFont::Medium);
+    spec.weekdayFont = appFont(-1, QFont::DemiBold);
     return spec;
 }
 

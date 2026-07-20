@@ -1,4 +1,5 @@
 #include "qtmaterial/specs/qtmaterialdataspecresolver.h"
+#include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
 
 #include <QCoreApplication>
 #include <QGuiApplication>
@@ -1180,6 +1181,201 @@ void applyCarouselOverrides(
 }
 
 } // namespace
+
+void applyDatePickerOverrides(
+    const Theme& theme,
+    DatePickerSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(
+            theme,
+            QStringList{
+                QStringLiteral("data"),
+                QStringLiteral("datePicker"),
+                QStringLiteral("DatePicker")
+            });
+
+    if (tokens.isEmpty()) {
+        return;
+    }
+
+    applyTokenColor(&spec->backgroundColor, tokens, ColorRole::SurfaceContainerHigh);
+    applyTokenColor(&spec->foregroundColor, tokens, ColorRole::OnSurface);
+    applyTokenColor(&spec->headlineColor, tokens, ColorRole::OnSurface);
+    applyTokenColor(&spec->weekdayTextColor, tokens, ColorRole::OnSurfaceVariant);
+    applyTokenColor(&spec->selectedDateColor, tokens, ColorRole::Primary);
+    applyTokenColor(&spec->selectedDateTextColor, tokens, ColorRole::OnPrimary);
+    applyTokenColor(&spec->todayOutlineColor, tokens, ColorRole::Primary);
+    applyTokenColor(&spec->disabledTextColor, tokens, ColorRole::OnSurfaceVariant);
+    applyTokenColor(&spec->navigationButtonTextColor, tokens, ColorRole::OnSurface);
+    applyTokenColor(&spec->focusRingColor, tokens, ColorRole::Primary);
+
+    const QVariantMap& custom = tokens.custom;
+    readColor(custom, "backgroundColor", &spec->backgroundColor);
+    readColor(custom, "foregroundColor", &spec->foregroundColor);
+    readColor(custom, "headlineColor", &spec->headlineColor);
+    readColor(custom, "weekdayTextColor", &spec->weekdayTextColor);
+    readColor(custom, "selectedDateColor", &spec->selectedDateColor);
+    readColor(custom, "selectedDateTextColor", &spec->selectedDateTextColor);
+    readColor(custom, "todayOutlineColor", &spec->todayOutlineColor);
+    readColor(custom, "disabledTextColor", &spec->disabledTextColor);
+    readColor(custom, "hoverColor", &spec->hoverColor);
+    readColor(
+        custom,
+        "navigationButtonTextColor",
+        &spec->navigationButtonTextColor);
+    readColor(custom, "focusRingColor", &spec->focusRingColor);
+
+    readInt(custom, "cornerRadius", &spec->cornerRadius);
+    readInt(custom, "cellSize", &spec->cellSize);
+    readInt(custom, "headerHeight", &spec->headerHeight);
+    readInt(custom, "focusRingWidth", &spec->focusRingWidth);
+    readInt(custom, "contentSpacing", &spec->contentSpacing);
+    readInt(
+        custom,
+        "navigationButtonRadius",
+        &spec->navigationButtonRadius);
+    readInt(
+        custom,
+        "navigationButtonPaddingHorizontal",
+        &spec->navigationButtonPaddingHorizontal);
+    readInt(
+        custom,
+        "navigationButtonPaddingVertical",
+        &spec->navigationButtonPaddingVertical);
+
+    int left = spec->contentMargins.left();
+    int top = spec->contentMargins.top();
+    int right = spec->contentMargins.right();
+    int bottom = spec->contentMargins.bottom();
+    readInt(custom, "contentMarginLeft", &left);
+    readInt(custom, "contentMarginTop", &top);
+    readInt(custom, "contentMarginRight", &right);
+    readInt(custom, "contentMarginBottom", &bottom);
+    spec->contentMargins = QMargins(
+        qMax(0, left),
+        qMax(0, top),
+        qMax(0, right),
+        qMax(0, bottom));
+
+    if (tokens.typography.contains(TypeRole::HeadlineSmall)) {
+        spec->headlineFont =
+            tokens.typography.value(TypeRole::HeadlineSmall).font;
+    }
+    if (tokens.typography.contains(TypeRole::BodyMedium)) {
+        spec->dayFont =
+            tokens.typography.value(TypeRole::BodyMedium).font;
+    }
+    if (tokens.typography.contains(TypeRole::LabelLarge)) {
+        spec->weekdayFont =
+            tokens.typography.value(TypeRole::LabelLarge).font;
+    }
+    if (tokens.shapes.contains(ShapeRole::ExtraLarge)) {
+        spec->cornerRadius = qMax(
+            0,
+            qRound(tokens.shapes.value(ShapeRole::ExtraLarge)));
+    }
+}
+
+DatePickerSpec DataSpecResolver::datePickerSpec(
+    const Theme& theme,
+    Density density) const
+{
+    DatePickerSpec spec = defaultDatePickerSpec();
+
+    spec.backgroundColor =
+        roleOr(
+            theme,
+            ColorRole::SurfaceContainerHigh,
+            spec.backgroundColor);
+    spec.foregroundColor =
+        roleOr(theme, ColorRole::OnSurface, spec.foregroundColor);
+    spec.headlineColor =
+        roleOr(theme, ColorRole::OnSurface, spec.headlineColor);
+    spec.weekdayTextColor =
+        roleOr(
+            theme,
+            ColorRole::OnSurfaceVariant,
+            spec.weekdayTextColor);
+    spec.selectedDateColor =
+        roleOr(theme, ColorRole::Primary, spec.selectedDateColor);
+    spec.selectedDateTextColor =
+        roleOr(theme, ColorRole::OnPrimary, spec.selectedDateTextColor);
+    spec.todayOutlineColor =
+        roleOr(theme, ColorRole::Primary, spec.todayOutlineColor);
+    spec.disabledTextColor =
+        withOpacity(spec.foregroundColor, 0.38);
+    spec.hoverColor =
+        withOpacity(
+            spec.foregroundColor,
+            theme.stateLayer().hoverOpacity);
+    spec.navigationButtonTextColor = spec.foregroundColor;
+    spec.focusRingColor =
+        roleOr(theme, ColorRole::Primary, spec.focusRingColor);
+
+    const QFont fallback = applicationFont();
+    spec.headlineFont =
+        fontFor(theme, TypeRole::HeadlineSmall, fallback);
+    spec.dayFont =
+        fontFor(theme, TypeRole::BodyMedium, fallback);
+    spec.weekdayFont =
+        fontFor(theme, TypeRole::LabelLarge, fallback);
+
+    spec.cornerRadius = qRound(
+        radiusFor(
+            theme,
+            ShapeRole::ExtraLarge,
+            spec.cornerRadius,
+            spec.headerHeight));
+
+    switch (density) {
+    case Density::Compact:
+        spec.cellSize = 36;
+        spec.headerHeight = 56;
+        spec.contentSpacing = 6;
+        spec.contentMargins = QMargins(12, 12, 12, 12);
+        break;
+    case Density::Comfortable:
+        spec.cellSize = 44;
+        spec.headerHeight = 72;
+        spec.contentSpacing = 12;
+        spec.contentMargins = QMargins(20, 20, 20, 20);
+        break;
+    case Density::Default:
+    default:
+        break;
+    }
+
+    applyDatePickerOverrides(theme, &spec);
+
+    spec.cornerRadius = qMax(0, spec.cornerRadius);
+    spec.cellSize = qMax(32, spec.cellSize);
+    spec.headerHeight = qMax(40, spec.headerHeight);
+    spec.focusRingWidth = qMax(1, spec.focusRingWidth);
+    spec.contentSpacing = qMax(0, spec.contentSpacing);
+    spec.navigationButtonRadius =
+        qMax(0, spec.navigationButtonRadius);
+    spec.navigationButtonPaddingHorizontal =
+        qMax(0, spec.navigationButtonPaddingHorizontal);
+    spec.navigationButtonPaddingVertical =
+        qMax(0, spec.navigationButtonPaddingVertical);
+
+    if (spec.headlineFont.family().isEmpty()) {
+        spec.headlineFont = fallback;
+    }
+    if (spec.dayFont.family().isEmpty()) {
+        spec.dayFont = fallback;
+    }
+    if (spec.weekdayFont.family().isEmpty()) {
+        spec.weekdayFont = fallback;
+    }
+
+    return spec;
+}
 
 ListSpec DataSpecResolver::listSpec(
     const Theme& theme,

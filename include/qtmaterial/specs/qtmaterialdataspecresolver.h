@@ -19,6 +19,10 @@ namespace QtMaterial {
 class QTMATERIAL3_SPECS_EXPORT DataSpecResolver final
 {
 public:
+    DatePickerSpec datePickerSpec(
+        const Theme& theme,
+        Density density = Density::Default) const;
+
     ListSpec listSpec(
         const Theme& theme,
         Density density = Density::Default) const;
