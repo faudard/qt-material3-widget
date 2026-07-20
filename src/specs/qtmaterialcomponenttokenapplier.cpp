@@ -3424,4 +3424,338 @@ void applySnackbarComponentTokens(
         qMax(spec->shortDurationMs, spec->longDurationMs);
 }
 
+void applyTabsComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    TabsSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->containerColor,
+            tokens,
+            ColorRole::Surface);
+        applyColor(
+            &spec->activeLabelColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->inactiveLabelColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->activeIndicatorColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->stateLayerColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->focusRingColor,
+            tokens,
+            ColorRole::Primary);
+        applyColor(
+            &spec->disabledLabelColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->badgeColor,
+            tokens,
+            ColorRole::Error);
+        applyColor(
+            &spec->badgeLabelColor,
+            tokens,
+            ColorRole::OnError);
+        applyColor(
+            &spec->overflowButtonColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+
+        applyCustomColor(
+            &spec->containerColor,
+            tokens,
+            "containerColor");
+        applyCustomColor(
+            &spec->activeLabelColor,
+            tokens,
+            "activeLabelColor");
+        applyCustomColor(
+            &spec->inactiveLabelColor,
+            tokens,
+            "inactiveLabelColor");
+        applyCustomColor(
+            &spec->activeIndicatorColor,
+            tokens,
+            "activeIndicatorColor");
+        applyCustomColor(
+            &spec->stateLayerColor,
+            tokens,
+            "stateLayerColor");
+        applyCustomColor(
+            &spec->hoverStateLayerColor,
+            tokens,
+            "hoverStateLayerColor");
+        applyCustomColor(
+            &spec->focusedStateLayerColor,
+            tokens,
+            "focusedStateLayerColor");
+        applyCustomColor(
+            &spec->pressedStateLayerColor,
+            tokens,
+            "pressedStateLayerColor");
+        applyCustomColor(
+            &spec->focusRingColor,
+            tokens,
+            "focusRingColor");
+        applyCustomColor(
+            &spec->disabledLabelColor,
+            tokens,
+            "disabledLabelColor");
+        applyCustomColor(
+            &spec->badgeColor,
+            tokens,
+            "badgeColor");
+        applyCustomColor(
+            &spec->badgeLabelColor,
+            tokens,
+            "badgeLabelColor");
+        applyCustomColor(
+            &spec->overflowButtonColor,
+            tokens,
+            "overflowButtonColor");
+
+        int paddingLeft = spec->tabPadding.left();
+        int paddingTop = spec->tabPadding.top();
+        int paddingRight = spec->tabPadding.right();
+        int paddingBottom = spec->tabPadding.bottom();
+        int iconWidth = spec->iconSize.width();
+        int iconHeight = spec->iconSize.height();
+
+        readInt(tokens.custom, "tabPaddingLeft", &paddingLeft);
+        readInt(tokens.custom, "tabPaddingTop", &paddingTop);
+        readInt(tokens.custom, "tabPaddingRight", &paddingRight);
+        readInt(tokens.custom, "tabPaddingBottom", &paddingBottom);
+        readInt(tokens.custom, "iconWidth", &iconWidth);
+        readInt(tokens.custom, "iconHeight", &iconHeight);
+        readInt(
+            tokens.custom,
+            "containerHeight",
+            &spec->containerHeight);
+        readInt(
+            tokens.custom,
+            "compactContainerHeight",
+            &spec->compactContainerHeight);
+        readInt(
+            tokens.custom,
+            "indicatorHeight",
+            &spec->indicatorHeight);
+        readInt(
+            tokens.custom,
+            "indicatorHorizontalInset",
+            &spec->indicatorHorizontalInset);
+        readInt(
+            tokens.custom,
+            "minimumTabWidth",
+            &spec->minimumTabWidth);
+        readInt(
+            tokens.custom,
+            "maximumTabWidth",
+            &spec->maximumTabWidth);
+        readInt(
+            tokens.custom,
+            "stateLayerInset",
+            &spec->stateLayerInset);
+        readInt(
+            tokens.custom,
+            "focusInset",
+            &spec->focusInset);
+        readInt(
+            tokens.custom,
+            "badgeDiameter",
+            &spec->badgeDiameter);
+        readInt(
+            tokens.custom,
+            "badgeDotDiameter",
+            &spec->badgeDotDiameter);
+        readInt(
+            tokens.custom,
+            "badgeEndInset",
+            &spec->badgeEndInset);
+        readInt(
+            tokens.custom,
+            "badgeTopInset",
+            &spec->badgeTopInset);
+        readInt(
+            tokens.custom,
+            "overflowButtonPadding",
+            &spec->overflowButtonPadding);
+        readInt(
+            tokens.custom,
+            "overflowButtonOuterInset",
+            &spec->overflowButtonOuterInset);
+        readInt(
+            tokens.custom,
+            "overflowButtonMinSize",
+            &spec->overflowButtonMinSize);
+        readInt(
+            tokens.custom,
+            "overflowButtonHeightInset",
+            &spec->overflowButtonHeightInset);
+        readInt(
+            tokens.custom,
+            "animationDuration",
+            &spec->animationDuration);
+
+        readReal(
+            tokens.custom,
+            "stateLayerRadius",
+            &spec->stateLayerRadius);
+        readReal(
+            tokens.custom,
+            "focusRingWidth",
+            &spec->focusRingWidth);
+        readReal(
+            tokens.custom,
+            "badgeFontPointDelta",
+            &spec->badgeFontPointDelta);
+        readReal(
+            tokens.custom,
+            "hoverOpacity",
+            &spec->hoverOpacity);
+        readReal(
+            tokens.custom,
+            "pressedOpacity",
+            &spec->pressedOpacity);
+        readReal(
+            tokens.custom,
+            "focusOpacity",
+            &spec->focusOpacity);
+        readReal(
+            tokens.custom,
+            "disabledOpacity",
+            &spec->disabledOpacity);
+
+        spec->tabPadding = QMargins(
+            qMax(0, paddingLeft),
+            qMax(0, paddingTop),
+            qMax(0, paddingRight),
+            qMax(0, paddingBottom));
+        spec->iconSize = QSize(
+            qMax(0, iconWidth),
+            qMax(0, iconHeight));
+    }
+
+    spec->hasResolvedLabelFont = false;
+    if (tokens.typography.contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            tokens.typography.value(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    } else if (theme.typography().contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            theme.typography().style(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    }
+
+    spec->hasResolvedBadgeFont = false;
+    if (tokens.typography.contains(spec->badgeTypeRole)) {
+        spec->badgeFont =
+            tokens.typography.value(spec->badgeTypeRole).font;
+        spec->hasResolvedBadgeFont = true;
+    } else if (theme.typography().contains(spec->badgeTypeRole)) {
+        spec->badgeFont =
+            theme.typography().style(spec->badgeTypeRole).font;
+        spec->hasResolvedBadgeFont = true;
+    }
+
+    if (tokens.shapes.contains(spec->stateLayerShapeRole)) {
+        spec->stateLayerRadius = qMax<qreal>(
+            0.0,
+            tokens.shapes.value(spec->stateLayerShapeRole));
+    } else if (theme.shapes().contains(
+                   spec->stateLayerShapeRole)) {
+        spec->stateLayerRadius = qMax<qreal>(
+            0.0,
+            theme.shapes().radius(spec->stateLayerShapeRole));
+    }
+
+    spec->hasResolvedIndicatorMotion = false;
+    if (tokens.motion.contains(spec->indicatorMotion)) {
+        spec->indicatorMotionStyle =
+            tokens.motion.value(spec->indicatorMotion);
+        spec->animationDuration =
+            spec->indicatorMotionStyle.durationMs;
+        spec->hasResolvedIndicatorMotion = true;
+    } else if (theme.motion().contains(spec->indicatorMotion)) {
+        spec->indicatorMotionStyle =
+            theme.motion().style(spec->indicatorMotion);
+        spec->hasResolvedIndicatorMotion = true;
+    }
+
+    if (!tokens.isEmpty()) {
+        readInt(
+            tokens.custom,
+            "animationDuration",
+            &spec->animationDuration);
+        readReal(
+            tokens.custom,
+            "stateLayerRadius",
+            &spec->stateLayerRadius);
+    }
+
+    spec->containerHeight =
+        qMax(32, spec->containerHeight);
+    spec->compactContainerHeight =
+        qBound(32, spec->compactContainerHeight,
+               spec->containerHeight);
+    spec->indicatorHeight =
+        qMax(1, spec->indicatorHeight);
+    spec->indicatorHorizontalInset =
+        qMax(0, spec->indicatorHorizontalInset);
+    spec->minimumTabWidth =
+        qMax(32, spec->minimumTabWidth);
+    spec->maximumTabWidth =
+        qMax(spec->minimumTabWidth, spec->maximumTabWidth);
+    spec->stateLayerInset =
+        qMax(0, spec->stateLayerInset);
+    spec->focusInset =
+        qMax(0, spec->focusInset);
+    spec->stateLayerRadius =
+        qMax<qreal>(0.0, spec->stateLayerRadius);
+    spec->focusRingWidth =
+        qMax<qreal>(1.0, spec->focusRingWidth);
+    spec->badgeDiameter =
+        qMax(1, spec->badgeDiameter);
+    spec->badgeDotDiameter =
+        qMax(1, spec->badgeDotDiameter);
+    spec->badgeEndInset =
+        qMax(0, spec->badgeEndInset);
+    spec->badgeTopInset =
+        qMax(0, spec->badgeTopInset);
+    spec->overflowButtonPadding =
+        qMax(0, spec->overflowButtonPadding);
+    spec->overflowButtonOuterInset =
+        qMax(0, spec->overflowButtonOuterInset);
+    spec->overflowButtonMinSize =
+        qMax(16, spec->overflowButtonMinSize);
+    spec->overflowButtonHeightInset =
+        qMax(0, spec->overflowButtonHeightInset);
+    spec->animationDuration =
+        qMax(0, spec->animationDuration);
+    spec->hoverOpacity =
+        qBound<qreal>(0.0, spec->hoverOpacity, 1.0);
+    spec->pressedOpacity =
+        qBound<qreal>(0.0, spec->pressedOpacity, 1.0);
+    spec->focusOpacity =
+        qBound<qreal>(0.0, spec->focusOpacity, 1.0);
+    spec->disabledOpacity =
+        qBound<qreal>(0.0, spec->disabledOpacity, 1.0);
+}
+
 } // namespace QtMaterial

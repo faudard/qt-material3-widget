@@ -13,6 +13,7 @@
 #include "qtmaterial/specs/qtmaterialsegmentedbuttonspec.h"
 #include "qtmaterial/specs/qtmaterialsnackbarspec.h"
 #include "qtmaterial/specs/qtmaterialswitchspec.h"
+#include "qtmaterial/specs/qtmaterialtabsspec.h"
 #include "qtmaterial/specs/qtmaterialtextfieldspec.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 #include "qtmaterial/specs/qtmaterialautocompletepopupspec.h"
@@ -61,5 +62,10 @@ void applySnackbarComponentTokens(
     const Theme& theme,
     const QStringList& componentNames,
     SnackbarSpec* spec);
+
+void applyTabsComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    TabsSpec* spec);
 
 } // namespace QtMaterial

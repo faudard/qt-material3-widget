@@ -1,4 +1,5 @@
 #include "qtmaterial/specs/qtmaterialtabsspecresolver.h"
+#include "qtmaterialcomponenttokenapplier_p.h"
 
 #include <QtGlobal>
 
@@ -143,6 +144,14 @@ TabsSpec TabsSpecResolver::resolve(
     if (resolved.pressedOpacity < 0.0) {
         resolved.pressedOpacity = stateLayer.pressOpacity;
     }
+
+    applyTabsComponentTokens(
+        theme,
+        QStringList{
+            QStringLiteral("navigation"),
+            QStringLiteral("tabs"),
+            QStringLiteral("Tabs")},
+        &resolved);
 
     return resolved;
 }
