@@ -801,6 +801,80 @@
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\("
       ]
+    },
+    {
+      "name": "grid-list-uses-theme-context-resolved-spec",
+      "files": [
+        "include/qtmaterial/widgets/data/qtmaterialgridlist.h",
+        "src/widgets/data/qtmaterialgridlist.cpp"
+      ],
+      "required_regex": [
+        "\\bpublic\\s+ThemeContextHost\\b",
+        "Q_INTERFACES\\(QtMaterial::ThemeContextHost\\)",
+        "\\bQtMaterialThemeContextBinding\\b",
+        "\\bDataSpecResolver\\b",
+        "\\bclass\\s+GridListDelegate\\b",
+        "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bhasExplicitSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bresetSpec\\s*\\(",
+        "\\bhasCellExtentOverride\\s*\\(\\s*\\)\\s*const",
+        "\\bresetCellExtent\\s*\\(",
+        "\\bexplicitSpecSet\\b",
+        "\\bensureSpecResolved\\s*\\(\\s*\\)",
+        "\\bapplyResolvedSpec\\s*\\(\\s*\\)",
+        "themeBinding\\s*->\\s*theme\\s*\\(\\s*\\)",
+        "\\bitemContentMargins\\b",
+        "\\bdisabledSupportingTextColor\\b"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "\\bDataComponentSpecResolver\\b",
+        "ThemeManager::instance\\s*\\(",
+        "qobject_cast\\s*<\\s*QtMaterialWidget\\s*\\*>",
+        "\\brefreshThemeContextConnection\\b",
+        "\\b(?:themeChanged|themeDestroyed|ancestorContext)Connection\\b",
+        "QPointer\\s*<\\s*ThemeContext\\s*>",
+        "palette\\s*\\(\\s*\\)\\s*\\.\\s*color\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\("
+      ]
+    },
+    {
+      "name": "carousel-uses-control-resolved-spec",
+      "files": [
+        "include/qtmaterial/widgets/data/qtmaterialcarousel.h",
+        "src/widgets/data/qtmaterialcarousel.cpp"
+      ],
+      "required_regex": [
+        "\\bpublic\\s+QtMaterialControl\\b",
+        "\\bDataSpecResolver\\b",
+        "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bhasExplicitSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bresetSpec\\s*\\(",
+        "\\bexplicitSpecSet\\b",
+        "\\bensureSpecResolved\\s*\\(\\s*\\)",
+        "\\bitemSize\\b",
+        "\\bitemSelectedColor\\b",
+        "\\bactivePageIndicatorColor\\b",
+        "Resolved\\s+page\\s+indicators"
+      ],
+      "forbidden_regex": [
+        "QtMaterialCarousel\\s*:\\s*public\\s+QWidget",
+        "\\bpublic\\s+ThemeContextHost\\b",
+        "\\bQtMaterialThemeContextBinding\\b",
+        "\\bDataComponentSpecResolver\\b",
+        "\\bSpecFactory\\b",
+        "\\bpreferredItemSize\\b",
+        "\\bcurrentItemBackgroundColor\\b",
+        "\\bcurrentItemTextColor\\b",
+        "QStyleOptionFocusRect",
+        "\\bkDefaultCardWidth\\b",
+        "\\bkDefaultCardHeight\\b",
+        "\\bkGap\\b",
+        "\\bkPadding\\b",
+        "\\bkRadius\\b"
+      ]
     }
   ],
   "text_rules": [
@@ -1141,6 +1215,45 @@
         "private/qtmaterialthemecontextpropagation\\.cpp"
       ],
       "forbidden_regex": []
+    },
+    {
+      "name": "data-widget-specs-contain-complete-rendering-values",
+      "file": "include/qtmaterial/specs/qtmaterialdatacomponentspecs.h",
+      "required_regex": [
+        "\\bQColor\\s+disabledSupportingTextColor\\s*;",
+        "\\bQColor\\s+itemOutlineColor\\s*;",
+        "\\bQMargins\\s+itemContentMargins\\b",
+        "\\bQSize\\s+iconSize\\b",
+        "\\bint\\s+outlineWidth\\b",
+        "\\bQSize\\s+itemSize\\b",
+        "\\bQSize\\s+minimumItemSize\\b",
+        "\\bQColor\\s+itemSelectedColor\\s*;",
+        "\\bQColor\\s+selectedOutlineColor\\s*;",
+        "\\bQFont\\s+supportingFont\\s*;",
+        "\\bQMargins\\s+outerMargins\\b"
+      ],
+      "forbidden_regex": [
+        "\\bpreferredItemSize\\b",
+        "\\bcurrentItemBackgroundColor\\b",
+        "\\bcurrentItemTextColor\\b"
+      ]
+    },
+    {
+      "name": "data-spec-resolver-owns-grid-carousel-policy",
+      "file": "src/specs/qtmaterialdataspecresolver.cpp",
+      "required_regex": [
+        "\\bapplyGridListOverrides\\s*\\(",
+        "\\bapplyCarouselOverrides\\s*\\(",
+        "\\bDataSpecResolver\\s*::\\s*gridListSpec\\s*\\(",
+        "\\bDataSpecResolver\\s*::\\s*carouselSpec\\s*\\(",
+        "\\bdisabledSupportingTextColor\\b",
+        "\\bitemContentMargins\\b",
+        "\\bselectedOutlineColor\\b"
+      ],
+      "forbidden_regex": [
+        "\\bDataComponentSpecResolver\\s*::\\s*gridListSpec\\s*\\(",
+        "\\bDataComponentSpecResolver\\s*::\\s*carouselSpec\\s*\\("
+      ]
     }
   ],
   "tree_rules": [
