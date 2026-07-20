@@ -5,3 +5,9 @@
 *.json text eol=lf
 *.cmake text eol=lf
 CMakeLists.txt text eol=lf
+
+# absolute paths are ok, as are globs
+/**/postinst* text eol=lf
+
+# paths that don't start with / are treated relative to the .gitattributes folder
+relative/path/*.txt text eol=lf

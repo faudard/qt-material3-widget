@@ -3,6 +3,7 @@
 #include <QCalendarWidget>
 #include <QLabel>
 #include <QLayout>
+#include <qtextformat.h>
 
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
 

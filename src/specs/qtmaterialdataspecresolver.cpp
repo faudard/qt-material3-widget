@@ -1277,7 +1277,7 @@ void applyDatePickerOverrides(
     if (tokens.shapes.contains(ShapeRole::ExtraLarge)) {
         spec->cornerRadius = qMax(
             0,
-            qRound(tokens.shapes.value(ShapeRole::ExtraLarge)));
+            tokens.shapes.value(ShapeRole::ExtraLarge));
     }
 }
 

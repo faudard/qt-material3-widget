@@ -7,7 +7,9 @@
 #include "qtmaterial/foundation/qtmaterialdensity.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
-
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
+#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
+#include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
 namespace {
 
 bool enforceBudgets()
@@ -107,9 +109,9 @@ private slots:
         QElapsedTimer timer;
         timer.start();
         for (int iteration = 0; iteration < 10000; ++iteration) {
-            auto filled = ButtonSpecResolver().filledButtonSpec(theme, QtMaterial::Density::Default);
-            auto outlinedField = TextFieldSpecResolver().outlinedTextFieldSpec(theme, QtMaterial::Density::Default);
-            auto card = SurfaceSpecResolver().cardSpec(theme);
+            auto filled = QtMaterial::ButtonSpecResolver().filledButtonSpec(theme, QtMaterial::Density::Default);
+            auto outlinedField = QtMaterial::TextFieldSpecResolver().outlinedTextFieldSpec(theme, QtMaterial::Density::Default);
+            auto card = QtMaterial::SurfaceSpecResolver().cardSpec(theme);
             Q_UNUSED(filled);
             Q_UNUSED(outlinedField);
             Q_UNUSED(card);
@@ -123,6 +125,4 @@ private slots:
 
 QTEST_MAIN(tst_ThemePerformanceContracts)
 #include "tst_theme_performance_contracts.moc"
-#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
-#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
-#include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
+

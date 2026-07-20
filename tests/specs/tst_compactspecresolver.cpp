@@ -3,6 +3,7 @@
 #include "qtmaterial/specs/qtmaterialcompactspecresolver.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
+#include "qtmaterial/specs/qtmaterialchipspecresolver.h"
 
 using namespace QtMaterial;
 
@@ -171,4 +172,3 @@ void tst_CompactSpecResolver::remainsCompatibleWithSpecFactory()
 
 QTEST_MAIN(tst_CompactSpecResolver)
 #include "tst_compactspecresolver.moc"
-#include "qtmaterial/specs/qtmaterialchipspecresolver.h"

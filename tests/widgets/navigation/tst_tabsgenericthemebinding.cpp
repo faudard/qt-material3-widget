@@ -2,6 +2,7 @@
 
 #include "qtmaterial/core/qtmaterialthemecontextbinding.h"
 #include "qtmaterial/core/qtmaterialwidget.h"
+#include "qtmaterial/specs/qtmaterialtabsspecresolver.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemecontexthost.h"
 #include "qtmaterial/widgets/navigation/qtmaterialroute.h"

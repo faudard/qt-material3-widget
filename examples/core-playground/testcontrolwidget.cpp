@@ -49,7 +49,7 @@ void TestControlWidget::paintEvent(QPaintEvent* event)
 
 void TestControlWidget::invalidateResolvedSpec()
 {
-    m_spec = ButtonSpecResolver().filledButtonSpec(theme(), density());
+    m_spec = QtMaterial::ButtonSpecResolver().filledButtonSpec(theme(), density());
 }
 
 void TestControlWidget::buildUi()

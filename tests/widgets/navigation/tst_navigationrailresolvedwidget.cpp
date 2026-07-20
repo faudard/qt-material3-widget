@@ -1,5 +1,6 @@
 #include <QtTest>
 
+#include "qtmaterial/specs/qtmaterialnavigationrailspecresolver.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
