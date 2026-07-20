@@ -214,6 +214,7 @@ qtm3_add_test(tst_navigationrail_resolvedspec widgets/navigation/tst_navigationr
 # )
 
 qtm3_add_test(tst_snackbar widgets/surfaces/tst_snackbar.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_snackbarlifecycle widgets/surfaces/tst_snackbarlifecycle.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_snackbarhost widgets/surfaces/tst_snackbarhost.cpp qtmaterial3_widgets)
 
 qtm3_add_test(
