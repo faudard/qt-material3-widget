@@ -1378,7 +1378,6 @@ void applyAutocompletePopupComponentTokens(
     }
 }
 
-
 void applyDateFieldComponentTokens(
     const Theme& theme,
     const QStringList& componentNames,
@@ -1481,7 +1480,6 @@ void applyDateFieldComponentTokens(
     }
 }
 
-
 void applyNavigationRailComponentTokens(
     const Theme& theme,
     const QStringList& componentNames,
@@ -1517,6 +1515,14 @@ void applyNavigationRailComponentTokens(
             ColorRole::OnSurfaceVariant);
         applyColor(
             &spec->unselectedLabelColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->disabledIconColor,
+            tokens,
+            ColorRole::OnSurfaceVariant);
+        applyColor(
+            &spec->disabledLabelColor,
             tokens,
             ColorRole::OnSurfaceVariant);
         applyColor(
@@ -1575,98 +1581,56 @@ void applyNavigationRailComponentTokens(
             &spec->elevationRole,
             &spec->motionToken);
 
-        int indicatorWidth =
-            spec->indicatorSize.width();
-        int indicatorHeight =
-            spec->indicatorSize.height();
+        spec->iconSize = iconSizeFromTokens(
+            tokens,
+            IconSizeRole::Small,
+            spec->iconSize);
 
         readInt(tokens.custom, "railWidth", &spec->railWidth);
         readInt(tokens.custom, "itemHeight", &spec->itemHeight);
         readInt(tokens.custom, "itemSpacing", &spec->itemSpacing);
         readInt(tokens.custom, "topPadding", &spec->topPadding);
         readInt(tokens.custom, "bottomPadding", &spec->bottomPadding);
-        readInt(tokens.custom, "indicatorWidth", &indicatorWidth);
-        readInt(tokens.custom, "indicatorHeight", &indicatorHeight);
         readInt(tokens.custom, "iconSize", &spec->iconSize);
         readInt(
             tokens.custom,
             "indicatorTopOffset",
             &spec->indicatorTopOffset);
-        readInt(tokens.custom, "iconTopOffset", &spec->iconTopOffset);
-        readInt(tokens.custom, "labelTopOffset", &spec->labelTopOffset);
-        readInt(tokens.custom, "labelHeight", &spec->labelHeight);
-        readInt(tokens.custom, "dividerWidth", &spec->dividerWidth);
-        readReal(
+        readInt(
             tokens.custom,
-            "focusRingWidth",
-            &spec->focusRingWidth);
-        readReal(
+            "iconTopOffset",
+            &spec->iconTopOffset);
+        readInt(
             tokens.custom,
-            "disabledOpacity",
-            &spec->disabledOpacity);
+            "labelTopOffset",
+            &spec->labelTopOffset);
+        readInt(
+            tokens.custom,
+            "labelHeight",
+            &spec->labelHeight);
+        readInt(
+            tokens.custom,
+            "dividerWidth",
+            &spec->dividerWidth);
         readBool(
             tokens.custom,
             "showDivider",
             &spec->showDivider);
 
-        spec->indicatorSize =
-            QSize(indicatorWidth, indicatorHeight);
-    }
+        int indicatorWidth = spec->indicatorSize.width();
+        int indicatorHeight = spec->indicatorSize.height();
+        readInt(
+            tokens.custom,
+            "indicatorWidth",
+            &indicatorWidth);
+        readInt(
+            tokens.custom,
+            "indicatorHeight",
+            &indicatorHeight);
+        spec->indicatorSize = QSize(
+            qMax(1, indicatorWidth),
+            qMax(1, indicatorHeight));
 
-    spec->hasResolvedLabelFont = false;
-    if (tokens.typography.contains(spec->labelTypeRole)) {
-        spec->labelFont =
-            tokens.typography.value(spec->labelTypeRole).font;
-        spec->hasResolvedLabelFont = true;
-    } else if (theme.typography().contains(spec->labelTypeRole)) {
-        spec->labelFont =
-            theme.typography().style(spec->labelTypeRole).font;
-        spec->hasResolvedLabelFont = true;
-    }
-
-    if (spec->indicatorShapeRole == ShapeRole::Full) {
-        spec->indicatorRadius = -1.0;
-    } else if (tokens.shapes.contains(spec->indicatorShapeRole)) {
-        spec->indicatorRadius =
-            qMax<qreal>(
-                0.0,
-                static_cast<qreal>(
-                    tokens.shapes.value(
-                        spec->indicatorShapeRole)));
-    } else if (
-        theme.shapes().contains(spec->indicatorShapeRole)) {
-        spec->indicatorRadius =
-            qMax<qreal>(
-                0.0,
-                static_cast<qreal>(
-                    theme.shapes().radius(
-                        spec->indicatorShapeRole)));
-    }
-
-    spec->hasResolvedMotionStyle = false;
-    if (tokens.motion.contains(spec->motionToken)) {
-        spec->motionStyle =
-            tokens.motion.value(spec->motionToken);
-        spec->hasResolvedMotionStyle = true;
-    } else if (theme.motion().contains(spec->motionToken)) {
-        spec->motionStyle =
-            theme.motion().style(spec->motionToken);
-        spec->hasResolvedMotionStyle = true;
-    }
-
-    const StateLayer& stateLayer =
-        tokens.hasStateLayer
-        ? tokens.stateLayer
-        : theme.stateLayer();
-
-    spec->hoverStateLayerOpacity =
-        stateLayer.hoverOpacity;
-    spec->focusStateLayerOpacity =
-        stateLayer.focusOpacity;
-    spec->pressStateLayerOpacity =
-        stateLayer.pressOpacity;
-
-    if (!tokens.isEmpty()) {
         readReal(
             tokens.custom,
             "indicatorRadius",
@@ -1683,27 +1647,129 @@ void applyNavigationRailComponentTokens(
             tokens.custom,
             "pressStateLayerOpacity",
             &spec->pressStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "disabledOpacity",
+            &spec->disabledOpacity);
+        readReal(
+            tokens.custom,
+            "focusRingWidth",
+            &spec->focusRingWidth);
     }
 
-    spec->railWidth = qMax(1, spec->railWidth);
-    spec->itemHeight = qMax(1, spec->itemHeight);
+    spec->hasResolvedLabelFont = false;
+    if (tokens.typography.contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            tokens.typography.value(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    } else if (theme.typography().contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            theme.typography().style(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    }
+
+    if (spec->indicatorShapeRole == ShapeRole::Full) {
+        spec->indicatorRadius = -1.0;
+    } else if (tokens.shapes.contains(
+                   spec->indicatorShapeRole)) {
+        spec->indicatorRadius = qMax<qreal>(
+            0.0,
+            tokens.shapes.value(spec->indicatorShapeRole));
+    } else if (theme.shapes().contains(
+                   spec->indicatorShapeRole)) {
+        spec->indicatorRadius = qMax<qreal>(
+            0.0,
+            theme.shapes().radius(spec->indicatorShapeRole));
+    }
+
+    spec->hasResolvedMotionStyle = false;
+    if (tokens.motion.contains(spec->motionToken)) {
+        spec->motionStyle =
+            tokens.motion.value(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    } else if (theme.motion().contains(spec->motionToken)) {
+        spec->motionStyle =
+            theme.motion().style(spec->motionToken);
+        spec->hasResolvedMotionStyle = true;
+    }
+
+    const StateLayer& stateLayer =
+        tokens.hasStateLayer
+            ? tokens.stateLayer
+            : theme.stateLayer();
+    spec->hoverStateLayerOpacity =
+        stateLayer.hoverOpacity;
+    spec->focusStateLayerOpacity =
+        stateLayer.focusOpacity;
+    spec->pressStateLayerOpacity =
+        stateLayer.pressOpacity;
+
+    if (!tokens.isEmpty()) {
+        readReal(
+            tokens.custom,
+            "hoverStateLayerOpacity",
+            &spec->hoverStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "focusStateLayerOpacity",
+            &spec->focusStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "pressStateLayerOpacity",
+            &spec->pressStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "disabledOpacity",
+            &spec->disabledOpacity);
+        readReal(
+            tokens.custom,
+            "focusRingWidth",
+            &spec->focusRingWidth);
+    }
+
+    spec->disabledOpacity = qBound<qreal>(
+        0.0,
+        spec->disabledOpacity,
+        1.0);
+
+    spec->disabledIconColor =
+        spec->unselectedIconColor;
+    spec->disabledIconColor.setAlphaF(
+        spec->disabledIconColor.alphaF()
+        * spec->disabledOpacity);
+    spec->disabledLabelColor =
+        spec->unselectedLabelColor;
+    spec->disabledLabelColor.setAlphaF(
+        spec->disabledLabelColor.alphaF()
+        * spec->disabledOpacity);
+
+    if (!tokens.isEmpty()) {
+        applyCustomColor(
+            &spec->disabledIconColor,
+            tokens,
+            "disabledIconColor");
+        applyCustomColor(
+            &spec->disabledLabelColor,
+            tokens,
+            "disabledLabelColor");
+    }
+
+    spec->railWidth = qMax(48, spec->railWidth);
+    spec->itemHeight = qMax(48, spec->itemHeight);
     spec->itemSpacing = qMax(0, spec->itemSpacing);
     spec->topPadding = qMax(0, spec->topPadding);
     spec->bottomPadding = qMax(0, spec->bottomPadding);
-    spec->indicatorSize.setWidth(
-        qMax(1, spec->indicatorSize.width()));
-    spec->indicatorSize.setHeight(
-        qMax(1, spec->indicatorSize.height()));
-    spec->iconSize = qMax(1, spec->iconSize);
+    spec->iconSize = qMax(0, spec->iconSize);
+    spec->indicatorTopOffset =
+        qMax(0, spec->indicatorTopOffset);
+    spec->iconTopOffset = qMax(0, spec->iconTopOffset);
+    spec->labelTopOffset =
+        qMax(0, spec->labelTopOffset);
+    spec->labelHeight = qMax(1, spec->labelHeight);
+    spec->dividerWidth = qMax(1, spec->dividerWidth);
     spec->focusRingWidth =
-        qMax<qreal>(0.0, spec->focusRingWidth);
-    spec->disabledOpacity =
-        qBound<qreal>(
-            0.0,
-            spec->disabledOpacity,
-            1.0);
+        qMax<qreal>(1.0, spec->focusRingWidth);
 }
-
 
 void applyTextFieldComponentTokens(
     const Theme& theme,

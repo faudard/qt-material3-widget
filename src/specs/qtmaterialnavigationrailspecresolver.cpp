@@ -1,7 +1,5 @@
 #include "qtmaterial/specs/qtmaterialnavigationrailspecresolver.h"
 
-#include <QStringList>
-
 #include "qtmaterialcomponenttokenapplier_p.h"
 
 namespace QtMaterial {
@@ -27,6 +25,10 @@ NavigationRailSpecResolver::navigationRailSpec(
     spec.unselectedLabelColor =
         theme.colorScheme().color(
             ColorRole::OnSurfaceVariant);
+    spec.disabledIconColor =
+        spec.unselectedIconColor;
+    spec.disabledLabelColor =
+        spec.unselectedLabelColor;
     spec.stateLayerColor =
         theme.colorScheme().color(ColorRole::OnSurface);
     spec.focusRingColor =
@@ -42,7 +44,6 @@ NavigationRailSpecResolver::navigationRailSpec(
             QStringLiteral("navigationRail"),
             QStringLiteral("NavigationRail")},
         &spec);
-
     return spec;
 }
 
