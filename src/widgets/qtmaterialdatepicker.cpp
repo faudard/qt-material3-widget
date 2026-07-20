@@ -1,4 +1,6 @@
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
+#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 #include <memory>
 
 #include <QCalendarWidget>
@@ -17,7 +19,12 @@
 namespace QtMaterial {
 
 struct QtMaterialDatePickerPrivate {
-    DatePickerSpec m_spec = defaultDatePickerSpec();
+    mutable DatePickerSpec m_spec = defaultDatePickerSpec();
+    DatePickerSpec m_explicitSpec;
+    bool m_explicitSpecSet = false;
+    mutable bool m_specDirty = true;
+    QtMaterialThemeContextBinding* m_themeBinding = nullptr;
+    QDate m_formattedSelectedDate;
     QCalendarWidget* m_calendar = nullptr;
     QLabel* m_headerLabel = nullptr;
     QToolButton* m_prevButton = nullptr;
@@ -29,15 +36,65 @@ QtMaterialDatePicker::QtMaterialDatePicker(QWidget* parent)
     : QFrame(parent)
     , d_ptr(std::make_unique<QtMaterialDatePickerPrivate>())
 {
+    d_ptr->m_themeBinding =
+        new QtMaterialThemeContextBinding(this, this);
+    connect(
+        d_ptr->m_themeBinding,
+        &QtMaterialThemeContextBinding::effectiveThemeContextChanged,
+        this,
+        &QtMaterialDatePicker::effectiveThemeContextChanged);
+    connect(
+        d_ptr->m_themeBinding,
+        &QtMaterialThemeContextBinding::themeChanged,
+        this,
+        [this](const Theme&) {
+            if (d_ptr->m_explicitSpecSet) {
+                return;
+            }
+            d_ptr->m_specDirty = true;
+            ensureSpecResolved();
+            applyResolvedSpec();
+        });
+
     setObjectName(QStringLiteral("QtMaterialDatePicker"));
     setFocusPolicy(Qt::StrongFocus);
     setFrameShape(QFrame::NoFrame);
     buildUi();
-    applySpec();
+    ensureSpecResolved();
+    applyResolvedSpec();
     updateHeader();
 }
 
 QtMaterialDatePicker::~QtMaterialDatePicker() = default;
+
+void QtMaterialDatePicker::setThemeContext(
+    ThemeContext* context)
+{
+    if (themeContext() == context) {
+        return;
+    }
+
+    d_ptr->m_themeBinding->setThemeContext(context);
+    Q_EMIT themeContextChanged(context);
+
+    if (!d_ptr->m_explicitSpecSet) {
+        d_ptr->m_specDirty = true;
+        ensureSpecResolved();
+        applyResolvedSpec();
+    }
+}
+
+ThemeContext*
+QtMaterialDatePicker::themeContext() const noexcept
+{
+    return d_ptr->m_themeBinding->themeContext();
+}
+
+ThemeContext*
+QtMaterialDatePicker::effectiveThemeContext() const noexcept
+{
+    return d_ptr->m_themeBinding->effectiveThemeContext();
+}
 
 QDate QtMaterialDatePicker::selectedDate() const
 {
@@ -80,14 +137,41 @@ void QtMaterialDatePicker::setMaximumDate(const QDate& date)
 
 DatePickerSpec QtMaterialDatePicker::spec() const
 {
+    return resolvedSpec();
+}
+
+const DatePickerSpec&
+QtMaterialDatePicker::resolvedSpec() const
+{
+    ensureSpecResolved();
     return d_ptr->m_spec;
 }
 
-void QtMaterialDatePicker::setSpec(const DatePickerSpec& spec)
+void QtMaterialDatePicker::setSpec(
+    const DatePickerSpec& spec)
 {
-    d_ptr->m_spec = spec;
-    applySpec();
-    update();
+    d_ptr->m_explicitSpec = spec;
+    d_ptr->m_explicitSpecSet = true;
+    d_ptr->m_specDirty = true;
+    ensureSpecResolved();
+    applyResolvedSpec();
+}
+
+bool QtMaterialDatePicker::hasExplicitSpec() const noexcept
+{
+    return d_ptr->m_explicitSpecSet;
+}
+
+void QtMaterialDatePicker::resetSpec()
+{
+    if (!d_ptr->m_explicitSpecSet) {
+        return;
+    }
+
+    d_ptr->m_explicitSpecSet = false;
+    d_ptr->m_specDirty = true;
+    ensureSpecResolved();
+    applyResolvedSpec();
 }
 
 void QtMaterialDatePicker::showPreviousMonth()
@@ -112,7 +196,7 @@ void QtMaterialDatePicker::changeEvent(QEvent* event)
 {
     QFrame::changeEvent(event);
     if (event->type() == QEvent::EnabledChange || event->type() == QEvent::PaletteChange || event->type() == QEvent::FontChange) {
-        applySpec();
+        applyResolvedSpec();
     }
 }
 
@@ -144,6 +228,7 @@ void QtMaterialDatePicker::keyPressEvent(QKeyEvent* event)
 
 void QtMaterialDatePicker::paintEvent(QPaintEvent* event)
 {
+    ensureSpecResolved();
     QFrame::paintEvent(event);
 
     QPainter painter(this);
@@ -215,8 +300,28 @@ void QtMaterialDatePicker::updateHeader()
     setAccessibleName(tr("Date picker, selected %1").arg(QLocale().toString(date, QLocale::LongFormat)));
 }
 
-void QtMaterialDatePicker::applySpec()
+void QtMaterialDatePicker::ensureSpecResolved() const
 {
+    if (!d_ptr->m_specDirty) {
+        return;
+    }
+
+    if (d_ptr->m_explicitSpecSet) {
+        d_ptr->m_spec = d_ptr->m_explicitSpec;
+        d_ptr->m_specDirty = false;
+        return;
+    }
+
+    d_ptr->m_spec =
+        DataSpecResolver().datePickerSpec(
+            d_ptr->m_themeBinding->theme(),
+            Density::Default);
+    d_ptr->m_specDirty = false;
+}
+
+void QtMaterialDatePicker::applyResolvedSpec()
+{
+    ensureSpecResolved();
     setAutoFillBackground(false);
     if (layout()) {
         layout()->setContentsMargins(d_ptr->m_spec.contentMargins);
