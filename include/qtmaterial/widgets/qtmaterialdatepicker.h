@@ -69,6 +69,8 @@ protected:
 private:
     void buildUi();
     void updateHeader();
+    void updateTranslations();
+    void refreshDateFormats();
     void ensureSpecResolved() const;
     void applyResolvedSpec();
 

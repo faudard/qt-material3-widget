@@ -875,6 +875,100 @@
         "\\bkPadding\\b",
         "\\bkRadius\\b"
       ]
+    },
+    {
+      "name": "date-picker-compatibility-header-has-no-duplicate-type",
+      "files": [
+        "include/qtmaterial/specs/qtmaterialdatepickerspec.h"
+      ],
+      "required_regex": [
+        "qtmaterial/specs/qtmaterialdatacomponentspecs\\.h"
+      ],
+      "forbidden_regex": [
+        "\\bstruct\\s+(?:QTMATERIAL3_SPECS_EXPORT\\s+)?DatePickerSpec\\b",
+        "\\bcontainerColor\\b",
+        "\\bheaderColor\\b",
+        "\\bdayCellSize\\b"
+      ]
+    },
+    {
+      "name": "canonical-data-spec-header-owns-date-picker-spec",
+      "files": [
+        "include/qtmaterial/specs/qtmaterialdatacomponentspecs.h"
+      ],
+      "required_regex": [
+        "\\bstruct\\s+DatePickerSpec\\b",
+        "\\bweekdayTextColor\\b",
+        "\\bnavigationButtonTextColor\\b",
+        "\\bweekdayFont\\b",
+        "\\bcontentSpacing\\b",
+        "\\bnavigationButtonPaddingHorizontal\\b"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "date-picker-resolver-owns-theme-resolution",
+      "files": [
+        "include/qtmaterial/specs/qtmaterialdataspecresolver.h",
+        "src/specs/qtmaterialdataspecresolver.cpp"
+      ],
+      "required_regex": [
+        "\\bDatePickerSpec\\s+datePickerSpec\\s*\\(",
+        "\\bDataSpecResolver\\s*::\\s*datePickerSpec\\s*\\(",
+        "\\bapplyDatePickerOverrides\\s*\\(",
+        "QStringLiteral\\s*\\(\\s*\\\"datePicker\\\"\\s*\\)",
+        "TypeRole::HeadlineSmall",
+        "ShapeRole::ExtraLarge"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b"
+      ]
+    },
+    {
+      "name": "date-picker-header-exposes-modern-themed-spec-policy",
+      "files": [
+        "include/qtmaterial/widgets/qtmaterialdatepicker.h"
+      ],
+      "required_regex": [
+        "\\bpublic\\s+ThemeContextHost\\b",
+        "Q_INTERFACES\\(QtMaterial::ThemeContextHost\\)",
+        "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bhasExplicitSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bresetSpec\\s*\\(",
+        "\\bensureSpecResolved\\s*\\(\\s*\\)\\s*const",
+        "\\bapplyResolvedSpec\\s*\\(",
+        "\\brefreshDateFormats\\s*\\(",
+        "\\bupdateTranslations\\s*\\("
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "\\bresolveThemeSpec\\s*\\("
+      ]
+    },
+    {
+      "name": "date-picker-source-renders-only-from-resolved-spec",
+      "files": [
+        "src/widgets/qtmaterialdatepicker.cpp"
+      ],
+      "required_regex": [
+        "\\bQtMaterialThemeContextBinding\\b",
+        "\\bDataSpecResolver\\b",
+        "\\bensureSpecResolved\\s*\\(\\s*\\)\\s*const",
+        "\\bapplyResolvedSpec\\s*\\(",
+        "\\bm_explicitSpecSet\\b",
+        "\\bm_specDirty\\b",
+        "\\brefreshDateFormats\\s*\\(",
+        "\\bupdateTranslations\\s*\\("
+      ],
+      "forbidden_regex": [
+        "\\bDataComponentSpecResolver\\b",
+        "\\bSpecFactory\\b",
+        "ThemeManager::instance\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\(",
+        "emit\\s+selectedDateChanged\\s*\\(\\s*date\\s*\\)"
+      ]
     }
   ],
   "text_rules": [
@@ -1254,6 +1348,26 @@
         "\\bDataComponentSpecResolver\\s*::\\s*gridListSpec\\s*\\(",
         "\\bDataComponentSpecResolver\\s*::\\s*carouselSpec\\s*\\("
       ]
+    },
+    {
+      "name": "date-picker-defaults-cover-complete-runtime-spec",
+      "file": "src/specs/qtmaterialdatacomponentspecs.cpp",
+      "required_regex": [
+        "spec\\.weekdayTextColor\\s*=",
+        "spec\\.navigationButtonTextColor\\s*=",
+        "spec\\.weekdayFont\\s*="
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "date-picker-tests-cover-resolver-context-and-runtime",
+      "file": "tests/CMakeLists.txt",
+      "required_regex": [
+        "qtm3_add_test\\s*\\(\\s*tst_datepickerresolvedspec\\b",
+        "qtm3_add_test\\s*\\(\\s*tst_themeddatepicker\\b",
+        "qtm3_add_test\\s*\\(\\s*tst_datepickerstability\\b"
+      ],
+      "forbidden_regex": []
     }
   ],
   "tree_rules": [
