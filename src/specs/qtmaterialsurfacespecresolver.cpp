@@ -81,41 +81,14 @@ SnackbarSpec SurfaceSpecResolver::snackbarSpec(
         theme.colorScheme().color(ColorRole::InverseOnSurface);
     spec.shadowColor =
         theme.colorScheme().color(ColorRole::Shadow);
-    spec.shapeRole = ShapeRole::Small;
-    spec.elevationRole = ElevationRole::Level3;
-    spec.enterMotion = MotionToken::Medium2;
-    spec.exitMotion = MotionToken::Short4;
 
-    if (theme.typography().contains(spec.textTypeRole)) {
-        spec.textFont =
-            theme.typography().style(spec.textTypeRole).font;
-        spec.hasResolvedTextFont = true;
-    }
-    if (theme.typography().contains(spec.actionTypeRole)) {
-        spec.actionFont =
-            theme.typography().style(spec.actionTypeRole).font;
-        spec.hasResolvedActionFont = true;
-    }
-    if (theme.shapes().contains(spec.shapeRole)) {
-        spec.cornerRadius =
-            qMax<qreal>(0.0, theme.shapes().radius(spec.shapeRole));
-    }
-    if (theme.elevations().contains(spec.elevationRole)) {
-        spec.elevationStyle =
-            theme.elevations().style(spec.elevationRole);
-        spec.hasResolvedElevationStyle = true;
-    }
-    if (theme.motion().contains(spec.enterMotion)) {
-        spec.enterMotionStyle =
-            theme.motion().style(spec.enterMotion);
-        spec.hasResolvedEnterMotion = true;
-    }
-    if (theme.motion().contains(spec.exitMotion)) {
-        spec.exitMotionStyle =
-            theme.motion().style(spec.exitMotion);
-        spec.hasResolvedExitMotion = true;
-    }
-
+    applySnackbarComponentTokens(
+        theme,
+        QStringList{
+            QStringLiteral("surface"),
+            QStringLiteral("snackbar"),
+            QStringLiteral("Snackbar")},
+        &spec);
     return spec;
 }
 

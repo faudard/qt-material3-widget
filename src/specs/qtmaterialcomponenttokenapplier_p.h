@@ -11,6 +11,7 @@
 #include "qtmaterial/specs/qtmaterialiconbuttonspec.h"
 #include "qtmaterial/specs/qtmaterialradiobuttonspec.h"
 #include "qtmaterial/specs/qtmaterialsegmentedbuttonspec.h"
+#include "qtmaterial/specs/qtmaterialsnackbarspec.h"
 #include "qtmaterial/specs/qtmaterialswitchspec.h"
 #include "qtmaterial/specs/qtmaterialtextfieldspec.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
@@ -55,5 +56,10 @@ void applyMenuComponentTokens(
     const Theme& theme,
     const QStringList& componentNames,
     MenuSpec* spec);
+
+void applySnackbarComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    SnackbarSpec* spec);
 
 } // namespace QtMaterial

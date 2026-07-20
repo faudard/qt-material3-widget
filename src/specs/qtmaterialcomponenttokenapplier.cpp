@@ -3175,4 +3175,253 @@ void applyMenuComponentTokens(
     spec->focusRingWidth = qMax(1, spec->focusRingWidth);
 }
 
+void applySnackbarComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    SnackbarSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    if (!tokens.isEmpty()) {
+        applyColor(
+            &spec->containerColor,
+            tokens,
+            ColorRole::InverseSurface);
+        applyColor(
+            &spec->textColor,
+            tokens,
+            ColorRole::InverseOnSurface);
+        applyColor(
+            &spec->actionColor,
+            tokens,
+            ColorRole::InversePrimary);
+        applyColor(
+            &spec->dismissIconColor,
+            tokens,
+            ColorRole::InverseOnSurface);
+        applyColor(
+            &spec->shadowColor,
+            tokens,
+            ColorRole::Shadow);
+
+        applyCustomColor(
+            &spec->containerColor,
+            tokens,
+            "containerColor");
+        applyCustomColor(
+            &spec->textColor,
+            tokens,
+            "textColor");
+        applyCustomColor(
+            &spec->actionColor,
+            tokens,
+            "actionColor");
+        applyCustomColor(
+            &spec->dismissIconColor,
+            tokens,
+            "dismissIconColor");
+        applyCustomColor(
+            &spec->shadowColor,
+            tokens,
+            "shadowColor");
+
+        applyShapeMotionElevation(
+            tokens,
+            &spec->shapeRole,
+            &spec->elevationRole,
+            &spec->enterMotion);
+
+        if (tokens.custom.contains(
+                QStringLiteral("exitMotion"))) {
+            spec->exitMotion = parseMotionToken(
+                tokens.custom.value(
+                    QStringLiteral("exitMotion")).toString(),
+                spec->exitMotion);
+        }
+
+        int outerLeft = spec->outerMargins.left();
+        int outerTop = spec->outerMargins.top();
+        int outerRight = spec->outerMargins.right();
+        int outerBottom = spec->outerMargins.bottom();
+        int contentLeft = spec->contentPadding.left();
+        int contentTop = spec->contentPadding.top();
+        int contentRight = spec->contentPadding.right();
+        int contentBottom = spec->contentPadding.bottom();
+
+        readInt(tokens.custom, "outerMarginLeft", &outerLeft);
+        readInt(tokens.custom, "outerMarginTop", &outerTop);
+        readInt(tokens.custom, "outerMarginRight", &outerRight);
+        readInt(tokens.custom, "outerMarginBottom", &outerBottom);
+        readInt(tokens.custom, "contentPaddingLeft", &contentLeft);
+        readInt(tokens.custom, "contentPaddingTop", &contentTop);
+        readInt(tokens.custom, "contentPaddingRight", &contentRight);
+        readInt(tokens.custom, "contentPaddingBottom", &contentBottom);
+
+        readInt(tokens.custom, "minHeight", &spec->minHeight);
+        readInt(tokens.custom, "minWidth", &spec->minWidth);
+        readInt(tokens.custom, "maxWidth", &spec->maxWidth);
+        readInt(tokens.custom, "labelMinWidth", &spec->labelMinWidth);
+        readInt(
+            tokens.custom,
+            "controlsReserveSpacing",
+            &spec->controlsReserveSpacing);
+        readInt(
+            tokens.custom,
+            "slideDistance",
+            &spec->slideDistance);
+        readInt(
+            tokens.custom,
+            "actionSpacing",
+            &spec->actionSpacing);
+        readInt(
+            tokens.custom,
+            "actionMinWidth",
+            &spec->actionMinWidth);
+        readInt(
+            tokens.custom,
+            "actionPaddingHorizontal",
+            &spec->actionPaddingHorizontal);
+        readInt(
+            tokens.custom,
+            "actionPaddingVertical",
+            &spec->actionPaddingVertical);
+        readInt(
+            tokens.custom,
+            "actionCornerRadius",
+            &spec->actionCornerRadius);
+        readInt(
+            tokens.custom,
+            "dismissButtonSize",
+            &spec->dismissButtonSize);
+        readInt(
+            tokens.custom,
+            "dismissCornerRadius",
+            &spec->dismissCornerRadius);
+        readInt(
+            tokens.custom,
+            "shortDurationMs",
+            &spec->shortDurationMs);
+        readInt(
+            tokens.custom,
+            "longDurationMs",
+            &spec->longDurationMs);
+        readReal(
+            tokens.custom,
+            "cornerRadius",
+            &spec->cornerRadius);
+
+        spec->outerMargins = QMargins(
+            qMax(0, outerLeft),
+            qMax(0, outerTop),
+            qMax(0, outerRight),
+            qMax(0, outerBottom));
+        spec->contentPadding = QMargins(
+            qMax(0, contentLeft),
+            qMax(0, contentTop),
+            qMax(0, contentRight),
+            qMax(0, contentBottom));
+    }
+
+    spec->hasResolvedTextFont = false;
+    if (tokens.typography.contains(spec->textTypeRole)) {
+        spec->textFont =
+            tokens.typography.value(spec->textTypeRole).font;
+        spec->hasResolvedTextFont = true;
+    } else if (theme.typography().contains(spec->textTypeRole)) {
+        spec->textFont =
+            theme.typography().style(spec->textTypeRole).font;
+        spec->hasResolvedTextFont = true;
+    }
+
+    spec->hasResolvedActionFont = false;
+    if (tokens.typography.contains(spec->actionTypeRole)) {
+        spec->actionFont =
+            tokens.typography.value(spec->actionTypeRole).font;
+        spec->hasResolvedActionFont = true;
+    } else if (theme.typography().contains(spec->actionTypeRole)) {
+        spec->actionFont =
+            theme.typography().style(spec->actionTypeRole).font;
+        spec->hasResolvedActionFont = true;
+    }
+
+    if (tokens.shapes.contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            tokens.shapes.value(spec->shapeRole));
+    } else if (theme.shapes().contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            theme.shapes().radius(spec->shapeRole));
+    }
+
+    spec->hasResolvedElevationStyle = false;
+    if (tokens.elevations.contains(spec->elevationRole)) {
+        spec->elevationStyle =
+            tokens.elevations.value(spec->elevationRole);
+        spec->hasResolvedElevationStyle = true;
+    } else if (theme.elevations().contains(spec->elevationRole)) {
+        spec->elevationStyle =
+            theme.elevations().style(spec->elevationRole);
+        spec->hasResolvedElevationStyle = true;
+    }
+
+    spec->hasResolvedEnterMotion = false;
+    if (tokens.motion.contains(spec->enterMotion)) {
+        spec->enterMotionStyle =
+            tokens.motion.value(spec->enterMotion);
+        spec->hasResolvedEnterMotion = true;
+    } else if (theme.motion().contains(spec->enterMotion)) {
+        spec->enterMotionStyle =
+            theme.motion().style(spec->enterMotion);
+        spec->hasResolvedEnterMotion = true;
+    }
+
+    spec->hasResolvedExitMotion = false;
+    if (tokens.motion.contains(spec->exitMotion)) {
+        spec->exitMotionStyle =
+            tokens.motion.value(spec->exitMotion);
+        spec->hasResolvedExitMotion = true;
+    } else if (theme.motion().contains(spec->exitMotion)) {
+        spec->exitMotionStyle =
+            theme.motion().style(spec->exitMotion);
+        spec->hasResolvedExitMotion = true;
+    }
+
+    if (!tokens.isEmpty()) {
+        readReal(
+            tokens.custom,
+            "cornerRadius",
+            &spec->cornerRadius);
+    }
+
+    spec->minHeight = qMax(32, spec->minHeight);
+    spec->minWidth = qMax(80, spec->minWidth);
+    spec->maxWidth = qMax(spec->minWidth, spec->maxWidth);
+    spec->labelMinWidth = qMax(32, spec->labelMinWidth);
+    spec->controlsReserveSpacing =
+        qMax(0, spec->controlsReserveSpacing);
+    spec->slideDistance = qMax(0, spec->slideDistance);
+    spec->actionSpacing = qMax(0, spec->actionSpacing);
+    spec->actionMinWidth = qMax(0, spec->actionMinWidth);
+    spec->actionPaddingHorizontal =
+        qMax(0, spec->actionPaddingHorizontal);
+    spec->actionPaddingVertical =
+        qMax(0, spec->actionPaddingVertical);
+    spec->actionCornerRadius =
+        qMax(0, spec->actionCornerRadius);
+    spec->dismissButtonSize =
+        qMax(24, spec->dismissButtonSize);
+    spec->dismissCornerRadius =
+        qMax(0, spec->dismissCornerRadius);
+    spec->shortDurationMs =
+        qMax(1, spec->shortDurationMs);
+    spec->longDurationMs =
+        qMax(spec->shortDurationMs, spec->longDurationMs);
+}
+
 } // namespace QtMaterial
