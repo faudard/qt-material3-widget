@@ -73,16 +73,23 @@ struct GridListSpec
     QColor itemSelectedTextColor;
     QColor supportingTextColor;
     QColor disabledTextColor;
+    QColor disabledSupportingTextColor;
+    QColor itemOutlineColor;
     QColor focusRingColor;
 
     QFont titleFont;
     QFont supportingFont;
 
     QSize itemSize = QSize(160, 144);
+    QSize iconSize = QSize(32, 32);
+    QMargins itemContentMargins = QMargins(12, 12, 12, 12);
 
     int itemRadius = 16;
     int spacing = 12;
     int focusRingWidth = 2;
+    int outlineWidth = 1;
+    int titleSupportingSpacing = 4;
+    int iconTextSpacing = 8;
     int columns = 3;
     int minimumCellWidth = 120;
 };

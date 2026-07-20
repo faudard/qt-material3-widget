@@ -562,7 +562,6 @@ void applyDividerOverrides(
     }
 }
 
-
 void applyListOverrides(
     const Theme& theme,
     ListSpec* spec)
@@ -694,7 +693,6 @@ void applyListOverrides(
         "cornerRadius",
         &spec->cornerRadius);
 }
-
 
 void applyTableOverrides(
     const Theme& theme,
@@ -901,14 +899,8 @@ void applyGridListOverrides(
         return;
     }
 
-    applyTokenColor(
-        &spec->backgroundColor,
-        tokens,
-        ColorRole::Surface);
-    applyTokenColor(
-        &spec->foregroundColor,
-        tokens,
-        ColorRole::OnSurface);
+    applyTokenColor(&spec->backgroundColor, tokens, ColorRole::Surface);
+    applyTokenColor(&spec->foregroundColor, tokens, ColorRole::OnSurface);
     applyTokenColor(
         &spec->itemBackgroundColor,
         tokens,
@@ -926,79 +918,84 @@ void applyGridListOverrides(
         tokens,
         ColorRole::OnSurfaceVariant);
     applyTokenColor(
-        &spec->focusRingColor,
+        &spec->itemOutlineColor,
         tokens,
-        ColorRole::Primary);
+        ColorRole::OutlineVariant);
+    applyTokenColor(&spec->focusRingColor, tokens, ColorRole::Primary);
 
     const QVariantMap& custom = tokens.custom;
+    readColor(custom, "backgroundColor", &spec->backgroundColor);
+    readColor(custom, "foregroundColor", &spec->foregroundColor);
+    readColor(custom, "itemBackgroundColor", &spec->itemBackgroundColor);
+    readColor(custom, "itemHoverColor", &spec->itemHoverColor);
+    readColor(custom, "itemSelectedColor", &spec->itemSelectedColor);
+    readColor(custom, "itemSelectedTextColor", &spec->itemSelectedTextColor);
+    readColor(custom, "supportingTextColor", &spec->supportingTextColor);
+    readColor(custom, "disabledTextColor", &spec->disabledTextColor);
     readColor(
         custom,
-        "backgroundColor",
-        &spec->backgroundColor);
-    readColor(
-        custom,
-        "foregroundColor",
-        &spec->foregroundColor);
-    readColor(
-        custom,
-        "itemBackgroundColor",
-        &spec->itemBackgroundColor);
-    readColor(
-        custom,
-        "itemHoverColor",
-        &spec->itemHoverColor);
-    readColor(
-        custom,
-        "itemSelectedColor",
-        &spec->itemSelectedColor);
-    readColor(
-        custom,
-        "itemSelectedTextColor",
-        &spec->itemSelectedTextColor);
-    readColor(
-        custom,
-        "supportingTextColor",
-        &spec->supportingTextColor);
-    readColor(
-        custom,
-        "disabledTextColor",
-        &spec->disabledTextColor);
-    readColor(
-        custom,
-        "focusRingColor",
-        &spec->focusRingColor);
+        "disabledSupportingTextColor",
+        &spec->disabledSupportingTextColor);
+    readColor(custom, "itemOutlineColor", &spec->itemOutlineColor);
+    readColor(custom, "focusRingColor", &spec->focusRingColor);
 
-    if (
-        tokens.typography.contains(
-            TypeRole::TitleMedium)) {
+    if (tokens.typography.contains(TypeRole::TitleMedium)) {
         spec->titleFont =
-            tokens.typography
-                .value(TypeRole::TitleMedium)
-                .font;
+            tokens.typography.value(TypeRole::TitleMedium).font;
     }
-    if (
-        tokens.typography.contains(
-            TypeRole::BodyMedium)) {
+    if (tokens.typography.contains(TypeRole::BodyMedium)) {
         spec->supportingFont =
-            tokens.typography
-                .value(TypeRole::BodyMedium)
-                .font;
+            tokens.typography.value(TypeRole::BodyMedium).font;
     }
 
     int itemWidth = spec->itemSize.width();
     int itemHeight = spec->itemSize.height();
-    const bool itemWidthChanged =
-        readInt(custom, "itemWidth", &itemWidth);
-    const bool itemHeightChanged =
-        readInt(custom, "itemHeight", &itemHeight);
-
-    if (itemWidthChanged || itemHeightChanged) {
-        spec->itemSize =
-            QSize(itemWidth, itemHeight);
+    bool itemSizeChanged = false;
+    itemSizeChanged = readInt(custom, "itemWidth", &itemWidth)
+        || itemSizeChanged;
+    itemSizeChanged = readInt(custom, "itemHeight", &itemHeight)
+        || itemSizeChanged;
+    if (itemSizeChanged) {
+        spec->itemSize = QSize(itemWidth, itemHeight);
     }
+
+    int iconWidth = spec->iconSize.width();
+    int iconHeight = spec->iconSize.height();
+    bool iconSizeChanged = false;
+    iconSizeChanged = readInt(custom, "iconWidth", &iconWidth)
+        || iconSizeChanged;
+    iconSizeChanged = readInt(custom, "iconHeight", &iconHeight)
+        || iconSizeChanged;
+    if (iconSizeChanged) {
+        spec->iconSize = QSize(iconWidth, iconHeight);
+    }
+
+    int left = spec->itemContentMargins.left();
+    int top = spec->itemContentMargins.top();
+    int right = spec->itemContentMargins.right();
+    int bottom = spec->itemContentMargins.bottom();
+    bool marginsChanged = false;
+    marginsChanged = readInt(custom, "contentMarginLeft", &left)
+        || marginsChanged;
+    marginsChanged = readInt(custom, "contentMarginTop", &top)
+        || marginsChanged;
+    marginsChanged = readInt(custom, "contentMarginRight", &right)
+        || marginsChanged;
+    marginsChanged = readInt(custom, "contentMarginBottom", &bottom)
+        || marginsChanged;
+    if (marginsChanged) {
+        spec->itemContentMargins = QMargins(left, top, right, bottom);
+    }
+
     readInt(custom, "itemRadius", &spec->itemRadius);
     readInt(custom, "spacing", &spec->spacing);
     readInt(custom, "focusRingWidth", &spec->focusRingWidth);
+    readInt(custom, "outlineWidth", &spec->outlineWidth);
+    readInt(
+        custom,
+        "titleSupportingSpacing",
+        &spec->titleSupportingSpacing);
+    readInt(custom, "iconTextSpacing", &spec->iconTextSpacing);
     readInt(custom, "columns", &spec->columns);
     readInt(custom, "minimumCellWidth", &spec->minimumCellWidth);
 }
@@ -1184,7 +1181,6 @@ void applyCarouselOverrides(
 
 } // namespace
 
-
 ListSpec DataSpecResolver::listSpec(
     const Theme& theme,
     Density density) const
@@ -1255,7 +1251,6 @@ ListSpec DataSpecResolver::listSpec(
 
     return spec;
 }
-
 
 TableSpec DataSpecResolver::tableSpec(
     const Theme& theme,
@@ -1409,19 +1404,12 @@ GridListSpec DataSpecResolver::gridListSpec(
     const Theme& theme,
     Density density) const
 {
-    GridListSpec spec =
-        defaultGridListSpec();
+    GridListSpec spec = defaultGridListSpec();
 
     spec.backgroundColor =
-        roleOr(
-            theme,
-            ColorRole::Surface,
-            spec.backgroundColor);
+        roleOr(theme, ColorRole::Surface, spec.backgroundColor);
     spec.foregroundColor =
-        roleOr(
-            theme,
-            ColorRole::OnSurface,
-            spec.foregroundColor);
+        roleOr(theme, ColorRole::OnSurface, spec.foregroundColor);
     spec.itemBackgroundColor =
         roleOr(
             theme,
@@ -1442,45 +1430,40 @@ GridListSpec DataSpecResolver::gridListSpec(
             theme,
             ColorRole::OnSurfaceVariant,
             spec.supportingTextColor);
-    spec.focusRingColor =
+    spec.itemOutlineColor =
         roleOr(
             theme,
-            ColorRole::Primary,
-            spec.focusRingColor);
+            ColorRole::OutlineVariant,
+            spec.itemOutlineColor);
+    spec.focusRingColor =
+        roleOr(theme, ColorRole::Primary, spec.focusRingColor);
 
-    const StateLayer& stateLayer =
-        theme.stateLayer();
-
+    const StateLayer& stateLayer = theme.stateLayer();
     spec.itemHoverColor =
-        withOpacity(
-            spec.foregroundColor,
-            stateLayer.hoverOpacity);
+        withOpacity(spec.foregroundColor, stateLayer.hoverOpacity);
     spec.disabledTextColor =
-        withOpacity(
-            spec.foregroundColor,
-            0.38);
+        withOpacity(spec.foregroundColor, 0.38);
+    spec.disabledSupportingTextColor =
+        withOpacity(spec.supportingTextColor, 0.38);
 
-    const QFont fallback =
-        applicationFont();
+    const QFont fallback = applicationFont();
     spec.titleFont =
-        fontFor(
-            theme,
-            TypeRole::TitleMedium,
-            fallback);
+        fontFor(theme, TypeRole::TitleMedium, fallback);
     spec.supportingFont =
-        fontFor(
-            theme,
-            TypeRole::BodyMedium,
-            fallback);
+        fontFor(theme, TypeRole::BodyMedium, fallback);
 
     switch (density) {
     case Density::Compact:
         spec.itemSize = QSize(144, 120);
+        spec.iconSize = QSize(28, 28);
+        spec.itemContentMargins = QMargins(10, 10, 10, 10);
         spec.spacing = 8;
         spec.minimumCellWidth = 104;
         break;
     case Density::Comfortable:
         spec.itemSize = QSize(176, 152);
+        spec.iconSize = QSize(36, 36);
+        spec.itemContentMargins = QMargins(14, 14, 14, 14);
         spec.spacing = 16;
         spec.minimumCellWidth = 136;
         break;
@@ -1489,38 +1472,35 @@ GridListSpec DataSpecResolver::gridListSpec(
         break;
     }
 
-    applyGridListOverrides(
-        theme,
-        &spec);
+    applyGridListOverrides(theme, &spec);
 
-    spec.itemSize =
-        QSize(
-            qMax(48, spec.itemSize.width()),
-            qMax(48, spec.itemSize.height()));
-    spec.itemRadius =
-        qMax(0, spec.itemRadius);
-    spec.spacing =
-        qMax(0, spec.spacing);
-    spec.focusRingWidth =
-        qMax(0, spec.focusRingWidth);
-    spec.columns =
-        qMax(1, spec.columns);
-    spec.minimumCellWidth =
-        qMax(48, spec.minimumCellWidth);
+    spec.itemSize = QSize(
+        qMax(48, spec.itemSize.width()),
+        qMax(48, spec.itemSize.height()));
+    spec.iconSize = QSize(
+        qMax(0, spec.iconSize.width()),
+        qMax(0, spec.iconSize.height()));
+    spec.itemContentMargins = QMargins(
+        qMax(0, spec.itemContentMargins.left()),
+        qMax(0, spec.itemContentMargins.top()),
+        qMax(0, spec.itemContentMargins.right()),
+        qMax(0, spec.itemContentMargins.bottom()));
+    spec.itemRadius = qMax(0, spec.itemRadius);
+    spec.spacing = qMax(0, spec.spacing);
+    spec.focusRingWidth = qMax(0, spec.focusRingWidth);
+    spec.outlineWidth = qMax(0, spec.outlineWidth);
+    spec.titleSupportingSpacing = qMax(0, spec.titleSupportingSpacing);
+    spec.iconTextSpacing = qMax(0, spec.iconTextSpacing);
+    spec.columns = qMax(1, spec.columns);
+    spec.minimumCellWidth = qMax(48, spec.minimumCellWidth);
 
     if (spec.titleFont.family().isEmpty()) {
         spec.titleFont =
-            fontFor(
-                theme,
-                TypeRole::TitleMedium,
-                fallback);
+            fontFor(theme, TypeRole::TitleMedium, fallback);
     }
     if (spec.supportingFont.family().isEmpty()) {
         spec.supportingFont =
-            fontFor(
-                theme,
-                TypeRole::BodyMedium,
-                fallback);
+            fontFor(theme, TypeRole::BodyMedium, fallback);
     }
 
     return spec;

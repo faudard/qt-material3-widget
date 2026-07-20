@@ -89,6 +89,13 @@ GridListSpec defaultGridListSpec()
     spec.focusRingColor = QColor("#6750A4");
     spec.titleFont = appFont(0, QFont::DemiBold);
     spec.supportingFont = appFont(-1);
+    spec.disabledSupportingTextColor = QColor(0x49, 0x45, 0x4F, 0x61);
+    spec.itemOutlineColor = QColor("#CAC4D0");
+    spec.iconSize = QSize(32, 32);
+    spec.itemContentMargins = QMargins(12, 12, 12, 12);
+    spec.outlineWidth = 1;
+    spec.titleSupportingSpacing = 4;
+    spec.iconTextSpacing = 8;
     return spec;
 }
 

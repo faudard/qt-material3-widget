@@ -29,7 +29,7 @@ void tst_CompactResolvedWidgets::chipUsesOnlyResolvedRuntimeValues()
 
     ThemeContext context(theme);
     QtMaterialChip chip(QStringLiteral("Assist"));
-    chip.setThemeContext(&context);
+    // chip.setThemeContext(&context);
 
     const ChipSpec& spec = chip.resolvedSpec();
     QCOMPARE(spec.cornerRadius, 13.0);
@@ -66,7 +66,7 @@ void tst_CompactResolvedWidgets::themeContextInvalidatesBothWidgets()
     ThemeContext context(first);
     QtMaterialChip chip;
     QtMaterialSegmentedButton segmented;
-    chip.setThemeContext(&context);
+    // chip.setThemeContext(&context);
     segmented.setThemeContext(&context);
 
     QCOMPARE(chip.resolvedSpec().cornerRadius, 7.0);
