@@ -82,6 +82,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialtabs.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialroute.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialdivider.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h

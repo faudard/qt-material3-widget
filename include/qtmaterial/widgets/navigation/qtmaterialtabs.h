@@ -15,6 +15,8 @@
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
 #include "qtmaterial/specs/qtmaterialtabsspec.h"
+#include "qtmaterial/theme/qtmaterialthemecontexthost.h"
+#include "qtmaterial/widgets/navigation/qtmaterialroute.h"
 
 QT_BEGIN_NAMESPACE
 class QEvent;
@@ -30,100 +32,11 @@ class QtMaterialTabsPrivate;
 class QtMaterialNavigationController;
 class QtMaterialTabsBar;
 
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialRoute
-{
-    Q_GADGET
-    Q_PROPERTY(QString path READ path)
-
-public:
-    QtMaterialRoute() = default;
-
-    explicit QtMaterialRoute(QString path)
-        : m_path(normalizedPath(std::move(path)))
-    {
-    }
-
-    static QString normalizedPath(QString path)
-    {
-        path = path.trimmed();
-        path.replace(
-            QLatin1Char('\\'),
-            QLatin1Char('/'));
-
-        if (path.isEmpty()) {
-            return QString();
-        }
-
-        QString normalized;
-        normalized.reserve(path.size() + 1);
-
-        bool previousWasSlash = false;
-        for (const QChar character : path) {
-            const bool isSlash =
-                character == QLatin1Char('/');
-
-            if (isSlash) {
-                if (!previousWasSlash) {
-                    normalized.append(
-                        QLatin1Char('/'));
-                }
-            } else {
-                normalized.append(character);
-            }
-
-            previousWasSlash = isSlash;
-        }
-
-        while (
-            normalized.size() > 1
-            && normalized.endsWith(
-                QLatin1Char('/'))) {
-            normalized.chop(1);
-        }
-
-        if (
-            !normalized.startsWith(
-                QLatin1Char('/'))) {
-            normalized.prepend(
-                QLatin1Char('/'));
-        }
-
-        return normalized;
-    }
-
-    QString path() const
-    {
-        return m_path;
-    }
-
-    QString toString() const
-    {
-        return m_path;
-    }
-
-    bool isValid() const
-    {
-        return !m_path.isEmpty();
-    }
-
-    bool operator==(
-        const QtMaterialRoute& other) const
-    {
-        return m_path == other.m_path;
-    }
-
-    bool operator!=(
-        const QtMaterialRoute& other) const
-    {
-        return !(*this == other);
-    }
-
-private:
-    QString m_path;
-};
-
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTabs : public QTabWidget {
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTabs
+    : public QTabWidget
+    , public ThemeContextHost {
     Q_OBJECT
+    Q_INTERFACES(QtMaterial::ThemeContextHost)
     Q_PROPERTY(TabsVariant variant READ variant WRITE setVariant NOTIFY variantChanged)
     Q_PROPERTY(TabsDensity density READ density WRITE setDensity NOTIFY densityChanged)
     Q_PROPERTY(TabsAlignment alignment READ alignment WRITE setAlignment NOTIFY alignmentChanged)
@@ -169,8 +82,8 @@ public:
     void setUseGlobalTheme(bool enabled);
     void refreshTheme();
     void setThemeContext(QtMaterial::ThemeContext* context);
-    QtMaterial::ThemeContext* themeContext() const noexcept;
-    QtMaterial::ThemeContext* effectiveThemeContext() const noexcept;
+    QtMaterial::ThemeContext* themeContext() const noexcept override;
+    QtMaterial::ThemeContext* effectiveThemeContext() const noexcept override;
 
     bool wrapNavigation() const;
     void setWrapNavigation(bool enabled);
@@ -245,7 +158,6 @@ signals:
 
 protected:
     void changeEvent(QEvent* event) override;
-    bool event(QEvent* event) override;
     void tabInserted(int index) override;
     void tabRemoved(int index) override;
 
@@ -262,10 +174,6 @@ private:
  const TabDescriptor* descriptor(int index) const;
 
  void resolveSpecFromTheme();
-    bool refreshThemeContextConnection();
-    void handleThemeChanged(const QtMaterial::Theme& theme);
-    void handleInheritedThemeContextChanged(QtMaterial::ThemeContext* context);
-    void handleThemeContextDestroyed(bool explicitContext);
 
  void applyResolvedSpec();
 
@@ -297,4 +205,3 @@ private:
 
 } // namespace QtMaterial
 
-Q_DECLARE_METATYPE(QtMaterial::QtMaterialRoute)

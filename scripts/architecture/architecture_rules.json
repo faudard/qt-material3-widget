@@ -1127,6 +1127,132 @@
         "hiddenY\\s*=\\s*finalY\\s*\\+\\s*16",
         "padding:\\s*8px\\s+12px"
       ]
+    },
+    {
+      "name": "tabs-spec-owns-runtime-rendering-metrics",
+      "files": [
+        "include/qtmaterial/specs/qtmaterialtabsspec.h"
+      ],
+      "required_regex": [
+        "\\bQFont\\s+labelFont\\s*;",
+        "\\bQFont\\s+badgeFont\\s*;",
+        "\\bMotionStyle\\s+indicatorMotionStyle\\s*;",
+        "\\bint\\s+compactContainerHeight\\b",
+        "\\bint\\s+indicatorHorizontalInset\\b",
+        "\\bint\\s+stateLayerInset\\b",
+        "\\bqreal\\s+stateLayerRadius\\b",
+        "\\bint\\s+focusInset\\b",
+        "\\bqreal\\s+focusRingWidth\\b",
+        "\\bint\\s+overflowButtonPadding\\b"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "tabs-resolver-applies-runtime-component-tokens",
+      "files": [
+        "src/specs/qtmaterialtabsspecresolver.cpp",
+        "src/specs/qtmaterialcomponenttokenapplier.cpp"
+      ],
+      "required_regex": [
+        "\\bapplyTabsComponentTokens\\s*\\(",
+        "\\bhasResolvedLabelFont\\b",
+        "\\bhasResolvedBadgeFont\\b",
+        "\\bhasResolvedIndicatorMotion\\b",
+        "\\bindicatorHorizontalInset\\b",
+        "\\boverflowButtonPadding\\b"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b"
+      ]
+    },
+    {
+      "name": "tabs-header-uses-generic-theme-host-and-route",
+      "files": [
+        "include/qtmaterial/widgets/navigation/qtmaterialtabs.h"
+      ],
+      "required_regex": [
+        "\\bpublic\\s+ThemeContextHost\\b",
+        "Q_INTERFACES\\(QtMaterial::ThemeContextHost\\)",
+        "qtmaterial/widgets/navigation/qtmaterialroute\\.h",
+        "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel\\.h"
+      ],
+      "forbidden_regex": [
+        "class\\s+QTMATERIAL3_WIDGETS_EXPORT\\s+QtMaterialRoute",
+        "\\brefreshThemeContextConnection\\b",
+        "\\bhandleInheritedThemeContextChanged\\b",
+        "\\bhandleThemeContextDestroyed\\b",
+        "\\bbool\\s+event\\s*\\(\\s*QEvent",
+        "qtmaterial/core/qtmaterialnavigationmodel\\.h"
+      ]
+    },
+    {
+      "name": "tabs-source-uses-generic-theme-binding",
+      "files": [
+        "src/widgets/navigation/qtmaterialtabs.cpp"
+      ],
+      "required_regex": [
+        "\\bQtMaterialThemeContextBinding\\b",
+        "\\bthemeBinding\\b",
+        "\\bTabsSpecResolver\\b",
+        "\\bQtMaterialRoute::normalizedPath\\b"
+      ],
+      "forbidden_regex": [
+        "\\bQPointer<ThemeContext>\\b",
+        "\\bthemeChangedConnection\\b",
+        "\\bthemeDestroyedConnection\\b",
+        "\\bancestorContextConnection\\b",
+        "\\brefreshThemeContextConnection\\b",
+        "\\bhandleInheritedThemeContextChanged\\b",
+        "\\bhandleThemeContextDestroyed\\b",
+        "qtmaterial/core/qtmaterialwidget\\.h",
+        "qtmaterial/theme/qtmaterialthememanager\\.h",
+        "\\bcanonicalTabsRoutePath\\b",
+        "\\bqtm3TabsNavigationModelRoutePath\\b",
+        "\\bqtm3NavigationModelRoutePath\\b"
+      ]
+    },
+    {
+      "name": "tabs-bar-renders-only-from-spec-metrics",
+      "files": [
+        "src/widgets/navigation/qtmaterialtabs.cpp"
+      ],
+      "required_regex": [
+        "\\bstateLayerInset\\b",
+        "\\bstateLayerRadius\\b",
+        "\\bfocusInset\\b",
+        "\\bfocusRingWidth\\b",
+        "\\bindicatorHorizontalInset\\b",
+        "\\bbadgeEndInset\\b",
+        "\\bbadgeTopInset\\b",
+        "\\boverflowButtonPadding\\b",
+        "\\boverflowButtonOuterInset\\b",
+        "\\boverflowButtonMinSize\\b",
+        "\\boverflowButtonHeightInset\\b"
+      ],
+      "forbidden_regex": [
+        "adjusted\\(\\s*4\\s*,\\s*4\\s*,\\s*-4\\s*,\\s*-4",
+        "adjusted\\(\\s*3\\s*,\\s*3\\s*,\\s*-3\\s*,\\s*-3",
+        "QPen\\([^\\n]+,\\s*1\\.5\\s*\\)",
+        "drawRoundedRect\\([^;]+12\\.0\\s*,\\s*12\\.0",
+        "rect\\.left\\(\\)\\s*\\+\\s*10",
+        "rect\\.width\\(\\)\\s*-\\s*20",
+        "padding:\\s*4px",
+        "qMax\\(\\s*24\\s*,\\s*height\\(\\)\\s*-\\s*8",
+        "width\\(\\)\\s*-\\s*side\\s*-\\s*4",
+        "setDuration\\(\\s*180\\s*\\)"
+      ]
+    },
+    {
+      "name": "route-value-type-has-one-public-home",
+      "files": [
+        "include/qtmaterial/widgets/navigation/qtmaterialroute.h"
+      ],
+      "required_regex": [
+        "\\bclass\\s+QTMATERIAL3_WIDGETS_EXPORT\\s+QtMaterialRoute\\b",
+        "\\bstatic\\s+QString\\s+normalizedPath\\b",
+        "Q_DECLARE_METATYPE\\(QtMaterial::QtMaterialRoute\\)"
+      ],
+      "forbidden_regex": []
     }
   ],
   "text_rules": [

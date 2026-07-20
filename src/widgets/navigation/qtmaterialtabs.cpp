@@ -1,12 +1,9 @@
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
+#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
 
 #include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
-#include "qtmaterial/core/qtmaterialwidget.h"
 #include "qtmaterial/specs/qtmaterialtabsspecresolver.h"
-#include "qtmaterial/theme/qtmaterialthemecontext.h"
-#include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h"
-
 
 #include <QAction>
 #include <QApplication>
@@ -42,11 +39,7 @@ class QtMaterialTabsPrivate {
 public:
  TabsSpec authoredSpec;
  TabsSpec resolvedSpec;
- QPointer<ThemeContext> themeContext;
- QPointer<ThemeContext> effectiveThemeContext;
- QMetaObject::Connection themeChangedConnection;
- QMetaObject::Connection themeDestroyedConnection;
- QMetaObject::Connection ancestorContextConnection;
+    QtMaterialThemeContextBinding* themeBinding = nullptr;
  QVector<QtMaterialTabs::TabDescriptor> descriptors;
  QVector<QPointer<QtMaterialNavigationController>> boundControllers;
  QPointer<QStackedWidget> boundStack;
@@ -68,7 +61,11 @@ QColor withAlpha(QColor color, qreal opacity)
 
 int resolvedHeight(const TabsSpec& spec)
 {
-    return spec.density == TabsDensity::Compact ? qMin(spec.containerHeight, 40) : spec.containerHeight;
+    return spec.density == TabsDensity::Compact
+        ? qMin(
+              spec.containerHeight,
+              spec.compactContainerHeight)
+        : spec.containerHeight;
 }
 
 bool usesOverflowMenu(TabsOverflowMode mode)
@@ -79,28 +76,6 @@ bool usesOverflowMenu(TabsOverflowMode mode)
 bool usesScrollButtons(TabsOverflowMode mode)
 {
     return mode == TabsOverflowMode::ScrollButtons || mode == TabsOverflowMode::ScrollButtonsAndMenu;
-}
-
-
-QString canonicalTabsRoutePath(
-    const QString& routePath)
-{
-    return QtMaterialRoute::normalizedPath(
-        routePath);
-}
-
-QString qtm3TabsNavigationModelRoutePath(
-    const QString& routePath)
-{
-    return canonicalTabsRoutePath(
-        routePath);
-}
-
-QString qtm3NavigationModelRoutePath(
-    const QString& routePath)
-{
-    return canonicalTabsRoutePath(
-        routePath);
 }
 
 } // namespace
@@ -130,8 +105,7 @@ public:
         m_overflowButton->setPopupMode(QToolButton::InstantPopup);
         m_overflowButton->hide();
 
-        m_indicatorAnimation->setDuration(180);
-        connect(this, &QTabBar::currentChanged, this, &QtMaterialTabsBar::animateIndicatorToCurrentTab);
+            connect(this, &QTabBar::currentChanged, this, &QtMaterialTabsBar::animateIndicatorToCurrentTab);
         connect(m_overflowMenu, &QMenu::triggered, this, [this](QAction* action) {
             bool ok = false;
             const int index = action->data().toInt(&ok);
@@ -142,16 +116,32 @@ public:
     }
 
     void setResolvedSpec(const TabsSpec& spec)
-    {
-        m_spec = spec;
-        m_indicatorAnimation->setDuration(qMax(0, spec.animationDuration));
-        setUsesScrollButtons(::QtMaterial::usesScrollButtons(spec.overflowMode) && spec.scrollable);
-        setExpanding(spec.alignment == TabsAlignment::Stretch);
-        updateStyleSheet();
-        rebuildOverflowMenu();
-        updateOverflowButtonGeometry();
-        update();
+{
+    m_spec = spec;
+
+    m_indicatorAnimation->setDuration(
+        qMax(0, spec.animationDuration));
+    if (spec.hasResolvedIndicatorMotion) {
+        m_indicatorAnimation->setEasingCurve(
+            spec.indicatorMotionStyle.easing);
     }
+
+    if (spec.hasResolvedLabelFont) {
+        setFont(spec.labelFont);
+    }
+
+    setUsesScrollButtons(
+        ::QtMaterial::usesScrollButtons(
+            spec.overflowMode)
+        && spec.scrollable);
+    setExpanding(
+        spec.alignment == TabsAlignment::Stretch);
+
+    updateStyleSheet();
+    rebuildOverflowMenu();
+    updateOverflowButtonGeometry();
+    update();
+}
 
     void setBadgeProvider(std::function<QPair<QString, bool>(int)> provider)
     {
@@ -242,132 +232,251 @@ protected:
     }
 
     void paintEvent(QPaintEvent* event) override
-    {
-        QTabBar::paintEvent(event);
+{
+    QTabBar::paintEvent(event);
 
-        QPainter painter(this);
-        painter.setRenderHint(QPainter::Antialiasing, true);
+    QPainter painter(this);
+    painter.setRenderHint(
+        QPainter::Antialiasing,
+        true);
 
-        const auto drawStateLayer = [&](int index, const QColor& color, qreal opacity) {
-            if (index < 0 || index >= count()) {
+    const auto drawStateLayer =
+        [&](int index,
+            const QColor& color,
+            qreal opacity) {
+            if (index < 0
+                || index >= count()
+                || !isTabEnabled(index)) {
                 return;
             }
-            QRect rect = tabRect(index).adjusted(4, 4, -4, -4);
-            if (!rect.isValid()) {
+
+            const int inset =
+                qMax(0, m_spec.stateLayerInset);
+            const QRect layerRect =
+                tabRect(index).adjusted(
+                    inset,
+                    inset,
+                    -inset,
+                    -inset);
+            if (!layerRect.isValid()) {
                 return;
             }
+
             painter.setPen(Qt::NoPen);
-            painter.setBrush(withAlpha(color, opacity));
-            painter.drawRoundedRect(rect, 12.0, 12.0);
+            painter.setBrush(
+                withAlpha(color, opacity));
+            painter.drawRoundedRect(
+                layerRect,
+                m_spec.stateLayerRadius,
+                m_spec.stateLayerRadius);
         };
 
-        if (m_hoveredIndex >= 0 && m_hoveredIndex != currentIndex()) {
-            drawStateLayer(m_hoveredIndex,
-                           m_spec.hoverStateLayerColor.isValid() ? m_spec.hoverStateLayerColor : m_spec.stateLayerColor,
-                           qMax<qreal>(0.0, m_spec.hoverOpacity));
-        }
-        if (m_pressedIndex >= 0) {
-            drawStateLayer(m_pressedIndex,
-                           m_spec.pressedStateLayerColor.isValid() ? m_spec.pressedStateLayerColor : m_spec.stateLayerColor,
-                           qMax<qreal>(0.0, m_spec.pressedOpacity));
-        }
-        if (hasFocus() && currentIndex() >= 0) {
-            QRect focusRect = tabRect(currentIndex()).adjusted(3, 3, -3, -3);
-            QPen pen(m_spec.focusRingColor, 1.5);
-            painter.setPen(pen);
-            painter.setBrush(Qt::NoBrush);
-            painter.drawRoundedRect(focusRect, 12.0, 12.0);
-            drawStateLayer(currentIndex(),
-                           m_spec.focusedStateLayerColor.isValid() ? m_spec.focusedStateLayerColor : m_spec.stateLayerColor,
-                           qMax<qreal>(0.0, m_spec.focusOpacity));
-        }
-
-        if (m_indicatorRect.isValid() && currentIndex() >= 0) {
-            painter.setPen(Qt::NoPen);
-            painter.setBrush(m_spec.activeIndicatorColor);
-            painter.drawRoundedRect(m_indicatorRect, m_spec.indicatorHeight / 2.0, m_spec.indicatorHeight / 2.0);
-        }
-
-        if (m_badgeProvider) {
-            for (int i = 0; i < count(); ++i) {
-                const auto badge = m_badgeProvider(i);
-                if (!badge.second) {
-                    continue;
-                }
-                const QRect rect = tabRect(i);
-                const bool isDot = badge.first.isEmpty();
-                const int diameter = isDot ? m_spec.badgeDotDiameter : m_spec.badgeDiameter;
-                QRect badgeRect(rect.right() - diameter - 8, rect.top() + 6, diameter, diameter);
-                painter.setPen(Qt::NoPen);
-                painter.setBrush(m_spec.badgeColor);
-                painter.drawEllipse(badgeRect);
-                if (!isDot) {
-                    painter.setPen(m_spec.badgeLabelColor);
-                    QFont font = painter.font();
-                    font.setBold(true);
-                    font.setPointSizeF(qMax<qreal>(8.0, font.pointSizeF() - 1.0));
-                    painter.setFont(font);
-                    painter.drawText(badgeRect, Qt::AlignCenter, badge.first);
-                }
-            }
-        }
+    if (m_hoveredIndex >= 0
+        && m_hoveredIndex != currentIndex()) {
+        drawStateLayer(
+            m_hoveredIndex,
+            m_spec.hoverStateLayerColor.isValid()
+                ? m_spec.hoverStateLayerColor
+                : m_spec.stateLayerColor,
+            qMax<qreal>(
+                0.0,
+                m_spec.hoverOpacity));
     }
+
+    if (m_pressedIndex >= 0) {
+        drawStateLayer(
+            m_pressedIndex,
+            m_spec.pressedStateLayerColor.isValid()
+                ? m_spec.pressedStateLayerColor
+                : m_spec.stateLayerColor,
+            qMax<qreal>(
+                0.0,
+                m_spec.pressedOpacity));
+    }
+
+    if (hasFocus()
+        && currentIndex() >= 0
+        && isTabEnabled(currentIndex())) {
+        const int inset =
+            qMax(0, m_spec.focusInset);
+        const QRect focusRect =
+            tabRect(currentIndex()).adjusted(
+                inset,
+                inset,
+                -inset,
+                -inset);
+
+        painter.setPen(
+            QPen(
+                m_spec.focusRingColor,
+                m_spec.focusRingWidth));
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRoundedRect(
+            focusRect,
+            m_spec.stateLayerRadius,
+            m_spec.stateLayerRadius);
+
+        drawStateLayer(
+            currentIndex(),
+            m_spec.focusedStateLayerColor.isValid()
+                ? m_spec.focusedStateLayerColor
+                : m_spec.stateLayerColor,
+            qMax<qreal>(
+                0.0,
+                m_spec.focusOpacity));
+    }
+
+    if (m_indicatorRect.isValid()
+        && currentIndex() >= 0) {
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(
+            m_spec.activeIndicatorColor);
+        painter.drawRoundedRect(
+            m_indicatorRect,
+            m_spec.indicatorHeight / 2.0,
+            m_spec.indicatorHeight / 2.0);
+    }
+
+    if (!m_badgeProvider) {
+        return;
+    }
+
+    for (int index = 0;
+         index < count();
+         ++index) {
+        const auto badge =
+            m_badgeProvider(index);
+        if (!badge.second) {
+            continue;
+        }
+
+        const QRect tabGeometry =
+            tabRect(index);
+        const bool dot = badge.first.isEmpty();
+        const int diameter = dot
+            ? m_spec.badgeDotDiameter
+            : m_spec.badgeDiameter;
+        const int badgeX =
+            layoutDirection() == Qt::RightToLeft
+            ? tabGeometry.left()
+                + m_spec.badgeEndInset
+            : tabGeometry.right()
+                - diameter
+                - m_spec.badgeEndInset;
+        const QRect badgeRect(
+            badgeX,
+            tabGeometry.top()
+                + m_spec.badgeTopInset,
+            diameter,
+            diameter);
+
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(m_spec.badgeColor);
+        painter.drawEllipse(badgeRect);
+
+        if (dot) {
+            continue;
+        }
+
+        painter.setPen(
+            m_spec.badgeLabelColor);
+        if (m_spec.hasResolvedBadgeFont) {
+            painter.setFont(m_spec.badgeFont);
+        } else {
+            QFont badgeFont = painter.font();
+            badgeFont.setBold(true);
+            if (badgeFont.pointSizeF() > 0.0) {
+                badgeFont.setPointSizeF(
+                    qMax<qreal>(
+                        1.0,
+                        badgeFont.pointSizeF()
+                            + m_spec.badgeFontPointDelta));
+            }
+            painter.setFont(badgeFont);
+        }
+        painter.drawText(
+            badgeRect,
+            Qt::AlignCenter,
+            badge.first);
+    }
+}
 
 private:
     void updateStyleSheet()
-    {
-        const QString style = QStringLiteral(R"(
-            QTabBar::tab {
-                border: 0;
-                background: transparent;
-                min-height: %1px;
-                min-width: %2px;
-                max-width: %3px;
-                padding: %4px %5px %6px %7px;
-                color: %8;
-            }
-            QTabBar::tab:selected {
-                color: %9;
-            }
-            QTabBar::tab:disabled {
-                color: %10;
-            }
-            QToolButton {
-                border: 0;
-                padding: 4px;
-                color: %11;
-                background: transparent;
-            }
-            QToolButton::menu-indicator {
-                image: none;
-                width: 0px;
-            }
-        )")
-            .arg(resolvedHeight(m_spec))
-            .arg(m_spec.minimumTabWidth)
-            .arg(m_spec.maximumTabWidth)
-            .arg(m_spec.tabPadding.top())
-            .arg(m_spec.tabPadding.right())
-            .arg(m_spec.tabPadding.bottom())
-            .arg(m_spec.tabPadding.left())
-            .arg(m_spec.inactiveLabelColor.name(QColor::HexArgb))
-            .arg(m_spec.activeLabelColor.name(QColor::HexArgb))
-            .arg(m_spec.disabledLabelColor.name(QColor::HexArgb))
-            .arg(m_spec.overflowButtonColor.name(QColor::HexArgb));
-        setStyleSheet(style);
-    }
+{
+    const QString style = QStringLiteral(R"(
+QTabBar::tab {
+    border: 0;
+    background: transparent;
+    min-height: %1px;
+    min-width: %2px;
+    max-width: %3px;
+    padding: %4px %5px %6px %7px;
+    color: %8;
+}
+QTabBar::tab:selected {
+    color: %9;
+}
+QTabBar::tab:disabled {
+    color: %10;
+}
+QToolButton {
+    border: 0;
+    padding: %12px;
+    color: %11;
+    background: transparent;
+}
+QToolButton::menu-indicator {
+    image: none;
+    width: 0px;
+}
+)")
+        .arg(resolvedHeight(m_spec))
+        .arg(m_spec.minimumTabWidth)
+        .arg(m_spec.maximumTabWidth)
+        .arg(m_spec.tabPadding.top())
+        .arg(m_spec.tabPadding.right())
+        .arg(m_spec.tabPadding.bottom())
+        .arg(m_spec.tabPadding.left())
+        .arg(
+            m_spec.inactiveLabelColor.name(
+                QColor::HexArgb))
+        .arg(
+            m_spec.activeLabelColor.name(
+                QColor::HexArgb))
+        .arg(
+            m_spec.disabledLabelColor.name(
+                QColor::HexArgb))
+        .arg(
+            m_spec.overflowButtonColor.name(
+                QColor::HexArgb))
+        .arg(m_spec.overflowButtonPadding);
+
+    setStyleSheet(style);
+}
 
     QRect indicatorRectForIndex(int index) const
-    {
-        if (index < 0 || index >= count()) {
-            return {};
-        }
-        const QRect rect = tabRect(index);
-        return QRect(rect.left() + 10,
-                     rect.bottom() - m_spec.indicatorHeight + 1,
-                     qMax(0, rect.width() - 20),
-                     m_spec.indicatorHeight);
+{
+    if (index < 0 || index >= count()) {
+        return {};
     }
+
+    const QRect tabGeometry = tabRect(index);
+    const int inset = qMin(
+        qMax(0, m_spec.indicatorHorizontalInset),
+        tabGeometry.width() / 2);
+
+    return QRect(
+        tabGeometry.left() + inset,
+        tabGeometry.bottom()
+            - m_spec.indicatorHeight
+            + 1,
+        qMax(
+            0,
+            tabGeometry.width()
+                - inset * 2),
+        m_spec.indicatorHeight);
+}
 
     void animateIndicatorToCurrentTab(int index)
     {
@@ -419,13 +528,28 @@ private:
     }
 
     void updateOverflowButtonGeometry()
-    {
-        if (!m_overflowButton->isVisible()) {
-            return;
-        }
-        const int side = qMax(24, height() - 8);
-        m_overflowButton->setGeometry(width() - side - 4, (height() - side) / 2, side, side);
+{
+    if (!m_overflowButton->isVisible()) {
+        return;
     }
+
+    const int outerInset =
+        qMax(0, m_spec.overflowButtonOuterInset);
+    const int side = qMax(
+        m_spec.overflowButtonMinSize,
+        height()
+            - m_spec.overflowButtonHeightInset);
+    const int x =
+        layoutDirection() == Qt::RightToLeft
+        ? outerInset
+        : width() - side - outerInset;
+
+    m_overflowButton->setGeometry(
+        x,
+        (height() - side) / 2,
+        side,
+        side);
+}
 
     void moveToEnabledIndex(int start, int step, bool allowWrap)
     {
@@ -514,7 +638,21 @@ QtMaterialTabs::QtMaterialTabs(const TabsSpec& spec, QWidget* parent)
     }
 
     connect(this, &QTabWidget::currentChanged, this, &QtMaterialTabs::onCurrentTabChanged);
-    refreshThemeContextConnection();
+    d_ptr->themeBinding =
+        new QtMaterialThemeContextBinding(this, this);
+    connect(
+        d_ptr->themeBinding,
+        &QtMaterialThemeContextBinding::effectiveThemeContextChanged,
+        this,
+        &QtMaterialTabs::effectiveThemeContextChanged);
+    connect(
+        d_ptr->themeBinding,
+        &QtMaterialThemeContextBinding::themeChanged,
+        this,
+        [this](const Theme&) {
+            resolveSpecFromTheme();
+            applyResolvedSpec();
+        });
     resolveSpecFromTheme();
     applyResolvedSpec();
 }
@@ -1116,176 +1254,26 @@ const QtMaterialTabs::TabDescriptor* QtMaterialTabs::descriptor(int index) const
     return &d_ptr->descriptors[index];
 }
 
-
-void QtMaterialTabs::setThemeContext(ThemeContext* context)
+void QtMaterialTabs::setThemeContext(
+    ThemeContext* context)
 {
-    if (d_ptr->themeContext.data() == context) {
+    if (d_ptr->themeBinding->themeContext() == context) {
         return;
     }
 
-    d_ptr->themeContext = context;
-    const bool effectiveChanged =
-        refreshThemeContextConnection();
-
-    emit themeContextChanged(context);
-    if (effectiveChanged) {
-        emit effectiveThemeContextChanged(
-            effectiveThemeContext());
-    }
-
-    if (d_ptr->authoredSpec.useGlobalTheme) {
-        refreshTheme();
-    }
+    d_ptr->themeBinding->setThemeContext(context);
+    Q_EMIT themeContextChanged(context);
 }
 
 ThemeContext* QtMaterialTabs::themeContext() const noexcept
 {
-    return d_ptr->themeContext.data();
+    return d_ptr->themeBinding->themeContext();
 }
 
-ThemeContext* QtMaterialTabs::effectiveThemeContext() const noexcept
+ThemeContext*
+QtMaterialTabs::effectiveThemeContext() const noexcept
 {
-    if (d_ptr->themeContext) {
-        return d_ptr->themeContext.data();
-    }
-
-    QWidget* ancestor = parentWidget();
-    while (ancestor) {
-        if (auto* tabsParent =
-                qobject_cast<QtMaterialTabs*>(ancestor)) {
-            return tabsParent->effectiveThemeContext();
-        }
-        if (auto* materialParent =
-                qobject_cast<QtMaterialWidget*>(ancestor)) {
-            return materialParent->effectiveThemeContext();
-        }
-        ancestor = ancestor->parentWidget();
-    }
-
-    return ThemeManager::instance().defaultContext();
-}
-
-bool QtMaterialTabs::event(QEvent* event)
-{
-    const bool handled = QTabWidget::event(event);
-
-    if (event
-        && event->type() == QEvent::ParentChange
-        && refreshThemeContextConnection()) {
-        emit effectiveThemeContextChanged(
-            effectiveThemeContext());
-
-        if (d_ptr->authoredSpec.useGlobalTheme) {
-            refreshTheme();
-        }
-    }
-
-    return handled;
-}
-
-bool QtMaterialTabs::refreshThemeContextConnection()
-{
-    ThemeContext* nextContext = effectiveThemeContext();
-    const bool effectiveChanged =
-        d_ptr->effectiveThemeContext.data() != nextContext;
-
-    QObject::disconnect(d_ptr->themeChangedConnection);
-    QObject::disconnect(d_ptr->themeDestroyedConnection);
-    QObject::disconnect(d_ptr->ancestorContextConnection);
-
-    d_ptr->effectiveThemeContext = nextContext;
-
-    if (!d_ptr->themeContext) {
-        QWidget* ancestor = parentWidget();
-        while (ancestor) {
-            if (auto* tabsParent =
-                    qobject_cast<QtMaterialTabs*>(ancestor)) {
-                d_ptr->ancestorContextConnection =
-                    QObject::connect(
-                        tabsParent,
-                        &QtMaterialTabs::
-                            effectiveThemeContextChanged,
-                        this,
-                        &QtMaterialTabs::
-                            handleInheritedThemeContextChanged);
-                break;
-            }
-
-            if (auto* materialParent =
-                    qobject_cast<QtMaterialWidget*>(ancestor)) {
-                d_ptr->ancestorContextConnection =
-                    QObject::connect(
-                        materialParent,
-                        &QtMaterialWidget::
-                            effectiveThemeContextChanged,
-                        this,
-                        &QtMaterialTabs::
-                            handleInheritedThemeContextChanged);
-                break;
-            }
-
-            ancestor = ancestor->parentWidget();
-        }
-    }
-
-    if (nextContext) {
-        d_ptr->themeChangedConnection = QObject::connect(
-            nextContext,
-            &ThemeContext::themeChanged,
-            this,
-            &QtMaterialTabs::handleThemeChanged);
-
-        const bool explicitContext =
-            nextContext == d_ptr->themeContext.data();
-        d_ptr->themeDestroyedConnection = QObject::connect(
-            nextContext,
-            &QObject::destroyed,
-            this,
-            [this, explicitContext]() {
-                handleThemeContextDestroyed(explicitContext);
-            });
-    }
-
-    return effectiveChanged;
-}
-
-void QtMaterialTabs::handleThemeChanged(const Theme&)
-{
-    if (d_ptr->authoredSpec.useGlobalTheme) {
-        refreshTheme();
-    }
-}
-
-void QtMaterialTabs::handleInheritedThemeContextChanged(
-    ThemeContext*)
-{
-    if (refreshThemeContextConnection()) {
-        emit effectiveThemeContextChanged(
-            effectiveThemeContext());
-    }
-
-    if (d_ptr->authoredSpec.useGlobalTheme) {
-        refreshTheme();
-    }
-}
-
-void QtMaterialTabs::handleThemeContextDestroyed(
-    bool explicitContext)
-{
-    if (explicitContext) {
-        d_ptr->themeContext.clear();
-        emit themeContextChanged(nullptr);
-    }
-
-    d_ptr->effectiveThemeContext.clear();
-    refreshThemeContextConnection();
-
-    emit effectiveThemeContextChanged(
-        effectiveThemeContext());
-
-    if (d_ptr->authoredSpec.useGlobalTheme) {
-        refreshTheme();
-    }
+    return d_ptr->themeBinding->effectiveThemeContext();
 }
 
 void QtMaterialTabs::resolveSpecFromTheme()
@@ -1295,13 +1283,9 @@ void QtMaterialTabs::resolveSpecFromTheme()
         return;
     }
 
-    ThemeContext* context = effectiveThemeContext();
-    Q_ASSERT(context);
-
-    const TabsSpecResolver resolver;
     d_ptr->resolvedSpec =
-        resolver.resolve(
-            context->theme(),
+        TabsSpecResolver().resolve(
+            d_ptr->themeBinding->theme(),
             d_ptr->authoredSpec);
 }
 
@@ -1407,8 +1391,7 @@ void QtMaterialTabs::syncCurrentIndexFromController(int index)
 QString QtMaterialTabs::normalizeRoutePath(
     const QString& routePath)
 {
-    return QtMaterialRoute::normalizedPath(
-        routePath);
+    return QtMaterialRoute::normalizedPath(routePath);
 }
 
 QString QtMaterialTabs::routePathFromUrl(
@@ -1443,7 +1426,6 @@ QtMaterialTabsBar* QtMaterialTabs::materialTabBar() const
 {
     return qobject_cast<QtMaterialTabsBar*>(tabBar());
 }
-
 
 QtMaterialNavigationModel* QtMaterialTabs::navigationModel() const {
     return d_ptr->navigationModel;
@@ -1505,7 +1487,6 @@ void QtMaterialTabs::syncNavigationModelFromTabs() {
         item.route = tab && tab->route.isValid()
                          ? tab->route.path()
                          : normalizeRoutePath(item.id);
-
 
         item.label = tabText(i);
         item.icon = tabIcon(i);
@@ -1618,7 +1599,5 @@ QString QtMaterial::QtMaterialTabs::currentTabAccessibleText() const
 } // namespace QtMaterial
 
 #include "qtmaterialtabs.moc"
-#include "qtmaterial/core/qtmaterialwidget.h"
 #include "qtmaterial/specs/qtmaterialtabsspecresolver.h"
-#include "qtmaterial/theme/qtmaterialthemecontext.h"
 #include <QMetaObject>
