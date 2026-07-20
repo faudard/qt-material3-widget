@@ -2867,6 +2867,246 @@ void applyAutocompleteComponentTokens(
     }
 }
 
+void applyMenuComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    MenuSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
 
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(theme, componentNames);
+
+    spec->labelFont = theme.typography().style(
+        spec->labelTypeRole).font;
+    spec->shortcutFont = theme.typography().style(
+        spec->shortcutTypeRole).font;
+
+    if (theme.shapes().contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            theme.shapes().radius(spec->shapeRole));
+    }
+    if (theme.elevations().contains(spec->elevationRole)) {
+        spec->elevationStyle =
+            theme.elevations().style(spec->elevationRole);
+    }
+    if (theme.motion().contains(spec->enterMotion)) {
+        spec->enterMotionStyle =
+            theme.motion().style(spec->enterMotion);
+    }
+    if (theme.motion().contains(spec->exitMotion)) {
+        spec->exitMotionStyle =
+            theme.motion().style(spec->exitMotion);
+    }
+
+    const StateLayer& defaultStateLayer = theme.stateLayer();
+    spec->hoverStateLayerOpacity =
+        defaultStateLayer.hoverOpacity;
+    spec->focusStateLayerOpacity =
+        defaultStateLayer.focusOpacity;
+    spec->pressStateLayerOpacity =
+        defaultStateLayer.pressOpacity;
+
+    spec->disabledItemLabelColor.setAlpha(97);
+    spec->disabledItemIconColor.setAlpha(97);
+    spec->disabledShortcutColor.setAlpha(97);
+
+    if (tokens.isEmpty()) {
+        return;
+    }
+
+    applyColor(
+        &spec->containerColor,
+        tokens,
+        ColorRole::SurfaceContainer);
+    applyColor(
+        &spec->itemLabelColor,
+        tokens,
+        ColorRole::OnSurface);
+    applyColor(
+        &spec->itemIconColor,
+        tokens,
+        ColorRole::OnSurfaceVariant);
+    applyColor(
+        &spec->disabledItemLabelColor,
+        tokens,
+        ColorRole::OnSurfaceVariant);
+    applyColor(
+        &spec->disabledItemIconColor,
+        tokens,
+        ColorRole::OnSurfaceVariant);
+    applyColor(
+        &spec->stateLayerColor,
+        tokens,
+        ColorRole::OnSurface);
+    applyColor(
+        &spec->focusRingColor,
+        tokens,
+        ColorRole::Primary);
+    applyColor(
+        &spec->dividerColor,
+        tokens,
+        ColorRole::OutlineVariant);
+    applyColor(
+        &spec->shortcutColor,
+        tokens,
+        ColorRole::OnSurfaceVariant);
+    applyColor(
+        &spec->disabledShortcutColor,
+        tokens,
+        ColorRole::OnSurfaceVariant);
+    applyColor(
+        &spec->checkedIndicatorColor,
+        tokens,
+        ColorRole::Primary);
+
+    applyCustomColor(
+        &spec->containerColor, tokens, "containerColor");
+    applyCustomColor(
+        &spec->itemLabelColor, tokens, "itemLabelColor");
+    applyCustomColor(
+        &spec->itemIconColor, tokens, "itemIconColor");
+    applyCustomColor(
+        &spec->disabledItemLabelColor,
+        tokens,
+        "disabledItemLabelColor");
+    applyCustomColor(
+        &spec->disabledItemIconColor,
+        tokens,
+        "disabledItemIconColor");
+    applyCustomColor(
+        &spec->stateLayerColor, tokens, "stateLayerColor");
+    applyCustomColor(
+        &spec->focusRingColor, tokens, "focusRingColor");
+    applyCustomColor(
+        &spec->dividerColor, tokens, "dividerColor");
+    applyCustomColor(
+        &spec->shortcutColor, tokens, "shortcutColor");
+    applyCustomColor(
+        &spec->disabledShortcutColor,
+        tokens,
+        "disabledShortcutColor");
+    applyCustomColor(
+        &spec->checkedIndicatorColor,
+        tokens,
+        "checkedIndicatorColor");
+    applyCustomColor(
+        &spec->shadowColor, tokens, "shadowColor");
+
+    if (tokens.typography.contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            tokens.typography.value(spec->labelTypeRole).font;
+    }
+    if (tokens.typography.contains(spec->shortcutTypeRole)) {
+        spec->shortcutFont =
+            tokens.typography.value(spec->shortcutTypeRole).font;
+    }
+    if (tokens.shapes.contains(spec->shapeRole)) {
+        spec->cornerRadius = qMax<qreal>(
+            0.0,
+            tokens.shapes.value(spec->shapeRole));
+    }
+    if (tokens.elevations.contains(spec->elevationRole)) {
+        spec->elevationStyle =
+            tokens.elevations.value(spec->elevationRole);
+    }
+    if (tokens.motion.contains(spec->enterMotion)) {
+        spec->enterMotionStyle =
+            tokens.motion.value(spec->enterMotion);
+    }
+    if (tokens.motion.contains(spec->exitMotion)) {
+        spec->exitMotionStyle =
+            tokens.motion.value(spec->exitMotion);
+    }
+
+    const StateLayer& stateLayer =
+        tokens.hasStateLayer
+            ? tokens.stateLayer
+            : defaultStateLayer;
+    spec->hoverStateLayerOpacity = stateLayer.hoverOpacity;
+    spec->focusStateLayerOpacity = stateLayer.focusOpacity;
+    spec->pressStateLayerOpacity = stateLayer.pressOpacity;
+
+    int minWidth = spec->minItemSize.width();
+    int minHeight = spec->minItemSize.height();
+    int maxWidth = spec->maxPopupSize.width();
+    int maxHeight = spec->maxPopupSize.height();
+    int paddingLeft = spec->itemPadding.left();
+    int paddingTop = spec->itemPadding.top();
+    int paddingRight = spec->itemPadding.right();
+    int paddingBottom = spec->itemPadding.bottom();
+
+    readInt(tokens.custom, "minItemWidth", &minWidth);
+    readInt(tokens.custom, "minItemHeight", &minHeight);
+    readInt(tokens.custom, "maxPopupWidth", &maxWidth);
+    readInt(tokens.custom, "maxPopupHeight", &maxHeight);
+    readInt(tokens.custom, "paddingLeft", &paddingLeft);
+    readInt(tokens.custom, "paddingTop", &paddingTop);
+    readInt(tokens.custom, "paddingRight", &paddingRight);
+    readInt(tokens.custom, "paddingBottom", &paddingBottom);
+    readInt(tokens.custom, "iconSize", &spec->iconSize);
+    readInt(tokens.custom, "iconSpacing", &spec->iconSpacing);
+    readReal(tokens.custom, "cornerRadius", &spec->cornerRadius);
+    readInt(
+        tokens.custom,
+        "separatorHeight",
+        &spec->separatorHeight);
+    readInt(
+        tokens.custom,
+        "verticalPadding",
+        &spec->verticalPadding);
+    readInt(
+        tokens.custom,
+        "checkColumnWidth",
+        &spec->checkColumnWidth);
+    readInt(
+        tokens.custom,
+        "shortcutSpacing",
+        &spec->shortcutSpacing);
+    readInt(
+        tokens.custom,
+        "dividerInset",
+        &spec->dividerInset);
+    readInt(
+        tokens.custom,
+        "focusRingWidth",
+        &spec->focusRingWidth);
+    readReal(
+        tokens.custom,
+        "hoverStateLayerOpacity",
+        &spec->hoverStateLayerOpacity);
+    readReal(
+        tokens.custom,
+        "focusStateLayerOpacity",
+        &spec->focusStateLayerOpacity);
+    readReal(
+        tokens.custom,
+        "pressStateLayerOpacity",
+        &spec->pressStateLayerOpacity);
+
+    spec->minItemSize = QSize(
+        qMax(48, minWidth),
+        qMax(32, minHeight));
+    spec->maxPopupSize = QSize(
+        qMax(spec->minItemSize.width(), maxWidth),
+        qMax(spec->minItemSize.height(), maxHeight));
+    spec->itemPadding = QMargins(
+        qMax(0, paddingLeft),
+        qMax(0, paddingTop),
+        qMax(0, paddingRight),
+        qMax(0, paddingBottom));
+    spec->iconSize = qMax(0, spec->iconSize);
+    spec->iconSpacing = qMax(0, spec->iconSpacing);
+    spec->cornerRadius = qMax<qreal>(0.0, spec->cornerRadius);
+    spec->separatorHeight = qMax(1, spec->separatorHeight);
+    spec->verticalPadding = qMax(0, spec->verticalPadding);
+    spec->checkColumnWidth = qMax(0, spec->checkColumnWidth);
+    spec->shortcutSpacing = qMax(0, spec->shortcutSpacing);
+    spec->dividerInset = qMax(0, spec->dividerInset);
+    spec->focusRingWidth = qMax(1, spec->focusRingWidth);
+}
 
 } // namespace QtMaterial

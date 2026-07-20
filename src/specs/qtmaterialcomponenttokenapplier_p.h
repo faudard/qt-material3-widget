@@ -18,6 +18,7 @@
 #include "qtmaterial/specs/qtmaterialautocompletespec.h"
 #include "qtmaterial/specs/qtmaterialdatefieldspec.h"
 #include "qtmaterial/specs/qtmaterialnavigationrailspec.h"
+#include "qtmaterial/specs/qtmaterialmenuspec.h"
 
 namespace QtMaterial {
 
@@ -50,6 +51,9 @@ void applyAutocompleteComponentTokens(
     const QStringList& componentNames,
     AutocompleteSpec* spec);
 
-
+void applyMenuComponentTokens(
+    const Theme& theme,
+    const QStringList& componentNames,
+    MenuSpec* spec);
 
 } // namespace QtMaterial
