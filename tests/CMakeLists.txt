@@ -197,6 +197,7 @@ qtm3_add_test(tst_themedmenu widgets/navigation/tst_themedmenu.cpp qtmaterial3_w
 qtm3_add_test(tst_tabs_themecontext widgets/navigation/tst_tabs_themecontext.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_tabs_route_robustness widgets/navigation/tst_tabs_route_robustness.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_navigationrail widgets/navigation/tst_navigationrail.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_navigationrailresolvedwidget widgets/navigation/tst_navigationrailresolvedwidget.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_navigationrail_resolvedspec widgets/navigation/tst_navigationrail_resolvedspec.cpp qtmaterial3_widgets)
 
 #qtm3_add_test(tst_data_component_specs specs/tst_data_component_specs.cpp qtmaterial3_specs) # TODO
