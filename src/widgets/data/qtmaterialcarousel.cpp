@@ -19,6 +19,8 @@ struct QtMaterialCarouselPrivate
 
     mutable CarouselSpec spec;
     mutable bool specDirty = true;
+    CarouselSpec explicitSpec;
+    bool explicitSpecSet = false;
 
     int currentIndex = -1;
     int hoveredIndex = -1;
@@ -118,57 +120,49 @@ QRect itemRect(
     const CarouselSpec& spec,
     int index)
 {
-    if (
-        !widget
-        || !isValidIndex(data, index)) {
+    if (!widget || !isValidIndex(data, index)) {
         return QRect();
     }
 
-    const int first =
-        firstVisibleIndex(data);
-    const int last =
-        qMin(
-            data->items.size(),
-            first + data->visibleItemCount);
+    const int first = firstVisibleIndex(data);
+    const int last = qMin(
+        data->items.size(),
+        first + data->visibleItemCount);
 
     if (index < first || index >= last) {
         return QRect();
     }
 
-    const int visibleOffset =
-        index - first;
-    const int cards =
-        last - first;
+    const int visibleOffset = index - first;
+    const int cards = last - first;
+    const int indicatorBand =
+        spec.indicatorSize > 0
+        ? spec.indicatorSize + spec.pageSpacing
+        : 0;
 
     const int availableWidth =
         widget->width()
         - spec.outerMargins.left()
         - spec.outerMargins.right()
-        - qMax(0, cards - 1)
-            * spec.pageSpacing;
+        - qMax(0, cards - 1) * spec.pageSpacing;
 
-    const int cardWidth =
-        qMax(
-            spec.minimumItemSize.width(),
-            availableWidth
-                / qMax(1, cards));
-    const int cardHeight =
-        qMax(
-            spec.minimumItemSize.height(),
-            widget->height()
-                - spec.outerMargins.top()
-                - spec.outerMargins.bottom());
+    const int cardWidth = qMax(
+        spec.minimumItemSize.width(),
+        availableWidth / qMax(1, cards));
+    const int cardHeight = qMax(
+        spec.minimumItemSize.height(),
+        widget->height()
+            - spec.outerMargins.top()
+            - spec.outerMargins.bottom()
+            - indicatorBand);
 
     const int visualOffset =
-        widget->layoutDirection()
-            == Qt::RightToLeft
+        widget->layoutDirection() == Qt::RightToLeft
         ? cards - 1 - visibleOffset
         : visibleOffset;
-
     const int x =
         spec.outerMargins.left()
-        + visualOffset
-            * (cardWidth + spec.pageSpacing);
+        + visualOffset * (cardWidth + spec.pageSpacing);
 
     return QRect(
         x,
@@ -686,29 +680,67 @@ QtMaterialCarousel::resolvedSpec() const
     return d_ptr->spec;
 }
 
+CarouselSpec QtMaterialCarousel::spec() const
+{
+    return resolvedSpec();
+}
+
+void QtMaterialCarousel::setSpec(
+    const CarouselSpec& spec)
+{
+    d_ptr->explicitSpec = spec;
+    d_ptr->explicitSpecSet = true;
+    d_ptr->specDirty = true;
+    ensureSpecResolved();
+    updateGeometry();
+    update();
+}
+
+bool QtMaterialCarousel::hasExplicitSpec() const noexcept
+{
+    return d_ptr->explicitSpecSet;
+}
+
+void QtMaterialCarousel::resetSpec()
+{
+    if (!d_ptr->explicitSpecSet) {
+        return;
+    }
+
+    d_ptr->explicitSpecSet = false;
+    d_ptr->specDirty = true;
+    ensureSpecResolved();
+    updateGeometry();
+    update();
+}
+
 QSize QtMaterialCarousel::sizeHint() const
 {
-    const CarouselSpec& spec =
-        resolvedSpec();
-
-    const int cards =
-        qMax(1, d_ptr->visibleItemCount);
+    const CarouselSpec& spec = resolvedSpec();
+    const int cards = qMax(1, d_ptr->visibleItemCount);
+    const int indicatorBand =
+        spec.indicatorSize > 0
+        ? spec.indicatorSize + spec.pageSpacing
+        : 0;
 
     return QSize(
         spec.outerMargins.left()
             + spec.outerMargins.right()
             + cards * spec.itemSize.width()
-            + qMax(0, cards - 1)
-                * spec.pageSpacing,
+            + qMax(0, cards - 1) * spec.pageSpacing,
         spec.outerMargins.top()
             + spec.outerMargins.bottom()
-            + spec.itemSize.height());
+            + spec.itemSize.height()
+            + indicatorBand);
 }
 
 QSize QtMaterialCarousel::minimumSizeHint() const
 {
-    const CarouselSpec& spec =
-        resolvedSpec();
+    const CarouselSpec& spec = resolvedSpec();
+    const int indicatorBand =
+        spec.indicatorSize > 0
+        ? spec.indicatorSize + spec.pageSpacing
+        : 0;
 
     return QSize(
         spec.outerMargins.left()
@@ -716,7 +748,8 @@ QSize QtMaterialCarousel::minimumSizeHint() const
             + spec.minimumItemSize.width(),
         spec.outerMargins.top()
             + spec.outerMargins.bottom()
-            + spec.minimumItemSize.height());
+            + spec.minimumItemSize.height()
+            + indicatorBand);
 }
 
 void QtMaterialCarousel::next()
@@ -1115,6 +1148,34 @@ void QtMaterialCarousel::paintEvent(
         }
     }
 
+    // Resolved page indicators.
+    if (spec.indicatorSize > 0) {
+        const int itemCount = d_ptr->items.size();
+        const int totalWidth =
+            itemCount * spec.indicatorSize
+            + qMax(0, itemCount - 1) * spec.pageSpacing;
+        int x = (width() - totalWidth) / 2;
+        const int y =
+            height()
+            - spec.outerMargins.bottom()
+            - spec.indicatorSize;
+
+        painter.setPen(Qt::NoPen);
+        for (int index = 0; index < itemCount; ++index) {
+            painter.setBrush(
+                index == d_ptr->currentIndex
+                ? spec.activePageIndicatorColor
+                : spec.pageIndicatorColor);
+            painter.drawEllipse(
+                QRect(
+                    x,
+                    y,
+                    spec.indicatorSize,
+                    spec.indicatorSize));
+            x += spec.indicatorSize + spec.pageSpacing;
+        }
+    }
+
     if (
         hasFocus()
         && spec.focusRingWidth > 0) {
@@ -1152,6 +1213,12 @@ void QtMaterialCarousel::changeEvent(
 void QtMaterialCarousel::ensureSpecResolved() const
 {
     if (!d_ptr->specDirty) {
+        return;
+    }
+
+    if (d_ptr->explicitSpecSet) {
+        d_ptr->spec = d_ptr->explicitSpec;
+        d_ptr->specDirty = false;
         return;
     }
 

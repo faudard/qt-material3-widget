@@ -153,6 +153,7 @@ qtm3_add_test(tst_table_resolvedspec widgets/data/tst_table_resolvedspec.cpp qtm
 qtm3_add_test(tst_gridlist widgets/data/tst_gridlist.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_themedgridlist widgets/data/tst_themedgridlist.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_carousel widgets/data/tst_carousel.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_themedcarousel widgets/data/tst_themedcarousel.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_datacarouselresolver specs/tst_datacarouselresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_datawidgetresolvedspec specs/tst_datawidgetresolvedspec.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_datatableresolver specs/tst_datatableresolver.cpp qtmaterial3_theme qtmaterial3_specs)

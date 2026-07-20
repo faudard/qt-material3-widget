@@ -108,6 +108,10 @@ public:
     QString accessibilitySummary() const;
 
     const CarouselSpec& resolvedSpec() const;
+    CarouselSpec spec() const;
+    void setSpec(const CarouselSpec& spec);
+    bool hasExplicitSpec() const noexcept;
+    void resetSpec();
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
