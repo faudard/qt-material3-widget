@@ -1036,6 +1036,97 @@
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*stateLayer\\s*\\(",
         "palette\\s*\\(\\s*\\)\\s*\\.\\s*color\\s*\\("
       ]
+    },
+    {
+      "name": "snackbar-spec-owns-layout-and-timing-policy",
+      "files": [
+        "include/qtmaterial/specs/qtmaterialsnackbarspec.h"
+      ],
+      "required_regex": [
+        "\\bint\\s+minWidth\\b",
+        "\\bint\\s+labelMinWidth\\b",
+        "\\bint\\s+controlsReserveSpacing\\b",
+        "\\bint\\s+slideDistance\\b",
+        "\\bint\\s+actionPaddingHorizontal\\b",
+        "\\bint\\s+actionPaddingVertical\\b",
+        "\\bint\\s+shortDurationMs\\b",
+        "\\bint\\s+longDurationMs\\b"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "snackbar-resolver-delegates-component-overrides",
+      "files": [
+        "src/specs/qtmaterialsurfacespecresolver.cpp"
+      ],
+      "required_regex": [
+        "\\bapplySnackbarComponentTokens\\s*\\(",
+        "QStringLiteral\\(\"surface\"\\)",
+        "QStringLiteral\\(\"snackbar\"\\)",
+        "QStringLiteral\\(\"Snackbar\"\\)"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "\\breturn\\s+4000\\s*;",
+        "\\breturn\\s+10000\\s*;"
+      ]
+    },
+    {
+      "name": "snackbar-token-applier-resolves-behavior-metrics",
+      "files": [
+        "src/specs/qtmaterialcomponenttokenapplier.cpp"
+      ],
+      "required_regex": [
+        "\\bapplySnackbarComponentTokens\\s*\\(",
+        "\\bshortDurationMs\\b",
+        "\\blongDurationMs\\b",
+        "\\bslideDistance\\b",
+        "\\bactionPaddingHorizontal\\b",
+        "\\btokens\\.typography\\.contains\\b",
+        "\\btokens\\.elevations\\.contains\\b",
+        "\\btokens\\.motion\\.contains\\b"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b"
+      ]
+    },
+    {
+      "name": "snackbar-header-exposes-remaining-time-lifecycle",
+      "files": [
+        "include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h"
+      ],
+      "required_regex": [
+        "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bisAutoHidePaused\\s*\\(\\s*\\)\\s*const",
+        "\\bremainingAutoHideTimeMs\\s*\\(\\s*\\)\\s*const",
+        "\\bautoHidePausedChanged\\b"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "snackbar-source-preserves-auto-hide-remaining-time",
+      "files": [
+        "src/widgets/surfaces/qtmaterialsnackbar.cpp"
+      ],
+      "required_regex": [
+        "\\bremainingAutoHideMs\\b",
+        "\\bremainingTime\\s*\\(",
+        "\\bautoHidePausedChanged\\b",
+        "\\bslideDistance\\b",
+        "\\bcontrolsReserveSpacing\\b",
+        "\\blabelMinWidth\\b",
+        "\\bactionPaddingHorizontal\\b"
+      ],
+      "forbidden_regex": [
+        "\\breturn\\s+4000\\s*;",
+        "\\breturn\\s+10000\\s*;",
+        "\\bQSize\\s*\\(\\s*200\\s*,",
+        "\\bqMax\\s*\\(\\s*200\\s*,",
+        "\\bqMax\\s*\\(\\s*120\\s*,",
+        "\\+\\s*24\\s*;",
+        "hiddenY\\s*=\\s*finalY\\s*\\+\\s*16",
+        "padding:\\s*8px\\s+12px"
+      ]
     }
   ],
   "text_rules": [
@@ -1446,6 +1537,17 @@
         "\\bmouseReleaseEvent\\b",
         "\\bleaveEvent\\b",
         "\\binvalidateResolvedSpec\\b"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "snackbar-public-header-exposes-resolved-lifecycle",
+      "file": "include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h",
+      "required_regex": [
+        "\\bconst\\s+SnackbarSpec&\\s+resolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bbool\\s+isAutoHidePaused\\s*\\(\\s*\\)\\s*const",
+        "\\bint\\s+remainingAutoHideTimeMs\\s*\\(\\s*\\)\\s*const",
+        "\\bvoid\\s+autoHidePausedChanged\\s*\\(\\s*bool"
       ],
       "forbidden_regex": []
     }
