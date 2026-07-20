@@ -969,6 +969,73 @@
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\(",
         "emit\\s+selectedDateChanged\\s*\\(\\s*date\\s*\\)"
       ]
+    },
+    {
+      "name": "navigation-rail-spec-is-completely-resolved",
+      "files": [
+        "include/qtmaterial/specs/qtmaterialnavigationrailspec.h"
+      ],
+      "required_regex": [
+        "\\bQFont\\s+labelFont\\s*;",
+        "\\bMotionStyle\\s+motionStyle\\s*;",
+        "\\bQColor\\s+disabledIconColor\\s*;",
+        "\\bQColor\\s+disabledLabelColor\\s*;",
+        "\\bqreal\\s+indicatorRadius\\b",
+        "\\bqreal\\s+pressStateLayerOpacity\\b",
+        "\\bqreal\\s+focusRingWidth\\b",
+        "\\bint\\s+indicatorTopOffset\\b",
+        "\\bint\\s+iconTopOffset\\b",
+        "\\bint\\s+labelTopOffset\\b",
+        "\\bbool\\s+showDivider\\b"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "navigation-rail-resolver-owns-theme-resolution",
+      "files": [
+        "src/specs/qtmaterialnavigationrailspecresolver.cpp",
+        "src/specs/qtmaterialcomponenttokenapplier.cpp"
+      ],
+      "required_regex": [
+        "\\bapplyNavigationRailComponentTokens\\s*\\(",
+        "\\bhasResolvedLabelFont\\b",
+        "\\bhasResolvedMotionStyle\\b",
+        "\\bdisabledIconColor\\b",
+        "\\bdisabledLabelColor\\b",
+        "\\btokens\\.hasStateLayer\\b"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b"
+      ]
+    },
+    {
+      "name": "navigation-rail-renders-only-from-resolved-spec",
+      "files": [
+        "src/widgets/navigation/qtmaterialnavigationrail.cpp"
+      ],
+      "required_regex": [
+        "\\bNavigationRailSpecResolver\\b",
+        "\\bhoveredIndex\\b",
+        "\\bpressedIndex\\b",
+        "\\bhoverStateLayerOpacity\\b",
+        "\\bpressStateLayerOpacity\\b",
+        "\\bdisabledIconColor\\b",
+        "\\bdisabledLabelColor\\b",
+        "\\bindicatorTopOffset\\b",
+        "\\biconTopOffset\\b",
+        "\\blabelTopOffset\\b",
+        "\\bfocusRingWidth\\b",
+        "\\bshowDivider\\b",
+        "CompositionMode_SourceIn"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "\\bdisabledColor\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\(",
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*stateLayer\\s*\\(",
+        "palette\\s*\\(\\s*\\)\\s*\\.\\s*color\\s*\\("
+      ]
     }
   ],
   "text_rules": [
@@ -1366,6 +1433,19 @@
         "qtm3_add_test\\s*\\(\\s*tst_datepickerresolvedspec\\b",
         "qtm3_add_test\\s*\\(\\s*tst_themeddatepicker\\b",
         "qtm3_add_test\\s*\\(\\s*tst_datepickerstability\\b"
+      ],
+      "forbidden_regex": []
+    },
+    {
+      "name": "navigation-rail-public-header-keeps-resolved-contract",
+      "file": "include/qtmaterial/widgets/navigation/qtmaterialnavigationrail.h",
+      "required_regex": [
+        "\\bconst\\s+NavigationRailSpec&\\s+resolvedSpec\\s*\\(\\s*\\)\\s*const",
+        "\\bmouseMoveEvent\\b",
+        "\\bmousePressEvent\\b",
+        "\\bmouseReleaseEvent\\b",
+        "\\bleaveEvent\\b",
+        "\\binvalidateResolvedSpec\\b"
       ],
       "forbidden_regex": []
     }
