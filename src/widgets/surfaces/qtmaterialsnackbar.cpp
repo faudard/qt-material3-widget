@@ -18,7 +18,6 @@
 
 namespace QtMaterial {
 
-
 class QtMaterialSnackbarPrivate {
 public:
  mutable bool specDirty = true;
@@ -34,20 +33,22 @@ public:
  QTimer* timer = nullptr;
  bool pauseAutoHideOnInteraction = true;
  bool autoHidePaused = false;
+ int remainingAutoHideMs = 0;
  QString lastAccessibilitySummary;
  QPointer<QtMaterialTransitionController> transition;
 };
 
-
 namespace {
 
-int snackbarDurationMs(const SnackbarRequest& request)
+int snackbarDurationMs(
+    const SnackbarRequest& request,
+    const SnackbarSpec& spec)
 {
     switch (request.duration) {
     case SnackbarDuration::Short:
-        return 4000;
+        return spec.shortDurationMs;
     case SnackbarDuration::Long:
-        return 10000;
+        return spec.longDurationMs;
     case SnackbarDuration::Indefinite:
         return 0;
     }
@@ -83,8 +84,8 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
     d_ptr->dismissButton->hide();
 
     d_ptr->layout = new QHBoxLayout(this);
-    d_ptr->layout->setContentsMargins(16, 14, 8, 14);
-    d_ptr->layout->setSpacing(8);
+    d_ptr->layout->setContentsMargins(QMargins());
+    d_ptr->layout->setSpacing(0);
     d_ptr->layout->addWidget(d_ptr->label, 1);
     d_ptr->layout->addWidget(d_ptr->actionButton, 0);
     d_ptr->layout->addWidget(d_ptr->dismissButton, 0);
@@ -100,9 +101,14 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
             d_ptr->specPtr->enterMotionStyle);
     }
 
-    connect(d_ptr->timer, &QTimer::timeout, this, [this]() {
-        dismiss(SnackbarDismissReason::Timeout);
-    });
+    connect(
+        d_ptr->timer,
+        &QTimer::timeout,
+        this,
+        [this]() {
+            d_ptr->remainingAutoHideMs = 0;
+            dismiss(SnackbarDismissReason::Timeout);
+        });
 
     connect(d_ptr->actionButton, &QPushButton::clicked, this, [this]() {
         emit actionTriggered();
@@ -142,6 +148,10 @@ QtMaterialSnackbar::~QtMaterialSnackbar() = default;
 void QtMaterialSnackbar::setRequest(const SnackbarRequest& request)
 {
     d_ptr->request = request;
+    ensureSpecResolved();
+    d_ptr->remainingAutoHideMs = d_ptr->specPtr
+        ? snackbarDurationMs(request, *d_ptr->specPtr)
+        : 0;
     applyRequestToUi();
     updateAutoHide();
     updateGeometry();
@@ -190,6 +200,12 @@ void QtMaterialSnackbar::setDuration(SnackbarDuration duration)
     }
 
     d_ptr->request.duration = duration;
+    ensureSpecResolved();
+    d_ptr->remainingAutoHideMs = d_ptr->specPtr
+        ? snackbarDurationMs(
+              d_ptr->request,
+              *d_ptr->specPtr)
+        : 0;
     updateAutoHide();
 }
 
@@ -233,6 +249,15 @@ void QtMaterialSnackbar::showSnackbar()
     raise();
 
     d_ptr->timer->stop();
+    d_ptr->remainingAutoHideMs = d_ptr->specPtr
+        ? snackbarDurationMs(
+              d_ptr->request,
+              *d_ptr->specPtr)
+        : 0;
+    if (d_ptr->autoHidePaused) {
+        d_ptr->autoHidePaused = false;
+        Q_EMIT autoHidePausedChanged(false);
+    }
     d_ptr->pendingDismissReason = SnackbarDismissReason::Manual;
     d_ptr->state = State::Entering;
     d_ptr->transition->startForward();
@@ -245,6 +270,11 @@ void QtMaterialSnackbar::dismiss(SnackbarDismissReason reason)
     }
 
     d_ptr->timer->stop();
+    d_ptr->remainingAutoHideMs = 0;
+    if (d_ptr->autoHidePaused) {
+        d_ptr->autoHidePaused = false;
+        Q_EMIT autoHidePausedChanged(false);
+    }
     d_ptr->pendingDismissReason = reason;
 
     ensureSpecResolved();
@@ -262,21 +292,51 @@ qreal QtMaterialSnackbar::progress() const noexcept
     return d_ptr->transition ? d_ptr->transition->progress() : 0.0;
 }
 
+const SnackbarSpec& QtMaterialSnackbar::resolvedSpec() const
+{
+    ensureSpecResolved();
+    return *d_ptr->specPtr;
+}
+
+bool QtMaterialSnackbar::isAutoHidePaused() const noexcept
+{
+    return d_ptr->autoHidePaused;
+}
+
+int QtMaterialSnackbar::remainingAutoHideTimeMs() const noexcept
+{
+    if (d_ptr->timer && d_ptr->timer->isActive()) {
+        return qMax(0, d_ptr->timer->remainingTime());
+    }
+    return qMax(0, d_ptr->remainingAutoHideMs);
+}
+
 QSize QtMaterialSnackbar::sizeHint() const
 {
     ensureSpecResolved();
+    if (!d_ptr->specPtr) {
+        return QSize();
+    }
 
-    const int minHeight = d_ptr->specPtr ? d_ptr->specPtr->minHeight : 48;
-    const int minWidth = 200;
-    const QSize hint = layout() ? layout()->sizeHint() : QSize(minWidth, minHeight);
-
-    return QSize(qMax(minWidth, hint.width()), qMax(minHeight, hint.height()));
+    const QSize hint =
+        layout()
+            ? layout()->sizeHint()
+            : QSize(
+                  d_ptr->specPtr->minWidth,
+                  d_ptr->specPtr->minHeight);
+    return QSize(
+        qMax(d_ptr->specPtr->minWidth, hint.width()),
+        qMax(d_ptr->specPtr->minHeight, hint.height()));
 }
 
 QSize QtMaterialSnackbar::minimumSizeHint() const
 {
     ensureSpecResolved();
-    return QSize(200, d_ptr->specPtr ? d_ptr->specPtr->minHeight : 48);
+    return d_ptr->specPtr
+        ? QSize(
+              d_ptr->specPtr->minWidth,
+              d_ptr->specPtr->minHeight)
+        : QSize();
 }
 
 qreal QtMaterialSnackbar::resolvedCornerRadius()
@@ -349,10 +409,10 @@ void QtMaterialSnackbar::themeChangedEvent(const QtMaterial::Theme& theme)
 
     invalidateResolvedSpec();
     applyResolvedTheme();
+    updateAutoHide();
     syncGeometryToHost();
     update();
 }
-
 
 bool QtMaterialSnackbar::event(QEvent* event)
 {
@@ -395,7 +455,6 @@ bool QtMaterialSnackbar::eventFilter(QObject* watched, QEvent* event)
 
     return QtMaterialOverlaySurface::eventFilter(watched, event);
 }
-
 
 QString QtMaterialSnackbar::accessibilitySummary() const
 {
@@ -474,67 +533,88 @@ void QtMaterialSnackbar::syncAccessibilityState()
 
 void QtMaterialSnackbar::setAutoHidePaused(bool paused)
 {
-    if (!d_ptr->pauseAutoHideOnInteraction || snackbarDurationMs(d_ptr->request) <= 0) {
+    ensureSpecResolved();
+    if (!d_ptr->pauseAutoHideOnInteraction
+        || !d_ptr->specPtr
+        || snackbarDurationMs(
+               d_ptr->request,
+               *d_ptr->specPtr) <= 0
+        || d_ptr->autoHidePaused == paused) {
         return;
     }
 
-    if (d_ptr->autoHidePaused == paused) {
-        return;
-    }
-
-    d_ptr->autoHidePaused = paused;
-    if (d_ptr->autoHidePaused) {
+    if (paused) {
+        const int remaining =
+            d_ptr->timer->remainingTime();
+        if (remaining > 0) {
+            d_ptr->remainingAutoHideMs = remaining;
+        }
         d_ptr->timer->stop();
+        d_ptr->autoHidePaused = true;
+        Q_EMIT autoHidePausedChanged(true);
         return;
     }
 
+    d_ptr->autoHidePaused = false;
+    Q_EMIT autoHidePausedChanged(false);
     updateAutoHide();
 }
-
 
 void QtMaterialSnackbar::syncGeometryToHost()
 {
     QWidget* host = hostWidget();
     ensureSpecResolved();
-
-    if (!host || !d_ptr->specPtr || !d_ptr->layout || !d_ptr->label || !d_ptr->actionButton || !d_ptr->dismissButton) {
+    if (!host || !d_ptr->specPtr) {
         return;
     }
 
-    d_ptr->layout->setContentsMargins(d_ptr->specPtr->contentPadding);
-    d_ptr->layout->setSpacing(d_ptr->specPtr->actionSpacing);
-    if (d_ptr->specPtr->hasResolvedTextFont) {
-        d_ptr->label->setFont(d_ptr->specPtr->textFont);
-    }
-    if (d_ptr->specPtr->hasResolvedActionFont) {
-        d_ptr->actionButton->setFont(
-            d_ptr->specPtr->actionFont);
-    }
+    const SnackbarSpec& spec = *d_ptr->specPtr;
+    const QMargins margins = spec.outerMargins;
+    const int availableWidth = qMax(
+        spec.minWidth,
+        host->width()
+            - margins.left()
+            - margins.right());
+    const int maxWidth =
+        qMin(spec.maxWidth, availableWidth);
 
-    const QMargins margins = d_ptr->specPtr->outerMargins;
-    const int maxWidth = qMin(d_ptr->specPtr->maxWidth,
-                              qMax(200, host->width() - margins.left() - margins.right()));
-
-    const int estimatedButtonWidth =
+    const int estimatedControlsWidth =
         (d_ptr->actionButton->isVisible()
-             ? qMax(d_ptr->specPtr->actionMinWidth, d_ptr->actionButton->sizeHint().width())
-             : 0)
-        + (d_ptr->dismissButton->isVisible() ? d_ptr->specPtr->dismissButtonSize : 0)
-        + 24;
+            ? qMax(
+                spec.actionMinWidth,
+                d_ptr->actionButton->sizeHint().width())
+            : 0)
+        + (d_ptr->dismissButton->isVisible()
+            ? spec.dismissButtonSize
+            : 0)
+        + spec.controlsReserveSpacing;
 
-    d_ptr->label->setMaximumWidth(qMax(120, maxWidth - estimatedButtonWidth));
+    d_ptr->label->setMaximumWidth(
+        qMax(
+            spec.labelMinWidth,
+            maxWidth - estimatedControlsWidth));
 
     const QSize hint = sizeHint();
-    const int w = qMin(maxWidth, qMax(hint.width(), 200));
-    const int h = qMax(d_ptr->specPtr->minHeight, hint.height());
+    const int width =
+        qMin(maxWidth, qMax(hint.width(), spec.minWidth));
+    const int height =
+        qMax(spec.minHeight, hint.height());
 
-    const qreal p = progress();
-    const int finalX = (host->width() - w) / 2;
-    const int finalY = host->height() - margins.bottom() - h;
-    const int hiddenY = finalY + 16;
-    const int y = hiddenY - qRound((hiddenY - finalY) * p);
+    const qreal transitionProgress = progress();
+    const int finalX = (host->width() - width) / 2;
+    const int finalY =
+        host->height()
+        - margins.bottom()
+        - height;
+    const int hiddenY =
+        finalY + spec.slideDistance;
+    const int y =
+        hiddenY
+        - qRound(
+            (hiddenY - finalY)
+            * transitionProgress);
 
-    setGeometry(finalX, y, w, h);
+    setGeometry(finalX, y, width, height);
 }
 
 void QtMaterialSnackbar::ensureSpecResolved() const
@@ -558,26 +638,65 @@ void QtMaterialSnackbar::invalidateResolvedSpec()
 void QtMaterialSnackbar::applyResolvedTheme()
 {
     ensureSpecResolved();
-    if (!d_ptr->specPtr || !d_ptr->layout || !d_ptr->label || !d_ptr->actionButton || !d_ptr->dismissButton) {
+    if (!d_ptr->specPtr
+        || !d_ptr->layout
+        || !d_ptr->label
+        || !d_ptr->actionButton
+        || !d_ptr->dismissButton) {
         return;
     }
 
-    d_ptr->layout->setContentsMargins(d_ptr->specPtr->contentPadding);
-    d_ptr->layout->setSpacing(d_ptr->specPtr->actionSpacing);
+    const SnackbarSpec& spec = *d_ptr->specPtr;
 
-    d_ptr->label->setStyleSheet(QStringLiteral(
-                               "background: transparent; color: %1;")
-                               .arg(d_ptr->specPtr->textColor.name(QColor::HexArgb)));
+    d_ptr->layout->setContentsMargins(spec.contentPadding);
+    d_ptr->layout->setSpacing(spec.actionSpacing);
 
-    d_ptr->actionButton->setMinimumWidth(d_ptr->specPtr->actionMinWidth);
-    d_ptr->actionButton->setStyleSheet(QStringLiteral(
-                                      "QPushButton { background: transparent; border: none; color: %1; padding: 8px 12px; }")
-                                      .arg(d_ptr->specPtr->actionColor.name(QColor::HexArgb)));
+    if (spec.hasResolvedTextFont) {
+        d_ptr->label->setFont(spec.textFont);
+    }
+    if (spec.hasResolvedActionFont) {
+        d_ptr->actionButton->setFont(spec.actionFont);
+        d_ptr->dismissButton->setFont(spec.actionFont);
+    }
 
-    d_ptr->dismissButton->setFixedSize(d_ptr->specPtr->dismissButtonSize, d_ptr->specPtr->dismissButtonSize);
-    d_ptr->dismissButton->setStyleSheet(QStringLiteral(
-                                       "QPushButton { background: transparent; border: none; color: %1; }")
-                                       .arg(d_ptr->specPtr->dismissIconColor.name(QColor::HexArgb)));
+    d_ptr->label->setStyleSheet(
+        QStringLiteral(
+            "background: transparent; color: %1;")
+            .arg(spec.textColor.name(QColor::HexArgb)));
+
+    d_ptr->actionButton->setMinimumWidth(
+        spec.actionMinWidth);
+    d_ptr->actionButton->setStyleSheet(
+        QStringLiteral(
+            "QPushButton {"
+            " background: transparent;"
+            " border: none;"
+            " border-radius: %1px;"
+            " color: %2;"
+            " padding: %3px %4px;"
+            "}")
+            .arg(spec.actionCornerRadius)
+            .arg(spec.actionColor.name(QColor::HexArgb))
+            .arg(spec.actionPaddingVertical)
+            .arg(spec.actionPaddingHorizontal));
+
+    d_ptr->dismissButton->setFixedSize(
+        spec.dismissButtonSize,
+        spec.dismissButtonSize);
+    d_ptr->dismissButton->setStyleSheet(
+        QStringLiteral(
+            "QPushButton {"
+            " background: transparent;"
+            " border: none;"
+            " border-radius: %1px;"
+            " color: %2;"
+            "}")
+            .arg(spec.dismissCornerRadius)
+            .arg(
+                spec.dismissIconColor.name(
+                    QColor::HexArgb)));
+
+    updateGeometry();
 }
 
 void QtMaterialSnackbar::applyRequestToUi()
@@ -598,12 +717,36 @@ void QtMaterialSnackbar::applyRequestToUi()
 void QtMaterialSnackbar::updateAutoHide()
 {
     d_ptr->timer->stop();
+    ensureSpecResolved();
 
-    const int durationMs = snackbarDurationMs(d_ptr->request);
-    if (durationMs > 0 && (d_ptr->state == State::Entering || d_ptr->state == State::Visible)) {
-        d_ptr->timer->start(durationMs);
+    if (!d_ptr->specPtr) {
+        d_ptr->remainingAutoHideMs = 0;
+        return;
+    }
+
+    const int totalDuration =
+        snackbarDurationMs(
+            d_ptr->request,
+            *d_ptr->specPtr);
+    const bool canRun =
+        totalDuration > 0
+        && (d_ptr->state == State::Entering
+            || d_ptr->state == State::Visible);
+
+    if (!canRun) {
+        d_ptr->remainingAutoHideMs = 0;
+        return;
+    }
+
+    if (d_ptr->remainingAutoHideMs <= 0
+        || d_ptr->remainingAutoHideMs > totalDuration) {
+        d_ptr->remainingAutoHideMs = totalDuration;
+    }
+
+    if (!d_ptr->autoHidePaused) {
+        d_ptr->timer->start(
+            d_ptr->remainingAutoHideMs);
     }
 }
-
 
 } // namespace QtMaterial
