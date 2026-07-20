@@ -11,6 +11,7 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
+#include "qtmaterial/theme/qtmaterialthemecontexthost.h"
 
 class QEvent;
 class QKeyEvent;
@@ -25,8 +26,10 @@ class QtMaterialGridListPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialGridList
     : public QListWidget
+    , public ThemeContextHost
 {
     Q_OBJECT
+    Q_INTERFACES(QtMaterial::ThemeContextHost)
     Q_PROPERTY(
         QtMaterial::ThemeContext* themeContext
         READ themeContext
@@ -61,10 +64,14 @@ public:
 
     void setThemeContext(
         ThemeContext* context);
-    ThemeContext* themeContext() const noexcept;
-    ThemeContext* effectiveThemeContext() const noexcept;
+    ThemeContext* themeContext() const noexcept override;
+    ThemeContext* effectiveThemeContext() const noexcept override;
 
     const GridListSpec& resolvedSpec() const;
+    GridListSpec spec() const;
+    void setSpec(const GridListSpec& spec);
+    bool hasExplicitSpec() const noexcept;
+    void resetSpec();
 
     int addGridItem(
         const QString& title,
@@ -116,6 +123,8 @@ public:
 
     QSize cellExtent() const;
     void setCellExtent(const QSize& size);
+    bool hasCellExtentOverride() const noexcept;
+    void resetCellExtent();
 
     QString itemAccessibleText(int index) const;
     QString currentItemAccessibleText() const;
@@ -147,14 +156,6 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
-    bool refreshThemeContextConnection();
-
-    void handleThemeChanged(
-        const Theme& theme);
-    void handleInheritedThemeContextChanged(
-        ThemeContext* context);
-    void handleThemeContextDestroyed(
-        bool explicitContext);
 
     void ensureSpecResolved() const;
     void applyResolvedSpec();

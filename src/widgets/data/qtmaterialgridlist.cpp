@@ -1,5 +1,7 @@
 #include "qtmaterial/widgets/data/qtmaterialgridlist.h"
 
+#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+
 #include <algorithm>
 
 #include <QEvent>
@@ -10,17 +12,14 @@
 #include <QPainter>
 #include <QPalette>
 #include <QPainterPath>
-#include <QPointer>
 #include <QResizeEvent>
 #include <QScrollBar>
 #include <QStyle>
 #include <QStyledItemDelegate>
 #include <QStyleOptionViewItem>
 
-#include "qtmaterial/core/qtmaterialwidget.h"
 #include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
-#include "qtmaterial/theme/qtmaterialthememanager.h"
 
 namespace QtMaterial {
 namespace {
@@ -170,14 +169,13 @@ void updateItemText(
     item->setToolTip(display);
 }
 
-class GridListDelegate final
-    : public QStyledItemDelegate
+class GridListDelegate final : public QStyledItemDelegate
 {
 public:
     explicit GridListDelegate(
-        QtMaterialGridList* owner)
-        : QStyledItemDelegate(owner)
-        , m_owner(owner)
+        QtMaterialGridList* grid)
+        : QStyledItemDelegate(grid)
+        , m_grid(grid)
     {
     }
 
@@ -185,9 +183,7 @@ public:
         const QStyleOptionViewItem&,
         const QModelIndex&) const override
     {
-        return m_owner
-            ? m_owner->cellExtent()
-            : QSize(160, 144);
+        return m_grid ? m_grid->cellExtent() : QSize(160, 144);
     }
 
     void paint(
@@ -195,227 +191,143 @@ public:
         const QStyleOptionViewItem& option,
         const QModelIndex& index) const override
     {
-        if (
-            !painter
-            || !m_owner
-            || !index.isValid()) {
+        if (!painter || !m_grid) {
             return;
         }
 
-        const GridListSpec& spec =
-            m_owner->resolvedSpec();
-
+        const GridListSpec& spec = m_grid->resolvedSpec();
         const bool enabled =
-            option.state
-            .testFlag(QStyle::State_Enabled);
+            option.state.testFlag(QStyle::State_Enabled);
         const bool selected =
-            option.state
-            .testFlag(QStyle::State_Selected);
+            option.state.testFlag(QStyle::State_Selected);
         const bool hovered =
-            option.state
-            .testFlag(QStyle::State_MouseOver);
+            option.state.testFlag(QStyle::State_MouseOver);
         const bool focused =
-            option.state
-            .testFlag(QStyle::State_HasFocus);
-
-        QRectF itemRect =
-            QRectF(option.rect).adjusted(
-                2.0,
-                2.0,
-                -2.0,
-                -2.0);
-
-        const qreal radius =
-            qBound<qreal>(
-                0.0,
-                spec.itemRadius,
-                qMin(
-                    itemRect.width(),
-                    itemRect.height())
-                    / 2.0);
-
-        QColor background =
-            spec.itemBackgroundColor;
-        QColor foreground =
-            enabled
-            ? spec.foregroundColor
-            : spec.disabledTextColor;
-
-        if (selected) {
-            background =
-                spec.itemSelectedColor;
-            foreground =
-                enabled
-                ? spec.itemSelectedTextColor
-                : spec.disabledTextColor;
-        } else if (hovered && enabled) {
-            background =
-                spec.itemHoverColor;
-        }
-
-        QPainterPath path;
-        path.addRoundedRect(
-            itemRect,
-            radius,
-            radius);
+            option.state.testFlag(QStyle::State_HasFocus);
 
         painter->save();
-        painter->setRenderHint(
-            QPainter::Antialiasing,
-            true);
-        painter->fillPath(
-            path,
-            background);
+        painter->setRenderHint(QPainter::Antialiasing, true);
 
-        if (
-            focused
-            && spec.focusRingWidth > 0) {
-            painter->setPen(
-                QPen(
-                    spec.focusRingColor,
-                    spec.focusRingWidth));
-            painter->setBrush(Qt::NoBrush);
-            painter->drawPath(path);
+        const qreal outlineInset =
+            qMax(spec.outlineWidth, spec.focusRingWidth) / 2.0;
+        const QRectF cardRect =
+            QRectF(option.rect).adjusted(
+                outlineInset,
+                outlineInset,
+                -outlineInset,
+                -outlineInset);
+
+        QColor fill = selected
+            ? spec.itemSelectedColor
+            : spec.itemBackgroundColor;
+        painter->setPen(
+            spec.outlineWidth > 0
+            ? QPen(spec.itemOutlineColor, spec.outlineWidth)
+            : QPen(Qt::NoPen));
+        painter->setBrush(fill);
+        painter->drawRoundedRect(
+            cardRect,
+            spec.itemRadius,
+            spec.itemRadius);
+
+        if (hovered && enabled && !selected) {
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(spec.itemHoverColor);
+            painter->drawRoundedRect(
+                cardRect,
+                spec.itemRadius,
+                spec.itemRadius);
         }
 
-        const QIcon icon =
-            qvariant_cast<QIcon>(
-                index.data(
-                    Qt::DecorationRole));
-
-        const int horizontalPadding = 12;
-        const int verticalPadding = 10;
-        const int iconExtent =
-            icon.isNull()
-            ? 0
-            : qMin(
-                48,
-                qMax(
-                    24,
-                    static_cast<int>(
-                        itemRect.height() * 0.34)));
-
-        int contentTop =
-            static_cast<int>(itemRect.top())
-            + verticalPadding;
-
-        if (!icon.isNull()) {
+        QRect content =
+            option.rect.marginsRemoved(spec.itemContentMargins);
+        const QIcon icon = qvariant_cast<QIcon>(
+            index.data(Qt::DecorationRole));
+        if (!icon.isNull() && spec.iconSize.isValid()) {
             const QRect iconRect(
-                static_cast<int>(
-                    itemRect.center().x())
-                    - iconExtent / 2,
-                contentTop,
-                iconExtent,
-                iconExtent);
-
+                content.center().x() - spec.iconSize.width() / 2,
+                content.top(),
+                spec.iconSize.width(),
+                spec.iconSize.height());
             icon.paint(
                 painter,
                 iconRect,
                 Qt::AlignCenter,
-                enabled
-                    ? QIcon::Normal
-                    : QIcon::Disabled);
-
-            contentTop =
-                iconRect.bottom() + 8;
+                enabled ? QIcon::Normal : QIcon::Disabled);
+            content.setTop(
+                iconRect.bottom() + 1 + spec.iconTextSpacing);
         }
 
-        const QRect textRect(
-            static_cast<int>(itemRect.left())
-                + horizontalPadding,
-            contentTop,
-            qMax(
-                0,
-                static_cast<int>(itemRect.width())
-                    - 2 * horizontalPadding),
-            qMax(
-                0,
-                static_cast<int>(itemRect.bottom())
-                    - contentTop
-                    - verticalPadding));
+        const QColor titleColor = !enabled
+            ? spec.disabledTextColor
+            : selected
+                ? spec.itemSelectedTextColor
+                : spec.foregroundColor;
+        const QColor supportingColor = !enabled
+            ? spec.disabledSupportingTextColor
+            : selected
+                ? spec.itemSelectedTextColor
+                : spec.supportingTextColor;
 
-        const QString title =
-            index.data(kTitleRole).toString();
-        const QString supporting =
-            index.data(
-                kSupportingTextRole).toString();
-
-        QFont titleFont =
-            spec.titleFont;
-        if (titleFont.family().isEmpty()) {
-            titleFont = option.font;
-        }
-
-        painter->setFont(titleFont);
-        painter->setPen(foreground);
-
-        QFontMetrics titleMetrics(titleFont);
-        const QString elidedTitle =
-            titleMetrics.elidedText(
-                title,
-                Qt::ElideRight,
-                textRect.width());
-
-        const int titleHeight =
-            titleMetrics.height();
-
-        QRect titleRect = textRect;
-        if (supporting.trimmed().isEmpty()) {
-            titleRect.setTop(
-                textRect.center().y()
-                - titleHeight / 2);
-            titleRect.setHeight(titleHeight);
-        } else {
-            titleRect.setHeight(titleHeight);
-        }
-
+        painter->setFont(spec.titleFont);
+        painter->setPen(titleColor);
+        const QFontMetrics titleMetrics(spec.titleFont);
+        const QString title = index.data(kTitleRole).toString();
+        const QString elidedTitle = titleMetrics.elidedText(
+            title,
+            Qt::ElideRight,
+            content.width());
+        const QRect titleRect(
+            content.left(),
+            content.top(),
+            content.width(),
+            titleMetrics.height());
         painter->drawText(
             titleRect,
-            Qt::AlignHCenter
-                | Qt::AlignVCenter,
+            Qt::AlignHCenter | Qt::AlignTop,
             elidedTitle);
 
+        const QString supporting =
+            index.data(kSupportingTextRole).toString();
         if (!supporting.trimmed().isEmpty()) {
-            QFont supportingFont =
-                spec.supportingFont;
-            if (
-                supportingFont.family().isEmpty()) {
-                supportingFont = option.font;
-            }
-
-            painter->setFont(
-                supportingFont);
-            painter->setPen(
-                enabled
-                ? spec.supportingTextColor
-                : spec.disabledTextColor);
-
-            QFontMetrics supportingMetrics(
-                supportingFont);
-            const QString elidedSupporting =
+            painter->setFont(spec.supportingFont);
+            painter->setPen(supportingColor);
+            const QFontMetrics supportingMetrics(spec.supportingFont);
+            const QRect supportingRect(
+                content.left(),
+                titleRect.bottom() + 1
+                    + spec.titleSupportingSpacing,
+                content.width(),
+                supportingMetrics.height());
+            painter->drawText(
+                supportingRect,
+                Qt::AlignHCenter | Qt::AlignTop,
                 supportingMetrics.elidedText(
                     supporting,
                     Qt::ElideRight,
-                    textRect.width());
+                    supportingRect.width()));
+        }
 
-            QRect supportingRect = textRect;
-            supportingRect.setTop(
-                titleRect.bottom() + 2);
-            supportingRect.setHeight(
-                supportingMetrics.height());
-
-            painter->drawText(
-                supportingRect,
-                Qt::AlignHCenter
-                    | Qt::AlignVCenter,
-                elidedSupporting);
+        if (focused && spec.focusRingWidth > 0) {
+            painter->setBrush(Qt::NoBrush);
+            painter->setPen(
+                QPen(spec.focusRingColor, spec.focusRingWidth));
+            const QRectF focusRect = cardRect.adjusted(
+                spec.focusRingWidth,
+                spec.focusRingWidth,
+                -spec.focusRingWidth,
+                -spec.focusRingWidth);
+            painter->drawRoundedRect(
+                focusRect,
+                qMax(0, spec.itemRadius - spec.focusRingWidth),
+                qMax(0, spec.itemRadius - spec.focusRingWidth));
         }
 
         painter->restore();
     }
 
 private:
-    QtMaterialGridList* m_owner = nullptr;
+    const QtMaterialGridList* m_grid = nullptr;
 };
 
 } // namespace
@@ -437,16 +349,9 @@ struct QtMaterialGridListPrivate
 
     mutable GridListSpec spec;
     mutable bool specDirty = true;
-
-    QPointer<ThemeContext> themeContext;
-    QPointer<ThemeContext> effectiveThemeContext;
-
-    QMetaObject::Connection
-        themeChangedConnection;
-    QMetaObject::Connection
-        themeDestroyedConnection;
-    QMetaObject::Connection
-        ancestorContextConnection;
+    GridListSpec explicitSpec;
+    bool explicitSpecSet = false;
+    QtMaterialThemeContextBinding* themeBinding = nullptr;
 
     GridListDelegate* delegate = nullptr;
 };
@@ -479,7 +384,26 @@ QtMaterialGridList::QtMaterialGridList(
         toQtSelectionMode(
             d_ptr->selectionMode));
 
-    refreshThemeContextConnection();
+    d_ptr->themeBinding =
+        new QtMaterialThemeContextBinding(this, this);
+    connect(
+        d_ptr->themeBinding,
+        &QtMaterialThemeContextBinding::effectiveThemeContextChanged,
+        this,
+        &QtMaterialGridList::effectiveThemeContextChanged);
+    connect(
+        d_ptr->themeBinding,
+        &QtMaterialThemeContextBinding::themeChanged,
+        this,
+        [this](const Theme&) {
+            if (d_ptr->explicitSpecSet) {
+                return;
+            }
+            d_ptr->specDirty = true;
+            ensureSpecResolved();
+            applyResolvedSpec();
+        });
+
     ensureSpecResolved();
     applyResolvedSpec();
     updateAccessibilitySummary();
@@ -539,61 +463,24 @@ QtMaterialGridList::~QtMaterialGridList() =
 void QtMaterialGridList::setThemeContext(
     ThemeContext* context)
 {
-    if (
-        d_ptr->themeContext.data()
-        == context) {
+    if (themeContext() == context) {
         return;
     }
 
-    d_ptr->themeContext = context;
-
-    const bool changed =
-        refreshThemeContextConnection();
-
+    d_ptr->themeBinding->setThemeContext(context);
     Q_EMIT themeContextChanged(context);
-
-    if (changed) {
-        Q_EMIT effectiveThemeContextChanged(
-            effectiveThemeContext());
-    }
-
-    d_ptr->specDirty = true;
-    ensureSpecResolved();
-    applyResolvedSpec();
 }
 
 ThemeContext*
 QtMaterialGridList::themeContext() const noexcept
 {
-    return d_ptr->themeContext.data();
+    return d_ptr->themeBinding->themeContext();
 }
 
 ThemeContext*
-QtMaterialGridList::
-effectiveThemeContext() const noexcept
+QtMaterialGridList::effectiveThemeContext() const noexcept
 {
-    if (d_ptr->themeContext) {
-        return d_ptr->themeContext.data();
-    }
-
-    QWidget* ancestor = parentWidget();
-
-    while (ancestor) {
-        if (
-            auto* materialParent =
-                qobject_cast<
-                    QtMaterialWidget*>(
-                        ancestor)) {
-            return materialParent
-                ->effectiveThemeContext();
-        }
-
-        ancestor =
-            ancestor->parentWidget();
-    }
-
-    return ThemeManager::instance()
-        .defaultContext();
+    return d_ptr->themeBinding->effectiveThemeContext();
 }
 
 const GridListSpec&
@@ -601,6 +488,38 @@ QtMaterialGridList::resolvedSpec() const
 {
     ensureSpecResolved();
     return d_ptr->spec;
+}
+
+GridListSpec QtMaterialGridList::spec() const
+{
+    return resolvedSpec();
+}
+
+void QtMaterialGridList::setSpec(
+    const GridListSpec& spec)
+{
+    d_ptr->explicitSpec = spec;
+    d_ptr->explicitSpecSet = true;
+    d_ptr->specDirty = true;
+    ensureSpecResolved();
+    applyResolvedSpec();
+}
+
+bool QtMaterialGridList::hasExplicitSpec() const noexcept
+{
+    return d_ptr->explicitSpecSet;
+}
+
+void QtMaterialGridList::resetSpec()
+{
+    if (!d_ptr->explicitSpecSet) {
+        return;
+    }
+
+    d_ptr->explicitSpecSet = false;
+    d_ptr->specDirty = true;
+    ensureSpecResolved();
+    applyResolvedSpec();
 }
 
 int QtMaterialGridList::addGridItem(
@@ -1032,6 +951,26 @@ void QtMaterialGridList::setCellExtent(
     Q_EMIT cellExtentChanged(normalized);
 }
 
+bool QtMaterialGridList::hasCellExtentOverride() const noexcept
+{
+    return d_ptr->cellExtentExplicit;
+}
+
+void QtMaterialGridList::resetCellExtent()
+{
+    if (!d_ptr->cellExtentExplicit) {
+        return;
+    }
+
+    const QSize previous = cellExtent();
+    d_ptr->cellExtentExplicit = false;
+    applyResolvedSpec();
+
+    if (previous != cellExtent()) {
+        Q_EMIT cellExtentChanged(cellExtent());
+    }
+}
+
 QString
 QtMaterialGridList::itemAccessibleText(
     int index) const
@@ -1117,26 +1056,7 @@ QSize QtMaterialGridList::sizeHint() const
 bool QtMaterialGridList::event(
     QEvent* event)
 {
-    const bool handled =
-        QListWidget::event(event);
-
-    if (
-        event
-        && event->type()
-            == QEvent::ParentChange) {
-        if (
-            refreshThemeContextConnection()) {
-            Q_EMIT
-                effectiveThemeContextChanged(
-                    effectiveThemeContext());
-        }
-
-        d_ptr->specDirty = true;
-        ensureSpecResolved();
-        applyResolvedSpec();
-    }
-
-    return handled;
+    return QListWidget::event(event);
 }
 
 void QtMaterialGridList::keyPressEvent(
@@ -1230,139 +1150,22 @@ void QtMaterialGridList::resizeEvent(
     updateGridSize();
 }
 
-bool QtMaterialGridList::
-refreshThemeContextConnection()
-{
-    ThemeContext* nextContext =
-        effectiveThemeContext();
-
-    const bool changed =
-        d_ptr->effectiveThemeContext.data()
-        != nextContext;
-
-    QObject::disconnect(
-        d_ptr->themeChangedConnection);
-    QObject::disconnect(
-        d_ptr->themeDestroyedConnection);
-    QObject::disconnect(
-        d_ptr->ancestorContextConnection);
-
-    d_ptr->effectiveThemeContext =
-        nextContext;
-
-    if (!d_ptr->themeContext) {
-        QWidget* ancestor =
-            parentWidget();
-
-        while (ancestor) {
-            if (
-                auto* materialParent =
-                    qobject_cast<
-                        QtMaterialWidget*>(
-                            ancestor)) {
-                d_ptr->ancestorContextConnection =
-                    QObject::connect(
-                        materialParent,
-                        &QtMaterialWidget::
-                            effectiveThemeContextChanged,
-                        this,
-                        &QtMaterialGridList::
-                            handleInheritedThemeContextChanged);
-                break;
-            }
-
-            ancestor =
-                ancestor->parentWidget();
-        }
-    }
-
-    if (nextContext) {
-        d_ptr->themeChangedConnection =
-            QObject::connect(
-                nextContext,
-                &ThemeContext::themeChanged,
-                this,
-                &QtMaterialGridList::
-                    handleThemeChanged);
-
-        const bool explicitContext =
-            nextContext
-            == d_ptr->themeContext.data();
-
-        d_ptr->themeDestroyedConnection =
-            QObject::connect(
-                nextContext,
-                &QObject::destroyed,
-                this,
-                [this, explicitContext]() {
-                    handleThemeContextDestroyed(
-                        explicitContext);
-                });
-    }
-
-    return changed;
-}
-
-void QtMaterialGridList::handleThemeChanged(
-    const Theme&)
-{
-    d_ptr->specDirty = true;
-    ensureSpecResolved();
-    applyResolvedSpec();
-}
-
-void QtMaterialGridList::
-handleInheritedThemeContextChanged(
-    ThemeContext*)
-{
-    if (
-        refreshThemeContextConnection()) {
-        Q_EMIT effectiveThemeContextChanged(
-            effectiveThemeContext());
-    }
-
-    d_ptr->specDirty = true;
-    ensureSpecResolved();
-    applyResolvedSpec();
-}
-
-void QtMaterialGridList::
-handleThemeContextDestroyed(
-    bool explicitContext)
-{
-    if (explicitContext) {
-        d_ptr->themeContext.clear();
-        Q_EMIT themeContextChanged(nullptr);
-    }
-
-    d_ptr->effectiveThemeContext.clear();
-    refreshThemeContextConnection();
-
-    Q_EMIT effectiveThemeContextChanged(
-        effectiveThemeContext());
-
-    d_ptr->specDirty = true;
-    ensureSpecResolved();
-    applyResolvedSpec();
-}
-
-void QtMaterialGridList::
-ensureSpecResolved() const
+void QtMaterialGridList::ensureSpecResolved() const
 {
     if (!d_ptr->specDirty) {
         return;
     }
 
-    ThemeContext* context =
-        effectiveThemeContext();
-    Q_ASSERT(context);
+    if (d_ptr->explicitSpecSet) {
+        d_ptr->spec = d_ptr->explicitSpec;
+        d_ptr->specDirty = false;
+        return;
+    }
 
-    const DataSpecResolver resolver;
     d_ptr->spec =
-        resolver.gridListSpec(
-            context->theme(),
+        DataSpecResolver().gridListSpec(
+            d_ptr->themeBinding->theme(),
             Density::Default);
-
     d_ptr->specDirty = false;
 }
 
