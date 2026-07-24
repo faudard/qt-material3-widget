@@ -1762,5 +1762,28 @@
         "&\\s*ThemeManager\\s*::\\s*themeChanged"
       ]
     }
+  ,
+    {
+      "name": "migrated-widget-families-render-from-resolved-specs",
+      "paths": [
+        "include/qtmaterial/widgets/buttons",
+        "src/widgets/buttons",
+        "include/qtmaterial/widgets/selection",
+        "src/widgets/selection",
+        "include/qtmaterial/widgets/progress",
+        "src/widgets/progress",
+        "include/qtmaterial/widgets/data",
+        "src/widgets/data"
+      ],
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "qtmaterial/specs/qtmaterialspecfactory\\.h",
+        "\\bThemeManager::instance\\s*\\(",
+        "\\btheme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\(",
+        "\\b[A-Za-z_]\\w*\\s*\\.\\s*theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\(",
+        "\\b[A-Za-z_]\\w*\\s*->\\s*theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\(",
+        "\\beffectiveThemeContext\\s*\\(\\s*\\)\\s*->\\s*theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\("
+      ]
+    }
   ]
 }
