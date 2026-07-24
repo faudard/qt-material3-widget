@@ -1747,5 +1747,20 @@
         "\\bmake(?:DatePicker|Table|GridList|Carousel)Spec\\s*\\("
       ]
     }
+  ,
+    {
+      "name": "runtime-widgets-do-not-access-global-theme-manager",
+      "paths": [
+        "include/qtmaterial/widgets",
+        "src/widgets",
+        "include/qtmaterial/effects",
+        "src/effects"
+      ],
+      "forbidden_regex": [
+        "qtmaterial/theme/qtmaterialthememanager\\.h",
+        "\\bThemeManager\\s*::\\s*instance\\s*\\(",
+        "&\\s*ThemeManager\\s*::\\s*themeChanged"
+      ]
+    }
   ]
 }
