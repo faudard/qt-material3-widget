@@ -7,6 +7,7 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 
+#include "qtmaterial/theme/qtmaterialthemecontexthost.h"
 class QListView;
 class QStringListModel;
 class QSortFilterProxyModel;
@@ -25,11 +26,13 @@ class ThemeContext;
 
 } // namespace QtMaterial
 
-
 class QtMaterialAutocompletePopupPrivate;
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialAutocompletePopup : public QWidget {
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialAutocompletePopup
+    : public QWidget
+    , public QtMaterial::ThemeContextHost {
     Q_PROPERTY(QtMaterial::ThemeContext* themeContext READ themeContext WRITE setThemeContext NOTIFY themeContextChanged)
     Q_OBJECT
+    Q_INTERFACES(QtMaterial::ThemeContextHost)
 public:
     explicit QtMaterialAutocompletePopup(QWidget* parent = nullptr);
     ~QtMaterialAutocompletePopup() override;
@@ -37,9 +40,9 @@ public:
     void setThemeContext(
         QtMaterial::ThemeContext* context);
     QtMaterial::ThemeContext*
-    themeContext() const noexcept;
+    themeContext() const noexcept override;
     QtMaterial::ThemeContext*
-    effectiveThemeContext() const noexcept;
+    effectiveThemeContext() const noexcept override;
 
     const QtMaterial::AutocompletePopupSpec&
     resolvedSpec() const;
@@ -83,13 +86,7 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
-    bool refreshThemeContextConnection();
-    void handleThemeChanged(
-        const QtMaterial::Theme& theme);
-    void handleInheritedThemeContextChanged(
-        QtMaterial::ThemeContext* context);
-    void handleThemeContextDestroyed(
-        bool explicitContext);
+    void handleThemeChanged(const QtMaterial::Theme& theme);
     void refreshPopupVisibility();
     void setEffectivePopupVisible(bool visible);
     void ensureSpecResolved() const;

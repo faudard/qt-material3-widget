@@ -1,5 +1,6 @@
 #include "qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h"
 
+#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
 #include <QAbstractItemModel>
 #include <QEvent>
 #include <QKeyEvent>
@@ -14,7 +15,6 @@
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
-#include "qtmaterial/theme/qtmaterialthememanager.h"
 #include <memory>
 #include "qtmaterial/core/qtmaterialwidget.h"
 #include "qtmaterial/effects/qtmaterialelevationrenderer.h"
@@ -26,14 +26,14 @@ using QtMaterial::AutocompletePopupSpec;
 using QtMaterial::AutocompletePopupSpecResolver;
 using QtMaterial::QtMaterialElevationRenderer;
 using QtMaterial::QtMaterialWidget;
+using QtMaterial::QtMaterialThemeContextBinding;
 using QtMaterial::Theme;
 using QtMaterial::ThemeContext;
-using QtMaterial::ThemeManager;
-
 struct QtMaterialAutocompletePopupPrivate {
 
     mutable bool m_specDirty = true;
     mutable QtMaterial::AutocompletePopupSpec m_spec;
+    QtMaterialThemeContextBinding* m_themeBinding = nullptr;
     QPointer<QLineEdit> m_anchorLineEdit;
     QPointer<QAbstractItemModel> m_sourceModel;
     QSortFilterProxyModel* m_filterModel = nullptr;
@@ -42,14 +42,8 @@ struct QtMaterialAutocompletePopupPrivate {
     QString m_filterText;
     bool m_popupVisible = false;
 
-    QPointer<QtMaterial::ThemeContext> m_themeContext;
-    QPointer<QtMaterial::ThemeContext> m_effectiveThemeContext;
-    QMetaObject::Connection m_themeChangedConnection;
-    QMetaObject::Connection m_themeDestroyedConnection;
-    QMetaObject::Connection m_ancestorContextConnection;
     bool m_effectivePopupVisible = false;
 };
-
 
 QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
     : QWidget(parent)
@@ -59,6 +53,22 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
     setFocusPolicy(Qt::StrongFocus);
     setWindowFlag(Qt::Popup, true);
     setAutoFillBackground(false);
+    d_ptr->m_themeBinding =
+        new QtMaterialThemeContextBinding(this, this);
+
+    QObject::connect(
+        d_ptr->m_themeBinding,
+        &QtMaterialThemeContextBinding::
+            effectiveThemeContextChanged,
+        this,
+        &QtMaterialAutocompletePopup::
+            effectiveThemeContextChanged);
+
+    QObject::connect(
+        d_ptr->m_themeBinding,
+        &QtMaterialThemeContextBinding::themeChanged,
+        this,
+        &QtMaterialAutocompletePopup::handleThemeChanged);
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -66,9 +76,7 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
 
     d_ptr->m_ownedStringModel = new QStringListModel(this);
 
-
     d_ptr->m_filterModel = new QSortFilterProxyModel(this);
-
 
     d_ptr->m_filterModel->setSourceModel(d_ptr->m_ownedStringModel);
     d_ptr->m_filterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
@@ -124,65 +132,33 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
             refreshPopupVisibility();
         });
 
-    refreshThemeContextConnection();
     ensureSpecResolved();
     updatePopupPalette();
 }
 
 QtMaterialAutocompletePopup::~QtMaterialAutocompletePopup() = default;
 
-
 void QtMaterialAutocompletePopup::setThemeContext(
     ThemeContext* context)
 {
-    if (d_ptr->m_themeContext.data() == context) {
+    if (d_ptr->m_themeBinding->themeContext() == context) {
         return;
     }
 
-    d_ptr->m_themeContext = context;
-    const bool changed =
-        refreshThemeContextConnection();
-
+    d_ptr->m_themeBinding->setThemeContext(context);
     emit themeContextChanged(context);
-    if (changed) {
-        emit effectiveThemeContextChanged(
-            effectiveThemeContext());
-    }
-
-    d_ptr->m_specDirty = true;
-    ensureSpecResolved();
-    updatePopupPalette();
-    updateGeometry();
-    update();
 }
 
 ThemeContext*
 QtMaterialAutocompletePopup::themeContext() const noexcept
 {
-    return d_ptr->m_themeContext.data();
+    return d_ptr->m_themeBinding->themeContext();
 }
 
 ThemeContext*
 QtMaterialAutocompletePopup::effectiveThemeContext() const noexcept
 {
-    if (d_ptr->m_themeContext) {
-        return d_ptr->m_themeContext.data();
-    }
-
-    QWidget* ancestor =
-        d_ptr->m_anchorLineEdit
-        ? d_ptr->m_anchorLineEdit->parentWidget()
-        : parentWidget();
-
-    while (ancestor) {
-        if (auto* materialParent =
-                qobject_cast<QtMaterialWidget*>(ancestor)) {
-            return materialParent->effectiveThemeContext();
-        }
-        ancestor = ancestor->parentWidget();
-    }
-
-    return ThemeManager::instance().defaultContext();
+    return d_ptr->m_themeBinding->effectiveThemeContext();
 }
 
 const AutocompletePopupSpec&
@@ -192,105 +168,9 @@ QtMaterialAutocompletePopup::resolvedSpec() const
     return d_ptr->m_spec;
 }
 
-bool QtMaterialAutocompletePopup::refreshThemeContextConnection()
-{
-    ThemeContext* nextContext =
-        effectiveThemeContext();
-    const bool changed =
-        d_ptr->m_effectiveThemeContext.data() != nextContext;
-
-    QObject::disconnect(d_ptr->m_themeChangedConnection);
-    QObject::disconnect(d_ptr->m_themeDestroyedConnection);
-    QObject::disconnect(d_ptr->m_ancestorContextConnection);
-
-    d_ptr->m_effectiveThemeContext = nextContext;
-
-    if (!d_ptr->m_themeContext) {
-        QWidget* ancestor =
-            d_ptr->m_anchorLineEdit
-            ? d_ptr->m_anchorLineEdit->parentWidget()
-            : parentWidget();
-
-        while (ancestor) {
-            if (auto* materialParent =
-                    qobject_cast<QtMaterialWidget*>(
-                        ancestor)) {
-                d_ptr->m_ancestorContextConnection =
-                    QObject::connect(
-                        materialParent,
-                        &QtMaterialWidget::
-                            effectiveThemeContextChanged,
-                        this,
-                        &QtMaterialAutocompletePopup::
-                            handleInheritedThemeContextChanged);
-                break;
-            }
-            ancestor = ancestor->parentWidget();
-        }
-    }
-
-    if (nextContext) {
-        d_ptr->m_themeChangedConnection =
-            QObject::connect(
-                nextContext,
-                &ThemeContext::themeChanged,
-                this,
-                &QtMaterialAutocompletePopup::
-                    handleThemeChanged);
-
-        const bool explicitContext =
-            nextContext == d_ptr->m_themeContext.data();
-        d_ptr->m_themeDestroyedConnection =
-            QObject::connect(
-                nextContext,
-                &QObject::destroyed,
-                this,
-                [this, explicitContext]() {
-                    handleThemeContextDestroyed(
-                        explicitContext);
-                });
-    }
-
-    return changed;
-}
-
 void QtMaterialAutocompletePopup::handleThemeChanged(
     const Theme&)
 {
-    d_ptr->m_specDirty = true;
-    ensureSpecResolved();
-    updatePopupPalette();
-    updateGeometry();
-    update();
-}
-
-void QtMaterialAutocompletePopup::
-handleInheritedThemeContextChanged(
-    ThemeContext*)
-{
-    if (refreshThemeContextConnection()) {
-        emit effectiveThemeContextChanged(
-            effectiveThemeContext());
-    }
-
-    handleThemeChanged(
-        effectiveThemeContext()->theme());
-}
-
-void QtMaterialAutocompletePopup::
-handleThemeContextDestroyed(
-    bool explicitContext)
-{
-    if (explicitContext) {
-        d_ptr->m_themeContext.clear();
-        emit themeContextChanged(nullptr);
-    }
-
-    d_ptr->m_effectiveThemeContext.clear();
-    refreshThemeContextConnection();
-    emit effectiveThemeContextChanged(
-        effectiveThemeContext());
-
     d_ptr->m_specDirty = true;
     ensureSpecResolved();
     updatePopupPalette();
@@ -313,11 +193,6 @@ void QtMaterialAutocompletePopup::setAnchorLineEdit(
     d_ptr->m_anchorLineEdit = lineEdit;
     if (d_ptr->m_anchorLineEdit) {
         d_ptr->m_anchorLineEdit->installEventFilter(this);
-    }
-
-    if (refreshThemeContextConnection()) {
-        emit effectiveThemeContextChanged(
-            effectiveThemeContext());
     }
 
     d_ptr->m_specDirty = true;
@@ -466,10 +341,6 @@ bool QtMaterialAutocompletePopup::eventFilter(
             break;
 
         case QEvent::ParentChange:
-            if (refreshThemeContextConnection()) {
-                emit effectiveThemeContextChanged(
-                    effectiveThemeContext());
-            }
             d_ptr->m_specDirty = true;
             ensureSpecResolved();
             updatePopupPalette();
@@ -727,10 +598,6 @@ bool QtMaterialAutocompletePopup::event(QEvent* event)
             break;
 
         case QEvent::ParentChange:
-            if (refreshThemeContextConnection()) {
-                emit effectiveThemeContextChanged(
-                    effectiveThemeContext());
-            }
             d_ptr->m_specDirty = true;
             ensureSpecResolved();
             updatePopupPalette();
