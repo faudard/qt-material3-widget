@@ -244,6 +244,32 @@ def check_tree_rule(root: Path, rule: dict):
                     )
     return violations
 
+def check_path_rule(root: Path, rule: dict):
+    name = str(rule.get("name", ""))
+    configured = rule.get("forbidden_paths", [])
+    if not isinstance(configured, list) or not configured:
+        raise ConfigurationError(
+            f"{name}: path rule must define a non-empty "
+            "forbidden_paths array"
+        )
+
+    violations = []
+    for item in configured:
+        relative = str(item).replace("\\", "/")
+        path = safe_path(root, relative)
+        if not path.exists():
+            continue
+        violations.append(
+            Violation(
+                name,
+                relative,
+                1,
+                "forbidden path exists",
+            )
+        )
+    return violations
+
+
 def load_rules(path: Path):
     try:
         document = json.loads(read_text(path))
@@ -258,7 +284,7 @@ def load_rules(path: Path):
         raise ConfigurationError(
             "only architecture schema_version 1 is supported"
         )
-    for key in ("layer_rules", "tree_rules", "file_rules", "text_rules"):
+    for key in ("path_rules", "layer_rules", "tree_rules", "file_rules", "text_rules"):
         if not isinstance(document.get(key, []), list):
             raise ConfigurationError(f"{key} must be an array")
     return document
@@ -266,7 +292,7 @@ def load_rules(path: Path):
 
 def rule_names(document: dict):
     names = []
-    for category in ("layer_rules", "tree_rules", "file_rules", "text_rules"):
+    for category in ("path_rules", "layer_rules", "tree_rules", "file_rules", "text_rules"):
         for rule in document.get(category, []):
             names.append(str(rule.get("name", "<unnamed>")))
     return names
@@ -281,6 +307,9 @@ def run_checks(root: Path, document: dict, selected=None):
             or str(rule.get("name", "<unnamed>")) in selected
         )
 
+    for rule in document.get("path_rules", []):
+        if enabled(rule):
+            violations.extend(check_path_rule(root, rule))
     for rule in document.get("layer_rules", []):
         if enabled(rule):
             violations.extend(check_layer(root, rule))

@@ -118,8 +118,7 @@
         "QWidget",
         "QApplication"
       ]
-    }
-  ,
+    },
     {
       "name": "testing-does-not-depend-on-core",
       "paths": [
@@ -1264,8 +1263,7 @@
         "Q_DECLARE_METATYPE\\(QtMaterial::QtMaterialRoute\\)"
       ],
       "forbidden_regex": []
-    }
-  ,
+    },
     {
       "name": "abstract-button-uses-theme-context-binding",
       "description": "QtMaterialAbstractButton resolves its effective theme through QtMaterialThemeContextBinding and never consults ThemeManager directly.",
@@ -1287,8 +1285,7 @@
         "qtmaterial/theme/qtmaterialthememanager\\.h",
         "&ThemeManager::themeChanged"
       ]
-    }
-  ,
+    },
     {
       "name": "qtmaterial-widget-uses-theme-context-binding",
       "description": "QtMaterialWidget delegates context resolution and propagation to QtMaterialThemeContextBinding instead of maintaining a second implementation.",
@@ -1314,6 +1311,15 @@
         "\\bm_effectiveThemeContext\\b",
         "\\bm_themeChangedConnection\\b",
         "\\bm_themeDestroyedConnection\\b"
+      ]
+    },
+    {
+      "name": "core-cmake-does-not-export-moved-types",
+      "files": [
+        "src/core/CMakeLists.txt"
+      ],
+      "forbidden_regex": [
+        "qtmaterial(?:density|interactionstate|automation|componentregistry|formfieldcontrol|inputcontrol|navigationmodel|paintcache|paletteadapter)\\.(?:h|cpp)"
       ]
     }
   ],
@@ -1757,8 +1763,7 @@
         "qtmaterialspecfactory",
         "\\bmake(?:DatePicker|Table|GridList|Carousel)Spec\\s*\\("
       ]
-    }
-  ,
+    },
     {
       "name": "runtime-widgets-do-not-access-global-theme-manager",
       "paths": [
@@ -1772,8 +1777,7 @@
         "\\bThemeManager\\s*::\\s*instance\\s*\\(",
         "&\\s*ThemeManager\\s*::\\s*themeChanged"
       ]
-    }
-  ,
+    },
     {
       "name": "migrated-widget-families-render-from-resolved-specs",
       "paths": [
@@ -1795,8 +1799,7 @@
         "\\b[A-Za-z_]\\w*\\s*->\\s*theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\(",
         "\\beffectiveThemeContext\\s*\\(\\s*\\)\\s*->\\s*theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\("
       ]
-    }
-  ,
+    },
     {
       "name": "core-does-not-own-automation",
       "paths": [
@@ -1819,6 +1822,51 @@
       ],
       "forbidden_regex": [
         "qtmaterial/core/qtmaterialautomation\\.h"
+      ]
+    },
+    {
+      "name": "legacy-core-moved-headers-are-not-included",
+      "paths": [
+        "include",
+        "src",
+        "tests",
+        "examples",
+        "benchmarks",
+        "tools"
+      ],
+      "forbidden_regex": [
+        "qtmaterial/core/qtmaterialdensity\\.h",
+        "qtmaterial/core/qtmaterialinteractionstate\\.h",
+        "qtmaterial/core/qtmaterialautomation\\.h",
+        "qtmaterial/core/qtmaterialcomponentregistry\\.h",
+        "qtmaterial/core/qtmaterialformfieldcontrol\\.h",
+        "qtmaterial/core/qtmaterialinputcontrol\\.h",
+        "qtmaterial/core/qtmaterialnavigationmodel\\.h",
+        "qtmaterial/core/qtmaterialpaintcache\\.h",
+        "qtmaterial/core/qtmaterialpaletteadapter\\.h"
+      ]
+    }
+  ],
+  "path_rules": [
+    {
+      "name": "legacy-core-moved-files-are-absent",
+      "forbidden_paths": [
+        "include/qtmaterial/core/qtmaterialdensity.h",
+        "include/qtmaterial/core/qtmaterialinteractionstate.h",
+        "include/qtmaterial/core/qtmaterialautomation.h",
+        "include/qtmaterial/core/qtmaterialcomponentregistry.h",
+        "include/qtmaterial/core/qtmaterialformfieldcontrol.h",
+        "include/qtmaterial/core/qtmaterialinputcontrol.h",
+        "include/qtmaterial/core/qtmaterialnavigationmodel.h",
+        "include/qtmaterial/core/qtmaterialpaintcache.h",
+        "include/qtmaterial/core/qtmaterialpaletteadapter.h",
+        "src/core/qtmaterialautomation.cpp",
+        "src/core/qtmaterialcomponentregistry.cpp",
+        "src/core/qtmaterialformfieldcontrol.cpp",
+        "src/core/qtmaterialinputcontrol.cpp",
+        "src/core/qtmaterialnavigationmodel.cpp",
+        "src/core/qtmaterialpaintcache.cpp",
+        "src/core/qtmaterialpaletteadapter.cpp"
       ]
     }
   ]
