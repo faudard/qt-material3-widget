@@ -1277,6 +1277,34 @@
         "&ThemeManager::themeChanged"
       ]
     }
+  ,
+    {
+      "name": "qtmaterial-widget-uses-theme-context-binding",
+      "description": "QtMaterialWidget delegates context resolution and propagation to QtMaterialThemeContextBinding instead of maintaining a second implementation.",
+      "files": [
+        "include/qtmaterial/core/qtmaterialwidget.h",
+        "src/core/qtmaterialwidget.cpp"
+      ],
+      "required_regex": [
+        "\\bQtMaterialThemeContextBinding\\b",
+        "&QtMaterialThemeContextBinding::effectiveThemeContextChanged",
+        "&QtMaterialThemeContextBinding::themeChanged",
+        "m_themeBinding\\s*->\\s*setThemeContext\\s*\\(",
+        "m_themeBinding\\s*->\\s*effectiveThemeContext\\s*\\(",
+        "m_themeBinding\\s*->\\s*theme\\s*\\("
+      ],
+      "forbidden_regex": [
+        "ThemeManager::instance\\s*\\(",
+        "qtmaterial/theme/qtmaterialthememanager\\.h",
+        "ThemeContextPropagation::",
+        "\\brefreshThemeContextConnection\\b",
+        "\\bnotifyDescendantThemeContextChange\\b",
+        "\\bhandleThemeContextDestroyed\\b",
+        "\\bm_effectiveThemeContext\\b",
+        "\\bm_themeChangedConnection\\b",
+        "\\bm_themeDestroyedConnection\\b"
+      ]
+    }
   ],
   "text_rules": [
     {

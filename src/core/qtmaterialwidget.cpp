@@ -1,122 +1,42 @@
 #include "qtmaterial/core/qtmaterialwidget.h"
-#include "private/qtmaterialthemecontextpropagation_p.h"
-
+#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
 #include "private/qtmaterialmetadata_p.h"
 #include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
-#include "qtmaterial/theme/qtmaterialthememanager.h"
-#include "qtmaterial/theme/qtmaterialthemecontexthost.h"
-
 namespace QtMaterial {
 
 QtMaterialWidget::QtMaterialWidget(QWidget* parent)
     : QWidget(parent)
+    , m_themeBinding(new QtMaterialThemeContextBinding(this, this))
 {
+    QObject::connect(
+        m_themeBinding,
+        &QtMaterialThemeContextBinding::effectiveThemeContextChanged,
+        this,
+        &QtMaterialWidget::effectiveThemeContextChanged);
+
+    QObject::connect(
+        m_themeBinding,
+        &QtMaterialThemeContextBinding::themeChanged,
+        this,
+        &QtMaterialWidget::handleThemeChanged);
+
     setMaterialComponent(QStringLiteral("Widget"));
-
-    refreshThemeContextConnection();
 }
-
 QtMaterialWidget::~QtMaterialWidget() = default;
 
 void QtMaterialWidget::setThemeContext(ThemeContext* context)
 {
-    if (m_themeContext.data() == context) {
-        return;
-    }
-
-    m_themeContext = context;
-    if (!refreshThemeContextConnection()) {
-        return;
-    }
-
-    emit effectiveThemeContextChanged(effectiveThemeContext());
-    themeChangedEvent(theme());
-    notifyDescendantThemeContextChange();
+    m_themeBinding->setThemeContext(context);
 }
 
 ThemeContext* QtMaterialWidget::themeContext() const noexcept
 {
-    return m_themeContext.data();
+    return m_themeBinding->themeContext();
 }
 
 ThemeContext* QtMaterialWidget::effectiveThemeContext() const noexcept
 {
-    if (m_themeContext) {
-        return m_themeContext.data();
-    }
-
-    QWidget* ancestor = parentWidget();
-    while (ancestor) {
-        if (auto* materialParent = qobject_cast<ThemeContextHost*>(ancestor)) {
-            return materialParent->effectiveThemeContext();
-        }
-        ancestor = ancestor->parentWidget();
-    }
-
-    return ThemeManager::instance().defaultContext();
-}
-
-bool QtMaterialWidget::event(QEvent* event)
-{
-    const bool handled = QWidget::event(event);
-
-    if (event && (event->type() == QEvent::ParentChange
-         || event->type() == ThemeContextPropagation::eventType())
-        && refreshThemeContextConnection()) {
-        emit effectiveThemeContextChanged(effectiveThemeContext());
-        themeChangedEvent(theme());
-        notifyDescendantThemeContextChange();
-    }
-
-    return handled;
-}
-
-bool QtMaterialWidget::refreshThemeContextConnection()
-{
-    ThemeContext* nextContext = effectiveThemeContext();
-    if (m_effectiveThemeContext.data() == nextContext) {
-        return false;
-    }
-
-    QObject::disconnect(m_themeChangedConnection);
-    QObject::disconnect(m_themeDestroyedConnection);
-
-    m_effectiveThemeContext = nextContext;
-
-    if (nextContext) {
-        m_themeChangedConnection = QObject::connect(
-            nextContext,
-            &ThemeContext::themeChanged,
-            this,
-            &QtMaterialWidget::handleThemeChanged);
-
-        m_themeDestroyedConnection = QObject::connect(
-            nextContext,
-            &QObject::destroyed,
-            this,
-            &QtMaterialWidget::handleThemeContextDestroyed);
-    }
-
-    return true;
-}
-
-void QtMaterialWidget::notifyDescendantThemeContextChange()
-{
-    ThemeContextPropagation::notifyDescendants(this);
-}
-
-void QtMaterialWidget::handleThemeContextDestroyed()
-{
-    m_themeContext.clear();
-    m_effectiveThemeContext.clear();
-
-    if (!refreshThemeContextConnection()) {
-        return;
-    }
-
-    emit effectiveThemeContextChanged(effectiveThemeContext());
-    themeChangedEvent(theme());
-    notifyDescendantThemeContextChange();
+    return m_themeBinding->effectiveThemeContext();
 }
 
 QString QtMaterialWidget::materialComponent() const { return m_materialComponent; }
@@ -177,9 +97,7 @@ void QtMaterialWidget::setMaterialState(const QString& value)
 
 const Theme& QtMaterialWidget::theme() const
 {
-    ThemeContext* context = effectiveThemeContext();
-    Q_ASSERT(context);
-    return context->theme();
+    return m_themeBinding->theme();
 }
 
 void QtMaterialWidget::themeChangedEvent(const Theme&)
