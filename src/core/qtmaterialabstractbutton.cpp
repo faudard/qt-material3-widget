@@ -1,4 +1,5 @@
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
+#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
 #include <QtGlobal>
 #include "private/qtmaterialmetadata_p.h"
 #include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
@@ -8,7 +9,6 @@
 #include <QMouseEvent>
 
 #include "qtmaterial/core/qtmaterialeventcompat.h"
-#include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h"
 
 namespace {
@@ -59,14 +59,22 @@ QtMaterialAbstractButton::QtMaterialAbstractButton(QWidget* parent)
     : QAbstractButton(parent)
     , m_state()
     , m_density(Density::Default)
+    , m_themeBinding(new QtMaterialThemeContextBinding(this, this))
 {
     setAttribute(Qt::WA_Hover, true);
     setFocusPolicy(Qt::StrongFocus);
 
-    QObject::connect(&ThemeManager::instance(),
-                     &ThemeManager::themeChanged,
-                     this,
-                     &QtMaterialAbstractButton::handleThemeChanged);
+    QObject::connect(
+        m_themeBinding,
+        &QtMaterialThemeContextBinding::effectiveThemeContextChanged,
+        this,
+        &QtMaterialAbstractButton::effectiveThemeContextChanged);
+
+    QObject::connect(
+        m_themeBinding,
+        &QtMaterialThemeContextBinding::themeChanged,
+        this,
+        &QtMaterialAbstractButton::handleThemeChanged);
 
     syncFromButtonState();
     syncAutomationState();
@@ -128,6 +136,23 @@ void QtMaterialAbstractButton::setMaterialState(const QString& value) {
 
 void QtMaterialAbstractButton::syncAutomationState() {
     MetadataPrivate::syncInteractionState(this, m_state);
+}
+
+void QtMaterialAbstractButton::setThemeContext(
+    ThemeContext* context)
+{
+    m_themeBinding->setThemeContext(context);
+}
+
+ThemeContext* QtMaterialAbstractButton::themeContext() const noexcept
+{
+    return m_themeBinding->themeContext();
+}
+
+ThemeContext*
+QtMaterialAbstractButton::effectiveThemeContext() const noexcept
+{
+    return m_themeBinding->effectiveThemeContext();
 }
 
 Density QtMaterialAbstractButton::density() const noexcept
@@ -208,7 +233,7 @@ void QtMaterialAbstractButton::setDown(bool down)
 
 const Theme& QtMaterialAbstractButton::theme() const
 {
-    return ThemeManager::instance().theme();
+    return m_themeBinding->theme();
 }
 
 const QtMaterialInteractionState& QtMaterialAbstractButton::interactionState() const noexcept

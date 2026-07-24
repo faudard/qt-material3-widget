@@ -15,16 +15,28 @@ class QMouseEvent;
 #include <QString>
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
+#include "qtmaterial/theme/qtmaterialthemecontext.h"
+#include "qtmaterial/theme/qtmaterialthemecontexthost.h"
 
 namespace QtMaterial {
 
-class QTMATERIAL3_CORE_EXPORT QtMaterialAbstractButton : public QAbstractButton
+
+class QtMaterialThemeContextBinding;
+
+class QTMATERIAL3_CORE_EXPORT QtMaterialAbstractButton
+    : public QAbstractButton
+    , public ThemeContextHost
 {
     Q_OBJECT
+    Q_INTERFACES(QtMaterial::ThemeContextHost)
 
 public:
     explicit QtMaterialAbstractButton(QWidget* parent = nullptr);
     ~QtMaterialAbstractButton() override;
+
+    void setThemeContext(ThemeContext* context);
+    ThemeContext* themeContext() const noexcept override;
+    ThemeContext* effectiveThemeContext() const noexcept override;
 
     QString materialComponent() const;
     QString materialVariant() const;
@@ -48,6 +60,8 @@ public:
     void setDown(bool down);
 
 signals:
+    void effectiveThemeContextChanged(
+        QtMaterial::ThemeContext* context);
     void materialMetadataChanged();
 
 protected:
@@ -84,6 +98,7 @@ private:
 
     QtMaterialInteractionState m_state;
     Density m_density;
+    QtMaterialThemeContextBinding* m_themeBinding = nullptr;
 };
 
 } // namespace QtMaterial

@@ -1254,6 +1254,29 @@
       ],
       "forbidden_regex": []
     }
+  ,
+    {
+      "name": "abstract-button-uses-theme-context-binding",
+      "description": "QtMaterialAbstractButton resolves its effective theme through QtMaterialThemeContextBinding and never consults ThemeManager directly.",
+      "files": [
+        "include/qtmaterial/core/qtmaterialabstractbutton.h",
+        "src/core/qtmaterialabstractbutton.cpp"
+      ],
+      "required_regex": [
+        "public\\s+ThemeContextHost",
+        "Q_INTERFACES\\(QtMaterial::ThemeContextHost\\)",
+        "\\bQtMaterialThemeContextBinding\\b",
+        "\\bsetThemeContext\\s*\\(",
+        "\\beffectiveThemeContext\\s*\\(\\s*\\)\\s*const\\s+noexcept",
+        "&QtMaterialThemeContextBinding::themeChanged",
+        "m_themeBinding\\s*->\\s*theme\\s*\\("
+      ],
+      "forbidden_regex": [
+        "ThemeManager::instance\\s*\\(",
+        "qtmaterial/theme/qtmaterialthememanager\\.h",
+        "&ThemeManager::themeChanged"
+      ]
+    }
   ],
   "text_rules": [
     {
