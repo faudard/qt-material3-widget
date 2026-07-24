@@ -119,6 +119,17 @@
         "QApplication"
       ]
     }
+  ,
+    {
+      "name": "testing-does-not-depend-on-core",
+      "paths": [
+        "include/qtmaterial/testing",
+        "src/testing"
+      ],
+      "forbidden_include_prefixes": [
+        "qtmaterial/core/"
+      ]
+    }
   ],
   "file_rules": [
     {
@@ -1783,6 +1794,31 @@
         "\\b[A-Za-z_]\\w*\\s*\\.\\s*theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\(",
         "\\b[A-Za-z_]\\w*\\s*->\\s*theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\(",
         "\\beffectiveThemeContext\\s*\\(\\s*\\)\\s*->\\s*theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\("
+      ]
+    }
+  ,
+    {
+      "name": "core-does-not-own-automation",
+      "paths": [
+        "include/qtmaterial/core",
+        "src/core"
+      ],
+      "forbidden_regex": [
+        "\\bQtMaterialAutomation\\b",
+        "qtmaterialautomation"
+      ]
+    },
+    {
+      "name": "legacy-core-automation-header-is-not-used",
+      "paths": [
+        "include",
+        "src",
+        "tests",
+        "examples",
+        "benchmarks"
+      ],
+      "forbidden_regex": [
+        "qtmaterial/core/qtmaterialautomation\\.h"
       ]
     }
   ]
