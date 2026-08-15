@@ -20,7 +20,7 @@ namespace QtMaterial {
 /**
  * Resolved design-system value snapshot.
  *
- * Theme is intentionally not a QObject. It has ordinary copy/move value
+ * Theme is intentionally not a runtime object base class. It has ordinary copy/move value
  * semantics. Mutation is used while authoring/building a snapshot; runtime
  * owners publish copies and expose them as const values.
  */

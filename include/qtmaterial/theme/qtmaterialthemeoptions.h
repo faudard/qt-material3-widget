@@ -12,7 +12,7 @@ namespace QtMaterial {
  * User-facing preference for light/dark mode.
  *
  * ThemeMode remains the resolved mode stored in a built Theme. FollowSystem is
- * only a preference and must be resolved by SystemTheme/ThemeManager before a
+ * only a preference and must be resolved by system-theme adapter/runtime theme service before a
  * Theme is built.
  */
 enum class ThemePreference {
@@ -67,7 +67,7 @@ public:
     /** Resolved mode consumed by ThemeBuilder. Never set this to FollowSystem. */
     ThemeMode mode;
 
-    /** User preference used by SystemTheme/ThemeManager settings. */
+    /** User preference used by system-theme adapter/runtime theme service settings. */
     ThemePreference preference;
 
     ContrastMode contrast;
