@@ -17,6 +17,7 @@
 #include "qtmaterial/core/qtmaterialthemecontextbinding.h"
 #include "qtmaterial/effects/qtmaterialelevationrenderer.h"
 #include "qtmaterial/specs/qtmaterialmenuspecresolver.h"
+#include "../resolution/qtmaterialnavigationspecresolution_p.h"
 
 using QtMaterial::MenuSpec;
 using QtMaterial::MenuSpecResolver;
@@ -962,8 +963,7 @@ void QtMaterialMenu::resolveThemeSpec()
     }
 
     d_ptr->spec =
-        MenuSpecResolver().menuSpec(
-            d_ptr->themeBinding->theme());
+        NavigationSpecResolution::menuSpec(d_ptr);
     applySpec();
 }
 

@@ -11,10 +11,9 @@
 #include <QRectF>
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 #include "qtmaterial/specs/qtmaterialsnackbarspec.h"
-#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
-#include "qtmaterial/theme/qtmaterialtheme.h"
 #include <memory>
 #include "qtmaterial/effects/qtmaterialelevationrenderer.h"
+#include "../resolution/qtmaterialsurfacespecresolution_p.h"
 
 namespace QtMaterial {
 
@@ -623,8 +622,9 @@ void QtMaterialSnackbar::ensureSpecResolved() const
         return;
     }
 
-    const QtMaterial::SurfaceSpecResolver resolver;
-    d_ptr->spec = resolver.snackbarSpec(theme());
+    QtMaterial::ThemeContext* context = effectiveThemeContext();
+    Q_ASSERT(context);
+    d_ptr->spec = QtMaterial::SurfaceSpecResolution::snackbarSpec(context);
     d_ptr->specPtr = &d_ptr->spec;
     d_ptr->specDirty = false;
 }

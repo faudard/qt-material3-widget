@@ -375,10 +375,11 @@
         "ThemeManager::instance\\s*\\(\\s*\\)\\s*\\.\\s*theme\\s*\\(",
         "&\\s*ThemeManager::themeChanged",
         "\\broleOrFallback\\s*\\(",
-        "\\bSpecFactory\\b"
+        "\\bSpecFactory\\b",
+        "(?:m_)?themeBinding\\s*->\\s*theme\\s*\\("
       ],
       "required_regex": [
-        "\\bTabsSpecResolver\\b",
+        "\\bNavigationSpecResolution::tabsSpec\\s*\\(",
         "\\beffectiveThemeContext\\s*\\(",
         "\\bQtMaterialThemeContextBinding\\b",
         "QtMaterialThemeContextBinding::effectiveThemeContextChanged"
@@ -1187,7 +1188,7 @@
       "required_regex": [
         "\\bQtMaterialThemeContextBinding\\b",
         "\\bthemeBinding\\b",
-        "\\bTabsSpecResolver\\b",
+        "\\bNavigationSpecResolution::tabsSpec\\s*\\(",
         "\\bQtMaterialRoute::normalizedPath\\b"
       ],
       "forbidden_regex": [
@@ -1202,7 +1203,9 @@
         "qtmaterial/theme/qtmaterialthememanager\\.h",
         "\\bcanonicalTabsRoutePath\\b",
         "\\bqtm3TabsNavigationModelRoutePath\\b",
-        "\\bqtm3NavigationModelRoutePath\\b"
+        "\\bqtm3NavigationModelRoutePath\\b",
+        "\\bTabsSpecResolver\\b",
+        "(?:m_)?themeBinding\\s*->\\s*theme\\s*\\("
       ]
     },
     {

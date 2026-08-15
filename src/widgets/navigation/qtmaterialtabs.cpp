@@ -2,7 +2,6 @@
 #include "qtmaterial/core/qtmaterialthemecontextbinding.h"
 
 #include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
-#include "qtmaterial/specs/qtmaterialtabsspecresolver.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h"
 
 #include <QAction>
@@ -1284,9 +1283,7 @@ void QtMaterialTabs::resolveSpecFromTheme()
     }
 
     d_ptr->resolvedSpec =
-        TabsSpecResolver().resolve(
-            d_ptr->themeBinding->theme(),
-            d_ptr->authoredSpec);
+        NavigationSpecResolution::tabsSpec(d_ptr, d_ptr->authoredSpec);
 }
 
 void QtMaterialTabs::applyResolvedSpec()
@@ -1599,5 +1596,5 @@ QString QtMaterial::QtMaterialTabs::currentTabAccessibleText() const
 } // namespace QtMaterial
 
 #include "qtmaterialtabs.moc"
-#include "qtmaterial/specs/qtmaterialtabsspecresolver.h"
 #include <QMetaObject>
+#include "../resolution/qtmaterialnavigationspecresolution_p.h"

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <QMargins>
+#include <QColor>
 #include <QPainterPath>
 #include <QRect>
+#include <QRectF>
 
-#include "qtmaterial/theme/qtmaterialtheme.h"
 #include "qtmaterial/specs/qtmaterialdialogspec.h"
 #include "qtmaterial/specs/qtmaterialnavigationdrawerspec.h"
 #include "qtmaterial/specs/qtmaterialbottomsheetspec.h"
@@ -29,17 +29,23 @@ public:
         bool drawShadow = true;
     };
 
-    static SurfaceFrame dialogFrame(const QtMaterial::Theme& theme, const DialogSpec& spec, const QRect& bounds);
-    static SurfaceFrame drawerFrame(const QtMaterial::Theme& theme, const NavigationDrawerSpec& spec, const QRect& bounds);
-    static SurfaceFrame bottomSheetFrame(const QtMaterial::Theme& theme, const BottomSheetSpec& spec, const QRect& bounds);
-    static SurfaceFrame cardFrame(const QtMaterial::Theme& theme, const CardSpec& spec, const QRect& bounds);
-
+    static SurfaceFrame dialogFrame(const DialogSpec& spec, const QRect& bounds);
+    static SurfaceFrame drawerFrame(const NavigationDrawerSpec& spec, const QRect& bounds);
+    static SurfaceFrame bottomSheetFrame(const BottomSheetSpec& spec, const QRect& bounds);
+    static SurfaceFrame cardFrame(const CardSpec& spec, const QRect& bounds);
     static QPainterPath roundedPath(const QRectF& rect, qreal radius);
     static void paintFrame(QPainter* painter, const SurfaceFrame& frame);
 
 private:
-    static SurfaceFrame baseFrame(const QtMaterial::Theme& theme, ShapeRole shapeRole, ElevationRole elevationRole,
-        const QRectF& rect, const QColor& containerColor, const QColor& outlineColor, bool drawOutline);
+    static SurfaceFrame baseFrame(
+        qreal radius,
+        const ElevationStyle& elevationStyle,
+        bool hasResolvedElevationStyle,
+        const QColor& shadowColor,
+        const QRectF& rect,
+        const QColor& containerColor,
+        const QColor& outlineColor,
+        bool drawOutline);
 };
 
 } // namespace QtMaterial

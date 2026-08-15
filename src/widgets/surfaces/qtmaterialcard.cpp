@@ -1,7 +1,6 @@
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
 #include <memory>
 
-#include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
 #include <QEvent>
 #include <QFont>
 #include <QFontMetrics>
@@ -14,6 +13,7 @@
 #include <QPainterPath>
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
 #include "qtmaterial/effects/qtmaterialelevationrenderer.h"
+#include "../resolution/qtmaterialsurfacespecresolution_p.h"
 namespace {
 
 constexpr int kDefaultMinimumWidth = 120;
@@ -72,8 +72,7 @@ void ensureSpecResolved(
         self->effectiveThemeContext();
     Q_ASSERT(context);
 
-    const QtMaterial::SurfaceSpecResolver resolver;
-    d->spec = resolver.cardSpec(context->theme());
+    d->spec = QtMaterial::SurfaceSpecResolution::cardSpec(context);
     d->specDirty = false;
     d->layoutDirty = true;
 }
