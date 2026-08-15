@@ -3,7 +3,7 @@
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 namespace QtMaterial {
-class QTMATERIAL3_THEME_EXPORT ShapeScale {
+class QTMATERIAL3_THEME_MODEL_EXPORT ShapeScale {
 public:
     ShapeScale();
     ~ShapeScale();

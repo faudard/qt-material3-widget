@@ -1,6 +1,6 @@
 #include "qtmaterial/specs/qtmaterialdatefieldspecresolver.h"
 
-#include <QStringList>
+#include <QVector>
 
 #include "qtmaterialcomponenttokenapplier_p.h"
 
@@ -29,11 +29,7 @@ DateFieldSpec DateFieldSpecResolver::dateFieldSpec(
 
     applyDateFieldComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("input"),
-            QStringLiteral("textField"),
-            QStringLiteral("dateField"),
-            QStringLiteral("DateField")},
+        QVector<ComponentId>{ ComponentId::Input, ComponentId::TextField, ComponentId::DateField },
         &spec);
 
     return spec;

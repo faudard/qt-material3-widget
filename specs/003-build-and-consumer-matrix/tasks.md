@@ -1,0 +1,21 @@
+# Tasks: Build and Consumer Matrix
+
+- [x] **T001 [BCM-FR-001]** Add versioned consumer matrix.
+- [x] **T002 [BCM-FR-002]** Add source shared/static scenarios.
+- [x] **T003 [BCM-FR-003]** Add add_subdirectory consumer.
+- [x] **T004 [BCM-FR-004/011]** Add local/offline FetchContent consumer.
+- [x] **T005 [BCM-FR-005]** Add installed CONFIG/components consumer.
+- [x] **T006 [BCM-FR-006]** Compile actual Theme and Widgets public API.
+- [x] **T007 [BCM-FR-007]** Exercise static export path.
+- [x] **T008 [BCM-FR-008]** Add negative package-component scenario.
+- [x] **T009 [BCM-FR-009/010]** Define `ci` and `full` profiles.
+- [x] **T010 [BCM-FR-012]** Add library shared/static presets.
+- [x] **T011 [BCM-FR-013]** Wire matrix contract into repository health.
+- [x] **T012** Add matrix policy unit tests.
+- [x] **T013** Add Ubuntu consumer-contract CI matrix.
+- [ ] **T014 [GATE]** Apply to actual checkout.
+- [ ] **T015 [GATE]** Run all Python tooling tests.
+- [ ] **T016 [GATE]** Run consumer `ci` profile locally.
+- [ ] **T017 [GATE]** Run `full` before release/merge when practical.
+- [ ] **T018 [GATE]** Push/PR and confirm consumer-contract jobs.
+- [ ] **T019 [GATE]** Run `/speckit.analyze` then `/speckit.converge`.

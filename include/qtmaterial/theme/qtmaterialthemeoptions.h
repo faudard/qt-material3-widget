@@ -56,7 +56,7 @@ inline bool colorBackendPolicyRequiresMaterialColorUtilities(ColorBackendPolicy 
     return policy == ColorBackendPolicy::ForceMaterialColorUtilities;
 }
 
-class QTMATERIAL3_THEME_EXPORT ThemeOptions {
+class QTMATERIAL3_THEME_MODEL_EXPORT ThemeOptions {
 public:
     /** Canonical input structure used by ThemeBuilder. */
     ThemeOptions();

@@ -1,6 +1,6 @@
 #include "qtmaterial/specs/qtmaterialsurfacespecresolver.h"
 
-#include <QStringList>
+#include <QVector>
 
 #include "qtmaterialcomponenttokenapplier_p.h"
 
@@ -58,10 +58,7 @@ CardSpec SurfaceSpecResolver::cardSpec(const Theme& theme) const
 
     applyCardComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("surface"),
-            QStringLiteral("card"),
-            QStringLiteral("Card")},
+        QVector<ComponentId>{ ComponentId::Surface, ComponentId::Card },
         &spec);
 
     return spec;
@@ -84,10 +81,7 @@ SnackbarSpec SurfaceSpecResolver::snackbarSpec(
 
     applySnackbarComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("surface"),
-            QStringLiteral("snackbar"),
-            QStringLiteral("Snackbar")},
+        QVector<ComponentId>{ ComponentId::Surface, ComponentId::Snackbar },
         &spec);
     return spec;
 }

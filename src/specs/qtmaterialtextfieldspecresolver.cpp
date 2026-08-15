@@ -1,6 +1,6 @@
 #include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
 
-#include <QStringList>
+#include <QVector>
 
 #include "qtmaterialcomponenttokenapplier_p.h"
 
@@ -66,9 +66,7 @@ TextFieldSpec TextFieldSpecResolver::baseTextFieldSpec(
 
     applyTextFieldComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("input"),
-            QStringLiteral("textField")},
+        QVector<ComponentId>{ ComponentId::Input, ComponentId::TextField },
         &spec);
 
     return spec;
@@ -84,9 +82,7 @@ TextFieldSpec TextFieldSpecResolver::outlinedTextFieldSpec(
 
     applyTextFieldComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("textField.outlined"),
-            QStringLiteral("OutlinedTextField")},
+        QVector<ComponentId>{ ComponentId::TextFieldOutlined },
         &spec);
 
     return spec;
@@ -104,9 +100,7 @@ TextFieldSpec TextFieldSpecResolver::filledTextFieldSpec(
 
     applyTextFieldComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("textField.filled"),
-            QStringLiteral("FilledTextField")},
+        QVector<ComponentId>{ ComponentId::TextFieldFilled },
         &spec);
 
     return spec;

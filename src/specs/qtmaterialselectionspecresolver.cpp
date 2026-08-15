@@ -1,6 +1,6 @@
 #include "qtmaterial/specs/qtmaterialselectionspecresolver.h"
 
-#include <QStringList>
+#include <QVector>
 
 #include "qtmaterialcomponenttokenapplier_p.h"
 
@@ -48,10 +48,7 @@ CheckboxSpec SelectionSpecResolver::checkboxSpec(
 
     applyCheckboxComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("selection"),
-            QStringLiteral("checkbox"),
-            QStringLiteral("Checkbox")},
+        QVector<ComponentId>{ ComponentId::Checkbox },
         &spec);
 
     return spec;
@@ -80,10 +77,7 @@ RadioButtonSpec SelectionSpecResolver::radioButtonSpec(
 
     applyRadioButtonComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("selection"),
-            QStringLiteral("radioButton"),
-            QStringLiteral("RadioButton")},
+        QVector<ComponentId>{ ComponentId::RadioButton },
         &spec);
 
     return spec;
@@ -124,10 +118,7 @@ SwitchSpec SelectionSpecResolver::switchSpec(
 
     applySwitchComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("selection"),
-            QStringLiteral("switch"),
-            QStringLiteral("Switch")},
+        QVector<ComponentId>{ ComponentId::Switch },
         &spec);
 
     return spec;

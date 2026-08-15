@@ -1,6 +1,6 @@
 #include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 
-#include <QStringList>
+#include <QVector>
 
 #include "qtmaterialcomponenttokenapplier_p.h"
 
@@ -66,10 +66,7 @@ ButtonSpec ButtonSpecResolver::textButtonSpec(
 
     applyButtonComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("button"),
-            QStringLiteral("button.text"),
-            QStringLiteral("TextButton")},
+        QVector<ComponentId>{ ComponentId::Button, ComponentId::ButtonText },
         &spec);
     return spec;
 }
@@ -92,10 +89,7 @@ ButtonSpec ButtonSpecResolver::filledButtonSpec(
 
     applyButtonComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("button"),
-            QStringLiteral("button.filled"),
-            QStringLiteral("FilledButton")},
+        QVector<ComponentId>{ ComponentId::Button, ComponentId::ButtonFilled },
         &spec);
     return spec;
 }
@@ -119,10 +113,7 @@ ButtonSpec ButtonSpecResolver::filledTonalButtonSpec(
 
     applyButtonComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("button"),
-            QStringLiteral("button.filledTonal"),
-            QStringLiteral("FilledTonalButton")},
+        QVector<ComponentId>{ ComponentId::Button, ComponentId::ButtonFilledTonal },
         &spec);
     return spec;
 }
@@ -145,10 +136,7 @@ ButtonSpec ButtonSpecResolver::outlinedButtonSpec(
 
     applyButtonComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("button"),
-            QStringLiteral("button.outlined"),
-            QStringLiteral("OutlinedButton")},
+        QVector<ComponentId>{ ComponentId::Button, ComponentId::ButtonOutlined },
         &spec);
     return spec;
 }
@@ -172,10 +160,7 @@ ButtonSpec ButtonSpecResolver::elevatedButtonSpec(
 
     applyButtonComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("button"),
-            QStringLiteral("button.elevated"),
-            QStringLiteral("ElevatedButton")},
+        QVector<ComponentId>{ ComponentId::Button, ComponentId::ButtonElevated },
         &spec);
     return spec;
 }

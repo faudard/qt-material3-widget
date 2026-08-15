@@ -12,7 +12,7 @@ enum class ThemeColorBackend {
     MaterialColorUtilities
 };
 
-struct QTMATERIAL3_THEME_EXPORT ThemeColorBackendStatus {
+struct QTMATERIAL3_THEME_MODEL_EXPORT ThemeColorBackendStatus {
     ColorBackendPolicy requestedPolicy = ColorBackendPolicy::Auto;
     ThemeColorBackend requestedBackend = ThemeColorBackend::Fallback;
     ThemeColorBackend effectiveBackend = ThemeColorBackend::Fallback;
@@ -22,11 +22,11 @@ struct QTMATERIAL3_THEME_EXPORT ThemeColorBackendStatus {
     QString diagnostic;
 };
 
-QTMATERIAL3_THEME_EXPORT QString themeColorBackendToString(ThemeColorBackend backend);
-QTMATERIAL3_THEME_EXPORT QString colorBackendPolicyToString(ColorBackendPolicy policy);
-QTMATERIAL3_THEME_EXPORT ThemeColorBackend compiledThemeColorBackend() noexcept;
-QTMATERIAL3_THEME_EXPORT bool isMaterialColorUtilitiesCompiledIn() noexcept;
-QTMATERIAL3_THEME_EXPORT double contrastModeToMaterialColorUtilitiesLevel(ContrastMode contrast) noexcept;
-QTMATERIAL3_THEME_EXPORT ThemeColorBackendStatus resolveThemeColorBackend(const ThemeOptions& options);
+QTMATERIAL3_THEME_MODEL_EXPORT QString themeColorBackendToString(ThemeColorBackend backend);
+QTMATERIAL3_THEME_MODEL_EXPORT QString colorBackendPolicyToString(ColorBackendPolicy policy);
+QTMATERIAL3_THEME_MODEL_EXPORT ThemeColorBackend compiledThemeColorBackend() noexcept;
+QTMATERIAL3_THEME_MODEL_EXPORT bool isMaterialColorUtilitiesCompiledIn() noexcept;
+QTMATERIAL3_THEME_MODEL_EXPORT double contrastModeToMaterialColorUtilitiesLevel(ContrastMode contrast) noexcept;
+QTMATERIAL3_THEME_MODEL_EXPORT ThemeColorBackendStatus resolveThemeColorBackend(const ThemeOptions& options);
 
 } // namespace QtMaterial

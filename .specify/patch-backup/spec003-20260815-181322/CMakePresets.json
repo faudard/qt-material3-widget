@@ -1,0 +1,108 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "dev-tests",
+      "displayName": "Developer tests",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/dev-tests",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "QTMATERIAL3_BUILD_TESTS": "ON",
+        "QTMATERIAL3_BUILD_EXAMPLES": "ON",
+        "QTMATERIAL3_BUILD_BENCHMARKS": "OFF",
+        "QTMATERIAL3_USE_MCU": "OFF"
+      }
+    },
+    {
+      "name": "theme-fallback",
+      "displayName": "Theming validation, fallback backend",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/theming-fallback",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "QTMATERIAL3_BUILD_TESTS": "ON",
+        "QTMATERIAL3_BUILD_EXAMPLES": "ON",
+        "QTMATERIAL3_BUILD_BENCHMARKS": "OFF",
+        "QTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS": "ON",
+        "QTMATERIAL3_USE_MCU": "OFF"
+      }
+    },
+    {
+      "name": "theme-mcu-requested",
+      "displayName": "Theming validation, MCU requested",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/theming-mcu-requested",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "QTMATERIAL3_BUILD_TESTS": "ON",
+        "QTMATERIAL3_BUILD_EXAMPLES": "ON",
+        "QTMATERIAL3_BUILD_BENCHMARKS": "OFF",
+        "QTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS": "ON",
+        "QTMATERIAL3_USE_MCU": "ON"
+      }
+    },
+    {
+      "name": "install-export",
+      "displayName": "Install/export validation",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/install-export",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "QTMATERIAL3_BUILD_TESTS": "OFF",
+        "QTMATERIAL3_BUILD_EXAMPLES": "OFF",
+        "QTMATERIAL3_BUILD_BENCHMARKS": "OFF",
+        "QTMATERIAL3_USE_MCU": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "dev-tests",
+      "configurePreset": "dev-tests"
+    },
+    {
+      "name": "theme-fallback",
+      "configurePreset": "theme-fallback"
+    },
+    {
+      "name": "theme-mcu-requested",
+      "configurePreset": "theme-mcu-requested"
+    },
+    {
+      "name": "install-export",
+      "configurePreset": "install-export"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "theme-fallback",
+      "configurePreset": "theme-fallback",
+      "output": {
+        "outputOnFailure": true
+      },
+      "filter": {
+        "include": {
+          "name": "theme|serializer|seed|backend|componenttoken|runtime|systemtheme|accessibility|keyboard|visual|public"
+        }
+      }
+    },
+    {
+      "name": "theme-mcu-requested",
+      "configurePreset": "theme-mcu-requested",
+      "output": {
+        "outputOnFailure": true
+      },
+      "filter": {
+        "include": {
+          "name": "theme|serializer|seed|backend|componenttoken|runtime|systemtheme|accessibility|keyboard|visual|public"
+        }
+      }
+    }
+  ]
+}

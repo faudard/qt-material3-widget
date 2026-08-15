@@ -8,7 +8,7 @@
 
 namespace QtMaterial {
 
-class QTMATERIAL3_THEME_EXPORT ThemeObserver : public QObject {
+class QTMATERIAL3_THEME_RUNTIME_EXPORT ThemeObserver : public QObject {
     Q_OBJECT
 public:
     explicit ThemeObserver(QObject* parent = nullptr);

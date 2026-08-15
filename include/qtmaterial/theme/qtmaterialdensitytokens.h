@@ -15,7 +15,7 @@ enum class DensityRole {
     Comfortable
 };
 
-class QTMATERIAL3_THEME_EXPORT DensityTokens {
+class QTMATERIAL3_THEME_MODEL_EXPORT DensityTokens {
 public:
     DensityTokens();
     ~DensityTokens();

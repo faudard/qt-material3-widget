@@ -15,13 +15,13 @@ enum class ThemeValidationSeverity {
     Error
 };
 
-struct QTMATERIAL3_THEME_EXPORT ThemeValidationIssue {
+struct QTMATERIAL3_THEME_MODEL_EXPORT ThemeValidationIssue {
     ThemeValidationSeverity severity = ThemeValidationSeverity::Error;
     QString path;
     QString message;
 };
 
-struct QTMATERIAL3_THEME_EXPORT ThemeValidationResult {
+struct QTMATERIAL3_THEME_MODEL_EXPORT ThemeValidationResult {
     QList<ThemeValidationIssue> issues;
 
     bool isValid() const;
@@ -30,7 +30,7 @@ struct QTMATERIAL3_THEME_EXPORT ThemeValidationResult {
     QStringList warnings() const;
 };
 
-struct QTMATERIAL3_THEME_EXPORT ThemeValidationPolicy {
+struct QTMATERIAL3_THEME_MODEL_EXPORT ThemeValidationPolicy {
     bool requireCompleteColorScheme = true;
     bool validateContrast = true;
     bool validateTokenRanges = true;
@@ -38,12 +38,12 @@ struct QTMATERIAL3_THEME_EXPORT ThemeValidationPolicy {
     double minimumUiContrastRatio = 3.0;
 };
 
-QTMATERIAL3_THEME_EXPORT QString colorRoleName(ColorRole role);
-QTMATERIAL3_THEME_EXPORT double colorContrastRatio(const QColor& foreground, const QColor& background);
-QTMATERIAL3_THEME_EXPORT ThemeValidationResult validateColorScheme(
+QTMATERIAL3_THEME_MODEL_EXPORT QString colorRoleName(ColorRole role);
+QTMATERIAL3_THEME_MODEL_EXPORT double colorContrastRatio(const QColor& foreground, const QColor& background);
+QTMATERIAL3_THEME_MODEL_EXPORT ThemeValidationResult validateColorScheme(
     const ColorScheme& scheme,
     const ThemeValidationPolicy& policy = ThemeValidationPolicy{});
-QTMATERIAL3_THEME_EXPORT ThemeValidationResult validateTheme(
+QTMATERIAL3_THEME_MODEL_EXPORT ThemeValidationResult validateTheme(
     const Theme& theme,
     const ThemeValidationPolicy& policy = ThemeValidationPolicy{});
 

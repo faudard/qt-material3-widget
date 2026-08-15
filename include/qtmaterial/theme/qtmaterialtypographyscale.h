@@ -5,7 +5,7 @@
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 namespace QtMaterial {
 struct TypographyStyle { QFont font; qreal lineHeight = 0.0; qreal letterSpacing = 0.0; };
-class QTMATERIAL3_THEME_EXPORT TypographyScale {
+class QTMATERIAL3_THEME_MODEL_EXPORT TypographyScale {
 public:
     TypographyScale();
     ~TypographyScale();

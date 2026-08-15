@@ -34,7 +34,7 @@ inline uint qHash(IconSizeRole value, uint seed = 0) noexcept
 
 #endif
 
-class QTMATERIAL3_THEME_EXPORT IconSizeTokens {
+class QTMATERIAL3_THEME_MODEL_EXPORT IconSizeTokens {
 public:
     IconSizeTokens();
     ~IconSizeTokens();

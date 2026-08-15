@@ -8,7 +8,7 @@
 
 namespace QtMaterial {
 
-class QTMATERIAL3_THEME_EXPORT XmlThemeAdapter
+class QTMATERIAL3_THEME_IO_EXPORT XmlThemeAdapter
 {
 public:
     static Theme fromQtMaterialXml(

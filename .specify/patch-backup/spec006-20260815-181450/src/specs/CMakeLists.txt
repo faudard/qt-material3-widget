@@ -1,0 +1,114 @@
+set(QTMATERIAL3_SPECS_SOURCES
+    qtmaterialnavigationrailspecresolver.cpp
+    qtmaterialcomponenttokenapplier.cpp
+    qtmaterialbuttonspec.cpp
+    qtmaterialbuttonspecresolver.cpp
+    qtmaterialiconbuttonspec.cpp
+    qtmaterialactionbuttonspecresolver.cpp
+    qtmaterialcheckboxspec.cpp
+    qtmaterialradiobuttonspec.cpp
+    qtmaterialselectionspecresolver.cpp
+    qtmaterialcompactspecresolver.cpp
+    qtmaterialswitchspec.cpp
+    qtmaterialdialogspec.cpp
+    qtmaterialdialogspecresolver.cpp
+    qtmaterialtextfieldspec.cpp
+    qtmaterialtextfieldspecresolver.cpp
+    qtmaterialfabspec.cpp
+    qtmaterialcardspec.cpp
+    qtmaterialnavigationdrawerspec.cpp
+    qtmaterialoverlaysurfacespecresolver.cpp
+    qtmaterialbottomsheetspec.cpp
+    qtmaterialbannerspec.cpp
+    qtmaterialappbarspec.cpp
+    qtmaterialappbarspecresolver.cpp
+    qtmateriallistitemspec.cpp
+    qtmaterialdividerspec.cpp qtmaterialdataspecresolver.cpp
+    qtmaterialautocompletepopupspec.cpp
+    qtmaterialautocompletepopupspecresolver.cpp
+    qtmaterialdatefieldspec.cpp
+    qtmaterialdatefieldspecresolver.cpp
+    qtmaterialtabsspec.cpp
+    qtmaterialtabsspecresolver.cpp
+    qtmaterialsnackbarspec.cpp
+    qtmaterialsurfacespecresolver.cpp
+    qtmaterialprogressindicatorspec.cpp
+    qtmaterialprogressspecresolver.cpp
+    qtmaterialchipspecresolver.cpp
+    qtmaterialsegmentedbuttonspecresolver.cpp
+    qtmaterialmenuspecresolver.cpp
+    qtmaterialautocompletespecresolver.cpp
+    private/qtmaterialdensitymetrics_p.h
+    qtmaterialdatacomponentspecs.cpp
+    qtmaterialdatacomponentspecresolver.cpp
+    qtmaterialspecvalidation.cpp
+)
+
+set(QTMATERIAL3_SPECS_HEADERS
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbuttonspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbuttonspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialiconbuttonspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialactionbuttonspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialcheckboxspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialradiobuttonspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialselectionspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialcompactspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialselectionruntimespec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialswitchspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdialogspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdialogspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtextfieldspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtextfieldspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialfabspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialcardspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationdrawerspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbottomsheetspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialbannerspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialappbarspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialappbarspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmateriallistitemspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdividerspec.h ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdataspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletepopupspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatefieldspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatefieldspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtabsspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialtabsspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsnackbarspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsurfacespecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialprogressindicatorspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialprogressspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialchipspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialchipspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsegmentedbuttonspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialsegmentedbuttonspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationrailspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialnavigationrailspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialmenuspec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialmenuspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletespec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletespecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatacomponentspecs.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatacomponentspecresolver.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspeccontext.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspecvalidation.h
+)
+
+qtm3_add_module(
+    qtmaterial3_specs
+    Specs
+    QtMaterial3Specs
+    QTMATERIAL3_SPECS_LIBRARY
+    ${QTMATERIAL3_SPECS_SOURCES}
+    ${QTMATERIAL3_SPECS_HEADERS}
+)
+
+# Architecture boundary: Specs may depend on Foundation and Theme, but not Core/QtWidgets.
+target_link_libraries(qtmaterial3_specs
+    PUBLIC
+        qtmaterial3_foundation
+        #Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        qtmaterial3_theme
+)

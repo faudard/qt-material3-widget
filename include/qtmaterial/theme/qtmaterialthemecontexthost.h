@@ -12,7 +12,7 @@ class ThemeContext;
  * Contract implemented by widgets that participate in ThemeContext
  * inheritance without requiring QtMaterialWidget as their C++ base class.
  */
-class QTMATERIAL3_THEME_EXPORT ThemeContextHost
+class QTMATERIAL3_THEME_RUNTIME_EXPORT ThemeContextHost
 {
 protected:
     ThemeContextHost() noexcept;

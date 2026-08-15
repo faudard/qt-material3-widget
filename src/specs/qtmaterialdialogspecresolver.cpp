@@ -1,6 +1,6 @@
 #include "qtmaterial/specs/qtmaterialdialogspecresolver.h"
 
-#include <QStringList>
+#include <QVector>
 
 #include "qtmaterialcomponenttokenapplier_p.h"
 
@@ -22,10 +22,7 @@ DialogSpec DialogSpecResolver::dialogSpec(const Theme& theme) const
 
     applyDialogComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("surface"),
-            QStringLiteral("dialog"),
-            QStringLiteral("Dialog")},
+        QVector<ComponentId>{ ComponentId::Surface, ComponentId::Dialog },
         &spec);
 
     return spec;

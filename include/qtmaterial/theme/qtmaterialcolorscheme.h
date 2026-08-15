@@ -9,7 +9,7 @@
 
 namespace QtMaterial {
 
-class QTMATERIAL3_THEME_EXPORT ColorScheme {
+class QTMATERIAL3_THEME_MODEL_EXPORT ColorScheme {
 public:
     ColorScheme();
     ~ColorScheme();

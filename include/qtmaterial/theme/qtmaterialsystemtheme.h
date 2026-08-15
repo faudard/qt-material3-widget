@@ -10,7 +10,7 @@ namespace QtMaterial {
 
 class Theme;
 
-struct QTMATERIAL3_THEME_EXPORT SystemThemeSnapshot {
+struct QTMATERIAL3_THEME_RUNTIME_EXPORT SystemThemeSnapshot {
     ThemePreference preference = ThemePreference::FollowSystem;
     ThemeMode effectiveMode = ThemeMode::Light;
     ContrastMode effectiveContrast = ContrastMode::Standard;
@@ -26,7 +26,7 @@ struct QTMATERIAL3_THEME_EXPORT SystemThemeSnapshot {
  * without it, or enable this bridge when they want a Material theme to follow
  * operating-system light/dark and contrast changes.
  */
-class QTMATERIAL3_THEME_EXPORT SystemTheme : public QObject {
+class QTMATERIAL3_THEME_RUNTIME_EXPORT SystemTheme : public QObject {
     Q_OBJECT
 public:
     static SystemTheme& instance();
@@ -75,8 +75,8 @@ private:
     SystemThemeSnapshot m_lastSnapshot;
 };
 
-QString QTMATERIAL3_THEME_EXPORT toString(ThemePreference preference);
-ThemePreference QTMATERIAL3_THEME_EXPORT themePreferenceFromString(
+QString QTMATERIAL3_THEME_RUNTIME_EXPORT toString(ThemePreference preference);
+ThemePreference QTMATERIAL3_THEME_RUNTIME_EXPORT themePreferenceFromString(
     const QString& value,
     bool* ok = nullptr);
 

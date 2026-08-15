@@ -2,7 +2,7 @@
 #include <QColor>
 #include "qtmaterial/qtmaterialglobal.h"
 namespace QtMaterial {
-class QTMATERIAL3_THEME_EXPORT StateLayer {
+class QTMATERIAL3_THEME_MODEL_EXPORT StateLayer {
 public:
     StateLayer();
     ~StateLayer();

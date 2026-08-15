@@ -24,7 +24,7 @@ enum class ThemeChangeReason {
     ImportFile
 };
 
-class QTMATERIAL3_THEME_EXPORT ThemeManager : public QObject {
+class QTMATERIAL3_THEME_RUNTIME_EXPORT ThemeManager : public QObject {
     Q_OBJECT
 public:
     static ThemeManager& instance();

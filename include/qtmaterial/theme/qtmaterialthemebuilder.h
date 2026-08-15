@@ -9,7 +9,7 @@ class QColor;
 
 namespace QtMaterial {
 
-class QTMATERIAL3_THEME_EXPORT ThemeBuilder {
+class QTMATERIAL3_THEME_MODEL_EXPORT ThemeBuilder {
 public:
     ThemeBuilder();
     ~ThemeBuilder();

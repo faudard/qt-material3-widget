@@ -1,6 +1,6 @@
 #include "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h"
 
-#include <QStringList>
+#include <QVector>
 
 #include "qtmaterialcomponenttokenapplier_p.h"
 
@@ -37,11 +37,7 @@ AutocompletePopupSpecResolver::autocompletePopupSpec(
 
     applyAutocompletePopupComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("input"),
-            QStringLiteral("autocomplete"),
-            QStringLiteral("autocompletePopup"),
-            QStringLiteral("AutocompletePopup")},
+        QVector<ComponentId>{ ComponentId::Input, ComponentId::AutoComplete, ComponentId::AutoCompletePopup },
         &spec);
 
     return spec;

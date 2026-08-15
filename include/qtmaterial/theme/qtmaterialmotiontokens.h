@@ -5,7 +5,7 @@
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 namespace QtMaterial {
 struct MotionStyle { int durationMs = 0; QEasingCurve easing = QEasingCurve::Linear; };
-class QTMATERIAL3_THEME_EXPORT MotionTokens {
+class QTMATERIAL3_THEME_MODEL_EXPORT MotionTokens {
 public:
     MotionTokens();
     ~MotionTokens();

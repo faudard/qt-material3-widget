@@ -54,7 +54,7 @@ Deliverables:
 |---|---|
 | API inventory | List every public header, class, enum, property, signal, slot, and exported symbol. |
 | Implementation status | Mark each widget as `complete`, `usable`, `partial`, `skeleton`, or `planned`. |
-| Spec status | Verify every widget has a matching immutable spec and factory path. |
+| Spec status | Verify every widget has a matching immutable spec and dedicated resolver path. |
 | Docs status | Classify docs as complete, stub, obsolete, or missing. |
 | Test status | Map every widget/spec/effect/theme object to test coverage. |
 | Compatibility status | Verify Qt 5.14, latest Qt 5, Qt 6 LTS, and latest Qt 6 builds. |
@@ -1100,7 +1100,7 @@ For a widget to be “complete”:
 [ ] public header installed
 [ ] CMake target includes source/header
 [ ] spec exists
-[ ] default spec factory path exists
+[ ] dedicated spec resolver path exists
 [ ] theme resolution works
 [ ] sizeHint/minimumSizeHint correct
 [ ] paint path high-DPI safe
@@ -1271,7 +1271,7 @@ Below is a **status table of the whole project**, based on the public repository
 |---|---:|---|---|
 | `qtmaterial3_theme` | 🟡 Present, important but still stabilizing | Contains color scheme, theme options, theme, builder, manager, serializer, observer, typography, shape, elevation, motion, state layer. | Theme guide is relatively detailed; tests exist for builder, manager, serializer. |
 | `qtmaterial3_core` | 🟡 Present foundation | Contains widget base, interaction state, control, surface, overlay surface, abstract button, selection control, input control, accessibility helper. | Tests exist for interaction state, abstract button state, input control. |
-| `qtmaterial3_specs` | 🟡 Present foundation | Contains specs for buttons, icon button, checkbox, radio, switch, dialog, text field, FAB, card, navigation drawer, bottom sheet, banner, app bars, list item, divider, autocomplete, date field, tabs, snackbar, progress. | Spec factory and phase specs tests exist. |
+| `qtmaterial3_specs` | 🟡 Present foundation | Contains specs for buttons, icon button, checkbox, radio, switch, dialog, text field, FAB, card, navigation drawer, bottom sheet, banner, app bars, list item, divider, autocomplete, date field, tabs, snackbar, progress. | Dedicated spec-resolver and phase-spec tests exist. |
 | `qtmaterial3_effects` | 🟡 Present foundation | Ripple controller, state layer painter, focus indicator, shadow renderer/cache, transition controller, scrim widget. | Tests exist for state layer, ripple, focus, shadow, transition, scrim. |
 | `qtmaterial3_widgets` | 🟡 Present but experimental | Many widget classes are in the CMake source/header lists. | Broad tests exist, but docs are uneven and project remains experimental. |
 

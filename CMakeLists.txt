@@ -35,6 +35,9 @@ endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
 
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3QtCompatibility.cmake")
+qtmaterial3_validate_qt_compatibility()
+
 if(COMMAND qt_standard_project_setup)
     qt_standard_project_setup()
 else()
@@ -69,6 +72,9 @@ set(QTMATERIAL3_INSTALL_TARGETS
     qtmaterial3_foundation
     qtmaterial3_tooling
     qtmaterial3_testing
+    qtmaterial3_theme_model
+    qtmaterial3_theme_io
+    qtmaterial3_theme_runtime
     qtmaterial3_theme
     qtmaterial3_integration
     qtmaterial3_core
