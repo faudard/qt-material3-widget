@@ -1,4 +1,5 @@
 #include "qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h"
+#include "../resolution/qtmaterialinputspecresolution_p.h"
 
 #include "qtmaterial/core/qtmaterialthemecontextbinding.h"
 #include <QAbstractItemModel>
@@ -18,12 +19,10 @@
 #include <memory>
 #include "qtmaterial/core/qtmaterialwidget.h"
 #include "qtmaterial/effects/qtmaterialelevationrenderer.h"
-#include "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h"
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
 #include <QMetaObject>
 
 using QtMaterial::AutocompletePopupSpec;
-using QtMaterial::AutocompletePopupSpecResolver;
 using QtMaterial::QtMaterialElevationRenderer;
 using QtMaterial::QtMaterialWidget;
 using QtMaterial::QtMaterialThemeContextBinding;
@@ -452,15 +451,9 @@ QtMaterialAutocompletePopup::ensureSpecResolved() const
     if (!d_ptr->m_specDirty) {
         return;
     }
-
-    ThemeContext* context =
-        effectiveThemeContext();
-    Q_ASSERT(context);
-
-    const AutocompletePopupSpecResolver resolver;
     d_ptr->m_spec =
-        resolver.autocompletePopupSpec(
-            context->theme());
+        InputSpecResolution::autocompletePopupSpec(
+            d_ptr->m_themeBinding);
     d_ptr->m_specDirty = false;
 }
 

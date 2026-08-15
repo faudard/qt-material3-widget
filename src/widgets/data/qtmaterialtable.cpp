@@ -16,6 +16,7 @@
 #include <QStyleOptionViewItem>
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/specs/qtmaterialdataspecresolver.h"
+#include "../resolution/qtmaterialdataspecresolution_p.h"
 
 namespace QtMaterial {
 namespace {
@@ -649,12 +650,9 @@ ensureSpecResolved() const
         d_ptr->specDirty = false;
         return;
     }
-
-    const DataSpecResolver resolver;
-
     d_ptr->spec =
-        resolver.tableSpec(
-            d_ptr->themeBinding->theme(),
+        DataSpecResolution::tableSpec(
+            d_ptr->themeBinding,
             d_ptr->dense
             ? Density::Compact
             : Density::Default);

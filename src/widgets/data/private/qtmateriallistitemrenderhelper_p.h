@@ -6,7 +6,6 @@
 #include <QString>
 
 #include "qtmaterial/specs/qtmateriallistitemspec.h"
-#include "qtmaterial/theme/qtmaterialtheme.h"
 
 class QPainter;
 
@@ -15,8 +14,8 @@ namespace QtMaterial {
 class ListItemRenderHelper
 {
 public:
-    static QFont headlineFont(const ListItemSpec& spec, const Theme& theme);
-    static QFont supportingFont(const ListItemSpec& spec, const Theme& theme);
+    static QFont headlineFont(const ListItemSpec& spec);
+    static QFont supportingFont(const ListItemSpec& spec);
 
     static QColor containerColorForState(const ListItemSpec& spec,
                                          bool enabled,
@@ -24,7 +23,7 @@ public:
                                          bool selected,
                                          bool pressed);
 
-    static qreal stateLayerOpacity(const StateLayer& stateLayer,
+    static qreal stateLayerOpacity(const ListItemSpec& spec,
                                    bool hovered,
                                    bool focused,
                                    bool pressed);

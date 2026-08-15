@@ -9,7 +9,7 @@
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
-#include "qtmaterial/specs/qtmaterialcompactspecresolver.h"
+#include "qtmaterial/specs/qtmaterialchipspecresolver.h"
 
 namespace QtMaterial {
 namespace {
@@ -222,7 +222,7 @@ void QtMaterialChip::contentChangedEvent()
 
 ChipSpec QtMaterialChip::resolveSpec() const
 {
-    const CompactSpecResolver resolver;
+    const ChipSpecResolver resolver;
     return resolver.resolve(
         m_variant,
         theme(),

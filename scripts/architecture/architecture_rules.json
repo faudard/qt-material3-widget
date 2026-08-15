@@ -297,10 +297,11 @@
         "qtmaterial/specs/qtmaterialspecfactory\\.h",
         "\\bSpecFactory\\b",
         "ThemeManager::instance\\s*\\(\\s*\\)\\s*\\.\\s*theme\\s*\\(",
-        "\\bQtMaterialShadowRenderer\\b"
+        "\\bQtMaterialShadowRenderer\\b",
+        "\\bAutocompletePopupSpecResolver\\b"
       ],
       "required_regex": [
-        "\\bAutocompletePopupSpecResolver\\b",
+        "\\bInputSpecResolution::autocompletePopupSpec\\s*\\(",
         "\\beffectiveThemeContext\\s*\\(",
         "QtMaterialElevationRenderer\\s*::\\s*paintPathElevation\\s*\\(",
         "\\brefreshPopupVisibility\\s*\\("
@@ -500,7 +501,7 @@
       "required_regex": [
         "\\bconst\\s+GridListSpec\\s*&\\s*resolvedSpec\\s*\\(\\s*\\)\\s*const",
         "\\bensureSpecResolved\\s*\\(\\s*\\)",
-        "DataSpecResolver",
+        "\\bDataSpecResolution::gridListSpec\\s*\\(",
         "\\bapplyResolvedSpec\\s*\\(\\s*\\)",
         "effectiveThemeContextChanged",
         "resolvedPalette\\s*\\.\\s*setColor"
@@ -508,7 +509,8 @@
       "forbidden_regex": [
         "\\bSpecFactory\\b",
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
-        "\\bdefaultGridListSpec\\s*\\("
+        "\\bdefaultGridListSpec\\s*\\(",
+        "(?:m_)?themeBinding\\s*->\\s*theme\\s*\\("
       ]
     },
     {
@@ -582,7 +584,7 @@
         "\\bconst\\s+TableSpec\\s*&\\s*resolvedSpec\\s*\\(\\s*\\)\\s*const",
         "\\bensureSpecResolved\\s*\\(\\s*\\)",
         "\\bapplyResolvedSpec\\s*\\(\\s*\\)",
-        "DataSpecResolver",
+        "\\bDataSpecResolution::tableSpec\\s*\\(",
         "effectiveThemeContextChanged",
         "QtMaterialFocusIndicator\\s*::\\s*paintRectFocusRing",
         "resolvedPalette\\s*\\.\\s*setColor"
@@ -590,7 +592,8 @@
       "forbidden_regex": [
         "\\bSpecFactory\\b",
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
-        "\\bmakeTableSpec\\s*\\("
+        "\\bmakeTableSpec\\s*\\(",
+        "(?:m_)?themeBinding\\s*->\\s*theme\\s*\\("
       ]
     },
     {
@@ -778,7 +781,7 @@
       "required_regex": [
         "\\bpublic\\s+ThemeContextHost\\b",
         "\\bQtMaterialThemeContextBinding\\b",
-        "\\bDataSpecResolver\\b",
+        "\\bDataSpecResolution::tableSpec\\s*\\(",
         "\\bhasExplicitSpec\\s*\\(\\s*\\)\\s*const",
         "\\bresetSpec\\s*\\(",
         "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const"
@@ -788,7 +791,8 @@
         "ThemeManager::instance\\s*\\(",
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
-        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\("
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\(",
+        "(?:m_)?themeBinding\\s*->\\s*theme\\s*\\("
       ]
     },
     {
@@ -801,7 +805,7 @@
         "\\bpublic\\s+ThemeContextHost\\b",
         "Q_INTERFACES\\(QtMaterial::ThemeContextHost\\)",
         "\\bQtMaterialThemeContextBinding\\b",
-        "\\bDataSpecResolver\\b",
+        "\\bDataSpecResolution::gridListSpec\\s*\\(",
         "\\bclass\\s+GridListDelegate\\b",
         "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const",
         "\\bhasExplicitSpec\\s*\\(\\s*\\)\\s*const",
@@ -811,7 +815,6 @@
         "\\bexplicitSpecSet\\b",
         "\\bensureSpecResolved\\s*\\(\\s*\\)",
         "\\bapplyResolvedSpec\\s*\\(\\s*\\)",
-        "themeBinding\\s*->\\s*theme\\s*\\(\\s*\\)",
         "\\bitemContentMargins\\b",
         "\\bdisabledSupportingTextColor\\b"
       ],
@@ -826,7 +829,8 @@
         "palette\\s*\\(\\s*\\)\\s*\\.\\s*color\\s*\\(",
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
-        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\("
+        "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\(",
+        "(?:m_)?themeBinding\\s*->\\s*theme\\s*\\("
       ]
     },
     {
@@ -942,7 +946,7 @@
       ],
       "required_regex": [
         "\\bQtMaterialThemeContextBinding\\b",
-        "\\bDataSpecResolver\\b",
+        "\\bInputSpecResolution::datePickerSpec\\s*\\(",
         "\\bensureSpecResolved\\s*\\(\\s*\\)\\s*const",
         "\\bapplyResolvedSpec\\s*\\(",
         "\\bm_explicitSpecSet\\b",
@@ -957,7 +961,8 @@
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*colorScheme\\s*\\(",
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*typography\\s*\\(",
         "theme\\s*\\(\\s*\\)\\s*\\.\\s*shapes\\s*\\(",
-        "emit\\s+selectedDateChanged\\s*\\(\\s*date\\s*\\)"
+        "emit\\s+selectedDateChanged\\s*\\(\\s*date\\s*\\)",
+        "\\bDataSpecResolver\\b"
       ]
     },
     {

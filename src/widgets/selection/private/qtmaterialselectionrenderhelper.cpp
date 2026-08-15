@@ -52,31 +52,7 @@ void configureMotion(
     }
 }
 
-qreal stateLayerOpacity(const Theme& theme, const QtMaterialInteractionState& state)
-{
-    if (!state.isEnabled()) {
-        return 0.0;
-    }
-    const StateLayer& layer = theme.stateLayer();
-    if (state.isPressed()) {
-        return layer.pressOpacity;
-    }
-    if (state.isFocused()) {
-        return layer.focusOpacity;
-    }
-    if (state.isHovered()) {
-        return layer.hoverOpacity;
-    }
-    return 0.0;
-}
 
-QFont labelFont(const Theme& theme, TypeRole role, const QFont& fallback)
-{
-    if (theme.typography().contains(role)) {
-        return theme.typography().style(role).font;
-    }
-    return fallback;
-}
 
 QRectF centeredStateLayerRect(const QRect& bounds, int stateLayerSize)
 {

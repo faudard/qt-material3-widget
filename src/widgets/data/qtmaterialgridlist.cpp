@@ -20,6 +20,7 @@
 
 #include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
+#include "../resolution/qtmaterialdataspecresolution_p.h"
 
 namespace QtMaterial {
 namespace {
@@ -1163,8 +1164,8 @@ void QtMaterialGridList::ensureSpecResolved() const
     }
 
     d_ptr->spec =
-        DataSpecResolver().gridListSpec(
-            d_ptr->themeBinding->theme(),
+        DataSpecResolution::gridListSpec(
+            d_ptr->themeBinding,
             Density::Default);
     d_ptr->specDirty = false;
 }

@@ -95,45 +95,8 @@ qreal stateLayerOpacity(
     return 0.0;
 }
 
-qreal cornerRadius(const Theme& theme, const ButtonSpec& spec, const QRectF& bounds)
-{
-    if (spec.shapeRole == ShapeRole::Full) {
-        return bounds.height() / 2.0;
-    }
 
-    const int themeRadius = theme.shapes().radius(spec.shapeRole);
-    if (themeRadius > 0) {
-        return qMin<qreal>(themeRadius, bounds.height() / 2.0);
-    }
 
-    return bounds.height() / 2.0;
-}
-
-QPainterPath containerPath(const Theme& theme, const ButtonSpec& spec, const QRectF& bounds)
-{
-    QPainterPath path;
-    const qreal radius = cornerRadius(theme, spec, bounds);
-    path.addRoundedRect(bounds, radius, radius);
-    return path;
-}
-
-qreal stateLayerOpacity(const Theme& theme, const QtMaterialInteractionState& state)
-{
-    if (!state.isEnabled()) {
-        return 0.0;
-    }
-    const StateLayer& layer = theme.stateLayer();
-    if (state.isPressed()) {
-        return layer.pressOpacity;
-    }
-    if (state.isFocused()) {
-        return layer.focusOpacity;
-    }
-    if (state.isHovered()) {
-        return layer.hoverOpacity;
-    }
-    return 0.0;
-}
 
 ContentLayout layoutContent(
     const QAbstractButton* button,

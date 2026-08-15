@@ -5,18 +5,14 @@
 
 namespace QtMaterial {
 
-QFont ListItemRenderHelper::headlineFont(const ListItemSpec&, const Theme&)
+QFont ListItemRenderHelper::headlineFont(const ListItemSpec& spec)
 {
-    QFont font;
-    font.setPointSize(11);
-    return font;
+    return spec.headlineFont;
 }
 
-QFont ListItemRenderHelper::supportingFont(const ListItemSpec&, const Theme&)
+QFont ListItemRenderHelper::supportingFont(const ListItemSpec& spec)
 {
-    QFont font;
-    font.setPointSize(10);
-    return font;
+    return spec.supportingFont;
 }
 
 QColor ListItemRenderHelper::containerColorForState(const ListItemSpec& spec,
@@ -40,14 +36,15 @@ QColor ListItemRenderHelper::containerColorForState(const ListItemSpec& spec,
     return spec.containerColor;
 }
 
-qreal ListItemRenderHelper::stateLayerOpacity(const StateLayer& stateLayer,
-                                              bool hovered,
-                                              bool focused,
-                                              bool pressed)
+qreal ListItemRenderHelper::stateLayerOpacity(
+    const ListItemSpec& spec,
+    bool hovered,
+    bool focused,
+    bool pressed)
 {
-    if (pressed) return stateLayer.pressOpacity;
-    if (focused) return stateLayer.focusOpacity;
-    if (hovered) return stateLayer.hoverOpacity;
+    if (pressed) return spec.pressedOpacity;
+    if (focused) return spec.focusOpacity;
+    if (hovered) return spec.hoverOpacity;
     return 0.0;
 }
 

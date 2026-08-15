@@ -1,6 +1,6 @@
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
+#include "resolution/qtmaterialinputspecresolution_p.h"
 #include "qtmaterial/core/qtmaterialthemecontextbinding.h"
-#include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 #include <memory>
 
 #include <QCalendarWidget>
@@ -334,9 +334,8 @@ void QtMaterialDatePicker::ensureSpecResolved() const
     }
 
     d_ptr->m_spec =
-        DataSpecResolver().datePickerSpec(
-            d_ptr->m_themeBinding->theme(),
-            Density::Default);
+        InputSpecResolution::datePickerSpec(
+            d_ptr->m_themeBinding);
     d_ptr->m_specDirty = false;
 }
 

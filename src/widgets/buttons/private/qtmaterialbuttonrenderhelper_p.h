@@ -9,7 +9,6 @@
 
 #include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include "qtmaterial/specs/qtmaterialbuttonspec.h"
-#include "qtmaterial/theme/qtmaterialtheme.h"
 
 class QAbstractButton;
 
@@ -21,10 +20,6 @@ QFont resolvedLabelFont(const QFont& fallback, const ButtonSpec& spec);
 qreal cornerRadius(const ButtonSpec& spec, const QRectF& bounds);
 QPainterPath containerPath(const ButtonSpec& spec, const QRectF& bounds);
 qreal stateLayerOpacity(const ButtonSpec& spec, const QtMaterialInteractionState& state);
-qreal cornerRadius(const Theme& theme, const ButtonSpec& spec, const QRectF& bounds);
-QPainterPath containerPath(const Theme& theme, const ButtonSpec& spec, const QRectF& bounds);
-qreal stateLayerOpacity(const Theme& theme, const QtMaterialInteractionState& state);
-
 struct ContentLayout {
     QRect iconRect;
     QRect textRect;
