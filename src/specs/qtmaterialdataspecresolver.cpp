@@ -6,6 +6,7 @@
 #include <QVariant>
 
 #include "qtmaterialcomponenttokenapplier_p.h"
+#include <QVector>
 
 namespace QtMaterial {
 namespace {
@@ -262,12 +263,7 @@ void applyListItemOverrides(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QStringList{
-                QStringLiteral("data"),
-                QStringLiteral("list"),
-                QStringLiteral("listItem"),
-                QStringLiteral("ListItem")
-            });
+            QVector<ComponentId>{ ComponentId::Data, ComponentId::List, ComponentId::ListItem });
 
     if (tokens.isEmpty()) {
         return;
@@ -489,11 +485,7 @@ void applyDividerOverrides(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QStringList{
-                QStringLiteral("data"),
-                QStringLiteral("divider"),
-                QStringLiteral("Divider")
-            });
+            QVector<ComponentId>{ ComponentId::Data, ComponentId::Divider });
 
     if (tokens.isEmpty()) {
         return;
@@ -574,11 +566,7 @@ void applyListOverrides(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QStringList{
-                QStringLiteral("data"),
-                QStringLiteral("list"),
-                QStringLiteral("List")
-            });
+            QVector<ComponentId>{ ComponentId::Data, ComponentId::List });
 
     if (tokens.isEmpty()) {
         return;
@@ -706,11 +694,7 @@ void applyTableOverrides(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QStringList{
-                QStringLiteral("data"),
-                QStringLiteral("table"),
-                QStringLiteral("Table")
-            });
+            QVector<ComponentId>{ ComponentId::Data, ComponentId::Table });
 
     if (tokens.isEmpty()) {
         return;
@@ -890,11 +874,7 @@ void applyGridListOverrides(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QStringList{
-                QStringLiteral("data"),
-                QStringLiteral("gridList"),
-                QStringLiteral("GridList")
-            });
+            QVector<ComponentId>{ ComponentId::Data, ComponentId::GridList });
 
     if (tokens.isEmpty()) {
         return;
@@ -1012,11 +992,7 @@ void applyCarouselOverrides(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QStringList{
-                QStringLiteral("data"),
-                QStringLiteral("carousel"),
-                QStringLiteral("Carousel")
-            });
+            QVector<ComponentId>{ ComponentId::Data, ComponentId::Carousel });
 
     if (tokens.isEmpty()) {
         return;
@@ -1193,11 +1169,7 @@ void applyDatePickerOverrides(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QStringList{
-                QStringLiteral("data"),
-                QStringLiteral("datePicker"),
-                QStringLiteral("DatePicker")
-            });
+            QVector<ComponentId>{ ComponentId::Data, ComponentId::DatePicker });
 
     if (tokens.isEmpty()) {
         return;

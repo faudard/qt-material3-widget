@@ -1,6 +1,6 @@
 #include "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h"
 
-#include <QStringList>
+#include <QVector>
 
 #include "qtmaterialcomponenttokenapplier_p.h"
 
@@ -31,10 +31,7 @@ FabSpec ActionButtonSpecResolver::fabSpec(
 
     applyFabComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("button"),
-            QStringLiteral("fab"),
-            QStringLiteral("Fab")},
+        QVector<ComponentId>{ ComponentId::Button, ComponentId::FloatingActionButton },
         &spec);
 
     return spec;
@@ -49,11 +46,7 @@ FabSpec ActionButtonSpecResolver::extendedFabSpec(
 
     applyFabComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("button"),
-            QStringLiteral("fab"),
-            QStringLiteral("fab.extended"),
-            QStringLiteral("ExtendedFab")},
+        QVector<ComponentId>{ ComponentId::Button, ComponentId::FloatingActionButton, ComponentId::ExtendedFloatingActionButton },
         &spec);
 
     return spec;
@@ -85,10 +78,7 @@ IconButtonSpec ActionButtonSpecResolver::iconButtonSpec(
 
     applyIconButtonComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("button"),
-            QStringLiteral("iconButton"),
-            QStringLiteral("IconButton")},
+        QVector<ComponentId>{ ComponentId::Button, ComponentId::IconButton },
         &spec);
 
     return spec;

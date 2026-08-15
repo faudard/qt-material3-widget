@@ -379,3 +379,15 @@ qtm3_add_test(tst_datalistgridresolver specs/tst_datalistgridresolver.cpp qtmate
 qtm3_add_test(tst_data_list_grid_resolved widgets/data/tst_data_list_grid_resolved.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_compactspecresolver specs/tst_compactspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_compactcontrols widgets/compact/tst_compactcontrols.cpp qtmaterial3_widgets)
+
+qtm3_add_test(
+    tst_themeruntime
+    theme/tst_themeruntime.cpp
+    qtmaterial3_theme_runtime
+)
+
+qtm3_add_test(
+    tst_typedtokens
+    theme/tst_typedtokens.cpp
+    qtmaterial3_theme_io
+)

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "milestone": "0.5",
+  "policy": "Every item must be eliminated; entries are a remediation catalog, not an allowlist.",
+  "families": [
+    {
+      "rule": "ARCH-WIDGETS-RESOLVED-SPEC-ONLY",
+      "strategy": "Move theme reads into resolver boundaries and add concrete runtime values to resolved specs. Render/layout/motion helpers consume resolved values only.",
+      "knownPublicMainPaths": [
+        "src/widgets/buttons/private/qtmaterialbuttonmotionhelper_p.h",
+        "src/widgets/buttons/private/qtmaterialbuttonrenderhelper_p.h",
+        "src/widgets/buttons/qtmaterialfab.cpp",
+        "src/widgets/data/private/qtmateriallistitemrenderhelper_p.h",
+        "src/widgets/inputs/qtmaterialautocompletepopup.cpp",
+        "src/widgets/navigation/qtmaterialtabs.cpp",
+        "src/widgets/selection/private/qtmaterialselectionrenderhelper_p.h",
+        "src/widgets/surfaces/private/qtmaterialsurfacerenderhelper.cpp",
+        "src/widgets/surfaces/private/qtmaterialsurfacerenderhelper_p.h",
+        "src/widgets/surfaces/qtmaterialcard.cpp",
+        "src/widgets/surfaces/qtmaterialsnackbar.cpp"
+      ],
+      "subtasks": [
+        "Delete legacy Theme overloads when resolved-spec overloads already exist.",
+        "Button helpers use ButtonSpec.labelFont/motionStyle/cornerRadius/state-layer opacities.",
+        "Selection helpers use SelectionRuntimeSpec only.",
+        "List item rendering uses ListItemSpec fonts/opacities only.",
+        "Card/Snackbar specs gain concrete radius/elevation/motion runtime fields.",
+        "Surface render helper accepts only concrete resolved frame values/spec fields.",
+        "Autocomplete/Tabs keep ThemeContext plumbing but delegate Theme->Spec conversion to an allowed resolution boundary.",
+        "FAB variants resolve through the dedicated action/FAB resolver; no Theme reads in the widget body."
+      ]
+    },
+    {
+      "rule": "ARCH-CORE-NO-DOCS-GALLERY",
+      "strategy": "Component catalog/docs/gallery metadata belongs in Tooling, never Core. If the implementation has already moved, remove stale baseline entries rather than recreating Core ownership."
+    },
+    {
+      "rule": "ARCH-REQUIRED-TARGETS",
+      "strategy": "Physical ThemeModel/ThemeIO/ThemeRuntime targets from Spec 006 must exist and be required by the architecture config."
+    },
+    {
+      "rule": "ARCH-THEME-IO-OWNS-TEXT-KEYS",
+      "strategy": "Spec 008/010 must leave zero textual-key violations; do not re-baseline any residual alias/string lookup."
+    }
+  ]
+}

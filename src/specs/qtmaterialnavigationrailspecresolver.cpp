@@ -1,6 +1,7 @@
 #include "qtmaterial/specs/qtmaterialnavigationrailspecresolver.h"
 
 #include "qtmaterialcomponenttokenapplier_p.h"
+#include <QVector>
 
 namespace QtMaterial {
 
@@ -39,10 +40,7 @@ NavigationRailSpecResolver::navigationRailSpec(
 
     applyNavigationRailComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("navigation"),
-            QStringLiteral("navigationRail"),
-            QStringLiteral("NavigationRail")},
+        QVector<ComponentId>{ ComponentId::Navigation, ComponentId::NavigationRail },
         &spec);
     return spec;
 }

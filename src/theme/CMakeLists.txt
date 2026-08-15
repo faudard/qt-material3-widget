@@ -152,7 +152,6 @@ target_link_libraries(qtmaterial3_theme_io
 
 set(QTMATERIAL3_THEME_RUNTIME_SOURCES
     qtmaterialthemecontext.cpp
-    qtmaterialthemecontextdefaults.cpp
     qtmaterialthemecontexthost.cpp
     qtmaterialthememanager.cpp
     qtmaterialthemeobserver.cpp
@@ -161,7 +160,6 @@ set(QTMATERIAL3_THEME_RUNTIME_SOURCES
 
 set(QTMATERIAL3_THEME_RUNTIME_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemecontext.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemecontextdefaults.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemecontexthost.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthememanager.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemeobserver.h

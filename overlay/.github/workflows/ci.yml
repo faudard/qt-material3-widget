@@ -200,3 +200,20 @@ jobs:
           python3 scripts/ci/run-consumer-matrix.py
           --scenario "${{ matrix.scenario }}"
           --build-root "${{ github.workspace }}/build/consumer-contract"
+
+  architecture-zero-debt:
+    name: architecture-zero-debt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python checker tests
+        run: >
+          python3 -m unittest discover
+          -s tests/tools
+          -p "test_architecture_zero_debt.py"
+          -v
+
+      - name: Zero-debt architecture gate
+        run: python3 tools/check_architecture_zero_debt.py --root .
+

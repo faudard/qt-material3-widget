@@ -233,12 +233,12 @@ int iconSizeFromTokens(const ComponentTokenOverride& tokens, IconSizeRole role, 
 
 } // namespace
 
-ComponentTokenOverride mergedComponentOverride(const Theme& theme, const QStringList& componentNames)
+ComponentTokenOverride mergedComponentOverride(const Theme& theme, const QVector<ComponentId>& componentIds)
 {
     ComponentTokenOverride merged;
-    for (const QString& componentName : componentNames) {
-        if (theme.componentOverrides().contains(componentName)) {
-            mergeOverride(&merged, theme.componentOverrides().overrideFor(componentName));
+    for (ComponentId componentId : componentIds) {
+        if (theme.componentOverrides().contains(componentId)) {
+            mergeOverride(&merged, theme.componentOverrides().overrideFor(componentId));
         }
     }
     return merged;
@@ -246,7 +246,7 @@ ComponentTokenOverride mergedComponentOverride(const Theme& theme, const QString
 
 void applyButtonComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     ButtonSpec* spec)
 {
     if (!spec) {
@@ -384,7 +384,7 @@ void applyButtonComponentTokens(
 
 void applyFabComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     FabSpec* spec)
 {
     if (!spec) {
@@ -587,7 +587,7 @@ void applyFabComponentTokens(
 
 void applyIconButtonComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     IconButtonSpec* spec)
 {
     if (!spec) {
@@ -803,7 +803,7 @@ void resolveSelectionRuntimeTokens(
 
 void applyCheckboxComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     CheckboxSpec* spec)
 {
     if (!spec) {
@@ -912,7 +912,7 @@ void applyCheckboxComponentTokens(
 
 void applyRadioButtonComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     RadioButtonSpec* spec)
 {
     if (!spec) {
@@ -1001,7 +1001,7 @@ void applyRadioButtonComponentTokens(
 
 void applySwitchComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     SwitchSpec* spec)
 {
     if (!spec) {
@@ -1135,7 +1135,7 @@ void applySwitchComponentTokens(
 
 void applyAutocompletePopupComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     AutocompletePopupSpec* spec)
 {
     if (!spec) {
@@ -1380,7 +1380,7 @@ void applyAutocompletePopupComponentTokens(
 
 void applyDateFieldComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     DateFieldSpec* spec)
 {
     if (!spec) {
@@ -1482,7 +1482,7 @@ void applyDateFieldComponentTokens(
 
 void applyNavigationRailComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     NavigationRailSpec* spec)
 {
     if (!spec) {
@@ -1773,7 +1773,7 @@ void applyNavigationRailComponentTokens(
 
 void applyTextFieldComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     TextFieldSpec* spec)
 {
     if (!spec) {
@@ -2085,7 +2085,7 @@ void applyTextFieldComponentTokens(
 
 void applyCardComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     CardSpec* spec)
 {
     if (!spec) {
@@ -2209,7 +2209,7 @@ void applyCardComponentTokens(
 
 void applyDialogComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     DialogSpec* spec)
 {
     if (!spec) {
@@ -2391,7 +2391,7 @@ void applyDialogComponentTokens(
 
 void applyChipComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     ChipSpec* spec)
 {
     if (!spec) {
@@ -2550,7 +2550,7 @@ void applyChipComponentTokens(
 
 void applySegmentedButtonComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     SegmentedButtonSpec* spec)
 {
     if (!spec) {
@@ -2692,7 +2692,7 @@ void applySegmentedButtonComponentTokens(
 
 void applyAutocompleteComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     AutocompleteSpec* spec)
 {
     if (!spec) {
@@ -2935,7 +2935,7 @@ void applyAutocompleteComponentTokens(
 
 void applyMenuComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     MenuSpec* spec)
 {
     if (!spec) {
@@ -3177,7 +3177,7 @@ void applyMenuComponentTokens(
 
 void applySnackbarComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     SnackbarSpec* spec)
 {
     if (!spec) {
@@ -3426,7 +3426,7 @@ void applySnackbarComponentTokens(
 
 void applyTabsComponentTokens(
     const Theme& theme,
-    const QStringList& componentNames,
+    const QVector<ComponentId>& componentIds,
     TabsSpec* spec)
 {
     if (!spec) {

@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "id": "m3-expressive.compose-material3-1.5.0-alpha26",
+  "materialProfile": "expressive",
+  "referenceVersion": "androidx.compose.material3:material3:1.5.0-alpha26",
+  "stability": "experimental",
+  "releaseDate": "2026-08-12",
+  "retrievedAt": "2026-08-15",
+  "sourcePrecedence": [
+    "material-guideline",
+    "androidx-implementation",
+    "androidx-release-notes"
+  ],
+  "sources": [
+    {
+      "id": "m3-expressive-overview",
+      "kind": "material-guideline",
+      "uri": "https://m3.material.io/",
+      "notes": "Material 3 / Expressive guidance root."
+    },
+    {
+      "id": "androidx-material3-1.5.0-alpha26",
+      "kind": "androidx-implementation",
+      "uri": "https://android.googlesource.com/platform/frameworks/support/+/androidx-main/compose/material3/",
+      "artifact": "androidx.compose.material3:material3",
+      "version": "1.5.0-alpha26",
+      "releaseDate": "2026-08-12",
+      "notes": "Experimental/alpha reference track; never overwrites Classic reference data."
+    },
+    {
+      "id": "androidx-material3-release-1.5.0-alpha26",
+      "kind": "androidx-release-notes",
+      "uri": "https://developer.android.com/jetpack/androidx/releases/compose-material3",
+      "artifact": "androidx.compose.material3:material3",
+      "version": "1.5.0-alpha26",
+      "releaseDate": "2026-08-12"
+    }
+  ],
+  "comparisonPolicy": {
+    "classifications": [
+      "MUST_MATCH",
+      "PLATFORM_ADAPTATION",
+      "QTMATERIAL_EXTENSION"
+    ],
+    "domains": [
+      "geometry",
+      "tokens",
+      "colors",
+      "typography",
+      "states",
+      "motion",
+      "accessibility",
+      "behavior"
+    ],
+    "defaultGeometryToleranceDp": 0.5,
+    "defaultColorMetric": "semantic-token",
+    "typographyRasterPolicy": "spec-not-glyph-pixels"
+  },
+  "notes": [
+    "Expressive is versioned independently from Classic.",
+    "This reference is experimental because the pinned AndroidX artifact is alpha.",
+    "No Expressive case may be used as a Classic conformance baseline."
+  ]
+}

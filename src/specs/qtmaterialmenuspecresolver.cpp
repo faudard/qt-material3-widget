@@ -2,6 +2,7 @@
 
 #include "private/qtmaterialdensitymetrics_p.h"
 #include "qtmaterialcomponenttokenapplier_p.h"
+#include <QVector>
 
 namespace QtMaterial {
 
@@ -38,9 +39,7 @@ MenuSpec MenuSpecResolver::menuSpec(
 
     applyMenuComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("menu"),
-            QStringLiteral("Menu")},
+        QVector<ComponentId>{ ComponentId::Menu },
         &spec);
     return spec;
 }

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {
+      "id": "m3-classic.compose-material3-1.4.0",
+      "path": "classic/compose-material3-1.4.0/profile.json",
+      "profile": "classic",
+      "stability": "stable"
+    },
+    {
+      "id": "m3-expressive.compose-material3-1.5.0-alpha26",
+      "path": "expressive/compose-material3-1.5.0-alpha26/profile.json",
+      "profile": "expressive",
+      "stability": "experimental"
+    }
+  ],
+  "suites": [
+    {
+      "id": "classic.buttons.poc",
+      "path": "classic/compose-material3-1.4.0/suites/buttons-poc.json",
+      "profileId": "m3-classic.compose-material3-1.4.0",
+      "status": "seeded"
+    }
+  ]
+}

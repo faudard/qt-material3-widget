@@ -4,6 +4,7 @@
 #include "private/qtmaterialdensitymetrics_p.h"
 
 #include <QtGlobal>
+#include <QVector>
 
 namespace QtMaterial {
 
@@ -30,9 +31,7 @@ SegmentedButtonSpec SegmentedButtonSpecResolver::segmentedButtonSpec(
     spec.touchTarget = QSize(48, qMax(48, spec.segmentHeight));
     applySegmentedButtonComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("segmentedButton"),
-            QStringLiteral("SegmentedButton")},
+        QVector<ComponentId>{ ComponentId::SegmentedButton },
         &spec);
     return spec;
 }

@@ -1,219 +1,87 @@
 #include "qtmaterial/theme/qtmaterialthememanager.h"
-
+#include <QDebug>
 #include <QScopedValueRollback>
 #include <QThread>
-#include <QDebug>
-
 namespace QtMaterial {
-
 ThemeManager& ThemeManager::instance()
 {
     static ThemeManager manager;
     return manager;
 }
-
 ThemeManager::ThemeManager(QObject* parent)
-    : QObject(parent)
-    , m_options()
-    , m_defaultContext(nullptr)
-    , m_themeFingerprint()
-    , m_builder()
-    , m_applyingTheme(false)
-    , m_revision(0)
+    : QObject(parent), m_options(), m_builder(),
+      m_defaultContext(new ThemeContext(m_builder.build(m_options), this))
 {
     qRegisterMetaType<QtMaterial::Theme>("QtMaterial::Theme");
     qRegisterMetaType<QtMaterial::ThemeChangeReason>("QtMaterial::ThemeChangeReason");
-
-    const Theme initialTheme = m_builder.build(m_options);
-    m_defaultContext = new ThemeContext(initialTheme, this);
-    m_themeFingerprint = stableFingerprint(initialTheme);
 }
-
-const Theme& ThemeManager::theme() const noexcept
-{
-    return m_defaultContext->theme();
-}
-
-ThemeContext* ThemeManager::defaultContext() noexcept
-{
-    return m_defaultContext;
-}
-
-const ThemeContext* ThemeManager::defaultContext() const noexcept
-{
-    return m_defaultContext;
-}
-
-const ThemeOptions& ThemeManager::options() const noexcept
-{
-    return m_options;
-}
-
-quint64 ThemeManager::revision() const noexcept
-{
-    return m_revision;
-}
-
-bool ThemeManager::isApplyingTheme() const noexcept
-{
-    return m_applyingTheme;
-}
-
+ThemeContext* ThemeManager::defaultContext() noexcept { return m_defaultContext; }
+const ThemeContext* ThemeManager::defaultContext() const noexcept { return m_defaultContext; }
+const Theme& ThemeManager::theme() const noexcept { return m_defaultContext->theme(); }
+const ThemeOptions& ThemeManager::options() const noexcept { return m_options; }
+quint64 ThemeManager::revision() const noexcept { return m_defaultContext->revision(); }
+bool ThemeManager::isApplyingTheme() const noexcept { return m_applyingTheme; }
 bool ThemeManager::setTheme(const Theme& theme, ThemeChangeReason reason)
 {
     return applyResolvedTheme(theme, theme.options(), reason);
 }
-
 bool ThemeManager::setThemeOptions(const ThemeOptions& options)
 {
-    if (!ensureThreadAffinity("setThemeOptions")) {
-        return false;
-    }
-    if (m_options == options) {
-        return false;
-    }
-
-    const Theme nextTheme = m_builder.build(options);
-    return applyResolvedTheme(nextTheme, options, ThemeChangeReason::SetOptions);
+    if (!ensureThreadAffinity("setThemeOptions") || m_options == options) return false;
+    return applyResolvedTheme(m_builder.build(options), options,
+                              ThemeChangeReason::SetOptions);
 }
-
 bool ThemeManager::rebuildTheme(ThemeChangeReason reason)
 {
-    if (!ensureThreadAffinity("rebuildTheme")) {
-        return false;
-    }
-
-    const Theme nextTheme = m_builder.build(m_options);
-    return applyResolvedTheme(nextTheme, m_options, reason);
+    if (!ensureThreadAffinity("rebuildTheme")) return false;
+    return applyResolvedTheme(m_builder.build(m_options), m_options, reason);
 }
-
 bool ThemeManager::applySeedColor(const QColor& seed)
 {
-    if (!ensureThreadAffinity("applySeedColor")) {
+    if (!ensureThreadAffinity("applySeedColor") || m_options.sourceColor == seed)
         return false;
-    }
-    if (m_options.sourceColor == seed) {
-        return false;
-    }
-
-    ThemeOptions nextOptions = m_options;
-    nextOptions.sourceColor = seed;
-    const Theme nextTheme = m_builder.build(nextOptions);
-    return applyResolvedTheme(nextTheme, nextOptions, ThemeChangeReason::SeedColor);
+    ThemeOptions next = m_options;
+    next.sourceColor = seed;
+    return applyResolvedTheme(m_builder.build(next), next,
+                              ThemeChangeReason::SeedColor);
 }
-
 bool ThemeManager::applySeedColor(const QColor& seed, ThemeMode mode)
 {
-    if (!ensureThreadAffinity("applySeedColor")) {
+    if (!ensureThreadAffinity("applySeedColor")
+        || (m_options.sourceColor == seed && m_options.mode == mode))
         return false;
-    }
-    if (m_options.sourceColor == seed && m_options.mode == mode) {
-        return false;
-    }
-
-    ThemeOptions nextOptions = m_options;
-    nextOptions.sourceColor = seed;
-    nextOptions.mode = mode;
-    const Theme nextTheme = m_builder.build(nextOptions);
-    return applyResolvedTheme(nextTheme, nextOptions, ThemeChangeReason::SeedColor);
+    ThemeOptions next = m_options;
+    next.sourceColor = seed;
+    next.mode = mode;
+    return applyResolvedTheme(m_builder.build(next), next,
+                              ThemeChangeReason::SeedColor);
 }
-
-QByteArray ThemeManager::exportThemeJson(QJsonDocument::JsonFormat format) const
-{
-    return ThemeSerializer::toJson(theme(), format);
-}
-
-bool ThemeManager::exportThemeToFile(const QString& filePath,
-                                     QString* errorString,
-                                     QJsonDocument::JsonFormat format) const
-{
-    return ThemeSerializer::writeToFile(theme(), filePath, errorString, format);
-}
-
-bool ThemeManager::importThemeJson(const QByteArray& json,
-                                   QString* errorString,
-                                   ThemeReadMode mode)
-{
-    if (!ensureThreadAffinity("importThemeJson")) {
-        if (errorString) {
-            *errorString = QStringLiteral("ThemeManager::importThemeJson called from a non-owner thread.");
-        }
-        return false;
-    }
-
-    bool ok = false;
-    const Theme imported = ThemeSerializer::fromJson(json, mode, &ok, errorString);
-    if (!ok) {
-        return false;
-    }
-    return applyResolvedTheme(imported, imported.options(), ThemeChangeReason::ImportJson);
-}
-
-bool ThemeManager::importThemeFromFile(const QString& filePath,
-                                       QString* errorString,
-                                       ThemeReadMode mode)
-{
-    if (!ensureThreadAffinity("importThemeFromFile")) {
-        if (errorString) {
-            *errorString = QStringLiteral("ThemeManager::importThemeFromFile called from a non-owner thread.");
-        }
-        return false;
-    }
-
-    Theme imported;
-    if (!ThemeSerializer::readFromFile(filePath, &imported, mode, errorString)) {
-        return false;
-    }
-    return applyResolvedTheme(imported, imported.options(), ThemeChangeReason::ImportFile);
-}
-
 bool ThemeManager::applyResolvedTheme(const Theme& theme,
                                       const ThemeOptions& options,
                                       ThemeChangeReason reason)
 {
-    if (!ensureThreadAffinity("applyResolvedTheme")) {
-        return false;
-    }
+    if (!ensureThreadAffinity("applyResolvedTheme")) return false;
     if (m_applyingTheme) {
         qWarning() << "ThemeManager: ignored re-entrant theme application.";
         return false;
     }
+    if (theme == m_defaultContext->theme() && options == m_options) return false;
 
-    const QByteArray nextFingerprint = stableFingerprint(theme);
-    if (nextFingerprint == m_themeFingerprint && options == m_options) {
-        return false;
-    }
-
-    QScopedValueRollback<bool> applyingGuard(m_applyingTheme, true);
-
+    QScopedValueRollback<bool> guard(m_applyingTheme, true);
     m_options = options;
-    m_themeFingerprint = nextFingerprint;
-    ++m_revision;
+    if (!m_defaultContext->setTheme(theme)) return false;
 
-    m_defaultContext->setTheme(theme);
-    const Theme& appliedTheme = m_defaultContext->theme();
-
-    emit themeChanged(appliedTheme);
-    emit themeChangedWithReason(appliedTheme, reason);
-    emit themeRepolishRequested(appliedTheme, reason);
-
+    const Theme& applied = m_defaultContext->theme();
+    emit themeChanged(applied);
+    emit themeChangedWithReason(applied, reason);
+    emit themeRepolishRequested(applied, reason);
     return true;
 }
-
 bool ThemeManager::ensureThreadAffinity(const char* operation) const
 {
-    if (thread() == QThread::currentThread()) {
-        return true;
-    }
-
+    if (thread() == QThread::currentThread()) return true;
     qWarning() << "ThemeManager:" << operation
                << "must be called from the ThemeManager owner thread.";
     return false;
 }
-
-QByteArray ThemeManager::stableFingerprint(const Theme& theme) const
-{
-    return ThemeSerializer::toJson(theme, QJsonDocument::Compact);
-}
-
 } // namespace QtMaterial

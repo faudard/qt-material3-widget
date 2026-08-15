@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "m3-classic.compose-material3-1.4.0",
+  "materialProfile": "classic",
+  "referenceVersion": "androidx.compose.material3:material3:1.4.0",
+  "stability": "stable",
+  "releaseDate": "2025-09-24",
+  "retrievedAt": "2026-08-15",
+  "sourcePrecedence": [
+    "material-guideline",
+    "androidx-implementation",
+    "androidx-release-notes"
+  ],
+  "sources": [
+    {
+      "id": "m3-buttons",
+      "kind": "material-guideline",
+      "uri": "https://m3.material.io/components/buttons/specs",
+      "notes": "Normative component guideline/spec source."
+    },
+    {
+      "id": "m3-design-tokens",
+      "kind": "material-guideline",
+      "uri": "https://m3.material.io/foundations/design-tokens",
+      "notes": "Normative design-token terminology."
+    },
+    {
+      "id": "m3-states",
+      "kind": "material-guideline",
+      "uri": "https://m3.material.io/foundations/interaction/states/applying-states",
+      "notes": "Normative interactive-state terminology."
+    },
+    {
+      "id": "androidx-material3-1.4.0",
+      "kind": "androidx-implementation",
+      "uri": "https://android.googlesource.com/platform/frameworks/support/+/androidx-main/compose/material3/",
+      "artifact": "androidx.compose.material3:material3",
+      "version": "1.4.0",
+      "releaseDate": "2025-09-24",
+      "notes": "Executable Android reference implementation; exact source pin enters with Spec 015."
+    },
+    {
+      "id": "androidx-material3-release-1.4.0",
+      "kind": "androidx-release-notes",
+      "uri": "https://developer.android.com/jetpack/androidx/releases/compose-material3",
+      "artifact": "androidx.compose.material3:material3",
+      "version": "1.4.0",
+      "releaseDate": "2025-09-24"
+    }
+  ],
+  "comparisonPolicy": {
+    "classifications": [
+      "MUST_MATCH",
+      "PLATFORM_ADAPTATION",
+      "QTMATERIAL_EXTENSION"
+    ],
+    "domains": [
+      "geometry",
+      "tokens",
+      "colors",
+      "typography",
+      "states",
+      "motion",
+      "accessibility",
+      "behavior"
+    ],
+    "defaultGeometryToleranceDp": 0.5,
+    "defaultColorMetric": "semantic-token",
+    "typographyRasterPolicy": "spec-not-glyph-pixels"
+  },
+  "notes": [
+    "Classic and Expressive are separate reference profiles.",
+    "Material guidelines are normative; AndroidX is the executable implementation reference.",
+    "Raster glyph identity is not required across Qt/Skia/platform font stacks."
+  ]
+}

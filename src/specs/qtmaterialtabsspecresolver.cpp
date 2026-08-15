@@ -2,6 +2,7 @@
 #include "qtmaterialcomponenttokenapplier_p.h"
 
 #include <QtGlobal>
+#include <QVector>
 
 namespace QtMaterial {
 namespace {
@@ -147,10 +148,7 @@ TabsSpec TabsSpecResolver::resolve(
 
     applyTabsComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("navigation"),
-            QStringLiteral("tabs"),
-            QStringLiteral("Tabs")},
+        QVector<ComponentId>{ ComponentId::Navigation, ComponentId::Tabs },
         &resolved);
 
     return resolved;

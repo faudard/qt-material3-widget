@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qtm3.dev/schemas/material-reference-profile/v1",
+  "title": "QtMaterial3 Material Reference Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "materialProfile",
+    "referenceVersion",
+    "stability",
+    "releaseDate",
+    "sourcePrecedence",
+    "sources",
+    "comparisonPolicy"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^m3-[a-z0-9.-]+$"
+    },
+    "materialProfile": {
+      "enum": [
+        "classic",
+        "expressive"
+      ]
+    },
+    "referenceVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stability": {
+      "enum": [
+        "stable",
+        "experimental"
+      ]
+    },
+    "releaseDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "retrievedAt": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sourcePrecedence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "enum": [
+          "material-guideline",
+          "androidx-implementation",
+          "androidx-release-notes"
+        ]
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "uri"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "material-guideline",
+              "androidx-implementation",
+              "androidx-release-notes"
+            ]
+          },
+          "uri": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "releaseDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "comparisonPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classifications",
+        "domains",
+        "defaultGeometryToleranceDp",
+        "defaultColorMetric",
+        "typographyRasterPolicy"
+      ],
+      "properties": {
+        "classifications": {
+          "const": [
+            "MUST_MATCH",
+            "PLATFORM_ADAPTATION",
+            "QTMATERIAL_EXTENSION"
+          ]
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "geometry",
+              "tokens",
+              "colors",
+              "typography",
+              "states",
+              "motion",
+              "accessibility",
+              "behavior"
+            ]
+          }
+        },
+        "defaultGeometryToleranceDp": {
+          "type": "number",
+          "minimum": 0
+        },
+        "defaultColorMetric": {
+          "enum": [
+            "semantic-token",
+            "deltaE2000",
+            "exact"
+          ]
+        },
+        "typographyRasterPolicy": {
+          "const": "spec-not-glyph-pixels"
+        }
+      }
+    }
+  }
+}

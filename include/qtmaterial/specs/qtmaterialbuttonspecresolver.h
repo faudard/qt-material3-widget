@@ -19,9 +19,7 @@ enum class ButtonVariant
 /**
  * Resolves immutable specifications for the standard text-button family.
  *
- * Widgets consume this resolver directly. SpecFactory delegates to it
- * temporarily to preserve the current public API while the architecture is
- * migrated family by family.
+ * Widgets consume this resolver directly. This resolver is the canonical boundary for this component family.
  */
 class QTMATERIAL3_SPECS_EXPORT ButtonSpecResolver final
 {

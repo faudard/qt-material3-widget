@@ -249,7 +249,7 @@ void SystemTheme::applyToThemeManager() {
     ThemeBuilder builder;
     Theme theme = builder.build(options);
     applyPlatformFontToTheme(theme);
-    ThemeManager::instance().setTheme(theme);
+    ThemeManager::instance().setTheme(theme, ThemeChangeReason::SystemAppearance);
 }
 
 bool SystemTheme::eventFilter(QObject* watched, QEvent* event) {
@@ -309,37 +309,8 @@ void SystemTheme::emitDelta(
     }
 }
 
-QString toString(ThemePreference preference) {
-    switch (preference) {
-    case ThemePreference::Light:
-        return QStringLiteral("light");
-    case ThemePreference::Dark:
-        return QStringLiteral("dark");
-    case ThemePreference::FollowSystem:
-        return QStringLiteral("followSystem");
-    }
-    return QStringLiteral("followSystem");
-}
 
-ThemePreference themePreferenceFromString(const QString& value, bool* ok) {
-    const QString normalized = value.trimmed().toLower();
-    if (normalized == QLatin1String("light")) {
-        if (ok) *ok = true;
-        return ThemePreference::Light;
-    }
-    if (normalized == QLatin1String("dark")) {
-        if (ok) *ok = true;
-        return ThemePreference::Dark;
-    }
-    if (normalized == QLatin1String("followsystem")
-        || normalized == QLatin1String("system")
-        || normalized == QLatin1String("auto")) {
-        if (ok) *ok = true;
-        return ThemePreference::FollowSystem;
-    }
 
-    if (ok) *ok = false;
-    return ThemePreference::FollowSystem;
-}
+
 
 } // namespace QtMaterial

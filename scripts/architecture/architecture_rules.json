@@ -360,7 +360,6 @@
       ],
       "required_regex": [
         "\\bQtMaterialRoute::normalizedPath\\s*\\(",
-        "\\bcanonicalTabsRoutePath\\s*\\(",
         "\\bemitCurrentRouteIfChanged\\s*\\(",
         "\\blastEmittedCurrentRoutePath\\b",
         "if\\s*\\(\\s*tab->route\\s*==\\s*normalized\\s*\\)"
@@ -380,8 +379,8 @@
       "required_regex": [
         "\\bTabsSpecResolver\\b",
         "\\beffectiveThemeContext\\s*\\(",
-        "&\\s*ThemeContext::themeChanged",
-        "\\brefreshThemeContextConnection\\s*\\("
+        "\\bQtMaterialThemeContextBinding\\b",
+        "QtMaterialThemeContextBinding::effectiveThemeContextChanged"
       ]
     },
     {
@@ -410,15 +409,16 @@
         "src/specs/qtmaterialdataspecresolver.cpp"
       ],
       "required_regex": [
-        "qtmaterial/specs/qtmaterialspecfactory\\.h",
-        "\\bSpecFactory\\b",
         "class\\s+QTMATERIAL3_SPECS_EXPORT\\s+DataSpecResolver",
         "ListItemSpec\\s+listItemSpec\\s*\\(",
         "DividerSpec\\s+dividerSpec\\s*\\(",
-        "DataSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*listItemSpec",
-        "DataSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*dividerSpec"
+        "DataSpecResolver\\s*::\\s*listItemSpec\\s*\\(",
+        "DataSpecResolver\\s*::\\s*dividerSpec\\s*\\("
       ],
-      "forbidden_regex": []
+      "forbidden_regex": [
+        "\\bSpecFactory\\b",
+        "qtmaterial/specs/qtmaterialspecfactory\\.h"
+      ]
     },
     {
       "name": "list-item-uses-resolved-data-spec",
@@ -465,8 +465,9 @@
         "\\bGridListSpec\\s+gridListSpec\\s*\\(",
         "DataSpecResolver\\s*::\\s*listSpec\\s*\\(",
         "DataSpecResolver\\s*::\\s*gridListSpec\\s*\\(",
-        "mergedComponentOverride\\s*\\([\\s\\S]*?QStringLiteral\\s*\\(\\s*\\\"list\\\"\\s*\\)",
-        "mergedComponentOverride\\s*\\([\\s\\S]*?QStringLiteral\\s*\\(\\s*\\\"gridList\\\"\\s*\\)"
+        "ComponentId::Data\\b",
+        "ComponentId::List\\b",
+        "ComponentId::GridList\\b"
       ],
       "forbidden_regex": []
     },
@@ -519,7 +520,8 @@
       "required_regex": [
         "\\bCarouselSpec\\s+carouselSpec\\s*\\(",
         "DataSpecResolver\\s*::\\s*carouselSpec\\s*\\(",
-        "mergedComponentOverride\\s*\\([\\s\\S]*?QStringLiteral\\s*\\(\\s*\"carousel\"\\s*\\)",
+        "ComponentId::Data\\b",
+        "ComponentId::Carousel\\b",
         "\\bstateLayer\\s*\\.\\s*hoverOpacity\\b",
         "\\bstateLayer\\s*\\.\\s*pressOpacity\\b"
       ],
@@ -562,10 +564,13 @@
       "required_regex": [
         "\\bTableSpec\\s+tableSpec\\s*\\(",
         "DataSpecResolver\\s*::\\s*tableSpec\\s*\\(",
-        "mergedComponentOverride\\s*\\([\\s\\S]*?QStringLiteral\\s*\\(\\s*\\\"table\\\"\\s*\\)",
-        "makeTableSpec\\s*\\([\\s\\S]*?DataSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*tableSpec"
+        "ComponentId::Data\\b",
+        "ComponentId::Table\\b"
       ],
-      "forbidden_regex": []
+      "forbidden_regex": [
+        "\\bmakeTableSpec\\s*\\(",
+        "\\bSpecFactory\\b"
+      ]
     },
     {
       "name": "table-uses-resolved-data-spec",
@@ -613,17 +618,17 @@
       ]
     },
     {
-      "name": "compact-chip-factory-delegates-to-resolver",
+      "name": "chip-spec-resolver-is-canonical",
       "files": [
         "include/qtmaterial/specs/qtmaterialchipspecresolver.h",
         "src/specs/qtmaterialchipspecresolver.cpp"
       ],
       "required_regex": [
         "\\bclass\\s+QTMATERIAL3_SPECS_EXPORT\\s+ChipSpecResolver\\b",
-        "return\\s+ChipSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*assistChipSpec\\s*\\(",
-        "return\\s+ChipSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*filterChipSpec\\s*\\(",
-        "return\\s+ChipSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*inputChipSpec\\s*\\(",
-        "return\\s+ChipSpecResolver\\s*\\(\\s*\\)\\s*\\.\\s*suggestionChipSpec\\s*\\("
+        "\\bassistChipSpec\\s*\\(",
+        "\\bfilterChipSpec\\s*\\(",
+        "\\binputChipSpec\\s*\\(",
+        "\\bsuggestionChipSpec\\s*\\("
       ],
       "forbidden_regex": [
         "qtmaterial/specs/qtmaterialspecfactory\\.h",
@@ -633,14 +638,14 @@
       ]
     },
     {
-      "name": "chip-uses-resolved-compact-spec",
+      "name": "chip-uses-resolved-spec",
       "files": [
         "include/qtmaterial/widgets/selection/qtmaterialchip.h",
         "src/widgets/selection/qtmaterialchip.cpp"
       ],
       "required_regex": [
         "\\bconst\\s+ChipSpec\\s*&\\s*resolvedSpec\\s*\\(\\s*\\)\\s*const",
-        "\\bCompactSpecResolver\\b",
+        "\\bChipSpecResolver\\b",
         "\\bhoverStateLayerOpacity\\b",
         "\\bfocusRingWidth\\b"
       ],
@@ -667,31 +672,6 @@
       ],
       "forbidden_regex": [
         "\\bpublic\\s+QWidget\\b"
-      ]
-    },
-    {
-      "name": "palette-adapter-core-header-is-compatibility-only",
-      "files": [
-        "include/qtmaterial/core/qtmaterialpaletteadapter.h"
-      ],
-      "required_regex": [
-        "qtmaterial/integration/qtmaterialpaletteadapter\\.h"
-      ],
-      "forbidden_regex": [
-        "class\\s+QTMATERIAL3_CORE_EXPORT\\s+QtMaterialPaletteAdapter"
-      ]
-    },
-    {
-      "name": "component-registry-core-header-is-compatibility-only",
-      "files": [
-        "include/qtmaterial/core/qtmaterialcomponentregistry.h"
-      ],
-      "required_regex": [
-        "qtmaterial/tooling/qtmaterialcomponentregistry\\.h"
-      ],
-      "forbidden_regex": [
-        "QTMATERIAL3_CORE_EXPORT\\s+ComponentDescriptor",
-        "QTMATERIAL3_CORE_EXPORT\\s+QVector"
       ]
     },
     {
@@ -761,9 +741,7 @@
       ],
       "required_regex": [
         "\\bpublic\\s+ThemeContextHost\\b",
-        "Q_INTERFACES\\(QtMaterial::ThemeContextHost\\)",
-        "qobject_cast<ThemeContextHost\\s*\\*>",
-        "ThemeContextPropagation::eventType\\s*\\("
+        "Q_INTERFACES\\(QtMaterial::ThemeContextHost\\)"
       ],
       "forbidden_regex": [
         "findChildren\\s*<\\s*QtMaterialWidget"
@@ -779,14 +757,16 @@
         "\\bQtMaterialThemeContextBinding\\b",
         "explicit\\s+context\\s*->\\s*nearest\\s+ThemeContextHost",
         "qobject_cast<ThemeContextHost\\s*\\*>",
-        "ThemeManager::instance\\(\\)\\.defaultContext\\(\\)",
+        "ThemeContextDefaults::defaultContext\\s*\\(",
         "ThemeContextPropagation::notifyDescendants"
       ],
       "forbidden_regex": [
         "class\\s+.*ThemeManager",
         "\\bTheme\\s+m_theme\\b",
         "qtmaterial/specs/",
-        "qtmaterial/widgets/"
+        "qtmaterial/widgets/",
+        "ThemeManager::instance\\s*\\(",
+        "qtmaterial/theme/qtmaterialthememanager\\.h"
       ]
     },
     {
@@ -798,11 +778,10 @@
       "required_regex": [
         "\\bpublic\\s+ThemeContextHost\\b",
         "\\bQtMaterialThemeContextBinding\\b",
-        "\\bDataComponentSpecResolver\\b",
+        "\\bDataSpecResolver\\b",
         "\\bhasExplicitSpec\\s*\\(\\s*\\)\\s*const",
         "\\bresetSpec\\s*\\(",
-        "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const",
-        "\\bm_hasExplicitSpec\\b"
+        "\\bresolvedSpec\\s*\\(\\s*\\)\\s*const"
       ],
       "forbidden_regex": [
         "\\bSpecFactory\\b",
@@ -926,9 +905,10 @@
         "\\bDatePickerSpec\\s+datePickerSpec\\s*\\(",
         "\\bDataSpecResolver\\s*::\\s*datePickerSpec\\s*\\(",
         "\\bapplyDatePickerOverrides\\s*\\(",
-        "QStringLiteral\\s*\\(\\s*\\\"datePicker\\\"\\s*\\)",
         "TypeRole::HeadlineSmall",
-        "ShapeRole::ExtraLarge"
+        "ShapeRole::ExtraLarge",
+        "ComponentId::Data\\b",
+        "ComponentId::DatePicker\\b"
       ],
       "forbidden_regex": [
         "\\bSpecFactory\\b"
@@ -1071,9 +1051,8 @@
       ],
       "required_regex": [
         "\\bapplySnackbarComponentTokens\\s*\\(",
-        "QStringLiteral\\(\"surface\"\\)",
-        "QStringLiteral\\(\"snackbar\"\\)",
-        "QStringLiteral\\(\"Snackbar\"\\)"
+        "ComponentId::Surface\\b",
+        "ComponentId::Snackbar\\b"
       ],
       "forbidden_regex": [
         "\\bSpecFactory\\b",
@@ -1329,11 +1308,14 @@
       "file": "src/specs/CMakeLists.txt",
       "forbidden_regex": [
         "\\bqtmaterial3_core\\b",
-        "Qt(?:\\$\\{QT_VERSION_MAJOR\\}|5|6)?::Widgets"
+        "Qt(?:\\$\\{QT_VERSION_MAJOR\\}|5|6)?::Widgets",
+        "\\bqtmaterial3_theme\\b",
+        "\\bqtmaterial3_theme_io\\b",
+        "\\bqtmaterial3_theme_runtime\\b"
       ],
       "required_regex": [
         "\\bqtmaterial3_foundation\\b",
-        "\\bqtmaterial3_theme\\b"
+        "\\bqtmaterial3_theme_model\\b"
       ]
     },
     {
@@ -1343,7 +1325,7 @@
         "\\bTheme\\s+m_theme\\s*;"
       ],
       "required_regex": [
-        "ThemeContext\\s*\\*\\s*m_defaultContext\\s*;",
+        "ThemeContext\\s*\\*\\s*m_defaultContext(?:\\s*=\\s*nullptr)?\\s*;",
         "defaultContext\\s*\\("
       ]
     },
@@ -1355,7 +1337,7 @@
       ],
       "required_regex": [
         "effectiveThemeContext\\s*\\(",
-        "defaultContext\\s*\\("
+        "QtMaterialThemeContextBinding"
       ]
     },
     {

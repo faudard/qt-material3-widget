@@ -9,7 +9,7 @@ namespace QtMaterial {
 
 /**
  * Resolves immutable specifications for Assist, Filter, Input and Suggestion
- * chips. SpecFactory delegates here temporarily while callers migrate.
+ * chips. This resolver is the canonical boundary for all chip variants.
  */
 class QTMATERIAL3_SPECS_EXPORT ChipSpecResolver final
 {

@@ -40,7 +40,8 @@ target_link_libraries(
     qtmaterial3_core
     PUBLIC
         qtmaterial3_foundation
-        qtmaterial3_theme
+        qtmaterial3_theme_model
+        qtmaterial3_theme_runtime
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
         Qt${QT_VERSION_MAJOR}::Widgets

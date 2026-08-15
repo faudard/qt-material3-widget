@@ -73,6 +73,24 @@ enum class ComponentId : quint32 {
     NavigationRail = 0x1500,
     Surface = 0x1600,
 
+    Data = 0x1700,
+    Table = 0x1701,
+    GridList = 0x1702,
+    Carousel = 0x1703,
+    DatePicker = 0x1704,
+
+    Navigation = 0x1800,
+    Selection = 0x1900,
+
+    Chip = 0x1A00,
+    AssistChip = 0x1A01,
+    FilterChip = 0x1A02,
+    InputChip = 0x1A03,
+    SuggestionChip = 0x1A04,
+
+    Menu = 0x1B00,
+    SegmentedButton = 0x1C00,
+
     Custom = 0xFFFF0000u
 };
 

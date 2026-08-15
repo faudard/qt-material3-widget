@@ -12,9 +12,7 @@ namespace QtMaterial {
 /**
  * Resolves immutable specifications for the standard selection controls.
  *
- * Widgets consume this resolver directly. SpecFactory delegates to it
- * temporarily to preserve source compatibility during the architecture
- * refactor.
+ * Widgets consume this resolver directly. This resolver is the canonical boundary for standard selection controls.
  */
 class QTMATERIAL3_SPECS_EXPORT SelectionSpecResolver final
 {

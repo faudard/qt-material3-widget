@@ -37,6 +37,7 @@ ALIASES = {
     'iconButton.outlined': 'IconButtonOutlined',
     'OutlinedIconButton': 'IconButtonOutlined',
     'fab': 'FloatingActionButton',
+    'Fab': 'FloatingActionButton',
     'floatingActionButton': 'FloatingActionButton',
     'FloatingActionButton': 'FloatingActionButton',
     'fab.small': 'SmallFloatingActionButton',
@@ -46,7 +47,7 @@ ALIASES = {
     'fab.extended': 'ExtendedFloatingActionButton',
     'ExtendedFab': 'ExtendedFloatingActionButton',
     'ExtendedFloatingActionButton': 'ExtendedFloatingActionButton',
-    'selection': 'Custom',
+    'selection': 'Selection',
     'checkbox': 'Checkbox',
     'Checkbox': 'Checkbox',
     'radio': 'RadioButton',
@@ -76,6 +77,7 @@ ALIASES = {
     'textField.filled': 'TextFieldFilled',
     'FilledTextField': 'TextFieldFilled',
     'autocomplete': 'AutoComplete',
+    'Autocomplete': 'AutoComplete',
     'AutoComplete': 'AutoComplete',
     'autocompletePopup': 'AutoCompletePopup',
     'AutocompletePopup': 'AutoCompletePopup',
@@ -97,10 +99,39 @@ ALIASES = {
     'NavigationRail': 'NavigationRail',
     'surface': 'Surface',
     'Surface': 'Surface',
+
+    'data': 'Data',
+    'table': 'Table',
+    'Table': 'Table',
+    'gridList': 'GridList',
+    'GridList': 'GridList',
+    'carousel': 'Carousel',
+    'Carousel': 'Carousel',
+    'datePicker': 'DatePicker',
+    'DatePicker': 'DatePicker',
+
+    'navigation': 'Navigation',
+
+    'chip': 'Chip',
+    'Chip': 'Chip',
+    'chip.assist': 'AssistChip',
+    'AssistChip': 'AssistChip',
+    'chip.filter': 'FilterChip',
+    'FilterChip': 'FilterChip',
+    'chip.input': 'InputChip',
+    'InputChip': 'InputChip',
+    'chip.suggestion': 'SuggestionChip',
+    'SuggestionChip': 'SuggestionChip',
+
+    'menu': 'Menu',
+    'Menu': 'Menu',
+    'segmentedButton': 'SegmentedButton',
+    'SegmentedButton': 'SegmentedButton',
 }
 
-# Umbrella aliases may be represented by typed base IDs or omitted if they
-# resolve to Custom and a more specific first-party ID follows.
+# Custom remains reserved for opaque third-party serialized names. First-party
+# umbrella keys (selection/data/navigation/...) always have a real typed ID so
+# family-level overrides keep their precedence semantics.
 SKIP_ENUM = {"Custom"}
 
 LIST_RE = re.compile(
@@ -141,6 +172,13 @@ def migrate_file(path: Path, apply: bool) -> tuple[bool, list[str]]:
     changed = new_text != text
     if changed:
         new_text = new_text.replace("#include <QStringList>", "#include <QVector>")
+        if "QVector<ComponentId>" in new_text and "#include <QVector>" not in new_text:
+            include_matches = list(re.finditer(r'^#include[^\n]*$', new_text, re.MULTILINE))
+            if include_matches:
+                pos = include_matches[-1].end()
+                new_text = new_text[:pos] + "\n#include <QVector>" + new_text[pos:]
+            else:
+                new_text = "#include <QVector>\n" + new_text
         if apply:
             path.write_text(new_text, encoding="utf-8")
     return changed, []

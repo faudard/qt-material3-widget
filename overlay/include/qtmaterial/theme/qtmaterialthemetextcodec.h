@@ -4,21 +4,25 @@
 #include <QStringList>
 
 #include "qtmaterial/qtmaterialglobal.h"
+#include "qtmaterial/foundation/qtmaterialtokenid.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 
 namespace QtMaterial {
 
-/**
- * Sole public boundary for textual component identifiers used by theme IO.
- *
- * Specs/ThemeModel consume ComponentId only. ThemeSerializer uses this codec
- * for canonical names, legacy aliases and opaque third-party extension names.
- */
 class QTMATERIAL3_THEME_IO_EXPORT ThemeTextCodec final {
 public:
+    // Component identity boundary.
     static QString componentIdToString(ComponentId id);
     static bool componentIdFromString(const QString& text, ComponentId* outId);
 
+    // Universal token identity boundary.
+    static QString tokenIdToString(TokenId id);
+    static bool tokenIdFromString(
+        TokenCategory category,
+        const QString& text,
+        TokenId* outId);
+
+    // Opaque extension component names.
     static QStringList extensionComponentNames(
         const ComponentTokenOverrides& overrides);
     static ComponentTokenOverride extensionOverrideFor(

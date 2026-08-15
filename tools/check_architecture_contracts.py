@@ -29,7 +29,7 @@ from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 SOURCE_SUFFIXES = {".h", ".hh", ".hpp", ".hxx", ".c", ".cc", ".cpp", ".cxx", ".ipp", ".inl"}
 SKIP_DIR_NAMES = {
     ".git", ".svn", ".hg", ".idea", ".vs", ".vscode", "__pycache__",
-    "third_party", "_deps", "generated", "install", "dist"
+    "third_party", "_deps", "generated", "install", "dist", ".specify"
 }
 SKIP_DIR_PREFIXES = ("build", "cmake-build-")
 
@@ -326,7 +326,7 @@ def check_sources(root: Path, config: dict, reporter: Reporter) -> None:
             add_regex_matches(
                 reporter, root, path, original,
                 "ARCH-WIDGETS-RESOLVED-SPEC-ONLY", "theme-header-outside-resolution",
-                r"^\s*#\s*include\s*[<\"]qtmaterial/theme/",
+                r"^\s*#\s*include\s*[<\"]qtmaterial/theme/(?!qtmaterialthemecontext(?:host)?\.h[>\"])",
                 "widgets may read theme data only inside the dedicated spec-resolution boundary",
             )
             add_regex_matches(

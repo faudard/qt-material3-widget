@@ -1,0 +1,4 @@
+# QtMaterial3 architecture debt baseline retired by Spec 011.
+# Zero active entries are permitted.
+#
+# Do not add exceptions here. Fix the architecture violation instead.

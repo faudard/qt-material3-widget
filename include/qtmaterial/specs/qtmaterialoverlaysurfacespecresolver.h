@@ -11,7 +11,7 @@ namespace QtMaterial {
  * Resolves modal/overlay surface specifications from a Theme snapshot.
  *
  * Widgets consume the concrete values directly after this boundary.
- * SpecFactory delegates here temporarily for source compatibility.
+ * This resolver is the canonical boundary for overlay surface resolution.
  */
 class QTMATERIAL3_SPECS_EXPORT OverlaySurfaceSpecResolver final
 {

@@ -86,6 +86,8 @@ def main(argv: Sequence[str] | None = None) -> int:
          [py, str(ROOT/"tools/check_theme_io.py")]),
         ("theme-runtime",
          [py, str(ROOT/"tools/check_theme_runtime.py")]),
+        ("typed-token-system",
+         [py, str(ROOT/"tools/check_typed_token_system.py")]),
     ]
     results = [check_quality_workflow_structure()]
     results.extend(run_command_check(n,c) for n,c in commands)

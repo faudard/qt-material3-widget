@@ -1,4 +1,7 @@
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
+#include "qtmaterial/theme/qtmaterialthemetextcodec.h"
+#include "qtmaterial/theme/qtmaterialtokenids.h"
+#include "qtmaterial/theme/qtmaterialthemetextcodec.h"
 #include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 
 #include <QColor>
@@ -228,124 +231,6 @@ const std::array kColorBackendPolicies = {
     EnumNamePair<ColorBackendPolicy>{ ColorBackendPolicy::ForceFallback, "ForceFallback" },
 };
 
-const std::array kColorRoles = {
-    EnumNamePair<ColorRole>{ ColorRole::Primary, "Primary" },
-    EnumNamePair<ColorRole>{ ColorRole::OnPrimary, "OnPrimary" },
-    EnumNamePair<ColorRole>{ ColorRole::PrimaryContainer, "PrimaryContainer" },
-    EnumNamePair<ColorRole>{ ColorRole::OnPrimaryContainer, "OnPrimaryContainer" },
-    EnumNamePair<ColorRole>{ ColorRole::PrimaryFixed, "PrimaryFixed" },
-    EnumNamePair<ColorRole>{ ColorRole::PrimaryFixedDim, "PrimaryFixedDim" },
-    EnumNamePair<ColorRole>{ ColorRole::OnPrimaryFixed, "OnPrimaryFixed" },
-    EnumNamePair<ColorRole>{ ColorRole::OnPrimaryFixedVariant, "OnPrimaryFixedVariant" },
-    EnumNamePair<ColorRole>{ ColorRole::Secondary, "Secondary" },
-    EnumNamePair<ColorRole>{ ColorRole::OnSecondary, "OnSecondary" },
-    EnumNamePair<ColorRole>{ ColorRole::SecondaryContainer, "SecondaryContainer" },
-    EnumNamePair<ColorRole>{ ColorRole::OnSecondaryContainer, "OnSecondaryContainer" },
-    EnumNamePair<ColorRole>{ ColorRole::SecondaryFixed, "SecondaryFixed" },
-    EnumNamePair<ColorRole>{ ColorRole::SecondaryFixedDim, "SecondaryFixedDim" },
-    EnumNamePair<ColorRole>{ ColorRole::OnSecondaryFixed, "OnSecondaryFixed" },
-    EnumNamePair<ColorRole>{ ColorRole::OnSecondaryFixedVariant, "OnSecondaryFixedVariant" },
-    EnumNamePair<ColorRole>{ ColorRole::Tertiary, "Tertiary" },
-    EnumNamePair<ColorRole>{ ColorRole::OnTertiary, "OnTertiary" },
-    EnumNamePair<ColorRole>{ ColorRole::TertiaryContainer, "TertiaryContainer" },
-    EnumNamePair<ColorRole>{ ColorRole::OnTertiaryContainer, "OnTertiaryContainer" },
-    EnumNamePair<ColorRole>{ ColorRole::TertiaryFixed, "TertiaryFixed" },
-    EnumNamePair<ColorRole>{ ColorRole::TertiaryFixedDim, "TertiaryFixedDim" },
-    EnumNamePair<ColorRole>{ ColorRole::OnTertiaryFixed, "OnTertiaryFixed" },
-    EnumNamePair<ColorRole>{ ColorRole::OnTertiaryFixedVariant, "OnTertiaryFixedVariant" },
-    EnumNamePair<ColorRole>{ ColorRole::Error, "Error" },
-    EnumNamePair<ColorRole>{ ColorRole::OnError, "OnError" },
-    EnumNamePair<ColorRole>{ ColorRole::ErrorContainer, "ErrorContainer" },
-    EnumNamePair<ColorRole>{ ColorRole::OnErrorContainer, "OnErrorContainer" },
-    EnumNamePair<ColorRole>{ ColorRole::Background, "Background" },
-    EnumNamePair<ColorRole>{ ColorRole::OnBackground, "OnBackground" },
-    EnumNamePair<ColorRole>{ ColorRole::Surface, "Surface" },
-    EnumNamePair<ColorRole>{ ColorRole::OnSurface, "OnSurface" },
-    EnumNamePair<ColorRole>{ ColorRole::SurfaceDim, "SurfaceDim" },
-    EnumNamePair<ColorRole>{ ColorRole::SurfaceBright, "SurfaceBright" },
-    EnumNamePair<ColorRole>{ ColorRole::SurfaceContainerLowest, "SurfaceContainerLowest" },
-    EnumNamePair<ColorRole>{ ColorRole::SurfaceContainerLow, "SurfaceContainerLow" },
-    EnumNamePair<ColorRole>{ ColorRole::SurfaceContainer, "SurfaceContainer" },
-    EnumNamePair<ColorRole>{ ColorRole::SurfaceContainerHigh, "SurfaceContainerHigh" },
-    EnumNamePair<ColorRole>{ ColorRole::SurfaceContainerHighest, "SurfaceContainerHighest" },
-    EnumNamePair<ColorRole>{ ColorRole::SurfaceVariant, "SurfaceVariant" },
-    EnumNamePair<ColorRole>{ ColorRole::OnSurfaceVariant, "OnSurfaceVariant" },
-    EnumNamePair<ColorRole>{ ColorRole::SurfaceTint, "SurfaceTint" },
-    EnumNamePair<ColorRole>{ ColorRole::Outline, "Outline" },
-    EnumNamePair<ColorRole>{ ColorRole::OutlineVariant, "OutlineVariant" },
-    EnumNamePair<ColorRole>{ ColorRole::InverseSurface, "InverseSurface" },
-    EnumNamePair<ColorRole>{ ColorRole::InverseOnSurface, "InverseOnSurface" },
-    EnumNamePair<ColorRole>{ ColorRole::InversePrimary, "InversePrimary" },
-    EnumNamePair<ColorRole>{ ColorRole::Shadow, "Shadow" },
-    EnumNamePair<ColorRole>{ ColorRole::Scrim, "Scrim" },
-};
-
-const std::array kTypeRoles = {
-    EnumNamePair<TypeRole>{ TypeRole::DisplayLarge, "DisplayLarge" },
-    EnumNamePair<TypeRole>{ TypeRole::DisplayMedium, "DisplayMedium" },
-    EnumNamePair<TypeRole>{ TypeRole::DisplaySmall, "DisplaySmall" },
-    EnumNamePair<TypeRole>{ TypeRole::HeadlineLarge, "HeadlineLarge" },
-    EnumNamePair<TypeRole>{ TypeRole::HeadlineMedium, "HeadlineMedium" },
-    EnumNamePair<TypeRole>{ TypeRole::HeadlineSmall, "HeadlineSmall" },
-    EnumNamePair<TypeRole>{ TypeRole::TitleLarge, "TitleLarge" },
-    EnumNamePair<TypeRole>{ TypeRole::TitleMedium, "TitleMedium" },
-    EnumNamePair<TypeRole>{ TypeRole::TitleSmall, "TitleSmall" },
-    EnumNamePair<TypeRole>{ TypeRole::BodyLarge, "BodyLarge" },
-    EnumNamePair<TypeRole>{ TypeRole::BodyMedium, "BodyMedium" },
-    EnumNamePair<TypeRole>{ TypeRole::BodySmall, "BodySmall" },
-    EnumNamePair<TypeRole>{ TypeRole::LabelLarge, "LabelLarge" },
-    EnumNamePair<TypeRole>{ TypeRole::LabelMedium, "LabelMedium" },
-    EnumNamePair<TypeRole>{ TypeRole::LabelSmall, "LabelSmall" },
-};
-
-const std::array kShapeRoles = {
-    EnumNamePair<ShapeRole>{ ShapeRole::None, "None" },
-    EnumNamePair<ShapeRole>{ ShapeRole::ExtraSmall, "ExtraSmall" },
-    EnumNamePair<ShapeRole>{ ShapeRole::Small, "Small" },
-    EnumNamePair<ShapeRole>{ ShapeRole::Medium, "Medium" },
-    EnumNamePair<ShapeRole>{ ShapeRole::Large, "Large" },
-    EnumNamePair<ShapeRole>{ ShapeRole::ExtraLarge, "ExtraLarge" },
-    EnumNamePair<ShapeRole>{ ShapeRole::Full, "Full" },
-};
-
-const std::array kElevationRoles = {
-    EnumNamePair<ElevationRole>{ ElevationRole::Level0, "Level0" },
-    EnumNamePair<ElevationRole>{ ElevationRole::Level1, "Level1" },
-    EnumNamePair<ElevationRole>{ ElevationRole::Level2, "Level2" },
-    EnumNamePair<ElevationRole>{ ElevationRole::Level3, "Level3" },
-    EnumNamePair<ElevationRole>{ ElevationRole::Level4, "Level4" },
-    EnumNamePair<ElevationRole>{ ElevationRole::Level5, "Level5" },
-};
-
-const std::array kMotionTokens = {
-    EnumNamePair<MotionToken>{ MotionToken::Short1, "Short1" },
-    EnumNamePair<MotionToken>{ MotionToken::Short2, "Short2" },
-    EnumNamePair<MotionToken>{ MotionToken::Short3, "Short3" },
-    EnumNamePair<MotionToken>{ MotionToken::Short4, "Short4" },
-    EnumNamePair<MotionToken>{ MotionToken::Medium1, "Medium1" },
-    EnumNamePair<MotionToken>{ MotionToken::Medium2, "Medium2" },
-    EnumNamePair<MotionToken>{ MotionToken::Medium3, "Medium3" },
-    EnumNamePair<MotionToken>{ MotionToken::Medium4, "Medium4" },
-    EnumNamePair<MotionToken>{ MotionToken::Long1, "Long1" },
-    EnumNamePair<MotionToken>{ MotionToken::Long2, "Long2" },
-    EnumNamePair<MotionToken>{ MotionToken::Long3, "Long3" },
-    EnumNamePair<MotionToken>{ MotionToken::Long4, "Long4" },
-};
-
-const std::array kDensityRoles = {
-    EnumNamePair<DensityRole>{ DensityRole::Compact, "Compact" },
-    EnumNamePair<DensityRole>{ DensityRole::Default, "Default" },
-    EnumNamePair<DensityRole>{ DensityRole::Comfortable, "Comfortable" },
-};
-
-const std::array kIconSizeRoles = {
-    EnumNamePair<IconSizeRole>{ IconSizeRole::ExtraSmall, "ExtraSmall" },
-    EnumNamePair<IconSizeRole>{ IconSizeRole::Small, "Small" },
-    EnumNamePair<IconSizeRole>{ IconSizeRole::Medium, "Medium" },
-    EnumNamePair<IconSizeRole>{ IconSizeRole::Large, "Large" },
-    EnumNamePair<IconSizeRole>{ IconSizeRole::ExtraLarge, "ExtraLarge" },
-};
-
 QJsonObject fontToJson(const QFont& font)
 {
     QJsonObject object;
@@ -493,9 +378,9 @@ bool optionsFromJson(const QJsonObject& object, ThemeOptions* outOptions, QStrin
 QJsonObject colorSchemeToJson(const ColorScheme& scheme)
 {
     QJsonObject object;
-    for (const auto& [role, name] : kColorRoles) {
+    for (ColorRole role : allColorRoles()) {
         if (scheme.contains(role)) {
-            object.insert(QString::fromLatin1(name), colorToString(scheme.color(role)));
+            object.insert(ThemeTextCodec::tokenIdToString(tokenId(role)), colorToString(scheme.color(role)));
         }
     }
     return object;
@@ -511,8 +396,8 @@ bool colorSchemeFromJson(const QJsonObject& object, ColorScheme* outScheme, QStr
     }
 
     ColorScheme scheme;
-    for (const auto& [role, name] : kColorRoles) {
-        const QString key = QString::fromLatin1(name);
+    for (ColorRole role : allColorRoles()) {
+        const QString key = ThemeTextCodec::tokenIdToString(tokenId(role));
         if (!object.contains(key)) {
             continue;
         }
@@ -533,7 +418,7 @@ bool colorSchemeFromJson(const QJsonObject& object, ColorScheme* outScheme, QStr
 QJsonObject typographyToJson(const TypographyScale& typography)
 {
     QJsonObject object;
-    for (const auto& [role, name] : kTypeRoles) {
+    for (TypeRole role : allTypeRoles()) {
         if (!typography.contains(role)) {
             continue;
         }
@@ -542,7 +427,7 @@ QJsonObject typographyToJson(const TypographyScale& typography)
         styleObject.insert(QStringLiteral("font"), fontToJson(style.font));
         styleObject.insert(QStringLiteral("lineHeight"), style.lineHeight);
         styleObject.insert(QStringLiteral("letterSpacing"), style.letterSpacing);
-        object.insert(QString::fromLatin1(name), styleObject);
+        object.insert(ThemeTextCodec::tokenIdToString(tokenId(role)), styleObject);
     }
     return object;
 }
@@ -557,8 +442,8 @@ bool typographyFromJson(const QJsonObject& object, TypographyScale* outTypograph
     }
 
     TypographyScale typography;
-    for (const auto& [role, name] : kTypeRoles) {
-        const QString key = QString::fromLatin1(name);
+    for (TypeRole role : allTypeRoles()) {
+        const QString key = ThemeTextCodec::tokenIdToString(tokenId(role));
         if (!object.contains(key)) {
             continue;
         }
@@ -584,9 +469,9 @@ bool typographyFromJson(const QJsonObject& object, TypographyScale* outTypograph
 QJsonObject shapesToJson(const ShapeScale& shapes)
 {
     QJsonObject object;
-    for (const auto& [role, name] : kShapeRoles) {
+    for (ShapeRole role : allShapeRoles()) {
         if (shapes.contains(role)) {
-            object.insert(QString::fromLatin1(name), shapes.radius(role));
+            object.insert(ThemeTextCodec::tokenIdToString(tokenId(role)), shapes.radius(role));
         }
     }
     return object;
@@ -602,8 +487,8 @@ bool shapesFromJson(const QJsonObject& object, ShapeScale* outShapes, QString* e
     }
 
     ShapeScale shapes;
-    for (const auto& [role, name] : kShapeRoles) {
-        const QString key = QString::fromLatin1(name);
+    for (ShapeRole role : allShapeRoles()) {
+        const QString key = ThemeTextCodec::tokenIdToString(tokenId(role));
         if (!object.contains(key)) {
             continue;
         }
@@ -617,7 +502,7 @@ bool shapesFromJson(const QJsonObject& object, ShapeScale* outShapes, QString* e
 QJsonObject elevationsToJson(const ElevationScale& elevations)
 {
     QJsonObject object;
-    for (const auto& [role, name] : kElevationRoles) {
+    for (ElevationRole role : allElevationRoles()) {
         if (!elevations.contains(role)) {
             continue;
         }
@@ -626,7 +511,7 @@ QJsonObject elevationsToJson(const ElevationScale& elevations)
         styleObject.insert(QStringLiteral("shadowBlur"), style.shadowBlur);
         styleObject.insert(QStringLiteral("shadowYOffset"), style.shadowYOffset);
         styleObject.insert(QStringLiteral("tonalOverlayOpacity"), style.tonalOverlayOpacity);
-        object.insert(QString::fromLatin1(name), styleObject);
+        object.insert(ThemeTextCodec::tokenIdToString(tokenId(role)), styleObject);
     }
     return object;
 }
@@ -641,8 +526,8 @@ bool elevationsFromJson(const QJsonObject& object, ElevationScale* outElevations
     }
 
     ElevationScale elevations;
-    for (const auto& [role, name] : kElevationRoles) {
-        const QString key = QString::fromLatin1(name);
+    for (ElevationRole role : allElevationRoles()) {
+        const QString key = ThemeTextCodec::tokenIdToString(tokenId(role));
         if (!object.contains(key)) {
             continue;
         }
@@ -668,7 +553,7 @@ bool elevationsFromJson(const QJsonObject& object, ElevationScale* outElevations
 QJsonObject motionToJson(const MotionTokens& motion)
 {
     QJsonObject object;
-    for (const auto& [token, name] : kMotionTokens) {
+    for (MotionToken token : allMotionTokens()) {
         if (!motion.contains(token)) {
             continue;
         }
@@ -676,7 +561,7 @@ QJsonObject motionToJson(const MotionTokens& motion)
         QJsonObject styleObject;
         styleObject.insert(QStringLiteral("durationMs"), style.durationMs);
         styleObject.insert(QStringLiteral("easingType"), static_cast<int>(style.easing.type()));
-        object.insert(QString::fromLatin1(name), styleObject);
+        object.insert(ThemeTextCodec::tokenIdToString(tokenId(token)), styleObject);
     }
     return object;
 }
@@ -691,8 +576,8 @@ bool motionFromJson(const QJsonObject& object, MotionTokens* outMotion, QString*
     }
 
     MotionTokens motion;
-    for (const auto& [token, name] : kMotionTokens) {
-        const QString key = QString::fromLatin1(name);
+    for (MotionToken token : allMotionTokens()) {
+        const QString key = ThemeTextCodec::tokenIdToString(tokenId(token));
         if (!object.contains(key)) {
             continue;
         }
@@ -861,9 +746,9 @@ bool interactionsFromJson(const QJsonObject& object, InteractionStateTokens* out
 QJsonObject densityToJson(const DensityTokens& density)
 {
     QJsonObject object;
-    for (const auto& [role, name] : kDensityRoles) {
+    for (DensityRole role : allDensityRoles()) {
         if (density.contains(role)) {
-            object.insert(QString::fromLatin1(name), density.value(role));
+            object.insert(ThemeTextCodec::tokenIdToString(tokenId(role)), density.value(role));
         }
     }
     return object;
@@ -879,8 +764,8 @@ bool densityFromJson(const QJsonObject& object, DensityTokens* outDensity, QStri
     }
 
     DensityTokens density;
-    for (const auto& [role, name] : kDensityRoles) {
-        const QString key = QString::fromLatin1(name);
+    for (DensityRole role : allDensityRoles()) {
+        const QString key = ThemeTextCodec::tokenIdToString(tokenId(role));
         if (object.contains(key)) {
             density.setValue(role, object.value(key).toInt());
         }
@@ -892,9 +777,9 @@ bool densityFromJson(const QJsonObject& object, DensityTokens* outDensity, QStri
 QJsonObject iconSizesToJson(const IconSizeTokens& iconSizes)
 {
     QJsonObject object;
-    for (const auto& [role, name] : kIconSizeRoles) {
+    for (IconSizeRole role : allIconSizeRoles()) {
         if (iconSizes.contains(role)) {
-            object.insert(QString::fromLatin1(name), iconSizes.size(role));
+            object.insert(ThemeTextCodec::tokenIdToString(tokenId(role)), iconSizes.size(role));
         }
     }
     return object;
@@ -910,8 +795,8 @@ bool iconSizesFromJson(const QJsonObject& object, IconSizeTokens* outIconSizes, 
     }
 
     IconSizeTokens iconSizes;
-    for (const auto& [role, name] : kIconSizeRoles) {
-        const QString key = QString::fromLatin1(name);
+    for (IconSizeRole role : allIconSizeRoles()) {
+        const QString key = ThemeTextCodec::tokenIdToString(tokenId(role));
         if (object.contains(key)) {
             iconSizes.setSize(role, object.value(key).toInt());
         }
@@ -923,9 +808,9 @@ bool iconSizesFromJson(const QJsonObject& object, IconSizeTokens* outIconSizes, 
 QJsonObject componentOverridesToJson(const ComponentTokenOverrides& overrides)
 {
     QJsonObject root;
-    const QStringList names = overrides.componentNames();
-    for (const QString& componentName : names) {
-        const ComponentTokenOverride overrideTokens = overrides.overrideFor(componentName);
+    for (ComponentId componentId : overrides.componentIds()) {
+        const QString componentName = ThemeTextCodec::componentIdToString(componentId);
+        const ComponentTokenOverride overrideTokens = overrides.overrideFor(componentId);
         QJsonObject object;
 
         ColorScheme colors;
@@ -1024,7 +909,7 @@ bool componentOverridesFromJson(const QJsonObject& object, ComponentTokenOverrid
             if (!colorSchemeFromJson(componentObject.value(QStringLiteral("colors")).toObject(), &colors, errorString)) {
                 return false;
             }
-            for (const auto& [role, name] : kColorRoles) {
+            for (ColorRole role : allColorRoles()) {
                 if (colors.contains(role)) {
                     overrideTokens.colors.insert(role, colors.color(role));
                 }
@@ -1035,9 +920,8 @@ bool componentOverridesFromJson(const QJsonObject& object, ComponentTokenOverrid
             if (!typographyFromJson(componentObject.value(QStringLiteral("typography")).toObject(), &typography, errorString)) {
                 return false;
             }
-            for (const auto& [role, name] : kTypeRoles) {
-                Q_UNUSED(name);
-                if (typography.contains(role)) {
+            for (TypeRole role : allTypeRoles()) {
+                                if (typography.contains(role)) {
                     overrideTokens.typography.insert(role, typography.style(role));
                 }
             }
@@ -1047,9 +931,8 @@ bool componentOverridesFromJson(const QJsonObject& object, ComponentTokenOverrid
             if (!shapesFromJson(componentObject.value(QStringLiteral("shapes")).toObject(), &shapes, errorString)) {
                 return false;
             }
-            for (const auto& [role, name] : kShapeRoles) {
-                Q_UNUSED(name);
-                if (shapes.contains(role)) {
+            for (ShapeRole role : allShapeRoles()) {
+                                if (shapes.contains(role)) {
                     overrideTokens.shapes.insert(role, shapes.radius(role));
                 }
             }
@@ -1059,9 +942,8 @@ bool componentOverridesFromJson(const QJsonObject& object, ComponentTokenOverrid
             if (!elevationsFromJson(componentObject.value(QStringLiteral("elevations")).toObject(), &elevations, errorString)) {
                 return false;
             }
-            for (const auto& [role, name] : kElevationRoles) {
-                Q_UNUSED(name);
-                if (elevations.contains(role)) {
+            for (ElevationRole role : allElevationRoles()) {
+                                if (elevations.contains(role)) {
                     overrideTokens.elevations.insert(role, elevations.style(role));
                 }
             }
@@ -1071,9 +953,8 @@ bool componentOverridesFromJson(const QJsonObject& object, ComponentTokenOverrid
             if (!motionFromJson(componentObject.value(QStringLiteral("motion")).toObject(), &motion, errorString)) {
                 return false;
             }
-            for (const auto& [token, name] : kMotionTokens) {
-                Q_UNUSED(name);
-                if (motion.contains(token)) {
+            for (MotionToken token : allMotionTokens()) {
+                                if (motion.contains(token)) {
                     overrideTokens.motion.insert(token, motion.style(token));
                 }
             }
@@ -1083,9 +964,8 @@ bool componentOverridesFromJson(const QJsonObject& object, ComponentTokenOverrid
             if (!densityFromJson(componentObject.value(QStringLiteral("density")).toObject(), &density, errorString)) {
                 return false;
             }
-            for (const auto& [role, name] : kDensityRoles) {
-                Q_UNUSED(name);
-                if (density.contains(role)) {
+            for (DensityRole role : allDensityRoles()) {
+                                if (density.contains(role)) {
                     overrideTokens.density.insert(role, density.value(role));
                 }
             }
@@ -1095,9 +975,8 @@ bool componentOverridesFromJson(const QJsonObject& object, ComponentTokenOverrid
             if (!iconSizesFromJson(componentObject.value(QStringLiteral("iconSizes")).toObject(), &iconSizes, errorString)) {
                 return false;
             }
-            for (const auto& [role, name] : kIconSizeRoles) {
-                Q_UNUSED(name);
-                if (iconSizes.contains(role)) {
+            for (IconSizeRole role : allIconSizeRoles()) {
+                                if (iconSizes.contains(role)) {
                     overrideTokens.iconSizes.insert(role, iconSizes.size(role));
                 }
             }
@@ -1112,7 +991,14 @@ bool componentOverridesFromJson(const QJsonObject& object, ComponentTokenOverrid
             overrideTokens.custom = componentObject.value(QStringLiteral("custom")).toObject().toVariantMap();
         }
 
-        overrides.setOverride(it.key(), overrideTokens);
+        ComponentId componentId = ComponentId::Custom;
+        if (ThemeTextCodec::componentIdFromString(it.key(), &componentId)
+            && componentId != ComponentId::Custom) {
+            overrides.setOverride(componentId, overrideTokens);
+        } else {
+            ThemeTextCodec::setExtensionOverride(
+                &overrides, it.key(), overrideTokens);
+        }
     }
 
     *outOverrides = overrides;

@@ -4,6 +4,7 @@
 #include "private/qtmaterialdensitymetrics_p.h"
 
 #include <QtGlobal>
+#include <QVector>
 
 namespace QtMaterial {
 
@@ -40,10 +41,7 @@ ChipSpec ChipSpecResolver::resolve(
     case ChipVariant::Assist:
         applyChipComponentTokens(
             theme,
-            QStringList{
-                QStringLiteral("chip"),
-                QStringLiteral("chip.assist"),
-                QStringLiteral("AssistChip")},
+            QVector<ComponentId>{ ComponentId::Chip, ComponentId::AssistChip },
             &spec);
         break;
     case ChipVariant::Filter:
@@ -57,10 +55,7 @@ ChipSpec ChipSpecResolver::resolve(
         spec.stateLayerColor = spec.labelColor;
         applyChipComponentTokens(
             theme,
-            QStringList{
-                QStringLiteral("chip"),
-                QStringLiteral("chip.filter"),
-                QStringLiteral("FilterChip")},
+            QVector<ComponentId>{ ComponentId::Chip, ComponentId::FilterChip },
             &spec);
         break;
     case ChipVariant::Input:
@@ -71,10 +66,7 @@ ChipSpec ChipSpecResolver::resolve(
             theme.colorScheme().color(ColorRole::OnSurfaceVariant);
         applyChipComponentTokens(
             theme,
-            QStringList{
-                QStringLiteral("chip"),
-                QStringLiteral("chip.input"),
-                QStringLiteral("InputChip")},
+            QVector<ComponentId>{ ComponentId::Chip, ComponentId::InputChip },
             &spec);
         break;
     case ChipVariant::Suggestion:
@@ -86,10 +78,7 @@ ChipSpec ChipSpecResolver::resolve(
         spec.selectedIconColor = spec.selectedLabelColor;
         applyChipComponentTokens(
             theme,
-            QStringList{
-                QStringLiteral("chip"),
-                QStringLiteral("chip.suggestion"),
-                QStringLiteral("SuggestionChip")},
+            QVector<ComponentId>{ ComponentId::Chip, ComponentId::SuggestionChip },
             &spec);
         break;
     }

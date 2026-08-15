@@ -2,6 +2,7 @@
 #include "qtmaterialcomponenttokenapplier_p.h"
 
 #include "private/qtmaterialdensitymetrics_p.h"
+#include <QVector>
 
 namespace QtMaterial {
 
@@ -38,9 +39,7 @@ AutocompleteSpec AutocompleteSpecResolver::autocompleteSpec(
         SpecsPrivate::adjustedMetric(56, density, -8, 4);
     applyAutocompleteComponentTokens(
         theme,
-        QStringList{
-            QStringLiteral("autocomplete"),
-            QStringLiteral("Autocomplete")},
+        QVector<ComponentId>{ ComponentId::AutoComplete },
         &spec);
     return spec;
 }
