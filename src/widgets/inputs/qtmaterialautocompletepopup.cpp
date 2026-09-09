@@ -58,10 +58,10 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
     QObject::connect(
         d_ptr->m_themeBinding,
         &QtMaterialThemeContextBinding::
-            effectiveThemeContextChanged,
+        effectiveThemeContextChanged,
         this,
         &QtMaterialAutocompletePopup::
-            effectiveThemeContextChanged);
+        effectiveThemeContextChanged);
 
     QObject::connect(
         d_ptr->m_themeBinding,
@@ -371,12 +371,12 @@ void QtMaterialAutocompletePopup::paintEvent(
 
     const qreal radius =
         d_ptr->m_spec.cornerRadius < 0
-        ? qMin(
-            visualRect.width(),
-            visualRect.height()) / 2.0
-        : qMin<qreal>(
-            d_ptr->m_spec.cornerRadius,
-            visualRect.height() / 2.0);
+            ? qMin(
+                  visualRect.width(),
+                  visualRect.height()) / 2.0
+            : qMin<qreal>(
+                  d_ptr->m_spec.cornerRadius,
+                  visualRect.height() / 2.0);
 
     QPainterPath path;
     path.addRoundedRect(
@@ -452,7 +452,7 @@ QtMaterialAutocompletePopup::ensureSpecResolved() const
         return;
     }
     d_ptr->m_spec =
-        InputSpecResolution::autocompletePopupSpec(
+        QtMaterial::InputSpecResolution::autocompletePopupSpec(
             d_ptr->m_themeBinding);
     d_ptr->m_specDirty = false;
 }
@@ -566,7 +566,7 @@ void QtMaterialAutocompletePopup::refreshPopupVisibility()
 }
 
 void QtMaterialAutocompletePopup::
-setEffectivePopupVisible(bool visible)
+    setEffectivePopupVisible(bool visible)
 {
     if (d_ptr->m_effectivePopupVisible == visible) {
         return;

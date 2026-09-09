@@ -44,8 +44,8 @@ bool validIndex(
     int index) noexcept
 {
     return d
-        && index >= 0
-        && index < d->items.size();
+           && index >= 0
+           && index < d->items.size();
 }
 
 bool activatable(
@@ -53,7 +53,7 @@ bool activatable(
     int index)
 {
     return validIndex(d, index)
-        && d->items.at(index).role
+    && d->items.at(index).role
             == QtMaterialMenu::ItemRole::Action
         && d->items.at(index).enabled;
 }
@@ -94,8 +94,8 @@ int nextActivatable(
     }
     if (step == 0) {
         return activatable(d, start)
-            ? start
-            : firstActivatable(d);
+        ? start
+        : firstActivatable(d);
     }
 
     int index = start;
@@ -164,7 +164,7 @@ QtMaterialMenu::QtMaterialMenu(QWidget* parent)
     connect(
         d_ptr->themeBinding,
         &QtMaterialThemeContextBinding::
-            effectiveThemeContextChanged,
+        effectiveThemeContextChanged,
         this,
         &QtMaterialMenu::effectiveThemeContextChanged);
     connect(
@@ -291,8 +291,8 @@ bool QtMaterialMenu::isEmpty() const noexcept
 QString QtMaterialMenu::itemText(int index) const
 {
     return validIndex(d_ptr.get(), index)
-        ? d_ptr->items.at(index).text
-        : QString();
+    ? d_ptr->items.at(index).text
+    : QString();
 }
 
 void QtMaterialMenu::setItemText(
@@ -313,8 +313,8 @@ void QtMaterialMenu::setItemText(
 QString QtMaterialMenu::itemShortcutText(int index) const
 {
     return validIndex(d_ptr.get(), index)
-        ? d_ptr->items.at(index).shortcutText
-        : QString();
+    ? d_ptr->items.at(index).shortcutText
+    : QString();
 }
 
 void QtMaterialMenu::setItemShortcutText(
@@ -336,8 +336,8 @@ void QtMaterialMenu::setItemShortcutText(
 QIcon QtMaterialMenu::itemIcon(int index) const
 {
     return validIndex(d_ptr.get(), index)
-        ? d_ptr->items.at(index).icon
-        : QIcon();
+    ? d_ptr->items.at(index).icon
+    : QIcon();
 }
 
 void QtMaterialMenu::setItemIcon(
@@ -357,8 +357,8 @@ void QtMaterialMenu::setItemIcon(
 bool QtMaterialMenu::isSeparator(int index) const
 {
     return validIndex(d_ptr.get(), index)
-        && d_ptr->items.at(index).role
-            == ItemRole::Separator;
+    && d_ptr->items.at(index).role
+        == ItemRole::Separator;
 }
 
 bool QtMaterialMenu::isItemEnabled(int index) const
@@ -393,7 +393,7 @@ void QtMaterialMenu::setItemEnabled(
 bool QtMaterialMenu::isItemCheckable(int index) const
 {
     return validIndex(d_ptr.get(), index)
-        && d_ptr->items.at(index).checkable;
+    && d_ptr->items.at(index).checkable;
 }
 
 void QtMaterialMenu::setItemCheckable(
@@ -417,7 +417,7 @@ void QtMaterialMenu::setItemCheckable(
 bool QtMaterialMenu::isItemChecked(int index) const
 {
     return validIndex(d_ptr.get(), index)
-        && d_ptr->items.at(index).checked;
+    && d_ptr->items.at(index).checked;
 }
 
 void QtMaterialMenu::setItemChecked(
@@ -484,13 +484,13 @@ QRect QtMaterialMenu::itemRect(int index) const
          preceding < index;
          ++preceding) {
         y += isSeparator(preceding)
-            ? d_ptr->spec.separatorHeight
-            : d_ptr->spec.minItemSize.height();
+        ? d_ptr->spec.separatorHeight
+        : d_ptr->spec.minItemSize.height();
     }
 
     const int height = isSeparator(index)
-        ? d_ptr->spec.separatorHeight
-        : d_ptr->spec.minItemSize.height();
+                           ? d_ptr->spec.separatorHeight
+                           : d_ptr->spec.minItemSize.height();
     return QRect(
         0,
         y,
@@ -519,8 +519,8 @@ QString QtMaterialMenu::itemAccessibleText(int index) const
     }
     if (item.checkable) {
         parts << (item.checked
-            ? tr("checked")
-            : tr("not checked"));
+                      ? tr("checked")
+                      : tr("not checked"));
     }
     if (index == d_ptr->currentIndex) {
         parts << tr("focused");
@@ -543,7 +543,7 @@ QString QtMaterialMenu::accessibilitySummary() const
         tr("Menu, %n item(s)", nullptr, activatableCount);
     if (d_ptr->currentIndex >= 0) {
         summary += QStringLiteral(", ")
-            + itemAccessibleText(d_ptr->currentIndex);
+        + itemAccessibleText(d_ptr->currentIndex);
     } else if (d_ptr->items.isEmpty()) {
         summary += QStringLiteral(", ") + tr("empty");
     }
@@ -590,11 +590,11 @@ QSize QtMaterialMenu::sizeHint() const
     }
     if (hasIcon) {
         width += d_ptr->spec.iconSize
-            + d_ptr->spec.iconSpacing;
+                 + d_ptr->spec.iconSpacing;
     }
     if (shortcutWidth > 0) {
         width += d_ptr->spec.shortcutSpacing
-            + shortcutWidth;
+                 + shortcutWidth;
     }
 
     return QSize(
@@ -667,8 +667,8 @@ void QtMaterialMenu::paintEvent(QPaintEvent*)
                 d_ptr->spec.pressStateLayerOpacity;
         } else if (index == d_ptr->currentIndex) {
             stateOpacity = hasFocus()
-                ? d_ptr->spec.focusStateLayerOpacity
-                : d_ptr->spec.hoverStateLayerOpacity;
+            ? d_ptr->spec.focusStateLayerOpacity
+            : d_ptr->spec.hoverStateLayerOpacity;
         }
         if (stateOpacity > 0.0) {
             painter.fillRect(
@@ -686,14 +686,14 @@ void QtMaterialMenu::paintEvent(QPaintEvent*)
             - d_ptr->spec.itemPadding.right();
 
         const QColor labelColor = item.enabled
-            ? d_ptr->spec.itemLabelColor
-            : d_ptr->spec.disabledItemLabelColor;
+                                      ? d_ptr->spec.itemLabelColor
+                                      : d_ptr->spec.disabledItemLabelColor;
         const QColor iconColor = item.enabled
-            ? d_ptr->spec.itemIconColor
-            : d_ptr->spec.disabledItemIconColor;
+                                     ? d_ptr->spec.itemIconColor
+                                     : d_ptr->spec.disabledItemIconColor;
         const QColor shortcutColor = item.enabled
-            ? d_ptr->spec.shortcutColor
-            : d_ptr->spec.disabledShortcutColor;
+                                         ? d_ptr->spec.shortcutColor
+                                         : d_ptr->spec.disabledShortcutColor;
 
         if (item.checkable) {
             const QRect checkRect(
@@ -746,10 +746,10 @@ void QtMaterialMenu::paintEvent(QPaintEvent*)
             }
             if (rtl) {
                 right -= d_ptr->spec.iconSize
-                    + d_ptr->spec.iconSpacing;
+                         + d_ptr->spec.iconSpacing;
             } else {
                 left += d_ptr->spec.iconSize
-                    + d_ptr->spec.iconSpacing;
+                        + d_ptr->spec.iconSpacing;
             }
         }
 
@@ -773,10 +773,10 @@ void QtMaterialMenu::paintEvent(QPaintEvent*)
                 item.shortcutText);
             if (rtl) {
                 left += shortcutWidth
-                    + d_ptr->spec.shortcutSpacing;
+                        + d_ptr->spec.shortcutSpacing;
             } else {
                 right -= shortcutWidth
-                    + d_ptr->spec.shortcutSpacing;
+                         + d_ptr->spec.shortcutSpacing;
             }
         }
 
@@ -963,7 +963,7 @@ void QtMaterialMenu::resolveThemeSpec()
     }
 
     d_ptr->spec =
-        NavigationSpecResolution::menuSpec(d_ptr);
+        QtMaterial::NavigationSpecResolution::menuSpec(d_ptr->themeBinding);
     applySpec();
 }
 

@@ -12,6 +12,10 @@ project(
 
 set(QTMATERIAL3_IS_TOP_LEVEL ${PROJECT_IS_TOP_LEVEL})
 
+if(WIN32 AND QTMATERIAL3_IS_TOP_LEVEL)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
+endif()
+
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3HeaderSurface.cmake")

@@ -24,3 +24,8 @@ target_link_libraries(qtmaterial3_core_playground PRIVATE
     qtmaterial3_specs
     qtmaterial3_widgets
 )
+
+if(WIN32 AND QTMATERIAL3_IS_TOP_LEVEL
+        AND NOT DEFINED CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
+endif()

@@ -3,6 +3,7 @@
 #include <QLineEdit>
 
 #include "qtmaterial/core/qtmaterialwidget.h"
+#include "qtmaterial/specs/qtmaterialautocompletepopupspec.h"
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
 #include "qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h"
 
@@ -12,6 +13,7 @@ class tst_QtMaterialAutocompletePopup : public QObject
 private slots:
     void themeContextUsesBinding();
     void constructs();
+    void constructsWithVisibleParent();
     void anchorAndVisibility();
     void suggestionsRoundTrip();
 };
@@ -21,6 +23,23 @@ void tst_QtMaterialAutocompletePopup::constructs()
     QtMaterialAutocompletePopup popup;
     QVERIFY(popup.model() != nullptr);
     QVERIFY(!popup.isPopupVisible());
+}
+
+void tst_QtMaterialAutocompletePopup::constructsWithVisibleParent()
+{
+    QtMaterial::ThemeContext context;
+    QtMaterial::QtMaterialWidget host;
+    host.setThemeContext(&context);
+    host.show();
+    QCoreApplication::processEvents();
+
+    QtMaterialAutocompletePopup popup(&host);
+    QCOMPARE(popup.windowType(), Qt::Popup);
+    QCOMPARE(popup.effectiveThemeContext(), &context);
+    QVERIFY(popup.model() != nullptr);
+    QVERIFY(popup.sizeHint().isValid());
+    QCOMPARE(popup.minimumSizeHint(), popup.resolvedSpec().minPopupSize);
+    QVERIFY(!popup.isVisible());
 }
 
 void tst_QtMaterialAutocompletePopup::anchorAndVisibility()

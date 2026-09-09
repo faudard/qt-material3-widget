@@ -44,3 +44,4 @@ target_link_libraries(qtmaterial3_gallery
         qtmaterial3_effects
         qtmaterial3_widgets
 )
+

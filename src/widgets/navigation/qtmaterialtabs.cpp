@@ -1,4 +1,5 @@
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
+#include "../resolution/qtmaterialnavigationspecresolution_p.h"
 #include "qtmaterial/core/qtmaterialthemecontextbinding.h"
 
 #include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
@@ -25,29 +26,29 @@
 namespace QtMaterial {
 
 struct QtMaterialTabs::TabDescriptor {
- QString id;
- QString testId;
- QtMaterialRoute route;
- std::function<QWidget*()> factory;
- bool loaded = true;
- QString badgeText;
- bool badgeVisible = false;
+    QString id;
+    QString testId;
+    QtMaterialRoute route;
+    std::function<QWidget*()> factory;
+    bool loaded = true;
+    QString badgeText;
+    bool badgeVisible = false;
 };
 
 class QtMaterialTabsPrivate {
 public:
- TabsSpec authoredSpec;
- TabsSpec resolvedSpec;
+    TabsSpec authoredSpec;
+    TabsSpec resolvedSpec;
     QtMaterialThemeContextBinding* themeBinding = nullptr;
- QVector<QtMaterialTabs::TabDescriptor> descriptors;
- QVector<QPointer<QtMaterialNavigationController>> boundControllers;
- QPointer<QStackedWidget> boundStack;
- QPointer<QtMaterialNavigationModel> navigationModel;
- bool lazyLoading = false;
- bool syncingExternal = false;
- bool syncingNavigationModel = false;
- QString lastAccessibilitySummary;
- QString lastEmittedCurrentRoutePath;
+    QVector<QtMaterialTabs::TabDescriptor> descriptors;
+    QVector<QPointer<QtMaterialNavigationController>> boundControllers;
+    QPointer<QStackedWidget> boundStack;
+    QPointer<QtMaterialNavigationModel> navigationModel;
+    bool lazyLoading = false;
+    bool syncingExternal = false;
+    bool syncingNavigationModel = false;
+    QString lastAccessibilitySummary;
+    QString lastEmittedCurrentRoutePath;
 };
 
 namespace {
@@ -61,10 +62,10 @@ QColor withAlpha(QColor color, qreal opacity)
 int resolvedHeight(const TabsSpec& spec)
 {
     return spec.density == TabsDensity::Compact
-        ? qMin(
-              spec.containerHeight,
-              spec.compactContainerHeight)
-        : spec.containerHeight;
+               ? qMin(
+                     spec.containerHeight,
+                     spec.compactContainerHeight)
+               : spec.containerHeight;
 }
 
 bool usesOverflowMenu(TabsOverflowMode mode)
@@ -104,7 +105,7 @@ public:
         m_overflowButton->setPopupMode(QToolButton::InstantPopup);
         m_overflowButton->hide();
 
-            connect(this, &QTabBar::currentChanged, this, &QtMaterialTabsBar::animateIndicatorToCurrentTab);
+        connect(this, &QTabBar::currentChanged, this, &QtMaterialTabsBar::animateIndicatorToCurrentTab);
         connect(m_overflowMenu, &QMenu::triggered, this, [this](QAction* action) {
             bool ok = false;
             const int index = action->data().toInt(&ok);
@@ -115,32 +116,32 @@ public:
     }
 
     void setResolvedSpec(const TabsSpec& spec)
-{
-    m_spec = spec;
+    {
+        m_spec = spec;
 
-    m_indicatorAnimation->setDuration(
-        qMax(0, spec.animationDuration));
-    if (spec.hasResolvedIndicatorMotion) {
-        m_indicatorAnimation->setEasingCurve(
-            spec.indicatorMotionStyle.easing);
+        m_indicatorAnimation->setDuration(
+            qMax(0, spec.animationDuration));
+        if (spec.hasResolvedIndicatorMotion) {
+            m_indicatorAnimation->setEasingCurve(
+                spec.indicatorMotionStyle.easing);
+        }
+
+        if (spec.hasResolvedLabelFont) {
+            setFont(spec.labelFont);
+        }
+
+        setUsesScrollButtons(
+            ::QtMaterial::usesScrollButtons(
+                spec.overflowMode)
+            && spec.scrollable);
+        setExpanding(
+            spec.alignment == TabsAlignment::Stretch);
+
+        updateStyleSheet();
+        rebuildOverflowMenu();
+        updateOverflowButtonGeometry();
+        update();
     }
-
-    if (spec.hasResolvedLabelFont) {
-        setFont(spec.labelFont);
-    }
-
-    setUsesScrollButtons(
-        ::QtMaterial::usesScrollButtons(
-            spec.overflowMode)
-        && spec.scrollable);
-    setExpanding(
-        spec.alignment == TabsAlignment::Stretch);
-
-    updateStyleSheet();
-    rebuildOverflowMenu();
-    updateOverflowButtonGeometry();
-    update();
-}
 
     void setBadgeProvider(std::function<QPair<QString, bool>(int)> provider)
     {
@@ -203,9 +204,9 @@ protected:
     void keyPressEvent(QKeyEvent* event) override
     {
         const bool backward = event->matches(QKeySequence::Back) ||
-            (event->modifiers().testFlag(Qt::ControlModifier) && event->key() == Qt::Key_Tab && event->modifiers().testFlag(Qt::ShiftModifier));
+                              (event->modifiers().testFlag(Qt::ControlModifier) && event->key() == Qt::Key_Tab && event->modifiers().testFlag(Qt::ShiftModifier));
         const bool forward = event->matches(QKeySequence::Forward) ||
-            (event->modifiers().testFlag(Qt::ControlModifier) && event->key() == Qt::Key_Tab && !event->modifiers().testFlag(Qt::ShiftModifier));
+                             (event->modifiers().testFlag(Qt::ControlModifier) && event->key() == Qt::Key_Tab && !event->modifiers().testFlag(Qt::ShiftModifier));
 
         if (event->key() == Qt::Key_Home) {
             moveToEnabledIndex(0, +1, false);
@@ -231,179 +232,179 @@ protected:
     }
 
     void paintEvent(QPaintEvent* event) override
-{
-    QTabBar::paintEvent(event);
+    {
+        QTabBar::paintEvent(event);
 
-    QPainter painter(this);
-    painter.setRenderHint(
-        QPainter::Antialiasing,
-        true);
+        QPainter painter(this);
+        painter.setRenderHint(
+            QPainter::Antialiasing,
+            true);
 
-    const auto drawStateLayer =
-        [&](int index,
-            const QColor& color,
-            qreal opacity) {
-            if (index < 0
-                || index >= count()
-                || !isTabEnabled(index)) {
-                return;
-            }
+        const auto drawStateLayer =
+            [&](int index,
+                const QColor& color,
+                qreal opacity) {
+                if (index < 0
+                    || index >= count()
+                    || !isTabEnabled(index)) {
+                    return;
+                }
 
+                const int inset =
+                    qMax(0, m_spec.stateLayerInset);
+                const QRect layerRect =
+                    tabRect(index).adjusted(
+                        inset,
+                        inset,
+                        -inset,
+                        -inset);
+                if (!layerRect.isValid()) {
+                    return;
+                }
+
+                painter.setPen(Qt::NoPen);
+                painter.setBrush(
+                    withAlpha(color, opacity));
+                painter.drawRoundedRect(
+                    layerRect,
+                    m_spec.stateLayerRadius,
+                    m_spec.stateLayerRadius);
+            };
+
+        if (m_hoveredIndex >= 0
+            && m_hoveredIndex != currentIndex()) {
+            drawStateLayer(
+                m_hoveredIndex,
+                m_spec.hoverStateLayerColor.isValid()
+                    ? m_spec.hoverStateLayerColor
+                    : m_spec.stateLayerColor,
+                qMax<qreal>(
+                    0.0,
+                    m_spec.hoverOpacity));
+        }
+
+        if (m_pressedIndex >= 0) {
+            drawStateLayer(
+                m_pressedIndex,
+                m_spec.pressedStateLayerColor.isValid()
+                    ? m_spec.pressedStateLayerColor
+                    : m_spec.stateLayerColor,
+                qMax<qreal>(
+                    0.0,
+                    m_spec.pressedOpacity));
+        }
+
+        if (hasFocus()
+            && currentIndex() >= 0
+            && isTabEnabled(currentIndex())) {
             const int inset =
-                qMax(0, m_spec.stateLayerInset);
-            const QRect layerRect =
-                tabRect(index).adjusted(
+                qMax(0, m_spec.focusInset);
+            const QRect focusRect =
+                tabRect(currentIndex()).adjusted(
                     inset,
                     inset,
                     -inset,
                     -inset);
-            if (!layerRect.isValid()) {
-                return;
-            }
 
-            painter.setPen(Qt::NoPen);
-            painter.setBrush(
-                withAlpha(color, opacity));
+            painter.setPen(
+                QPen(
+                    m_spec.focusRingColor,
+                    m_spec.focusRingWidth));
+            painter.setBrush(Qt::NoBrush);
             painter.drawRoundedRect(
-                layerRect,
+                focusRect,
                 m_spec.stateLayerRadius,
                 m_spec.stateLayerRadius);
-        };
 
-    if (m_hoveredIndex >= 0
-        && m_hoveredIndex != currentIndex()) {
-        drawStateLayer(
-            m_hoveredIndex,
-            m_spec.hoverStateLayerColor.isValid()
-                ? m_spec.hoverStateLayerColor
-                : m_spec.stateLayerColor,
-            qMax<qreal>(
-                0.0,
-                m_spec.hoverOpacity));
-    }
-
-    if (m_pressedIndex >= 0) {
-        drawStateLayer(
-            m_pressedIndex,
-            m_spec.pressedStateLayerColor.isValid()
-                ? m_spec.pressedStateLayerColor
-                : m_spec.stateLayerColor,
-            qMax<qreal>(
-                0.0,
-                m_spec.pressedOpacity));
-    }
-
-    if (hasFocus()
-        && currentIndex() >= 0
-        && isTabEnabled(currentIndex())) {
-        const int inset =
-            qMax(0, m_spec.focusInset);
-        const QRect focusRect =
-            tabRect(currentIndex()).adjusted(
-                inset,
-                inset,
-                -inset,
-                -inset);
-
-        painter.setPen(
-            QPen(
-                m_spec.focusRingColor,
-                m_spec.focusRingWidth));
-        painter.setBrush(Qt::NoBrush);
-        painter.drawRoundedRect(
-            focusRect,
-            m_spec.stateLayerRadius,
-            m_spec.stateLayerRadius);
-
-        drawStateLayer(
-            currentIndex(),
-            m_spec.focusedStateLayerColor.isValid()
-                ? m_spec.focusedStateLayerColor
-                : m_spec.stateLayerColor,
-            qMax<qreal>(
-                0.0,
-                m_spec.focusOpacity));
-    }
-
-    if (m_indicatorRect.isValid()
-        && currentIndex() >= 0) {
-        painter.setPen(Qt::NoPen);
-        painter.setBrush(
-            m_spec.activeIndicatorColor);
-        painter.drawRoundedRect(
-            m_indicatorRect,
-            m_spec.indicatorHeight / 2.0,
-            m_spec.indicatorHeight / 2.0);
-    }
-
-    if (!m_badgeProvider) {
-        return;
-    }
-
-    for (int index = 0;
-         index < count();
-         ++index) {
-        const auto badge =
-            m_badgeProvider(index);
-        if (!badge.second) {
-            continue;
+            drawStateLayer(
+                currentIndex(),
+                m_spec.focusedStateLayerColor.isValid()
+                    ? m_spec.focusedStateLayerColor
+                    : m_spec.stateLayerColor,
+                qMax<qreal>(
+                    0.0,
+                    m_spec.focusOpacity));
         }
 
-        const QRect tabGeometry =
-            tabRect(index);
-        const bool dot = badge.first.isEmpty();
-        const int diameter = dot
-            ? m_spec.badgeDotDiameter
-            : m_spec.badgeDiameter;
-        const int badgeX =
-            layoutDirection() == Qt::RightToLeft
-            ? tabGeometry.left()
-                + m_spec.badgeEndInset
-            : tabGeometry.right()
-                - diameter
-                - m_spec.badgeEndInset;
-        const QRect badgeRect(
-            badgeX,
-            tabGeometry.top()
-                + m_spec.badgeTopInset,
-            diameter,
-            diameter);
-
-        painter.setPen(Qt::NoPen);
-        painter.setBrush(m_spec.badgeColor);
-        painter.drawEllipse(badgeRect);
-
-        if (dot) {
-            continue;
+        if (m_indicatorRect.isValid()
+            && currentIndex() >= 0) {
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(
+                m_spec.activeIndicatorColor);
+            painter.drawRoundedRect(
+                m_indicatorRect,
+                m_spec.indicatorHeight / 2.0,
+                m_spec.indicatorHeight / 2.0);
         }
 
-        painter.setPen(
-            m_spec.badgeLabelColor);
-        if (m_spec.hasResolvedBadgeFont) {
-            painter.setFont(m_spec.badgeFont);
-        } else {
-            QFont badgeFont = painter.font();
-            badgeFont.setBold(true);
-            if (badgeFont.pointSizeF() > 0.0) {
-                badgeFont.setPointSizeF(
-                    qMax<qreal>(
-                        1.0,
-                        badgeFont.pointSizeF()
-                            + m_spec.badgeFontPointDelta));
+        if (!m_badgeProvider) {
+            return;
+        }
+
+        for (int index = 0;
+             index < count();
+             ++index) {
+            const auto badge =
+                m_badgeProvider(index);
+            if (!badge.second) {
+                continue;
             }
-            painter.setFont(badgeFont);
+
+            const QRect tabGeometry =
+                tabRect(index);
+            const bool dot = badge.first.isEmpty();
+            const int diameter = dot
+                                     ? m_spec.badgeDotDiameter
+                                     : m_spec.badgeDiameter;
+            const int badgeX =
+                layoutDirection() == Qt::RightToLeft
+                    ? tabGeometry.left()
+                          + m_spec.badgeEndInset
+                    : tabGeometry.right()
+                          - diameter
+                          - m_spec.badgeEndInset;
+            const QRect badgeRect(
+                badgeX,
+                tabGeometry.top()
+                    + m_spec.badgeTopInset,
+                diameter,
+                diameter);
+
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(m_spec.badgeColor);
+            painter.drawEllipse(badgeRect);
+
+            if (dot) {
+                continue;
+            }
+
+            painter.setPen(
+                m_spec.badgeLabelColor);
+            if (m_spec.hasResolvedBadgeFont) {
+                painter.setFont(m_spec.badgeFont);
+            } else {
+                QFont badgeFont = painter.font();
+                badgeFont.setBold(true);
+                if (badgeFont.pointSizeF() > 0.0) {
+                    badgeFont.setPointSizeF(
+                        qMax<qreal>(
+                            1.0,
+                            badgeFont.pointSizeF()
+                                + m_spec.badgeFontPointDelta));
+                }
+                painter.setFont(badgeFont);
+            }
+            painter.drawText(
+                badgeRect,
+                Qt::AlignCenter,
+                badge.first);
         }
-        painter.drawText(
-            badgeRect,
-            Qt::AlignCenter,
-            badge.first);
     }
-}
 
 private:
     void updateStyleSheet()
-{
-    const QString style = QStringLiteral(R"(
+    {
+        const QString style = QStringLiteral(R"(
 QTabBar::tab {
     border: 0;
     background: transparent;
@@ -430,52 +431,52 @@ QToolButton::menu-indicator {
     width: 0px;
 }
 )")
-        .arg(resolvedHeight(m_spec))
-        .arg(m_spec.minimumTabWidth)
-        .arg(m_spec.maximumTabWidth)
-        .arg(m_spec.tabPadding.top())
-        .arg(m_spec.tabPadding.right())
-        .arg(m_spec.tabPadding.bottom())
-        .arg(m_spec.tabPadding.left())
-        .arg(
-            m_spec.inactiveLabelColor.name(
-                QColor::HexArgb))
-        .arg(
-            m_spec.activeLabelColor.name(
-                QColor::HexArgb))
-        .arg(
-            m_spec.disabledLabelColor.name(
-                QColor::HexArgb))
-        .arg(
-            m_spec.overflowButtonColor.name(
-                QColor::HexArgb))
-        .arg(m_spec.overflowButtonPadding);
+                                  .arg(resolvedHeight(m_spec))
+                                  .arg(m_spec.minimumTabWidth)
+                                  .arg(m_spec.maximumTabWidth)
+                                  .arg(m_spec.tabPadding.top())
+                                  .arg(m_spec.tabPadding.right())
+                                  .arg(m_spec.tabPadding.bottom())
+                                  .arg(m_spec.tabPadding.left())
+                                  .arg(
+                                      m_spec.inactiveLabelColor.name(
+                                          QColor::HexArgb))
+                                  .arg(
+                                      m_spec.activeLabelColor.name(
+                                          QColor::HexArgb))
+                                  .arg(
+                                      m_spec.disabledLabelColor.name(
+                                          QColor::HexArgb))
+                                  .arg(
+                                      m_spec.overflowButtonColor.name(
+                                          QColor::HexArgb))
+                                  .arg(m_spec.overflowButtonPadding);
 
-    setStyleSheet(style);
-}
-
-    QRect indicatorRectForIndex(int index) const
-{
-    if (index < 0 || index >= count()) {
-        return {};
+        setStyleSheet(style);
     }
 
-    const QRect tabGeometry = tabRect(index);
-    const int inset = qMin(
-        qMax(0, m_spec.indicatorHorizontalInset),
-        tabGeometry.width() / 2);
+    QRect indicatorRectForIndex(int index) const
+    {
+        if (index < 0 || index >= count()) {
+            return {};
+        }
 
-    return QRect(
-        tabGeometry.left() + inset,
-        tabGeometry.bottom()
-            - m_spec.indicatorHeight
-            + 1,
-        qMax(
-            0,
-            tabGeometry.width()
-                - inset * 2),
-        m_spec.indicatorHeight);
-}
+        const QRect tabGeometry = tabRect(index);
+        const int inset = qMin(
+            qMax(0, m_spec.indicatorHorizontalInset),
+            tabGeometry.width() / 2);
+
+        return QRect(
+            tabGeometry.left() + inset,
+            tabGeometry.bottom()
+                - m_spec.indicatorHeight
+                + 1,
+            qMax(
+                0,
+                tabGeometry.width()
+                    - inset * 2),
+            m_spec.indicatorHeight);
+    }
 
     void animateIndicatorToCurrentTab(int index)
     {
@@ -527,28 +528,28 @@ QToolButton::menu-indicator {
     }
 
     void updateOverflowButtonGeometry()
-{
-    if (!m_overflowButton->isVisible()) {
-        return;
+    {
+        if (!m_overflowButton->isVisible()) {
+            return;
+        }
+
+        const int outerInset =
+            qMax(0, m_spec.overflowButtonOuterInset);
+        const int side = qMax(
+            m_spec.overflowButtonMinSize,
+            height()
+                - m_spec.overflowButtonHeightInset);
+        const int x =
+            layoutDirection() == Qt::RightToLeft
+                ? outerInset
+                : width() - side - outerInset;
+
+        m_overflowButton->setGeometry(
+            x,
+            (height() - side) / 2,
+            side,
+            side);
     }
-
-    const int outerInset =
-        qMax(0, m_spec.overflowButtonOuterInset);
-    const int side = qMax(
-        m_spec.overflowButtonMinSize,
-        height()
-            - m_spec.overflowButtonHeightInset);
-    const int x =
-        layoutDirection() == Qt::RightToLeft
-        ? outerInset
-        : width() - side - outerInset;
-
-    m_overflowButton->setGeometry(
-        x,
-        (height() - side) / 2,
-        side,
-        side);
-}
 
     void moveToEnabledIndex(int start, int step, bool allowWrap)
     {
@@ -616,10 +617,10 @@ QtMaterialTabs::QtMaterialTabs(QWidget* parent)
 
 QtMaterialTabs::QtMaterialTabs(const TabsSpec& spec, QWidget* parent)
     : QTabWidget(parent)
- , d_ptr(std::make_unique<QtMaterialTabsPrivate>())
+    , d_ptr(std::make_unique<QtMaterialTabsPrivate>())
 {
- d_ptr->authoredSpec = spec;
- d_ptr->resolvedSpec = spec;
+    d_ptr->authoredSpec = spec;
+    d_ptr->resolvedSpec = spec;
     setDocumentMode(true);
     setTabBar(new QtMaterialTabsBar(this));
     setMovable(false);
@@ -1283,14 +1284,14 @@ void QtMaterialTabs::resolveSpecFromTheme()
     }
 
     d_ptr->resolvedSpec =
-        NavigationSpecResolution::tabsSpec(d_ptr, d_ptr->authoredSpec);
+        NavigationSpecResolution::tabsSpec(d_ptr->themeBinding, d_ptr->authoredSpec);
 }
 
 void QtMaterialTabs::applyResolvedSpec()
 {
     const QString alignmentRule = d_ptr->resolvedSpec.alignment == TabsAlignment::Center
-        ? QStringLiteral("center")
-        : QStringLiteral("left");
+                                      ? QStringLiteral("center")
+                                      : QStringLiteral("left");
 
     setStyleSheet(QStringLiteral(R"(
         QTabWidget::pane {
@@ -1301,8 +1302,8 @@ void QtMaterialTabs::applyResolvedSpec()
             alignment: %2;
         }
     )")
-        .arg(d_ptr->resolvedSpec.containerColor.name(QColor::HexArgb))
-        .arg(alignmentRule));
+                      .arg(d_ptr->resolvedSpec.containerColor.name(QColor::HexArgb))
+                      .arg(alignmentRule));
 
     if (auto* bar = materialTabBar()) {
         bar->setResolvedSpec(d_ptr->resolvedSpec);

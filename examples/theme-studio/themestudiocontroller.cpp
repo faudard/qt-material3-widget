@@ -5,6 +5,7 @@
 
 #include "themepresetcatalog.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
+#include "qtmaterial/theme/qtmaterialthemeserializer.h"
 #include "qtmaterial/theme/qtmaterialxmlthemeadapter.h"
 
 using namespace QtMaterial;
@@ -158,11 +159,13 @@ void ThemeStudioController::resetToDefaults()
 
 bool ThemeStudioController::importJsonFile(const QString& path, QString* errorString)
 {
-    if (!ThemeManager::instance().importThemeFromFile(path, errorString)) {
+    Theme imported;
+    if (!ThemeSerializer::readFromFile(path, &imported, errorString)) {
         emit errorOccurred(errorString ? *errorString : QStringLiteral("Import failed."));
         return false;
     }
 
+    ThemeManager::instance().setTheme(imported, ThemeChangeReason::External);
     m_currentFilePath = path;
     m_currentPresetId.clear();
     syncFromThemeManager();
@@ -177,7 +180,7 @@ bool ThemeStudioController::importJsonFile(const QString& path, QString* errorSt
 
 bool ThemeStudioController::exportJsonFile(const QString& path, QString* errorString) const
 {
-    return ThemeManager::instance().exportThemeToFile(path, errorString);
+    return ThemeSerializer::writeToFile(ThemeManager::instance().theme(), path, errorString);
 }
 
 void ThemeStudioController::setDirty(bool dirty)
@@ -200,7 +203,7 @@ void ThemeStudioController::syncFromThemeManager()
 void ThemeStudioController::emitThemeJson()
 {
     emit themeJsonChanged(QString::fromUtf8(
-        ThemeManager::instance().exportThemeJson(QJsonDocument::Indented)));
+        ThemeSerializer::toJson(ThemeManager::instance().theme(), QJsonDocument::Indented)));
 }
 
 bool ThemeStudioController::importQtMaterialXmlFile(const QString& path, QString* errorString)

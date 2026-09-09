@@ -3,11 +3,13 @@
 #include <QClipboard>
 #include <QGuiApplication>
 #include <QHBoxLayout>
+#include <QJsonDocument>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
 
 #include "qtmaterial/theme/qtmaterialthememanager.h"
+#include "qtmaterial/theme/qtmaterialthemeserializer.h"
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
 using namespace QtMaterial;
@@ -46,11 +48,11 @@ ThemeJsonView::ThemeJsonView(QWidget* parent)
     connect(m_exportButton, &QPushButton::clicked, this, &ThemeJsonView::exportRequested);
 
     m_editor->setPlainText(QString::fromUtf8(
-        ThemeManager::instance().exportThemeJson(QJsonDocument::Indented)));
+        ThemeSerializer::toJson(ThemeManager::instance().theme(), QJsonDocument::Indented)));
 }
 
-void ThemeJsonView::applyTheme(const Theme&)
+void ThemeJsonView::applyTheme(const Theme& theme)
 {
     m_editor->setPlainText(QString::fromUtf8(
-        ThemeManager::instance().exportThemeJson(QJsonDocument::Indented)));
+        ThemeSerializer::toJson(theme, QJsonDocument::Indented)));
 }

@@ -41,6 +41,15 @@ QString themeModeToString(ThemeMode mode) {
     return mode == ThemeMode::Dark ? QStringLiteral("Dark") : QStringLiteral("Light");
 }
 
+QString themePreferenceToString(ThemePreference preference) {
+    switch (preference) {
+    case ThemePreference::Light: return QStringLiteral("Light");
+    case ThemePreference::Dark: return QStringLiteral("Dark");
+    case ThemePreference::FollowSystem: return QStringLiteral("Follow system");
+    }
+    return QStringLiteral("Unknown");
+}
+
 QString contrastToString(ContrastMode contrast) {
     switch (contrast) {
     case ContrastMode::Standard:
@@ -107,6 +116,19 @@ QString roleName(ColorRole role) {
     case ColorRole::InverseOnSurface: return QStringLiteral("inverse-on-surface");
     case ColorRole::InversePrimary: return QStringLiteral("inverse-primary");
     case ColorRole::Shadow: return QStringLiteral("shadow");
+    case ColorRole::PrimaryFixed: return QStringLiteral("primary-fixed");
+    case ColorRole::PrimaryFixedDim: return QStringLiteral("primary-fixed-dim");
+    case ColorRole::OnPrimaryFixed: return QStringLiteral("on-primary-fixed");
+    case ColorRole::OnPrimaryFixedVariant: return QStringLiteral("on-primary-fixed-variant");
+    case ColorRole::SecondaryFixed: return QStringLiteral("secondary-fixed");
+    case ColorRole::SecondaryFixedDim: return QStringLiteral("secondary-fixed-dim");
+    case ColorRole::OnSecondaryFixed: return QStringLiteral("on-secondary-fixed");
+    case ColorRole::OnSecondaryFixedVariant: return QStringLiteral("on-secondary-fixed-variant");
+    case ColorRole::TertiaryFixed: return QStringLiteral("tertiary-fixed");
+    case ColorRole::TertiaryFixedDim: return QStringLiteral("tertiary-fixed-dim");
+    case ColorRole::OnTertiaryFixed: return QStringLiteral("on-tertiary-fixed");
+    case ColorRole::OnTertiaryFixedVariant: return QStringLiteral("on-tertiary-fixed-variant");
+    case ColorRole::SurfaceTint: return QStringLiteral("surface-tint");
     case ColorRole::Scrim: return QStringLiteral("scrim");
     }
     return QStringLiteral("unknown");
@@ -329,9 +351,9 @@ QWidget* ThemePreviewWindow::buildComponentPreview() {
     layout->setColumnStretch(1, 1);
 
     body->setStyleSheet(QStringLiteral(
-        "QWidget { background: transparent; color: %1; }"
-        "QPlainTextEdit, QComboBox { background-color: %2; color: %1; border: 1px solid %3; border-radius: 12px; padding: 8px; }"
-    ).arg(onSurface.name(QColor::HexArgb), surface.name(QColor::HexArgb), outline.name(QColor::HexArgb)));
+                            "QWidget { background: transparent; color: %1; }"
+                            "QPlainTextEdit, QComboBox { background-color: %2; color: %1; border: 1px solid %3; border-radius: 12px; padding: 8px; }"
+                            ).arg(onSurface.name(QColor::HexArgb), surface.name(QColor::HexArgb), outline.name(QColor::HexArgb)));
 
     return body;
 }
@@ -390,11 +412,11 @@ QWidget* ThemePreviewWindow::buildShapePreview() {
         card->setAlignment(Qt::AlignCenter);
         card->setMinimumSize(144, 88);
         card->setStyleSheet(QStringLiteral(
-            "QLabel { background-color: %1; color: %2; border: 1px solid %3; border-radius: %4px; padding: 12px; }"
-        ).arg(scheme.color(ColorRole::SurfaceContainerHigh).name(QColor::HexArgb),
-              scheme.color(ColorRole::OnSurface).name(QColor::HexArgb),
-              scheme.color(ColorRole::OutlineVariant).name(QColor::HexArgb),
-              QString::number(qMin(radius, 44))));
+                                "QLabel { background-color: %1; color: %2; border: 1px solid %3; border-radius: %4px; padding: 12px; }"
+                                ).arg(scheme.color(ColorRole::SurfaceContainerHigh).name(QColor::HexArgb),
+                                     scheme.color(ColorRole::OnSurface).name(QColor::HexArgb),
+                                     scheme.color(ColorRole::OutlineVariant).name(QColor::HexArgb),
+                                     QString::number(qMin(radius, 44))));
         layout->addWidget(card, i / 3, i % 3);
         ++i;
     }
@@ -421,8 +443,8 @@ QWidget* ThemePreviewWindow::buildElevationPreview() {
     int i = 0;
     for (const auto& item : roles) {
         const ElevationStyle elevation = theme.elevations().contains(item.first)
-            ? theme.elevations().style(item.first)
-            : ElevationStyle{};
+        ? theme.elevations().style(item.first)
+        : ElevationStyle{};
         auto* card = new QLabel(
             QStringLiteral("%1\nblur %2 / y %3\ntonal %4")
                 .arg(item.second)
@@ -433,10 +455,10 @@ QWidget* ThemePreviewWindow::buildElevationPreview() {
         card->setAlignment(Qt::AlignCenter);
         card->setMinimumSize(156, 96);
         card->setStyleSheet(QStringLiteral(
-            "QLabel { background-color: %1; color: %2; border: 1px solid %3; border-radius: 18px; padding: 12px; }"
-        ).arg(scheme.color(ColorRole::SurfaceContainerHigh).name(QColor::HexArgb),
-              scheme.color(ColorRole::OnSurface).name(QColor::HexArgb),
-              scheme.color(ColorRole::OutlineVariant).name(QColor::HexArgb)));
+                                "QLabel { background-color: %1; color: %2; border: 1px solid %3; border-radius: 18px; padding: 12px; }"
+                                ).arg(scheme.color(ColorRole::SurfaceContainerHigh).name(QColor::HexArgb),
+                                     scheme.color(ColorRole::OnSurface).name(QColor::HexArgb),
+                                     scheme.color(ColorRole::OutlineVariant).name(QColor::HexArgb)));
         layout->addWidget(card, i / 3, i % 3);
         ++i;
     }
@@ -466,8 +488,8 @@ QWidget* ThemePreviewWindow::buildStateLayerPreview() {
         chip->setAlignment(Qt::AlignCenter);
         chip->setMinimumSize(144, 92);
         chip->setStyleSheet(QStringLiteral(
-            "QLabel { background-color: %1; color: %2; border-radius: 18px; padding: 12px; font-weight: 700; }"
-        ).arg(overlay(base, state.color, item.second).name(QColor::HexArgb), text.name(QColor::HexArgb)));
+                                "QLabel { background-color: %1; color: %2; border-radius: 18px; padding: 12px; font-weight: 700; }"
+                                ).arg(overlay(base, state.color, item.second).name(QColor::HexArgb), text.name(QColor::HexArgb)));
         layout->addWidget(chip);
     }
     layout->addStretch(1);
@@ -530,7 +552,7 @@ void ThemePreviewWindow::exportThemeJson() {
     }
 
     QString error;
-    if (!ThemeManager::instance().exportThemeToFile(filePath, &error)) {
+    if (!ThemeSerializer::writeToFile(ThemeManager::instance().theme(), filePath, &error)) {
         QMessageBox::critical(this, tr("Export failed"), error);
         return;
     }
@@ -548,13 +570,12 @@ void ThemePreviewWindow::importThemeJson() {
     }
 
     QString error;
-#if defined(QTMATERIAL3_HAS_THEME_READ_MODE)
-    Q_UNUSED(error);
-#endif
-    if (!ThemeManager::instance().importThemeFromFile(filePath, &error)) {
+    Theme importedTheme;
+    if (!ThemeSerializer::readFromFile(filePath, &importedTheme, &error)) {
         QMessageBox::critical(this, tr("Import failed"), error);
         return;
     }
+    ThemeManager::instance().setTheme(importedTheme, ThemeChangeReason::External);
     QMessageBox::information(this, tr("Import complete"), tr("Theme imported from %1").arg(filePath));
 }
 
@@ -638,11 +659,11 @@ QWidget* ThemePreviewWindow::buildAccessibilityPreview() {
     auto* summary = new QLabel(body);
     summary->setWordWrap(true);
     summary->setText(tr("High contrast: %1\nReduced motion: %2\nText contrast minimum: %3\nUI contrast minimum: %4\nKeyboard focus visible: %5")
-        .arg(accessibility.highContrast ? tr("enabled") : tr("disabled"))
-        .arg(accessibility.reducedMotion ? tr("enabled") : tr("disabled"))
-        .arg(accessibility.minimumTextContrastRatio, 0, 'f', 1)
-        .arg(accessibility.minimumUiContrastRatio, 0, 'f', 1)
-        .arg(interactions.keyboardFocusVisible ? tr("yes") : tr("no")));
+                         .arg(accessibility.highContrast ? tr("enabled") : tr("disabled"))
+                         .arg(accessibility.reducedMotion ? tr("enabled") : tr("disabled"))
+                         .arg(accessibility.minimumTextContrastRatio, 0, 'f', 1)
+                         .arg(accessibility.minimumUiContrastRatio, 0, 'f', 1)
+                         .arg(interactions.keyboardFocusVisible ? tr("yes") : tr("no")));
 
     auto* focusSample = new QPushButton(tr("Keyboard focus sample"), body);
     focusSample->setFocusPolicy(Qt::StrongFocus);
@@ -657,9 +678,9 @@ QWidget* ThemePreviewWindow::buildAccessibilityPreview() {
     auto* contrast = new QLabel(body);
     contrast->setWordWrap(true);
     contrast->setText(tr("Primary/on-primary contrast: %1\nSurface/on-surface contrast: %2\nDisabled/on-surface-variant contrast: %3")
-        .arg(contrastRatio(onPrimary, primary), 0, 'f', 2)
-        .arg(contrastRatio(onSurface, surface), 0, 'f', 2)
-        .arg(contrastRatio(disabled, surface), 0, 'f', 2));
+                          .arg(contrastRatio(onPrimary, primary), 0, 'f', 2)
+                          .arg(contrastRatio(onSurface, surface), 0, 'f', 2)
+                          .arg(contrastRatio(disabled, surface), 0, 'f', 2));
 
     layout->addWidget(panel(tr("Accessibility policy"), summary), 0, 0);
     layout->addWidget(panel(tr("Contrast checks"), contrast), 0, 1);
@@ -675,18 +696,18 @@ QWidget* ThemePreviewWindow::buildAccessibilityPreview() {
 
     const QString focusColor = accessibility.focusRing.color.name(QColor::HexArgb);
     body->setStyleSheet(QStringLiteral(
-        "QWidget { background: transparent; color: %1; }"
-        "QPushButton#focusSample { background-color: %2; color: %3; border: %4px solid %5; border-radius: 12px; padding: 10px 16px; }"
-        "QPushButton#focusSample:focus { outline: none; border: %6px solid %5; }"
-        "QPushButton:disabled { background-color: %7; color: %8; border: 1px solid %8; border-radius: 12px; padding: 10px 16px; }"
-    ).arg(onSurface.name(QColor::HexArgb),
-          primary.name(QColor::HexArgb),
-          onPrimary.name(QColor::HexArgb),
-          QString::number(qMax(1, accessibility.focusRing.width - 1)),
-          focusColor,
-          QString::number(accessibility.focusRing.width),
-          surface.name(QColor::HexArgb),
-          disabled.name(QColor::HexArgb)));
+                            "QWidget { background: transparent; color: %1; }"
+                            "QPushButton#focusSample { background-color: %2; color: %3; border: %4px solid %5; border-radius: 12px; padding: 10px 16px; }"
+                            "QPushButton#focusSample:focus { outline: none; border: %6px solid %5; }"
+                            "QPushButton:disabled { background-color: %7; color: %8; border: 1px solid %8; border-radius: 12px; padding: 10px 16px; }"
+                            ).arg(onSurface.name(QColor::HexArgb),
+                                 primary.name(QColor::HexArgb),
+                                 onPrimary.name(QColor::HexArgb),
+                                 QString::number(qMax(1, accessibility.focusRing.width - 1)),
+                                 focusColor,
+                                 QString::number(accessibility.focusRing.width),
+                                 surface.name(QColor::HexArgb),
+                                 disabled.name(QColor::HexArgb)));
 
     return body;
 }
@@ -741,7 +762,7 @@ QString ThemePreviewWindow::tokenReport() const {
 QString ThemePreviewWindow::modeLabelText() const {
     const auto snapshot = SystemTheme::instance().snapshot();
     return QStringLiteral("Preference: %1 · Effective mode: %2 · Native scheme: %3")
-        .arg(toString(snapshot.preference),
+        .arg(themePreferenceToString(snapshot.preference),
              themeModeToString(snapshot.effectiveMode),
              snapshot.hasNativeColorScheme ? tr("yes") : tr("palette fallback"));
 }
@@ -763,8 +784,8 @@ void ThemePreviewWindow::setColorChip(QFrame* chip, const QColor& fill, const QC
         return;
     }
     chip->setStyleSheet(QStringLiteral(
-        "QFrame { background-color: %1; border: 1px solid %2; border-radius: 12px; }"
-    ).arg(fill.name(QColor::HexArgb), border.name(QColor::HexArgb)));
+                            "QFrame { background-color: %1; border: 1px solid %2; border-radius: 12px; }"
+                            ).arg(fill.name(QColor::HexArgb), border.name(QColor::HexArgb)));
 }
 
 QLabel* ThemePreviewWindow::roleChip(const QString& name, const QColor& fill, const QColor& text, QWidget* parent) const {
@@ -772,8 +793,8 @@ QLabel* ThemePreviewWindow::roleChip(const QString& name, const QColor& fill, co
     chip->setAlignment(Qt::AlignCenter);
     chip->setMinimumHeight(86);
     chip->setStyleSheet(QStringLiteral(
-        "QLabel { background-color: %1; color: %2; border-radius: 18px; padding: 12px; font-weight: 700; }"
-    ).arg(fill.name(QColor::HexArgb), text.name(QColor::HexArgb)));
+                            "QLabel { background-color: %1; color: %2; border-radius: 18px; padding: 12px; font-weight: 700; }"
+                            ).arg(fill.name(QColor::HexArgb), text.name(QColor::HexArgb)));
     return chip;
 }
 
@@ -793,31 +814,31 @@ void ThemePreviewWindow::applyPlaygroundStyle() {
     const QColor outline = scheme.color(ColorRole::OutlineVariant);
 
     setStyleSheet(QStringLiteral(
-        "#themeStudio { background-color: %1; color: %2; }"
-        "#studioTitle { color: %2; font-size: 28px; font-weight: 800; }"
-        "#studioStatus { color: %2; font-size: 13px; }"
-        "#controlPanel, #previewPanel { background-color: %3; border: 1px solid %4; border-radius: 22px; }"
-        "#panelTitle { color: %2; font-weight: 800; font-size: 15px; }"
-        "#previewTabs::pane { border: 1px solid %4; border-radius: 18px; background: %3; }"
-        "QTabBar::tab { color: %2; background: %5; padding: 10px 16px; border-top-left-radius: 12px; border-top-right-radius: 12px; margin-right: 4px; }"
-        "QTabBar::tab:selected { background: %6; color: %7; }"
-        "QRadioButton, QCheckBox, QComboBox, QLabel { color: %2; }"
-        "QComboBox { background: %5; border: 1px solid %4; border-radius: 12px; padding: 8px; }"
-        "QPlainTextEdit#jsonPreview { background-color: %5; color: %2; border: 1px solid %4; border-radius: 14px; padding: 12px; }"
-        "QPushButton { border-radius: 18px; padding: 8px 14px; min-height: 34px; font-weight: 700; }"
-        "QPushButton#primaryAction, QPushButton#filledButton { background: %6; color: %7; border: none; }"
-        "QPushButton#tonalButton { background: %8; color: %9; border: none; }"
-        "QPushButton#outlinedButton, QPushButton { background: transparent; color: %6; border: 1px solid %4; }"
-        "QPushButton#textButton { background: transparent; color: %6; border: none; }"
-    ).arg(surface.name(QColor::HexArgb),
-          onSurface.name(QColor::HexArgb),
-          surfaceContainer.name(QColor::HexArgb),
-          outline.name(QColor::HexArgb),
-          surfaceContainerHigh.name(QColor::HexArgb),
-          primary.name(QColor::HexArgb),
-          onPrimary.name(QColor::HexArgb),
-          primaryContainer.name(QColor::HexArgb),
-          onPrimaryContainer.name(QColor::HexArgb)));
+                      "#themeStudio { background-color: %1; color: %2; }"
+                      "#studioTitle { color: %2; font-size: 28px; font-weight: 800; }"
+                      "#studioStatus { color: %2; font-size: 13px; }"
+                      "#controlPanel, #previewPanel { background-color: %3; border: 1px solid %4; border-radius: 22px; }"
+                      "#panelTitle { color: %2; font-weight: 800; font-size: 15px; }"
+                      "#previewTabs::pane { border: 1px solid %4; border-radius: 18px; background: %3; }"
+                      "QTabBar::tab { color: %2; background: %5; padding: 10px 16px; border-top-left-radius: 12px; border-top-right-radius: 12px; margin-right: 4px; }"
+                      "QTabBar::tab:selected { background: %6; color: %7; }"
+                      "QRadioButton, QCheckBox, QComboBox, QLabel { color: %2; }"
+                      "QComboBox { background: %5; border: 1px solid %4; border-radius: 12px; padding: 8px; }"
+                      "QPlainTextEdit#jsonPreview { background-color: %5; color: %2; border: 1px solid %4; border-radius: 14px; padding: 12px; }"
+                      "QPushButton { border-radius: 18px; padding: 8px 14px; min-height: 34px; font-weight: 700; }"
+                      "QPushButton#primaryAction, QPushButton#filledButton { background: %6; color: %7; border: none; }"
+                      "QPushButton#tonalButton { background: %8; color: %9; border: none; }"
+                      "QPushButton#outlinedButton, QPushButton { background: transparent; color: %6; border: 1px solid %4; }"
+                      "QPushButton#textButton { background: transparent; color: %6; border: none; }"
+                      ).arg(surface.name(QColor::HexArgb),
+                           onSurface.name(QColor::HexArgb),
+                           surfaceContainer.name(QColor::HexArgb),
+                           outline.name(QColor::HexArgb),
+                           surfaceContainerHigh.name(QColor::HexArgb),
+                           primary.name(QColor::HexArgb),
+                           onPrimary.name(QColor::HexArgb),
+                           primaryContainer.name(QColor::HexArgb),
+                           onPrimaryContainer.name(QColor::HexArgb)));
 }
 
 void ThemePreviewWindow::refreshPreview() {
@@ -827,7 +848,7 @@ void ThemePreviewWindow::refreshPreview() {
 
     if (m_statusLabel) {
         m_statusLabel->setText(QStringLiteral("%1\n%2\nSeed: %3")
-            .arg(modeLabelText(), contrastLabelText(), options.sourceColor.name(QColor::HexRgb)));
+                                   .arg(modeLabelText(), contrastLabelText(), options.sourceColor.name(QColor::HexRgb)));
     }
 
     if (m_contrastCombo) {
@@ -848,7 +869,7 @@ void ThemePreviewWindow::refreshPreview() {
     applyPlaygroundStyle();
 
     if (m_jsonPreview) {
-        m_jsonPreview->setPlainText(QString::fromUtf8(ThemeManager::instance().exportThemeJson(QJsonDocument::Indented)));
+        m_jsonPreview->setPlainText(QString::fromUtf8(ThemeSerializer::toJson(ThemeManager::instance().theme(), QJsonDocument::Indented)));
     }
 
     if (m_tabs) {

@@ -9,10 +9,6 @@ const Theme& ThemeContext::theme() const noexcept { return m_theme; }
 quint64 ThemeContext::revision() const noexcept { return m_revision; }
 bool ThemeContext::setTheme(const Theme& theme)
 {
-    if (theme == m_theme) {
-        return true;
-    }
-
     if (!ensureThreadAffinity("setTheme") || theme == m_theme) return false;
     m_theme = theme;
     ++m_revision;
