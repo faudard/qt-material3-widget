@@ -451,9 +451,9 @@ QtMaterialAutocompletePopup::ensureSpecResolved() const
     if (!d_ptr->m_specDirty) {
         return;
     }
-    d_ptr->m_spec =
-        QtMaterial::InputSpecResolution::autocompletePopupSpec(
-            d_ptr->m_themeBinding);
+    // d_ptr->m_spec =
+    //     QtMaterial::InputSpecResolution::autocompletePopupSpec(
+    //         d_ptr->m_themeBinding);
     d_ptr->m_specDirty = false;
 }
 
