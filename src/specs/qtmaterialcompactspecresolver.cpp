@@ -1,3 +1,4 @@
+#include <QVector>
 #include "qtmaterial/specs/qtmaterialcompactspecresolver.h"
 
 #include <QStringList>
@@ -112,33 +113,33 @@ void selectShapeRole(
     }
 }
 
-QString variantComponentName(ChipVariant variant)
+ComponentId variantComponentId(ChipVariant variant)
 {
     switch (variant) {
     case ChipVariant::Filter:
-        return QStringLiteral("chip.filter");
+        return ComponentId::FilterChip;
     case ChipVariant::Input:
-        return QStringLiteral("chip.input");
+        return ComponentId::InputChip;
     case ChipVariant::Suggestion:
-        return QStringLiteral("chip.suggestion");
+        return ComponentId::SuggestionChip;
     case ChipVariant::Assist:
     default:
-        return QStringLiteral("chip.assist");
+        return ComponentId::AssistChip;
     }
 }
 
-QString legacyVariantComponentName(ChipVariant variant)
+ComponentId legacyVariantComponentId(ChipVariant variant)
 {
     switch (variant) {
     case ChipVariant::Filter:
-        return QStringLiteral("FilterChip");
+        return ComponentId::FilterChip;
     case ChipVariant::Input:
-        return QStringLiteral("InputChip");
+        return ComponentId::InputChip;
     case ChipVariant::Suggestion:
-        return QStringLiteral("SuggestionChip");
+        return ComponentId::SuggestionChip;
     case ChipVariant::Assist:
     default:
-        return QStringLiteral("AssistChip");
+        return ComponentId::AssistChip;
     }
 }
 
@@ -341,13 +342,7 @@ void CompactSpecResolver::applyComponentOverrides(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QStringList{
-                QStringLiteral("compact"),
-                QStringLiteral("compact.chip"),
-                QStringLiteral("chip"),
-                variantComponentName(variant),
-                legacyVariantComponentName(variant)
-            });
+            QVector<ComponentId>{ComponentId::Chip, variantComponentId(variant), legacyVariantComponentId(variant)});
 
     if (tokens.isEmpty()) {
         return;
@@ -547,13 +542,7 @@ void CompactSpecResolver::resolveRuntimeValues(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QStringList{
-                QStringLiteral("compact"),
-                QStringLiteral("compact.chip"),
-                QStringLiteral("chip"),
-                variantComponentName(spec->variant),
-                legacyVariantComponentName(spec->variant)
-            });
+            QVector<ComponentId>{ComponentId::Chip, variantComponentId(spec->variant), legacyVariantComponentId(spec->variant)});
 
     spec->hasResolvedLabelFont = false;
     if (tokens.typography.contains(
