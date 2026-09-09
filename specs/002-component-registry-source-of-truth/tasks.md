@@ -5,13 +5,15 @@
 - [x] **T003 [REG-FR-004]** Enforce global uniqueness for publicHeader/widgetType/galleryRoute.
 - [x] **T004 [REG-FR-005/006]** Enforce strong `complete` maturity evidence.
 - [x] **T005 [REG-FR-007]** Enforce reference-candidate rules.
-- [x] **T006 [REG-FR-008]** Report implicit metadata as migration warnings.
+- [x] **T006 [REG-FR-008]** Require explicit maturity/release/reference metadata.
 - [x] **T007 [REG-FR-009]** Add `--check-generated`.
 - [x] **T008 [REG-FR-010]** Route repository health through the governance checker.
 - [x] **T009 [REG-FR-011]** Keep tooling standard-library-only.
 - [x] **T010 [REG-FR-012]** Document registry scope vs public-header-boundary scope.
 - [x] **T011 [REGRESSION]** Correct the Spec 001 workflow-key smoke checker.
-- [ ] **T012 [GATE]** Apply to actual checkout and run all tool tests.
-- [ ] **T013 [GATE]** Run generator `--check` against actual generated docs.
+- [x] **T012 [GATE]** Apply to actual checkout and run all tool tests.
+- [x] **T013 [GATE]** Run generator `--check` against actual generated docs.
 - [ ] **T014 [GATE]** Push/PR and confirm Quality workflow.
 - [ ] **T015 [GATE]** Run `/speckit.analyze` then `/speckit.converge`.
+- [x] **T016 [REG-FR-013/014]** Evaluate all 32 entries with closed evidence, gaps and next actions.
+- [x] **T017 [REG-FR-015]** Enforce strict repository health in Quality CI and audit the command.

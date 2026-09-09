@@ -31,7 +31,7 @@ jobs:
         run: python -m unittest discover -s tests/tools -p "test_*.py" -v
 
       - name: Check repository health
-        run: python tools/repo_health.py
+        run: python tools/repo_health.py --strict
 
   docs:
     name: docs

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "m3-expressive.compose-material3-1.5.0-alpha27",
+  "materialProfile": "expressive",
+  "referenceVersion": "androidx.compose.material3:material3:1.5.0-alpha27",
+  "stability": "experimental",
+  "releaseDate": "2026-08-26",
+  "retrievedAt": "2026-09-01",
+  "sourcePrecedence": [
+    "material-guideline",
+    "androidx-implementation",
+    "androidx-release-notes"
+  ],
+  "sources": [
+    {
+      "id": "m3-expressive",
+      "kind": "material-guideline",
+      "title": "Material 3 guidance",
+      "uri": "https://m3.material.io/",
+      "notes": "Material 3 and Expressive guidance root."
+    },
+    {
+      "id": "androidx-material3-1.5.0-alpha27",
+      "kind": "androidx-implementation",
+      "title": "AndroidX Compose Material3 1.5.0-alpha27 artifact",
+      "uri": "https://dl.google.com/dl/android/maven2/androidx/compose/material3/material3/1.5.0-alpha27/material3-1.5.0-alpha27.pom",
+      "artifact": "androidx.compose.material3:material3",
+      "version": "1.5.0-alpha27",
+      "releaseDate": "2026-08-26",
+      "notes": "Immutable experimental executable-reference coordinate; never a Classic baseline."
+    },
+    {
+      "id": "androidx-material3-release-1.5.0-alpha27",
+      "kind": "androidx-release-notes",
+      "title": "AndroidX Compose Material3 1.5.0-alpha27 release notes",
+      "uri": "https://developer.android.com/jetpack/androidx/releases/compose-material3#1.5.0-alpha27",
+      "artifact": "androidx.compose.material3:material3",
+      "version": "1.5.0-alpha27",
+      "releaseDate": "2026-08-26"
+    }
+  ],
+  "comparisonPolicy": {
+    "classifications": [
+      "MUST_MATCH",
+      "PLATFORM_ADAPTATION",
+      "QTMATERIAL_EXTENSION"
+    ],
+    "domains": [
+      "geometry",
+      "tokens",
+      "colors",
+      "typography",
+      "states",
+      "motion",
+      "accessibility",
+      "behavior"
+    ],
+    "defaultGeometryToleranceDp": 0.5,
+    "defaultColorMetric": "semantic-token",
+    "typographyRasterPolicy": "spec-not-glyph-pixels"
+  },
+  "notes": [
+    "Expressive is versioned independently from Classic.",
+    "This profile is experimental because the pinned AndroidX artifact is alpha.",
+    "No Expressive case may be used as a Classic conformance baseline."
+  ]
+}

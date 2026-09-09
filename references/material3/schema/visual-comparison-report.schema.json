@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qtm3.dev/schemas/material-visual-comparison-report/v1",
+  "title": "QtMaterial3 Material visual comparison report",
+  "description": "Closed result emitted by the read-only zero-tolerance Material comparator.",
+  "x-qtm3-schemaVersion": 1,
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contractId",
+    "contractSha256",
+    "targetId",
+    "status",
+    "actualManifestSha256",
+    "referenceManifestSha256",
+    "caseCount",
+    "passedCaseCount",
+    "failedCaseCount",
+    "cases"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "contractId": { "type": "string", "minLength": 1 },
+    "contractSha256": { "$ref": "#/$defs/sha256" },
+    "targetId": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["pass", "fail"] },
+    "actualManifestSha256": { "$ref": "#/$defs/sha256" },
+    "referenceManifestSha256": { "$ref": "#/$defs/sha256" },
+    "caseCount": { "type": "integer", "minimum": 1 },
+    "passedCaseCount": { "type": "integer", "minimum": 0 },
+    "failedCaseCount": { "type": "integer", "minimum": 0 },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/case" }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "componentId",
+        "state",
+        "theme",
+        "status",
+        "actualPath",
+        "referencePath",
+        "width",
+        "height",
+        "actualPixelSha256",
+        "referencePixelSha256",
+        "differentPixels",
+        "maxChannelDelta",
+        "ssim",
+        "failureKinds",
+        "actualArtifactPath",
+        "diffArtifactPath",
+        "metricsArtifactPath"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "componentId": { "type": "string", "minLength": 1 },
+        "state": {
+          "enum": ["enabled", "disabled", "hovered", "focused", "pressed"]
+        },
+        "theme": { "enum": ["light", "dark"] },
+        "status": { "enum": ["pass", "fail"] },
+        "actualPath": { "type": "string", "minLength": 1 },
+        "referencePath": { "type": "string", "minLength": 1 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "actualPixelSha256": { "$ref": "#/$defs/sha256" },
+        "referencePixelSha256": { "$ref": "#/$defs/sha256" },
+        "differentPixels": { "type": "integer", "minimum": 0 },
+        "maxChannelDelta": { "type": "integer", "minimum": 0 },
+        "ssim": { "type": "number", "minimum": -1, "maximum": 1 },
+        "failureKinds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["pixel-count", "channel-delta", "ssim"] }
+        },
+        "actualArtifactPath": { "type": "string" },
+        "diffArtifactPath": { "type": "string" },
+        "metricsArtifactPath": { "type": "string" }
+      }
+    }
+  }
+}

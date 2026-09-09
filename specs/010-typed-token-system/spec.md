@@ -1,7 +1,7 @@
 # Feature Specification: Typed Token System
 
 **Feature Branch**: `010-typed-token-system`  
-**Status**: Ready for application / convergence  
+**Status**: Static application complete / Qt build gates pending
 **Milestone**: 0.5 Architecture Foundation  
 **Created**: 2026-08-15
 

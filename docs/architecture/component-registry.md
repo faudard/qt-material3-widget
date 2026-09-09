@@ -13,11 +13,19 @@ The registry tracks:
 - test target
 - gallery route
 - documentation path
+- explicit release and reference-candidate decisions
+- ten evaluated maturity axes with evidence, gaps and next actions
 
 Generate the human-readable status files with:
 
 ```bash
 python3 scripts/generate_component_status.py
+```
+
+Validate the closed registry and all generated outputs with:
+
+```bash
+python3 tools/check_component_registry.py --check-generated --strict
 ```
 
 Generated outputs:
@@ -36,3 +44,5 @@ Maturity levels:
 | `planned` | Not implemented yet. |
 
 A 1.0 release should not contain P0 components marked `skeleton` or `planned`.
+The Quality workflow runs complete repository health in strict mode, so implicit
+registry metadata, unevaluated axes and stale generated documents cannot merge.

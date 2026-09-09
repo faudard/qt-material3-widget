@@ -231,6 +231,49 @@ int iconSizeFromTokens(const ComponentTokenOverride& tokens, IconSizeRole role, 
     return tokens.iconSizes.value(role, fallback);
 }
 
+void applyColorPreservingOpacity(
+    QColor* color,
+    const ComponentTokenOverride& tokens,
+    ColorRole role)
+{
+    const qreal opacity = color->alphaF();
+    applyColor(color, tokens, role);
+    color->setAlphaF(opacity);
+}
+
+void applyDisabledButtonColors(
+    ButtonSpec* spec,
+    const ComponentTokenOverride& tokens,
+    ColorRole containerRole,
+    ColorRole contentRole)
+{
+    applyColorPreservingOpacity(
+        &spec->disabledContainerColor,
+        tokens,
+        containerRole);
+    applyColorPreservingOpacity(
+        &spec->disabledLabelColor,
+        tokens,
+        contentRole);
+}
+
+void resolveElevationStyle(
+    const Theme& theme,
+    const ComponentTokenOverride& tokens,
+    ElevationRole role,
+    ElevationStyle* style,
+    bool* resolved)
+{
+    *resolved = false;
+    if (tokens.elevations.contains(role)) {
+        *style = tokens.elevations.value(role);
+        *resolved = true;
+    } else if (theme.elevations().contains(role)) {
+        *style = theme.elevations().style(role);
+        *resolved = true;
+    }
+}
+
 } // namespace
 
 ComponentTokenOverride mergedComponentOverride(const Theme& theme, const QVector<ComponentId>& componentIds)
@@ -254,30 +297,138 @@ void applyButtonComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
+    const bool isTextButton =
+        componentIds.contains(ComponentId::ButtonText);
+    const bool isFilledButton =
+        componentIds.contains(ComponentId::ButtonFilled);
+    const bool isFilledTonalButton =
+        componentIds.contains(ComponentId::ButtonFilledTonal);
+    const bool isOutlinedButton =
+        componentIds.contains(ComponentId::ButtonOutlined);
+    const bool isElevatedButton =
+        componentIds.contains(ComponentId::ButtonElevated);
 
     // Runtime defaults are resolved even when no component override exists.
     spec->shadowColor = theme.colorScheme().color(ColorRole::Shadow);
+    spec->focusRingWidth = qMax<qreal>(
+        0.0,
+        theme.accessibility().focusRing.width);
 
     if (!tokens.isEmpty()) {
-        applyColor(&spec->containerColor, tokens, ColorRole::Primary);
-        applyColor(&spec->labelColor, tokens, ColorRole::OnPrimary);
-        applyColor(&spec->iconColor, tokens, ColorRole::OnPrimary);
-        applyColor(
-            &spec->disabledContainerColor,
-            tokens,
-            ColorRole::SurfaceContainerHigh);
-        applyColor(
-            &spec->disabledLabelColor,
-            tokens,
-            ColorRole::OnSurfaceVariant);
-        applyColor(&spec->stateLayerColor, tokens, ColorRole::SurfaceTint);
+        if (isTextButton) {
+            applyColor(&spec->labelColor, tokens, ColorRole::Primary);
+            applyColor(&spec->iconColor, tokens, ColorRole::Primary);
+            applyColorPreservingOpacity(
+                &spec->disabledLabelColor,
+                tokens,
+                ColorRole::OnSurfaceVariant);
+            applyColor(
+                &spec->stateLayerColor,
+                tokens,
+                ColorRole::Primary);
+        } else if (isFilledButton) {
+            applyColor(&spec->containerColor, tokens, ColorRole::Primary);
+            applyColor(&spec->labelColor, tokens, ColorRole::OnPrimary);
+            applyColor(&spec->iconColor, tokens, ColorRole::OnPrimary);
+            applyDisabledButtonColors(
+                spec,
+                tokens,
+                ColorRole::OnSurface,
+                ColorRole::OnSurfaceVariant);
+            applyColor(
+                &spec->stateLayerColor,
+                tokens,
+                ColorRole::OnPrimary);
+        } else if (isFilledTonalButton) {
+            applyColor(
+                &spec->containerColor,
+                tokens,
+                ColorRole::SecondaryContainer);
+            applyColor(
+                &spec->labelColor,
+                tokens,
+                ColorRole::OnSecondaryContainer);
+            applyColor(
+                &spec->iconColor,
+                tokens,
+                ColorRole::OnSecondaryContainer);
+            applyDisabledButtonColors(
+                spec,
+                tokens,
+                ColorRole::OnSurface,
+                ColorRole::OnSurface);
+            applyColor(
+                &spec->stateLayerColor,
+                tokens,
+                ColorRole::OnSecondaryContainer);
+        } else if (isElevatedButton) {
+            applyColor(
+                &spec->containerColor,
+                tokens,
+                ColorRole::SurfaceContainerLow);
+            applyColor(&spec->labelColor, tokens, ColorRole::Primary);
+            applyColor(&spec->iconColor, tokens, ColorRole::Primary);
+            applyDisabledButtonColors(
+                spec,
+                tokens,
+                ColorRole::OnSurface,
+                ColorRole::OnSurfaceVariant);
+            applyColor(
+                &spec->stateLayerColor,
+                tokens,
+                ColorRole::Primary);
+        } else if (isOutlinedButton) {
+            applyColor(
+                &spec->labelColor,
+                tokens,
+                ColorRole::OnSurfaceVariant);
+            applyColor(
+                &spec->iconColor,
+                tokens,
+                ColorRole::OnSurfaceVariant);
+            applyColorPreservingOpacity(
+                &spec->disabledLabelColor,
+                tokens,
+                ColorRole::OnSurfaceVariant);
+            applyColor(
+                &spec->stateLayerColor,
+                tokens,
+                ColorRole::OnSurfaceVariant);
+        } else {
+            applyColor(&spec->containerColor, tokens, ColorRole::Primary);
+            applyColor(&spec->labelColor, tokens, ColorRole::OnPrimary);
+            applyColor(&spec->iconColor, tokens, ColorRole::OnPrimary);
+            applyColor(
+                &spec->disabledContainerColor,
+                tokens,
+                ColorRole::SurfaceContainerHigh);
+            applyColor(
+                &spec->disabledLabelColor,
+                tokens,
+                ColorRole::OnSurfaceVariant);
+            applyColor(
+                &spec->stateLayerColor,
+                tokens,
+                ColorRole::SurfaceTint);
+        }
         applyColor(&spec->focusRingColor, tokens, ColorRole::Primary);
-        applyColor(&spec->outlineColor, tokens, ColorRole::Outline);
-        applyColor(
-            &spec->disabledOutlineColor,
-            tokens,
-            ColorRole::OutlineVariant);
+        if (isOutlinedButton) {
+            applyColor(
+                &spec->outlineColor,
+                tokens,
+                ColorRole::OutlineVariant);
+            applyColorPreservingOpacity(
+                &spec->disabledOutlineColor,
+                tokens,
+                ColorRole::OutlineVariant);
+        } else if (!isTextButton) {
+            applyColor(&spec->outlineColor, tokens, ColorRole::Outline);
+            applyColor(
+                &spec->disabledOutlineColor,
+                tokens,
+                ColorRole::OutlineVariant);
+        }
         applyColor(&spec->shadowColor, tokens, ColorRole::Shadow);
 
         applyCustomColor(&spec->containerColor, tokens, "containerColor");
@@ -308,6 +459,11 @@ void applyButtonComponentTokens(
             &spec->shapeRole,
             &spec->elevationRole,
             &spec->motionToken);
+        if (tokens.custom.contains(QStringLiteral("hoverElevationRole"))) {
+            spec->hoverElevationRole = parseElevationRole(
+                tokens.custom.value(QStringLiteral("hoverElevationRole")).toString(),
+                spec->hoverElevationRole);
+        }
         applyTouchTarget(&spec->touchTarget, tokens);
 
         spec->iconSize =
@@ -316,6 +472,7 @@ void applyButtonComponentTokens(
         readInt(tokens.custom, "horizontalPadding", &spec->horizontalPadding);
         readInt(tokens.custom, "iconSize", &spec->iconSize);
         readInt(tokens.custom, "iconSpacing", &spec->iconSpacing);
+        readReal(tokens.custom, "outlineWidth", &spec->outlineWidth);
     }
 
     // Resolve typography after role overrides.
@@ -352,6 +509,19 @@ void applyButtonComponentTokens(
         spec->hasResolvedMotionStyle = true;
     }
 
+    resolveElevationStyle(
+        theme,
+        tokens,
+        spec->elevationRole,
+        &spec->elevationStyle,
+        &spec->hasResolvedElevationStyle);
+    resolveElevationStyle(
+        theme,
+        tokens,
+        spec->hoverElevationRole,
+        &spec->hoverElevationStyle,
+        &spec->hasResolvedHoverElevationStyle);
+
     // Component-local state-layer tokens take precedence over global tokens.
     const StateLayer& stateLayer =
         tokens.hasStateLayer ? tokens.stateLayer : theme.stateLayer();
@@ -363,6 +533,10 @@ void applyButtonComponentTokens(
     // Explicit concrete values are the final override layer.
     if (!tokens.isEmpty()) {
         readReal(tokens.custom, "cornerRadius", &spec->cornerRadius);
+        readReal(
+            tokens.custom,
+            "focusRingWidth",
+            &spec->focusRingWidth);
         readReal(
             tokens.custom,
             "hoverStateLayerOpacity",
@@ -379,7 +553,48 @@ void applyButtonComponentTokens(
             tokens.custom,
             "dragStateLayerOpacity",
             &spec->dragStateLayerOpacity);
+        readReal(
+            tokens.custom,
+            "restingElevationProgress",
+            &spec->restingElevationProgress);
+        readReal(
+            tokens.custom,
+            "hoverElevationProgress",
+            &spec->hoverElevationProgress);
+        readReal(
+            tokens.custom,
+            "focusElevationProgress",
+            &spec->focusElevationProgress);
+        readReal(
+            tokens.custom,
+            "pressElevationProgress",
+            &spec->pressElevationProgress);
+        readReal(
+            tokens.custom,
+            "disabledElevationProgress",
+            &spec->disabledElevationProgress);
     }
+
+    spec->focusRingWidth = qMax<qreal>(0.0, spec->focusRingWidth);
+    spec->outlineWidth = qMax<qreal>(0.0, spec->outlineWidth);
+    spec->hoverStateLayerOpacity =
+        qBound<qreal>(0.0, spec->hoverStateLayerOpacity, 1.0);
+    spec->focusStateLayerOpacity =
+        qBound<qreal>(0.0, spec->focusStateLayerOpacity, 1.0);
+    spec->pressStateLayerOpacity =
+        qBound<qreal>(0.0, spec->pressStateLayerOpacity, 1.0);
+    spec->dragStateLayerOpacity =
+        qBound<qreal>(0.0, spec->dragStateLayerOpacity, 1.0);
+    spec->restingElevationProgress =
+        qBound<qreal>(0.0, spec->restingElevationProgress, 1.0);
+    spec->hoverElevationProgress =
+        qBound<qreal>(0.0, spec->hoverElevationProgress, 1.0);
+    spec->focusElevationProgress =
+        qBound<qreal>(0.0, spec->focusElevationProgress, 1.0);
+    spec->pressElevationProgress =
+        qBound<qreal>(0.0, spec->pressElevationProgress, 1.0);
+    spec->disabledElevationProgress =
+        qBound<qreal>(0.0, spec->disabledElevationProgress, 1.0);
 }
 
 void applyFabComponentTokens(
@@ -392,7 +607,7 @@ void applyFabComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -595,7 +810,7 @@ void applyIconButtonComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -811,7 +1026,7 @@ void applyCheckboxComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -920,7 +1135,7 @@ void applyRadioButtonComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -1009,7 +1224,7 @@ void applySwitchComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -1143,7 +1358,7 @@ void applyAutocompletePopupComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -1388,7 +1603,7 @@ void applyDateFieldComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -1490,7 +1705,7 @@ void applyNavigationRailComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -1781,7 +1996,7 @@ void applyTextFieldComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -2093,7 +2308,7 @@ void applyCardComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -2217,7 +2432,7 @@ void applyDialogComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -2399,7 +2614,7 @@ void applyChipComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(&spec->containerColor, tokens, ColorRole::SurfaceContainerLow);
@@ -2558,7 +2773,7 @@ void applySegmentedButtonComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(&spec->containerColor, tokens, ColorRole::Surface);
@@ -2700,7 +2915,7 @@ void applyAutocompleteComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -2943,7 +3158,7 @@ void applyMenuComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     spec->labelFont = theme.typography().style(
         spec->labelTypeRole).font;
@@ -3185,7 +3400,7 @@ void applySnackbarComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(
@@ -3434,7 +3649,7 @@ void applyTabsComponentTokens(
     }
 
     const ComponentTokenOverride tokens =
-        mergedComponentOverride(theme, componentNames);
+        mergedComponentOverride(theme, componentIds);
 
     if (!tokens.isEmpty()) {
         applyColor(

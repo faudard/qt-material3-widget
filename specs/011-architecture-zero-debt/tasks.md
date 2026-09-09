@@ -13,16 +13,16 @@
 - [x] T011 add CI zero-debt job.
 - [x] T012 wire aggregate gate into repo health.
 - [x] T013 add policy regression tests.
-- [ ] T014 apply prepare phase to actual checkout.
-- [ ] T015 eliminate all stale Core/docs and required-target findings.
-- [ ] T016 verify ThemeIO rule count == 0 after Specs 008/010.
-- [ ] T017 remove Theme overloads from button/selection/data render helpers.
-- [ ] T018 migrate every widget Theme read into resolver boundary/resolved spec.
-- [ ] T019 remove every remaining SpecFactory consumer.
-- [ ] T020 strict legacy checker == 0.
-- [ ] T021 second layer checker == 0.
-- [ ] T022 active baseline entries == 0.
-- [ ] T023 aggregate zero-debt gate == green.
+- [x] T014 apply prepare phase to actual checkout.
+- [x] T015 eliminate all stale Core/docs and required-target findings.
+- [x] T016 verify ThemeIO rule count == 0 after Specs 008/010.
+- [x] T017 remove Theme overloads from button/selection/data render helpers.
+- [x] T018 migrate every widget Theme read into resolver boundary/resolved spec.
+- [x] T019 remove every remaining SpecFactory consumer.
+- [x] T020 strict legacy checker == 0.
+- [x] T021 second layer checker == 0.
+- [x] T022 active baseline entries == 0.
+- [x] T023 aggregate zero-debt gate == green.
 - [ ] T024 Qt6 shared/static build/test.
 - [ ] T025 exact Qt5.14.2 build/test.
 - [ ] T026 consumer matrix.

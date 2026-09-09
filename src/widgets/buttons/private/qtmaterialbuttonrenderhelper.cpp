@@ -84,7 +84,7 @@ qreal stateLayerOpacity(
         return 0.0;
     }
     if (state.isPressed()) {
-        return spec.pressStateLayerOpacity;
+        return 0.0;
     }
     if (state.isFocused()) {
         return spec.focusStateLayerOpacity;

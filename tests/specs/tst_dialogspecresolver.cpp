@@ -103,7 +103,7 @@ void tst_DialogSpecResolver::resolvesComponentOverrides()
         640);
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("dialog"),
+        ComponentId::Dialog,
         tokens);
 
     const DialogSpec spec =

@@ -54,7 +54,7 @@ void tst_SnackbarResolvedSpec::componentOverridesWin()
         QStringLiteral("#123456"));
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("snackbar"),
+        ComponentId::Snackbar,
         tokens);
 
     const SnackbarSpec spec =
@@ -83,7 +83,7 @@ void tst_SnackbarResolvedSpec::clampsBehaviorMetrics()
     tokens.custom.insert(QStringLiteral("longDurationMs"), 0);
     tokens.custom.insert(QStringLiteral("dismissButtonSize"), 4);
     theme.componentOverrides().setOverride(
-        QStringLiteral("snackbar"),
+        ComponentId::Snackbar,
         tokens);
 
     const SnackbarSpec spec =

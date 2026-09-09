@@ -4,11 +4,15 @@ on:
   pull_request:
     paths:
       - 'docs/components/component-registry.json'
+      - 'docs/components/component-registry.schema.json'
+      - 'STATUS.md'
       - 'docs/component-status.md'
       - 'docs/components/maturity.md'
+      - 'docs/public-api/compact-controls.md'
       - 'docs/public-api/buttons.md'
       - 'examples/gallery/pages/buttonspage.cpp'
       - 'scripts/generate_component_status.py'
+      - 'tools/check_component_registry.py'
       - 'scripts/promote_buttons_maturity.py'
       - 'scripts/run_buttons_maturity_checks.py'
       - 'tests/CMakeLists.txt'
@@ -18,11 +22,15 @@ on:
       - main
     paths:
       - 'docs/components/component-registry.json'
+      - 'docs/components/component-registry.schema.json'
+      - 'STATUS.md'
       - 'docs/component-status.md'
       - 'docs/components/maturity.md'
+      - 'docs/public-api/compact-controls.md'
       - 'docs/public-api/buttons.md'
       - 'examples/gallery/pages/buttonspage.cpp'
       - 'scripts/generate_component_status.py'
+      - 'tools/check_component_registry.py'
       - 'scripts/promote_buttons_maturity.py'
       - 'scripts/run_buttons_maturity_checks.py'
       - 'tests/CMakeLists.txt'
@@ -44,7 +52,7 @@ jobs:
           python-version: '3.x'
 
       - name: Validate generated component status
-        run: python scripts/generate_component_status.py --check
+        run: python tools/check_component_registry.py --check-generated --strict
 
       - name: Audit Buttons maturity evidence
         run: python scripts/promote_buttons_maturity.py --dry-run --fail-on-blockers

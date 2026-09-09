@@ -24,6 +24,8 @@ QtMaterialFilledButton::QtMaterialFilledButton(QWidget* parent)
  setMaterialComponent(QStringLiteral("button"));
  setMaterialVariant(QStringLiteral("filled"));
  setMaterialRole(QStringLiteral("action"));
+ d->elevationTransition->setObjectName(
+  QStringLiteral("_qtm3_button_elevation_transition"));
  d->elevationTransition->setProgress(0.0);
  QObject::connect(
   d->elevationTransition,
@@ -177,15 +179,15 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
     if (
         isEnabled()
         && spec.hasResolvedElevationStyle
-        && elevationProgress > 0.0
+        && spec.hasResolvedHoverElevationStyle
         && !d->layout.containerPath.isEmpty()) {
         QtMaterialElevationRenderer::
             paintInterpolatedPathElevation(
                 &painter,
                 d->layout.containerPath,
                 spec.shadowColor,
-                ElevationStyle{},
                 spec.elevationStyle,
+                spec.hoverElevationStyle,
                 elevationProgress);
     }
 
@@ -197,7 +199,7 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
  painter.restore();
 
  const qreal layerOpacity = animatedStateLayerOpacity();
- if (layerOpacity > 0.0) {
+ if (isEnabled() && layerOpacity > 0.0) {
   QtMaterialStateLayerPainter::paintPath(
    &painter,
    d->layout.containerPath,
@@ -206,7 +208,9 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
  }
 
  setRippleClipPath(d->layout.containerPath);
- paintRipple(&painter, spec.stateLayerColor);
+ if (isEnabled()) {
+  paintRipple(&painter, spec.stateLayerColor);
+ }
 
  ButtonRenderHelper::ContentLayout contentLayout;
  contentLayout.iconRect = d->layout.iconRect;
@@ -225,13 +229,13 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
   iconColor,
   resolvedFont);
 
- if (interactionState().isFocused()) {
+ if (isEnabled() && interactionState().isFocused()) {
   QtMaterialFocusIndicator::paintRectFocusRing(
    &painter,
    d->layout.visualRect,
    spec.focusRingColor,
    d->layout.cornerRadius,
-   2.0);
+   spec.focusRingWidth);
  }
 }
 

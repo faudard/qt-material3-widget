@@ -10,8 +10,8 @@
 - [x] T008 typed-token architecture checker.
 - [x] T009 C++ stability/uniqueness/text tests.
 - [x] T010 repository-health integration.
-- [ ] T011 apply to actual checkout.
-- [ ] T012 migrate ThemeSerializer and verify no duplicate name tables.
+- [x] T011 apply to actual checkout.
+- [x] T012 migrate ThemeSerializer and verify no duplicate name tables.
 - [ ] T013 run existing serializer round-trip/backward compatibility tests.
 - [ ] T014 build Qt6 shared/static.
 - [ ] T015 run component/spec tests to confirm no universal dynamic lookup leaked in.

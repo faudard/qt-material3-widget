@@ -20,6 +20,7 @@ qtm3_add_test(
     tst_qtcompat
     compat/tst_qtcompat.cpp
     Qt${QT_VERSION_MAJOR}::Gui
+    qtmaterial3_theme_model
 )
 
 qtm3_add_test(
@@ -268,15 +269,18 @@ qtm3_add_test(tst_textfield_dirty_state widgets/inputs/tst_textfield_dirty_state
 
 set(QTM3_CONSUMER_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/_installed_package")
 set(QTM3_CONSUMER_BINARY_DIR  "${CMAKE_CURRENT_BINARY_DIR}/_consumer_build")
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 add_test(
     NAME tst_installed_package_consumer
     COMMAND
         ${CMAKE_COMMAND}
         -DREPO_BINARY_DIR=${CMAKE_BINARY_DIR}
+        "-DREPO_SOURCE_DIR=${PROJECT_SOURCE_DIR}"
         -DTEST_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/consumer
         -DTEST_BINARY_DIR=${QTM3_CONSUMER_BINARY_DIR}
         -DINSTALL_PREFIX=${QTM3_CONSUMER_INSTALL_DIR}
+        "-DPYTHON_EXECUTABLE=${Python3_EXECUTABLE}"
         -DBUILD_CONFIG=$<CONFIG>
         -DDEFAULT_BUILD_CONFIG=${CMAKE_BUILD_TYPE}
         -DGENERATOR_NAME=${CMAKE_GENERATOR}
@@ -296,6 +300,38 @@ if(QTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS)
   qtm3_add_test(tst_theme_visual_regression visual/tst_theme_visual_regression.cpp qtmaterial3_theme qtmaterial3_widgets)
   target_compile_definitions(tst_theme_visual_regression PRIVATE
     QTMATERIAL3_VISUAL_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/visual")
+
+  # Material conformance capture is an explicit artifact-producing command,
+  # not a passing CTest until reviewed references and comparison exist.
+  if(COMMAND qt_add_executable)
+    qt_add_executable(qtmaterial3_material_button_capture
+      visual/material3/material_button_capture_main.cpp
+      visual/material3/qtmaterialbuttoncapturecontroller.cpp
+      visual/material3/qtmaterialbuttoncapturecontroller_p.h
+      visual/material3/qtmaterialcaptureeffectsaccess_p.h
+    )
+  else()
+    add_executable(qtmaterial3_material_button_capture
+      visual/material3/material_button_capture_main.cpp
+      visual/material3/qtmaterialbuttoncapturecontroller.cpp
+      visual/material3/qtmaterialbuttoncapturecontroller_p.h
+      visual/material3/qtmaterialcaptureeffectsaccess_p.h
+    )
+  endif()
+  target_compile_features(qtmaterial3_material_button_capture PRIVATE cxx_std_17)
+  target_include_directories(qtmaterial3_material_button_capture PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/visual/material3"
+    "${PROJECT_SOURCE_DIR}/src/widgets/buttons/private"
+  )
+  target_compile_definitions(qtmaterial3_material_button_capture PRIVATE
+    QTMATERIAL3_MATERIAL_BUTTON_VISUAL_CONTRACT="${PROJECT_SOURCE_DIR}/references/material3/classic/compose-material3-1.4.0/visual/buttons.json"
+  )
+  target_link_libraries(qtmaterial3_material_button_capture PRIVATE
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
+    qtmaterial3_theme
+    qtmaterial3_widgets
+  )
 endif()
 
 # Public API guardrail: every public theming header must compile as a standalone include.

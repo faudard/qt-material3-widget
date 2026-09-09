@@ -1,0 +1,2482 @@
+{
+  "schemaVersion": 1,
+  "id": "classic.buttons.filled.renderer",
+  "profileId": "m3-classic.compose-material3-1.4.0",
+  "componentModelId": "classic.buttons",
+  "status": "evidence-backed",
+  "coverage": {
+    "mode": "vertical-slice",
+    "rationale": "First semantic renderer vertical: the Classic small Filled Button at default Qt density, across every required state and both theme modes."
+  },
+  "fixture": {
+    "size": "small",
+    "density": "default",
+    "content": "label-only"
+  },
+  "family": "Buttons",
+  "anchorComponentId": "button.filled",
+  "sourceRefs": [
+    "m3-buttons",
+    "m3-states",
+    "androidx-material3-1.4.0",
+    "androidx-material3-source-1.4.0"
+  ],
+  "caseDimensions": {
+    "components": [
+      "button.filled"
+    ],
+    "states": [
+      "enabled",
+      "disabled",
+      "hovered",
+      "focused",
+      "pressed"
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ]
+  },
+  "cases": [
+    {
+      "id": "classic.buttons.filled.renderer.button.filled.enabled.light",
+      "componentId": "button.filled",
+      "state": "enabled",
+      "theme": "light",
+      "classification": "MUST_MATCH",
+      "assertions": [
+        {
+          "id": "container-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.role",
+          "operator": "token-equals",
+          "expected": "Primary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "container-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "interaction-color-role",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L141",
+              "symbol": "Button contentColor"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L230",
+              "symbol": "Surface ripple"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L64-L71",
+              "symbol": "ripple color"
+            }
+          ]
+        },
+        {
+          "id": "interaction-opacity",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.opacity",
+          "operator": "equals",
+          "expected": 0.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L138",
+              "symbol": "Button Surface binding"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L231",
+              "symbol": "Surface clickable enabled state"
+            }
+          ]
+        },
+        {
+          "id": "interaction-kind",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.kind",
+          "operator": "equals",
+          "expected": "none",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L138",
+              "symbol": "Button Surface binding"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L231",
+              "symbol": "Surface clickable enabled state"
+            }
+          ]
+        },
+        {
+          "id": "container-elevation",
+          "domain": "tokens",
+          "classification": "MUST_MATCH",
+          "path": "render.elevation.role",
+          "operator": "token-equals",
+          "expected": "Level0",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens.*ContainerElevation"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L805-L818",
+              "symbol": "ButtonDefaults.buttonElevation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classic.buttons.filled.renderer.button.filled.enabled.dark",
+      "componentId": "button.filled",
+      "state": "enabled",
+      "theme": "dark",
+      "classification": "MUST_MATCH",
+      "assertions": [
+        {
+          "id": "container-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.role",
+          "operator": "token-equals",
+          "expected": "Primary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "container-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "interaction-color-role",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L141",
+              "symbol": "Button contentColor"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L230",
+              "symbol": "Surface ripple"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L64-L71",
+              "symbol": "ripple color"
+            }
+          ]
+        },
+        {
+          "id": "interaction-opacity",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.opacity",
+          "operator": "equals",
+          "expected": 0.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L138",
+              "symbol": "Button Surface binding"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L231",
+              "symbol": "Surface clickable enabled state"
+            }
+          ]
+        },
+        {
+          "id": "interaction-kind",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.kind",
+          "operator": "equals",
+          "expected": "none",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L138",
+              "symbol": "Button Surface binding"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L231",
+              "symbol": "Surface clickable enabled state"
+            }
+          ]
+        },
+        {
+          "id": "container-elevation",
+          "domain": "tokens",
+          "classification": "MUST_MATCH",
+          "path": "render.elevation.role",
+          "operator": "token-equals",
+          "expected": "Level0",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens.*ContainerElevation"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L805-L818",
+              "symbol": "ButtonDefaults.buttonElevation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classic.buttons.filled.renderer.button.filled.disabled.light",
+      "componentId": "button.filled",
+      "state": "disabled",
+      "theme": "light",
+      "classification": "MUST_MATCH",
+      "assertions": [
+        {
+          "id": "container-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.role",
+          "operator": "token-equals",
+          "expected": "OnSurface",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "container-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.alpha",
+          "operator": "equals",
+          "expected": 0.1,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.role",
+          "operator": "token-equals",
+          "expected": "OnSurfaceVariant",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.alpha",
+          "operator": "equals",
+          "expected": 0.38,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.role",
+          "operator": "token-equals",
+          "expected": "OnSurfaceVariant",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.alpha",
+          "operator": "equals",
+          "expected": 0.38,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "interaction-color-role",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L141",
+              "symbol": "Button contentColor"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L230",
+              "symbol": "Surface ripple"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L64-L71",
+              "symbol": "ripple color"
+            }
+          ]
+        },
+        {
+          "id": "interaction-opacity",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.opacity",
+          "operator": "equals",
+          "expected": 0.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L138",
+              "symbol": "Button Surface binding"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L231",
+              "symbol": "Surface clickable enabled state"
+            }
+          ]
+        },
+        {
+          "id": "interaction-kind",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.kind",
+          "operator": "equals",
+          "expected": "none",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L138",
+              "symbol": "Button Surface binding"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L231",
+              "symbol": "Surface clickable enabled state"
+            }
+          ]
+        },
+        {
+          "id": "container-elevation",
+          "domain": "tokens",
+          "classification": "MUST_MATCH",
+          "path": "render.elevation.role",
+          "operator": "token-equals",
+          "expected": "Level0",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens.*ContainerElevation"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L805-L818",
+              "symbol": "ButtonDefaults.buttonElevation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classic.buttons.filled.renderer.button.filled.disabled.dark",
+      "componentId": "button.filled",
+      "state": "disabled",
+      "theme": "dark",
+      "classification": "MUST_MATCH",
+      "assertions": [
+        {
+          "id": "container-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.role",
+          "operator": "token-equals",
+          "expected": "OnSurface",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "container-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.alpha",
+          "operator": "equals",
+          "expected": 0.1,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.role",
+          "operator": "token-equals",
+          "expected": "OnSurfaceVariant",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.alpha",
+          "operator": "equals",
+          "expected": 0.38,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.role",
+          "operator": "token-equals",
+          "expected": "OnSurfaceVariant",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.alpha",
+          "operator": "equals",
+          "expected": 0.38,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L24-L30",
+              "symbol": "FilledButtonTokens.Disabled*"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "interaction-color-role",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L141",
+              "symbol": "Button contentColor"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L230",
+              "symbol": "Surface ripple"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L64-L71",
+              "symbol": "ripple color"
+            }
+          ]
+        },
+        {
+          "id": "interaction-opacity",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.opacity",
+          "operator": "equals",
+          "expected": 0.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L138",
+              "symbol": "Button Surface binding"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L231",
+              "symbol": "Surface clickable enabled state"
+            }
+          ]
+        },
+        {
+          "id": "interaction-kind",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.kind",
+          "operator": "equals",
+          "expected": "none",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L138",
+              "symbol": "Button Surface binding"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L231",
+              "symbol": "Surface clickable enabled state"
+            }
+          ]
+        },
+        {
+          "id": "container-elevation",
+          "domain": "tokens",
+          "classification": "MUST_MATCH",
+          "path": "render.elevation.role",
+          "operator": "token-equals",
+          "expected": "Level0",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens.*ContainerElevation"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L805-L818",
+              "symbol": "ButtonDefaults.buttonElevation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classic.buttons.filled.renderer.button.filled.hovered.light",
+      "componentId": "button.filled",
+      "state": "hovered",
+      "theme": "light",
+      "classification": "MUST_MATCH",
+      "assertions": [
+        {
+          "id": "container-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.role",
+          "operator": "token-equals",
+          "expected": "Primary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "container-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "interaction-color-role",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L141",
+              "symbol": "Button contentColor"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L230",
+              "symbol": "Surface ripple"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L64-L71",
+              "symbol": "ripple color"
+            }
+          ]
+        },
+        {
+          "id": "interaction-opacity",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.opacity",
+          "operator": "equals",
+          "expected": 0.08,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "interaction-kind",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.kind",
+          "operator": "equals",
+          "expected": "state-layer",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "container-elevation",
+          "domain": "tokens",
+          "classification": "MUST_MATCH",
+          "path": "render.elevation.role",
+          "operator": "token-equals",
+          "expected": "Level1",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens.*ContainerElevation"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L805-L818",
+              "symbol": "ButtonDefaults.buttonElevation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classic.buttons.filled.renderer.button.filled.hovered.dark",
+      "componentId": "button.filled",
+      "state": "hovered",
+      "theme": "dark",
+      "classification": "MUST_MATCH",
+      "assertions": [
+        {
+          "id": "container-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.role",
+          "operator": "token-equals",
+          "expected": "Primary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "container-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "interaction-color-role",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L141",
+              "symbol": "Button contentColor"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L230",
+              "symbol": "Surface ripple"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L64-L71",
+              "symbol": "ripple color"
+            }
+          ]
+        },
+        {
+          "id": "interaction-opacity",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.opacity",
+          "operator": "equals",
+          "expected": 0.08,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "interaction-kind",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.kind",
+          "operator": "equals",
+          "expected": "state-layer",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "container-elevation",
+          "domain": "tokens",
+          "classification": "MUST_MATCH",
+          "path": "render.elevation.role",
+          "operator": "token-equals",
+          "expected": "Level1",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens.*ContainerElevation"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L805-L818",
+              "symbol": "ButtonDefaults.buttonElevation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classic.buttons.filled.renderer.button.filled.focused.light",
+      "componentId": "button.filled",
+      "state": "focused",
+      "theme": "light",
+      "classification": "MUST_MATCH",
+      "assertions": [
+        {
+          "id": "container-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.role",
+          "operator": "token-equals",
+          "expected": "Primary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "container-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "interaction-color-role",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L141",
+              "symbol": "Button contentColor"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L230",
+              "symbol": "Surface ripple"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L64-L71",
+              "symbol": "ripple color"
+            }
+          ]
+        },
+        {
+          "id": "interaction-opacity",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.opacity",
+          "operator": "equals",
+          "expected": 0.1,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "interaction-kind",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.kind",
+          "operator": "equals",
+          "expected": "state-layer",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "container-elevation",
+          "domain": "tokens",
+          "classification": "MUST_MATCH",
+          "path": "render.elevation.role",
+          "operator": "token-equals",
+          "expected": "Level0",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens.*ContainerElevation"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L805-L818",
+              "symbol": "ButtonDefaults.buttonElevation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classic.buttons.filled.renderer.button.filled.focused.dark",
+      "componentId": "button.filled",
+      "state": "focused",
+      "theme": "dark",
+      "classification": "MUST_MATCH",
+      "assertions": [
+        {
+          "id": "container-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.role",
+          "operator": "token-equals",
+          "expected": "Primary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "container-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "interaction-color-role",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L141",
+              "symbol": "Button contentColor"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L230",
+              "symbol": "Surface ripple"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L64-L71",
+              "symbol": "ripple color"
+            }
+          ]
+        },
+        {
+          "id": "interaction-opacity",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.opacity",
+          "operator": "equals",
+          "expected": 0.1,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "interaction-kind",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.kind",
+          "operator": "equals",
+          "expected": "state-layer",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "container-elevation",
+          "domain": "tokens",
+          "classification": "MUST_MATCH",
+          "path": "render.elevation.role",
+          "operator": "token-equals",
+          "expected": "Level0",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens.*ContainerElevation"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L805-L818",
+              "symbol": "ButtonDefaults.buttonElevation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classic.buttons.filled.renderer.button.filled.pressed.light",
+      "componentId": "button.filled",
+      "state": "pressed",
+      "theme": "light",
+      "classification": "MUST_MATCH",
+      "assertions": [
+        {
+          "id": "container-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.role",
+          "operator": "token-equals",
+          "expected": "Primary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "container-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "interaction-color-role",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L141",
+              "symbol": "Button contentColor"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L230",
+              "symbol": "Surface ripple"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L64-L71",
+              "symbol": "ripple color"
+            }
+          ]
+        },
+        {
+          "id": "interaction-opacity",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.opacity",
+          "operator": "equals",
+          "expected": 0.1,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "interaction-kind",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.kind",
+          "operator": "equals",
+          "expected": "ripple",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "container-elevation",
+          "domain": "tokens",
+          "classification": "MUST_MATCH",
+          "path": "render.elevation.role",
+          "operator": "token-equals",
+          "expected": "Level0",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens.*ContainerElevation"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L805-L818",
+              "symbol": "ButtonDefaults.buttonElevation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classic.buttons.filled.renderer.button.filled.pressed.dark",
+      "componentId": "button.filled",
+      "state": "pressed",
+      "theme": "dark",
+      "classification": "MUST_MATCH",
+      "assertions": [
+        {
+          "id": "container-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.role",
+          "operator": "token-equals",
+          "expected": "Primary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "container-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.container.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "label-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.label.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-role",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "icon-color-alpha",
+          "domain": "colors",
+          "classification": "MUST_MATCH",
+          "path": "render.icon.color.alpha",
+          "operator": "equals",
+          "expected": 1.0,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L598-L610",
+              "symbol": "ColorScheme.defaultButtonColors"
+            }
+          ]
+        },
+        {
+          "id": "interaction-color-role",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.color.role",
+          "operator": "token-equals",
+          "expected": "OnPrimary",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L125-L141",
+              "symbol": "Button contentColor"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Surface.kt#L227-L230",
+              "symbol": "Surface ripple"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L64-L71",
+              "symbol": "ripple color"
+            }
+          ]
+        },
+        {
+          "id": "interaction-opacity",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.opacity",
+          "operator": "equals",
+          "expected": 0.1,
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "interaction-kind",
+          "domain": "states",
+          "classification": "MUST_MATCH",
+          "path": "render.interaction.kind",
+          "operator": "equals",
+          "expected": "ripple",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Ripple.kt#L128-L140",
+              "symbol": "RippleDefaults.RippleAlpha"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/StateTokens.kt#L21-L25",
+              "symbol": "StateTokens"
+            }
+          ]
+        },
+        {
+          "id": "container-elevation",
+          "domain": "tokens",
+          "classification": "MUST_MATCH",
+          "path": "render.elevation.role",
+          "operator": "token-equals",
+          "expected": "Level0",
+          "sourceRefs": [
+            "androidx-material3-source-1.4.0"
+          ],
+          "evidence": [
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledButtonTokens.kt#L21-L43",
+              "symbol": "FilledButtonTokens.*ContainerElevation"
+            },
+            {
+              "sourceRef": "androidx-material3-source-1.4.0",
+              "locator": "compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Button.kt#L805-L818",
+              "symbol": "ButtonDefaults.buttonElevation"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

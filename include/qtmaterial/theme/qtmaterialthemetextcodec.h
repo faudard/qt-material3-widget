@@ -3,6 +3,7 @@
 #include <QString>
 #include <QStringList>
 
+#include "qtmaterial/foundation/qtmaterialtokenid.h"
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 
@@ -18,6 +19,12 @@ class QTMATERIAL3_THEME_IO_EXPORT ThemeTextCodec final {
 public:
     static QString componentIdToString(ComponentId id);
     static bool componentIdFromString(const QString& text, ComponentId* outId);
+
+    static QString tokenIdToString(TokenId id);
+    static bool tokenIdFromString(
+        TokenCategory category,
+        const QString& text,
+        TokenId* outId);
 
     static QStringList extensionComponentNames(
         const ComponentTokenOverrides& overrides);

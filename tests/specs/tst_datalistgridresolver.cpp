@@ -103,7 +103,7 @@ appliesListOverrides()
         QColor(Qt::red));
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("list"),
+        ComponentId::List,
         tokens);
 
     const ListSpec spec =
@@ -141,7 +141,7 @@ appliesGridListOverrides()
         QColor(Qt::blue));
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("gridList"),
+        ComponentId::GridList,
         tokens);
 
     const GridListSpec spec =

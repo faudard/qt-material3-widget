@@ -180,7 +180,7 @@ void tst_ActionButtonSpecResolver::resolvesComponentOverrides()
         60);
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("fab"),
+        ComponentId::FloatingActionButton,
         tokens);
 
     const FabSpec spec =

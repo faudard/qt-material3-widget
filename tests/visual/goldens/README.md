@@ -2,6 +2,13 @@
 
 This directory stores PNG visual regression goldens for the Theme Studio and themed component grid.
 
+These are internal self-regression artifacts, not Material reference images.
+They are intentionally excluded from the strict Material visual contract
+documented in
+[`docs/conformance/visual-comparator.md`](../../../docs/conformance/visual-comparator.md).
+Its target-specific references use `tests/visual/material3-references/` and no
+such image is accepted while that contract remains `contract-only`.
+
 The visual harness has two levels:
 
 1. **Token-board goldens** are deterministic painter-generated snapshots of resolved theme tokens. These are suitable for normal regression gates.

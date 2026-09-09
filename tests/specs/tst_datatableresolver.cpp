@@ -110,7 +110,7 @@ appliesComponentOverrides()
         QColor(Qt::red));
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("table"),
+        ComponentId::Table,
         tokens);
 
     const TableSpec spec =

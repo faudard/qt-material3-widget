@@ -1,10 +1,25 @@
 #include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 
+#include <QtGlobal>
 #include <QVector>
 
 #include "qtmaterialcomponenttokenapplier_p.h"
 
 namespace QtMaterial {
+namespace {
+
+constexpr qreal kDisabledButtonContainerOpacity = 0.10;
+constexpr qreal kFilledTonalDisabledContainerOpacity = 0.12;
+constexpr qreal kDisabledButtonContentOpacity = 0.38;
+constexpr qreal kSmallOutlinedButtonOutlineWidth = 1.0;
+
+QColor withOpacity(QColor color, qreal opacity)
+{
+    color.setAlphaF(qBound<qreal>(0.0, opacity, 1.0));
+    return color;
+}
+
+} // namespace
 
 ButtonSpec ButtonSpecResolver::baseButtonSpec(
     Density density) noexcept
@@ -56,13 +71,23 @@ ButtonSpec ButtonSpecResolver::textButtonSpec(
     Density density) const
 {
     ButtonSpec spec = baseButtonSpec(density);
+    spec.containerColor = Qt::transparent;
     spec.labelColor = theme.colorScheme().color(ColorRole::Primary);
     spec.iconColor = spec.labelColor;
     spec.disabledContainerColor = Qt::transparent;
-    spec.disabledLabelColor =
-        theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.disabledLabelColor = withOpacity(
+        theme.colorScheme().color(ColorRole::OnSurfaceVariant),
+        kDisabledButtonContentOpacity);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
+
+    spec.elevationRole = ElevationRole::Level0;
+    spec.hoverElevationRole = ElevationRole::Level0;
+    spec.restingElevationProgress = 0.0;
+    spec.hoverElevationProgress = 0.0;
+    spec.focusElevationProgress = 0.0;
+    spec.pressElevationProgress = 0.0;
+    spec.disabledElevationProgress = 0.0;
 
     applyButtonComponentTokens(
         theme,
@@ -79,13 +104,22 @@ ButtonSpec ButtonSpecResolver::filledButtonSpec(
     spec.containerColor = theme.colorScheme().color(ColorRole::Primary);
     spec.labelColor = theme.colorScheme().color(ColorRole::OnPrimary);
     spec.iconColor = spec.labelColor;
-    spec.disabledContainerColor =
-        theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    spec.disabledLabelColor =
-        theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.disabledContainerColor = withOpacity(
+        theme.colorScheme().color(ColorRole::OnSurface),
+        kDisabledButtonContainerOpacity);
+    spec.disabledLabelColor = withOpacity(
+        theme.colorScheme().color(ColorRole::OnSurfaceVariant),
+        kDisabledButtonContentOpacity);
     spec.stateLayerColor = theme.colorScheme().color(ColorRole::OnPrimary);
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.elevationRole = ElevationRole::Level1;
+
+    spec.elevationRole = ElevationRole::Level0;
+    spec.hoverElevationRole = ElevationRole::Level1;
+    spec.restingElevationProgress = 0.0;
+    spec.hoverElevationProgress = 1.0;
+    spec.focusElevationProgress = 0.0;
+    spec.pressElevationProgress = 0.0;
+    spec.disabledElevationProgress = 0.0;
 
     applyButtonComponentTokens(
         theme,
@@ -104,12 +138,22 @@ ButtonSpec ButtonSpecResolver::filledTonalButtonSpec(
     spec.labelColor =
         theme.colorScheme().color(ColorRole::OnSecondaryContainer);
     spec.iconColor = spec.labelColor;
-    spec.disabledContainerColor =
-        theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    spec.disabledLabelColor =
-        theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.disabledContainerColor = withOpacity(
+        theme.colorScheme().color(ColorRole::OnSurface),
+        kFilledTonalDisabledContainerOpacity);
+    spec.disabledLabelColor = withOpacity(
+        theme.colorScheme().color(ColorRole::OnSurface),
+        kDisabledButtonContentOpacity);
     spec.stateLayerColor = spec.labelColor;
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Secondary);
+
+    spec.elevationRole = ElevationRole::Level0;
+    spec.hoverElevationRole = ElevationRole::Level1;
+    spec.restingElevationProgress = 0.0;
+    spec.hoverElevationProgress = 1.0;
+    spec.focusElevationProgress = 0.0;
+    spec.pressElevationProgress = 0.0;
+    spec.disabledElevationProgress = 0.0;
 
     applyButtonComponentTokens(
         theme,
@@ -123,16 +167,30 @@ ButtonSpec ButtonSpecResolver::outlinedButtonSpec(
     Density density) const
 {
     ButtonSpec spec = baseButtonSpec(density);
-    spec.labelColor = theme.colorScheme().color(ColorRole::Primary);
+    spec.containerColor = Qt::transparent;
+    spec.labelColor =
+        theme.colorScheme().color(ColorRole::OnSurfaceVariant);
     spec.iconColor = spec.labelColor;
     spec.disabledContainerColor = Qt::transparent;
-    spec.disabledLabelColor =
-        theme.colorScheme().color(ColorRole::OnSurfaceVariant);
-    spec.stateLayerColor = theme.colorScheme().color(ColorRole::Primary);
+    spec.disabledLabelColor = withOpacity(
+        theme.colorScheme().color(ColorRole::OnSurfaceVariant),
+        kDisabledButtonContentOpacity);
+    spec.stateLayerColor = spec.labelColor;
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
-    spec.outlineColor = theme.colorScheme().color(ColorRole::Outline);
-    spec.disabledOutlineColor =
+    spec.outlineColor =
         theme.colorScheme().color(ColorRole::OutlineVariant);
+    spec.disabledOutlineColor = withOpacity(
+        theme.colorScheme().color(ColorRole::OutlineVariant),
+        kDisabledButtonContainerOpacity);
+    spec.outlineWidth = kSmallOutlinedButtonOutlineWidth;
+
+    spec.elevationRole = ElevationRole::Level0;
+    spec.hoverElevationRole = ElevationRole::Level0;
+    spec.restingElevationProgress = 0.0;
+    spec.hoverElevationProgress = 0.0;
+    spec.focusElevationProgress = 0.0;
+    spec.pressElevationProgress = 0.0;
+    spec.disabledElevationProgress = 0.0;
 
     applyButtonComponentTokens(
         theme,
@@ -150,13 +208,21 @@ ButtonSpec ButtonSpecResolver::elevatedButtonSpec(
         theme.colorScheme().color(ColorRole::SurfaceContainerLow);
     spec.labelColor = theme.colorScheme().color(ColorRole::Primary);
     spec.iconColor = spec.labelColor;
-    spec.disabledContainerColor =
-        theme.colorScheme().color(ColorRole::SurfaceContainerHigh);
-    spec.disabledLabelColor =
-        theme.colorScheme().color(ColorRole::OnSurfaceVariant);
+    spec.disabledContainerColor = withOpacity(
+        theme.colorScheme().color(ColorRole::OnSurface),
+        kDisabledButtonContainerOpacity);
+    spec.disabledLabelColor = withOpacity(
+        theme.colorScheme().color(ColorRole::OnSurfaceVariant),
+        kDisabledButtonContentOpacity);
     spec.stateLayerColor = spec.labelColor;
     spec.focusRingColor = theme.colorScheme().color(ColorRole::Primary);
     spec.elevationRole = ElevationRole::Level1;
+    spec.hoverElevationRole = ElevationRole::Level2;
+    spec.restingElevationProgress = 0.0;
+    spec.hoverElevationProgress = 1.0;
+    spec.focusElevationProgress = 0.0;
+    spec.pressElevationProgress = 0.0;
+    spec.disabledElevationProgress = 0.0;
 
     applyButtonComponentTokens(
         theme,

@@ -13,7 +13,7 @@ QtMaterialFilledTonalButton::QtMaterialFilledTonalButton(QWidget* parent)
 }
 
 QtMaterialFilledTonalButton::QtMaterialFilledTonalButton(const QString& text, QWidget* parent)
-    : QtMaterialFilledButton(parent)
+    : QtMaterialFilledTonalButton(parent)
 {
     setText(text);
 }

@@ -56,14 +56,17 @@ filledButton.colors.insert(QtMaterial::ColorRole::Primary, QColor("#004A77"));
 filledButton.colors.insert(QtMaterial::ColorRole::OnPrimary, QColor("#FFFFFF"));
 filledButton.custom.insert("minHeight", 44);
 
-theme.componentOverrides().setOverride("button.filled", filledButton);
+theme.componentOverrides().setOverride(
+    QtMaterial::ComponentId::ButtonFilled,
+    filledButton);
 ```
 
-Recommended override key order:
+Recommended override ID order:
 
-1. family key, for example `button`
-2. component key, for example `button.filled`
-3. legacy alias only when maintaining compatibility with old code
+1. family ID, for example `ComponentId::Button`
+2. component ID, for example `ComponentId::ButtonFilled`
+
+Textual names and legacy aliases are accepted only at the ThemeIO serialization boundary.
 
 ## Check backend selection
 

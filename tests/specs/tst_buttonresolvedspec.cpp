@@ -54,6 +54,9 @@ void tst_ButtonResolvedSpec::resolvesRuntimeTokens()
     QCOMPARE(spec.pressStateLayerOpacity, 0.15);
     QCOMPARE(spec.dragStateLayerOpacity, 0.19);
     QCOMPARE(spec.shadowColor, shadow);
+    QCOMPARE(
+        spec.focusRingWidth,
+        static_cast<qreal>(theme.accessibility().focusRing.width));
 }
 
 void tst_ButtonResolvedSpec::resolvesComponentOverrides()
@@ -82,6 +85,7 @@ void tst_ButtonResolvedSpec::resolvesComponentOverrides()
     overrideTokens.custom.insert(
         QStringLiteral("shadowColor"),
         QStringLiteral("#345678"));
+    overrideTokens.custom.insert(QStringLiteral("outlineWidth"), 2.5);
 
     overrideTokens.hasStateLayer = true;
     overrideTokens.stateLayer.hoverOpacity = 0.03;
@@ -90,7 +94,7 @@ void tst_ButtonResolvedSpec::resolvesComponentOverrides()
     overrideTokens.stateLayer.dragOpacity = 0.12;
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("button.outlined"),
+        ComponentId::ButtonOutlined,
         overrideTokens);
 
     const ButtonSpec spec =
@@ -106,6 +110,7 @@ void tst_ButtonResolvedSpec::resolvesComponentOverrides()
     QCOMPARE(spec.pressStateLayerOpacity, 0.09);
     QCOMPARE(spec.dragStateLayerOpacity, 0.12);
     QCOMPARE(spec.shadowColor, QColor(QStringLiteral("#345678")));
+    QCOMPARE(spec.outlineWidth, 2.5);
 }
 
 QTEST_MAIN(tst_ButtonResolvedSpec)

@@ -62,7 +62,7 @@ void tst_DataWidgetResolvedSpec::componentOverridesWin()
         QStringLiteral("itemOutlineColor"),
         QColor(QStringLiteral("#123456")));
     theme.componentOverrides().setOverride(
-        QStringLiteral("gridList"), gridTokens);
+        ComponentId::GridList, gridTokens);
 
     ComponentTokenOverride carouselTokens;
     carouselTokens.custom.insert(QStringLiteral("itemWidth"), 204);
@@ -71,7 +71,7 @@ void tst_DataWidgetResolvedSpec::componentOverridesWin()
         QStringLiteral("itemSelectedColor"),
         QColor(QStringLiteral("#345678")));
     theme.componentOverrides().setOverride(
-        QStringLiteral("carousel"), carouselTokens);
+        ComponentId::Carousel, carouselTokens);
 
     const GridListSpec grid =
         DataSpecResolver().gridListSpec(theme);

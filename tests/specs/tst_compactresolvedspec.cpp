@@ -78,7 +78,7 @@ void tst_CompactResolvedSpec::compactOverridesWin()
     tokens.stateLayer.dragOpacity = 0.12;
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("chip.assist"),
+        ComponentId::AssistChip,
         tokens);
 
     const ChipSpec spec =

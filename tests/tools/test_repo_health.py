@@ -30,6 +30,8 @@ class WorkflowStructureTests(unittest.TestCase):
             "jobs:\n"
             "  health:\n"
             "    runs-on: ubuntu-latest\n"
+            "    steps:\n"
+            "      - run: python tools/repo_health.py --strict\n"
         )
         result = repo_health.check_quality_workflow_structure(path)
         self.assertTrue(result.ok, result.detail)
@@ -56,8 +58,48 @@ class WorkflowStructureTests(unittest.TestCase):
         self.assertFalse(result.ok)
         self.assertIn("empty", result.detail)
 
+    def test_rejects_non_strict_repository_health(self) -> None:
+        path = self.write_workflow(
+            "name: Quality\n"
+            "on:\n"
+            "  pull_request:\n"
+            "jobs:\n"
+            "  health:\n"
+            "    runs-on: ubuntu-latest\n"
+            "    steps:\n"
+            "      - run: python tools/repo_health.py\n"
+        )
+        result = repo_health.check_quality_workflow_structure(path)
+        self.assertFalse(result.ok)
+        self.assertIn("strict mode", result.detail)
+
 
 class CommandCheckTests(unittest.TestCase):
+    def test_health_commands_use_zero_debt_and_typed_contracts(self) -> None:
+        commands = repo_health.health_commands(sys.executable)
+        names = [name for name, _ in commands]
+        self.assertIn("architecture-zero-debt", names)
+        self.assertNotIn("architecture-contracts", names)
+        self.assertIn("public-private-headers", names)
+        self.assertNotIn("public-private-headers-source", names)
+        self.assertNotIn(
+            "--source-only",
+            dict(commands)["public-private-headers"],
+        )
+        self.assertIn("material-reference-model", names)
+        self.assertIn("material-structural-conformance", names)
+        self.assertIn("material-renderer-conformance", names)
+        self.assertIn("material-visual-contract", names)
+        self.assertIn("material-conformance-harness", names)
+        self.assertIn("theme-runtime", names)
+        self.assertIn("typed-token-system", names)
+
+    def test_strict_health_propagates_to_component_registry(self) -> None:
+        normal = dict(repo_health.health_commands(sys.executable, strict=False))
+        strict = dict(repo_health.health_commands(sys.executable, strict=True))
+        self.assertNotIn("--strict", normal["component-registry"])
+        self.assertIn("--strict", strict["component-registry"])
+
     def test_command_exit_code_is_propagated(self) -> None:
         ok = repo_health.run_command_check(
             "ok", [sys.executable, "-c", "raise SystemExit(0)"], cwd=Path.cwd()

@@ -2,6 +2,14 @@ if(NOT DEFINED REPO_BINARY_DIR OR REPO_BINARY_DIR STREQUAL "")
     message(FATAL_ERROR "REPO_BINARY_DIR is required")
 endif()
 
+if(NOT DEFINED REPO_SOURCE_DIR OR REPO_SOURCE_DIR STREQUAL "")
+    message(FATAL_ERROR "REPO_SOURCE_DIR is required")
+endif()
+
+if(NOT DEFINED PYTHON_EXECUTABLE OR PYTHON_EXECUTABLE STREQUAL "")
+    message(FATAL_ERROR "PYTHON_EXECUTABLE is required")
+endif()
+
 if(NOT DEFINED TEST_SOURCE_DIR OR TEST_SOURCE_DIR STREQUAL "")
     message(FATAL_ERROR "TEST_SOURCE_DIR is required")
 endif()
@@ -42,6 +50,20 @@ execute_process(
 )
 if(NOT _install_result EQUAL 0)
     message(FATAL_ERROR "Install step failed with code ${_install_result}")
+endif()
+
+execute_process(
+    COMMAND
+        "${PYTHON_EXECUTABLE}"
+        "${REPO_SOURCE_DIR}/tools/check_installed_header_surface.py"
+        --root "${REPO_SOURCE_DIR}"
+        --prefix "${INSTALL_PREFIX}"
+    RESULT_VARIABLE _header_surface_result
+)
+if(NOT _header_surface_result EQUAL 0)
+    message(FATAL_ERROR
+        "Installed header surface check failed with code ${_header_surface_result}"
+    )
 endif()
 
 set(_configure_cmd

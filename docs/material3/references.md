@@ -2,6 +2,19 @@
 
 This page maps the most useful upstream Material 3 references to the corresponding areas of `qt-material3-widget`.
 
+For conformance work, do not treat this live-link index as a pinned baseline. Use
+the [versioned Material reference model](../conformance/material-reference-model.md),
+whose profiles, component models and case suites are validated in CI. The first
+[structural conformance vertical](../conformance/structural-conformance.md) is
+documented separately from renderer and visual conformance.
+The active [renderer conformance verticals](../conformance/renderer-conformance.md)
+record semantic colors, disabled alpha, interaction feedback and elevation for
+Text, Filled, Filled Tonal, Elevated and Outlined Buttons using the same
+deterministic fixture.
+The [visual comparator contract](../conformance/visual-comparator.md) closes the
+future capture environment, state phases, target matrix and reference paths;
+it is deliberately separate from runtime pixel evidence.
+
 These links are **design-system references**, not the project API reference. Use them to understand Material semantics, token naming, and component behavior. Then use this repository’s own guides and generated C++ API pages to see how those ideas are implemented in Qt.
 
 ## Start here
@@ -64,6 +77,7 @@ A practical rule of thumb:
 - use **Material 3 docs** for visual semantics, token meaning, and interaction expectations
 - use **`docs/public-api/*`** for package-level guidance
 - use **`docs/api/index.md`** for exact C++ classes and members
+- use **`references/material3/`** for pinned, machine-readable conformance evidence
 
 ## Documentation policy suggestion
 

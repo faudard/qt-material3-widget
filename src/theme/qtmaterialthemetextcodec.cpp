@@ -1,11 +1,12 @@
 #include "qtmaterial/theme/qtmaterialthemetextcodec.h"
+#include "qtmaterial/theme/qtmaterialtokenids.h"
 
 #include <algorithm>
 
 namespace QtMaterial {
 namespace {
 struct ComponentNamePair { ComponentId id; const char* canonical; };
-static const ComponentNamePair kCanonical[] = {
+static const ComponentNamePair kCanonicalComponents[] = {
     { ComponentId::Button, "button" },
     { ComponentId::ButtonText, "button.text" },
     { ComponentId::ButtonFilled, "button.filled" },
@@ -62,8 +63,8 @@ static const ComponentNamePair kCanonical[] = {
     { ComponentId::SegmentedButton, "segmentedButton" },
     { ComponentId::Custom, "custom" },
 };
-struct AliasPair { const char* alias; ComponentId id; };
-static const AliasPair kAliases[] = {
+struct ComponentAliasPair { const char* alias; ComponentId id; };
+static const ComponentAliasPair kComponentAliases[] = {
     { "button", ComponentId::Button },
     { "Button", ComponentId::Button },
     { "button.text", ComponentId::ButtonText },
@@ -174,21 +175,159 @@ static const AliasPair kAliases[] = {
     { "segmentedButton", ComponentId::SegmentedButton },
     { "SegmentedButton", ComponentId::SegmentedButton },
 };
+struct TokenNamePair { TokenId id; const char* canonical; };
+static const TokenNamePair kTokenNames[] = {
+    { tokenId(ColorRole::Primary), "Primary" },
+    { tokenId(ColorRole::OnPrimary), "OnPrimary" },
+    { tokenId(ColorRole::PrimaryContainer), "PrimaryContainer" },
+    { tokenId(ColorRole::OnPrimaryContainer), "OnPrimaryContainer" },
+    { tokenId(ColorRole::PrimaryFixed), "PrimaryFixed" },
+    { tokenId(ColorRole::PrimaryFixedDim), "PrimaryFixedDim" },
+    { tokenId(ColorRole::OnPrimaryFixed), "OnPrimaryFixed" },
+    { tokenId(ColorRole::OnPrimaryFixedVariant), "OnPrimaryFixedVariant" },
+    { tokenId(ColorRole::Secondary), "Secondary" },
+    { tokenId(ColorRole::OnSecondary), "OnSecondary" },
+    { tokenId(ColorRole::SecondaryContainer), "SecondaryContainer" },
+    { tokenId(ColorRole::OnSecondaryContainer), "OnSecondaryContainer" },
+    { tokenId(ColorRole::SecondaryFixed), "SecondaryFixed" },
+    { tokenId(ColorRole::SecondaryFixedDim), "SecondaryFixedDim" },
+    { tokenId(ColorRole::OnSecondaryFixed), "OnSecondaryFixed" },
+    { tokenId(ColorRole::OnSecondaryFixedVariant), "OnSecondaryFixedVariant" },
+    { tokenId(ColorRole::Tertiary), "Tertiary" },
+    { tokenId(ColorRole::OnTertiary), "OnTertiary" },
+    { tokenId(ColorRole::TertiaryContainer), "TertiaryContainer" },
+    { tokenId(ColorRole::OnTertiaryContainer), "OnTertiaryContainer" },
+    { tokenId(ColorRole::TertiaryFixed), "TertiaryFixed" },
+    { tokenId(ColorRole::TertiaryFixedDim), "TertiaryFixedDim" },
+    { tokenId(ColorRole::OnTertiaryFixed), "OnTertiaryFixed" },
+    { tokenId(ColorRole::OnTertiaryFixedVariant), "OnTertiaryFixedVariant" },
+    { tokenId(ColorRole::Error), "Error" },
+    { tokenId(ColorRole::OnError), "OnError" },
+    { tokenId(ColorRole::ErrorContainer), "ErrorContainer" },
+    { tokenId(ColorRole::OnErrorContainer), "OnErrorContainer" },
+    { tokenId(ColorRole::Background), "Background" },
+    { tokenId(ColorRole::OnBackground), "OnBackground" },
+    { tokenId(ColorRole::Surface), "Surface" },
+    { tokenId(ColorRole::OnSurface), "OnSurface" },
+    { tokenId(ColorRole::SurfaceDim), "SurfaceDim" },
+    { tokenId(ColorRole::SurfaceBright), "SurfaceBright" },
+    { tokenId(ColorRole::SurfaceContainerLowest), "SurfaceContainerLowest" },
+    { tokenId(ColorRole::SurfaceContainerLow), "SurfaceContainerLow" },
+    { tokenId(ColorRole::SurfaceContainer), "SurfaceContainer" },
+    { tokenId(ColorRole::SurfaceContainerHigh), "SurfaceContainerHigh" },
+    { tokenId(ColorRole::SurfaceContainerHighest), "SurfaceContainerHighest" },
+    { tokenId(ColorRole::SurfaceVariant), "SurfaceVariant" },
+    { tokenId(ColorRole::OnSurfaceVariant), "OnSurfaceVariant" },
+    { tokenId(ColorRole::SurfaceTint), "SurfaceTint" },
+    { tokenId(ColorRole::Outline), "Outline" },
+    { tokenId(ColorRole::OutlineVariant), "OutlineVariant" },
+    { tokenId(ColorRole::InverseSurface), "InverseSurface" },
+    { tokenId(ColorRole::InverseOnSurface), "InverseOnSurface" },
+    { tokenId(ColorRole::InversePrimary), "InversePrimary" },
+    { tokenId(ColorRole::Shadow), "Shadow" },
+    { tokenId(ColorRole::Scrim), "Scrim" },
+    { tokenId(TypeRole::DisplayLarge), "DisplayLarge" },
+    { tokenId(TypeRole::DisplayMedium), "DisplayMedium" },
+    { tokenId(TypeRole::DisplaySmall), "DisplaySmall" },
+    { tokenId(TypeRole::HeadlineLarge), "HeadlineLarge" },
+    { tokenId(TypeRole::HeadlineMedium), "HeadlineMedium" },
+    { tokenId(TypeRole::HeadlineSmall), "HeadlineSmall" },
+    { tokenId(TypeRole::TitleLarge), "TitleLarge" },
+    { tokenId(TypeRole::TitleMedium), "TitleMedium" },
+    { tokenId(TypeRole::TitleSmall), "TitleSmall" },
+    { tokenId(TypeRole::BodyLarge), "BodyLarge" },
+    { tokenId(TypeRole::BodyMedium), "BodyMedium" },
+    { tokenId(TypeRole::BodySmall), "BodySmall" },
+    { tokenId(TypeRole::LabelLarge), "LabelLarge" },
+    { tokenId(TypeRole::LabelMedium), "LabelMedium" },
+    { tokenId(TypeRole::LabelSmall), "LabelSmall" },
+    { tokenId(ShapeRole::None), "None" },
+    { tokenId(ShapeRole::ExtraSmall), "ExtraSmall" },
+    { tokenId(ShapeRole::Small), "Small" },
+    { tokenId(ShapeRole::Medium), "Medium" },
+    { tokenId(ShapeRole::Large), "Large" },
+    { tokenId(ShapeRole::ExtraLarge), "ExtraLarge" },
+    { tokenId(ShapeRole::Full), "Full" },
+    { tokenId(ElevationRole::Level0), "Level0" },
+    { tokenId(ElevationRole::Level1), "Level1" },
+    { tokenId(ElevationRole::Level2), "Level2" },
+    { tokenId(ElevationRole::Level3), "Level3" },
+    { tokenId(ElevationRole::Level4), "Level4" },
+    { tokenId(ElevationRole::Level5), "Level5" },
+    { tokenId(MotionToken::Short1), "Short1" },
+    { tokenId(MotionToken::Short2), "Short2" },
+    { tokenId(MotionToken::Short3), "Short3" },
+    { tokenId(MotionToken::Short4), "Short4" },
+    { tokenId(MotionToken::Medium1), "Medium1" },
+    { tokenId(MotionToken::Medium2), "Medium2" },
+    { tokenId(MotionToken::Medium3), "Medium3" },
+    { tokenId(MotionToken::Medium4), "Medium4" },
+    { tokenId(MotionToken::Long1), "Long1" },
+    { tokenId(MotionToken::Long2), "Long2" },
+    { tokenId(MotionToken::Long3), "Long3" },
+    { tokenId(MotionToken::Long4), "Long4" },
+    { tokenId(StateLayerRole::Hover), "Hover" },
+    { tokenId(StateLayerRole::Focus), "Focus" },
+    { tokenId(StateLayerRole::Press), "Press" },
+    { tokenId(StateLayerRole::Drag), "Drag" },
+    { tokenId(DensityRole::Compact), "Compact" },
+    { tokenId(DensityRole::Default), "Default" },
+    { tokenId(DensityRole::Comfortable), "Comfortable" },
+    { tokenId(IconSizeRole::ExtraSmall), "ExtraSmall" },
+    { tokenId(IconSizeRole::Small), "Small" },
+    { tokenId(IconSizeRole::Medium), "Medium" },
+    { tokenId(IconSizeRole::Large), "Large" },
+    { tokenId(IconSizeRole::ExtraLarge), "ExtraLarge" },
+    { tokenId(AccessibilityRole::HighContrast), "highContrast" },
+    { tokenId(AccessibilityRole::ReducedMotion), "reducedMotion" },
+    { tokenId(AccessibilityRole::MinimumTextContrastRatio), "minimumTextContrastRatio" },
+    { tokenId(AccessibilityRole::MinimumUiContrastRatio), "minimumUiContrastRatio" },
+    { tokenId(AccessibilityRole::FocusRingWidth), "focusRing.width" },
+    { tokenId(AccessibilityRole::FocusRingOffset), "focusRing.offset" },
+    { tokenId(AccessibilityRole::FocusRingRadiusAdjustment), "focusRing.radiusAdjustment" },
+    { tokenId(AccessibilityRole::FocusRingColor), "focusRing.color" },
+    { tokenId(AccessibilityRole::FocusRingOpacity), "focusRing.opacity" },
+    { tokenId(InteractionRole::KeyboardFocusVisible), "keyboardFocusVisible" },
+    { tokenId(InteractionRole::StrongFocusIndicators), "strongFocusIndicators" },
+    { tokenId(InteractionRole::HoverFeedbackEnabled), "hoverFeedbackEnabled" },
+    { tokenId(InteractionRole::PressFeedbackEnabled), "pressFeedbackEnabled" },
+    { tokenId(InteractionRole::DragFeedbackEnabled), "dragFeedbackEnabled" },
+};
 } // namespace
 
 QString ThemeTextCodec::componentIdToString(ComponentId id)
 {
-    for (const auto& pair : kCanonical) {
+    for (const auto& pair : kCanonicalComponents)
         if (pair.id == id) return QString::fromLatin1(pair.canonical);
-    }
     return QString();
 }
 
 bool ThemeTextCodec::componentIdFromString(const QString& text, ComponentId* outId)
 {
     const QString normalized = text.trimmed();
-    for (const auto& pair : kAliases) {
+    for (const auto& pair : kComponentAliases) {
         if (normalized.compare(QLatin1String(pair.alias), Qt::CaseInsensitive) == 0) {
+            if (outId) *outId = pair.id;
+            return true;
+        }
+    }
+    return false;
+}
+
+QString ThemeTextCodec::tokenIdToString(TokenId id)
+{
+    for (const auto& pair : kTokenNames)
+        if (pair.id == id) return QString::fromLatin1(pair.canonical);
+    return QString();
+}
+
+bool ThemeTextCodec::tokenIdFromString(
+    TokenCategory category, const QString& text, TokenId* outId)
+{
+    const QString normalized = text.trimmed();
+    for (const auto& pair : kTokenNames) {
+        if (pair.id.category() == category
+            && normalized.compare(QLatin1String(pair.canonical), Qt::CaseInsensitive) == 0) {
             if (outId) *outId = pair.id;
             return true;
         }
@@ -212,18 +351,14 @@ ComponentTokenOverride ThemeTextCodec::extensionOverrideFor(
 }
 
 void ThemeTextCodec::setExtensionOverride(
-    ComponentTokenOverrides* overrides,
-    const QString& extensionName,
+    ComponentTokenOverrides* overrides, const QString& extensionName,
     const ComponentTokenOverride& overrideTokens)
 {
     if (!overrides) return;
     const QString key = extensionName.trimmed();
     if (key.isEmpty()) return;
-    if (overrideTokens.isEmpty()) {
-        overrides->m_extensionOverrides.remove(key);
-    } else {
-        overrides->m_extensionOverrides.insert(key, overrideTokens);
-    }
+    if (overrideTokens.isEmpty()) overrides->m_extensionOverrides.remove(key);
+    else overrides->m_extensionOverrides.insert(key, overrideTokens);
 }
 
 } // namespace QtMaterial

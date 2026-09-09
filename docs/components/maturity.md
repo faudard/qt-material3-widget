@@ -34,65 +34,65 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `compact.chip` | Chip | `planned` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
+| `compact.chip` | Chip | `planned` | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 | Chip is not release-scoped and has no registered widget test target. |
 
 ### Data
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `data.carousel` | Carousel | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `data.grid-list` | Grid List | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `data.table` | Table | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
+| `data.carousel` | Carousel | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Carousel Material reference model or deterministic visual conformance evidence is available. |
+| `data.grid-list` | Grid List | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Grid List Material reference model or deterministic visual conformance evidence is available. |
+| `data.table` | Table | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Table Material reference model or deterministic visual conformance evidence is available. |
 
 ### Data display
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `data.divider` | Divider | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
+| `data.divider` | Divider | `usable` | 2 | 2 | 2 | 1 | N/A | 1 | 1 | 2 | 1 | 2 | No Divider Material reference model or deterministic visual conformance evidence is available. |
 
 ### Inputs
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `input.date.field` | Date Field | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `input.text.filled` | Filled Text Field | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `input.text.outlined` | Outlined Text Field | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
+| `input.date.field` | Date Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Date Field Material reference model or deterministic visual conformance evidence is available. |
+| `input.text.filled` | Filled Text Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Filled Text Field Material reference model or deterministic visual conformance evidence is available. |
+| `input.text.outlined` | Outlined Text Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Outlined Text Field Material reference model or deterministic visual conformance evidence is available. |
 
 ### Navigation
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `navigation.rail` | Navigation Rail | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `navigation.tabs` | Tabs | `partial` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
+| `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Rail Material reference model or deterministic visual conformance evidence is available. |
+| `navigation.tabs` | Tabs | `partial` | 2 | 2 | 1 | 1 | 1 | 1 | 1 | 2 | 0 | 2 | Tabs has no gallery example and its complete interaction-state contract is not yet certified. |
 
 ### Progress
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `progress.circular` | Circular Progress Indicator | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `progress.linear` | Linear Progress Indicator | `partial` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
+| `progress.circular` | Circular Progress Indicator | `usable` | 2 | 2 | 2 | 1 | N/A | 1 | N/A | 2 | 1 | 2 | No Circular Progress Material reference model or deterministic visual conformance evidence is available. |
+| `progress.linear` | Linear Progress Indicator | `partial` | 2 | 2 | 1 | 1 | N/A | 1 | 1 | 2 | 1 | 2 | Linear Progress state, animation and RTL behavior are not yet conformantly certified. |
 
 ### Selection
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `selection.checkbox` | Checkbox | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `selection.radio` | Radio Button | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `selection.segmented-button` | Segmented Button | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `selection.switch` | Switch | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
+| `selection.checkbox` | Checkbox | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Checkbox Material reference model or deterministic visual conformance evidence is available. |
+| `selection.radio` | Radio Button | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Radio Button Material reference model or deterministic visual conformance evidence is available. |
+| `selection.segmented-button` | Segmented Button | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Segmented Button Material reference model or deterministic visual conformance evidence is available. |
+| `selection.switch` | Switch | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Switch Material reference model or deterministic visual conformance evidence is available. |
 
 ### Surfaces
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `surface.banner` | Banner | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `surface.bottom-app-bar` | Bottom App Bar | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `surface.bottom-sheet` | Bottom Sheet | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `surface.card` | Card | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `surface.dialog` | Dialog | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `surface.navigation-drawer` | Navigation Drawer | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `surface.top-app-bar` | Top App Bar | `usable` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
-| `surface.snackbar` | Snackbar | `partial` | ? | ? | ? | ? | ? | ? | ? | ? | ? | ? |  |
+| `surface.banner` | Banner | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Banner Material reference model or deterministic visual conformance evidence is available. |
+| `surface.bottom-app-bar` | Bottom App Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Bottom App Bar Material reference model or deterministic visual conformance evidence is available. |
+| `surface.bottom-sheet` | Bottom Sheet | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Bottom Sheet Material reference model or deterministic visual conformance evidence is available. |
+| `surface.card` | Card | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Card Material reference model or deterministic visual conformance evidence is available. |
+| `surface.dialog` | Dialog | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Dialog Material reference model or deterministic visual conformance evidence is available. |
+| `surface.navigation-drawer` | Navigation Drawer | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Drawer Material reference model or deterministic visual conformance evidence is available. |
+| `surface.top-app-bar` | Top App Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Top App Bar Material reference model or deterministic visual conformance evidence is available. |
+| `surface.snackbar` | Snackbar | `partial` | 2 | 2 | 1 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Snackbar lifecycle, action, focus and target-rendering behavior are not yet conformantly certified. |
 
 ## Buttons completion gate
 
@@ -113,16 +113,16 @@ The Buttons family can be considered `complete` only when all eight public varia
 
 | Axis | Count |
 |---|---:|
-| API | 24 |
-| Render | 24 |
-| States | 24 |
-| A11y | 24 |
-| Keys | 24 |
-| HiDPI | 24 |
-| RTL | 24 |
-| Tests | 24 |
-| Example | 24 |
-| Docs | 24 |
+| API | 0 |
+| Render | 0 |
+| States | 0 |
+| A11y | 0 |
+| Keys | 0 |
+| HiDPI | 0 |
+| RTL | 0 |
+| Tests | 0 |
+| Example | 0 |
+| Docs | 0 |
 
 ## Next actions
 
@@ -136,3 +136,27 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Icon Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Outlined Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Text Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Chip | Register focused widget tests and complete the public behavior contract before release scope is enabled. |
+| Carousel | Add Carousel reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
+| Grid List | Add Grid List reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
+| Table | Add Table reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
+| Divider | Add Divider token, RTL and HiDPI reference evidence before raising maturity axes. |
+| Date Field | Add Date Field state, accessibility and visual evidence before raising maturity axes. |
+| Filled Text Field | Add Text Field state, accessibility and visual evidence before raising maturity axes. |
+| Outlined Text Field | Add Text Field state, accessibility and visual evidence before raising maturity axes. |
+| Navigation Rail | Add Navigation Rail reference-model, RTL and visual evidence before raising maturity axes. |
+| Tabs | Add a Tabs gallery page and certify keyboard, route, RTL and visual state coverage. |
+| Circular Progress Indicator | Add progress token, animation, accessibility and visual evidence before raising maturity axes. |
+| Linear Progress Indicator | Certify determinate, indeterminate, RTL and target-rendering behavior before promoting to usable. |
+| Checkbox | Add Checkbox state, keyboard, accessibility, RTL and visual evidence before raising maturity axes. |
+| Radio Button | Add Radio Button state, keyboard, accessibility, RTL and visual evidence before raising maturity axes. |
+| Segmented Button | Add Segmented Button state, keyboard, accessibility, RTL and visual evidence before raising maturity axes. |
+| Switch | Add Switch state, keyboard, accessibility, RTL and visual evidence before raising maturity axes. |
+| Banner | Add Banner state, focus, RTL and visual evidence before raising maturity axes. |
+| Bottom App Bar | Add App Bar state, action, RTL and visual evidence before raising maturity axes. |
+| Bottom Sheet | Add drag, focus, RTL and visual conformance evidence before raising maturity axes. |
+| Card | Add Card variant, interaction, accessibility and visual evidence before raising maturity axes. |
+| Dialog | Add Dialog focus, accessibility, RTL and visual evidence before raising maturity axes. |
+| Navigation Drawer | Add Drawer state, focus, RTL and visual evidence before raising maturity axes. |
+| Top App Bar | Add App Bar state, action, RTL and visual evidence before raising maturity axes. |
+| Snackbar | Certify Snackbar host lifecycle, action states, accessibility and visual rendering before promoting to usable. |

@@ -1,19 +1,19 @@
 # Feature Specification: Public / Private Headers
 
 **Feature Branch**: `012-public-private-headers`  
-**Status**: Prepare / seal  
+**Status**: Install contract sealed / compiled consumer evidence pending
 **Milestone**: 0.5 → 0.6 API Foundation  
 **Created**: 2026-08-15
 
-## Audited current state
+## Pre-seal audited state
 
-The top-level project currently installs the entire `include/` directory. The Core target
-also lists `include/qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h` among its
-headers, so directory-based installation can leak implementation headers.
+Before phase 012.B, the top-level project installed the entire `include/` directory. The
+Core target also listed `include/qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h`
+among its headers, so directory-based installation could leak implementation headers.
 
-The repository already contains optional public-header hygiene/PIMPL/ABI CMake hooks, but
-the public-header hygiene implementation currently globs every widget header recursively,
-which also makes directory naming rather than an explicit API manifest the authority.
+The repository already contained optional public-header hygiene/PIMPL/ABI CMake hooks, but
+the public-header hygiene implementation globbed every widget header recursively, making
+directory naming rather than an explicit API manifest the authority.
 
 ## Requirements
 

@@ -85,7 +85,7 @@ void tst_ThemeSerializer::roundTrip_preservesNewTokenGroups()
     buttonOverride.shapes.insert(ShapeRole::Full, 999);
     buttonOverride.density.insert(DensityRole::Compact, -4);
     buttonOverride.iconSizes.insert(IconSizeRole::Medium, 20);
-    theme.componentOverrides().setOverride(QStringLiteral("Button"), buttonOverride);
+    theme.componentOverrides().setOverride(ComponentId::Button, buttonOverride);
 
     bool ok = false;
     QString error;
@@ -95,9 +95,9 @@ void tst_ThemeSerializer::roundTrip_preservesNewTokenGroups()
     QVERIFY2(ok, qPrintable(error));
     QCOMPARE(restored.density().value(DensityRole::Compact), theme.density().value(DensityRole::Compact));
     QCOMPARE(restored.iconSizes().size(IconSizeRole::Medium), theme.iconSizes().size(IconSizeRole::Medium));
-    QVERIFY(restored.componentOverrides().contains(QStringLiteral("Button")));
+    QVERIFY(restored.componentOverrides().contains(ComponentId::Button));
 
-    const ComponentTokenOverride restoredOverride = restored.componentOverrides().overrideFor(QStringLiteral("Button"));
+    const ComponentTokenOverride restoredOverride = restored.componentOverrides().overrideFor(ComponentId::Button);
     QCOMPARE(restoredOverride.colors.value(ColorRole::Primary), QColor(QStringLiteral("#112233")));
     QCOMPARE(restoredOverride.shapes.value(ShapeRole::Full), 999);
     QCOMPARE(restoredOverride.density.value(DensityRole::Compact), -4);

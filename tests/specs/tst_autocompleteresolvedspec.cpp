@@ -66,7 +66,7 @@ void tst_AutocompleteResolvedSpec::resolvesComponentOverrides()
     tokens.stateLayer.pressOpacity = 0.22;
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("autocomplete"),
+        ComponentId::AutoComplete,
         tokens);
 
     const AutocompleteSpec spec =

@@ -12,4 +12,6 @@ Expressive support must not silently overwrite classic behavior.
 The decision is binding on new specs and migration plans. Breaking cleanup is acceptable before 1.0 when required to reach the target architecture.
 
 ## Verification
-Reference manifests and feature switches/capabilities remain separate.
+The Classic and Expressive entries in
+`references/material3/reference-catalog.json` use distinct IDs, directories and
+artifact versions. Repository health validates that separation.

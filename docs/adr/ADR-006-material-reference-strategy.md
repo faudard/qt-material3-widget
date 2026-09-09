@@ -12,4 +12,6 @@ Conformance is structural + visual + motion against a named reference version. Q
 The decision is binding on new specs and migration plans. Breaking cleanup is acceptable before 1.0 when required to reach the target architecture.
 
 ## Verification
-Release reports record profile/reference/version.
+`references/material3/reference-catalog.json` records profile/reference/version.
+`tools/check_material_reference_model.py` rejects uncatalogued, unpinned or
+partially evidenced conformance data.

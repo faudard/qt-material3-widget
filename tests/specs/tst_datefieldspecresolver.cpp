@@ -80,7 +80,7 @@ void tst_DateFieldSpecResolver::resolvesComponentOverrides()
         QStringLiteral("#ff0000"));
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("dateField"),
+        ComponentId::DateField,
         tokens);
 
     const DateFieldSpec spec =

@@ -2,6 +2,15 @@
 
 Slice 9 adds a visual regression harness for the theming subsystem and Theme Studio.
 
+This is the legacy QtMaterial3 self-regression harness. Its opt-in comparison,
+missing-golden skip and environment-controlled tolerance are not Material
+conformance evidence and are not used by the Material gate. The separate
+[Material visual comparator](../conformance/visual-comparator.md) starts from a
+closed, non-overridable contract and remains `contract-only` until deterministic
+runtime capture has produced and reviewed a complete target set. Its 016.B
+runner emits actual artifacts only, and its 016.C1 comparator reads only an
+explicitly reviewed target set; neither can update references.
+
 ## Goals
 
 The harness protects the resolved visual contract across:
@@ -78,3 +87,6 @@ Golden changes should be reviewed when one of these changes intentionally occurs
 5. accessibility/focus-ring behavior changed
 
 Do not update goldens to hide accidental rendering drift.
+
+These update and tolerance controls apply only to this legacy harness. They
+cannot alter or satisfy a Material visual-contract case.

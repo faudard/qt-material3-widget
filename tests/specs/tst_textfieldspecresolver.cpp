@@ -84,7 +84,7 @@ void tst_TextFieldSpecResolver::isolatesVariantOverrides()
         QStringLiteral("cornerRadius"),
         11.0);
     theme.componentOverrides().setOverride(
-        QStringLiteral("textField.outlined"),
+        ComponentId::TextFieldOutlined,
         outlined);
 
     TextFieldSpecResolver resolver;
@@ -111,7 +111,7 @@ void tst_TextFieldSpecResolver::preservesGenericOverrides()
         QStringLiteral("supportingTopSpacing"),
         9);
     theme.componentOverrides().setOverride(
-        QStringLiteral("textField"),
+        ComponentId::TextField,
         generic);
 
     TextFieldSpecResolver resolver;

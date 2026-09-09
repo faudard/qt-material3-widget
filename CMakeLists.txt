@@ -14,6 +14,7 @@ set(QTMATERIAL3_IS_TOP_LEVEL ${PROJECT_IS_TOP_LEVEL})
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3HeaderSurface.cmake")
 
 if(QTMATERIAL3_IS_TOP_LEVEL)
     include(CTest)
@@ -96,10 +97,7 @@ if(QTMATERIAL3_INSTALL)
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )
 
-    install(
-        DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    )
+    qtmaterial3_install_public_headers()
 
     install(
         EXPORT QtMaterial3WidgetsTargets

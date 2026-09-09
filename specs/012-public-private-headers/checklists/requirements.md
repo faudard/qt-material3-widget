@@ -10,6 +10,6 @@
 - [x] Self-contained compilation uses explicit public manifest.
 - [x] Manifest drift fails CI.
 - [x] Public/private distinction is not confused with ABI freeze.
-- [ ] Actual repository manifest reviewed.
-- [ ] No real public→private include leak remains.
+- [x] Actual repository manifest reviewed.
+- [x] No real public→private include leak remains.
 - [ ] Qt5/Qt6 installed consumers are green.

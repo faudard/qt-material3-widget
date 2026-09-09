@@ -99,6 +99,21 @@ class ThemeTextMigrationTests(unittest.TestCase):
         self.assertIn("ComponentId::Selection", converted)
         self.assertIn("ComponentId::Checkbox", converted)
 
+    def test_component_override_api_uses_typed_id(self):
+        source = '''theme.componentOverrides().setOverride(
+            QStringLiteral("chip.filter"), tokens);'''
+        converted, unknown = migrate.convert_text(source)
+        self.assertEqual([], unknown)
+        self.assertIn("setOverride(\n            ComponentId::FilterChip", converted)
+        self.assertNotIn('QStringLiteral("chip.filter")', converted)
+
+    def test_unknown_component_override_api_fails_closed(self):
+        source = '''theme.componentOverrides().setOverride(
+            QStringLiteral("plugin.magic"), tokens);'''
+        converted, unknown = migrate.convert_text(source)
+        self.assertEqual(["plugin.magic"], unknown)
+        self.assertEqual(source, converted)
+
 
 
 if __name__ == "__main__":

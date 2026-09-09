@@ -85,6 +85,13 @@ def execute(name: str, scenario: dict[str, Any], *, build_root: Path,
         build(producer, config)
         install(producer, prefix, config)
 
+        run([
+            sys.executable,
+            str(ROOT / "tools" / "check_installed_header_surface.py"),
+            "--root", str(ROOT),
+            "--prefix", str(prefix),
+        ])
+
         src = ROOT / "tests" / "consumers" / (
             "installed" if kind == "install" else "invalid-component"
         )

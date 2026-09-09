@@ -25,8 +25,9 @@ Each tracked component owns:
 - `testTarget`;
 - `galleryRoute`;
 - `docsPath`;
-- release/reference metadata;
-- maturity evidence when evaluated.
+- explicit `maturityPolicy`, `releaseScope` and `referenceCandidate` metadata;
+- all ten maturity-axis values;
+- a review date, gaps, next actions and non-empty evidence for every axis.
 
 ## Generated outputs
 
@@ -47,6 +48,23 @@ and check drift with:
 python tools/check_component_registry.py --check-generated
 ```
 
+Strict release/CI validation is:
+
+```text
+python tools/check_component_registry.py --check-generated --strict
+```
+
+There is no unevaluated-axis or implicit-metadata migration mode left. Missing
+metadata, an absent axis, empty evidence, a future review date, a declared
+maturity inconsistent with its evaluated scores, or a non-complete component
+without an explicit gap fails governance. The generated maturity matrix must
+report zero unevaluated axes.
+
+Scores below `complete` remain deliberately conservative. A score of `1` means
+only basic or incomplete evidence; `2` means usable simple-case evidence.
+Neither is a Material-conformance claim. Material reference, renderer and
+visual evidence is tracked independently by the conformance harness.
+
 ## Complete maturity policy
 
 A component declared/effectively `complete` must:
@@ -57,6 +75,10 @@ A component declared/effectively `complete` must:
 - carry non-empty evidence for each axis;
 - have a valid ISO review date;
 - have a test target, public header, documentation and Gallery route.
+
+Every non-complete component must keep at least one concrete gap and one next
+action. Its declared maturity must equal the maturity derived from the recorded
+axis values.
 
 ## Registry scope
 

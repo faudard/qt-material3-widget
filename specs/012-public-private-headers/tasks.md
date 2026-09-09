@@ -10,11 +10,11 @@
 - [x] T008 consumer-matrix installed-prefix integration.
 - [x] T009 repository-health integration.
 - [x] T010 tool regression tests.
-- [ ] T011 prepare actual checkout and generate initial manifest.
-- [ ] T012 review every private classification.
-- [ ] T013 fix any public header that includes private implementation.
-- [ ] T014 source-only contract == green.
-- [ ] T015 seal explicit install contract.
+- [x] T011 prepare actual checkout and generate initial manifest.
+- [x] T012 review every private classification.
+- [x] T013 audit/fix public headers that include private implementation (none found).
+- [x] T014 source-only contract == green.
+- [x] T015 seal explicit install contract.
 - [ ] T016 build/install shared Qt6 and validate exact prefix surface.
 - [ ] T017 build/install static Qt6.
 - [ ] T018 exact Qt5.14.2 install/consumer validation.

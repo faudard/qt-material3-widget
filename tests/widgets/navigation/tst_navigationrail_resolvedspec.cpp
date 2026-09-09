@@ -31,7 +31,7 @@ followsThemeContext()
         QStringLiteral("railWidth"),
         94);
     theme.componentOverrides().setOverride(
-        QStringLiteral("navigationRail"),
+        ComponentId::NavigationRail,
         tokens);
 
     ThemeContext context(theme);

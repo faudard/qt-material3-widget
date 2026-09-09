@@ -1,6 +1,20 @@
 # Public / Private Header Contract
 
-QtMaterial3's installed header surface is explicit and version-controlled.
+QtMaterial3's header surface is explicit and version-controlled.
+
+## Rollout status
+
+Phase 012.B seals the source and CMake package contracts:
+
+- all 167 headers are classified by the manifest (166 public, 1 private);
+- public headers are checked for private and source-tree implementation includes;
+- only the 166 public entries are installed, preserving their relative paths;
+- one-header-per-translation-unit tests are generated from the public manifest;
+- installed and invalid-component consumer scenarios compare the installed prefix exactly;
+- the full source/install contract runs in repository health.
+
+Real Qt5/Qt6 shared/static install and consumer executions remain required evidence. They
+cannot be replaced by the static contract and are tracked separately in the phase tasks.
 
 ## Source-of-truth manifest
 

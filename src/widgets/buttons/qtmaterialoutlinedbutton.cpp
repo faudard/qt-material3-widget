@@ -55,7 +55,7 @@ void QtMaterialOutlinedButtonPrivate::ensureLayoutResolved(const QtMaterialOutli
     const ButtonSpec& spec = button.currentButtonSpec();
     const QFont resolvedFont = ButtonRenderHelper::resolvedLabelFont(button.font(), spec);
 
-    const qreal strokeInset = qMax<qreal>(resolvedOutlineStrokeWidth(button), 1.0);
+    const qreal strokeInset = resolvedOutlineStrokeWidth(button);
     layout.visualRect = ButtonRenderHelper::containerRect(button.rect(), spec)
                             .adjusted(strokeInset, strokeInset, -strokeInset, -strokeInset)
                             .toAlignedRect();
@@ -77,8 +77,8 @@ void QtMaterialOutlinedButtonPrivate::ensureLayoutResolved(const QtMaterialOutli
 
 qreal QtMaterialOutlinedButtonPrivate::resolvedOutlineStrokeWidth(const QtMaterialOutlinedButton& button) const
 {
-    const qreal dpr = qMax<qreal>(button.devicePixelRatioF(), 1.0);
-    return qMax<qreal>(1.0 / dpr, 0.5);
+    button.ensureSpecResolved();
+    return qMax<qreal>(button.currentButtonSpec().outlineWidth, 0.0);
 }
 
 QColor QtMaterialOutlinedButtonPrivate::resolvedOutlineColor(const QtMaterialOutlinedButton& button) const
@@ -162,8 +162,10 @@ void QtMaterialOutlinedButton::paintEvent(QPaintEvent*)
             layerOpacity);
     }
 
-    setRippleClipPath(d->layout.containerPath);
-    paintRipple(&painter, spec.stateLayerColor);
+    if (isEnabled()) {
+        setRippleClipPath(d->layout.containerPath);
+        paintRipple(&painter, spec.stateLayerColor);
+    }
 
     if (d->shouldPaintOutline(*this)) {
         QPen outlinePen(d->resolvedOutlineColor(*this));
@@ -185,23 +187,26 @@ void QtMaterialOutlinedButton::paintEvent(QPaintEvent*)
     contentLayout.elidedText = d->layout.elidedText;
     contentLayout.hasIcon = d->layout.hasIcon;
 
-    const QColor contentColor = isEnabled() ? spec.labelColor : spec.disabledLabelColor;
+    const QColor labelColor =
+        isEnabled() ? spec.labelColor : spec.disabledLabelColor;
+    const QColor iconColor =
+        isEnabled() ? spec.iconColor : spec.disabledLabelColor;
     ButtonRenderHelper::paintContentLayout(
         &painter,
         this,
         spec,
         contentLayout,
-        contentColor,
-        contentColor,
+        labelColor,
+        iconColor,
         resolvedFont);
 
-    if (interactionState().isFocused()) {
+    if (isEnabled() && interactionState().isFocused()) {
         QtMaterialFocusIndicator::paintRectFocusRing(
             &painter,
             d->layout.visualRect,
             spec.focusRingColor,
             d->layout.cornerRadius,
-            2.0);
+            spec.focusRingWidth);
     }
 }
 

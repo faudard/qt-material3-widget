@@ -55,7 +55,8 @@ Examples:
         "horizontalPadding": 28,
         "iconSpacing": 10,
         "shapeRole": "Full",
-        "elevationRole": "Level1",
+        "elevationRole": "Level0",
+        "hoverElevationRole": "Level1",
         "motionToken": "Short4"
       }
     }
@@ -63,4 +64,15 @@ Examples:
 }
 ```
 
-The override layer intentionally lives in `SpecFactory`, not inside individual widget paint paths. Widgets continue to render from resolved specs.
+Buttons resolve `elevationRole` and `hoverElevationRole` into two concrete
+`ElevationStyle` values before paint. Filled and Filled Tonal use Level0 →
+Level1; Elevated uses Level1 → Level2. Component elevation-map overrides
+therefore remain exact at both endpoints instead of being approximated from one
+style. Filled Tonal also preserves its distinct disabled semantics when colors
+are overridden: `OnSurface` at 12% for the container and 38% for content.
+Outlined preserves `OnSurfaceVariant` content and `OutlineVariant` borders,
+including the disabled 38%/10% alpha split. Its `outlineWidth` custom scalar is
+resolved into `ButtonSpec` before layout or paint.
+
+The override layer intentionally lives in dedicated spec resolution, not inside
+individual widget paint paths. Widgets continue to render from resolved specs.

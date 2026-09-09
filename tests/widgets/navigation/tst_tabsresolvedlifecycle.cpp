@@ -51,7 +51,7 @@ Theme tabsTestTheme()
     tokens.custom.insert(
         QStringLiteral("badgeEndInset"), 12);
     theme.componentOverrides().setOverride(
-        QStringLiteral("tabs"),
+        ComponentId::Tabs,
         tokens);
 
     return theme;

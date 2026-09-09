@@ -139,6 +139,15 @@ LIST_RE = re.compile(
     re.MULTILINE,
 )
 LITERAL_RE = re.compile(r'QStringLiteral\s*\(\s*"([^"]+)"\s*\)')
+COMPONENT_OVERRIDE_CALL_RE = re.compile(
+    r"(?P<prefix>\bcomponentOverrides\s*\(\s*\)\s*\.\s*"
+    r"(?:setOverride|contains|overrideFor|removeOverride)\s*\(\s*)"
+    r"QStringLiteral\s*\(\s*\"(?P<name>[^\"]+)\"\s*\)",
+    re.MULTILINE,
+)
+
+SOURCE_ROOTS = ("include", "src", "tests", "examples")
+SOURCE_SUFFIXES = {".h", ".hh", ".hpp", ".cpp", ".cc", ".cxx"}
 
 
 def convert_text(text: str) -> tuple[str, list[str]]:
@@ -161,7 +170,21 @@ def convert_text(text: str) -> tuple[str, list[str]]:
             return match.group(0)
         return "QVector<ComponentId>{ " + ", ".join(enums) + " }"
 
-    return LIST_RE.sub(replace, text), unknown
+    converted = LIST_RE.sub(replace, text)
+
+    def replace_component_override_call(match: re.Match[str]) -> str:
+        name = match.group("name")
+        enum = ALIASES.get(name)
+        if enum is None or enum in SKIP_ENUM:
+            unknown.append(name)
+            return match.group(0)
+        return match.group("prefix") + f"ComponentId::{enum}"
+
+    converted = COMPONENT_OVERRIDE_CALL_RE.sub(
+        replace_component_override_call,
+        converted,
+    )
+    return converted, unknown
 
 
 def migrate_file(path: Path, apply: bool) -> tuple[bool, list[str]]:
@@ -193,7 +216,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     root = args.root.resolve()
     failures = []
     changed = []
-    for path in sorted((root/"src/specs").glob("*specresolver.cpp")):
+    source_files = {
+        path
+        for base_name in SOURCE_ROOTS
+        for path in (root / base_name).rglob("*")
+        if path.is_file() and path.suffix.lower() in SOURCE_SUFFIXES
+    }
+    for path in sorted(source_files):
         did_change, unknown = migrate_file(path, args.apply)
         if unknown:
             failures.append((path, unknown))

@@ -66,7 +66,7 @@ componentMetricsReachWidget()
         QStringLiteral("topPadding"),
         15);
     theme.componentOverrides().setOverride(
-        QStringLiteral("navigationRail"),
+        ComponentId::NavigationRail,
         tokens);
 
     ThemeContext context(theme);

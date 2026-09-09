@@ -72,6 +72,17 @@ architecture/07-advanced-components
 
 ```{toctree}
 :maxdepth: 2
+:caption: Conformance
+
+conformance/material-reference-model
+conformance/structural-conformance
+conformance/renderer-conformance
+conformance/visual-comparator
+conformance/material-conformance-report
+```
+
+```{toctree}
+:maxdepth: 2
 :caption: Development
 
 development/coding-rules

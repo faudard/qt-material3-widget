@@ -121,7 +121,7 @@ componentMetricsDriveSizeHint()
         12);
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("carousel"),
+        ComponentId::Carousel,
         tokens);
 
     ThemeContext context(theme);

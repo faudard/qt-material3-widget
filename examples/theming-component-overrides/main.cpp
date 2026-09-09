@@ -25,18 +25,18 @@ int main(int argc, char** argv)
     buttonFamily.density.insert(DensityRole::Default, 2);
     buttonFamily.iconSizes.insert(IconSizeRole::Medium, 22);
     buttonFamily.custom.insert(QStringLiteral("minHeight"), 44);
-    theme.componentOverrides().setOverride(QStringLiteral("button"), buttonFamily);
+    theme.componentOverrides().setOverride(ComponentId::Button, buttonFamily);
 
     ComponentTokenOverride filledButton;
     filledButton.colors.insert(ColorRole::Primary, QColor(QStringLiteral("#004A77")));
     filledButton.colors.insert(ColorRole::OnPrimary, QColor(QStringLiteral("#FFFFFF")));
     filledButton.custom.insert(QStringLiteral("cornerRole"), QStringLiteral("large"));
-    theme.componentOverrides().setOverride(QStringLiteral("button.filled"), filledButton);
+    theme.componentOverrides().setOverride(ComponentId::ButtonFilled, filledButton);
 
     ComponentTokenOverride textField;
     textField.density.insert(DensityRole::Compact, -3);
     textField.custom.insert(QStringLiteral("supportingTextVisible"), true);
-    theme.componentOverrides().setOverride(QStringLiteral("textField.outlined"), textField);
+    theme.componentOverrides().setOverride(ComponentId::TextFieldOutlined, textField);
 
     QTextStream out(stdout);
     out << "Theme with component-local overrides:" << Qt::endl;

@@ -81,7 +81,7 @@ void tst_AutocompletePopupSpecResolver::resolvesComponentOverrides()
         0.18);
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("autocompletePopup"),
+        ComponentId::AutoCompletePopup,
         tokens);
 
     const AutocompletePopupSpec spec =

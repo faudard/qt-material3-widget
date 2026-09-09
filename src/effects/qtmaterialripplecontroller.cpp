@@ -4,6 +4,7 @@
 #include <QEasingCurve>
 #include <QWidget>
 #include <QtGlobal>
+#include <algorithm>
 #include <cmath>
 
 namespace QtMaterial {
@@ -117,8 +118,9 @@ void QtMaterialRippleController::paint(QPainter* painter, const QColor& color)
     painter->setPen(Qt::NoPen);
 
     for (const Ripple& ripple : m_ripples) {
-        const qreal rawProgress =
-            qreal(now - ripple.startedMs) / qreal(duration);
+        const qreal rawProgress = ripple.fixedProgress >= 0.0
+            ? ripple.fixedProgress
+            : qreal(now - ripple.startedMs) / qreal(duration);
         const qreal t = qBound<qreal>(0.0, rawProgress, 1.0);
 
         const qreal radius = ripple.endRadius * radiusCurve.valueForProgress(t);
@@ -147,13 +149,20 @@ void QtMaterialRippleController::advance()
     const int duration = qMax(1, m_durationMs > 0 ? m_durationMs : kFallbackDurationMs);
 
     for (int i = m_ripples.size() - 1; i >= 0; --i) {
+        if (m_ripples.at(i).fixedProgress >= 0.0) {
+            continue;
+        }
         const qint64 elapsed = now - m_ripples.at(i).startedMs;
         if (elapsed >= duration) {
             m_ripples.removeAt(i);
         }
     }
 
-    if (m_ripples.isEmpty() && m_timer) {
+    const bool hasAnimatedRipple = std::any_of(
+        m_ripples.cbegin(),
+        m_ripples.cend(),
+        [](const Ripple& ripple) { return ripple.fixedProgress < 0.0; });
+    if (!hasAnimatedRipple && m_timer) {
         m_timer->stop();
     }
 

@@ -1,7 +1,7 @@
 # Feature Specification: Architecture Zero Debt
 
 **Feature Branch**: `011-architecture-zero-debt`  
-**Status**: Convergence gate  
+**Status**: Static convergence complete / Qt build gates pending
 **Milestone**: 0.5 Architecture Foundation  
 **Created**: 2026-08-15
 

@@ -41,6 +41,8 @@ signals:
     void finished();
 
 private:
+    // Implemented only by the non-installed deterministic visual harness.
+    friend class QtMaterialTransitionControllerCaptureAccess;
 
     qreal m_progress = 0.0;
     int m_durationMs = 180;

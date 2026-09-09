@@ -81,13 +81,13 @@ void tst_SelectionResolvedSpec::resolvesComponentOverrides()
         0.11);
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("checkbox"),
+        ComponentId::Checkbox,
         tokens);
     theme.componentOverrides().setOverride(
-        QStringLiteral("radioButton"),
+        ComponentId::RadioButton,
         tokens);
     theme.componentOverrides().setOverride(
-        QStringLiteral("switch"),
+        ComponentId::Switch,
         tokens);
 
     SelectionSpecResolver resolver;

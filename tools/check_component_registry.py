@@ -27,6 +27,11 @@ REGISTRY_PATH = ROOT / "docs" / "components" / "component-registry.json"
 SCHEMA_PATH = ROOT / "docs" / "components" / "component-registry.schema.json"
 
 ID_RE = re.compile(r"^[a-z0-9]+(?:[.-][a-z0-9]+)*$")
+COMPONENT_FIELDS = {
+    "id", "name", "family", "maturity", "maturityPolicy", "publicHeader",
+    "specType", "widgetType", "testTarget", "galleryRoute", "docsPath",
+    "releaseScope", "referenceCandidate", "maturityAxes",
+}
 
 
 def load_generator():
@@ -55,10 +60,25 @@ def validate_schema_contract(path: Path = SCHEMA_PATH) -> list[str]:
     if schema.get("type") != "array":
         errors.append("component registry v1 schema must describe an array")
     required = set(schema.get("items", {}).get("required", []))
-    expected = {"id","name","family","maturity","publicHeader","specType","widgetType","galleryRoute","docsPath"}
-    missing = sorted(expected - required)
+    missing = sorted(COMPONENT_FIELDS - required)
     if missing:
         errors.append("schema missing required fields: " + ", ".join(missing))
+    item_schema = schema.get("items", {})
+    if item_schema.get("additionalProperties") is not False:
+        errors.append("component registry items must reject additional properties")
+    axes_schema = item_schema.get("properties", {}).get("maturityAxes", {})
+    required_axes = set(axes_schema.get("required", []))
+    expected_axes = {
+        "api", "rendering", "states", "accessibility", "keyboard",
+        "hidpi", "rtl", "tests", "example", "docs", "lastReviewed",
+        "gaps", "nextActions", "evidence",
+    }
+    missing_axes = sorted(expected_axes - required_axes)
+    if missing_axes:
+        errors.append(
+            "maturityAxes schema missing required fields: "
+            + ", ".join(missing_axes)
+        )
     return errors
 
 
@@ -83,9 +103,12 @@ def _valid_iso_date(value: Any) -> bool:
 def validate_governance(components: list[dict[str, Any]], *, axes: Sequence[str]) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
+    generator = load_generator()
 
     for item in components:
         cid = str(item.get("id", ""))
+        for field in sorted(set(item) - COMPONENT_FIELDS):
+            errors.append(f"{cid}: unknown component registry field `{field}`")
         if cid and not ID_RE.fullmatch(cid):
             errors.append(f"{cid}: id must match {ID_RE.pattern}")
 
@@ -93,23 +116,86 @@ def validate_governance(components: list[dict[str, Any]], *, axes: Sequence[str]
         if isinstance(header, str) and header and not header.startswith("qtmaterial/widgets/"):
             errors.append(f"{cid}: publicHeader must live under qtmaterial/widgets/")
 
-        if "releaseScope" not in item:
-            warnings.append(f"{cid}: releaseScope is implicit; make it explicit when this entry is next reviewed")
-        if "referenceCandidate" not in item:
-            warnings.append(f"{cid}: referenceCandidate is implicit; make it explicit when this entry is next reviewed")
+        if "maturityPolicy" not in item:
+            errors.append(f"{cid}: maturityPolicy must be explicit")
+        if not isinstance(item.get("releaseScope"), bool):
+            errors.append(f"{cid}: releaseScope must be an explicit boolean")
+        if not isinstance(item.get("referenceCandidate"), bool):
+            errors.append(f"{cid}: referenceCandidate must be an explicit boolean")
 
         effective = str(item.get("maturity", "planned"))
         policy = item.get("maturityPolicy", "manual")
         maturity_axes = item.get("maturityAxes")
-        if policy == "derived" and isinstance(maturity_axes, dict):
-            # The existing generator is authoritative for the derived threshold.
-            pass
+        if not isinstance(maturity_axes, dict):
+            errors.append(f"{cid}: maturityAxes must be explicit")
+            continue
+
+        for axis in axes:
+            if axis not in maturity_axes or maturity_axes.get(axis) is None:
+                errors.append(f"{cid}: maturityAxes.{axis} must be evaluated")
+
+        declared = str(item.get("maturity", "planned"))
+        derived = generator.derived_maturity(maturity_axes)
+        if declared != derived:
+            errors.append(
+                f"{cid}: declared maturity `{declared}` differs from "
+                f"evaluated maturity `{derived}`"
+            )
+
+        reviewed = maturity_axes.get("lastReviewed")
+        if not _valid_iso_date(reviewed):
+            errors.append(f"{cid}: maturityAxes.lastReviewed must be an ISO date")
+        elif date.fromisoformat(str(reviewed)) > date.today():
+            errors.append(f"{cid}: maturityAxes.lastReviewed cannot be in the future")
+
+        gaps = maturity_axes.get("gaps")
+        if not isinstance(gaps, list):
+            errors.append(f"{cid}: maturityAxes.gaps must be an array")
+        elif any(not isinstance(value, str) or not value.strip() for value in gaps):
+            errors.append(f"{cid}: maturityAxes.gaps must contain non-empty statements")
+        elif declared == "complete" and gaps:
+            errors.append(f"{cid}: complete component must have no maturity gaps")
+        elif declared != "complete" and not gaps:
+            errors.append(f"{cid}: non-complete component must declare a maturity gap")
+
+        actions = maturity_axes.get("nextActions")
+        if (
+            not isinstance(actions, list)
+            or not actions
+            or any(not isinstance(value, str) or not value.strip() for value in actions)
+        ):
+            errors.append(f"{cid}: maturityAxes.nextActions must be non-empty")
+
+        evidence = maturity_axes.get("evidence")
+        if not isinstance(evidence, dict):
+            errors.append(f"{cid}: maturityAxes.evidence must be an object")
+        else:
+            unknown_evidence = sorted(set(evidence) - set(axes) - {"notes"})
+            for field in unknown_evidence:
+                errors.append(f"{cid}: unknown maturityAxes.evidence field `{field}`")
+            for axis in axes:
+                values = evidence.get(axis)
+                if (
+                    not isinstance(values, list)
+                    or not values
+                    or any(not isinstance(value, str) or not value.strip() for value in values)
+                ):
+                    errors.append(
+                        f"{cid}: maturityAxes.evidence.{axis} must contain "
+                        "non-empty statements"
+                    )
+            notes = evidence.get("notes")
+            if notes is not None and (
+                not isinstance(notes, list)
+                or not notes
+                or any(not isinstance(value, str) or not value.strip() for value in notes)
+            ):
+                errors.append(
+                    f"{cid}: maturityAxes.evidence.notes must contain "
+                    "non-empty statements"
+                )
 
         if effective == "complete":
-            if not isinstance(maturity_axes, dict):
-                errors.append(f"{cid}: complete component must declare maturityAxes")
-                continue
-
             for axis in axes:
                 if axis not in maturity_axes:
                     errors.append(f"{cid}: complete component missing maturityAxes.{axis}")
@@ -120,21 +206,8 @@ def validate_governance(components: list[dict[str, Any]], *, axes: Sequence[str]
                         f"{cid}: complete component maturityAxes.{axis} must be 4 or N/A, got {value!r}"
                     )
 
-            gaps = maturity_axes.get("gaps")
-            if gaps not in ([], None):
-                errors.append(f"{cid}: complete component must have no maturity gaps")
-
-            if not _valid_iso_date(maturity_axes.get("lastReviewed")):
-                errors.append(f"{cid}: complete component requires ISO maturityAxes.lastReviewed")
-
-            evidence = maturity_axes.get("evidence")
             if not isinstance(evidence, dict):
                 errors.append(f"{cid}: complete component requires maturityAxes.evidence")
-            else:
-                for axis in axes:
-                    values = evidence.get(axis)
-                    if not isinstance(values, list) or not values:
-                        errors.append(f"{cid}: complete component requires non-empty evidence.{axis}")
 
     uniqueness_fields = ["publicHeader", "widgetType", "galleryRoute"]
     for field in uniqueness_fields:

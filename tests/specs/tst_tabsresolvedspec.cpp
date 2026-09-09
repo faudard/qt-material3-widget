@@ -69,7 +69,7 @@ void tst_TabsResolvedSpec::componentOverridesWin()
         QStringLiteral("#123456"));
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("tabs"),
+        ComponentId::Tabs,
         tokens);
 
     const TabsSpec spec =
@@ -109,7 +109,7 @@ void tst_TabsResolvedSpec::clampsRenderingMetrics()
     tokens.custom.insert(
         QStringLiteral("animationDuration"), -2);
     theme.componentOverrides().setOverride(
-        QStringLiteral("tabs"),
+        ComponentId::Tabs,
         tokens);
 
     const TabsSpec spec =

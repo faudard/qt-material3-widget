@@ -61,7 +61,7 @@ resolvesOverrides()
         0.18);
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("navigationRail"),
+        ComponentId::NavigationRail,
         tokens);
 
     const NavigationRailSpec spec =

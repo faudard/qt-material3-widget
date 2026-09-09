@@ -46,6 +46,15 @@ def check_quality_workflow_structure(path: Path = QUALITY_WORKFLOW) -> CheckResu
                   for l in lines[jobs_index+1:])
     if not has_job:
         return CheckResult("quality-workflow", False, "jobs mapping is empty")
+    strict_health = re.compile(
+        r"\bpython(?:3)?\s+tools/repo_health\.py\s+--strict(?:\s|$)"
+    )
+    if not any(strict_health.search(line) for line in lines):
+        return CheckResult(
+            "quality-workflow",
+            False,
+            "repository health must run explicitly in strict mode",
+        )
     return CheckResult("quality-workflow", True)
 
 def run_command_check(name: str, command: Sequence[str], cwd: Path = ROOT) -> CheckResult:
@@ -59,32 +68,57 @@ def run_command_check(name: str, command: Sequence[str], cwd: Path = ROOT) -> Ch
     return CheckResult(name, completed.returncode == 0,
                        f"exit={completed.returncode}")
 
+def health_commands(python: str, strict: bool = False) -> list[tuple[str, list[str]]]:
+    return [
+        ("architecture-zero-debt",
+         [python, str(ROOT/"tools/check_architecture_zero_debt.py"),
+          "--root", str(ROOT)]),
+        ("public-private-headers",
+         [python, str(ROOT/"tools/check_public_private_headers.py"),
+          "--root", str(ROOT)]),
+        ("component-registry",
+         [python, str(ROOT/"tools/check_component_registry.py"), "--check-generated"] +
+         (["--strict"] if strict else [])),
+        ("material-reference-model",
+         [python, str(ROOT/"tools/check_material_reference_model.py"),
+          "--root", str(ROOT)]),
+        ("material-structural-conformance",
+         [python, str(ROOT/"tools/check_material_structural_conformance.py"),
+          "--root", str(ROOT)]),
+        ("material-renderer-conformance",
+         [python, str(ROOT/"tools/check_material_renderer_conformance.py"),
+          "--root", str(ROOT)]),
+        ("material-visual-contract",
+         [python, str(ROOT/"tools/check_material_visual_contract.py"),
+          "--root", str(ROOT)]),
+        ("material-conformance-harness",
+         [python, str(ROOT/"tools/check_material_conformance_harness.py"),
+          "--root", str(ROOT)]),
+        ("build-consumer-matrix-contract",
+         [python, str(ROOT/"tools/check_build_consumer_matrix.py")]),
+        ("qt5-qt6-compatibility-contract",
+         [python, str(ROOT/"tools/check_qt_compatibility_contract.py")]),
+        ("no-legacy-specfactory",
+         [python, str(ROOT/"tools/check_no_legacy_specfactory.py")]),
+        ("theme-target-decomposition",
+         [python, str(ROOT/"tools/check_theme_target_decomposition.py")]),
+        ("theme-model",
+         [python, str(ROOT/"tools/check_theme_model.py")]),
+        ("theme-io",
+         [python, str(ROOT/"tools/check_theme_io.py")]),
+        ("theme-runtime",
+         [python, str(ROOT/"tools/check_theme_runtime.py")]),
+        ("typed-token-system",
+         [python, str(ROOT/"tools/check_typed_token_system.py")]),
+    ]
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--strict", action="store_true")
     args = parser.parse_args(argv)
 
     py = sys.executable
-    commands = [
-        ("architecture-contracts",
-         [py, str(ROOT/"tools/check_architecture_contracts.py")] +
-         (["--strict"] if args.strict else [])),
-        ("component-registry",
-         [py, str(ROOT/"tools/check_component_registry.py"), "--check-generated"] +
-         (["--strict"] if args.strict else [])),
-        ("build-consumer-matrix-contract",
-         [py, str(ROOT/"tools/check_build_consumer_matrix.py")]),
-        ("qt5-qt6-compatibility-contract",
-         [py, str(ROOT/"tools/check_qt_compatibility_contract.py")]),
-        ("no-legacy-specfactory",
-         [py, str(ROOT/"tools/check_no_legacy_specfactory.py")]),
-        ("theme-target-decomposition",
-         [py, str(ROOT/"tools/check_theme_target_decomposition.py")]),
-        ("theme-model",
-         [py, str(ROOT/"tools/check_theme_model.py")]),
-        ("theme-io",
-         [py, str(ROOT/"tools/check_theme_io.py")]),
-    ]
+    commands = health_commands(py, args.strict)
     results = [check_quality_workflow_structure()]
     results.extend(run_command_check(n,c) for n,c in commands)
     for r in results:

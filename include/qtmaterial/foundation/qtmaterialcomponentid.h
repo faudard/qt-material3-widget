@@ -56,6 +56,24 @@ enum class ComponentId : std::uint32_t {
     NavigationRail = 0x00001500u,
     Surface = 0x00001600u,
 
+    Data = 0x00001700u,
+    Table = 0x00001701u,
+    GridList = 0x00001702u,
+    Carousel = 0x00001703u,
+    DatePicker = 0x00001704u,
+
+    Navigation = 0x00001800u,
+    Selection = 0x00001900u,
+
+    Chip = 0x00001A00u,
+    AssistChip = 0x00001A01u,
+    FilterChip = 0x00001A02u,
+    InputChip = 0x00001A03u,
+    SuggestionChip = 0x00001A04u,
+
+    Menu = 0x00001B00u,
+    SegmentedButton = 0x00001C00u,
+
     Custom = 0xFFFF0000u
 };
 

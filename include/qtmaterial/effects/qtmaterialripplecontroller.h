@@ -41,6 +41,9 @@ private slots:
     void advance();
 
 private:
+    // Implemented only by the non-installed deterministic visual harness.
+    friend class QtMaterialRippleControllerCaptureAccess;
+
     qreal targetRadiusFor(const QPointF& center) const;
 
     struct Ripple
@@ -48,6 +51,7 @@ private:
         QPointF center;
         qreal endRadius = 0.0;
         qint64 startedMs = 0;
+        qreal fixedProgress = -1.0;
     };
 
     QPointer<QWidget> m_target;

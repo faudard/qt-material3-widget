@@ -2,7 +2,7 @@
 
 **Feature Branch**: `002-component-registry-source-of-truth`  
 **Created**: 2026-08-15  
-**Status**: Ready for repository application  
+**Status**: Strict static closure complete / external CI execution pending
 **Milestone**: 0.5 Architecture Foundation
 
 ## Confirmed current state
@@ -26,20 +26,23 @@ component identity/maturity safe to use as the canonical project inventory.
 - **REG-FR-005**: A `complete` component MUST have every maturity axis evaluated at 4 or explicitly `N/A`.
 - **REG-FR-006**: A `complete` component MUST have non-empty evidence per axis, an ISO review date, and no gaps.
 - **REG-FR-007**: A `referenceCandidate` MUST be `complete`; schema v1 permits at most one reference candidate per family.
-- **REG-FR-008**: Missing explicit `releaseScope`/`referenceCandidate` is a migration warning, not a 0.5-blocking error.
+- **REG-FR-008**: `maturityPolicy`, `releaseScope` and `referenceCandidate` MUST be explicit for every component.
 - **REG-FR-009**: Generated status documents MUST be checked deterministically via the existing generator `--check`.
 - **REG-FR-010**: Repository health MUST invoke the registry governance checker.
 - **REG-FR-011**: Registry tooling MUST require only the Python standard library.
 - **REG-FR-012**: Registry scope is component maturity; support/helper public headers remain the responsibility of the public/private-header boundary spec.
+- **REG-FR-013**: Every component MUST evaluate all ten maturity axes and carry non-empty evidence for each axis.
+- **REG-FR-014**: Every non-complete component MUST declare a gap and a next action; declared and derived maturity MUST agree.
+- **REG-FR-015**: Quality CI MUST execute repository health with explicit strict mode and reject workflow drift back to normal mode.
 
 ## Acceptance
 
 ```text
 python -m unittest discover -s tests/tools -p "test_*.py" -v
-python tools/check_component_registry.py --check-generated
-python tools/repo_health.py
+python tools/check_component_registry.py --check-generated --strict
+python tools/repo_health.py --strict
 ```
 
-The current repository may emit migration warnings for older non-button entries whose metadata is
-still implicit/not fully evaluated. Warnings become strict errors only with the explicit `--strict`
-gate.
+The current registry contains 32 closed entries and zero unevaluated axes. The
+24 non-Button assessments retain conservative scores and explicit gaps; this
+governance closure does not promote their Material-conformance status.

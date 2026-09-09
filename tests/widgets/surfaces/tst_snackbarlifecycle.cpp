@@ -63,7 +63,7 @@ Theme snackbarTestTheme(
         QStringLiteral("actionPaddingHorizontal"),
         17);
     theme.componentOverrides().setOverride(
-        QStringLiteral("snackbar"),
+        ComponentId::Snackbar,
         tokens);
 
     return theme;

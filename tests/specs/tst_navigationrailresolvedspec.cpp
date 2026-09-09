@@ -87,7 +87,7 @@ componentOverridesWin()
     tokens.stateLayer.pressOpacity = 0.19;
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("navigationRail"),
+        ComponentId::NavigationRail,
         tokens);
 
     const NavigationRailSpec spec =

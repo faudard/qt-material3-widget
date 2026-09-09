@@ -117,7 +117,7 @@ void tst_DateFieldAffordances::resolvedSpecFollowsThemeContext()
         QStringLiteral("actionIconSize"),
         26);
     theme.componentOverrides().setOverride(
-        QStringLiteral("dateField"),
+        ComponentId::DateField,
         tokens);
 
     ThemeContext context(theme);

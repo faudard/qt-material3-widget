@@ -62,7 +62,7 @@ void tst_DatePickerResolvedSpec::componentOverridesWin()
         QStringLiteral("navigationButtonTextColor"),
         QStringLiteral("#345678"));
     theme.componentOverrides().setOverride(
-        QStringLiteral("datePicker"),
+        ComponentId::DatePicker,
         tokens);
 
     const DatePickerSpec spec =

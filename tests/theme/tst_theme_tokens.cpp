@@ -49,13 +49,15 @@ void tst_ThemeTokens::componentOverrides_areStableAndSorted()
     ComponentTokenOverride card;
     card.elevations.insert(ElevationRole::Level1, ElevationStyle{ 4, 1, 0.05 });
 
-    theme.componentOverrides().setOverride(QStringLiteral("Card"), card);
-    theme.componentOverrides().setOverride(QStringLiteral("Button"), button);
+    theme.componentOverrides().setOverride(ComponentId::Card, card);
+    theme.componentOverrides().setOverride(ComponentId::Button, button);
 
-    const QStringList names = theme.componentOverrides().componentNames();
-    QCOMPARE(names, QStringList({ QStringLiteral("Button"), QStringLiteral("Card") }));
-    QVERIFY(theme.componentOverrides().contains(QStringLiteral("Button")));
-    QCOMPARE(theme.componentOverrides().overrideFor(QStringLiteral("Button")).shapes.value(ShapeRole::Full), 999);
+    const QList<ComponentId> ids = theme.componentOverrides().componentIds();
+    QCOMPARE(ids.size(), 2);
+    QCOMPARE(ids.at(0), ComponentId::Button);
+    QCOMPARE(ids.at(1), ComponentId::Card);
+    QVERIFY(theme.componentOverrides().contains(ComponentId::Button));
+    QCOMPARE(theme.componentOverrides().overrideFor(ComponentId::Button).shapes.value(ShapeRole::Full), 999);
 }
 
 QTEST_MAIN(tst_ThemeTokens)

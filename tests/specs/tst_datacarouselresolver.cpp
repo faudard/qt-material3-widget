@@ -78,7 +78,7 @@ appliesComponentOverrides()
         QColor(Qt::red));
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("carousel"),
+        ComponentId::Carousel,
         tokens);
 
     const CarouselSpec spec =

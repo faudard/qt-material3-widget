@@ -84,7 +84,7 @@ void tst_DataSpecResolver::appliesComponentOverrides()
         true);
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("listItem"),
+        ComponentId::ListItem,
         listItemOverride);
 
     ComponentTokenOverride dividerOverride;
@@ -96,7 +96,7 @@ void tst_DataSpecResolver::appliesComponentOverrides()
         QColor(Qt::blue));
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("divider"),
+        ComponentId::Divider,
         dividerOverride);
 
     const DataSpecResolver resolver;

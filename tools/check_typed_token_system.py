@@ -70,6 +70,12 @@ def validate(root: Path = ROOT) -> list[str]:
             "Button = 0x00000100u",
             "ButtonFilled = 0x00000102u",
             "TextFieldOutlined = 0x00000E11u",
+            "Data = 0x00001700u",
+            "Navigation = 0x00001800u",
+            "Selection = 0x00001900u",
+            "Chip = 0x00001A00u",
+            "Menu = 0x00001B00u",
+            "SegmentedButton = 0x00001C00u",
             "Custom = 0xFFFF0000u",
         ):
             if token not in data:
@@ -82,6 +88,17 @@ def validate(root: Path = ROOT) -> list[str]:
             errors.append("ThemeModel must not redefine ComponentId")
         if "qtmaterial/foundation/qtmaterialcomponentid.h" not in data:
             errors.append("Component tokens must consume Foundation ComponentId")
+
+    theme_cmake = root/"src/theme/CMakeLists.txt"
+    if theme_cmake.is_file():
+        data = read(theme_cmake)
+        if not re.search(
+            r"target_link_libraries\s*\(\s*qtmaterial3_theme_model\b"
+            r".*?\bqtmaterial3_foundation\b",
+            data,
+            re.DOTALL,
+        ):
+            errors.append("ThemeModel must link Foundation publicly")
 
     ids_h = root/"include/qtmaterial/theme/qtmaterialtokenids.h"
     if not ids_h.is_file():
@@ -109,6 +126,30 @@ def validate(root: Path = ROOT) -> list[str]:
                       "TokenCategory category"):
             if token not in data:
                 errors.append(f"ThemeTextCodec missing {token}")
+
+    applier = root/"src/specs/qtmaterialcomponenttokenapplier.cpp"
+    if applier.is_file() and re.search(r"\bcomponentNames\b", read(applier)):
+        errors.append("component token applier still uses legacy componentNames")
+
+    textual_override_api = re.compile(
+        r"\bcomponentOverrides\s*\(\s*\)\s*\.\s*"
+        r"(?:setOverride|contains|overrideFor|removeOverride)\s*\(\s*"
+        r"QStringLiteral\s*\(",
+        re.MULTILINE,
+    )
+    for base_rel in ("include", "src", "tests", "examples"):
+        base = root/base_rel
+        if not base.exists():
+            continue
+        for path in base.rglob("*"):
+            if not path.is_file() or path.suffix.lower() not in {
+                ".h", ".hpp", ".cpp", ".cc", ".cxx"
+            }:
+                continue
+            if textual_override_api.search(read(path)):
+                errors.append(
+                    f"{path.relative_to(root)} uses textual ComponentTokenOverrides API"
+                )
 
     serializer = root/"src/theme/qtmaterialthemeserializer.cpp"
     if serializer.is_file():

@@ -113,7 +113,7 @@ void tst_CompactSpecResolver::variantOverridesDoNotLeak()
         filterOnly);
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("chip.filter"),
+        ComponentId::FilterChip,
         tokens);
 
     CompactSpecResolver resolver;

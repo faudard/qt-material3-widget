@@ -122,7 +122,7 @@ void tst_SurfaceResolvedSpec::cardComponentOverridesWin()
         0.17);
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("card"),
+        ComponentId::Card,
         tokens);
 
     const CardSpec spec = SurfaceSpecResolver().cardSpec(theme);

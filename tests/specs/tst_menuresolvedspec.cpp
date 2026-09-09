@@ -74,7 +74,7 @@ void tst_MenuResolvedSpec::componentOverridesWin()
     tokens.stateLayer.pressOpacity = 0.21;
 
     theme.componentOverrides().setOverride(
-        QStringLiteral("menu"),
+        ComponentId::Menu,
         tokens);
 
     const MenuSpec spec =

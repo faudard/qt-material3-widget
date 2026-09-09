@@ -1,7 +1,6 @@
-#include <QVector>
 #include "qtmaterial/specs/qtmaterialcompactspecresolver.h"
 
-#include <QStringList>
+#include <QVector>
 #include <QVariant>
 #include <QtGlobal>
 
@@ -114,21 +113,6 @@ void selectShapeRole(
 }
 
 ComponentId variantComponentId(ChipVariant variant)
-{
-    switch (variant) {
-    case ChipVariant::Filter:
-        return ComponentId::FilterChip;
-    case ChipVariant::Input:
-        return ComponentId::InputChip;
-    case ChipVariant::Suggestion:
-        return ComponentId::SuggestionChip;
-    case ChipVariant::Assist:
-    default:
-        return ComponentId::AssistChip;
-    }
-}
-
-ComponentId legacyVariantComponentId(ChipVariant variant)
 {
     switch (variant) {
     case ChipVariant::Filter:
@@ -342,7 +326,10 @@ void CompactSpecResolver::applyComponentOverrides(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QVector<ComponentId>{ComponentId::Chip, variantComponentId(variant), legacyVariantComponentId(variant)});
+            QVector<ComponentId>{
+                ComponentId::Chip,
+                variantComponentId(variant)
+            });
 
     if (tokens.isEmpty()) {
         return;
@@ -542,7 +529,10 @@ void CompactSpecResolver::resolveRuntimeValues(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QVector<ComponentId>{ComponentId::Chip, variantComponentId(spec->variant), legacyVariantComponentId(spec->variant)});
+            QVector<ComponentId>{
+                ComponentId::Chip,
+                variantComponentId(spec->variant)
+            });
 
     spec->hasResolvedLabelFont = false;
     if (tokens.typography.contains(

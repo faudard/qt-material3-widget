@@ -12,11 +12,16 @@
       "name",
       "family",
       "maturity",
+      "maturityPolicy",
       "publicHeader",
       "specType",
       "widgetType",
+      "testTarget",
       "galleryRoute",
-      "docsPath"
+      "docsPath",
+      "releaseScope",
+      "referenceCandidate",
+      "maturityAxes"
     ],
     "properties": {
       "id": {
@@ -77,6 +82,22 @@
       },
       "maturityAxes": {
         "type": "object",
+        "required": [
+          "api",
+          "rendering",
+          "states",
+          "accessibility",
+          "keyboard",
+          "hidpi",
+          "rtl",
+          "tests",
+          "example",
+          "docs",
+          "lastReviewed",
+          "gaps",
+          "nextActions",
+          "evidence"
+        ],
         "properties": {
           "api": {
             "$ref": "#/$defs/axis"
@@ -115,23 +136,52 @@
           "gaps": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "minLength": 1
             }
           },
           "nextActions": {
             "type": "array",
+            "minItems": 1,
             "items": {
-              "type": "string"
+              "type": "string",
+              "minLength": 1
             }
           },
           "evidence": {
-            "type": "object"
+            "type": "object",
+            "required": [
+              "api",
+              "rendering",
+              "states",
+              "accessibility",
+              "keyboard",
+              "hidpi",
+              "rtl",
+              "tests",
+              "example",
+              "docs"
+            ],
+            "properties": {
+              "api": { "$ref": "#/$defs/evidence" },
+              "rendering": { "$ref": "#/$defs/evidence" },
+              "states": { "$ref": "#/$defs/evidence" },
+              "accessibility": { "$ref": "#/$defs/evidence" },
+              "keyboard": { "$ref": "#/$defs/evidence" },
+              "hidpi": { "$ref": "#/$defs/evidence" },
+              "rtl": { "$ref": "#/$defs/evidence" },
+              "tests": { "$ref": "#/$defs/evidence" },
+              "example": { "$ref": "#/$defs/evidence" },
+              "docs": { "$ref": "#/$defs/evidence" },
+              "notes": { "$ref": "#/$defs/evidence" }
+            },
+            "additionalProperties": false
           }
         },
         "additionalProperties": false
       }
     },
-    "additionalProperties": true
+    "additionalProperties": false
   },
   "$defs": {
     "axis": {
@@ -145,6 +195,14 @@
           "const": "N/A"
         }
       ]
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     }
   }
 }

@@ -17,7 +17,9 @@ inline qreal targetStateLayerOpacity(
         return 0.0;
     }
     if (state.isPressed()) {
-        return spec.pressStateLayerOpacity;
+        // Press feedback is owned by the ripple controller. Keeping the fixed
+        // layer at zero avoids painting the same Material state twice.
+        return 0.0;
     }
     if (state.isFocused()) {
         return spec.focusStateLayerOpacity;
