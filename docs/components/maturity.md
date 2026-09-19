@@ -63,14 +63,14 @@
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Rail Material reference model or deterministic visual conformance evidence is available. |
-| `navigation.tabs` | Tabs | `partial` | 2 | 2 | 1 | 1 | 1 | 1 | 1 | 2 | 0 | 2 | Tabs has no gallery example and its complete interaction-state contract is not yet certified. |
+| `navigation.tabs` | Tabs | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 3 | 2 | 2 | Complete visual-reference and full state-matrix certification remain before Tabs can be marked complete. |
 
 ### Progress
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `progress.circular` | Circular Progress Indicator | `usable` | 2 | 2 | 2 | 1 | N/A | 1 | N/A | 2 | 1 | 2 | No Circular Progress Material reference model or deterministic visual conformance evidence is available. |
-| `progress.linear` | Linear Progress Indicator | `partial` | 2 | 2 | 1 | 1 | N/A | 1 | 1 | 2 | 1 | 2 | Linear Progress state, animation and RTL behavior are not yet conformantly certified. |
+| `progress.linear` | Linear Progress Indicator | `usable` | 2 | 2 | 2 | 2 | N/A | 2 | 2 | 3 | 1 | 2 | Deterministic visual-reference coverage remains before Linear Progress can be marked complete. |
 
 ### Selection
 
@@ -92,7 +92,7 @@
 | `surface.dialog` | Dialog | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Dialog Material reference model or deterministic visual conformance evidence is available. |
 | `surface.navigation-drawer` | Navigation Drawer | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Drawer Material reference model or deterministic visual conformance evidence is available. |
 | `surface.top-app-bar` | Top App Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Top App Bar Material reference model or deterministic visual conformance evidence is available. |
-| `surface.snackbar` | Snackbar | `partial` | 2 | 2 | 1 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Snackbar lifecycle, action, focus and target-rendering behavior are not yet conformantly certified. |
+| `surface.snackbar` | Snackbar | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 3 | 1 | 2 | Reviewed visual-reference coverage and a broader transient-surface matrix remain before complete maturity. |
 
 ## Buttons completion gate
 
@@ -145,9 +145,9 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Filled Text Field | Add Text Field state, accessibility and visual evidence before raising maturity axes. |
 | Outlined Text Field | Add Text Field state, accessibility and visual evidence before raising maturity axes. |
 | Navigation Rail | Add Navigation Rail reference-model, RTL and visual evidence before raising maturity axes. |
-| Tabs | Add a Tabs gallery page and certify keyboard, route, RTL and visual state coverage. |
+| Tabs | Add deterministic visual-reference coverage and broaden the full state matrix for complete maturity. |
 | Circular Progress Indicator | Add progress token, animation, accessibility and visual evidence before raising maturity axes. |
-| Linear Progress Indicator | Certify determinate, indeterminate, RTL and target-rendering behavior before promoting to usable. |
+| Linear Progress Indicator | Add reviewed visual references and broader animation-end-state coverage for complete maturity. |
 | Checkbox | Add Checkbox state, keyboard, accessibility, RTL and visual evidence before raising maturity axes. |
 | Radio Button | Add Radio Button state, keyboard, accessibility, RTL and visual evidence before raising maturity axes. |
 | Segmented Button | Add Segmented Button state, keyboard, accessibility, RTL and visual evidence before raising maturity axes. |
@@ -159,4 +159,4 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Dialog | Add Dialog focus, accessibility, RTL and visual evidence before raising maturity axes. |
 | Navigation Drawer | Add Drawer state, focus, RTL and visual evidence before raising maturity axes. |
 | Top App Bar | Add App Bar state, action, RTL and visual evidence before raising maturity axes. |
-| Snackbar | Certify Snackbar host lifecycle, action states, accessibility and visual rendering before promoting to usable. |
+| Snackbar | Add deterministic visual references and extended transient-surface state coverage for complete maturity. |
