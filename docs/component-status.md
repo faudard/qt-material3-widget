@@ -51,14 +51,14 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
 | `navigation.rail` | Navigation Rail | `usable` | `qtmaterial/widgets/navigation/qtmaterialnavigationrail.h` | `NavigationRailSpec` | `tst_navigationrail` | `docs/public-api/navigation.md` | `/navigation/rail` |
-| `navigation.tabs` | Tabs | `partial` | `qtmaterial/widgets/navigation/qtmaterialtabs.h` | `TabsSpec` | `tst_tabs` | `docs/public-api/navigation.md` | `/navigation/tabs` |
+| `navigation.tabs` | Tabs | `usable` | `qtmaterial/widgets/navigation/qtmaterialtabs.h` | `TabsSpec` | `tst_tabs` | `docs/public-api/navigation.md` | `/navigation/tabs` |
 
 ## Progress
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
 | `progress.circular` | Circular Progress Indicator | `usable` | `qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress-indicators.md` | `/progress/circular` |
-| `progress.linear` | Linear Progress Indicator | `partial` | `qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress-indicators.md` | `/progress/linear` |
+| `progress.linear` | Linear Progress Indicator | `usable` | `qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress-indicators.md` | `/progress/linear` |
 
 ## Selection
 
@@ -80,4 +80,4 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 | `surface.dialog` | Dialog | `usable` | `qtmaterial/widgets/surfaces/qtmaterialdialog.h` | `DialogSpec` | `tst_dialog` | `docs/public-api/surfaces.md` | `/surfaces/dialog` |
 | `surface.navigation-drawer` | Navigation Drawer | `usable` | `qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h` | `NavigationDrawerSpec` | `tst_navigationdrawer` | `docs/public-api/navigationdrawer-release-readiness.md` | `/surfaces/navigation-drawer` |
 | `surface.top-app-bar` | Top App Bar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialtopappbar.h` | `AppBarSpec` | `tst_topappbar` | `docs/public-api/appbars-release-readiness.md` | `/surfaces/top-app-bar` |
-| `surface.snackbar` | Snackbar | `partial` | `qtmaterial/widgets/surfaces/qtmaterialsnackbar.h` | `SnackbarSpec` | `tst_snackbar` | `docs/public-api/surfaces.md` | `/surfaces/snackbar` |
+| `surface.snackbar` | Snackbar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialsnackbar.h` | `SnackbarSpec` | `tst_snackbar` | `docs/public-api/surfaces.md` | `/surfaces/snackbar` |
