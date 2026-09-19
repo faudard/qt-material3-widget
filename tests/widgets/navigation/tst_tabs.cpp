@@ -271,7 +271,7 @@ void TestQtMaterialTabs::rendersAtHighDpi()
     tabs.addTab(new QWidget(&tabs), QStringLiteral("Overview"));
     tabs.addTab(new QWidget(&tabs), QStringLiteral("Settings"));
 
-    QPixmap pixmap(tabs.size() * 2);
+    QPixmap pixmap(tabs.width() * 2, tabs.height() * 2);
     pixmap.setDevicePixelRatio(2.0);
     pixmap.fill(Qt::transparent);
     tabs.render(&pixmap);
