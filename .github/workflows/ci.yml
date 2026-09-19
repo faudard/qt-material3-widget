@@ -51,11 +51,11 @@ jobs:
             use-mcu: "OFF"
             build-extra-examples: "OFF"
 
-          - name: macos-qt6.8.4
+          - name: macos-qt6.8.3
             os: macos-latest
-            qt-version: "6.8.4"
+            qt-version: "6.8.3"
             qt-arch: clang_64
-            expected-qt-version: "6.8.4"
+            expected-qt-version: "6.8.3"
             msvc-toolset: ""
             expected-msvc-prefix: ""
             use-mcu: "OFF"
