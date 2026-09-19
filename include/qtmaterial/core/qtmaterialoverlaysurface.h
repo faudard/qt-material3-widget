@@ -4,6 +4,9 @@
 
 #include "qtmaterial/core/qtmaterialsurface.h"
 
+class QEvent;
+class QShowEvent;
+
 namespace QtMaterial {
 
 class QTMATERIAL3_CORE_EXPORT QtMaterialOverlaySurface : public QtMaterialSurface
@@ -19,6 +22,7 @@ public:
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event) override;
+    void showEvent(QShowEvent* event) override;
     virtual void syncGeometryToHost();
 
 private:
