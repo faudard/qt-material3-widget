@@ -6,35 +6,6 @@
 
 namespace QtMaterial {
 
-namespace {
-
-template <typename SpecT>
-void resolveSelectionRuntimeValues(const Theme& theme, SpecT* spec)
-{
-    if (!spec) {
-        return;
-    }
-
-    const StateLayer& stateLayer = theme.stateLayer();
-    spec->hoverStateLayerOpacity = stateLayer.hoverOpacity;
-    spec->focusStateLayerOpacity = stateLayer.focusOpacity;
-    spec->pressStateLayerOpacity = stateLayer.pressOpacity;
-    spec->dragStateLayerOpacity = stateLayer.dragOpacity;
-
-    spec->hasResolvedLabelFont = false;
-    if (theme.typography().contains(spec->labelTypeRole)) {
-        spec->labelFont = theme.typography().style(spec->labelTypeRole).font;
-        spec->hasResolvedLabelFont = true;
-    }
-
-    spec->hasResolvedMotionStyle = false;
-    if (theme.motion().contains(spec->motionToken)) {
-        spec->motionStyle = theme.motion().style(spec->motionToken);
-        spec->hasResolvedMotionStyle = true;
-    }
-}
-
-} // namespace
 
 
 int SelectionSpecResolver::spacingForDensity(
@@ -79,9 +50,8 @@ CheckboxSpec SelectionSpecResolver::checkboxSpec(
 
     applyCheckboxComponentTokens(
         theme,
-        QVector<ComponentId>{ ComponentId::Checkbox },
+        QVector<ComponentId>{ ComponentId::Selection, ComponentId::Checkbox },
         &spec);
-    resolveSelectionRuntimeValues(theme, &spec);
 
     return spec;
 }
@@ -109,9 +79,8 @@ RadioButtonSpec SelectionSpecResolver::radioButtonSpec(
 
     applyRadioButtonComponentTokens(
         theme,
-        QVector<ComponentId>{ ComponentId::RadioButton },
+        QVector<ComponentId>{ ComponentId::Selection, ComponentId::RadioButton },
         &spec);
-    resolveSelectionRuntimeValues(theme, &spec);
 
     return spec;
 }
@@ -151,9 +120,8 @@ SwitchSpec SelectionSpecResolver::switchSpec(
 
     applySwitchComponentTokens(
         theme,
-        QVector<ComponentId>{ ComponentId::Switch },
+        QVector<ComponentId>{ ComponentId::Selection, ComponentId::Switch },
         &spec);
-    resolveSelectionRuntimeValues(theme, &spec);
 
     return spec;
 }
