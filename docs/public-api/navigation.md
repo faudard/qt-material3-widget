@@ -1,163 +1,89 @@
 # Navigation
 
-Phase 6 navigation widgets now include a proposed `QtMaterialTabs` implementation aligned with the repository architecture.
+The 0.5.0 navigation surface currently exposes two release-scoped widgets:
 
-## Why this corrected iteration exists
+- `QtMaterial::QtMaterialTabs`
+- `QtMaterial::QtMaterialNavigationRail`
 
-The earlier experimental Tabs patches were useful to validate feature scope, but they had three structural weaknesses:
+Component maturity is tracked in `docs/components/component-registry.json`.
 
-- metadata was stored by raw tab index in maps, which is fragile after `insertTab()` / `removeTab()`
-- the theme application path mutated the authored spec instead of resolving into a separate runtime spec
-- generic QObject binding was flexible, but too weakly typed for a library that is trying to stabilize its public API
+## Tabs
 
-This corrected patch fixes those points while preserving the recent features:
-
-- Material 3 themed states
-- overflow menu
-- lazy loading
-- routes and URL navigation
-- test IDs for automation
-- multi-widget synchronization through navigation controllers
-
-## Public types
-
-### `TabsSpec`
-
-`TabsSpec` remains a simple value type in `qtmaterial3_specs`.
-
-It covers:
-
-- variant
-- density
-- alignment
-- overflow mode
-- color roles
-- state-layer opacities
-- sizing and animation values
-- scroll and wrap-navigation behavior
-
-### `QtMaterialRoute`
-
-`QtMaterialRoute` is a small typed wrapper over a normalized route path.
-
-Example:
-
-```cpp
-QtMaterialRoute(QStringLiteral("settings/profile"))
-```
-
-### `QtMaterialNavigationController`
-
-Instead of binding Tabs directly to arbitrary QObjects, this patch introduces a narrow controller contract:
-
-```cpp
-class QtMaterialNavigationController : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
-};
-```
-
-That makes multi-widget synchronization explicit and testable.
-
-A convenience adapter for `QStackedWidget` is included:
-
-```cpp
-QtMaterialStackedWidgetController
-```
-
-## `QtMaterialTabs`
+`QtMaterialTabs` is a themed `QTabWidget` integration with typed routes, stable per-tab metadata,
+lazy page-content creation, badges, overflow handling, and synchronization with navigation
+controllers.
 
 ### Spec flow
 
-The widget now keeps two specs:
+The widget keeps authored and resolved state separate:
 
-- `authoredSpec()` — exactly what the consumer provided
-- `resolvedSpec()` — runtime spec after theme resolution
+- `authoredSpec()` is the consumer-provided `TabsSpec`.
+- `resolvedSpec()` is the runtime spec after theme resolution.
 
-That matches the repository rule:
+Rendering uses the resolved spec.
 
-> widgets render from resolved specs, not from ad hoc theme lookups
+### Routes and synchronization
 
-### Metadata model
+Each tab can expose:
 
-All per-tab metadata now lives in a descriptor vector synchronized with the real tab order.
+- a stable tab ID;
+- a test/automation ID;
+- a normalized `QtMaterialRoute`;
+- a lazy-loading factory;
+- optional badge content.
 
-Stored per tab:
+`bindTo(QStackedWidget*)` synchronizes a stack directly. Multiple
+`QtMaterialNavigationController` instances can also be bound bidirectionally.
 
-- `tabId`
-- `tabTestId`
-- `route`
-- lazy-loading `factory`
-- `loaded` state
-- badge content and visibility
+### Keyboard contract
 
-This avoids index/key drift after insertions and removals.
+The tab bar uses `Qt::StrongFocus` and supports:
 
-### Automation surface
+- `Home` / `End`;
+- horizontal and vertical arrow navigation;
+- disabled-tab skipping;
+- optional wrap navigation;
+- Ctrl+Tab / Ctrl+Shift+Tab style forward/backward navigation.
 
-Automation data is exposed through dynamic properties on each page widget:
+Horizontal arrows follow visual direction. In a right-to-left layout, Right moves toward the
+visually right tab and Left moves toward the visually left tab rather than assuming LTR index
+direction.
+
+### Accessibility and automation
+
+The internal tab bar has the stable object name `qtmaterial_tabs_bar` and accessible name
+`Tabs`. Native tab labels remain available to the Qt accessibility layer.
+
+Page widgets expose dynamic automation metadata:
 
 - `materialTabId`
 - `materialTabTestId`
 - `materialTabRoute`
 - `materialTabIndex`
 
-The tab bar also gets a stable object name:
+### 0.5.0 maturity evidence
 
-```cpp
-qtmaterial_tabs_bar
-```
+`tst_tabs` and the focused route/theme/lifecycle suites cover:
 
-This is a better split than overloading accessibility text for test automation.
+- insertion/removal metadata stability;
+- authored/resolved spec separation;
+- stacked-widget and controller synchronization;
+- lazy loading;
+- routes and URL navigation;
+- LTR and RTL keyboard behavior;
+- accessibility surface;
+- DPR 2.0 render smoke.
 
-## Lazy loading
+The gallery navigation page includes a Tabs example with routes, IDs, and a badge.
 
-Lazy loading no longer assumes the tab page itself does not exist.
+Tabs is therefore release-scoped as **usable** in 0.5.0. Reviewed visual-reference coverage and
+a broader full state matrix remain before `complete` maturity.
 
-Instead:
+## Navigation Rail
 
-- the tab page exists as a normal `QWidget`
-- the factory creates the page content on first activation
-- content is inserted into the page layout when needed
+`QtMaterialNavigationRail` is release-scoped as **usable**. Its focused release contract covers
+destination selection, disabled destinations, keyboard navigation, resolved specs, and
+accessibility summaries.
 
-That integrates cleanly with `QTabWidget`.
-
-## URL navigation
-
-`navigateToUrl()` now resolves both host and path:
-
-```cpp
-app://settings/profile
-```
-
-becomes:
-
-```text
-settings/profile
-```
-
-This avoids the common bug where only the trailing path segment is used.
-
-## Integration checklist
-
-The patch archive contains:
-
-- `include/qtmaterial/specs/qtmaterialtabsspec.h`
-- `include/qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h`
-- `include/qtmaterial/widgets/navigation/qtmaterialtabs.h`
-- `src/specs/qtmaterialtabsspec.cpp`
-- `src/widgets/navigation/qtmaterialtabs.cpp`
-- `tests/widgets/navigation/tst_tabs.cpp`
-
-To integrate into the repository:
-
-1. add the new spec source/header to `qtmaterial3_specs`
-2. add the new widget source/header to `qtmaterial3_widgets`
-3. add `tst_tabs` to `tests/CMakeLists.txt`
-
-The provided script patches those files automatically.
-
-
-## `QtMaterialNavigationRail`
-
-`QtMaterialNavigationRail` is covered by `docs/public-api/navigationrail-release-readiness.md`. The release contract covers destination selection, disabled destinations, keyboard navigation and accessibility summaries.
+See [Navigation Rail release readiness](navigationrail-release-readiness.md) for the detailed
+contract.
