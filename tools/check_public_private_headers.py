@@ -50,7 +50,7 @@ def check_public_includes(
                 errors.append(f"{rel} includes private header {normalized}")
                 continue
 
-            if normalized.startswith("qtmaterial/") and PRIVATE_NAME_RE.search(normalized):
+            if PRIVATE_NAME_RE.search(normalized):
                 errors.append(f"{rel} includes private-looking header {normalized}")
 
             if normalized.startswith("src/") or "/src/" in normalized:
@@ -106,6 +106,17 @@ def check_install_contract(root: Path) -> list[str]:
                 re.IGNORECASE,
             ):
                 errors.append("private header list must never be installed")
+
+    consumer_runner = root / "scripts/ci/run-consumer-matrix.py"
+    if not consumer_runner.is_file():
+        errors.append("consumer matrix runner missing installed header-surface verification")
+    else:
+        runner_text = consumer_runner.read_text(encoding="utf-8", errors="replace")
+        if (
+            "check_installed_header_surface.py" not in runner_text
+            or "--prefix" not in runner_text
+        ):
+            errors.append("consumer matrix runner missing installed header-surface verification")
 
     if not hygiene.is_file():
         errors.append("missing QtMaterial3PublicHeaderHygiene.cmake")
