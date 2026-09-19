@@ -159,34 +159,9 @@ MotionToken parseMotionToken(const QString& text, MotionToken fallback)
 
 void applyShapeMotionElevation(const ComponentTokenOverride& tokens, ShapeRole* shape, ElevationRole* elevation, MotionToken* motion)
 {
-    if (tokens.shapes.contains(ShapeRole::Full)) *shape = ShapeRole::Full;
-    else if (tokens.shapes.contains(ShapeRole::ExtraLarge)) *shape = ShapeRole::ExtraLarge;
-    else if (tokens.shapes.contains(ShapeRole::Large)) *shape = ShapeRole::Large;
-    else if (tokens.shapes.contains(ShapeRole::Medium)) *shape = ShapeRole::Medium;
-    else if (tokens.shapes.contains(ShapeRole::Small)) *shape = ShapeRole::Small;
-    else if (tokens.shapes.contains(ShapeRole::ExtraSmall)) *shape = ShapeRole::ExtraSmall;
-    else if (tokens.shapes.contains(ShapeRole::None)) *shape = ShapeRole::None;
-
-    if (tokens.elevations.contains(ElevationRole::Level5)) *elevation = ElevationRole::Level5;
-    else if (tokens.elevations.contains(ElevationRole::Level4)) *elevation = ElevationRole::Level4;
-    else if (tokens.elevations.contains(ElevationRole::Level3)) *elevation = ElevationRole::Level3;
-    else if (tokens.elevations.contains(ElevationRole::Level2)) *elevation = ElevationRole::Level2;
-    else if (tokens.elevations.contains(ElevationRole::Level1)) *elevation = ElevationRole::Level1;
-    else if (tokens.elevations.contains(ElevationRole::Level0)) *elevation = ElevationRole::Level0;
-
-    if (tokens.motion.contains(MotionToken::Short1)) *motion = MotionToken::Short1;
-    else if (tokens.motion.contains(MotionToken::Short2)) *motion = MotionToken::Short2;
-    else if (tokens.motion.contains(MotionToken::Short3)) *motion = MotionToken::Short3;
-    else if (tokens.motion.contains(MotionToken::Short4)) *motion = MotionToken::Short4;
-    else if (tokens.motion.contains(MotionToken::Medium1)) *motion = MotionToken::Medium1;
-    else if (tokens.motion.contains(MotionToken::Medium2)) *motion = MotionToken::Medium2;
-    else if (tokens.motion.contains(MotionToken::Medium3)) *motion = MotionToken::Medium3;
-    else if (tokens.motion.contains(MotionToken::Medium4)) *motion = MotionToken::Medium4;
-    else if (tokens.motion.contains(MotionToken::Long1)) *motion = MotionToken::Long1;
-    else if (tokens.motion.contains(MotionToken::Long2)) *motion = MotionToken::Long2;
-    else if (tokens.motion.contains(MotionToken::Long3)) *motion = MotionToken::Long3;
-    else if (tokens.motion.contains(MotionToken::Long4)) *motion = MotionToken::Long4;
-
+    // The typed maps override values for an existing semantic role; their
+    // presence must not silently switch the component to another role.
+    // Role changes are explicit component-local decisions via custom keys.
     const QVariantMap& custom = tokens.custom;
     if (custom.contains(QStringLiteral("shapeRole"))) {
         *shape = parseShapeRole(custom.value(QStringLiteral("shapeRole")).toString(), *shape);
@@ -1580,6 +1555,14 @@ void applyAutocompletePopupComponentTokens(
     if (!tokens.isEmpty()) {
         readReal(
             tokens.custom,
+            "cornerRadius",
+            &spec->cornerRadius);
+        readReal(
+            tokens.custom,
+            "focusRingWidth",
+            &spec->focusRingWidth);
+        readReal(
+            tokens.custom,
             "hoverStateLayerOpacity",
             &spec->hoverStateLayerOpacity);
         readReal(
@@ -1920,6 +1903,10 @@ void applyNavigationRailComponentTokens(
         stateLayer.pressOpacity;
 
     if (!tokens.isEmpty()) {
+        readReal(
+            tokens.custom,
+            "indicatorRadius",
+            &spec->indicatorRadius);
         readReal(
             tokens.custom,
             "hoverStateLayerOpacity",
