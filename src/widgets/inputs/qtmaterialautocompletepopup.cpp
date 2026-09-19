@@ -513,8 +513,8 @@ QtMaterialAutocompletePopup::ensureSpecResolved() const
     }
     if (ThemeContext* context = effectiveThemeContext()) {
         d_ptr->m_spec =
-            QtMaterial::AutocompletePopupSpecResolver()
-                .autocompletePopupSpec(context->theme());
+            QtMaterial::InputSpecResolution::autocompletePopupSpec(
+                context->theme());
     } else {
         d_ptr->m_spec =
             QtMaterial::InputSpecResolution::autocompletePopupSpec(
