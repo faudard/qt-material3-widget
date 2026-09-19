@@ -1149,9 +1149,10 @@ bool validateStrictV2(const QJsonObject& object, QString* errorString)
     const QSet<QString> sourceKeys = {
         QStringLiteral("seedColor"),
         QStringLiteral("mode"),
+        QStringLiteral("preference"),
         QStringLiteral("contrast"),
-        QStringLiteral("expressive"),
-        QStringLiteral("useMaterialColorUtilities")
+        QStringLiteral("variant"),
+        QStringLiteral("colorBackendPolicy")
     };
     if (!rejectUnknownKeys(source, sourceKeys, QStringLiteral("source"), errorString)) {
         return false;
