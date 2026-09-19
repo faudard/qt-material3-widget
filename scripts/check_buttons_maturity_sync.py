@@ -59,21 +59,19 @@ def main(argv: list[str]) -> int:
     if sync_rc != 0:
         return sync_rc
 
-    drift_markers = [
-        "docs/components/component-registry.json current",
-        "Planned score updates:",
-    ]
-    has_diff = "docs/components/component-registry.json synchronized" in sync_output
+    # Descriptive audit evidence and lastReviewed timestamps are intentionally
+    # allowed to evolve without blocking CI. The synchronization gate protects
+    # the maturity axes themselves; score drift remains release-significant.
     has_score_updates = "No score updates needed." not in sync_output
 
-    if has_diff or has_score_updates:
-        print("Buttons maturity registry is out of sync with the axis audit.", file=sys.stderr)
+    if has_score_updates:
+        print("Buttons maturity scores are out of sync with the axis audit.", file=sys.stderr)
         print("Run:", file=sys.stderr)
         print("  python scripts/sync_buttons_maturity_axes.py --apply", file=sys.stderr)
         print("  python scripts/generate_component_status.py", file=sys.stderr)
         return 1
 
-    print("Buttons maturity registry is synchronized with the axis audit.")
+    print("Buttons maturity scores are synchronized with the axis audit.")
     return 0
 
 
