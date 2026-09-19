@@ -144,6 +144,9 @@ void tst_QtMaterialBottomSheet::dragDownCollapsesOrDismisses()
     sheet.setCollapsedHeight(96);
     sheet.open();
     QVERIFY(sheet.isOpen());
+    QTRY_COMPARE(
+        sheet.state(),
+        QtMaterial::QtMaterialBottomSheet::SheetState::Open);
 
     const QPoint start(sheet.width() / 2, host.height() - 300);
     const QPoint end(sheet.width() / 2, host.height() - 80);
