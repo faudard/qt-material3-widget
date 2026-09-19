@@ -36,9 +36,15 @@ def installed_headers(prefix: Path) -> list[str]:
 
 def validate(root: Path, prefix: Path) -> list[str]:
     helper = load_manifest_helper(root)
-    public, private = helper.parse_manifest(
-        root / "cmake/QtMaterial3HeaderSurfaceManifest.cmake"
-    )
+    manifest = root / "cmake/QtMaterial3HeaderSurfaceManifest.cmake"
+    manifest_errors = helper.validate_manifest(root, manifest)
+    if manifest_errors:
+        return [
+            "source manifest invalid: " + error
+            for error in manifest_errors
+        ]
+
+    public, private = helper.parse_manifest(manifest)
     actual = installed_headers(prefix)
 
     errors: list[str] = []
