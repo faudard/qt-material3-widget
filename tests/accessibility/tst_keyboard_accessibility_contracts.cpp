@@ -1,5 +1,8 @@
 #include <QtTest/QtTest>
 
+#include <QVBoxLayout>
+#include <QWidget>
+
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
 #include "qtmaterial/widgets/selection/qtmaterialradiobutton.h"
@@ -18,15 +21,24 @@ private slots:
 
 void tst_KeyboardAccessibilityContracts::buttonActivatesWithSpace()
 {
+    QWidget window;
+    QVBoxLayout layout(&window);
+
     QtMaterial::QtMaterialFilledButton button;
     button.setText(QStringLiteral("Save"));
-    button.show();
-    QVERIFY(QTest::qWaitForWindowExposed(&button));
+    layout.addWidget(&button);
+
+    window.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&window));
 
     QSignalSpy clickedSpy(&button, &QAbstractButton::clicked);
 
-    button.setFocus();
-    QVERIFY(button.hasFocus());
+    // On macOS a standalone top-level button is not guaranteed to become the
+    // Cocoa first responder. Exercise the button in a normal window hierarchy
+    // and allow the native event loop to deliver focus.
+    window.activateWindow();
+    button.setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(button.hasFocus());
 
     QTest::keyClick(&button, Qt::Key_Space);
     QCOMPARE(clickedSpy.count(), 1);
