@@ -42,7 +42,7 @@ void tst_OverlaySurface::mapsGeometryIntoOverlayParentCoordinates()
         window.mapFromGlobal(host.mapToGlobal(QPoint(0, 0))),
         host.size());
 
-    QCOMPARE(overlay.geometry(), expectedInitial);
+    QTRY_COMPARE(overlay.geometry(), expectedInitial);
 
     host.move(30, 18);
     QCoreApplication::processEvents();
@@ -51,7 +51,7 @@ void tst_OverlaySurface::mapsGeometryIntoOverlayParentCoordinates()
         window.mapFromGlobal(host.mapToGlobal(QPoint(0, 0))),
         host.size());
 
-    QCOMPARE(overlay.geometry(), expectedAfterMove);
+    QTRY_COMPARE(overlay.geometry(), expectedAfterMove);
 
     host.resize(100, 36);
     QCoreApplication::processEvents();
@@ -60,7 +60,7 @@ void tst_OverlaySurface::mapsGeometryIntoOverlayParentCoordinates()
         window.mapFromGlobal(host.mapToGlobal(QPoint(0, 0))),
         host.size());
 
-    QCOMPARE(overlay.geometry(), expectedAfterResize);
+    QTRY_COMPARE(overlay.geometry(), expectedAfterResize);
 }
 
 void tst_OverlaySurface::topLevelOverlayUsesGlobalGeometry()
@@ -83,7 +83,7 @@ void tst_OverlaySurface::topLevelOverlayUsesGlobalGeometry()
         host.mapToGlobal(QPoint(0, 0)),
         host.size());
 
-    QCOMPARE(overlay.geometry(), expected);
+    QTRY_COMPARE(overlay.geometry(), expected);
 }
 
 void tst_OverlaySurface::hostHideAndShowRestoresOverlayVisibilityIntent()
@@ -102,29 +102,29 @@ void tst_OverlaySurface::hostHideAndShowRestoresOverlayVisibilityIntent()
     overlay.show();
     QCoreApplication::processEvents();
 
-    QVERIFY(overlay.isVisible());
+    QTRY_VERIFY(overlay.isVisible());
 
     host.hide();
     QCoreApplication::processEvents();
 
-    QVERIFY(!overlay.isVisible());
+    QTRY_VERIFY(!overlay.isVisible());
 
     host.show();
     QCoreApplication::processEvents();
 
-    QVERIFY(overlay.isVisible());
+    QTRY_VERIFY(overlay.isVisible());
 
     overlay.hide();
     QCoreApplication::processEvents();
 
     host.hide();
     QCoreApplication::processEvents();
-    QVERIFY(!overlay.isVisible());
+    QTRY_VERIFY(!overlay.isVisible());
 
     host.show();
     QCoreApplication::processEvents();
 
-    QVERIFY(!overlay.isVisible());
+    QTRY_VERIFY(!overlay.isVisible());
 }
 
 QTEST_MAIN(tst_OverlaySurface)
