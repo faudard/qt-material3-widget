@@ -51,7 +51,19 @@ QtMaterialList::QtMaterialList(QWidget* parent)
     syncAccessibility();
 }
 
-QtMaterialList::~QtMaterialList() = default;
+QtMaterialList::~QtMaterialList()
+{
+    // QWidget destroys child items after derived members have been torn down.
+    // Disconnect item callbacks now so QObject::destroyed cannot enter this
+    // object after d_ptr has already been released.
+    for (const QPointer<QtMaterialListItem>& pointer : d_ptr->items) {
+        if (QtMaterialListItem* item = pointer.data()) {
+            item->removeEventFilter(this);
+            QObject::disconnect(item, nullptr, this, nullptr);
+        }
+    }
+    d_ptr->items.clear();
+}
 
 int QtMaterialList::count() const noexcept
 {
