@@ -3,6 +3,7 @@
 #include <QEvent>
 #include <QPoint>
 #include <QRect>
+#include <QShowEvent>
 #include <QWidget>
 
 namespace QtMaterial {
@@ -85,6 +86,12 @@ bool QtMaterialOverlaySurface::eventFilter(QObject* watched, QEvent* event)
     }
 
     return QtMaterialSurface::eventFilter(watched, event);
+}
+
+void QtMaterialOverlaySurface::showEvent(QShowEvent* event)
+{
+    syncGeometryToHost();
+    QtMaterialSurface::showEvent(event);
 }
 
 void QtMaterialOverlaySurface::syncGeometryToHost()
