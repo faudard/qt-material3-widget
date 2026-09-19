@@ -70,8 +70,10 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
 {
     setAttribute(Qt::WA_Hover, true);
     setFocusPolicy(Qt::StrongFocus);
-    setWindowFlag(Qt::Popup, true);
     setAutoFillBackground(false);
+
+    // Create the binding before operations such as setWindowFlag() that may
+    // synchronously deliver ParentChange. ParentChange resolves the spec.
     d_ptr->m_themeBinding =
         new QtMaterialThemeContextBinding(this, this);
 
@@ -88,6 +90,8 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
         &QtMaterialThemeContextBinding::themeChanged,
         this,
         &QtMaterialAutocompletePopup::handleThemeChanged);
+
+    setWindowFlag(Qt::Popup, true);
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -155,7 +159,18 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
     updatePopupPalette();
 }
 
-QtMaterialAutocompletePopup::~QtMaterialAutocompletePopup() = default;
+QtMaterialAutocompletePopup::~QtMaterialAutocompletePopup()
+{
+    QObject::disconnect(d_ptr->m_anchorThemeChangedConnection);
+    if (d_ptr->m_anchorLineEdit) {
+        d_ptr->m_anchorLineEdit->removeEventFilter(this);
+    }
+
+    // The binding is parented to this QWidget. Destroy it while d_ptr is still
+    // alive so no host event/filter callback can observe torn-down state.
+    delete d_ptr->m_themeBinding;
+    d_ptr->m_themeBinding = nullptr;
+}
 
 void QtMaterialAutocompletePopup::setThemeContext(
     ThemeContext* context)
@@ -171,20 +186,26 @@ void QtMaterialAutocompletePopup::setThemeContext(
 ThemeContext*
 QtMaterialAutocompletePopup::themeContext() const noexcept
 {
-    return d_ptr->m_themeBinding->themeContext();
+    return d_ptr->m_themeBinding
+        ? d_ptr->m_themeBinding->themeContext()
+        : nullptr;
 }
 
 ThemeContext*
 QtMaterialAutocompletePopup::effectiveThemeContext() const noexcept
 {
-    if (ThemeContext* explicitContext =
-            d_ptr->m_themeBinding->themeContext()) {
-        return explicitContext;
+    if (d_ptr->m_themeBinding) {
+        if (ThemeContext* explicitContext =
+                d_ptr->m_themeBinding->themeContext()) {
+            return explicitContext;
+        }
     }
     if (d_ptr->m_anchorThemeContext) {
         return d_ptr->m_anchorThemeContext.data();
     }
-    return d_ptr->m_themeBinding->effectiveThemeContext();
+    return d_ptr->m_themeBinding
+        ? d_ptr->m_themeBinding->effectiveThemeContext()
+        : nullptr;
 }
 
 const AutocompletePopupSpec&
@@ -509,6 +530,9 @@ void
 QtMaterialAutocompletePopup::ensureSpecResolved() const
 {
     if (!d_ptr->m_specDirty) {
+        return;
+    }
+    if (!d_ptr->m_themeBinding) {
         return;
     }
     if (ThemeContext* context = effectiveThemeContext()) {
