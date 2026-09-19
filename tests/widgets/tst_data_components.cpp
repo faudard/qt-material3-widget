@@ -3,9 +3,9 @@
 #include <QLabel>
 
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
-#include "qtmaterial/widgets/qtmaterialtable.h"
-#include "qtmaterial/widgets/qtmaterialgridlist.h"
-#include "qtmaterial/widgets/qtmaterialcarousel.h"
+#include "qtmaterial/widgets/data/qtmaterialtable.h"
+#include "qtmaterial/widgets/data/qtmaterialgridlist.h"
+#include "qtmaterial/widgets/data/qtmaterialcarousel.h"
 
 class tst_DataComponents : public QObject {
     Q_OBJECT
