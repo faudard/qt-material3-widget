@@ -27,7 +27,7 @@ void TestQtMaterialList::constructsWithAccessibleSummary()
 
     QCOMPARE(list.count(), 0);
     QCOMPARE(list.currentIndex(), -1);
-    QCOMPARE(list.accessibilitySummary(), QStringLiteral("0 item(s)"));
+    QCOMPARE(list.accessibilitySummary(), QStringLiteral("Empty list"));
     QCOMPARE(list.accessibleName(), QStringLiteral("List"));
 }
 
