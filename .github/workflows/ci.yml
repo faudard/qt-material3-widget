@@ -184,6 +184,26 @@ jobs:
           --build-root "${{ github.workspace }}/build/consumer-qt5142"
           --generator Ninja
 
+      - name: Validate installed consumer on Windows Qt 6
+        if: matrix.name == 'windows-qt6.7.3-v142'
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: >
+          python scripts/ci/run-consumer-matrix.py
+          --scenario install-shared
+          --build-root "${{ github.workspace }}/build/consumer-windows-qt6"
+          --generator Ninja
+
+      - name: Validate installed consumer on macOS
+        if: matrix.name == 'macos-qt6.8.3'
+        shell: bash
+        run: >
+          python3 scripts/ci/run-consumer-matrix.py
+          --scenario install-shared
+          --build-root "${{ github.workspace }}/build/consumer-macos"
+          --generator Ninja
+
   consumer-contract:
     name: consumer-${{ matrix.scenario }}
     runs-on: ubuntu-latest
@@ -216,6 +236,125 @@ jobs:
           python3 scripts/ci/run-consumer-matrix.py
           --scenario "${{ matrix.scenario }}"
           --build-root "${{ github.workspace }}/build/consumer-contract"
+
+  release-package:
+    name: release-package
+    runs-on: ubuntu-latest
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Qt/build dependencies
+        run: bash scripts/ci/install-ubuntu-deps.sh
+
+      - name: Validate release contract
+        run: python3 tools/check_release_contract.py --root . --expected-version 0.5.0
+
+      - name: Configure release package
+        run: >
+          cmake -S . -B build-release -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DQTMATERIAL3_BUILD_TESTS=OFF
+          -DQTMATERIAL3_BUILD_EXAMPLES=OFF
+          -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
+          -DQTMATERIAL3_USE_MCU=OFF
+          -DQTMATERIAL3_INSTALL=ON
+
+      - name: Build and stage install
+        run: |
+          cmake --build build-release --parallel
+          cmake --install build-release --prefix "${{ github.workspace }}/build-release/stage"
+
+      - name: Build binary archives
+        working-directory: build-release
+        run: |
+          cpack -G TGZ
+          cpack -G ZIP
+
+      - name: Build source archives
+        working-directory: build-release
+        run: |
+          cpack --config CPackSourceConfig.cmake -G TGZ
+          cpack --config CPackSourceConfig.cmake -G ZIP
+
+      - name: Verify archive set
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(find build-release -maxdepth 1 -name 'qt-material3-widget-0.5.0*.tar.gz' | wc -l)" -ge 1
+          test "$(find build-release -maxdepth 1 -name 'qt-material3-widget-0.5.0*.zip' | wc -l)" -ge 1
+          test -f build-release/stage/share/doc/qt-material3-widget/LICENSE
+          test -f build-release/stage/share/doc/qt-material3-widget/CHANGELOG.md
+
+      - name: Upload release archives
+        uses: actions/upload-artifact@v6
+        with:
+          name: qt-material3-widget-0.5.0-packages
+          path: |
+            build-release/qt-material3-widget-0.5.0*.tar.gz
+            build-release/qt-material3-widget-0.5.0*.zip
+          if-no-files-found: error
+
+  examples-benchmarks:
+    name: examples-benchmarks
+    runs-on: ubuntu-latest
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Qt/build dependencies
+        run: bash scripts/ci/install-ubuntu-deps.sh
+
+      - name: Configure examples and benchmarks
+        run: >
+          cmake -S . -B build-extras -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DQTMATERIAL3_BUILD_TESTS=OFF
+          -DQTMATERIAL3_BUILD_EXAMPLES=ON
+          -DQTMATERIAL3_BUILD_BENCHMARKS=ON
+          -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=OFF
+          -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=ON
+          -DQTMATERIAL3_USE_MCU=OFF
+
+      - name: Build examples and benchmarks
+        run: cmake --build build-extras --parallel
+
+  sanitizers:
+    name: sanitizers-linux
+    runs-on: ubuntu-latest
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+      ASAN_OPTIONS: detect_leaks=0:halt_on_error=1
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Qt/build dependencies
+        run: bash scripts/ci/install-ubuntu-deps.sh
+
+      - name: Configure ASan and UBSan
+        run: >
+          cmake -S . -B build-sanitize -G Ninja
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
+          -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+          -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address,undefined"
+          -DQTMATERIAL3_BUILD_TESTS=ON
+          -DQTMATERIAL3_BUILD_EXAMPLES=OFF
+          -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
+          -DQTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS=OFF
+          -DQTMATERIAL3_USE_MCU=OFF
+
+      - name: Build sanitizer configuration
+        run: cmake --build build-sanitize --parallel
+
+      - name: Run sanitizer tests
+        shell: bash
+        run: |
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            bash -c 'openbox >/tmp/openbox-sanitize.log 2>&1 & ctest --test-dir build-sanitize --output-on-failure'
 
   architecture-zero-debt:
     name: architecture-zero-debt
