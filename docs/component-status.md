@@ -79,5 +79,5 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 | `surface.card` | Card | `usable` | `qtmaterial/widgets/surfaces/qtmaterialcard.h` | `CardSpec` | `tst_card` | `docs/public-api/surfaces.md` | `/surfaces/card` |
 | `surface.dialog` | Dialog | `usable` | `qtmaterial/widgets/surfaces/qtmaterialdialog.h` | `DialogSpec` | `tst_dialog` | `docs/public-api/surfaces.md` | `/surfaces/dialog` |
 | `surface.navigation-drawer` | Navigation Drawer | `usable` | `qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h` | `NavigationDrawerSpec` | `tst_navigationdrawer` | `docs/public-api/navigationdrawer-release-readiness.md` | `/surfaces/navigation-drawer` |
-| `surface.top-app-bar` | Top App Bar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialtopappbar.h` | `AppBarSpec` | `tst_topappbar` | `docs/public-api/appbars-release-readiness.md` | `/surfaces/top-app-bar` |
 | `surface.snackbar` | Snackbar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialsnackbar.h` | `SnackbarSpec` | `tst_snackbar` | `docs/public-api/surfaces.md` | `/surfaces/snackbar` |
+| `surface.top-app-bar` | Top App Bar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialtopappbar.h` | `AppBarSpec` | `tst_topappbar` | `docs/public-api/appbars-release-readiness.md` | `/surfaces/top-app-bar` |
