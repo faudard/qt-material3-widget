@@ -1,3 +1,5 @@
+#include <QImage>
+#include <QPixmap>
 #include <QSignalSpy>
 #include <QtTest/QtTest>
 
@@ -24,6 +26,10 @@ private Q_SLOTS:
     void circularDeterminateAccessibilityIncludesPercent();
     void circularIndeterminateAccessibilityUsesStatusText();
     void circularAsyncStateUpdatesAccessibility();
+    void linearDeterminateAccessibilityIncludesPercent();
+    void linearIndeterminateAccessibilityUsesStatusText();
+    void linearRtlPaintsFromTrailingEdge();
+    void linearRendersAtHighDpi();
 };
 
 void tst_ProgressIndicators::linearValueIsClamped()
@@ -225,6 +231,77 @@ void tst_ProgressIndicators::circularAsyncStateUpdatesAccessibility()
 
     QCOMPARE(indicator.mode(), QtMaterialCircularProgressIndicator::Mode::Indeterminate);
     QCOMPARE(indicator.accessibleValueText(), QStringLiteral("Waiting"));
+}
+
+void tst_ProgressIndicators::linearDeterminateAccessibilityIncludesPercent()
+{
+    QtMaterialLinearProgressIndicator indicator;
+    QCOMPARE(indicator.accessibleName(), QStringLiteral("Progress indicator"));
+
+    indicator.setStatusText(QStringLiteral("Uploading"));
+    indicator.setValue(0.25);
+
+    QCOMPARE(indicator.accessibleValueText(), QStringLiteral("Uploading, 25%"));
+    QCOMPARE(indicator.accessibleDescription(), QStringLiteral("Uploading, 25%"));
+}
+
+void tst_ProgressIndicators::linearIndeterminateAccessibilityUsesStatusText()
+{
+    QtMaterialLinearProgressIndicator indicator;
+    indicator.setIndeterminate(true);
+    QCOMPARE(indicator.accessibleValueText(), QStringLiteral("In progress"));
+
+    indicator.setStatusText(QStringLiteral("Syncing"));
+    QCOMPARE(indicator.accessibleValueText(), QStringLiteral("Syncing"));
+    QCOMPARE(indicator.accessibleDescription(), QStringLiteral("Syncing"));
+}
+
+void tst_ProgressIndicators::linearRtlPaintsFromTrailingEdge()
+{
+    QtMaterialLinearProgressIndicator indicator;
+    indicator.resize(200, 12);
+    indicator.setActiveColor(QColor(QStringLiteral("#ff0000")));
+    indicator.setTrackColor(QColor(QStringLiteral("#0000ff")));
+    indicator.setTrackGap(0);
+    indicator.setStopIndicatorSize(0);
+    indicator.setValue(0.25);
+
+    auto render = [&indicator](Qt::LayoutDirection direction) {
+        indicator.setLayoutDirection(direction);
+        QImage image(indicator.size(), QImage::Format_ARGB32_Premultiplied);
+        image.fill(Qt::transparent);
+        indicator.render(&image);
+        return image;
+    };
+
+    const QImage ltr = render(Qt::LeftToRight);
+    const QImage rtl = render(Qt::RightToLeft);
+    const int y = indicator.height() / 2;
+
+    const QColor ltrStart = ltr.pixelColor(20, y);
+    const QColor ltrEnd = ltr.pixelColor(180, y);
+    const QColor rtlStart = rtl.pixelColor(20, y);
+    const QColor rtlEnd = rtl.pixelColor(180, y);
+
+    QVERIFY(ltrStart.red() > ltrStart.blue());
+    QVERIFY(ltrEnd.blue() > ltrEnd.red());
+    QVERIFY(rtlStart.blue() > rtlStart.red());
+    QVERIFY(rtlEnd.red() > rtlEnd.blue());
+}
+
+void tst_ProgressIndicators::linearRendersAtHighDpi()
+{
+    QtMaterialLinearProgressIndicator indicator;
+    indicator.resize(320, qMax(8, indicator.sizeHint().height()));
+    indicator.setValue(0.5);
+
+    QPixmap pixmap(indicator.size() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    indicator.render(&pixmap);
+
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
 }
 
 QTEST_MAIN(tst_ProgressIndicators)
