@@ -295,7 +295,7 @@ void tst_ProgressIndicators::linearRendersAtHighDpi()
     indicator.resize(320, qMax(8, indicator.sizeHint().height()));
     indicator.setValue(0.5);
 
-    QPixmap pixmap(indicator.size() * 2);
+    QPixmap pixmap(indicator.width() * 2, indicator.height() * 2);
     pixmap.setDevicePixelRatio(2.0);
     pixmap.fill(Qt::transparent);
     indicator.render(&pixmap);
