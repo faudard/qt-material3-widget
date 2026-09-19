@@ -365,9 +365,8 @@ void QtMaterialList::setCurrentIndex(int index)
         break;
 
     case SelectionMode::MultiSelection:
-        if (auto* item = itemAt(index)) {
-            item->setSelected(true);
-        }
+        // Current/focus navigation is independent from selection in multi
+        // selection mode. Activation (Space/click) owns the toggle.
         break;
     }
     d_ptr->syncingSelection = false;
