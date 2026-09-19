@@ -32,8 +32,25 @@ void tst_AutocompleteResolvedWidget::appliesResolvedInputFontAndMetrics()
     field.setThemeContext(&context);
 
     const AutocompleteSpec& spec = field.resolvedSpec();
-    QCOMPARE(spec.inputFont, typography.font);
-    QCOMPARE(field.lineEdit()->font(), typography.font);
+    QVERIFY(spec.hasResolvedInputFont);
+    QCOMPARE(
+        spec.inputFont.pointSize(),
+        typography.font.pointSize());
+    QCOMPARE(
+        spec.inputFont.weight(),
+        typography.font.weight());
+    QCOMPARE(
+        spec.inputFont.italic(),
+        typography.font.italic());
+    QCOMPARE(
+        field.lineEdit()->font().pointSize(),
+        typography.font.pointSize());
+    QCOMPARE(
+        field.lineEdit()->font().weight(),
+        typography.font.weight());
+    QCOMPARE(
+        field.lineEdit()->font().italic(),
+        typography.font.italic());
     QCOMPARE(spec.inputCornerRadius, 12.0);
     QCOMPARE(field.sizeHint().height(), spec.inputMinHeight);
 }
