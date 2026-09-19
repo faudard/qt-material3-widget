@@ -52,7 +52,7 @@ jobs:
             build-extra-examples: "OFF"
 
           - name: macos-qt6.8.3
-            os: macos-latest
+            os: macos-15-intel
             qt-version: "6.8.3"
             qt-arch: clang_64
             expected-qt-version: "6.8.3"
@@ -130,7 +130,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_C_COMPILER=cl
           -DCMAKE_CXX_COMPILER=cl
-          -DQTMATERIAL3_EXPECT_QT_VERSION=${{ matrix.expected-qt-version }}
+          "-DQTMATERIAL3_EXPECT_QT_VERSION=${{ matrix.expected-qt-version }}"
           -DQTMATERIAL3_BUILD_TESTS=ON
           -DQTMATERIAL3_BUILD_EXAMPLES=ON
           -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=${{ matrix.build-extra-examples }}
