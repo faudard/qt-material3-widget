@@ -58,8 +58,8 @@ void tst_SelectionControlLayout::ltrGeometryPlacesIndicatorOnLeadingEdge()
     control.setSpacing(12);
     control.setLayoutDirection(Qt::LeftToRight);
 
-    QCOMPARE(control.indicatorRect(), QRect(0, 11, 18, 18));
-    QCOMPARE(control.labelRect(), QRect(30, 0, 110, 40));
+    QCOMPARE(control.indicatorRect(), QRect(15, 11, 18, 18));
+    QCOMPARE(control.labelRect(), QRect(48, 0, 92, 40));
 }
 
 void tst_SelectionControlLayout::rtlGeometryMirrorsIndicatorAndLabel()
@@ -69,8 +69,8 @@ void tst_SelectionControlLayout::rtlGeometryMirrorsIndicatorAndLabel()
     control.setSpacing(12);
     control.setLayoutDirection(Qt::RightToLeft);
 
-    QCOMPARE(control.indicatorRect(), QRect(122, 11, 18, 18));
-    QCOMPARE(control.labelRect(), QRect(0, 0, 110, 40));
+    QCOMPARE(control.indicatorRect(), QRect(107, 11, 18, 18));
+    QCOMPARE(control.labelRect(), QRect(0, 0, 92, 40));
 }
 
 void tst_SelectionControlLayout::spacingIsClampedToZero()
@@ -80,8 +80,8 @@ void tst_SelectionControlLayout::spacingIsClampedToZero()
     control.setSpacing(-8);
 
     QCOMPARE(control.spacing(), 0);
-    QCOMPARE(control.indicatorRect(), QRect(0, 11, 18, 18));
-    QCOMPARE(control.labelRect(), QRect(18, 0, 122, 40));
+    QCOMPARE(control.indicatorRect(), QRect(15, 11, 18, 18));
+    QCOMPARE(control.labelRect(), QRect(48, 0, 92, 40));
 }
 
 void tst_SelectionControlLayout::sizeHintUsesBoundedSpacingAndMinimumHeight()
@@ -94,7 +94,7 @@ void tst_SelectionControlLayout::sizeHintUsesBoundedSpacingAndMinimumHeight()
     const QSize hint = control.exposedSizeHint();
 
     QCOMPARE(control.spacing(), 0);
-    QCOMPARE(hint.width(), 18 + fm.horizontalAdvance(QStringLiteral("Option")) + 16);
+    QCOMPARE(hint.width(), 48 + fm.horizontalAdvance(QStringLiteral("Option")) + 16);
     QCOMPARE(hint.height(), qMax(48, fm.height() + 16));
 }
 
