@@ -1553,11 +1553,11 @@ void applyAutocompletePopupComponentTokens(
         stateLayer.pressOpacity;
 
     if (!tokens.isEmpty()) {
-        readReal(
+        readInt(
             tokens.custom,
             "cornerRadius",
             &spec->cornerRadius);
-        readReal(
+        readInt(
             tokens.custom,
             "focusRingWidth",
             &spec->focusRingWidth);
