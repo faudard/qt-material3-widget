@@ -1,6 +1,5 @@
 #include <QtTest/QtTest>
 #include <QStandardItemModel>
-#include <QLabel>
 
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
@@ -35,25 +34,28 @@ private slots:
         QVERIFY(table.spec().rowHeight > 0);
     }
 
-    void gridListAcceptsModel()
+    void gridListItems()
     {
-        QStandardItemModel model;
-        auto* item = new QStandardItem(QStringLiteral("Card"));
-        item->setData(QStringLiteral("Supporting text"), Qt::UserRole + 1);
-        model.appendRow(item);
-
         QtMaterial::QtMaterialGridList grid;
-        grid.setModel(&model);
+        const int index = grid.addGridItem(
+            QStringLiteral("Card"),
+            QStringLiteral("Supporting text"));
         grid.setColumns(2);
-        QCOMPARE(grid.model(), &model);
+
+        QCOMPARE(index, 0);
+        QCOMPARE(grid.count(), 1);
+        QCOMPARE(grid.itemTitle(0), QStringLiteral("Card"));
+        QCOMPARE(
+            grid.itemSupportingText(0),
+            QStringLiteral("Supporting text"));
         QCOMPARE(grid.columns(), 2);
     }
 
     void carouselNavigation()
     {
         QtMaterial::QtMaterialCarousel carousel;
-        carousel.addPage(new QLabel(QStringLiteral("One")), QStringLiteral("One"));
-        carousel.addPage(new QLabel(QStringLiteral("Two")), QStringLiteral("Two"));
+        carousel.addItem(QStringLiteral("One"));
+        carousel.addItem(QStringLiteral("Two"));
         QCOMPARE(carousel.count(), 2);
         QCOMPARE(carousel.currentIndex(), 0);
         carousel.next();
