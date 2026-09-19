@@ -36,7 +36,7 @@ void tst_ThemedTable::resolvesDefaultSpecFromParentContext()
         theme.colorScheme().color(ColorRole::Surface));
     QCOMPARE(
         table.resolvedSpec().bodyFont,
-        theme.typography().bodyMedium);
+        theme.typography().style(TypeRole::BodyMedium).font);
 }
 
 void tst_ThemedTable::followsThemeChangesInThemeMode()
