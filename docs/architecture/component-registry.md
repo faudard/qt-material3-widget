@@ -16,7 +16,7 @@ The registry tracks:
 - explicit release and reference-candidate decisions
 - ten evaluated maturity axes with evidence, gaps and next actions
 
-Generate the human-readable status files with:
+Generate the human-readable status files and the runtime C++ registry with:
 
 ```bash
 python3 scripts/generate_component_status.py
@@ -32,6 +32,8 @@ Generated outputs:
 
 - `STATUS.md`
 - `docs/component-status.md`
+- `docs/components/maturity.md`
+- `src/tooling/qtmaterialcomponentregistry_generated.inc`
 
 Maturity levels:
 
@@ -45,4 +47,6 @@ Maturity levels:
 
 A 1.0 release should not contain P0 components marked `skeleton` or `planned`.
 The Quality workflow runs complete repository health in strict mode, so implicit
-registry metadata, unevaluated axes and stale generated documents cannot merge.
+registry metadata, unevaluated axes and stale generated artifacts cannot merge.
+The runtime tooling registry is therefore compiled from the same canonical JSON
+inventory used to produce the status documentation.
