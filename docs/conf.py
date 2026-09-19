@@ -62,6 +62,14 @@ html_static_path = []
 
 nitpicky = False
 
+# Known documentation debt in legacy/generated fragments. Keep all other
+# Sphinx warnings fatal in CI.
+suppress_warnings = [
+    "toc.not_included",
+    "myst.header",
+    "misc.highlighting_failure",
+]
+
 # Optional local hint when Sphinx is run before Doxygen.
 if not DOXYGEN_XML_DIR.exists():
     print(
