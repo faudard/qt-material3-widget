@@ -39,7 +39,7 @@ void TestQtMaterialList::addItemsUpdatesCountAndCurrentIndex()
 
     QCOMPARE(list.count(), 2);
     QCOMPARE(list.currentIndex(), 0);
-    QCOMPARE(list.itemAccessibleText(0), QStringLiteral("Inbox, selected"));
+    QCOMPARE(list.itemAccessibleText(0), QStringLiteral("Inbox, 1 of 2, selected"));
     QVERIFY(list.accessibilitySummary().contains(QStringLiteral("2 items")));
 }
 

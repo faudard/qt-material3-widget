@@ -11,6 +11,24 @@ private slots:
         QVERIFY(!registry.isEmpty());
         QVERIFY(QtMaterial::findComponentDescriptor(registry, QStringLiteral("button.filled")) != nullptr);
         QVERIFY(QtMaterial::findComponentDescriptor(registry, QStringLiteral("navigation.rail")) != nullptr);
+        QVERIFY(QtMaterial::findComponentDescriptor(registry, QStringLiteral("data.carousel")) != nullptr);
+        QVERIFY(QtMaterial::findComponentDescriptor(registry, QStringLiteral("surface.navigation-drawer")) != nullptr);
+
+        const auto* filled = QtMaterial::findComponentDescriptor(registry, QStringLiteral("button.filled"));
+        QVERIFY(filled != nullptr);
+        QCOMPARE(filled->maturity, QtMaterial::ComponentMaturity::Complete);
+
+        const auto* rail = QtMaterial::findComponentDescriptor(registry, QStringLiteral("navigation.rail"));
+        QVERIFY(rail != nullptr);
+        QCOMPARE(rail->maturity, QtMaterial::ComponentMaturity::Usable);
+
+        const auto* snackbar = QtMaterial::findComponentDescriptor(registry, QStringLiteral("surface.snackbar"));
+        QVERIFY(snackbar != nullptr);
+        QCOMPARE(snackbar->maturity, QtMaterial::ComponentMaturity::Partial);
+
+        const auto* chip = QtMaterial::findComponentDescriptor(registry, QStringLiteral("compact.chip"));
+        QVERIFY(chip != nullptr);
+        QCOMPARE(chip->maturity, QtMaterial::ComponentMaturity::Planned);
     }
 
     void maturityRoundTrip()

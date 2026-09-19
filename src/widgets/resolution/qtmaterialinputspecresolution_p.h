@@ -10,11 +10,24 @@ namespace QtMaterial {
 namespace InputSpecResolution {
 
 inline AutocompletePopupSpec autocompletePopupSpec(
+    const Theme& theme)
+{
+    return AutocompletePopupSpecResolver().autocompletePopupSpec(
+        theme);
+}
+
+inline AutocompletePopupSpec autocompletePopupSpec(
+    const ThemeContext* context)
+{
+    Q_ASSERT(context);
+    return autocompletePopupSpec(context->theme());
+}
+
+inline AutocompletePopupSpec autocompletePopupSpec(
     const QtMaterialThemeContextBinding* binding)
 {
     Q_ASSERT(binding);
-    return AutocompletePopupSpecResolver().autocompletePopupSpec(
-        binding->theme());
+    return autocompletePopupSpec(binding->theme());
 }
 
 inline DatePickerSpec datePickerSpec(

@@ -28,12 +28,32 @@ using QtMaterial::QtMaterialWidget;
 using QtMaterial::QtMaterialThemeContextBinding;
 using QtMaterial::Theme;
 using QtMaterial::ThemeContext;
+namespace {
+
+ThemeContext* inheritedThemeContextFromAnchor(QLineEdit* anchor)
+{
+    QWidget* current = anchor;
+    while (current) {
+        if (auto* host = qobject_cast<QtMaterial::ThemeContextHost*>(current)) {
+            if (ThemeContext* context = host->effectiveThemeContext()) {
+                return context;
+            }
+        }
+        current = current->parentWidget();
+    }
+    return nullptr;
+}
+
+} // namespace
+
 struct QtMaterialAutocompletePopupPrivate {
 
     mutable bool m_specDirty = true;
     mutable QtMaterial::AutocompletePopupSpec m_spec;
     QtMaterialThemeContextBinding* m_themeBinding = nullptr;
     QPointer<QLineEdit> m_anchorLineEdit;
+    QPointer<ThemeContext> m_anchorThemeContext;
+    QMetaObject::Connection m_anchorThemeChangedConnection;
     QPointer<QAbstractItemModel> m_sourceModel;
     QSortFilterProxyModel* m_filterModel = nullptr;
     QStringListModel* m_ownedStringModel = nullptr;
@@ -50,8 +70,10 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
 {
     setAttribute(Qt::WA_Hover, true);
     setFocusPolicy(Qt::StrongFocus);
-    setWindowFlag(Qt::Popup, true);
     setAutoFillBackground(false);
+
+    // Create the binding before operations such as setWindowFlag() that may
+    // synchronously deliver ParentChange. ParentChange resolves the spec.
     d_ptr->m_themeBinding =
         new QtMaterialThemeContextBinding(this, this);
 
@@ -68,6 +90,8 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
         &QtMaterialThemeContextBinding::themeChanged,
         this,
         &QtMaterialAutocompletePopup::handleThemeChanged);
+
+    setWindowFlag(Qt::Popup, true);
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -135,7 +159,18 @@ QtMaterialAutocompletePopup::QtMaterialAutocompletePopup(QWidget* parent)
     updatePopupPalette();
 }
 
-QtMaterialAutocompletePopup::~QtMaterialAutocompletePopup() = default;
+QtMaterialAutocompletePopup::~QtMaterialAutocompletePopup()
+{
+    QObject::disconnect(d_ptr->m_anchorThemeChangedConnection);
+    if (d_ptr->m_anchorLineEdit) {
+        d_ptr->m_anchorLineEdit->removeEventFilter(this);
+    }
+
+    // The binding is parented to this QWidget. Destroy it while d_ptr is still
+    // alive so no host event/filter callback can observe torn-down state.
+    delete d_ptr->m_themeBinding;
+    d_ptr->m_themeBinding = nullptr;
+}
 
 void QtMaterialAutocompletePopup::setThemeContext(
     ThemeContext* context)
@@ -151,13 +186,26 @@ void QtMaterialAutocompletePopup::setThemeContext(
 ThemeContext*
 QtMaterialAutocompletePopup::themeContext() const noexcept
 {
-    return d_ptr->m_themeBinding->themeContext();
+    return d_ptr->m_themeBinding
+        ? d_ptr->m_themeBinding->themeContext()
+        : nullptr;
 }
 
 ThemeContext*
 QtMaterialAutocompletePopup::effectiveThemeContext() const noexcept
 {
-    return d_ptr->m_themeBinding->effectiveThemeContext();
+    if (d_ptr->m_themeBinding) {
+        if (ThemeContext* explicitContext =
+                d_ptr->m_themeBinding->themeContext()) {
+            return explicitContext;
+        }
+    }
+    if (d_ptr->m_anchorThemeContext) {
+        return d_ptr->m_anchorThemeContext.data();
+    }
+    return d_ptr->m_themeBinding
+        ? d_ptr->m_themeBinding->effectiveThemeContext()
+        : nullptr;
 }
 
 const AutocompletePopupSpec&
@@ -192,6 +240,22 @@ void QtMaterialAutocompletePopup::setAnchorLineEdit(
     d_ptr->m_anchorLineEdit = lineEdit;
     if (d_ptr->m_anchorLineEdit) {
         d_ptr->m_anchorLineEdit->installEventFilter(this);
+    }
+
+    QObject::disconnect(d_ptr->m_anchorThemeChangedConnection);
+    d_ptr->m_anchorThemeContext =
+        inheritedThemeContextFromAnchor(d_ptr->m_anchorLineEdit);
+    if (d_ptr->m_anchorThemeContext) {
+        d_ptr->m_anchorThemeChangedConnection =
+            QObject::connect(
+                d_ptr->m_anchorThemeContext,
+                &ThemeContext::themeChanged,
+                this,
+                [this](const Theme& theme) {
+                    if (!themeContext()) {
+                        handleThemeChanged(theme);
+                    }
+                });
     }
 
     d_ptr->m_specDirty = true;
@@ -340,6 +404,23 @@ bool QtMaterialAutocompletePopup::eventFilter(
             break;
 
         case QEvent::ParentChange:
+            QObject::disconnect(
+                d_ptr->m_anchorThemeChangedConnection);
+            d_ptr->m_anchorThemeContext =
+                inheritedThemeContextFromAnchor(
+                    d_ptr->m_anchorLineEdit);
+            if (d_ptr->m_anchorThemeContext) {
+                d_ptr->m_anchorThemeChangedConnection =
+                    QObject::connect(
+                        d_ptr->m_anchorThemeContext,
+                        &ThemeContext::themeChanged,
+                        this,
+                        [this](const Theme& theme) {
+                            if (!themeContext()) {
+                                handleThemeChanged(theme);
+                            }
+                        });
+            }
             d_ptr->m_specDirty = true;
             ensureSpecResolved();
             updatePopupPalette();
@@ -451,9 +532,18 @@ QtMaterialAutocompletePopup::ensureSpecResolved() const
     if (!d_ptr->m_specDirty) {
         return;
     }
-    // d_ptr->m_spec =
-    //     QtMaterial::InputSpecResolution::autocompletePopupSpec(
-    //         d_ptr->m_themeBinding);
+    if (!d_ptr->m_themeBinding) {
+        return;
+    }
+    if (ThemeContext* context = effectiveThemeContext()) {
+        d_ptr->m_spec =
+            QtMaterial::InputSpecResolution::autocompletePopupSpec(
+                context);
+    } else {
+        d_ptr->m_spec =
+            QtMaterial::InputSpecResolution::autocompletePopupSpec(
+                d_ptr->m_themeBinding);
+    }
     d_ptr->m_specDirty = false;
 }
 

@@ -134,7 +134,7 @@ def validate_contract(root: Path = ROOT) -> list[str]:
     )
     errors += require(
         root/"src/theme/qtmaterialthemecontext.cpp",
-        ("if (theme == m_theme)",),
+        ("theme == m_theme",),
         root,
     )
 

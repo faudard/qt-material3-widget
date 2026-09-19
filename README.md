@@ -48,13 +48,13 @@ These pages describe Material 3 design intent.
 The generated API reference in this repository documents the actual C++ API exposed by `qt-material3-widget`.
 
 ## Module layout
-- `qtmaterial3_foundation` � dependency-light shared value types (`Density` and `QtMaterialInteractionState`)
+- `qtmaterial3_foundation` — dependency-light shared value types (`Density` and `QtMaterialInteractionState`)
 
-- `qtmaterial3_theme` — tokens, schemes, builder, serializer, manager
-- `qtmaterial3_core` — widget bases and interaction state
-- `qtmaterial3_specs` — immutable component specs and factory
-- `qtmaterial3_effects` — ripple, focus, shadow, transitions, scrim
-- `qtmaterial3_widgets` — public widget implementations
+- `qtmaterial3_theme` â€” tokens, schemes, builder, serializer, manager
+- `qtmaterial3_core` â€” widget bases and interaction state
+- `qtmaterial3_specs` â€” immutable component specs and resolver infrastructure
+- `qtmaterial3_effects` â€” ripple, focus, shadow, transitions, scrim
+- `qtmaterial3_widgets` â€” public widget implementations
 
 ## Current direction
 
@@ -128,17 +128,17 @@ Typical consumer scenarios:
 See the dedicated guide: [docs/public-api/theming.md](docs/public-api/theming.md)
 
 ## Examples
-  * `examples/theming-seed-workflow` � public seed color, light/dark, contrast, and JSON inspection workflow
-  * `examples/theming-runtime-switch` � runtime theme application and revision tracking
-  * `examples/theming-json-workflow` � strict JSON export/import workflow
-  * `examples/theming-component-overrides` � component-local override serialization workflow
-  * `examples/theming-backend-report` � MCU/fallback backend status workflow
+  * `examples/theming-seed-workflow` — public seed color, light/dark, contrast, and JSON inspection workflow
+  * `examples/theming-runtime-switch` — runtime theme application and revision tracking
+  * `examples/theming-json-workflow` — strict JSON export/import workflow
+  * `examples/theming-component-overrides` — component-local override serialization workflow
+  * `examples/theming-backend-report` — MCU/fallback backend status workflow
 
-- `examples/gallery` — showcase / component gallery
-- `examples/minimal-consumer` — smallest integration example
-- `examples/install-consumer` — install/export validation
-- `examples/theme-playground` — theme experimentation, seed color workflow, JSON import/export
-- `examples/core-playground` — low-level behavior validation
+- `examples/gallery` â€” showcase / component gallery
+- `examples/minimal-consumer` â€” smallest integration example
+- `examples/install-consumer` â€” install/export validation
+- `examples/theme-playground` â€” theme experimentation, seed color workflow, JSON import/export
+- `examples/core-playground` â€” low-level behavior validation
 
 ## Documentation map
 

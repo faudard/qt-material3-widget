@@ -51,7 +51,19 @@ QtMaterialList::QtMaterialList(QWidget* parent)
     syncAccessibility();
 }
 
-QtMaterialList::~QtMaterialList() = default;
+QtMaterialList::~QtMaterialList()
+{
+    // QWidget destroys child items after derived members have been torn down.
+    // Disconnect item callbacks now so QObject::destroyed cannot enter this
+    // object after d_ptr has already been released.
+    for (const QPointer<QtMaterialListItem>& pointer : d_ptr->items) {
+        if (QtMaterialListItem* item = pointer.data()) {
+            item->removeEventFilter(this);
+            QObject::disconnect(item, nullptr, this, nullptr);
+        }
+    }
+    d_ptr->items.clear();
+}
 
 int QtMaterialList::count() const noexcept
 {
@@ -353,9 +365,8 @@ void QtMaterialList::setCurrentIndex(int index)
         break;
 
     case SelectionMode::MultiSelection:
-        if (auto* item = itemAt(index)) {
-            item->setSelected(true);
-        }
+        // Current/focus navigation is independent from selection in multi
+        // selection mode. Activation (Space/click) owns the toggle.
         break;
     }
     d_ptr->syncingSelection = false;
@@ -523,8 +534,14 @@ QString QtMaterialList::itemAccessibleText(
 
 QString QtMaterialList::accessibilitySummary() const
 {
+    if (count() == 0) {
+        return tr("Empty list");
+    }
+
     QString summary =
-        tr("%n item(s)", nullptr, count());
+        count() == 1
+        ? tr("1 item")
+        : tr("%1 items").arg(count());
 
     const QList<int> selected =
         selectedIndexes();
@@ -910,7 +927,34 @@ bool QtMaterialList::activateIndex(int index)
         return false;
     }
 
-    setCurrentIndex(index);
+    if (d_ptr->selectionMode
+        == SelectionMode::MultiSelection) {
+        const QList<int> selectionBefore =
+            selectedIndexes();
+        const int oldCurrentIndex =
+            d_ptr->currentIndex;
+
+        d_ptr->currentIndex = index;
+        if (QtMaterialListItem* item =
+                itemAt(index)) {
+            d_ptr->syncingSelection = true;
+            item->setSelected(
+                !item->isSelected());
+            d_ptr->syncingSelection = false;
+        }
+
+        if (oldCurrentIndex != index) {
+            Q_EMIT currentIndexChanged(index);
+        }
+        if (selectionBefore
+            != selectedIndexes()) {
+            Q_EMIT selectionChanged();
+        }
+        syncAccessibility();
+    } else {
+        setCurrentIndex(index);
+    }
+
     Q_EMIT itemActivated(index);
     return true;
 }

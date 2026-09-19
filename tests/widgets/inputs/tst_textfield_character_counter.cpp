@@ -36,7 +36,11 @@ void tst_textfield_character_counter::counterIsDisabledByDefault()
     QtMaterialOutlinedTextField field;
 
     QVERIFY(!field.isCharacterCounterEnabled());
-    QVERIFY(field.findChild<QLabel*>(QStringLiteral("qtmaterial_textfield_characterCounter")) == nullptr);
+    auto* counter =
+        field.findChild<QLabel*>(
+            QStringLiteral("qtmaterial_textfield_characterCounter"));
+    QVERIFY(counter != nullptr);
+    QVERIFY(!counter->isVisible());
 }
 
 void tst_textfield_character_counter::enablingCounterCreatesStableLabel()

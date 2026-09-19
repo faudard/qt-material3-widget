@@ -1,5 +1,8 @@
 #include <QtTest/QtTest>
 
+#include <QVBoxLayout>
+#include <QWidget>
+
 #include "qtmaterial/widgets/buttons/qtmaterialfab.h"
 
 class tst_Fab : public QObject {
@@ -24,15 +27,20 @@ void tst_Fab::constructs()
 
 void tst_Fab::keyboardActivation()
 {
+    QWidget window;
+    QVBoxLayout layout(&window);
+
     QtMaterial::QtMaterialFab widget;
     widget.setIconAccessibleName(QStringLiteral("Create"));
     widget.resize(widget.sizeHint());
-    widget.show();
+    layout.addWidget(&widget);
 
-    QVERIFY(QTest::qWaitForWindowExposed(&widget));
+    window.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&window));
 
-    widget.setFocus();
-    QVERIFY(widget.hasFocus());
+    window.activateWindow();
+    widget.setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(widget.hasFocus());
 
     QSignalSpy clickedSpy(&widget, &QAbstractButton::clicked);
     QVERIFY(clickedSpy.isValid());

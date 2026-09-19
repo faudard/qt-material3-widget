@@ -74,6 +74,7 @@ repeatedVisibilityRequestRecoversPopup()
     QWidget host;
     QLineEdit anchor(&host);
     host.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&host));
 
     QtMaterialAutocompletePopup popup;
     popup.setAnchorLineEdit(&anchor);
@@ -81,20 +82,16 @@ repeatedVisibilityRequestRecoversPopup()
         {QStringLiteral("alpha")});
 
     popup.setPopupVisible(true);
-    QCoreApplication::processEvents();
-    QVERIFY(popup.isPopupVisible());
+    QTRY_VERIFY(popup.isPopupVisible());
 
     popup.hide();
-    QCoreApplication::processEvents();
-    QVERIFY(!popup.isPopupVisible());
+    QTRY_VERIFY(!popup.isPopupVisible());
 
     popup.setPopupVisible(true);
-    QCoreApplication::processEvents();
-    QVERIFY(popup.isPopupVisible());
+    QTRY_VERIFY(popup.isPopupVisible());
 
     popup.setPopupVisible(false);
-    QCoreApplication::processEvents();
-    QVERIFY(!popup.isPopupVisible());
+    QTRY_VERIFY(!popup.isPopupVisible());
 }
 
 QTEST_MAIN(tst_AutocompletePopupThemeContext)

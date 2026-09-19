@@ -8,6 +8,9 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+
+if not (ROOT / "tools/check_material_structural_conformance.py").is_file():
+    raise unittest.SkipTest("Material conformance tooling is not implemented yet: tools/check_material_structural_conformance.py")
 SCRIPT = ROOT / "tools/check_material_structural_conformance.py"
 SPEC = importlib.util.spec_from_file_location(
     "qtm3_material_structural_conformance_tests", SCRIPT

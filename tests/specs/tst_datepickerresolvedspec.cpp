@@ -39,9 +39,9 @@ void tst_DatePickerResolvedSpec::resolvesCompleteRuntimeValues()
     QCOMPARE(spec.cornerRadius, 24);
     QVERIFY(spec.weekdayTextColor.isValid());
     QVERIFY(spec.navigationButtonTextColor.isValid());
-    QCOMPARE(spec.headlineFont, theme.typography().headlineSmall);
-    QCOMPARE(spec.dayFont, theme.typography().bodyMedium);
-    QCOMPARE(spec.weekdayFont, theme.typography().labelLarge);
+    QCOMPARE(spec.headlineFont, theme.typography().style(TypeRole::HeadlineSmall).font);
+    QCOMPARE(spec.dayFont, theme.typography().style(TypeRole::BodyMedium).font);
+    QCOMPARE(spec.weekdayFont, theme.typography().style(TypeRole::LabelLarge).font);
     QVERIFY(spec.cellSize >= 32);
     QVERIFY(spec.headerHeight >= 40);
 }

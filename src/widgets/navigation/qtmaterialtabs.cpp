@@ -1191,6 +1191,9 @@ void QtMaterialTabs::tabInserted(int index)
     }
     updateAllAutomationMetadata();
 
+    syncControllersFromCurrentIndex(currentIndex());
+    syncNavigationModelSelectionFromCurrentTab();
+    syncAccessibilityState();
     emitCurrentRouteIfChanged();
 }
 
@@ -1204,6 +1207,9 @@ void QtMaterialTabs::tabRemoved(int index)
     }
     updateAllAutomationMetadata();
 
+    syncControllersFromCurrentIndex(currentIndex());
+    syncNavigationModelSelectionFromCurrentTab();
+    syncAccessibilityState();
     emitCurrentRouteIfChanged();
 }
 
@@ -1228,6 +1234,14 @@ void QtMaterialTabs::emitCurrentRouteIfChanged()
 void QtMaterialTabs::onCurrentTabChanged(
     int index)
 {
+    // QTabWidget can emit currentChanged while insert/remove is still
+    // reindexing tabs. During that window descriptors still describe the old
+    // structure, so emitting route state would produce a transient empty or
+    // wrong route. tabInserted()/tabRemoved() perform the final sync.
+    if (d_ptr->descriptors.size() != count()) {
+        return;
+    }
+
     if (index >= 0) {
         ensureTabLoaded(index);
     }

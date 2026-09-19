@@ -5,7 +5,7 @@ option(BUILD_SHARED_LIBS "Build QtMaterial3 libraries as shared libraries" ON)
 
 project(
     qt-material3-widgets
-    VERSION 0.4.0
+    VERSION 0.4.1
     DESCRIPTION "Material 3 widgets for Qt Widgets"
     LANGUAGES CXX
 )

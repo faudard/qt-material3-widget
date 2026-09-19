@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QMetaType>
+#include <QObject>
 #include <QString>
 
 #include <utility>

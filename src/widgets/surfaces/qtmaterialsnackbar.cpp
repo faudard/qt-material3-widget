@@ -91,6 +91,7 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
 
     d_ptr->timer = new QTimer(this);
     d_ptr->timer->setSingleShot(true);
+    d_ptr->timer->setTimerType(Qt::PreciseTimer);
 
     d_ptr->transition = new QtMaterialTransitionController(this);
     ensureSpecResolved();

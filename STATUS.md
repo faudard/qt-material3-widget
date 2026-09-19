@@ -23,3 +23,4 @@ No registry-level maturity blockers.
 
 - `docs/component-status.md` — compact component registry status.
 - `docs/components/maturity.md` — detailed maturity matrix.
+- `src/tooling/qtmaterialcomponentregistry_generated.inc` — runtime C++ registry entries.

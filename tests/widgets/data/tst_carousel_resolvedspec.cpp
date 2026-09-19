@@ -133,7 +133,7 @@ componentMetricsDriveSizeHint()
         carousel.sizeHint(),
         QSize(
             10 + 14 + 2 * 200 + 20,
-            8 + 12 + 140));
+            8 + 12 + 140 + 8 + 20));
 }
 
 QTEST_MAIN(tst_CarouselResolvedSpec)

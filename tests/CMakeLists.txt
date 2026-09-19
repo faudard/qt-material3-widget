@@ -120,10 +120,6 @@ qtm3_add_test(tst_filledtextfield widgets/inputs/tst_filledtextfield.cpp qtmater
 qtm3_add_test(tst_textfield_validation_group widgets/inputs/tst_textfield_validation_group.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_textfield_validation_summary widgets/inputs/tst_textfield_validation_summary.cpp qtmaterial3_widgets)
 
-# qtm3_add_test(tst_textfieldshellhelper_rtl widgets/inputs/tst_textfieldshellhelper_rtl.cpp qtmaterial3_widgets)
-# target_include_directories(tst_textfieldshellhelper_rtl PRIVATE
-#     ${CMAKE_SOURCE_DIR}/src/widgets/inputs/private
-# )
 qtm3_add_test(tst_textfield_accessibility widgets/inputs/tst_textfield_accessibility.cpp qtmaterial3_widgets)
 
 
@@ -207,11 +203,13 @@ qtm3_add_test(
     core/tst_abstractbutton_themecontext.cpp
     qtmaterial3_core
 )
-# qtm3_add_test(tst_overlaysurface core/tst_overlaysurface.cpp qtmaterial3_core)
-#qtm3_add_test(tst_selectioncontrol_layout core/tst_selectioncontrol_layout.cpp qtmaterial3_core)
+qtm3_add_test(tst_overlaysurface core/tst_overlaysurface.cpp qtmaterial3_core)
+qtm3_add_test(tst_selectioncontrol_layout core/tst_selectioncontrol_layout.cpp qtmaterial3_core)
 qtm3_add_test(tst_inputcontrol widgets/inputs/common/tst_inputcontrol.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_scrimwidget effects/tst_scrimwidget.cpp qtmaterial3_effects)
-# qtm3_add_test(tst_filledtonalbutton_render tests/render/buttons/tst_filledtonalbutton_render.cpp qtmaterial3_widgets)
+# Baseline deployment for this legacy render test is not deterministic yet;
+# keep visual coverage in tst_visual_smoke_contracts until its baseline path is normalized.
+# qtm3_add_test(tst_filledtonalbutton_render render/buttons/tst_filledtonalbutton_render.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_progressindicators widgets/progress/tst_progressindicators.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_tabs widgets/navigation/tst_tabs.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_themedmenu widgets/navigation/tst_themedmenu.cpp qtmaterial3_widgets)
@@ -223,17 +221,8 @@ qtm3_add_test(tst_navigationrail widgets/navigation/tst_navigationrail.cpp qtmat
 qtm3_add_test(tst_navigationrailresolvedwidget widgets/navigation/tst_navigationrailresolvedwidget.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_navigationrail_resolvedspec widgets/navigation/tst_navigationrail_resolvedspec.cpp qtmaterial3_widgets)
 
-#qtm3_add_test(tst_data_component_specs specs/tst_data_component_specs.cpp qtmaterial3_specs) # TODO
-#qtm3_add_test(tst_data_components widgets/tst_data_components.cpp qtmaterial3_widgets) #TODO
-
-# qtm3_add_test(tst_textfieldshellhelper widgets/inputs/tst_textfieldshellhelper.cpp qtmaterial3_widgets)
-
-# comment don t compile TODO
-# qtm3_add_test(tst_textfieldshellhelper widgets/inputs/tst_textfieldshellhelper.cpp qtmaterial3_widgets) 
-
-# target_include_directories(tst_textfieldshellhelper PRIVATE
-#     ${CMAKE_SOURCE_DIR}/src/widgets/inputs/private
-# )
+qtm3_add_test(tst_data_component_specs specs/tst_data_component_specs.cpp qtmaterial3_specs)
+qtm3_add_test(tst_data_components widgets/tst_data_components.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_snackbar widgets/surfaces/tst_snackbar.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_snackbarlifecycle widgets/surfaces/tst_snackbarlifecycle.cpp qtmaterial3_widgets)

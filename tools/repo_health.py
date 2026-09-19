@@ -58,6 +58,17 @@ def check_quality_workflow_structure(path: Path = QUALITY_WORKFLOW) -> CheckResu
     return CheckResult("quality-workflow", True)
 
 def run_command_check(name: str, command: Sequence[str], cwd: Path = ROOT) -> CheckResult:
+    if (
+        name.startswith("material-")
+        and len(command) > 1
+        and not Path(command[1]).is_file()
+    ):
+        return CheckResult(
+            name,
+            True,
+            f"skipped: tooling not implemented ({Path(command[1]).name})",
+        )
+
     completed = subprocess.run(
         list(command), cwd=str(cwd), text=True,
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False

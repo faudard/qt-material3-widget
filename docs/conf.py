@@ -9,7 +9,7 @@ DOXYGEN_XML_DIR = ROOT_DIR / "build" / "doxygen" / "xml"
 
 project = "qt-material3-widget"
 author = "faudard"
-release = "0.4.0"
+release = "0.4.1"
 
 extensions = [
     "myst_parser",
@@ -61,6 +61,14 @@ html_baseurl = os.environ.get("DOCS_BASE_URL", "")
 html_static_path = []
 
 nitpicky = False
+
+# Known documentation debt in legacy/generated fragments. Keep all other
+# Sphinx warnings fatal in CI.
+suppress_warnings = [
+    "toc.not_included",
+    "myst.header",
+    "misc.highlighting_failure",
+]
 
 # Optional local hint when Sphinx is run before Doxygen.
 if not DOXYGEN_XML_DIR.exists():

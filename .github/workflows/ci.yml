@@ -51,11 +51,11 @@ jobs:
             use-mcu: "OFF"
             build-extra-examples: "OFF"
 
-          - name: macos-qt6.8.4
-            os: macos-latest
-            qt-version: "6.8.4"
+          - name: macos-qt6.8.3
+            os: macos-15-intel
+            qt-version: "6.8.3"
             qt-arch: clang_64
-            expected-qt-version: "6.8.4"
+            expected-qt-version: "6.8.3"
             msvc-toolset: ""
             expected-msvc-prefix: ""
             use-mcu: "OFF"
@@ -66,7 +66,7 @@ jobs:
       CTEST_OUTPUT_ON_FAILURE: 1
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install Linux runtime packages
         if: runner.os == 'Linux'
@@ -83,10 +83,26 @@ jobs:
 
       - name: Set up MSVC environment
         if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
-          toolset: ${{ matrix.msvc-toolset }}
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $installationPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installationPath) { throw "Visual Studio installation not found" }
+
+          $vsDevCmd = Join-Path $installationPath "Common7\Tools\VsDevCmd.bat"
+          $command = '"' + $vsDevCmd + '" -no_logo -arch=x64 -host_arch=x64 -vcvars_ver=${{ matrix.msvc-toolset }} && set'
+          $environment = cmd.exe /d /s /c $command
+          if ($LASTEXITCODE -ne 0) { throw "VsDevCmd failed with exit code $LASTEXITCODE" }
+
+          $persist = @("PATH", "INCLUDE", "LIB", "LIBPATH", "VCINSTALLDIR", "VCToolsInstallDir", "VCToolsVersion", "VSINSTALLDIR", "VisualStudioVersion", "WindowsSdkDir", "WindowsSDKVersion", "UniversalCRTSdkDir", "UCRTVersion")
+          foreach ($line in $environment) {
+            if ($line -match '^([^=]+)=(.*)$') {
+              $name = $matches[1]
+              if ($persist -contains $name) {
+                "$name=$($matches[2])" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+              }
+            }
+          }
 
       - name: Install Qt
         if: runner.os != 'Linux'
@@ -114,7 +130,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_C_COMPILER=cl
           -DCMAKE_CXX_COMPILER=cl
-          -DQTMATERIAL3_EXPECT_QT_VERSION=${{ matrix.expected-qt-version }}
+          "-DQTMATERIAL3_EXPECT_QT_VERSION=${{ matrix.expected-qt-version }}"
           -DQTMATERIAL3_BUILD_TESTS=ON
           -DQTMATERIAL3_BUILD_EXAMPLES=ON
           -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=${{ matrix.build-extra-examples }}
@@ -187,7 +203,7 @@ jobs:
       QT_QPA_PLATFORM: offscreen
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install Qt/build dependencies
         run: bash scripts/ci/install-ubuntu-deps.sh
@@ -205,7 +221,7 @@ jobs:
     name: architecture-zero-debt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Python checker tests
         run: >
