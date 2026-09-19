@@ -46,6 +46,9 @@ private slots:
     void supportsRoutesAndUrlNavigation();
     void exposesAutomationProperties();
     void supportsKeyboardNavigation();
+    void supportsRtlKeyboardNavigation();
+    void exposesAccessibleTabBar();
+    void rendersAtHighDpi();
 };
 
 void TestQtMaterialTabs::constructs()
@@ -220,6 +223,61 @@ void TestQtMaterialTabs::supportsKeyboardNavigation()
 
     QTest::keyClick(bar, Qt::Key_End);
     QCOMPARE(tabs.currentIndex(), 2);
+}
+
+void TestQtMaterialTabs::supportsRtlKeyboardNavigation()
+{
+    QWidget host;
+    QVBoxLayout layout(&host);
+    QtMaterial::QtMaterialTabs tabs;
+    tabs.setLayoutDirection(Qt::RightToLeft);
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("One"));
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("Two"));
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("Three"));
+    tabs.setWrapNavigation(true);
+    tabs.setCurrentIndex(1);
+    layout.addWidget(&tabs);
+
+    host.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&host));
+
+    QTabBar* bar = tabs.findChild<QTabBar*>(QStringLiteral("qtmaterial_tabs_bar"));
+    QVERIFY(bar != nullptr);
+    bar->setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(bar->hasFocus());
+
+    QTest::keyClick(bar, Qt::Key_Right);
+    QCOMPARE(tabs.currentIndex(), 0);
+
+    QTest::keyClick(bar, Qt::Key_Left);
+    QCOMPARE(tabs.currentIndex(), 1);
+}
+
+void TestQtMaterialTabs::exposesAccessibleTabBar()
+{
+    QtMaterial::QtMaterialTabs tabs;
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("Overview"));
+
+    QTabBar* bar = tabs.findChild<QTabBar*>(QStringLiteral("qtmaterial_tabs_bar"));
+    QVERIFY(bar != nullptr);
+    QCOMPARE(bar->accessibleName(), QStringLiteral("Tabs"));
+    QCOMPARE(bar->tabText(0), QStringLiteral("Overview"));
+}
+
+void TestQtMaterialTabs::rendersAtHighDpi()
+{
+    QtMaterial::QtMaterialTabs tabs;
+    tabs.resize(480, 160);
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("Overview"));
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("Settings"));
+
+    QPixmap pixmap(tabs.size() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    tabs.render(&pixmap);
+
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
 }
 
 QTEST_MAIN(TestQtMaterialTabs)
