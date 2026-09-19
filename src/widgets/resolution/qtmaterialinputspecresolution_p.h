@@ -17,6 +17,13 @@ inline AutocompletePopupSpec autocompletePopupSpec(
 }
 
 inline AutocompletePopupSpec autocompletePopupSpec(
+    const ThemeContext* context)
+{
+    Q_ASSERT(context);
+    return autocompletePopupSpec(context->theme());
+}
+
+inline AutocompletePopupSpec autocompletePopupSpec(
     const QtMaterialThemeContextBinding* binding)
 {
     Q_ASSERT(binding);
