@@ -97,8 +97,10 @@ public:
         setElideMode(Qt::ElideRight);
         setMouseTracking(true);
         setFocusPolicy(Qt::StrongFocus);
+        setAccessibleName(tr("Tabs"));
 
         m_overflowButton->setText(QStringLiteral("…"));
+        m_overflowButton->setAccessibleName(tr("More tabs"));
         m_overflowButton->setAutoRaise(true);
         m_overflowButton->setFocusPolicy(Qt::NoFocus);
         m_overflowButton->setMenu(m_overflowMenu);
@@ -218,12 +220,22 @@ protected:
             event->accept();
             return;
         }
-        if (event->key() == Qt::Key_Left || event->key() == Qt::Key_Up || backward) {
+        if (event->key() == Qt::Key_Left) {
+            moveRelative(layoutDirection() == Qt::RightToLeft ? +1 : -1);
+            event->accept();
+            return;
+        }
+        if (event->key() == Qt::Key_Right) {
+            moveRelative(layoutDirection() == Qt::RightToLeft ? -1 : +1);
+            event->accept();
+            return;
+        }
+        if (event->key() == Qt::Key_Up || backward) {
             moveRelative(-1);
             event->accept();
             return;
         }
-        if (event->key() == Qt::Key_Right || event->key() == Qt::Key_Down || forward) {
+        if (event->key() == Qt::Key_Down || forward) {
             moveRelative(+1);
             event->accept();
             return;
