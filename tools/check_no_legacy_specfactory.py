@@ -97,7 +97,7 @@ def scan_tree(root: Path = ROOT) -> list[Violation]:
             )
 
         try:
-            text = path.read_text(encoding="utf-8")
+            text = path.read_text(encoding="utf-8", errors="replace")
         except UnicodeDecodeError:
             continue
 
@@ -118,7 +118,7 @@ def scan_tree(root: Path = ROOT) -> list[Violation]:
         path = root / rel_text
         if not path.is_file():
             continue
-        text = path.read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8", errors="replace")
         for number, line in enumerate(text.splitlines(), start=1):
             for pattern in patterns:
                 if pattern.search(line):
