@@ -24,6 +24,7 @@ Use these pages for package-level guidance and family-level orientation. For exa
 - compact controls
 - inputs
 - navigation
+- progress indicators
 - selection controls
 - surfaces
 - data widgets
@@ -49,6 +50,7 @@ compact-controls
 data-widgets
 inputs
 navigation
+progress-indicators
 selection
 surfaces
 ```
