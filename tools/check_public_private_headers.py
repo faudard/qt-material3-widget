@@ -97,15 +97,15 @@ def check_install_contract(root: Path) -> list[str]:
         ):
             if token not in helper_text:
                 errors.append(f"header install helper missing {token}")
-        if "QTMATERIAL3_PRIVATE_HEADERS" in helper_text and \
-           "install(" in helper_text:
-            # Private list may be validated, but never looped into install.
-            if re.search(
-                r"foreach\s*\([^\)]*QTMATERIAL3_PRIVATE_HEADERS",
-                helper_text,
-                re.IGNORECASE,
-            ):
-                errors.append("private header list must never be installed")
+        # A private-header loop may validate source files, but an install()
+        # command inside that loop is forbidden.
+        if re.search(
+            r"foreach\s*\([^\)]*QTMATERIAL3_PRIVATE_HEADERS[^\)]*\)"
+            r"(?:(?!endforeach\s*\().)*install\s*\(",
+            helper_text,
+            re.IGNORECASE | re.DOTALL,
+        ):
+            errors.append("private header list must never be installed")
 
     consumer_runner = root / "scripts/ci/run-consumer-matrix.py"
     if not consumer_runner.is_file():
