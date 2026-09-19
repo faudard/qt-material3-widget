@@ -63,14 +63,14 @@
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Rail Material reference model or deterministic visual conformance evidence is available. |
-| `navigation.tabs` | Tabs | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 3 | 2 | 2 | Complete visual-reference and full state-matrix certification remain before Tabs can be marked complete. |
+| `navigation.tabs` | Tabs | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Complete visual-reference and full state-matrix certification remain before Tabs can be marked complete. |
 
 ### Progress
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `progress.circular` | Circular Progress Indicator | `usable` | 2 | 2 | 2 | 1 | N/A | 1 | N/A | 2 | 1 | 2 | No Circular Progress Material reference model or deterministic visual conformance evidence is available. |
-| `progress.linear` | Linear Progress Indicator | `usable` | 2 | 2 | 2 | 2 | N/A | 2 | 2 | 3 | 1 | 2 | Deterministic visual-reference coverage remains before Linear Progress can be marked complete. |
+| `progress.linear` | Linear Progress Indicator | `usable` | 2 | 2 | 2 | 2 | N/A | 2 | 2 | 2 | 1 | 2 | Deterministic visual-reference coverage remains before Linear Progress can be marked complete. |
 
 ### Selection
 
@@ -91,8 +91,8 @@
 | `surface.card` | Card | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Card Material reference model or deterministic visual conformance evidence is available. |
 | `surface.dialog` | Dialog | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Dialog Material reference model or deterministic visual conformance evidence is available. |
 | `surface.navigation-drawer` | Navigation Drawer | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Drawer Material reference model or deterministic visual conformance evidence is available. |
+| `surface.snackbar` | Snackbar | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Reviewed visual-reference coverage and a broader transient-surface matrix remain before complete maturity. |
 | `surface.top-app-bar` | Top App Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Top App Bar Material reference model or deterministic visual conformance evidence is available. |
-| `surface.snackbar` | Snackbar | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 3 | 1 | 2 | Reviewed visual-reference coverage and a broader transient-surface matrix remain before complete maturity. |
 
 ## Buttons completion gate
 
@@ -158,5 +158,5 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Card | Add Card variant, interaction, accessibility and visual evidence before raising maturity axes. |
 | Dialog | Add Dialog focus, accessibility, RTL and visual evidence before raising maturity axes. |
 | Navigation Drawer | Add Drawer state, focus, RTL and visual evidence before raising maturity axes. |
-| Top App Bar | Add App Bar state, action, RTL and visual evidence before raising maturity axes. |
 | Snackbar | Add deterministic visual references and extended transient-surface state coverage for complete maturity. |
+| Top App Bar | Add App Bar state, action, RTL and visual evidence before raising maturity axes. |
