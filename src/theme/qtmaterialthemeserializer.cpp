@@ -1366,52 +1366,50 @@ Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, bool* ok, QStri
 
 Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, ThemeReadMode mode, bool* ok, QString* errorString)
 {
-    const QJsonObject root = normalizeThemeRootForRead(object);
-    const int inputFormatVersion = object.value(QStringLiteral("formatVersion")).toInt(kCurrentFormatVersion);
-    if (inputFormatVersion == 1) {
-        static const QSet<QString> allowedV1RootKeys = {
-            QStringLiteral("formatVersion"),
-            QStringLiteral("options"),
-            QStringLiteral("colorScheme"),
-            QStringLiteral("metadata"),
-        };
-
-        for (auto it = object.constBegin(); it != object.constEnd(); ++it) {
-            if (it->toString() == QStringLiteral("resolved")) {
-                continue;
-            }
-
-            if (!allowedV1RootKeys.contains(it.key())) {
-                fail(ok, errorString, QStringLiteral("Unknown key '%1' in root.").arg(it.key()));
-                return Theme();
-            }
-        }
-
-        QJsonObject upgraded = object;
-        upgraded.insert(QStringLiteral("formatVersion"), kCurrentFormatVersion);
-        return fromJsonObject(upgraded, ThemeReadMode::Strict, ok, errorString);
-    }
-
     if (object.isEmpty()) {
         fail(ok, errorString, QStringLiteral("Theme JSON object is empty."));
         return Theme();
     }
 
-    const int formatVersion = object.value(QStringLiteral("formatVersion")).toInt(ThemeSerializer::kMinimumReadableFormatVersion);
-    if (formatVersion == kCurrentFormatVersion) {
+    const int formatVersion =
+        object.value(QStringLiteral("formatVersion"))
+            .toInt(ThemeSerializer::kMinimumReadableFormatVersion);
+
+    const bool currentShape =
+        object.contains(QStringLiteral("source"))
+        || object.contains(QStringLiteral("resolved"));
+
+    if (formatVersion == kCurrentFormatVersion && currentShape) {
         return parseV2Theme(object, mode, ok, errorString);
     }
 
-    if (formatVersion == 1) {
+    const bool legacyShape =
+        object.contains(QStringLiteral("options"))
+        || object.contains(QStringLiteral("colorScheme"))
+        || object.contains(QStringLiteral("typography"))
+        || object.contains(QStringLiteral("shapes"))
+        || object.contains(QStringLiteral("elevations"))
+        || object.contains(QStringLiteral("motion"))
+        || object.contains(QStringLiteral("stateLayer"));
+
+    if (formatVersion == 1 && legacyShape) {
+        if (mode == ThemeReadMode::Strict) {
+            fail(
+                ok,
+                errorString,
+                QStringLiteral(
+                    "Strict mode only accepts the current theme JSON shape."));
+            return Theme();
+        }
         return parseV1Theme(object, mode, ok, errorString);
     }
 
-    fail(ok,
-         errorString,
-         QStringLiteral("Unsupported theme formatVersion %1. Supported version is %2.")
-             .arg(formatVersion)
-             .arg(kMinimumReadableFormatVersion)
-             .arg(kCurrentFormatVersion));
+    fail(
+        ok,
+        errorString,
+        QStringLiteral(
+            "Unsupported theme formatVersion %1 or document shape.")
+            .arg(formatVersion));
     return Theme();
 }
 
