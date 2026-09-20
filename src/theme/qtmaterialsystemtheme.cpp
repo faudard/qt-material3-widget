@@ -54,6 +54,24 @@ SystemTheme& SystemTheme::instance() {
     return bridge;
 }
 
+ThemeMode SystemTheme::resolveMode(
+    ThemePreference preference,
+    ThemeMode systemMode) noexcept {
+    switch (preference) {
+    case ThemePreference::Light:
+        return ThemeMode::Light;
+    case ThemePreference::Dark:
+        return ThemeMode::Dark;
+    case ThemePreference::FollowSystem:
+        return systemMode;
+    }
+    return systemMode;
+}
+
+ContrastMode SystemTheme::resolveContrast(bool highContrast) noexcept {
+    return highContrast ? ContrastMode::High : ContrastMode::Standard;
+}
+
 SystemTheme::SystemTheme(QObject* parent)
     : QObject(parent)
     , m_lastSnapshot(snapshot()) {
@@ -123,24 +141,17 @@ SystemThemeSnapshot SystemTheme::snapshot() const {
 }
 
 ThemeMode SystemTheme::effectiveMode() const {
-    if (m_preference == ThemePreference::Light) {
-        return ThemeMode::Light;
-    }
-    if (m_preference == ThemePreference::Dark) {
-        return ThemeMode::Dark;
-    }
-
+    ThemeMode systemMode = modeFromPalette();
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     if (const auto* hints = QGuiApplication::styleHints()) {
-        return modeFromQtColorScheme(hints->colorScheme());
+        systemMode = modeFromQtColorScheme(hints->colorScheme());
     }
 #endif
-
-    return modeFromPalette();
+    return resolveMode(m_preference, systemMode);
 }
 
 ContrastMode SystemTheme::effectiveContrast() const {
-    return isHighContrastEnabled() ? ContrastMode::High : ContrastMode::Standard;
+    return resolveContrast(isHighContrastEnabled());
 }
 
 bool SystemTheme::isHighContrastEnabled() const {
@@ -248,6 +259,7 @@ void SystemTheme::applyToThemeManager() {
 
     ThemeBuilder builder;
     Theme theme = builder.build(options);
+    applyAccessibilityPreferencesToTheme(theme);
     applyPlatformFontToTheme(theme);
     ThemeManager::instance().setTheme(theme, ThemeChangeReason::SystemAppearance);
 }
