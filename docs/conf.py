@@ -9,7 +9,7 @@ DOXYGEN_XML_DIR = ROOT_DIR / "build" / "doxygen" / "xml"
 
 project = "qt-material3-widget"
 author = "faudard"
-release = "0.7.0"
+release = "0.8.0"
 
 extensions = [
     "myst_parser",
