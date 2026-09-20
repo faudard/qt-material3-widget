@@ -47,8 +47,20 @@ ThemeStudioWindow::ThemeStudioWindow(QWidget* parent)
             &ThemeStudioController::pendingOptionsChanged,
             this,
             [this](const ThemeOptions& options) {
-                m_modeLabel->setText(options.mode == ThemeMode::Dark ? tr("Mode: Dark")
-                                                                    : tr("Mode: Light"));
+                switch (options.preference) {
+                case ThemePreference::Light:
+                    m_modeLabel->setText(tr("Mode: Light"));
+                    break;
+                case ThemePreference::Dark:
+                    m_modeLabel->setText(tr("Mode: Dark"));
+                    break;
+                case ThemePreference::FollowSystem:
+                    m_modeLabel->setText(
+                        options.mode == ThemeMode::Dark
+                            ? tr("Mode: System (Dark)")
+                            : tr("Mode: System (Light)"));
+                    break;
+                }
                 m_seedLabel->setText(tr("Seed: %1").arg(options.sourceColor.name().toUpper()));
 
                 QString contrastText = tr("Standard");
@@ -270,6 +282,32 @@ void ThemeStudioWindow::wireJsonActions()
             &ThemeJsonView::exportRequested,
             m_exportAction,
             &QAction::trigger);
+
+    connect(m_previewPane->jsonView(),
+            &ThemeJsonView::validateRequested,
+            this,
+            [this](const QByteArray& json) {
+                QString error;
+                const bool valid = m_controller->validateJson(json, &error);
+                m_previewPane->jsonView()->setValidationResult(valid, error);
+                statusBar()->showMessage(
+                    valid ? tr("Theme JSON is valid.")
+                          : tr("Theme JSON validation failed."),
+                    3500);
+            });
+
+    connect(m_previewPane->jsonView(),
+            &ThemeJsonView::applyRequested,
+            this,
+            [this](const QByteArray& json) {
+                QString error;
+                const bool applied = m_controller->applyJson(json, &error);
+                m_previewPane->jsonView()->setValidationResult(applied, error);
+                if (!applied) {
+                    QMessageBox::critical(
+                        this, tr("Invalid Theme JSON"), error);
+                }
+            });
 }
 
 void ThemeStudioWindow::updateApplyState(bool dirty)

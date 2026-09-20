@@ -1,6 +1,6 @@
 PROJECT_NAME           = "qt-material3-widget"
 PROJECT_BRIEF          = "Material 3 widgets for Qt Widgets"
-PROJECT_NUMBER         = 0.5.0
+PROJECT_NUMBER         = 0.6.0
 
 OUTPUT_DIRECTORY       = build/doxygen
 CREATE_SUBDIRS         = NO

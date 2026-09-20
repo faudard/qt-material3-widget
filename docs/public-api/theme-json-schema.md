@@ -6,7 +6,7 @@
 docs/schema/theme.schema.json
 ```
 
-This schema describes the current pre-release export format used by `QtMaterial::ThemeSerializer`.
+This schema is the frozen 0.6.x `formatVersion: 1` persistence contract used by `QtMaterial::ThemeSerializer`.
 
 ## Format version
 
@@ -41,7 +41,7 @@ Required fields:
 
 ```json
 {
-  "seedColor": "#6750A4FF",
+  "seedColor": "#FF6750A4",
   "mode": "Light",
   "preference": "Light",
   "contrast": "Standard",
@@ -52,7 +52,7 @@ Required fields:
 
 Field meanings:
 
-- `seedColor`: ARGB/RGBA-style color string in the schema format `#RRGGBBAA`;
+- `seedColor`: Qt `QColor::HexArgb` string in canonical `#AARRGGBB` form;
 - `mode`: resolved mode, either `Light` or `Dark`;
 - `preference`: user preference, one of `Light`, `Dark`, or `FollowSystem`;
 - `contrast`: one of `Standard`, `Medium`, or `High`;
@@ -92,7 +92,7 @@ Required fields:
 ```json
 {
   "generatorVersion": "qt-material3-widget",
-  "libraryVersion": "0.1.0",
+  "libraryVersion": "0.6.0",
   "qtVersion": "6.x"
 }
 ```
@@ -146,7 +146,7 @@ A structurally valid document has this shape:
     "elevationScale": {},
     "motionTokens": {},
     "stateLayer": {
-      "color": "#000000FF",
+      "color": "#FF000000",
       "hoverOpacity": 0.08,
       "focusOpacity": 0.12,
       "pressOpacity": 0.12,
@@ -161,7 +161,7 @@ A structurally valid document has this shape:
         "width": 2,
         "offset": 2,
         "radiusAdjustment": 0,
-        "color": "#6750A4FF",
+        "color": "#FF6750A4",
         "opacity": 1.0
       }
     },
@@ -200,9 +200,10 @@ The schema, serializer, and documentation must describe the same contract.
 
 ## Compatibility policy
 
-Before the first official release, the schema may change as part of API stabilization.
+Starting with 0.6.0, `formatVersion: 1` is frozen as the first supported persistence contract.
+Compatible 0.6.x changes must preserve existing documents.
 
-After the first official release:
+Compatibility rules:
 
 - keep `formatVersion: 1` stable for compatible additions;
 - add optional fields instead of renaming or deleting required fields;

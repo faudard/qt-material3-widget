@@ -805,81 +805,100 @@ bool iconSizesFromJson(const QJsonObject& object, IconSizeTokens* outIconSizes, 
     return true;
 }
 
+QJsonObject componentOverrideToJson(const ComponentTokenOverride& overrideTokens)
+{
+    QJsonObject object;
+
+    ColorScheme colors;
+    for (auto it = overrideTokens.colors.constBegin(); it != overrideTokens.colors.constEnd(); ++it) {
+        colors.setColor(it.key(), it.value());
+    }
+    if (!overrideTokens.colors.isEmpty()) {
+        object.insert(QStringLiteral("colors"), colorSchemeToJson(colors));
+    }
+
+    TypographyScale typography;
+    for (auto it = overrideTokens.typography.constBegin(); it != overrideTokens.typography.constEnd(); ++it) {
+        typography.setStyle(it.key(), it.value());
+    }
+    if (!overrideTokens.typography.isEmpty()) {
+        object.insert(QStringLiteral("typography"), typographyToJson(typography));
+    }
+
+    ShapeScale shapes;
+    for (auto it = overrideTokens.shapes.constBegin(); it != overrideTokens.shapes.constEnd(); ++it) {
+        shapes.setRadius(it.key(), it.value());
+    }
+    if (!overrideTokens.shapes.isEmpty()) {
+        object.insert(QStringLiteral("shapes"), shapesToJson(shapes));
+    }
+
+    ElevationScale elevations;
+    for (auto it = overrideTokens.elevations.constBegin(); it != overrideTokens.elevations.constEnd(); ++it) {
+        elevations.setStyle(it.key(), it.value());
+    }
+    if (!overrideTokens.elevations.isEmpty()) {
+        object.insert(QStringLiteral("elevations"), elevationsToJson(elevations));
+    }
+
+    MotionTokens motion;
+    for (auto it = overrideTokens.motion.constBegin(); it != overrideTokens.motion.constEnd(); ++it) {
+        motion.setStyle(it.key(), it.value());
+    }
+    if (!overrideTokens.motion.isEmpty()) {
+        object.insert(QStringLiteral("motion"), motionToJson(motion));
+    }
+
+    DensityTokens density;
+    density.clear();
+    for (auto it = overrideTokens.density.constBegin(); it != overrideTokens.density.constEnd(); ++it) {
+        density.setValue(it.key(), it.value());
+    }
+    if (!overrideTokens.density.isEmpty()) {
+        object.insert(QStringLiteral("density"), densityToJson(density));
+    }
+
+    IconSizeTokens iconSizes;
+    iconSizes.clear();
+    for (auto it = overrideTokens.iconSizes.constBegin(); it != overrideTokens.iconSizes.constEnd(); ++it) {
+        iconSizes.setSize(it.key(), it.value());
+    }
+    if (!overrideTokens.iconSizes.isEmpty()) {
+        object.insert(QStringLiteral("iconSizes"), iconSizesToJson(iconSizes));
+    }
+
+    if (overrideTokens.hasStateLayer) {
+        object.insert(QStringLiteral("stateLayer"), stateLayerToJson(overrideTokens.stateLayer));
+    }
+    if (!overrideTokens.custom.isEmpty()) {
+        object.insert(QStringLiteral("custom"), QJsonObject::fromVariantMap(overrideTokens.custom));
+    }
+
+    return object;
+}
+
 QJsonObject componentOverridesToJson(const ComponentTokenOverrides& overrides)
 {
     QJsonObject root;
+
     for (ComponentId componentId : overrides.componentIds()) {
         const QString componentName = ThemeTextCodec::componentIdToString(componentId);
-        const ComponentTokenOverride overrideTokens = overrides.overrideFor(componentId);
-        QJsonObject object;
-
-        ColorScheme colors;
-        for (auto it = overrideTokens.colors.constBegin(); it != overrideTokens.colors.constEnd(); ++it) {
-            colors.setColor(it.key(), it.value());
+        if (!componentName.isEmpty()) {
+            root.insert(componentName, componentOverrideToJson(overrides.overrideFor(componentId)));
         }
-        if (!overrideTokens.colors.isEmpty()) {
-            object.insert(QStringLiteral("colors"), colorSchemeToJson(colors));
-        }
-
-        TypographyScale typography;
-        for (auto it = overrideTokens.typography.constBegin(); it != overrideTokens.typography.constEnd(); ++it) {
-            typography.setStyle(it.key(), it.value());
-        }
-        if (!overrideTokens.typography.isEmpty()) {
-            object.insert(QStringLiteral("typography"), typographyToJson(typography));
-        }
-
-        ShapeScale shapes;
-        for (auto it = overrideTokens.shapes.constBegin(); it != overrideTokens.shapes.constEnd(); ++it) {
-            shapes.setRadius(it.key(), it.value());
-        }
-        if (!overrideTokens.shapes.isEmpty()) {
-            object.insert(QStringLiteral("shapes"), shapesToJson(shapes));
-        }
-
-        ElevationScale elevations;
-        for (auto it = overrideTokens.elevations.constBegin(); it != overrideTokens.elevations.constEnd(); ++it) {
-            elevations.setStyle(it.key(), it.value());
-        }
-        if (!overrideTokens.elevations.isEmpty()) {
-            object.insert(QStringLiteral("elevations"), elevationsToJson(elevations));
-        }
-
-        MotionTokens motion;
-        for (auto it = overrideTokens.motion.constBegin(); it != overrideTokens.motion.constEnd(); ++it) {
-            motion.setStyle(it.key(), it.value());
-        }
-        if (!overrideTokens.motion.isEmpty()) {
-            object.insert(QStringLiteral("motion"), motionToJson(motion));
-        }
-
-        DensityTokens density;
-        density.clear();
-        for (auto it = overrideTokens.density.constBegin(); it != overrideTokens.density.constEnd(); ++it) {
-            density.setValue(it.key(), it.value());
-        }
-        if (!overrideTokens.density.isEmpty()) {
-            object.insert(QStringLiteral("density"), densityToJson(density));
-        }
-
-        IconSizeTokens iconSizes;
-        iconSizes.clear();
-        for (auto it = overrideTokens.iconSizes.constBegin(); it != overrideTokens.iconSizes.constEnd(); ++it) {
-            iconSizes.setSize(it.key(), it.value());
-        }
-        if (!overrideTokens.iconSizes.isEmpty()) {
-            object.insert(QStringLiteral("iconSizes"), iconSizesToJson(iconSizes));
-        }
-
-        if (overrideTokens.hasStateLayer) {
-            object.insert(QStringLiteral("stateLayer"), stateLayerToJson(overrideTokens.stateLayer));
-        }
-        if (!overrideTokens.custom.isEmpty()) {
-            object.insert(QStringLiteral("custom"), QJsonObject::fromVariantMap(overrideTokens.custom));
-        }
-
-        root.insert(componentName, object);
     }
+
+    // ThemeModel intentionally has no string-key API. ThemeIO owns opaque extension
+    // identifiers and must preserve them byte-for-byte across a semantic round-trip.
+    for (const QString& extensionName : ThemeTextCodec::extensionComponentNames(overrides)) {
+        if (!extensionName.isEmpty() && !root.contains(extensionName)) {
+            root.insert(
+                extensionName,
+                componentOverrideToJson(
+                    ThemeTextCodec::extensionOverrideFor(overrides, extensionName)));
+        }
+    }
+
     return root;
 }
 
@@ -1026,7 +1045,7 @@ QJsonObject metadataToJson()
 {
     QJsonObject object;
     object.insert(QStringLiteral("generatorVersion"), QStringLiteral("qt-material3-widget ThemeSerializer v1"));
-    object.insert(QStringLiteral("libraryVersion"), QStringLiteral("0.5.0"));
+    object.insert(QStringLiteral("libraryVersion"), QStringLiteral("0.6.0"));
     object.insert(QStringLiteral("qtVersion"), QString::fromLatin1(QT_VERSION_STR));
     return object;
 }
@@ -1127,6 +1146,16 @@ bool applyResolvedToTheme(const QJsonObject& resolved, Theme* theme, QString* er
 
 bool validateStrictV2(const QJsonObject& object, QString* errorString)
 {
+    const QJsonValue versionValue = object.value(QStringLiteral("formatVersion"));
+    if (!versionValue.isDouble()
+        || versionValue.toDouble() != static_cast<double>(ThemeSerializer::kCurrentFormatVersion)) {
+        if (errorString) {
+            *errorString = QStringLiteral("Strict theme requires formatVersion %1.")
+                .arg(ThemeSerializer::kCurrentFormatVersion);
+        }
+        return false;
+    }
+
     const QSet<QString> rootKeys = {
         QStringLiteral("formatVersion"),
         QStringLiteral("source"),
@@ -1139,10 +1168,10 @@ bool validateStrictV2(const QJsonObject& object, QString* errorString)
 
     QJsonObject source;
     QJsonObject resolved;
-    if (!requireObjectMember(object, QStringLiteral("source"), &source, errorString)) {
-        return false;
-    }
-    if (!requireObjectMember(object, QStringLiteral("resolved"), &resolved, errorString)) {
+    QJsonObject metadata;
+    if (!requireObjectMember(object, QStringLiteral("source"), &source, errorString)
+        || !requireObjectMember(object, QStringLiteral("resolved"), &resolved, errorString)
+        || !requireObjectMember(object, QStringLiteral("metadata"), &metadata, errorString)) {
         return false;
     }
 
@@ -1158,9 +1187,10 @@ bool validateStrictV2(const QJsonObject& object, QString* errorString)
         return false;
     }
     for (const QString& requiredKey : sourceKeys) {
-        if (!source.contains(requiredKey)) {
+        if (!source.contains(requiredKey) || !source.value(requiredKey).isString()) {
             if (errorString) {
-                *errorString = QStringLiteral("Strict theme is missing source.%1.").arg(requiredKey);
+                *errorString =
+                    QStringLiteral("Strict theme requires string source.%1.").arg(requiredKey);
             }
             return false;
         }
@@ -1182,13 +1212,86 @@ bool validateStrictV2(const QJsonObject& object, QString* errorString)
     if (!rejectUnknownKeys(resolved, resolvedKeys, QStringLiteral("resolved"), errorString)) {
         return false;
     }
-
     for (const QString& requiredKey : resolvedKeys) {
-        if (!resolved.contains(requiredKey)) {
+        if (!resolved.contains(requiredKey) || !resolved.value(requiredKey).isObject()) {
             if (errorString) {
-                *errorString = QStringLiteral("Strict theme is missing resolved.%1.").arg(requiredKey);
+                *errorString =
+                    QStringLiteral("Strict theme requires object resolved.%1.").arg(requiredKey);
             }
             return false;
+        }
+    }
+
+    const QSet<QString> metadataKeys = {
+        QStringLiteral("generatorVersion"),
+        QStringLiteral("libraryVersion"),
+        QStringLiteral("qtVersion"),
+        QStringLiteral("timestamp")
+    };
+    if (!rejectUnknownKeys(metadata, metadataKeys, QStringLiteral("metadata"), errorString)) {
+        return false;
+    }
+    const QStringList requiredMetadata = {
+        QStringLiteral("generatorVersion"),
+        QStringLiteral("libraryVersion"),
+        QStringLiteral("qtVersion")
+    };
+    for (const QString& key : requiredMetadata) {
+        if (!metadata.contains(key) || !metadata.value(key).isString()
+            || metadata.value(key).toString().trimmed().isEmpty()) {
+            if (errorString) {
+                *errorString = QStringLiteral("Strict theme requires non-empty string metadata.%1.")
+                    .arg(key);
+            }
+            return false;
+        }
+    }
+    if (metadata.contains(QStringLiteral("timestamp"))
+        && !metadata.value(QStringLiteral("timestamp")).isString()) {
+        if (errorString) {
+            *errorString = QStringLiteral("Strict theme metadata.timestamp must be a string.");
+        }
+        return false;
+    }
+
+    const QSet<QString> componentKeys = {
+        QStringLiteral("colors"),
+        QStringLiteral("typography"),
+        QStringLiteral("shapes"),
+        QStringLiteral("elevations"),
+        QStringLiteral("motion"),
+        QStringLiteral("density"),
+        QStringLiteral("iconSizes"),
+        QStringLiteral("stateLayer"),
+        QStringLiteral("custom")
+    };
+    const QJsonObject componentOverrides =
+        resolved.value(QStringLiteral("componentOverrides")).toObject();
+    for (auto it = componentOverrides.constBegin(); it != componentOverrides.constEnd(); ++it) {
+        if (!it.value().isObject()) {
+            if (errorString) {
+                *errorString =
+                    QStringLiteral("Component override '%1' must be an object.").arg(it.key());
+            }
+            return false;
+        }
+        const QJsonObject component = it.value().toObject();
+        if (!rejectUnknownKeys(
+                component,
+                componentKeys,
+                QStringLiteral("resolved.componentOverrides.%1").arg(it.key()),
+                errorString)) {
+            return false;
+        }
+        for (auto field = component.constBegin(); field != component.constEnd(); ++field) {
+            if (!field.value().isObject()) {
+                if (errorString) {
+                    *errorString =
+                        QStringLiteral("Component override '%1.%2' must be an object.")
+                            .arg(it.key(), field.key());
+                }
+                return false;
+            }
         }
     }
 
@@ -1448,6 +1551,20 @@ Theme ThemeSerializer::fromJson(const QByteArray& json,
         return Theme();
     }
     return fromJsonDocument(document, mode, ok, errorString);
+}
+
+bool ThemeSerializer::validateJson(
+    const QByteArray& json,
+    ThemeReadMode mode,
+    QString* errorString)
+{
+    bool ok = false;
+    QString localError;
+    fromJson(json, mode, &ok, &localError);
+    if (errorString) {
+        *errorString = localError;
+    }
+    return ok;
 }
 
 bool ThemeSerializer::readFromFile(const QString& filePath, Theme* outTheme, QString* errorString)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QByteArray>
 #include <QObject>
 #include <QString>
 
@@ -22,14 +23,18 @@ public:
 public slots:
     void setSeedColor(const QColor& color);
     void setMode(QtMaterial::ThemeMode mode);
+    void setPreference(QtMaterial::ThemePreference preference);
     void setContrast(QtMaterial::ContrastMode contrast);
     void setExpressive(bool enabled);
+    void setBackendPolicy(QtMaterial::ColorBackendPolicy policy);
     void applyPreset(const QString& presetId);
 
     void applyPending();
     void resetToDefaults();
 
     bool importJsonFile(const QString& path, QString* errorString = nullptr);
+    bool applyJson(const QByteArray& json, QString* errorString = nullptr);
+    bool validateJson(const QByteArray& json, QString* errorString = nullptr) const;
     bool exportJsonFile(const QString& path, QString* errorString = nullptr) const;
     bool importQtMaterialXmlFile(const QString& path, QString* errorString = nullptr);
     bool exportQtMaterialXmlFile(const QString& path, QString* errorString = nullptr) const;

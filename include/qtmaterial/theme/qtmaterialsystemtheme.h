@@ -17,6 +17,14 @@ class QTMATERIAL3_THEME_RUNTIME_EXPORT SystemTheme final : public QObject {
     Q_OBJECT
 public:
     static SystemTheme& instance();
+
+    // Pure policy helpers used by applications and deterministic tests. The
+    // platform probe supplies systemMode/highContrast; these helpers resolve
+    // the user-facing preference without depending on the host CI machine.
+    static ThemeMode resolveMode(
+        ThemePreference preference,
+        ThemeMode systemMode) noexcept;
+    static ContrastMode resolveContrast(bool highContrast) noexcept;
     ThemePreference preference() const noexcept;
     void setPreference(ThemePreference preference);
     bool autoApplyToThemeManager() const noexcept;
@@ -24,6 +32,7 @@ public:
     bool usePlatformFont() const noexcept;
     void setUsePlatformFont(bool enabled);
     SystemThemeSnapshot snapshot() const;
+    ThemeMode systemMode() const;
     ThemeMode effectiveMode() const;
     ContrastMode effectiveContrast() const;
     bool isHighContrastEnabled() const;

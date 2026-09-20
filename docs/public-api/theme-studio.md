@@ -1,40 +1,31 @@
-# Theme Studio and system appearance integration
+# Theme Studio
 
-`examples/theme-playground` is now treated as a developer-facing Theme Studio rather
-than a minimal smoke-test window.
+`examples/theme-studio` is the supported 0.6.x developer-facing theme authoring tool.
 
-## Theme Studio features
+## Authoring surface
 
 - seed color picker
-- light, dark, and follow-system mode controls
-- contrast mode selector
-- typography preview
-- shape preview
-- elevation preview
-- state-layer preview
-- component preview grid
-- resolved JSON export/import
-- copy resolved JSON
-- copy C++ snippet
-- copy CSS-like token report
-- screenshot export
+- Light, Dark, and Follow System preference
+- Standard, Medium, and High contrast
+- TonalSpot and Expressive variants
+- Auto / Prefer MCU / Force MCU / Force Fallback backend policy
+- component and semantic color previews
+- Light/Dark comparison
+- editable resolved Theme JSON v1
+- strict validation with parser diagnostics
+- apply edited JSON directly to the runtime theme
+- JSON import/export
+- legacy qt-material XML import/export
+- presets plus explicit Apply/Reset dirty-state workflow
 
-## System theme integration
+Theme Studio imports JSON with `ThemeReadMode::Strict`. A document that violates the frozen Theme JSON v1 contract is rejected before it can replace the active theme.
 
-Use `QtMaterial::SystemTheme` when an application wants Material themes to follow
-platform appearance changes:
+## Follow System
 
-```cpp
-QtMaterial::SystemTheme::instance().setPreference(
-    QtMaterial::ThemePreference::FollowSystem);
-QtMaterial::SystemTheme::instance().setUsePlatformFont(true);
-QtMaterial::SystemTheme::instance().setAutoApplyToThemeManager(true);
-```
+When Follow System is selected, the controller stores `ThemePreference::FollowSystem` and resolves the concrete `ThemeMode` through `SystemTheme`. The built `Theme` therefore remains strictly Light or Dark.
 
-`SystemTheme` resolves effective light/dark mode from `QStyleHints::colorScheme`
-when available and falls back to palette luminance otherwise. On Qt 6.10 and newer,
-it reads `QAccessibilityHints::contrastPreference` and maps high contrast to
-`ContrastMode::High`.
+## Backend selection
 
-The bridge is optional. Existing applications can continue to use `ThemeManager`
-directly and ignore the system-theme helper.
+`ForceFallback` is useful for deterministic snapshots. MCU policies are available when Material Color Utilities is compiled into the build; the runtime backend status remains observable through `ThemeBuilder`.
+
+See [System theme integration](system-theme.md), [Theme JSON schema](theme-json-schema.md), and [component overrides](component-overrides.md).

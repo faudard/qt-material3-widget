@@ -12,6 +12,7 @@ private slots:
     void equalContextUpdateIsNoOp();
     void contextRevisionIncrementsExactlyOnce();
     void managerRevisionDelegatesToDefaultContext();
+    void independentContextsRemainIsolated();
 };
 
 void ThemeRuntimeTest::defaultProviderMatchesManager()
@@ -47,5 +48,27 @@ void ThemeRuntimeTest::managerRevisionDelegatesToDefaultContext()
     auto& m = QtMaterial::ThemeManager::instance();
     QCOMPARE(m.revision(), m.defaultContext()->revision());
 }
+void ThemeRuntimeTest::independentContextsRemainIsolated()
+{
+    QtMaterial::ThemeBuilder builder;
+    const auto initial =
+        builder.buildLightFromSeed(QColor(QStringLiteral("#6750A4")));
+    const auto changed =
+        builder.buildDarkFromSeed(QColor(QStringLiteral("#00639B")));
+
+    QtMaterial::ThemeContext first(initial);
+    QtMaterial::ThemeContext second(initial);
+    QSignalSpy firstSpy(&first, &QtMaterial::ThemeContext::themeChanged);
+    QSignalSpy secondSpy(&second, &QtMaterial::ThemeContext::themeChanged);
+
+    QVERIFY(first.setTheme(changed));
+    QCOMPARE(first.revision(), quint64(1));
+    QCOMPARE(second.revision(), quint64(0));
+    QVERIFY(first.theme() == changed);
+    QVERIFY(second.theme() == initial);
+    QCOMPARE(firstSpy.count(), 1);
+    QCOMPARE(secondSpy.count(), 0);
+}
+
 QTEST_MAIN(ThemeRuntimeTest)
 #include "tst_themeruntime.moc"

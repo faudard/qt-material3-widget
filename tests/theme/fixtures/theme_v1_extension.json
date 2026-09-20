@@ -1,0 +1,60 @@
+{
+  "formatVersion": 1,
+  "source": {
+    "seedColor": "#ff6750a4",
+    "mode": "Light",
+    "preference": "Light",
+    "contrast": "Standard",
+    "variant": "TonalSpot",
+    "colorBackendPolicy": "ForceFallback"
+  },
+  "resolved": {
+    "colorScheme": {},
+    "typographyScale": {},
+    "shapeScale": {},
+    "elevationScale": {},
+    "motionTokens": {},
+    "stateLayer": {
+      "color": "#ff000000",
+      "hoverOpacity": 0.08,
+      "focusOpacity": 0.12,
+      "pressOpacity": 0.12,
+      "dragOpacity": 0.16
+    },
+    "accessibility": {
+      "highContrast": false,
+      "reducedMotion": false,
+      "minimumTextContrastRatio": 4.5,
+      "minimumUiContrastRatio": 3.0,
+      "focusRing": {
+        "width": 2,
+        "offset": 2,
+        "radiusAdjustment": 0,
+        "color": "#ff6750a4",
+        "opacity": 1.0
+      }
+    },
+    "interactions": {
+      "keyboardFocusVisible": true,
+      "strongFocusIndicators": false,
+      "hoverFeedbackEnabled": true,
+      "pressFeedbackEnabled": true,
+      "dragFeedbackEnabled": true
+    },
+    "density": {},
+    "iconSizes": {},
+    "componentOverrides": {
+      "com.example.fixtureWidget": {
+        "custom": {
+          "fixtureVersion": 1,
+          "label": "opaque-extension"
+        }
+      }
+    }
+  },
+  "metadata": {
+    "generatorVersion": "qt-material3-widget ThemeSerializer v1",
+    "libraryVersion": "0.6.0",
+    "qtVersion": "fixture"
+  }
+}

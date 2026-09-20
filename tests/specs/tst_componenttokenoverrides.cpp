@@ -17,6 +17,7 @@ class ComponentTokenOverridesTest : public QObject {
 private slots:
     void textButtonOverridePreservesSemanticRoles();
     void filledButtonOverrideWinsOverFamilyDefaults();
+    void specificOverrideWinsAcrossAllMergeLayers();
     void filledTonalButtonOverridePreservesSemanticRoles();
     void outlinedButtonOverridePreservesSemanticRoles();
     void elevatedButtonOverridePreservesSemanticRoles();
@@ -93,6 +94,35 @@ void ComponentTokenOverridesTest::filledButtonOverrideWinsOverFamilyDefaults()
     QCOMPARE(spec.horizontalPadding, 30);
     QCOMPARE(spec.iconSize, 22);
     QCOMPARE(spec.iconSpacing, 10);
+}
+
+void ComponentTokenOverridesTest::specificOverrideWinsAcrossAllMergeLayers()
+{
+    Theme theme = ThemeBuilder().build(ThemeOptions{});
+
+    ComponentTokenOverride family;
+    family.colors.insert(ColorRole::Primary, QColor(QStringLiteral("#AA0000")));
+    family.custom.insert(QStringLiteral("containerHeight"), 44);
+    family.hasStateLayer = true;
+    family.stateLayer = theme.stateLayer();
+    family.stateLayer.hoverOpacity = 0.21;
+    family.iconSizes.insert(IconSizeRole::Small, 19);
+    theme.componentOverrides().setOverride(ComponentId::Button, family);
+
+    ComponentTokenOverride specific;
+    specific.colors.insert(ColorRole::Primary, QColor(QStringLiteral("#0000AA")));
+    specific.custom.insert(QStringLiteral("containerHeight"), 58);
+    specific.hasStateLayer = true;
+    specific.stateLayer = theme.stateLayer();
+    specific.stateLayer.hoverOpacity = 0.31;
+    specific.iconSizes.insert(IconSizeRole::Small, 23);
+    theme.componentOverrides().setOverride(ComponentId::ButtonFilled, specific);
+
+    const ButtonSpec spec = ButtonSpecResolver().filledButtonSpec(theme);
+    QCOMPARE(spec.containerColor, QColor(QStringLiteral("#0000AA")));
+    QCOMPARE(spec.containerHeight, 58);
+    QCOMPARE(spec.iconSize, 23);
+    QCOMPARE(spec.hoverStateLayerOpacity, 0.31);
 }
 
 void ComponentTokenOverridesTest::filledTonalButtonOverridePreservesSemanticRoles()

@@ -24,14 +24,22 @@ class benchmark_ThemeManagerFanout : public QObject
     Q_OBJECT
 
 private slots:
+    void applyThemeWithManyObservers_data()
+    {
+        QTest::addColumn<int>("observerCount");
+        QTest::newRow("500-observers") << 500;
+        QTest::newRow("1000-observers") << 1000;
+    }
+
     void applyThemeWithManyObservers()
     {
-        constexpr int kObserverCount = 250;
+        QFETCH(int, observerCount);
+
         QVector<ThemeSink*> sinks;
-        sinks.reserve(kObserverCount);
+        sinks.reserve(observerCount);
 
         auto& manager = QtMaterial::ThemeManager::instance();
-        for (int i = 0; i < kObserverCount; ++i) {
+        for (int i = 0; i < observerCount; ++i) {
             auto* sink = new ThemeSink;
             sinks.append(sink);
             QObject::connect(&manager,
@@ -48,6 +56,9 @@ private slots:
             manager.applySeedColor(seed, QtMaterial::ThemeMode::Light);
         }
 
+        for (ThemeSink* sink : sinks) {
+            QVERIFY(sink->count > 0);
+        }
         qDeleteAll(sinks);
     }
 };

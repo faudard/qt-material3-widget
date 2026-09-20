@@ -36,6 +36,7 @@ private:
     QPushButton* m_seedButton {};
     QComboBox* m_modeCombo {};
     QComboBox* m_contrastCombo {};
+    QComboBox* m_backendCombo {};
     QCheckBox* m_expressiveCheck {};
     QPushButton* m_applyButton {};
     QPushButton* m_resetButton {};
