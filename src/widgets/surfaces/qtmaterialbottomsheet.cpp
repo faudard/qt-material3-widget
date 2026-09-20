@@ -863,7 +863,7 @@ void QtMaterialBottomSheet::themeChangedEvent(const QtMaterial::Theme &theme)
         d_ptr->transition->applyMotionStyle(
             d_ptr->specPtr->motionStyle);
         d_ptr->transition->setReducedMotion(
-            theme().accessibility().reducedMotion);
+            theme.accessibility().reducedMotion);
     }
     syncContainerGeometry();
     applySheetMask();
