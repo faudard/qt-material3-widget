@@ -97,5 +97,6 @@ if(NOT TARGET benchmark_paintcache)
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Test
   qtmaterial3_core
+  qtmaterial3_effects
  )
 endif()
