@@ -115,7 +115,10 @@ void QtMaterialFilledButton::themeChangedEvent(const Theme& theme)
  QtMaterialTextButton::themeChangedEvent(theme);
  d->invalidateLayout(*this);
  ensureSpecResolved();
- ButtonMotionHelper::configureTransition(currentButtonSpec(), d->elevationTransition);
+ ButtonMotionHelper::configureTransition(
+  currentButtonSpec(),
+  d->elevationTransition,
+  theme().accessibility().reducedMotion);
  d->elevationTransition->startTo(d->targetElevationProgress(*this));
 }
 
@@ -124,7 +127,10 @@ void QtMaterialFilledButton::invalidateResolvedSpec()
  QtMaterialTextButton::invalidateResolvedSpec();
  d->invalidateLayout(*this);
  ensureSpecResolved();
- ButtonMotionHelper::configureTransition(currentButtonSpec(), d->elevationTransition);
+ ButtonMotionHelper::configureTransition(
+  currentButtonSpec(),
+  d->elevationTransition,
+  theme().accessibility().reducedMotion);
  d->elevationTransition->startTo(d->targetElevationProgress(*this));
 }
 
@@ -157,7 +163,10 @@ void QtMaterialFilledButton::stateChangedEvent()
 {
  QtMaterialTextButton::stateChangedEvent();
  ensureSpecResolved();
- ButtonMotionHelper::configureTransition(currentButtonSpec(), d->elevationTransition);
+ ButtonMotionHelper::configureTransition(
+  currentButtonSpec(),
+  d->elevationTransition,
+  theme().accessibility().reducedMotion);
  d->elevationTransition->startTo(d->targetElevationProgress(*this));
 }
 
@@ -229,7 +238,10 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
   iconColor,
   resolvedFont);
 
- if (isEnabled() && interactionState().isFocused()) {
+ if (QtMaterialFocusIndicator::shouldShow(
+      interactionState(),
+      focusReason(),
+      theme().interactions())) {
   QtMaterialFocusIndicator::paintRectFocusRing(
    &painter,
    d->layout.visualRect,

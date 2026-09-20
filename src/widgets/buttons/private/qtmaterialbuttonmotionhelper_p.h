@@ -33,26 +33,30 @@ inline qreal targetStateLayerOpacity(
 
 inline void configureTransition(
     const ButtonSpec& spec,
-    QtMaterialTransitionController* transition)
+    QtMaterialTransitionController* transition,
+    bool reducedMotion = false)
 {
     if (!transition || !spec.hasResolvedMotionStyle) {
         return;
     }
     transition->applyMotionStyle(spec.motionStyle);
+    transition->setReducedMotion(reducedMotion);
 }
 
 inline void configureMotion(
     const ButtonSpec& spec,
     QtMaterialTransitionController* stateLayerTransition,
-    QtMaterialRippleController* ripple)
+    QtMaterialRippleController* ripple,
+    bool reducedMotion = false)
 {
-    configureTransition(spec, stateLayerTransition);
+    configureTransition(spec, stateLayerTransition, reducedMotion);
 
     if (ripple) {
         if (spec.hasResolvedMotionStyle && spec.motionStyle.durationMs > 0) {
             ripple->setDuration(spec.motionStyle.durationMs);
         }
         ripple->setBaseOpacity(spec.pressStateLayerOpacity);
+        ripple->setReducedMotion(reducedMotion);
     }
 }
 

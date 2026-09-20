@@ -24,8 +24,14 @@ QtMaterialTransitionController::QtMaterialTransitionController(QObject* parent)
     });
 
     connect(m_animation, &QVariantAnimation::finished, this, [this]() {
-        m_progress = qBound<qreal>(0.0, m_targetProgress, 1.0);
-        emit progressChanged(m_progress);
+        const qreal target =
+            qBound<qreal>(0.0, m_targetProgress, 1.0);
+        if (qAbs(m_progress - target) >= kEpsilon) {
+            m_progress = target;
+            emit progressChanged(m_progress);
+        } else {
+            m_progress = target;
+        }
         emit finished();
     });
 }

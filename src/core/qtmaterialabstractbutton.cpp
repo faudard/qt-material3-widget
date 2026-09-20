@@ -13,42 +13,19 @@
 
 namespace {
 
-struct InteractionSnapshot {
-    bool hovered;
-    bool focused;
-    bool pressed;
-    bool checked;
-    bool checkable;
-    bool enabled;
-    bool selected;
-    bool error;
-};
+using InteractionSnapshot = QtMaterial::QtMaterialInteractionState;
 
-[[nodiscard]] InteractionSnapshot snapshotOf(const QtMaterial::QtMaterialInteractionState& state) noexcept
+[[nodiscard]] InteractionSnapshot snapshotOf(
+    const QtMaterial::QtMaterialInteractionState& state) noexcept
 {
-    return {
-        state.isHovered(),
-        state.isFocused(),
-        state.isPressed(),
-        state.isChecked(),
-        state.isCheckable(),
-        state.isEnabled(),
-        state.isSelected(),
-        state.hasError()
-    };
+    return state;
 }
 
-[[nodiscard]] bool sameSnapshot(const InteractionSnapshot& lhs,
-                                const InteractionSnapshot& rhs) noexcept
+[[nodiscard]] bool sameSnapshot(
+    const InteractionSnapshot& lhs,
+    const InteractionSnapshot& rhs) noexcept
 {
-    return lhs.hovered   == rhs.hovered
-        && lhs.focused   == rhs.focused
-        && lhs.pressed   == rhs.pressed
-        && lhs.checked   == rhs.checked
-        && lhs.checkable == rhs.checkable
-        && lhs.enabled   == rhs.enabled
-        && lhs.selected  == rhs.selected
-        && lhs.error     == rhs.error;
+    return lhs == rhs;
 }
 
 } // namespace
@@ -246,6 +223,11 @@ QtMaterialInteractionState& QtMaterialAbstractButton::interactionState() noexcep
     return m_state;
 }
 
+Qt::FocusReason QtMaterialAbstractButton::focusReason() const noexcept
+{
+    return m_focusReason;
+}
+
 void QtMaterialAbstractButton::syncFromButtonState() noexcept
 {
     m_state.setEnabled(isEnabled());
@@ -276,6 +258,7 @@ void QtMaterialAbstractButton::invalidateResolvedSpec() {}
 
 void QtMaterialAbstractButton::stateChangedEvent()
 {
+    syncAutomationState();
     update();
 }
 
@@ -330,6 +313,7 @@ void QtMaterialAbstractButton::leaveEvent(QEvent* event)
 void QtMaterialAbstractButton::focusInEvent(QFocusEvent* event)
 {
     const auto before = snapshotOf(m_state);
+    m_focusReason = event ? event->reason() : Qt::OtherFocusReason;
 
     QAbstractButton::focusInEvent(event);
 
