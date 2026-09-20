@@ -1,10 +1,5 @@
 #pragma once
-#include <QWidget>
-#include "qtmaterial/qtmaterialglobal.h"
-namespace QtMaterial { class DatePickerSpec; }
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDatePicker : public QWidget {
-    Q_OBJECT
-public:
-    explicit QtMaterialDatePicker(QWidget* parent = nullptr);
-    ~QtMaterialDatePicker() override;
-};
+
+// Compatibility include retained for the historical inputs path.
+// The canonical QtMaterialDatePicker declaration lives at widgets/qtmaterialdatepicker.h.
+#include "qtmaterial/widgets/qtmaterialdatepicker.h"
