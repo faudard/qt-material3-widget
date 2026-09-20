@@ -8,7 +8,7 @@ private slots:
     void createFilledButton()
     {
         QBENCHMARK {
-            QtMaterialFilledButton button;
+            QtMaterial::QtMaterialFilledButton button;
             button.setText(QStringLiteral("Hello"));
         }
     }
