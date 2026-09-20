@@ -489,7 +489,11 @@ void QtMaterialSegmentedButton::paintEvent(QPaintEvent*)
                          Qt::AlignCenter, d->segments.at(i).text);
     }
 
-    if (hasFocus() && d->currentIndex >= 0) {
+    if (QtMaterialFocusIndicator::shouldShow(
+            interactionState(),
+            focusReason(),
+            theme().interactions())
+        && d->currentIndex >= 0) {
         QPainterPath focusPath;
         focusPath.addRoundedRect(QRectF(segmentedButtonSegmentRect(*this, theme(), *d, d->currentIndex)).adjusted(1, 1, -1, -1), radius, radius);
         QtMaterialFocusIndicator::paintPathFocusRing(&painter, focusPath, d->spec.focusRingColor, 2.0);

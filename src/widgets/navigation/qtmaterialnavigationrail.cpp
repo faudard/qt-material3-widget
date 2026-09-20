@@ -740,7 +740,10 @@ void QtMaterialNavigationRail::paintEvent(QPaintEvent*)
         }
     }
 
-    if (hasFocus()
+    if (QtMaterialFocusIndicator::shouldShow(
+            interactionState(),
+            focusReason(),
+            theme().interactions())
         && d_ptr->enabledIndex(
             d_ptr->currentIndex)) {
         const QRect currentItem =

@@ -1177,7 +1177,10 @@ void QtMaterialCarousel::paintEvent(
     }
 
     if (
-        hasFocus()
+        QtMaterialFocusIndicator::shouldShow(
+            interactionState(),
+            focusReason(),
+            theme().interactions())
         && spec.focusRingWidth > 0) {
         QtMaterialFocusIndicator::
             paintRectFocusRing(
