@@ -53,6 +53,7 @@ component-overrides
 system-theme
 theme-studio
 interaction-effects
+component-expansion
 buttons
 compact-controls
 data-widgets
