@@ -34,7 +34,7 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `compact.chip` | Chip | `planned` | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 | Chip is not release-scoped and has no registered widget test target. |
+| `compact.chip` | Chip | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Chip family has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
 
 ### Data
 
@@ -54,9 +54,17 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| `input.combo-box` | Combo Box | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Combo Box has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `input.date-range-picker` | Date Range Picker | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Date Range Picker has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
 | `input.date.field` | Date Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Date Field Material reference model or deterministic visual conformance evidence is available. |
+| `input.range-slider` | Range Slider | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Range Slider has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `input.search-bar` | Search Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Search Bar has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `input.search-view` | Search View | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Search View has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `input.slider` | Slider | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Slider has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
 | `input.text.filled` | Filled Text Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Filled Text Field Material reference model or deterministic visual conformance evidence is available. |
 | `input.text.outlined` | Outlined Text Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Outlined Text Field Material reference model or deterministic visual conformance evidence is available. |
+| `input.time-field` | Time Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Time Field has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `input.time-picker` | Time Picker | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Time Picker has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
 
 ### Navigation
 
@@ -136,14 +144,22 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Icon Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Outlined Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Text Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
-| Chip | Register focused widget tests and complete the public behavior contract before release scope is enabled. |
+| Chip | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Chip family. |
 | Carousel | Add Carousel reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
 | Grid List | Add Grid List reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
 | Table | Add Table reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
 | Divider | Add Divider token, RTL and HiDPI reference evidence before raising maturity axes. |
+| Combo Box | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Combo Box. |
+| Date Range Picker | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Date Range Picker. |
 | Date Field | Add Date Field state, accessibility and visual evidence before raising maturity axes. |
+| Range Slider | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Range Slider. |
+| Search Bar | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Search Bar. |
+| Search View | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Search View. |
+| Slider | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Slider. |
 | Filled Text Field | Add Text Field state, accessibility and visual evidence before raising maturity axes. |
 | Outlined Text Field | Add Text Field state, accessibility and visual evidence before raising maturity axes. |
+| Time Field | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Time Field. |
+| Time Picker | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Time Picker. |
 | Navigation Rail | Add Navigation Rail reference-model, RTL and visual evidence before raising maturity axes. |
 | Tabs | Add deterministic visual-reference coverage and broaden the full state matrix for complete maturity. |
 | Circular Progress Indicator | Add progress token, animation, accessibility and visual evidence before raising maturity axes. |
