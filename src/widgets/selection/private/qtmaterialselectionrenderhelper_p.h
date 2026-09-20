@@ -13,9 +13,9 @@
 #include "qtmaterial/specs/qtmaterialradiobuttonspec.h"
 #include "qtmaterial/specs/qtmaterialswitchspec.h"
 #include "qtmaterial/specs/qtmaterialselectionruntimespec.h"
-#include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 
 namespace QtMaterial {
+struct InteractionStateTokens;
 class QtMaterialRippleController;
 class QtMaterialTransitionController;
 } // namespace QtMaterial
