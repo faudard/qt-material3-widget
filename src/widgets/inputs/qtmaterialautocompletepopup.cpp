@@ -52,6 +52,7 @@ struct QtMaterialAutocompletePopupPrivate {
     mutable QtMaterial::AutocompletePopupSpec m_spec;
     QtMaterialThemeContextBinding* m_themeBinding = nullptr;
     QPointer<QLineEdit> m_anchorLineEdit;
+    QObject* m_anchorLineEditObject = nullptr;
     QPointer<ThemeContext> m_anchorThemeContext;
     QMetaObject::Connection m_anchorThemeChangedConnection;
     QPointer<QAbstractItemModel> m_sourceModel;
@@ -238,8 +239,18 @@ void QtMaterialAutocompletePopup::setAnchorLineEdit(
     }
 
     d_ptr->m_anchorLineEdit = lineEdit;
+    d_ptr->m_anchorLineEditObject = lineEdit;
     if (d_ptr->m_anchorLineEdit) {
         d_ptr->m_anchorLineEdit->installEventFilter(this);
+        QObject::connect(
+            lineEdit,
+            &QObject::destroyed,
+            this,
+            [this, lineEdit]() {
+                if (d_ptr->m_anchorLineEditObject == lineEdit) {
+                    d_ptr->m_anchorLineEditObject = nullptr;
+                }
+            });
     }
 
     QObject::disconnect(d_ptr->m_anchorThemeChangedConnection);
@@ -394,7 +405,7 @@ bool QtMaterialAutocompletePopup::eventFilter(
     QObject* watched,
     QEvent* event)
 {
-    if (watched == d_ptr->m_anchorLineEdit && event) {
+    if (watched == d_ptr->m_anchorLineEditObject && event) {
         switch (event->type()) {
         case QEvent::Move:
         case QEvent::Resize:
