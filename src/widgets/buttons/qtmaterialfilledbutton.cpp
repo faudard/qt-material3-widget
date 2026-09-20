@@ -118,7 +118,7 @@ void QtMaterialFilledButton::themeChangedEvent(const Theme& theme)
  ButtonMotionHelper::configureTransition(
   currentButtonSpec(),
   d->elevationTransition,
-  theme().accessibility().reducedMotion);
+  theme.accessibility().reducedMotion);
  d->elevationTransition->startTo(d->targetElevationProgress(*this));
 }
 
