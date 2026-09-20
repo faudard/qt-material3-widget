@@ -6,6 +6,8 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QSignalSpy>
+#include <QVBoxLayout>
+#include <QWidget>
 #include <memory>
 
 #include "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h"
@@ -84,13 +86,18 @@ QVector<ButtonCase> buttonCases()
     };
 }
 
-void prepareButton(QAbstractButton& button)
+void prepareButton(QAbstractButton& button, QWidget& window)
 {
+    auto* layout = new QVBoxLayout(&window);
+    layout->addWidget(&button);
+
     button.resize(button.sizeHint().expandedTo(QSize(128, 56)));
-    button.show();
-    QTest::qWaitForWindowExposed(&button);
-    button.setFocus(Qt::TabFocusReason);
-    QVERIFY(button.hasFocus());
+    window.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&window));
+
+    window.activateWindow();
+    button.setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(button.hasFocus());
 }
 
 } // namespace
@@ -110,8 +117,9 @@ private slots:
 void tst_ButtonKeyboardActivation::spaceActivatesOnce()
 {
     for (const ButtonCase& testCase : buttonCases()) {
+        QWidget window;
         auto button = testCase.create();
-        prepareButton(*button);
+        prepareButton(*button, window);
 
         QSignalSpy clickedSpy(button.get(), &QAbstractButton::clicked);
         QVERIFY2(clickedSpy.isValid(), qPrintable(testCase.name));
@@ -124,8 +132,9 @@ void tst_ButtonKeyboardActivation::spaceActivatesOnce()
 void tst_ButtonKeyboardActivation::returnActivatesOnce()
 {
     for (const ButtonCase& testCase : buttonCases()) {
+        QWidget window;
         auto button = testCase.create();
-        prepareButton(*button);
+        prepareButton(*button, window);
 
         QSignalSpy clickedSpy(button.get(), &QAbstractButton::clicked);
         QVERIFY2(clickedSpy.isValid(), qPrintable(testCase.name));
@@ -138,8 +147,9 @@ void tst_ButtonKeyboardActivation::returnActivatesOnce()
 void tst_ButtonKeyboardActivation::enterActivatesOnce()
 {
     for (const ButtonCase& testCase : buttonCases()) {
+        QWidget window;
         auto button = testCase.create();
-        prepareButton(*button);
+        prepareButton(*button, window);
 
         QSignalSpy clickedSpy(button.get(), &QAbstractButton::clicked);
         QVERIFY2(clickedSpy.isValid(), qPrintable(testCase.name));
@@ -152,8 +162,9 @@ void tst_ButtonKeyboardActivation::enterActivatesOnce()
 void tst_ButtonKeyboardActivation::disabledDoesNotActivateFromKeyboard()
 {
     for (const ButtonCase& testCase : buttonCases()) {
+        QWidget window;
         auto button = testCase.create();
-        prepareButton(*button);
+        prepareButton(*button, window);
         button->setEnabled(false);
 
         QSignalSpy clickedSpy(button.get(), &QAbstractButton::clicked);
@@ -169,8 +180,9 @@ void tst_ButtonKeyboardActivation::disabledDoesNotActivateFromKeyboard()
 void tst_ButtonKeyboardActivation::keyEventsLeaveButtonReleased()
 {
     for (const ButtonCase& testCase : buttonCases()) {
+        QWidget window;
         auto button = testCase.create();
-        prepareButton(*button);
+        prepareButton(*button, window);
 
         QTest::keyClick(button.get(), Qt::Key_Space);
         QVERIFY2(!button->isDown(), qPrintable(testCase.name));
