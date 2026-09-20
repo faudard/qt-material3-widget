@@ -1,6 +1,7 @@
 #include <QtTest/QtTest>
 
 #include <QLineEdit>
+#include <QListView>
 #include <QStringListModel>
 
 #include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
