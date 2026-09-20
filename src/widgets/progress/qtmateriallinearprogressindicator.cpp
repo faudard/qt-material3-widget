@@ -44,6 +44,7 @@ QtMaterialLinearProgressIndicator::QtMaterialLinearProgressIndicator(QWidget* pa
     setMaterialComponent(QStringLiteral("LinearProgressIndicator"));
     syncAsyncStateFromProgress();
     initAnimation();
+    updateAccessibleState();
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setAttribute(Qt::WA_TransparentForMouseEvents);
 }
@@ -57,6 +58,7 @@ QtMaterialLinearProgressIndicator::QtMaterialLinearProgressIndicator(const Progr
     setMaterialComponent(QStringLiteral("LinearProgressIndicator"));
     syncAsyncStateFromProgress();
     initAnimation();
+    updateAccessibleState();
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setAttribute(Qt::WA_TransparentForMouseEvents);
 }
@@ -77,6 +79,7 @@ void QtMaterialLinearProgressIndicator::setValue(qreal value) {
         emit asyncStateChanged();
     }
     emit valueChanged(d->value);
+    updateAccessibleState();
     update();
 }
 
@@ -93,6 +96,7 @@ void QtMaterialLinearProgressIndicator::setMode(Mode mode) {
     updateAnimationState();
     emit modeChanged(d->mode);
     emit asyncStateChanged();
+    updateAccessibleState();
     update();
 }
 
@@ -105,6 +109,7 @@ void QtMaterialLinearProgressIndicator::setBusy(bool busy) {
     d->asyncState.setBusy(busy);
     syncMaterialStateFromAsyncState();
     emit asyncStateChanged();
+    updateAccessibleState();
     update();
 }
 
@@ -123,9 +128,9 @@ void QtMaterialLinearProgressIndicator::setStatusText(const QString& text) {
         return;
     }
     d->asyncState.setStatusText(text);
-    setAccessibleDescription(text);
     syncMaterialStateFromAsyncState();
     emit asyncStateChanged();
+    updateAccessibleState();
 }
 
 QtMaterialAsyncState QtMaterialLinearProgressIndicator::asyncState() const { return d->asyncState; }
@@ -142,6 +147,7 @@ void QtMaterialLinearProgressIndicator::setAsyncState(const QtMaterialAsyncState
     emit modeChanged(d->mode);
     emit valueChanged(d->value);
     emit asyncStateChanged();
+    updateAccessibleState();
     update();
 }
 
