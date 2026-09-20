@@ -3,6 +3,7 @@
 #include <QLineEdit>
 #include <QListView>
 #include <QStringListModel>
+#include <QStandardItemModel>
 
 #include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
 #include "qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h"
@@ -13,6 +14,8 @@
 #include "qtmaterial/widgets/inputs/qtmaterialtimefield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialtimepicker.h"
 #include "qtmaterial/widgets/selection/qtmaterialchip.h"
+#include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
+#include "qtmaterial/widgets/data/qtmaterialtable.h"
 
 using namespace QtMaterial;
 
@@ -99,6 +102,27 @@ private slots:
         QVERIFY(!chip.isCheckable());
         chip.setRemovable(true);
         QVERIFY(chip.isRemovable());
+    }
+
+    void menuAndDataExpansion()
+    {
+        QtMaterialMenu menu;
+        const int first = menu.addItem(QStringLiteral("One"));
+        const int second = menu.addItem(QStringLiteral("Two"));
+        menu.setItemExclusiveGroup(first, 1);
+        menu.setItemExclusiveGroup(second, 1);
+        menu.setItemChecked(first, true);
+        QVERIFY(menu.isItemChecked(first));
+        QCOMPARE(menu.itemExclusiveGroup(second), 1);
+
+        QStandardItemModel model(4, 2);
+        QtMaterialTable table;
+        table.setModel(&model);
+        QVERIFY(!table.multiSelectionEnabled());
+        table.setMultiSelectionEnabled(true);
+        QVERIFY(table.multiSelectionEnabled());
+        table.setDense(true);
+        QVERIFY(table.dense());
     }
 };
 
