@@ -1,16 +1,16 @@
 [
   {
-    "id": "button.text",
-    "name": "Text Button",
+    "id": "button.elevated",
+    "name": "Elevated Button",
     "family": "Buttons",
     "maturity": "complete",
-    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialtextbutton.h",
-    "specType": "ButtonSpec",
-    "widgetType": "QtMaterialTextButton",
-    "testTarget": "tst_textbutton",
-    "galleryRoute": "/buttons/text",
-    "docsPath": "docs/public-api/buttons.md",
     "maturityPolicy": "manual",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h",
+    "specType": "ButtonSpec",
+    "widgetType": "QtMaterialElevatedButton",
+    "testTarget": "tst_elevatedbutton",
+    "galleryRoute": "/buttons/elevated",
+    "docsPath": "docs/public-api/buttons.md",
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
@@ -32,14 +32,96 @@
       "evidence": {
         "api": [
           "registry entry exists",
-          "public header exists: include/qtmaterial/widgets/buttons/qtmaterialtextbutton.h",
-          "source exists: src/widgets/buttons/qtmaterialtextbutton.cpp",
-          "variant test `tst_textbutton` is registered",
+          "public header exists: include/qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h",
+          "source exists: src/widgets/buttons/qtmaterialelevatedbutton.cpp",
+          "variant test `tst_elevatedbutton` is registered",
           "Material automation metadata is explicit"
         ],
         "rendering": [
           "gallery includes maturity rendering coverage",
-          "variant rendering can be exercised by `tst_textbutton`"
+          "variant rendering can be exercised by `tst_elevatedbutton`",
+          "focused ElevatedButton shadow test exists and is registered"
+        ],
+        "states": [
+          "shared contract covers enabled/disabled/focus/activation states",
+          "variant test exists for component-specific state behavior"
+        ],
+        "accessibility": [
+          "docs include the Buttons accessibility contract",
+          "shared contract includes accessibility checks",
+          "focused IconButton/FAB accessibility test exists and is registered"
+        ],
+        "keyboard": [
+          "shared contract covers keyboard activation and disabled non-activation"
+        ],
+        "hidpi": [
+          "shared contract includes DPR 2.0 render smoke",
+          "ElevatedButton focused test covers DPR 1.0/1.5/2.0"
+        ],
+        "rtl": [
+          "shared contract includes RTL sizeHint stability",
+          "gallery includes RTL preview"
+        ],
+        "tests": [
+          "variant test `tst_elevatedbutton` is registered",
+          "shared button contract test exists and is registered",
+          "focused test `tst_elevatedbutton_shadow` exists and is registered"
+        ],
+        "example": [
+          "gallery contains marked maturity coverage block"
+        ],
+        "docs": [
+          "buttons.md contains marked maturity contract block"
+        ],
+        "notes": [
+          "Public Elevated Button variant is tracked in the registry.",
+          "Shared Buttons maturity contract covers keyboard, accessibility, disabled-state, RTL, and HiDPI smoke behavior.",
+          "Elevated-specific maturity requires elevation and shadow rendering to remain covered by variant tests or visual review."
+        ]
+      }
+    }
+  },
+  {
+    "id": "button.extended-fab",
+    "name": "Extended Floating Action Button",
+    "family": "Buttons",
+    "maturity": "complete",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialextendedfab.h",
+    "specType": "FabSpec",
+    "widgetType": "QtMaterialExtendedFab",
+    "testTarget": "tst_extendedfab",
+    "galleryRoute": "/buttons/extended-fab",
+    "docsPath": "docs/public-api/buttons.md",
+    "releaseScope": true,
+    "maturityPolicy": "manual",
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 4,
+      "rendering": 4,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-07-17",
+      "gaps": [],
+      "nextActions": [
+        "Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync."
+      ],
+      "evidence": {
+        "api": [
+          "registry entry exists",
+          "public header exists: include/qtmaterial/widgets/buttons/qtmaterialextendedfab.h",
+          "source exists: src/widgets/buttons/qtmaterialextendedfab.cpp",
+          "variant test `tst_extendedfab` is registered",
+          "Material automation metadata is explicit"
+        ],
+        "rendering": [
+          "gallery includes maturity rendering coverage",
+          "variant rendering can be exercised by `tst_extendedfab`"
         ],
         "states": [
           "shared contract covers enabled/disabled/focus/activation states",
@@ -61,8 +143,9 @@
           "gallery includes RTL preview"
         ],
         "tests": [
-          "variant test `tst_textbutton` is registered",
-          "shared button contract test exists and is registered"
+          "variant test `tst_extendedfab` is registered",
+          "shared button contract test exists and is registered",
+          "focused test `tst_icon_fab_accessibility` exists and is registered"
         ],
         "example": [
           "gallery contains marked maturity coverage block"
@@ -71,8 +154,87 @@
           "buttons.md contains marked maturity contract block"
         ],
         "notes": [
-          "Public Text Button variant is tracked in the registry.",
+          "Public Extended FAB variant is tracked in the registry.",
           "Shared Buttons maturity contract covers keyboard, accessibility, disabled-state, RTL, and HiDPI smoke behavior."
+        ]
+      }
+    }
+  },
+  {
+    "id": "button.fab",
+    "name": "Floating Action Button",
+    "family": "Buttons",
+    "maturity": "complete",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialfab.h",
+    "specType": "FabSpec",
+    "widgetType": "QtMaterialFab",
+    "testTarget": "tst_fab",
+    "galleryRoute": "/buttons/fab",
+    "docsPath": "docs/public-api/buttons.md",
+    "releaseScope": true,
+    "maturityPolicy": "manual",
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 4,
+      "rendering": 4,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": "N/A",
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-07-17",
+      "gaps": [],
+      "nextActions": [
+        "Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync."
+      ],
+      "evidence": {
+        "api": [
+          "registry entry exists",
+          "public header exists: include/qtmaterial/widgets/buttons/qtmaterialfab.h",
+          "source exists: src/widgets/buttons/qtmaterialfab.cpp",
+          "variant test `tst_fab` is registered",
+          "Material automation metadata is explicit"
+        ],
+        "rendering": [
+          "gallery includes maturity rendering coverage",
+          "variant rendering can be exercised by `tst_fab`"
+        ],
+        "states": [
+          "shared contract covers enabled/disabled/focus/activation states",
+          "variant test exists for component-specific state behavior"
+        ],
+        "accessibility": [
+          "docs include the Buttons accessibility contract",
+          "shared contract includes accessibility checks",
+          "focused IconButton/FAB accessibility test exists and is registered"
+        ],
+        "keyboard": [
+          "shared contract covers keyboard activation and disabled non-activation"
+        ],
+        "hidpi": [
+          "shared contract includes DPR 2.0 render smoke"
+        ],
+        "rtl": [
+          "RTL is not applicable to icon-only layout"
+        ],
+        "tests": [
+          "variant test `tst_fab` is registered",
+          "shared button contract test exists and is registered",
+          "focused test `tst_icon_fab_accessibility` exists and is registered"
+        ],
+        "example": [
+          "gallery contains marked maturity coverage block"
+        ],
+        "docs": [
+          "buttons.md contains marked maturity contract block"
+        ],
+        "notes": [
+          "Public compact FAB variant is tracked in the registry.",
+          "Icon-only accessible-name policy is documented and covered by the shared Buttons contract test.",
+          "RTL is not applicable to the icon-only compact FAB layout itself."
         ]
       }
     }
@@ -235,6 +397,85 @@
     }
   },
   {
+    "id": "button.icon",
+    "name": "Icon Button",
+    "family": "Buttons",
+    "maturity": "complete",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialiconbutton.h",
+    "specType": "IconButtonSpec",
+    "widgetType": "QtMaterialIconButton",
+    "testTarget": "tst_iconbutton",
+    "galleryRoute": "/buttons/icon",
+    "docsPath": "docs/public-api/buttons.md",
+    "maturityPolicy": "manual",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 4,
+      "rendering": 4,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": "N/A",
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-07-17",
+      "gaps": [],
+      "nextActions": [
+        "Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync."
+      ],
+      "evidence": {
+        "api": [
+          "registry entry exists",
+          "public header exists: include/qtmaterial/widgets/buttons/qtmaterialiconbutton.h",
+          "source exists: src/widgets/buttons/qtmaterialiconbutton.cpp",
+          "variant test `tst_iconbutton` is registered",
+          "Material automation metadata is explicit"
+        ],
+        "rendering": [
+          "gallery includes maturity rendering coverage",
+          "variant rendering can be exercised by `tst_iconbutton`"
+        ],
+        "states": [
+          "shared contract covers enabled/disabled/focus/activation states",
+          "variant test exists for component-specific state behavior"
+        ],
+        "accessibility": [
+          "docs include the Buttons accessibility contract",
+          "shared contract includes accessibility checks",
+          "focused IconButton/FAB accessibility test exists and is registered"
+        ],
+        "keyboard": [
+          "shared contract covers keyboard activation and disabled non-activation"
+        ],
+        "hidpi": [
+          "shared contract includes DPR 2.0 render smoke"
+        ],
+        "rtl": [
+          "RTL is not applicable to icon-only layout"
+        ],
+        "tests": [
+          "variant test `tst_iconbutton` is registered",
+          "shared button contract test exists and is registered",
+          "focused test `tst_icon_fab_accessibility` exists and is registered"
+        ],
+        "example": [
+          "gallery contains marked maturity coverage block"
+        ],
+        "docs": [
+          "buttons.md contains marked maturity contract block"
+        ],
+        "notes": [
+          "Public Icon Button variant is tracked in the registry.",
+          "Icon-only accessible-name policy is documented and covered by the shared Buttons contract test.",
+          "RTL is not applicable to the icon-only layout itself; geometry stability is still covered by the shared contract where relevant."
+        ]
+      }
+    }
+  },
+  {
     "id": "button.outlined",
     "name": "Outlined Button",
     "family": "Buttons",
@@ -317,17 +558,17 @@
     }
   },
   {
-    "id": "button.elevated",
-    "name": "Elevated Button",
+    "id": "button.text",
+    "name": "Text Button",
     "family": "Buttons",
     "maturity": "complete",
-    "maturityPolicy": "manual",
-    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialtextbutton.h",
     "specType": "ButtonSpec",
-    "widgetType": "QtMaterialElevatedButton",
-    "testTarget": "tst_elevatedbutton",
-    "galleryRoute": "/buttons/elevated",
+    "widgetType": "QtMaterialTextButton",
+    "testTarget": "tst_textbutton",
+    "galleryRoute": "/buttons/text",
     "docsPath": "docs/public-api/buttons.md",
+    "maturityPolicy": "manual",
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
@@ -349,254 +590,14 @@
       "evidence": {
         "api": [
           "registry entry exists",
-          "public header exists: include/qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h",
-          "source exists: src/widgets/buttons/qtmaterialelevatedbutton.cpp",
-          "variant test `tst_elevatedbutton` is registered",
+          "public header exists: include/qtmaterial/widgets/buttons/qtmaterialtextbutton.h",
+          "source exists: src/widgets/buttons/qtmaterialtextbutton.cpp",
+          "variant test `tst_textbutton` is registered",
           "Material automation metadata is explicit"
         ],
         "rendering": [
           "gallery includes maturity rendering coverage",
-          "variant rendering can be exercised by `tst_elevatedbutton`",
-          "focused ElevatedButton shadow test exists and is registered"
-        ],
-        "states": [
-          "shared contract covers enabled/disabled/focus/activation states",
-          "variant test exists for component-specific state behavior"
-        ],
-        "accessibility": [
-          "docs include the Buttons accessibility contract",
-          "shared contract includes accessibility checks",
-          "focused IconButton/FAB accessibility test exists and is registered"
-        ],
-        "keyboard": [
-          "shared contract covers keyboard activation and disabled non-activation"
-        ],
-        "hidpi": [
-          "shared contract includes DPR 2.0 render smoke",
-          "ElevatedButton focused test covers DPR 1.0/1.5/2.0"
-        ],
-        "rtl": [
-          "shared contract includes RTL sizeHint stability",
-          "gallery includes RTL preview"
-        ],
-        "tests": [
-          "variant test `tst_elevatedbutton` is registered",
-          "shared button contract test exists and is registered",
-          "focused test `tst_elevatedbutton_shadow` exists and is registered"
-        ],
-        "example": [
-          "gallery contains marked maturity coverage block"
-        ],
-        "docs": [
-          "buttons.md contains marked maturity contract block"
-        ],
-        "notes": [
-          "Public Elevated Button variant is tracked in the registry.",
-          "Shared Buttons maturity contract covers keyboard, accessibility, disabled-state, RTL, and HiDPI smoke behavior.",
-          "Elevated-specific maturity requires elevation and shadow rendering to remain covered by variant tests or visual review."
-        ]
-      }
-    }
-  },
-  {
-    "id": "button.icon",
-    "name": "Icon Button",
-    "family": "Buttons",
-    "maturity": "complete",
-    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialiconbutton.h",
-    "specType": "IconButtonSpec",
-    "widgetType": "QtMaterialIconButton",
-    "testTarget": "tst_iconbutton",
-    "galleryRoute": "/buttons/icon",
-    "docsPath": "docs/public-api/buttons.md",
-    "maturityPolicy": "manual",
-    "releaseScope": true,
-    "referenceCandidate": false,
-    "maturityAxes": {
-      "api": 4,
-      "rendering": 4,
-      "states": 4,
-      "accessibility": 4,
-      "keyboard": 4,
-      "hidpi": 4,
-      "rtl": "N/A",
-      "tests": 4,
-      "example": 4,
-      "docs": 4,
-      "lastReviewed": "2026-07-17",
-      "gaps": [],
-      "nextActions": [
-        "Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync."
-      ],
-      "evidence": {
-        "api": [
-          "registry entry exists",
-          "public header exists: include/qtmaterial/widgets/buttons/qtmaterialiconbutton.h",
-          "source exists: src/widgets/buttons/qtmaterialiconbutton.cpp",
-          "variant test `tst_iconbutton` is registered",
-          "Material automation metadata is explicit"
-        ],
-        "rendering": [
-          "gallery includes maturity rendering coverage",
-          "variant rendering can be exercised by `tst_iconbutton`"
-        ],
-        "states": [
-          "shared contract covers enabled/disabled/focus/activation states",
-          "variant test exists for component-specific state behavior"
-        ],
-        "accessibility": [
-          "docs include the Buttons accessibility contract",
-          "shared contract includes accessibility checks",
-          "focused IconButton/FAB accessibility test exists and is registered"
-        ],
-        "keyboard": [
-          "shared contract covers keyboard activation and disabled non-activation"
-        ],
-        "hidpi": [
-          "shared contract includes DPR 2.0 render smoke"
-        ],
-        "rtl": [
-          "RTL is not applicable to icon-only layout"
-        ],
-        "tests": [
-          "variant test `tst_iconbutton` is registered",
-          "shared button contract test exists and is registered",
-          "focused test `tst_icon_fab_accessibility` exists and is registered"
-        ],
-        "example": [
-          "gallery contains marked maturity coverage block"
-        ],
-        "docs": [
-          "buttons.md contains marked maturity contract block"
-        ],
-        "notes": [
-          "Public Icon Button variant is tracked in the registry.",
-          "Icon-only accessible-name policy is documented and covered by the shared Buttons contract test.",
-          "RTL is not applicable to the icon-only layout itself; geometry stability is still covered by the shared contract where relevant."
-        ]
-      }
-    }
-  },
-  {
-    "id": "button.fab",
-    "name": "Floating Action Button",
-    "family": "Buttons",
-    "maturity": "complete",
-    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialfab.h",
-    "specType": "FabSpec",
-    "widgetType": "QtMaterialFab",
-    "testTarget": "tst_fab",
-    "galleryRoute": "/buttons/fab",
-    "docsPath": "docs/public-api/buttons.md",
-    "releaseScope": true,
-    "maturityPolicy": "manual",
-    "referenceCandidate": false,
-    "maturityAxes": {
-      "api": 4,
-      "rendering": 4,
-      "states": 4,
-      "accessibility": 4,
-      "keyboard": 4,
-      "hidpi": 4,
-      "rtl": "N/A",
-      "tests": 4,
-      "example": 4,
-      "docs": 4,
-      "lastReviewed": "2026-07-17",
-      "gaps": [],
-      "nextActions": [
-        "Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync."
-      ],
-      "evidence": {
-        "api": [
-          "registry entry exists",
-          "public header exists: include/qtmaterial/widgets/buttons/qtmaterialfab.h",
-          "source exists: src/widgets/buttons/qtmaterialfab.cpp",
-          "variant test `tst_fab` is registered",
-          "Material automation metadata is explicit"
-        ],
-        "rendering": [
-          "gallery includes maturity rendering coverage",
-          "variant rendering can be exercised by `tst_fab`"
-        ],
-        "states": [
-          "shared contract covers enabled/disabled/focus/activation states",
-          "variant test exists for component-specific state behavior"
-        ],
-        "accessibility": [
-          "docs include the Buttons accessibility contract",
-          "shared contract includes accessibility checks",
-          "focused IconButton/FAB accessibility test exists and is registered"
-        ],
-        "keyboard": [
-          "shared contract covers keyboard activation and disabled non-activation"
-        ],
-        "hidpi": [
-          "shared contract includes DPR 2.0 render smoke"
-        ],
-        "rtl": [
-          "RTL is not applicable to icon-only layout"
-        ],
-        "tests": [
-          "variant test `tst_fab` is registered",
-          "shared button contract test exists and is registered",
-          "focused test `tst_icon_fab_accessibility` exists and is registered"
-        ],
-        "example": [
-          "gallery contains marked maturity coverage block"
-        ],
-        "docs": [
-          "buttons.md contains marked maturity contract block"
-        ],
-        "notes": [
-          "Public compact FAB variant is tracked in the registry.",
-          "Icon-only accessible-name policy is documented and covered by the shared Buttons contract test.",
-          "RTL is not applicable to the icon-only compact FAB layout itself."
-        ]
-      }
-    }
-  },
-  {
-    "id": "button.extended-fab",
-    "name": "Extended Floating Action Button",
-    "family": "Buttons",
-    "maturity": "complete",
-    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialextendedfab.h",
-    "specType": "FabSpec",
-    "widgetType": "QtMaterialExtendedFab",
-    "testTarget": "tst_extendedfab",
-    "galleryRoute": "/buttons/extended-fab",
-    "docsPath": "docs/public-api/buttons.md",
-    "releaseScope": true,
-    "maturityPolicy": "manual",
-    "referenceCandidate": false,
-    "maturityAxes": {
-      "api": 4,
-      "rendering": 4,
-      "states": 4,
-      "accessibility": 4,
-      "keyboard": 4,
-      "hidpi": 4,
-      "rtl": 4,
-      "tests": 4,
-      "example": 4,
-      "docs": 4,
-      "lastReviewed": "2026-07-17",
-      "gaps": [],
-      "nextActions": [
-        "Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync."
-      ],
-      "evidence": {
-        "api": [
-          "registry entry exists",
-          "public header exists: include/qtmaterial/widgets/buttons/qtmaterialextendedfab.h",
-          "source exists: src/widgets/buttons/qtmaterialextendedfab.cpp",
-          "variant test `tst_extendedfab` is registered",
-          "Material automation metadata is explicit"
-        ],
-        "rendering": [
-          "gallery includes maturity rendering coverage",
-          "variant rendering can be exercised by `tst_extendedfab`"
+          "variant rendering can be exercised by `tst_textbutton`"
         ],
         "states": [
           "shared contract covers enabled/disabled/focus/activation states",
@@ -618,9 +619,8 @@
           "gallery includes RTL preview"
         ],
         "tests": [
-          "variant test `tst_extendedfab` is registered",
-          "shared button contract test exists and is registered",
-          "focused test `tst_icon_fab_accessibility` exists and is registered"
+          "variant test `tst_textbutton` is registered",
+          "shared button contract test exists and is registered"
         ],
         "example": [
           "gallery contains marked maturity coverage block"
@@ -629,7 +629,7 @@
           "buttons.md contains marked maturity contract block"
         ],
         "notes": [
-          "Public Extended FAB variant is tracked in the registry.",
+          "Public Text Button variant is tracked in the registry.",
           "Shared Buttons maturity contract covers keyboard, accessibility, disabled-state, RTL, and HiDPI smoke behavior."
         ]
       }
@@ -639,64 +639,67 @@
     "id": "compact.chip",
     "name": "Chip",
     "family": "Compact controls",
-    "maturity": "planned",
+    "maturity": "usable",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/selection/qtmaterialchip.h",
     "specType": "ChipSpec",
     "widgetType": "QtMaterialChip",
-    "testTarget": "",
+    "testTarget": "tst_component_expansion",
     "galleryRoute": "/compact/chip",
-    "docsPath": "docs/public-api/compact-controls.md",
-    "releaseScope": false,
+    "docsPath": "docs/public-api/component-expansion.md",
+    "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 1,
-      "rendering": 0,
-      "states": 0,
-      "accessibility": 0,
-      "keyboard": 0,
-      "hidpi": 0,
-      "rtl": 0,
-      "tests": 0,
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
       "example": 1,
-      "docs": 1,
-      "lastReviewed": "2026-09-09",
+      "docs": 2,
+      "lastReviewed": "2026-09-20",
       "gaps": [
-        "Chip is not release-scoped and has no registered widget test target."
+        "Chip family has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
       ],
       "nextActions": [
-        "Register focused widget tests and complete the public behavior contract before release scope is enabled."
+        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Chip family."
       ],
       "evidence": {
         "api": [
-          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialchip.h."
+          "Chip family has a public 0.8 header and stable Qt-style API."
         ],
         "rendering": [
-          "No release-scoped rendering assessment is claimed."
+          "Chip family has a production implementation in the Widgets module."
         ],
         "states": [
-          "No release-scoped state assessment is claimed."
+          "Chip family exposes its primary runtime states and invariants."
         ],
         "accessibility": [
-          "No release-scoped accessibility assessment is claimed."
+          "Chip family sets accessible names/descriptions or relies on the native Qt accessible control."
         ],
         "keyboard": [
-          "No release-scoped keyboard assessment is claimed."
+          "Chip family preserves native Qt keyboard behavior and 0.8 smoke coverage."
         ],
         "hidpi": [
-          "No release-scoped HiDPI assessment is claimed."
+          "Chip family uses Qt logical geometry and device-independent painting."
         ],
         "rtl": [
-          "No release-scoped RTL assessment is claimed."
+          "Chip family preserves Qt layout direction; range geometry handles RTL where directional."
         ],
         "tests": [
-          "tests/widgets/compact/tst_chip.cpp is not registered as the component test target."
+          "tst_component_expansion exercises the 0.8 public contract."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp instantiates Chip examples."
+          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
         ],
         "docs": [
-          "docs/public-api/compact-controls.md documents the planned boundary."
+          "docs/public-api/component-expansion.md documents the 0.8 contract."
+        ],
+        "notes": [
+          "Chip family entered release scope in 0.8.0."
         ]
       }
     }
@@ -763,6 +766,72 @@
         ],
         "docs": [
           "docs/public-api/data-widgets.md documents the public data-widget contract."
+        ]
+      }
+    }
+  },
+  {
+    "id": "data.divider",
+    "name": "Divider",
+    "family": "Data display",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialdivider.h",
+    "specType": "DividerSpec",
+    "widgetType": "QtMaterialDivider",
+    "testTarget": "tst_divider",
+    "galleryRoute": "/data/divider",
+    "docsPath": "docs/public-api/divider-release-readiness.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": "N/A",
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-09",
+      "gaps": [
+        "No Divider Material reference model or deterministic visual conformance evidence is available."
+      ],
+      "nextActions": [
+        "Add Divider token, RTL and HiDPI reference evidence before raising maturity axes."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/data/qtmaterialdivider.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/data/qtmaterialdivider.cpp."
+        ],
+        "states": [
+          "tests/widgets/data/tst_divider.cpp exercises orientation and inset behavior."
+        ],
+        "accessibility": [
+          "docs/public-api/divider-release-readiness.md defines decorative and semantic exposure."
+        ],
+        "keyboard": [
+          "Divider is non-interactive; keyboard activation does not apply."
+        ],
+        "hidpi": [
+          "Custom separator rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "The release-readiness contract documents leading/trailing RTL insets."
+        ],
+        "tests": [
+          "Registered target tst_divider provides simple-case widget coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/datapage.cpp instantiates QtMaterialDivider."
+        ],
+        "docs": [
+          "docs/public-api/divider-release-readiness.md documents the public contract."
         ]
       }
     }
@@ -900,17 +969,17 @@
     }
   },
   {
-    "id": "data.divider",
-    "name": "Divider",
-    "family": "Data display",
+    "id": "input.combo-box",
+    "name": "Combo Box",
+    "family": "Inputs",
     "maturity": "usable",
     "maturityPolicy": "derived",
-    "publicHeader": "qtmaterial/widgets/data/qtmaterialdivider.h",
-    "specType": "DividerSpec",
-    "widgetType": "QtMaterialDivider",
-    "testTarget": "tst_divider",
-    "galleryRoute": "/data/divider",
-    "docsPath": "docs/public-api/divider-release-readiness.md",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialcombobox.h",
+    "specType": "AutocompleteSpec",
+    "widgetType": "QtMaterialComboBox",
+    "testTarget": "tst_component_expansion",
+    "galleryRoute": "/inputs/combo-box",
+    "docsPath": "docs/public-api/component-expansion.md",
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
@@ -918,49 +987,121 @@
       "rendering": 2,
       "states": 2,
       "accessibility": 1,
-      "keyboard": "N/A",
+      "keyboard": 1,
       "hidpi": 1,
       "rtl": 1,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-09-20",
       "gaps": [
-        "No Divider Material reference model or deterministic visual conformance evidence is available."
+        "Combo Box has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
       ],
       "nextActions": [
-        "Add Divider token, RTL and HiDPI reference evidence before raising maturity axes."
+        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Combo Box."
       ],
       "evidence": {
         "api": [
-          "Public header exists: include/qtmaterial/widgets/data/qtmaterialdivider.h."
+          "Combo Box has a public 0.8 header and stable Qt-style API."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/data/qtmaterialdivider.cpp."
+          "Combo Box has a production implementation in the Widgets module."
         ],
         "states": [
-          "tests/widgets/data/tst_divider.cpp exercises orientation and inset behavior."
+          "Combo Box exposes its primary runtime states and invariants."
         ],
         "accessibility": [
-          "docs/public-api/divider-release-readiness.md defines decorative and semantic exposure."
+          "Combo Box sets accessible names/descriptions or relies on the native Qt accessible control."
         ],
         "keyboard": [
-          "Divider is non-interactive; keyboard activation does not apply."
+          "Combo Box preserves native Qt keyboard behavior and 0.8 smoke coverage."
         ],
         "hidpi": [
-          "Custom separator rendering exists without deterministic target HiDPI evidence."
+          "Combo Box uses Qt logical geometry and device-independent painting."
         ],
         "rtl": [
-          "The release-readiness contract documents leading/trailing RTL insets."
+          "Combo Box preserves Qt layout direction; range geometry handles RTL where directional."
         ],
         "tests": [
-          "Registered target tst_divider provides simple-case widget coverage."
+          "tst_component_expansion exercises the 0.8 public contract."
         ],
         "example": [
-          "examples/gallery/pages/datapage.cpp instantiates QtMaterialDivider."
+          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
         ],
         "docs": [
-          "docs/public-api/divider-release-readiness.md documents the public contract."
+          "docs/public-api/component-expansion.md documents the 0.8 contract."
+        ],
+        "notes": [
+          "Combo Box entered release scope in 0.8.0."
+        ]
+      }
+    }
+  },
+  {
+    "id": "input.date-range-picker",
+    "name": "Date Range Picker",
+    "family": "Inputs",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h",
+    "specType": "DatePickerSpec",
+    "widgetType": "QtMaterialDateRangePicker",
+    "testTarget": "tst_component_expansion",
+    "galleryRoute": "/inputs/date-range-picker",
+    "docsPath": "docs/public-api/component-expansion.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-20",
+      "gaps": [
+        "Date Range Picker has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+      ],
+      "nextActions": [
+        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Date Range Picker."
+      ],
+      "evidence": {
+        "api": [
+          "Date Range Picker has a public 0.8 header and stable Qt-style API."
+        ],
+        "rendering": [
+          "Date Range Picker has a production implementation in the Widgets module."
+        ],
+        "states": [
+          "Date Range Picker exposes its primary runtime states and invariants."
+        ],
+        "accessibility": [
+          "Date Range Picker sets accessible names/descriptions or relies on the native Qt accessible control."
+        ],
+        "keyboard": [
+          "Date Range Picker preserves native Qt keyboard behavior and 0.8 smoke coverage."
+        ],
+        "hidpi": [
+          "Date Range Picker uses Qt logical geometry and device-independent painting."
+        ],
+        "rtl": [
+          "Date Range Picker preserves Qt layout direction; range geometry handles RTL where directional."
+        ],
+        "tests": [
+          "tst_component_expansion exercises the 0.8 public contract."
+        ],
+        "example": [
+          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+        ],
+        "docs": [
+          "docs/public-api/component-expansion.md documents the 0.8 contract."
+        ],
+        "notes": [
+          "Date Range Picker entered release scope in 0.8.0."
         ]
       }
     }
@@ -1027,6 +1168,282 @@
         ],
         "docs": [
           "docs/public-api/inputs.md documents the Date Field contract."
+        ]
+      }
+    }
+  },
+  {
+    "id": "input.range-slider",
+    "name": "Range Slider",
+    "family": "Inputs",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialrangeslider.h",
+    "specType": "SelectionRuntimeSpec",
+    "widgetType": "QtMaterialRangeSlider",
+    "testTarget": "tst_component_expansion",
+    "galleryRoute": "/inputs/range-slider",
+    "docsPath": "docs/public-api/component-expansion.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-20",
+      "gaps": [
+        "Range Slider has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+      ],
+      "nextActions": [
+        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Range Slider."
+      ],
+      "evidence": {
+        "api": [
+          "Range Slider has a public 0.8 header and stable Qt-style API."
+        ],
+        "rendering": [
+          "Range Slider has a production implementation in the Widgets module."
+        ],
+        "states": [
+          "Range Slider exposes its primary runtime states and invariants."
+        ],
+        "accessibility": [
+          "Range Slider sets accessible names/descriptions or relies on the native Qt accessible control."
+        ],
+        "keyboard": [
+          "Range Slider preserves native Qt keyboard behavior and 0.8 smoke coverage."
+        ],
+        "hidpi": [
+          "Range Slider uses Qt logical geometry and device-independent painting."
+        ],
+        "rtl": [
+          "Range Slider preserves Qt layout direction; range geometry handles RTL where directional."
+        ],
+        "tests": [
+          "tst_component_expansion exercises the 0.8 public contract."
+        ],
+        "example": [
+          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+        ],
+        "docs": [
+          "docs/public-api/component-expansion.md documents the 0.8 contract."
+        ],
+        "notes": [
+          "Range Slider entered release scope in 0.8.0."
+        ]
+      }
+    }
+  },
+  {
+    "id": "input.search-bar",
+    "name": "Search Bar",
+    "family": "Inputs",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialsearchbar.h",
+    "specType": "AutocompleteSpec",
+    "widgetType": "QtMaterialSearchBar",
+    "testTarget": "tst_component_expansion",
+    "galleryRoute": "/inputs/search-bar",
+    "docsPath": "docs/public-api/component-expansion.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-20",
+      "gaps": [
+        "Search Bar has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+      ],
+      "nextActions": [
+        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Search Bar."
+      ],
+      "evidence": {
+        "api": [
+          "Search Bar has a public 0.8 header and stable Qt-style API."
+        ],
+        "rendering": [
+          "Search Bar has a production implementation in the Widgets module."
+        ],
+        "states": [
+          "Search Bar exposes its primary runtime states and invariants."
+        ],
+        "accessibility": [
+          "Search Bar sets accessible names/descriptions or relies on the native Qt accessible control."
+        ],
+        "keyboard": [
+          "Search Bar preserves native Qt keyboard behavior and 0.8 smoke coverage."
+        ],
+        "hidpi": [
+          "Search Bar uses Qt logical geometry and device-independent painting."
+        ],
+        "rtl": [
+          "Search Bar preserves Qt layout direction; range geometry handles RTL where directional."
+        ],
+        "tests": [
+          "tst_component_expansion exercises the 0.8 public contract."
+        ],
+        "example": [
+          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+        ],
+        "docs": [
+          "docs/public-api/component-expansion.md documents the 0.8 contract."
+        ],
+        "notes": [
+          "Search Bar entered release scope in 0.8.0."
+        ]
+      }
+    }
+  },
+  {
+    "id": "input.search-view",
+    "name": "Search View",
+    "family": "Inputs",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialsearchview.h",
+    "specType": "AutocompleteSpec",
+    "widgetType": "QtMaterialSearchView",
+    "testTarget": "tst_component_expansion",
+    "galleryRoute": "/inputs/search-view",
+    "docsPath": "docs/public-api/component-expansion.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-20",
+      "gaps": [
+        "Search View has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+      ],
+      "nextActions": [
+        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Search View."
+      ],
+      "evidence": {
+        "api": [
+          "Search View has a public 0.8 header and stable Qt-style API."
+        ],
+        "rendering": [
+          "Search View has a production implementation in the Widgets module."
+        ],
+        "states": [
+          "Search View exposes its primary runtime states and invariants."
+        ],
+        "accessibility": [
+          "Search View sets accessible names/descriptions or relies on the native Qt accessible control."
+        ],
+        "keyboard": [
+          "Search View preserves native Qt keyboard behavior and 0.8 smoke coverage."
+        ],
+        "hidpi": [
+          "Search View uses Qt logical geometry and device-independent painting."
+        ],
+        "rtl": [
+          "Search View preserves Qt layout direction; range geometry handles RTL where directional."
+        ],
+        "tests": [
+          "tst_component_expansion exercises the 0.8 public contract."
+        ],
+        "example": [
+          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+        ],
+        "docs": [
+          "docs/public-api/component-expansion.md documents the 0.8 contract."
+        ],
+        "notes": [
+          "Search View entered release scope in 0.8.0."
+        ]
+      }
+    }
+  },
+  {
+    "id": "input.slider",
+    "name": "Slider",
+    "family": "Inputs",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialslider.h",
+    "specType": "SelectionRuntimeSpec",
+    "widgetType": "QtMaterialSlider",
+    "testTarget": "tst_component_expansion",
+    "galleryRoute": "/inputs/slider",
+    "docsPath": "docs/public-api/component-expansion.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-20",
+      "gaps": [
+        "Slider has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+      ],
+      "nextActions": [
+        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Slider."
+      ],
+      "evidence": {
+        "api": [
+          "Slider has a public 0.8 header and stable Qt-style API."
+        ],
+        "rendering": [
+          "Slider has a production implementation in the Widgets module."
+        ],
+        "states": [
+          "Slider exposes its primary runtime states and invariants."
+        ],
+        "accessibility": [
+          "Slider sets accessible names/descriptions or relies on the native Qt accessible control."
+        ],
+        "keyboard": [
+          "Slider preserves native Qt keyboard behavior and 0.8 smoke coverage."
+        ],
+        "hidpi": [
+          "Slider uses Qt logical geometry and device-independent painting."
+        ],
+        "rtl": [
+          "Slider preserves Qt layout direction; range geometry handles RTL where directional."
+        ],
+        "tests": [
+          "tst_component_expansion exercises the 0.8 public contract."
+        ],
+        "example": [
+          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+        ],
+        "docs": [
+          "docs/public-api/component-expansion.md documents the 0.8 contract."
+        ],
+        "notes": [
+          "Slider entered release scope in 0.8.0."
         ]
       }
     }
@@ -1159,6 +1576,144 @@
         ],
         "docs": [
           "docs/public-api/inputs.md and focused Text Field guides document the contract."
+        ]
+      }
+    }
+  },
+  {
+    "id": "input.time-field",
+    "name": "Time Field",
+    "family": "Inputs",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialtimefield.h",
+    "specType": "DateFieldSpec",
+    "widgetType": "QtMaterialTimeField",
+    "testTarget": "tst_component_expansion",
+    "galleryRoute": "/inputs/time-field",
+    "docsPath": "docs/public-api/component-expansion.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-20",
+      "gaps": [
+        "Time Field has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+      ],
+      "nextActions": [
+        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Time Field."
+      ],
+      "evidence": {
+        "api": [
+          "Time Field has a public 0.8 header and stable Qt-style API."
+        ],
+        "rendering": [
+          "Time Field has a production implementation in the Widgets module."
+        ],
+        "states": [
+          "Time Field exposes its primary runtime states and invariants."
+        ],
+        "accessibility": [
+          "Time Field sets accessible names/descriptions or relies on the native Qt accessible control."
+        ],
+        "keyboard": [
+          "Time Field preserves native Qt keyboard behavior and 0.8 smoke coverage."
+        ],
+        "hidpi": [
+          "Time Field uses Qt logical geometry and device-independent painting."
+        ],
+        "rtl": [
+          "Time Field preserves Qt layout direction; range geometry handles RTL where directional."
+        ],
+        "tests": [
+          "tst_component_expansion exercises the 0.8 public contract."
+        ],
+        "example": [
+          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+        ],
+        "docs": [
+          "docs/public-api/component-expansion.md documents the 0.8 contract."
+        ],
+        "notes": [
+          "Time Field entered release scope in 0.8.0."
+        ]
+      }
+    }
+  },
+  {
+    "id": "input.time-picker",
+    "name": "Time Picker",
+    "family": "Inputs",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialtimepicker.h",
+    "specType": "DateFieldSpec",
+    "widgetType": "QtMaterialTimePicker",
+    "testTarget": "tst_component_expansion",
+    "galleryRoute": "/inputs/time-picker",
+    "docsPath": "docs/public-api/component-expansion.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-20",
+      "gaps": [
+        "Time Picker has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+      ],
+      "nextActions": [
+        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Time Picker."
+      ],
+      "evidence": {
+        "api": [
+          "Time Picker has a public 0.8 header and stable Qt-style API."
+        ],
+        "rendering": [
+          "Time Picker has a production implementation in the Widgets module."
+        ],
+        "states": [
+          "Time Picker exposes its primary runtime states and invariants."
+        ],
+        "accessibility": [
+          "Time Picker sets accessible names/descriptions or relies on the native Qt accessible control."
+        ],
+        "keyboard": [
+          "Time Picker preserves native Qt keyboard behavior and 0.8 smoke coverage."
+        ],
+        "hidpi": [
+          "Time Picker uses Qt logical geometry and device-independent painting."
+        ],
+        "rtl": [
+          "Time Picker preserves Qt layout direction; range geometry handles RTL where directional."
+        ],
+        "tests": [
+          "tst_component_expansion exercises the 0.8 public contract."
+        ],
+        "example": [
+          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+        ],
+        "docs": [
+          "docs/public-api/component-expansion.md documents the 0.8 contract."
+        ],
+        "notes": [
+          "Time Picker entered release scope in 0.8.0."
         ]
       }
     }
