@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QByteArray>
 #include <QWidget>
 
 namespace QtMaterial {
@@ -18,15 +19,21 @@ public:
 
 public slots:
     void applyTheme(const QtMaterial::Theme& theme);
+    void setValidationResult(bool valid, const QString& message);
 
 signals:
     void copyRequested();
     void importRequested();
     void exportRequested();
+    void validateRequested(const QByteArray& json);
+    void applyRequested(const QByteArray& json);
 
 private:
     QPlainTextEdit* m_editor {};
     QPushButton* m_copyButton {};
     QPushButton* m_importButton {};
     QPushButton* m_exportButton {};
+    QPushButton* m_validateButton {};
+    QPushButton* m_applyButton {};
+    class QLabel* m_validationLabel {};
 };

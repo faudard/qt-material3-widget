@@ -42,16 +42,13 @@ ThemeEditorPanel::ThemeEditorPanel(ThemeStudioController* controller, QWidget* p
     , m_seedButton(new QPushButton(tr("Choose color"), this))
     , m_modeCombo(new QComboBox(this))
     , m_contrastCombo(new QComboBox(this))
+    , m_backendCombo(new QComboBox(this))
     , m_expressiveCheck(new QCheckBox(tr("Expressive"), this))
     , m_applyButton(new QPushButton(tr("Apply"), this))
     , m_resetButton(new QPushButton(tr("Reset"), this))
     , m_importButton(new QPushButton(tr("Import JSON"), this))
     , m_exportButton(new QPushButton(tr("Export JSON"), this))
 {
-    m_expressiveCheck->setEnabled(false);
-    m_expressiveCheck->setToolTip(
-    tr("Planned option. ThemeBuilder does not implement expressive generation yet."));
-
     m_seedPreview->setMinimumWidth(72);
 
     m_presetCombo->addItem(tr("Custom"), QString());
@@ -59,12 +56,25 @@ ThemeEditorPanel::ThemeEditorPanel(ThemeStudioController* controller, QWidget* p
         m_presetCombo->addItem(preset.displayName, preset.id);
     }
 
-    m_modeCombo->addItem(tr("Light"), static_cast<int>(ThemeMode::Light));
-    m_modeCombo->addItem(tr("Dark"), static_cast<int>(ThemeMode::Dark));
+    m_modeCombo->addItem(tr("Light"), static_cast<int>(ThemePreference::Light));
+    m_modeCombo->addItem(tr("Dark"), static_cast<int>(ThemePreference::Dark));
+    m_modeCombo->addItem(
+        tr("Follow system"), static_cast<int>(ThemePreference::FollowSystem));
 
     m_contrastCombo->addItem(tr("Standard"), static_cast<int>(ContrastMode::Standard));
     m_contrastCombo->addItem(tr("Medium"), static_cast<int>(ContrastMode::Medium));
     m_contrastCombo->addItem(tr("High"), static_cast<int>(ContrastMode::High));
+
+    m_backendCombo->addItem(tr("Auto"), static_cast<int>(ColorBackendPolicy::Auto));
+    m_backendCombo->addItem(
+        tr("Prefer Material Color Utilities"),
+        static_cast<int>(ColorBackendPolicy::PreferMaterialColorUtilities));
+    m_backendCombo->addItem(
+        tr("Force Material Color Utilities"),
+        static_cast<int>(ColorBackendPolicy::ForceMaterialColorUtilities));
+    m_backendCombo->addItem(
+        tr("Force fallback"),
+        static_cast<int>(ColorBackendPolicy::ForceFallback));
 
     auto* presetBox = new QGroupBox(tr("Presets"), this);
     auto* presetLayout = new QVBoxLayout(presetBox);
@@ -79,7 +89,9 @@ ThemeEditorPanel::ThemeEditorPanel(ThemeStudioController* controller, QWidget* p
     generationLayout->addWidget(m_modeCombo, 1, 1, 1, 2);
     generationLayout->addWidget(new QLabel(tr("Contrast"), this), 2, 0);
     generationLayout->addWidget(m_contrastCombo, 2, 1, 1, 2);
-    generationLayout->addWidget(m_expressiveCheck, 3, 0, 1, 3);
+    generationLayout->addWidget(new QLabel(tr("Backend"), this), 3, 0);
+    generationLayout->addWidget(m_backendCombo, 3, 1, 1, 2);
+    generationLayout->addWidget(m_expressiveCheck, 4, 0, 1, 3);
 
     auto* actionsBox = new QGroupBox(tr("Actions"), this);
     auto* actionsLayout = new QVBoxLayout(actionsBox);
@@ -110,8 +122,9 @@ ThemeEditorPanel::ThemeEditorPanel(ThemeStudioController* controller, QWidget* p
             QOverload<int>::of(&QComboBox::currentIndexChanged),
             this,
             [this](int index) {
-                m_controller->setMode(
-                    static_cast<ThemeMode>(m_modeCombo->itemData(index).toInt()));
+                m_controller->setPreference(
+                    static_cast<ThemePreference>(
+                        m_modeCombo->itemData(index).toInt()));
             });
 
     connect(m_contrastCombo,
@@ -120,6 +133,15 @@ ThemeEditorPanel::ThemeEditorPanel(ThemeStudioController* controller, QWidget* p
             [this](int index) {
                 m_controller->setContrast(
                     static_cast<ContrastMode>(m_contrastCombo->itemData(index).toInt()));
+            });
+
+    connect(m_backendCombo,
+            QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this,
+            [this](int index) {
+                m_controller->setBackendPolicy(
+                    static_cast<ColorBackendPolicy>(
+                        m_backendCombo->itemData(index).toInt()));
             });
 
     connect(m_expressiveCheck,
@@ -211,6 +233,7 @@ void ThemeEditorPanel::syncUiFromOptions(const ThemeOptions& options)
     const QSignalBlocker presetBlocker(m_presetCombo);
     const QSignalBlocker modeBlocker(m_modeCombo);
     const QSignalBlocker contrastBlocker(m_contrastCombo);
+    const QSignalBlocker backendBlocker(m_backendCombo);
     const QSignalBlocker expressiveBlocker(m_expressiveCheck);
 
     m_seedPreview->setText(options.sourceColor.name().toUpper());
@@ -221,7 +244,17 @@ void ThemeEditorPanel::syncUiFromOptions(const ThemeOptions& options)
     const int presetIndex = presetId.isEmpty() ? 0 : m_presetCombo->findData(presetId);
     m_presetCombo->setCurrentIndex(presetIndex >= 0 ? presetIndex : 0);
 
-    m_modeCombo->setCurrentIndex(options.mode == ThemeMode::Dark ? 1 : 0);
+    switch (options.preference) {
+    case ThemePreference::Light:
+        m_modeCombo->setCurrentIndex(0);
+        break;
+    case ThemePreference::Dark:
+        m_modeCombo->setCurrentIndex(1);
+        break;
+    case ThemePreference::FollowSystem:
+        m_modeCombo->setCurrentIndex(2);
+        break;
+    }
 
     switch (options.contrast) {
     case ContrastMode::Standard:
@@ -234,6 +267,10 @@ void ThemeEditorPanel::syncUiFromOptions(const ThemeOptions& options)
         m_contrastCombo->setCurrentIndex(2);
         break;
     }
+
+    const int backendIndex =
+        m_backendCombo->findData(static_cast<int>(options.backendPolicy));
+    m_backendCombo->setCurrentIndex(backendIndex >= 0 ? backendIndex : 0);
 
     m_expressiveCheck->setChecked(isExpressiveThemeVariant(options.variant));
 }

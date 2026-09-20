@@ -14,6 +14,8 @@ ThemeOptions makeOptions(const QString& hex,
     ThemeOptions options;
     options.sourceColor = QColor(hex);
     options.mode = mode;
+    options.preference =
+        mode == ThemeMode::Dark ? ThemePreference::Dark : ThemePreference::Light;
     options.contrast = contrast;
     options.variant = variant;
     return options;

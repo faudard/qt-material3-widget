@@ -6,6 +6,7 @@
 #include "themepresetcatalog.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
+#include "qtmaterial/theme/qtmaterialsystemtheme.h"
 #include "qtmaterial/theme/qtmaterialxmlthemeadapter.h"
 
 using namespace QtMaterial;
@@ -66,11 +67,32 @@ void ThemeStudioController::setSeedColor(const QColor& color)
 
 void ThemeStudioController::setMode(ThemeMode mode)
 {
-    if (m_pendingOptions.mode == mode) {
+    setPreference(
+        mode == ThemeMode::Dark ? ThemePreference::Dark : ThemePreference::Light);
+}
+
+void ThemeStudioController::setPreference(ThemePreference preference)
+{
+    ThemeMode resolvedMode = m_pendingOptions.mode;
+    switch (preference) {
+    case ThemePreference::Light:
+        resolvedMode = ThemeMode::Light;
+        break;
+    case ThemePreference::Dark:
+        resolvedMode = ThemeMode::Dark;
+        break;
+    case ThemePreference::FollowSystem:
+        resolvedMode = SystemTheme::instance().effectiveMode();
+        break;
+    }
+
+    if (m_pendingOptions.preference == preference
+        && m_pendingOptions.mode == resolvedMode) {
         return;
     }
 
-    m_pendingOptions.mode = mode;
+    m_pendingOptions.preference = preference;
+    m_pendingOptions.mode = resolvedMode;
     m_currentPresetId.clear();
     emit currentPresetChanged(m_currentPresetId);
     setDirty(true);
@@ -106,6 +128,19 @@ void ThemeStudioController::setExpressive(bool enabled)
     emit pendingOptionsChanged(m_pendingOptions);
 }
 
+void ThemeStudioController::setBackendPolicy(ColorBackendPolicy policy)
+{
+    if (m_pendingOptions.backendPolicy == policy) {
+        return;
+    }
+
+    m_pendingOptions.backendPolicy = policy;
+    m_currentPresetId.clear();
+    emit currentPresetChanged(m_currentPresetId);
+    setDirty(true);
+    emit pendingOptionsChanged(m_pendingOptions);
+}
+
 void ThemeStudioController::applyPreset(const QString& presetId)
 {
     if (presetId.isEmpty()) {
@@ -134,6 +169,10 @@ void ThemeStudioController::applyPending()
         emit currentPresetChanged(QString());
     }
 
+    if (m_pendingOptions.preference == ThemePreference::FollowSystem) {
+        m_pendingOptions.mode = SystemTheme::instance().effectiveMode();
+    }
+
     ThemeManager::instance().setThemeOptions(m_pendingOptions);
     setDirty(false);
     emit themeApplied(ThemeManager::instance().theme());
@@ -160,7 +199,8 @@ void ThemeStudioController::resetToDefaults()
 bool ThemeStudioController::importJsonFile(const QString& path, QString* errorString)
 {
     Theme imported;
-    if (!ThemeSerializer::readFromFile(path, &imported, errorString)) {
+    if (!ThemeSerializer::readFromFile(
+            path, &imported, ThemeReadMode::Strict, errorString)) {
         emit errorOccurred(errorString ? *errorString : QStringLiteral("Import failed."));
         return false;
     }
@@ -176,6 +216,43 @@ bool ThemeStudioController::importJsonFile(const QString& path, QString* errorSt
     emitThemeJson();
     setDirty(false);
     return true;
+}
+
+bool ThemeStudioController::applyJson(const QByteArray& json, QString* errorString)
+{
+    bool ok = false;
+    QString localError;
+    const Theme imported = ThemeSerializer::fromJson(
+        json, ThemeReadMode::Strict, &ok, &localError);
+    if (!ok) {
+        if (errorString) {
+            *errorString = localError;
+        }
+        return false;
+    }
+
+    ThemeManager::instance().setTheme(imported, ThemeChangeReason::External);
+    m_currentFilePath.clear();
+    m_currentPresetId.clear();
+    syncFromThemeManager();
+
+    emit currentPresetChanged(m_currentPresetId);
+    emit currentFilePathChanged(m_currentFilePath);
+    emit themeApplied(ThemeManager::instance().theme());
+    emitThemeJson();
+    setDirty(false);
+    if (errorString) {
+        errorString->clear();
+    }
+    return true;
+}
+
+bool ThemeStudioController::validateJson(
+    const QByteArray& json,
+    QString* errorString) const
+{
+    return ThemeSerializer::validateJson(
+        json, ThemeReadMode::Strict, errorString);
 }
 
 bool ThemeStudioController::exportJsonFile(const QString& path, QString* errorString) const
