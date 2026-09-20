@@ -48,14 +48,13 @@ def validate(root: Path, expected_version: str | None = None) -> list[str]:
     if not ROOT_REQUIRED.issubset(required):
         errors.append("theme schema is missing required root blocks")
 
+    definitions = schema.get("$defs", {})
     for block, expected in (
         ("source", SOURCE_REQUIRED),
         ("resolved", RESOLVED_REQUIRED),
         ("metadata", METADATA_REQUIRED),
     ):
-        actual = set(
-            schema.get("properties", {}).get(block, {}).get("required", [])
-        )
+        actual = set(definitions.get(block, {}).get("required", []))
         if not expected.issubset(actual):
             errors.append(f"theme schema {block} required set is incomplete")
 

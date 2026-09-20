@@ -84,8 +84,8 @@ void tst_ThemeTokenMatrix::fallbackMatrix()
     const Theme first = builder.build(options);
     const Theme second = builder.build(options);
 
-    QCOMPARE(first, second);
-    QCOMPARE(first.options(), options);
+    QVERIFY(first == second);
+    QVERIFY(first.options() == options);
     QCOMPARE(first.mode(), mode);
     QCOMPARE(first.contrastMode(), contrast);
     QCOMPARE(first.isDark(), mode == ThemeMode::Dark);
@@ -126,7 +126,7 @@ void tst_ThemeTokenMatrix::fallbackMatrix()
     const Theme restored =
         ThemeSerializer::fromJson(serialized, ThemeReadMode::Strict, &ok, &error);
     QVERIFY2(ok, qPrintable(error));
-    QCOMPARE(restored, first);
+    QVERIFY(restored == first);
 }
 
 void tst_ThemeTokenMatrix::mcuMatrixWhenAvailable_data()
@@ -172,7 +172,7 @@ void tst_ThemeTokenMatrix::mcuMatrixWhenAvailable()
     QCOMPARE(status.effectiveBackend, ThemeColorBackend::MaterialColorUtilities);
 
     const Theme theme = builder.build(options);
-    QCOMPARE(theme.options(), options);
+    QVERIFY(theme.options() == options);
 
     bool ok = false;
     QString error;
@@ -180,7 +180,7 @@ void tst_ThemeTokenMatrix::mcuMatrixWhenAvailable()
         ThemeSerializer::toJson(theme, QJsonDocument::Compact),
         ThemeReadMode::Strict, &ok, &error);
     QVERIFY2(ok, qPrintable(error));
-    QCOMPARE(restored, theme);
+    QVERIFY(restored == theme);
 }
 
 QTEST_MAIN(tst_ThemeTokenMatrix)

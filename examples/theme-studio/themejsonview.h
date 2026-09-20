@@ -9,6 +9,7 @@ class Theme;
 
 class QPlainTextEdit;
 class QPushButton;
+class QLabel;
 
 class ThemeJsonView : public QWidget
 {
@@ -35,5 +36,5 @@ private:
     QPushButton* m_exportButton {};
     QPushButton* m_validateButton {};
     QPushButton* m_applyButton {};
-    class QLabel* m_validationLabel {};
+    QLabel* m_validationLabel {};
 };

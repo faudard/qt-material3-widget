@@ -64,8 +64,8 @@ void ThemeRuntimeTest::independentContextsRemainIsolated()
     QVERIFY(first.setTheme(changed));
     QCOMPARE(first.revision(), quint64(1));
     QCOMPARE(second.revision(), quint64(0));
-    QCOMPARE(first.theme(), changed);
-    QCOMPARE(second.theme(), initial);
+    QVERIFY(first.theme() == changed);
+    QVERIFY(second.theme() == initial);
     QCOMPARE(firstSpy.count(), 1);
     QCOMPARE(secondSpy.count(), 0);
 }
