@@ -9,6 +9,7 @@
 #include "qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h"
 #include "qtmaterial/widgets/inputs/qtmaterialrangeslider.h"
 #include "qtmaterial/widgets/inputs/qtmaterialsearchview.h"
+#include "qtmaterial/widgets/inputs/qtmaterialsearchbar.h"
 #include "qtmaterial/widgets/inputs/qtmaterialslider.h"
 #include "qtmaterial/widgets/inputs/qtmaterialtimefield.h"
 
@@ -27,7 +28,13 @@ AdvancedInputsPage::AdvancedInputsPage(QWidget* parent)
     layout->addWidget(title);
 
     auto* searchModel = new QStringListModel(
-        {tr("Search Bar"), tr("Search View"), tr("Combo Box"), tr("Slider"), tr("Time Picker")},
+        QStringList{
+            tr("Search Bar"),
+            tr("Search View"),
+            tr("Combo Box"),
+            tr("Slider"),
+            tr("Time Picker")
+        },
         this);
     auto* searchView = new QtMaterial::QtMaterialSearchView(this);
     searchView->setSourceModel(searchModel);
