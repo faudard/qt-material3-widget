@@ -47,10 +47,10 @@ static QString modeName(ThemeMode mode)
 static QString variantName(ThemeVariant expression)
 {
     switch (expression) {
-    case ThemeVariant::Expressive :
-        return QStringLiteral("standard");
+    case ThemeVariant::Expressive:
+        return QStringLiteral("expressive");
     case ThemeVariant::TonalSpot:
-        return QStringLiteral("medium");
+        return QStringLiteral("tonalspot");
     }
     return QStringLiteral("standard");
 }

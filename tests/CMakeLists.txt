@@ -189,6 +189,7 @@ qtm3_add_test(tst_themeserializer_readmodes theme/tst_themeserializer_readmodes.
 qtm3_add_test(tst_theme_json_contract theme/tst_theme_json_contract.cpp qtmaterial3_theme)
 target_compile_definitions(tst_theme_json_contract PRIVATE QTMATERIAL3_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 qtm3_add_test(tst_theme_tokens theme/tst_theme_tokens.cpp qtmaterial3_theme)
+qtm3_add_test(tst_theme_token_matrix theme/tst_theme_token_matrix.cpp qtmaterial3_theme)
 qtm3_add_test(tst_theme_color_backend theme/tst_theme_color_backend.cpp qtmaterial3_theme)
 qtm3_add_test(tst_theme_mcu_adapter theme/tst_theme_mcu_adapter.cpp qtmaterial3_theme)
 qtm3_add_test(tst_theme_mcu_goldens theme/tst_theme_mcu_goldens.cpp qtmaterial3_theme)
