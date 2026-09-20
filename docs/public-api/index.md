@@ -10,6 +10,9 @@ Use these pages for package-level guidance and family-level orientation. For exa
 
 - theme construction via `QtMaterial::ThemeBuilder`
 - runtime theme access and updates via `QtMaterial::ThemeManager`
+- persistence and validation via `QtMaterial::ThemeSerializer`
+- system appearance resolution via `QtMaterial::SystemTheme`
+- typed component-local overrides via `ComponentTokenOverrides`
 - token containers such as `ColorScheme`, `TypographyScale`, `ShapeScale`, `ElevationScale`, `MotionTokens`, and `StateLayer`
 
 ### Core widget infrastructure
@@ -45,6 +48,10 @@ Prefer includes from the installed public include tree:
 :maxdepth: 1
 
 theming
+theme-json-schema
+component-overrides
+system-theme
+theme-studio
 buttons
 compact-controls
 data-widgets

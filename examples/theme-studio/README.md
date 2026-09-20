@@ -1,21 +1,27 @@
-# Theme Studio skeleton
+# Qt Material 3 Theme Studio
 
-Contenu cumulatif des PR A, B, C et D proposé dans la conversation.
+`qtmaterial3_theme_studio` is the supported developer-facing theme authoring example for the 0.6.x release.
 
-## Contenu
+## Features
 
-- PR A: squelette `theme-studio`
-- PR B: onglet `Colors` + vue des rôles couleur
-- PR C: toolbar + état dirty + onglet `JSON`
-- PR D: presets + onglet `Compare`
+- seed color selection
+- Light, Dark, and Follow System preference
+- Standard, Medium, and High contrast
+- TonalSpot and Expressive variants
+- Auto, Prefer MCU, Force MCU, and Force Fallback backend policies
+- live component and color-role previews
+- Light/Dark comparison
+- editable Theme JSON v1 view
+- strict JSON validation and direct apply
+- JSON import/export
+- legacy qt-material XML import/export
+- built-in presets and dirty/apply/reset workflow
 
-## À intégrer
+## Build
 
-1. Copier `examples/theme-studio/` dans le repo.
-2. Ajouter `add_subdirectory(theme-studio)` dans `examples/CMakeLists.txt`.
-3. Reconfigurer puis recompiler complètement le projet.
+```bash
+cmake -S . -B build -DQTMATERIAL3_BUILD_EXAMPLES=ON -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=ON
+cmake --build build --target qtmaterial3_theme_studio
+```
 
-## Notes
-
-- Cette archive est une base de travail. Elle n'a pas été compilée contre le dépôt ici.
-- Quelques ajustements peuvent être nécessaires selon l'état exact du repo au moment de l'intégration.
+The example uses the same public ThemeBuilder, ThemeSerializer, SystemTheme, and ThemeManager contracts available to downstream consumers.

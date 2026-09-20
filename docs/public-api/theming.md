@@ -167,35 +167,23 @@ This is the recommended consumer-facing API for a settings screen or live theme 
 
 ## Export the active theme to JSON
 
-Use `ThemeManager` when you want to export the current runtime theme directly.
+Persistence belongs to `ThemeSerializer`; `ThemeManager` only owns runtime state.
 
 ```cpp
-#include <QByteArray>
 #include <QJsonDocument>
-
 #include <qtmaterial/theme/qtmaterialthememanager.h>
+#include <qtmaterial/theme/qtmaterialthemeserializer.h>
 
-const QByteArray json = QtMaterial::ThemeManager::instance().exportThemeJson(
-    QJsonDocument::Indented);
-```
-
-Write to disk directly:
-
-```cpp
-#include <QDebug>
+const QtMaterial::Theme& active = QtMaterial::ThemeManager::instance().theme();
+const QByteArray json = QtMaterial::ThemeSerializer::toJson(
+    active, QJsonDocument::Indented);
 
 QString error;
-const bool ok = QtMaterial::ThemeManager::instance().exportThemeToFile(
-    "theme.json",
-    &error,
-    QJsonDocument::Indented);
-
-if (!ok) {
-    qWarning() << "Failed to export theme:" << error;
-}
+const bool ok = QtMaterial::ThemeSerializer::writeToFile(
+    active, "theme.json", &error, QJsonDocument::Indented);
 ```
 
-Use the manager export functions when you want to persist the exact active runtime theme, not only the source options.
+This persists the exact resolved runtime theme, including component overrides.
 
 ## Import a theme from JSON
 
@@ -211,7 +199,7 @@ const QByteArray json = R"json(
 {
   "formatVersion": 1,
   "source": {
-    "seedColor": "#6750A4FF",
+    "seedColor": "#FF6750A4",
     "mode": "Light",
     "preference": "Light",
     "contrast": "Standard",
@@ -225,7 +213,7 @@ const QByteArray json = R"json(
     "elevationScale": {},
     "motionTokens": {},
     "stateLayer": {
-      "color": "#000000FF",
+      "color": "#FF000000",
       "hoverOpacity": 0.08,
       "focusOpacity": 0.12,
       "pressOpacity": 0.12,
@@ -240,7 +228,7 @@ const QByteArray json = R"json(
         "width": 2,
         "offset": 2,
         "radiusAdjustment": 0,
-        "color": "#6750A4FF",
+        "color": "#FF6750A4",
         "opacity": 1.0
       }
     },
@@ -257,19 +245,21 @@ const QByteArray json = R"json(
   },
   "metadata": {
     "generatorVersion": "qt-material3-widget",
-    "libraryVersion": "0.1.0",
+    "libraryVersion": "0.6.0",
     "qtVersion": "6.x"
   }
 }
 )json";
 
 QString error;
-const bool ok = QtMaterial::ThemeManager::instance().importThemeJson(
-    json,
-    &error,
-    QtMaterial::ThemeReadMode::Strict);
+bool parsed = false;
+const QtMaterial::Theme imported = QtMaterial::ThemeSerializer::fromJson(
+    json, QtMaterial::ThemeReadMode::Strict, &parsed, &error);
 
-if (!ok) {
+if (parsed) {
+    QtMaterial::ThemeManager::instance().setTheme(
+        imported, QtMaterial::ThemeChangeReason::External);
+} else {
     qWarning() << "Failed to import theme JSON:" << error;
 }
 ```
@@ -278,12 +268,17 @@ Or from a file:
 
 ```cpp
 QString error;
-const bool ok = QtMaterial::ThemeManager::instance().importThemeFromFile(
+QtMaterial::Theme imported;
+const bool ok = QtMaterial::ThemeSerializer::readFromFile(
     "theme.json",
-    &error,
-    QtMaterial::ThemeReadMode::Lenient);
+    &imported,
+    QtMaterial::ThemeReadMode::Strict,
+    &error);
 
-if (!ok) {
+if (ok) {
+    QtMaterial::ThemeManager::instance().setTheme(
+        imported, QtMaterial::ThemeChangeReason::External);
+} else {
     qWarning() << "Failed to import theme file:" << error;
 }
 ```
@@ -421,7 +416,12 @@ Example fallback:
 #include <QDebug>
 
 QString error;
-if (!QtMaterial::ThemeManager::instance().importThemeFromFile("theme.json", &error)) {
+QtMaterial::Theme imported;
+if (QtMaterial::ThemeSerializer::readFromFile(
+        "theme.json", &imported, QtMaterial::ThemeReadMode::Strict, &error)) {
+    QtMaterial::ThemeManager::instance().setTheme(
+        imported, QtMaterial::ThemeChangeReason::External);
+} else {
     qWarning() << "Import failed, falling back to default theme:" << error;
     QtMaterial::ThemeManager::instance().applySeedColor(QColor("#6750A4"));
 }
@@ -439,7 +439,7 @@ That distinction matters because a resolved theme carries concrete token values 
 
 ## JSON schema contract
 
-The repository ships one current pre-release theme schema:
+The repository ships the frozen 0.6.x Theme JSON v1 schema:
 
 ```text
 docs/schema/theme.schema.json
@@ -447,12 +447,14 @@ docs/schema/theme.schema.json
 
 The schema documents the current `ThemeSerializer::kCurrentFormatVersion`, which is `1` for the first official theme JSON contract.
 
-There are no public legacy `v1`/`v2` migration promises yet. Until the first official release, breaking changes to this pre-release schema may still happen. After release, schema compatibility rules should be documented in the release notes.
+`formatVersion: 1` is the supported persistence contract for 0.6.x. Compatible additions must preserve existing documents; breaking changes require a new format version and an explicit migration policy.
 
 ## See also
 
 - [Theme JSON schema](theme-json-schema.md)
 - [Public API guide](index.md)
 - [C++ API reference](../api/index.md)
-- `examples/theme-playground` for an interactive consumer example
+- [Theme Studio](theme-studio.md) for the supported authoring example
+- [System theme integration](system-theme.md)
+- [Component-local overrides](component-overrides.md)
 - Material 3 references in [the documentation root](../index.md)
