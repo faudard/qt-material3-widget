@@ -5,7 +5,26 @@ All notable changes to qt-material3-widget are documented here.
 The project follows semantic versioning while it remains pre-1.0: minor releases may contain
 source or ABI changes, and those changes must be called out explicitly.
 
-## [0.5.0] - Unreleased
+## [0.6.0] - Unreleased
+
+### Added
+- Frozen Theme JSON formatVersion 1 contract with deterministic serializer fixtures and strict validation.
+- Token certification matrix for light/dark, contrast modes, theme variants, and color backends.
+- Component-local override compatibility coverage, including opaque extension round-trips.
+- System-theme and Theme Studio release gates.
+- Runtime propagation and high-fanout theme benchmarks.
+
+### Changed
+- Theme Studio is promoted from a development skeleton to the supported theme authoring example.
+- Theme JSON imports in Theme Studio use strict validation by default.
+- Theme runtime contracts explicitly require no-op equality, single revision increments, and isolated ThemeContext instances.
+
+### Compatibility
+- Theme JSON formatVersion 1 is frozen for 0.6.x compatible additions.
+- Minimum supported Qt remains Qt 5.14.2.
+- C++17 and CMake 3.21+ remain required.
+
+## [0.5.0] - 2026-09-20
 
 ### Added
 - Release packaging through CPack with ZIP and TGZ install archives and source archives.

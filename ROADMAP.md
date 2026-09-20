@@ -25,10 +25,27 @@ Release gates:
 
 ## 0.6.0 — Theme and Tokens
 
-- Freeze and document the theme JSON schema.
-- Expand token round-trip, contrast and color-backend goldens.
-- Mature system-theme integration and the theme playground.
-- Formalize component-local override compatibility.
+Goal: freeze the theme persistence contract and certify token generation, overrides,
+system appearance integration, authoring tooling, and runtime propagation.
+
+Release gates:
+
+- Freeze Theme JSON `formatVersion: 1` and keep schema, serializer, documentation, and fixtures aligned.
+- Strict reads reject unsupported versions, missing required blocks, invalid block types, and unknown contract fields.
+- Lenient reads retain forward-compatible root data handling without weakening malformed-input checks.
+- Theme → JSON → Theme round-trips are semantically lossless and byte-deterministic for identical themes.
+- Opaque third-party component override names survive import/export without entering ThemeModel string APIs.
+- Token matrices cover Light/Dark, Standard/Medium/High contrast, TonalSpot/Expressive, fallback, and MCU when available.
+- Component-local override precedence and canonical ComponentId serialization are executable contracts.
+- SystemTheme supports explicit Light/Dark, FollowSystem, platform-font application, safe Qt 5.14.2 fallback,
+  and native Qt 6 color-scheme/high-contrast observation when available.
+- Theme Studio provides strict JSON import/export, validation diagnostics, backend/variant controls,
+  live compare, and reset/apply workflows.
+- ThemeContext and ThemeManager guarantee no revision for equal themes and exactly one revision/change sequence
+  for a semantic change; independent contexts remain isolated.
+- Theme fan-out benchmarks include 500 and 1000 observers.
+- Windows Qt 5.14.2/MSVC v142, Windows Qt 6, Ubuntu Qt 6, macOS Qt 6, ASan/UBSan,
+  examples/benchmarks, documentation, package and installed-consumer gates remain green.
 
 ## 0.7.0 — Interaction and Effects
 
