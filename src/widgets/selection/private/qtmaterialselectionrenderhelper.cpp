@@ -36,11 +36,13 @@ QFont resolvedLabelFont(
 void configureMotion(
     const SelectionRuntimeSpec& spec,
     QtMaterialTransitionController* transition,
-    QtMaterialRippleController* ripple)
+    QtMaterialRippleController* ripple,
+    bool reducedMotion)
 {
     if (spec.hasResolvedMotionStyle) {
         if (transition) {
             transition->applyMotionStyle(spec.motionStyle);
+            transition->setReducedMotion(reducedMotion);
         }
         if (ripple && spec.motionStyle.durationMs > 0) {
             ripple->setDuration(spec.motionStyle.durationMs);
@@ -49,6 +51,7 @@ void configureMotion(
 
     if (ripple) {
         ripple->setBaseOpacity(spec.pressStateLayerOpacity);
+        ripple->setReducedMotion(reducedMotion);
     }
 }
 

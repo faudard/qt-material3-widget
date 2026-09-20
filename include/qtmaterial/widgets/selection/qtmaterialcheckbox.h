@@ -31,6 +31,7 @@ protected:
     void invalidateResolvedSpec() override;
     void mousePressEvent(QMouseEvent* event) override;
     void nextCheckState() override;
+    void stateChangedEvent() override;
 
 private:
     void resolveSpecIfNeeded() const;

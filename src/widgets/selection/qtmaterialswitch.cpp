@@ -110,6 +110,15 @@ void QtMaterialSwitch::invalidateResolvedSpec()
 void QtMaterialSwitch::stateChangedEvent()
 {
     QtMaterialSelectionControl::stateChangedEvent();
+    resolveLayoutIfNeeded();
+
+    if (isEnabled()
+        && interactionState().isPressed()
+        && d->m_ripple
+        && !d->m_ripple->isActive()) {
+        d->m_ripple->addRipple(d->m_cachedStateLayerRect.center());
+    }
+
     syncAccessibleState();
     update();
 }
@@ -135,7 +144,8 @@ void QtMaterialSwitch::resolveSpecIfNeeded() const
     SelectionRenderHelper::configureMotion(
         d->m_spec,
         d->m_transition,
-        d->m_ripple);
+        d->m_ripple,
+        theme().accessibility().reducedMotion);
     d->m_specDirty = false;
     d->m_layoutDirty = true;
 }
@@ -254,6 +264,9 @@ void QtMaterialSwitch::syncTransitionState(bool animated)
     if (!d->m_transition) {
         return;
     }
+
+    d->m_transition->setReducedMotion(
+        theme().accessibility().reducedMotion);
 
     if (animated) {
         if (isChecked()) {
@@ -388,7 +401,10 @@ void QtMaterialSwitch::paintEvent(QPaintEvent*)
                                           d->m_cachedLabelFont);
     }
 
-    if (interactionState().isFocused()) {
+    if (QtMaterialFocusIndicator::shouldShow(
+            interactionState(),
+            focusReason(),
+            theme().interactions())) {
         painter.save();
         QtMaterialFocusIndicator::paintPathFocusRing(&painter,
                                                      d->m_cachedFocusRingPath,

@@ -213,6 +213,8 @@ void QtMaterialDialog::open()
             d_ptr->transition->applyMotionStyle(
                 d_ptr->spec.enterMotionStyle);
         }
+        d_ptr->transition->setReducedMotion(
+            theme().accessibility().reducedMotion);
         d_ptr->transition->startForward();
     }
 
@@ -229,6 +231,8 @@ void QtMaterialDialog::close()
             d_ptr->transition->applyMotionStyle(
                 d_ptr->spec.exitMotionStyle);
         }
+        d_ptr->transition->setReducedMotion(
+            theme().accessibility().reducedMotion);
         d_ptr->transition->startBackward();
     }
 

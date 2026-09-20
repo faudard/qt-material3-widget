@@ -33,7 +33,8 @@ QFont resolvedLabelFont(
 void configureMotion(
     const SelectionRuntimeSpec& spec,
     QtMaterialTransitionController* transition,
-    QtMaterialRippleController* ripple);
+    QtMaterialRippleController* ripple,
+    bool reducedMotion = false);
 
 
 QRectF centeredStateLayerRect(const QRect& bounds, int stateLayerSize);
