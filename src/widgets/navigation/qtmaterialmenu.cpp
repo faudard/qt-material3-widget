@@ -436,6 +436,29 @@ void QtMaterialMenu::setItemChecked(
     update();
 }
 
+int QtMaterialMenu::itemExclusiveGroup(int index) const
+{
+    return validIndex(d_ptr.get(), index)
+        ? d_ptr->items.at(index).exclusiveGroup
+        : -1;
+}
+
+void QtMaterialMenu::setItemExclusiveGroup(int index, int group)
+{
+    if (!validIndex(d_ptr.get(), index)
+        || isSeparator(index)
+        || d_ptr->items[index].exclusiveGroup == group) {
+        return;
+    }
+
+    d_ptr->items[index].exclusiveGroup = group;
+    if (group >= 0) {
+        d_ptr->items[index].checkable = true;
+    }
+    updateAccessibility();
+    update();
+}
+
 int QtMaterialMenu::currentIndex() const noexcept
 {
     return d_ptr->currentIndex;
@@ -991,8 +1014,17 @@ void QtMaterialMenu::activateIndex(int index)
     }
 
     if (d_ptr->items[index].checkable) {
-        d_ptr->items[index].checked =
-            !d_ptr->items[index].checked;
+        const int group = d_ptr->items[index].exclusiveGroup;
+        if (group >= 0) {
+            for (int candidate = 0; candidate < d_ptr->items.size(); ++candidate) {
+                if (d_ptr->items[candidate].exclusiveGroup == group) {
+                    d_ptr->items[candidate].checked = candidate == index;
+                }
+            }
+        } else {
+            d_ptr->items[index].checked =
+                !d_ptr->items[index].checked;
+        }
         updateAccessibility();
         update();
     }
