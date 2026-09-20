@@ -376,6 +376,26 @@ void QtMaterialTable::setDense(
         d_ptr->dense);
 }
 
+bool QtMaterialTable::multiSelectionEnabled() const noexcept
+{
+    return selectionMode() == QAbstractItemView::ExtendedSelection
+        || selectionMode() == QAbstractItemView::MultiSelection;
+}
+
+void QtMaterialTable::setMultiSelectionEnabled(bool enabled)
+{
+    const bool current = multiSelectionEnabled();
+    if (current == enabled) {
+        return;
+    }
+    setSelectionMode(
+        enabled
+            ? QAbstractItemView::ExtendedSelection
+            : QAbstractItemView::SingleSelection);
+    syncAccessibility();
+    Q_EMIT multiSelectionEnabledChanged(enabled);
+}
+
 QString
 QtMaterialTable::accessibilitySummary() const
 {
