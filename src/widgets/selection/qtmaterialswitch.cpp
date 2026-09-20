@@ -110,6 +110,15 @@ void QtMaterialSwitch::invalidateResolvedSpec()
 void QtMaterialSwitch::stateChangedEvent()
 {
     QtMaterialSelectionControl::stateChangedEvent();
+    resolveLayoutIfNeeded();
+
+    if (isEnabled()
+        && interactionState().isPressed()
+        && d->m_ripple
+        && !d->m_ripple->isActive()) {
+        d->m_ripple->addRipple(d->m_cachedStateLayerRect.center());
+    }
+
     syncAccessibleState();
     update();
 }
@@ -135,7 +144,8 @@ void QtMaterialSwitch::resolveSpecIfNeeded() const
     SelectionRenderHelper::configureMotion(
         d->m_spec,
         d->m_transition,
-        d->m_ripple);
+        d->m_ripple,
+        theme().accessibility().reducedMotion);
     d->m_specDirty = false;
     d->m_layoutDirty = true;
 }
@@ -255,6 +265,9 @@ void QtMaterialSwitch::syncTransitionState(bool animated)
         return;
     }
 
+    d->m_transition->setReducedMotion(
+        theme().accessibility().reducedMotion);
+
     if (animated) {
         if (isChecked()) {
             d->m_transition->startForward();
@@ -344,7 +357,10 @@ void QtMaterialSwitch::paintEvent(QPaintEvent*)
 
     const bool enabled = isEnabled();
     const qreal progress = d->m_transition ? d->m_transition->progress() : (isChecked() ? 1.0 : 0.0);
-    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(d->m_spec, interactionState());
+    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(
+        d->m_spec,
+        interactionState(),
+        theme().interactions());
 
     const QColor offTrack = enabled
                                 ? d->m_spec.unselectedTrackColor
@@ -388,7 +404,10 @@ void QtMaterialSwitch::paintEvent(QPaintEvent*)
                                           d->m_cachedLabelFont);
     }
 
-    if (interactionState().isFocused()) {
+    if (QtMaterialFocusIndicator::shouldShow(
+            interactionState(),
+            focusReason(),
+            theme().interactions())) {
         painter.save();
         QtMaterialFocusIndicator::paintPathFocusRing(&painter,
                                                      d->m_cachedFocusRingPath,

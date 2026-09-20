@@ -116,6 +116,14 @@ void QtMaterialRadioButton::invalidateResolvedSpec()
 void QtMaterialRadioButton::stateChangedEvent()
 {
     QtMaterialSelectionControl::stateChangedEvent();
+    resolveLayoutIfNeeded();
+
+    if (isEnabled()
+        && interactionState().isPressed()
+        && d->ripple
+        && !d->ripple->isActive()) {
+        d->ripple->addRipple(d->cachedStateLayerRect.center());
+    }
     update();
 }
 
@@ -131,7 +139,8 @@ void QtMaterialRadioButton::resolveSpecIfNeeded() const
     SelectionRenderHelper::configureMotion(
         d->spec,
         d->transition,
-        d->ripple);
+        d->ripple,
+        theme().accessibility().reducedMotion);
     d->specDirty = false;
     d->layoutDirty = true;
 }
@@ -285,7 +294,10 @@ void QtMaterialRadioButton::paintEvent(QPaintEvent*)
 
     const bool enabled = isEnabled();
     const qreal progress = d->transition ? d->transition->progress() : (isChecked() ? 1.0 : 0.0);
-    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(d->spec, interactionState());
+    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(
+        d->spec,
+        interactionState(),
+        theme().interactions());
 
     SelectionRenderHelper::paintCircularStateLayer(
         &painter,
@@ -337,7 +349,10 @@ void QtMaterialRadioButton::paintEvent(QPaintEvent*)
             labelFont);
     }
 
-    if (interactionState().isFocused()) {
+    if (QtMaterialFocusIndicator::shouldShow(
+            interactionState(),
+            focusReason(),
+            theme().interactions())) {
         QtMaterialFocusIndicator::paintRectFocusRing(
             &painter,
             d->cachedFocusRingRect,

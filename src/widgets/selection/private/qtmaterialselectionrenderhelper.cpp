@@ -2,6 +2,7 @@
 
 #include <QFontMetrics>
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
+#include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 
 namespace QtMaterial::SelectionRenderHelper {
@@ -9,21 +10,18 @@ namespace QtMaterial::SelectionRenderHelper {
 
 qreal stateLayerOpacity(
     const SelectionRuntimeSpec& spec,
-    const QtMaterialInteractionState& state)
+    const QtMaterialInteractionState& state,
+    const InteractionStateTokens& policy)
 {
-    if (!state.isEnabled()) {
-        return 0.0;
-    }
-    if (state.isPressed()) {
-        return spec.pressStateLayerOpacity;
-    }
-    if (state.isFocused()) {
-        return spec.focusStateLayerOpacity;
-    }
-    if (state.isHovered()) {
-        return spec.hoverStateLayerOpacity;
-    }
-    return 0.0;
+    StateLayer layer;
+    layer.hoverOpacity = spec.hoverStateLayerOpacity;
+    layer.focusOpacity = spec.focusStateLayerOpacity;
+    layer.pressOpacity = spec.pressStateLayerOpacity;
+    layer.dragOpacity = spec.dragStateLayerOpacity;
+    return QtMaterialStateLayerPainter::opacityForState(
+        state,
+        layer,
+        policy);
 }
 
 QFont resolvedLabelFont(
@@ -36,11 +34,13 @@ QFont resolvedLabelFont(
 void configureMotion(
     const SelectionRuntimeSpec& spec,
     QtMaterialTransitionController* transition,
-    QtMaterialRippleController* ripple)
+    QtMaterialRippleController* ripple,
+    bool reducedMotion)
 {
     if (spec.hasResolvedMotionStyle) {
         if (transition) {
             transition->applyMotionStyle(spec.motionStyle);
+            transition->setReducedMotion(reducedMotion);
         }
         if (ripple && spec.motionStyle.durationMs > 0) {
             ripple->setDuration(spec.motionStyle.durationMs);
@@ -49,6 +49,7 @@ void configureMotion(
 
     if (ripple) {
         ripple->setBaseOpacity(spec.pressStateLayerOpacity);
+        ripple->setReducedMotion(reducedMotion);
     }
 }
 
@@ -62,18 +63,19 @@ QRectF centeredStateLayerRect(const QRect& bounds, int stateLayerSize)
                   stateLayerSize);
 }
 
-void paintCircularStateLayer(QPainter* painter, const QRectF& rect, const QColor& color, qreal opacity)
+void paintCircularStateLayer(
+    QPainter* painter,
+    const QRectF& rect,
+    const QColor& color,
+    qreal opacity)
 {
-    if (!painter || opacity <= 0.0) {
-        return;
-    }
-    painter->save();
-    QColor brush = color;
-    brush.setAlphaF(opacity);
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(brush);
-    painter->drawEllipse(rect);
-    painter->restore();
+    QPainterPath path;
+    path.addEllipse(rect);
+    QtMaterialStateLayerPainter::paintPath(
+        painter,
+        path,
+        color,
+        opacity);
 }
 
 void paintLabel(QPainter* painter, const QRect& rect, Qt::Alignment alignment, const QString& text, const QColor& color, const QFont& font)

@@ -24,7 +24,7 @@ Use the narrative pages to understand concepts, layering, and supported workflow
 - [Development rules](development/coding-rules.md)
 - [Accessibility and keyboard rules](development/accessibility-keyboard-rules.md)
 - [Development release rules](development/release-process.md)
-- [0.6.x release checklist](release-process.md)
+- [0.7.x release checklist](release-process.md)
 
 ## Installation and downstream usage
 

@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include <QList>
 #include <QPointer>
 #include <QSize>
 #include <QString>
@@ -123,6 +124,7 @@ protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent* event) override;
     void keyPressEvent(QKeyEvent *event) override;
+    bool focusNextPrevChild(bool next) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
@@ -137,6 +139,8 @@ private:
     void applyContainerClip();
     void applySheetMask();
     void focusFirstChild();
+    QList<QWidget*> focusableSheetChildren() const;
+    bool moveFocusInsideSheet(bool next);
     void syncAccessibility();
     void cancelActiveDrag(bool refreshGeometry);
     void setState(SheetState state);

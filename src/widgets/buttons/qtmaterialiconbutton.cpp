@@ -282,7 +282,10 @@ void QtMaterialIconButton::paintEvent(QPaintEvent* event)
         d->m_ripple->paint(&painter, d->m_spec.stateLayerColor);
     }
 
-    if (interactionState().isFocused()) {
+    if (QtMaterialFocusIndicator::shouldShow(
+            interactionState(),
+            focusReason(),
+            theme().interactions())) {
         QtMaterialFocusIndicator::paintPathFocusRing(
             &painter,
             d->m_cachedContainerPath,
@@ -341,7 +344,15 @@ void QtMaterialIconButton::themeChangedEvent(const Theme& theme)
 
 void QtMaterialIconButton::stateChangedEvent()
 {
-    update();
+    QtMaterialAbstractButton::stateChangedEvent();
+    if (isEnabled()
+        && interactionState().isPressed()
+        && d->m_ripple
+        && !d->m_ripple->isActive()) {
+        ensureLayoutResolved();
+        d->m_ripple->addRipple(
+            d->m_cachedContainerPath.boundingRect().center());
+    }
 }
 
 void QtMaterialIconButton::contentChangedEvent()
@@ -381,9 +392,12 @@ void QtMaterialIconButton::ensureSpecResolved() const
 
     d->m_spec = resolveIconButtonSpec();
 
+    const bool reducedMotion =
+        theme().accessibility().reducedMotion;
     if (d->m_spec.hasResolvedMotionStyle) {
         d->m_transition->applyMotionStyle(
             d->m_spec.motionStyle);
+        d->m_transition->setReducedMotion(reducedMotion);
         if (d->m_spec.motionStyle.durationMs > 0) {
             d->m_ripple->setDuration(
                 d->m_spec.motionStyle.durationMs);
@@ -391,6 +405,7 @@ void QtMaterialIconButton::ensureSpecResolved() const
     }
     d->m_ripple->setBaseOpacity(
         d->m_spec.pressStateLayerOpacity);
+    d->m_ripple->setReducedMotion(reducedMotion);
 
     d->m_specDirty = false;
     d->m_layoutDirty = true;

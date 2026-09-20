@@ -47,6 +47,11 @@ QtMaterialInteractionState& QtMaterialControl::interactionState() noexcept
     return m_state;
 }
 
+Qt::FocusReason QtMaterialControl::focusReason() const noexcept
+{
+    return m_focusReason;
+}
+
 void QtMaterialControl::themeChangedEvent(const QtMaterial::Theme&)
 {
     invalidateResolvedSpec();
@@ -79,6 +84,7 @@ void QtMaterialControl::leaveEvent(QEvent* event)
 
 void QtMaterialControl::focusInEvent(QFocusEvent* event)
 {
+    m_focusReason = event ? event->reason() : Qt::OtherFocusReason;
     m_state.setFocused(true);
     stateChangedEvent();
     QtMaterialWidget::focusInEvent(event);

@@ -118,10 +118,13 @@ void QtMaterialCheckbox::setCheckState(Qt::CheckState state)
 void QtMaterialCheckbox::syncCheckedFromCheckState()
 {
     const bool selected = (d->m_checkState != Qt::Unchecked);
+    interactionState().setIndeterminate(
+        d->m_checkState == Qt::PartiallyChecked);
 
     if (QAbstractButton::isChecked() != selected) {
         QAbstractButton::setChecked(selected);
     }
+    stateChangedEvent();
 }
 
 qreal QtMaterialCheckbox::targetTransitionProgress() const noexcept
@@ -161,7 +164,8 @@ void QtMaterialCheckbox::resolveSpecIfNeeded() const
     SelectionRenderHelper::configureMotion(
         d->m_spec,
         d->m_transition,
-        d->m_ripple);
+        d->m_ripple,
+        theme().accessibility().reducedMotion);
 
     d->m_specDirty = false;
 }
@@ -172,6 +176,23 @@ void QtMaterialCheckbox::mousePressEvent(QMouseEvent* event)
         d->m_ripple->addRipple(QtMaterial::mousePosition(event));
     }
     QtMaterialSelectionControl::mousePressEvent(event);
+}
+
+void QtMaterialCheckbox::stateChangedEvent()
+{
+    QtMaterialSelectionControl::stateChangedEvent();
+    resolveSpecIfNeeded();
+
+    if (isEnabled()
+        && interactionState().isPressed()
+        && d->m_ripple
+        && !d->m_ripple->isActive()) {
+        const QRectF stateRect =
+            SelectionRenderHelper::centeredStateLayerRect(
+                indicatorRect(),
+                d->m_spec.stateLayerSize);
+        d->m_ripple->addRipple(stateRect.center());
+    }
 }
 
 void QtMaterialCheckbox::nextCheckState()
@@ -210,7 +231,10 @@ void QtMaterialCheckbox::paintEvent(QPaintEvent*)
     const QRectF stateLayerRect =
         SelectionRenderHelper::centeredStateLayerRect(box, d->m_spec.stateLayerSize);
     const qreal stateOpacity =
-        SelectionRenderHelper::stateLayerOpacity(d->m_spec, interactionState());
+        SelectionRenderHelper::stateLayerOpacity(
+        d->m_spec,
+        interactionState(),
+        theme().interactions());
     const qreal progress =
         d->m_transition ? d->m_transition->progress() : targetTransitionProgress();
 
@@ -284,7 +308,10 @@ void QtMaterialCheckbox::paintEvent(QPaintEvent*)
     SelectionRenderHelper::paintLabel(
         &painter, labelRect(), labelAlignment(), text(), labelColor, labelFont);
 
-    if (interactionState().isFocused()) {
+    if (QtMaterialFocusIndicator::shouldShow(
+            interactionState(),
+            focusReason(),
+            theme().interactions())) {
         QtMaterialFocusIndicator::paintRectFocusRing(
             &painter,
             stateLayerRect,

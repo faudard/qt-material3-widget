@@ -261,6 +261,8 @@ void QtMaterialSnackbar::showSnackbar()
         Q_EMIT autoHidePausedChanged(false);
     }
     d_ptr->pendingDismissReason = SnackbarDismissReason::Manual;
+    d_ptr->transition->setReducedMotion(
+        theme().accessibility().reducedMotion);
     d_ptr->state = State::Entering;
     d_ptr->transition->startForward();
 }
@@ -285,6 +287,8 @@ void QtMaterialSnackbar::dismiss(SnackbarDismissReason reason)
             d_ptr->specPtr->exitMotionStyle);
     }
 
+    d_ptr->transition->setReducedMotion(
+        theme().accessibility().reducedMotion);
     d_ptr->state = State::Leaving;
     d_ptr->transition->startBackward();
 }

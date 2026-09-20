@@ -21,6 +21,7 @@
 #include "qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h"
 #include <QElapsedTimer>
 #include <QHideEvent>
+#include <algorithm>
 
 namespace QtMaterial {
 
@@ -184,6 +185,8 @@ QtMaterialBottomSheet::QtMaterialBottomSheet(QWidget *parent)
         && d_ptr->specPtr->hasResolvedMotionStyle) {
         d_ptr->transition->applyMotionStyle(
             d_ptr->specPtr->motionStyle);
+        d_ptr->transition->setReducedMotion(
+            theme().accessibility().reducedMotion);
     }
 
     d_ptr->scrim = new QtMaterialScrimWidget(parent ? parent : this);
@@ -252,6 +255,8 @@ void QtMaterialBottomSheet::open()
     if (d_ptr->specPtr) {
         d_ptr->transition->applyMotionStyle(
             d_ptr->specPtr->motionStyle);
+        d_ptr->transition->setReducedMotion(
+            theme().accessibility().reducedMotion);
     }
 
     syncToHost();
@@ -291,6 +296,8 @@ void QtMaterialBottomSheet::close()
         && d_ptr->specPtr->hasResolvedMotionStyle) {
         d_ptr->transition->applyMotionStyle(
             d_ptr->specPtr->motionStyle);
+        d_ptr->transition->setReducedMotion(
+            theme().accessibility().reducedMotion);
     }
 
     d_ptr->invalidateCachedGeometry();
@@ -681,6 +688,18 @@ void QtMaterialBottomSheet::keyPressEvent(QKeyEvent *event)
     QtMaterialOverlaySurface::keyPressEvent(event);
 }
 
+bool QtMaterialBottomSheet::focusNextPrevChild(bool next)
+{
+    if (!d_ptr->modal
+        || !isVisible()
+        || (d_ptr->state != SheetState::Opening
+            && d_ptr->state != SheetState::Open)) {
+        return QtMaterialOverlaySurface::focusNextPrevChild(next);
+    }
+
+    return moveFocusInsideSheet(next);
+}
+
 void QtMaterialBottomSheet::mousePressEvent(
     QMouseEvent* event)
 {
@@ -843,6 +862,8 @@ void QtMaterialBottomSheet::themeChangedEvent(const QtMaterial::Theme &theme)
     if (d_ptr->specPtr) {
         d_ptr->transition->applyMotionStyle(
             d_ptr->specPtr->motionStyle);
+        d_ptr->transition->setReducedMotion(
+            theme.accessibility().reducedMotion);
     }
     syncContainerGeometry();
     applySheetMask();
@@ -1097,25 +1118,89 @@ void QtMaterialBottomSheet::applySheetMask()
 
 void QtMaterialBottomSheet::focusFirstChild()
 {
-    if (d_ptr->initialFocusWidget && d_ptr->initialFocusWidget->isVisible() && d_ptr->initialFocusWidget->isEnabled()) {
-        d_ptr->initialFocusWidget->setFocus(Qt::OtherFocusReason);
-        return;
-    }
+    QWidget* target = nullptr;
 
-    if (d_ptr->container) {
-        const auto children = d_ptr->container->findChildren<QWidget *>();
-        for (QWidget *child : children) {
-            if (!child || !child->isVisible() || !child->isEnabled()) {
-                continue;
-            }
-            if (child->focusPolicy() != Qt::NoFocus) {
-                child->setFocus(Qt::OtherFocusReason);
-                return;
-            }
+    if (d_ptr->initialFocusWidget
+        && d_ptr->initialFocusWidget->isVisible()
+        && d_ptr->initialFocusWidget->isEnabled()
+        && d_ptr->initialFocusWidget->focusPolicy() != Qt::NoFocus) {
+        target = d_ptr->initialFocusWidget;
+    } else {
+        const QList<QWidget*> children = focusableSheetChildren();
+        if (!children.isEmpty()) {
+            target = children.first();
         }
     }
 
-    setFocus(Qt::OtherFocusReason);
+    if (!target) {
+        target = this;
+    }
+
+    target->setFocus(Qt::OtherFocusReason);
+}
+
+QList<QWidget*> QtMaterialBottomSheet::focusableSheetChildren() const
+{
+    QList<QWidget*> result;
+    if (!d_ptr->container) {
+        return result;
+    }
+
+    const auto children =
+        d_ptr->container->findChildren<QWidget*>(
+            QString(),
+            Qt::FindChildrenRecursively);
+    result.reserve(children.size());
+
+    for (QWidget* child : children) {
+        if (!child
+            || !child->isEnabled()
+            || !child->isVisibleTo(d_ptr->container)
+            || child->focusPolicy() == Qt::NoFocus) {
+            continue;
+        }
+        result.append(child);
+    }
+
+    std::sort(
+        result.begin(),
+        result.end(),
+        [](QWidget* lhs, QWidget* rhs) {
+            const QPoint left =
+                lhs->mapTo(lhs->window(), QPoint(0, 0));
+            const QPoint right =
+                rhs->mapTo(rhs->window(), QPoint(0, 0));
+            if (left.y() == right.y()) {
+                return left.x() < right.x();
+            }
+            return left.y() < right.y();
+        });
+
+    return result;
+}
+
+bool QtMaterialBottomSheet::moveFocusInsideSheet(bool next)
+{
+    const QList<QWidget*> focusable = focusableSheetChildren();
+    if (focusable.isEmpty()) {
+        setFocus(next ? Qt::TabFocusReason : Qt::BacktabFocusReason);
+        return true;
+    }
+
+    QWidget* current = QApplication::focusWidget();
+    int currentIndex = focusable.indexOf(current);
+    if (currentIndex < 0) {
+        currentIndex = next ? -1 : 0;
+    }
+
+    const int direction = next ? 1 : -1;
+    const int nextIndex =
+        (currentIndex + direction + focusable.size())
+        % focusable.size();
+
+    focusable.at(nextIndex)->setFocus(
+        next ? Qt::TabFocusReason : Qt::BacktabFocusReason);
+    return true;
 }
 
 void QtMaterialBottomSheet::cancelActiveDrag(

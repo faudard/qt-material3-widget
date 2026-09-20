@@ -68,6 +68,7 @@ protected:
     const Theme& theme() const;
     const QtMaterialInteractionState& interactionState() const noexcept;
     QtMaterialInteractionState& interactionState() noexcept;
+    Qt::FocusReason focusReason() const noexcept;
 
     virtual void themeChangedEvent(const QtMaterial::Theme& theme);
     virtual void invalidateResolvedSpec();
@@ -97,6 +98,7 @@ private:
     void syncAutomationState();
 
     QtMaterialInteractionState m_state;
+    Qt::FocusReason m_focusReason = Qt::OtherFocusReason;
     Density m_density;
     QtMaterialThemeContextBinding* m_themeBinding = nullptr;
 };

@@ -28,6 +28,7 @@ public:
 protected:
     const QtMaterialInteractionState& interactionState() const noexcept;
     QtMaterialInteractionState& interactionState() noexcept;
+    Qt::FocusReason focusReason() const noexcept;
 
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
     virtual void invalidateResolvedSpec();
@@ -43,6 +44,7 @@ private:
     void syncAutomationState();
 
     QtMaterialInteractionState m_state;
+    Qt::FocusReason m_focusReason = Qt::OtherFocusReason;
     Density m_density;
 };
 

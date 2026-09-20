@@ -200,7 +200,10 @@ void QtMaterialOutlinedButton::paintEvent(QPaintEvent*)
         iconColor,
         resolvedFont);
 
-    if (isEnabled() && interactionState().isFocused()) {
+    if (QtMaterialFocusIndicator::shouldShow(
+            interactionState(),
+            focusReason(),
+            theme().interactions())) {
         QtMaterialFocusIndicator::paintRectFocusRing(
             &painter,
             d->layout.visualRect,

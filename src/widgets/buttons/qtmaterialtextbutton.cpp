@@ -74,7 +74,11 @@ void QtMaterialTextButton::ensureSpecResolved() const
   return;
  }
  d->spec = resolveButtonSpec();
- ButtonMotionHelper::configureMotion(d->spec, d->stateLayerTransition, d->ripple);
+ ButtonMotionHelper::configureMotion(
+  d->spec,
+  d->stateLayerTransition,
+  d->ripple,
+  theme().accessibility().reducedMotion);
  d->specDirty = false;
 }
 
@@ -136,13 +140,20 @@ void QtMaterialTextButton::stateChangedEvent()
 void QtMaterialTextButton::syncStateLayerAnimation()
 {
  ensureSpecResolved();
- ButtonMotionHelper::syncStateLayerTransition(currentButtonSpec(), interactionState(), d->stateLayerTransition);
+ ButtonMotionHelper::syncStateLayerTransition(
+  currentButtonSpec(),
+  interactionState(),
+  d->stateLayerTransition,
+  theme().accessibility().reducedMotion);
 }
 
 qreal QtMaterialTextButton::animatedStateLayerOpacity() const noexcept
 {
  if (!d->stateLayerTransition) {
-  return ButtonMotionHelper::targetStateLayerOpacity(currentButtonSpec(), interactionState());
+  return ButtonMotionHelper::targetStateLayerOpacity(
+   currentButtonSpec(),
+   interactionState(),
+   theme().accessibility().reducedMotion);
  }
  return d->stateLayerTransition->progress();
 }
@@ -214,9 +225,11 @@ void QtMaterialTextButton::paintEvent(QPaintEvent*)
   text());
 
  if (
-  isEnabled()
-  && interactionState().isFocused()
-  && spec.focusRingWidth > 0.0) {
+  spec.focusRingWidth > 0.0
+  && QtMaterialFocusIndicator::shouldShow(
+   interactionState(),
+   focusReason(),
+   theme().interactions())) {
   QtMaterialFocusIndicator::paintRectFocusRing(
    &painter,
    visualRect,

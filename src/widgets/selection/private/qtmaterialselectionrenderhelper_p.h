@@ -15,6 +15,7 @@
 #include "qtmaterial/specs/qtmaterialselectionruntimespec.h"
 
 namespace QtMaterial {
+struct InteractionStateTokens;
 class QtMaterialRippleController;
 class QtMaterialTransitionController;
 } // namespace QtMaterial
@@ -24,7 +25,8 @@ namespace QtMaterial::SelectionRenderHelper {
 
 qreal stateLayerOpacity(
     const SelectionRuntimeSpec& spec,
-    const QtMaterialInteractionState& state);
+    const QtMaterialInteractionState& state,
+    const InteractionStateTokens& policy);
 
 QFont resolvedLabelFont(
     const QFont& fallback,
@@ -33,7 +35,8 @@ QFont resolvedLabelFont(
 void configureMotion(
     const SelectionRuntimeSpec& spec,
     QtMaterialTransitionController* transition,
-    QtMaterialRippleController* ripple);
+    QtMaterialRippleController* ripple,
+    bool reducedMotion = false);
 
 
 QRectF centeredStateLayerRect(const QRect& bounds, int stateLayerSize);

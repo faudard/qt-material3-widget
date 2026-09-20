@@ -29,25 +29,33 @@ public:
     void setEasingCurve(const QEasingCurve& curve);
     QEasingCurve easingCurve() const noexcept;
 
+    void setReducedMotion(bool reducedMotion);
+    bool reducedMotion() const noexcept;
+
+    bool isRunning() const noexcept;
+    void stop();
+    void finish();
+
     void startForward();
     void startBackward();
-
     void startTo(qreal target);
 
     void applyMotionStyle(const MotionStyle& style);
     void applyMotionToken(const Theme& theme, MotionToken token);
+
 signals:
     void progressChanged(qreal value);
     void finished();
 
 private:
-    // Implemented only by the non-installed deterministic visual harness.
     friend class QtMaterialTransitionControllerCaptureAccess;
 
     qreal m_progress = 0.0;
+    qreal m_targetProgress = 0.0;
     int m_durationMs = 180;
     QEasingCurve m_easing = QEasingCurve(QEasingCurve::OutCubic);
     QVariantAnimation* m_animation = nullptr;
+    bool m_reducedMotion = false;
 };
 
 } // namespace QtMaterial

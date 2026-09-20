@@ -11,15 +11,19 @@ namespace QtMaterial::ButtonMotionHelper {
 
 inline qreal targetStateLayerOpacity(
     const ButtonSpec& spec,
-    const QtMaterialInteractionState& state)
+    const QtMaterialInteractionState& state,
+    bool reducedMotion = false)
 {
     if (!state.isEnabled()) {
         return 0.0;
     }
     if (state.isPressed()) {
-        // Press feedback is owned by the ripple controller. Keeping the fixed
-        // layer at zero avoids painting the same Material state twice.
-        return 0.0;
+        // Animated press feedback is normally owned by the ripple. When
+        // reduced motion suppresses that animation, keep an immediate static
+        // state layer so press feedback never disappears.
+        return reducedMotion
+            ? spec.pressStateLayerOpacity
+            : 0.0;
     }
     if (state.isFocused()) {
         return spec.focusStateLayerOpacity;
@@ -33,26 +37,30 @@ inline qreal targetStateLayerOpacity(
 
 inline void configureTransition(
     const ButtonSpec& spec,
-    QtMaterialTransitionController* transition)
+    QtMaterialTransitionController* transition,
+    bool reducedMotion = false)
 {
     if (!transition || !spec.hasResolvedMotionStyle) {
         return;
     }
     transition->applyMotionStyle(spec.motionStyle);
+    transition->setReducedMotion(reducedMotion);
 }
 
 inline void configureMotion(
     const ButtonSpec& spec,
     QtMaterialTransitionController* stateLayerTransition,
-    QtMaterialRippleController* ripple)
+    QtMaterialRippleController* ripple,
+    bool reducedMotion = false)
 {
-    configureTransition(spec, stateLayerTransition);
+    configureTransition(spec, stateLayerTransition, reducedMotion);
 
     if (ripple) {
         if (spec.hasResolvedMotionStyle && spec.motionStyle.durationMs > 0) {
             ripple->setDuration(spec.motionStyle.durationMs);
         }
         ripple->setBaseOpacity(spec.pressStateLayerOpacity);
+        ripple->setReducedMotion(reducedMotion);
     }
 }
 
@@ -60,12 +68,14 @@ inline void configureMotion(
 inline void syncStateLayerTransition(
     const ButtonSpec& spec,
     const QtMaterialInteractionState& state,
-    QtMaterialTransitionController* transition)
+    QtMaterialTransitionController* transition,
+    bool reducedMotion = false)
 {
     if (!transition) {
         return;
     }
-    transition->startTo(targetStateLayerOpacity(spec, state));
+    transition->startTo(
+        targetStateLayerOpacity(spec, state, reducedMotion));
 }
 
 

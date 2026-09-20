@@ -52,6 +52,7 @@ theme-json-schema
 component-overrides
 system-theme
 theme-studio
+interaction-effects
 buttons
 compact-controls
 data-widgets
