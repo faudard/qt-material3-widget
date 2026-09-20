@@ -50,6 +50,11 @@ public:
         ThemeReadMode mode,
         bool* ok = nullptr,
         QString* errorString = nullptr);
+
+    static bool validateJson(const QByteArray& json,
+        ThemeReadMode mode = ThemeReadMode::Strict,
+        QString* errorString = nullptr);
+
     static bool readFromFile(const QString& filePath,
         Theme* outTheme,
         QString* errorString = nullptr);
