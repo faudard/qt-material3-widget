@@ -93,26 +93,40 @@ void tst_ThemeTokenMatrix::fallbackMatrix()
     const ThemeColorBackendStatus status = builder.colorBackendStatus(options);
     QCOMPARE(status.effectiveBackend, ThemeColorBackend::Fallback);
 
-    for (ColorRole role : allColorRoles()) {
-        QVERIFY(first.colorScheme().contains(role));
+    for (int value = static_cast<int>(ColorRole::Primary);
+         value <= static_cast<int>(ColorRole::Scrim);
+         ++value) {
+        QVERIFY(first.colorScheme().contains(static_cast<ColorRole>(value)));
     }
-    for (TypeRole role : allTypeRoles()) {
-        QVERIFY(first.typography().contains(role));
+    for (int value = static_cast<int>(TypeRole::DisplayLarge);
+         value <= static_cast<int>(TypeRole::LabelSmall);
+         ++value) {
+        QVERIFY(first.typography().contains(static_cast<TypeRole>(value)));
     }
-    for (ShapeRole role : allShapeRoles()) {
-        QVERIFY(first.shapes().contains(role));
+    for (int value = static_cast<int>(ShapeRole::None);
+         value <= static_cast<int>(ShapeRole::Full);
+         ++value) {
+        QVERIFY(first.shapes().contains(static_cast<ShapeRole>(value)));
     }
-    for (ElevationRole role : allElevationRoles()) {
-        QVERIFY(first.elevations().contains(role));
+    for (int value = static_cast<int>(ElevationRole::Level0);
+         value <= static_cast<int>(ElevationRole::Level5);
+         ++value) {
+        QVERIFY(first.elevations().contains(static_cast<ElevationRole>(value)));
     }
-    for (MotionToken token : allMotionTokens()) {
-        QVERIFY(first.motion().contains(token));
+    for (int value = static_cast<int>(MotionToken::Short1);
+         value <= static_cast<int>(MotionToken::Long4);
+         ++value) {
+        QVERIFY(first.motion().contains(static_cast<MotionToken>(value)));
     }
-    for (DensityRole role : allDensityRoles()) {
-        QVERIFY(first.density().contains(role));
+    for (int value = static_cast<int>(DensityRole::Compact);
+         value <= static_cast<int>(DensityRole::Comfortable);
+         ++value) {
+        QVERIFY(first.density().contains(static_cast<DensityRole>(value)));
     }
-    for (IconSizeRole role : allIconSizeRoles()) {
-        QVERIFY(first.iconSizes().contains(role));
+    for (int value = static_cast<int>(IconSizeRole::ExtraSmall);
+         value <= static_cast<int>(IconSizeRole::ExtraLarge);
+         ++value) {
+        QVERIFY(first.iconSizes().contains(static_cast<IconSizeRole>(value)));
     }
 
     QCOMPARE(first.accessibility().highContrast, contrast == ContrastMode::High);
