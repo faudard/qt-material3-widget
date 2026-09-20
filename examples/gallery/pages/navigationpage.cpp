@@ -29,7 +29,8 @@ NavigationPage::NavigationPage(QWidget* parent)
     tabs->setRoute(0, QStringLiteral("navigation/overview"));
     tabs->setRoute(1, QStringLiteral("navigation/activity"));
     tabs->setRoute(2, QStringLiteral("navigation/settings"));
-    tabs->setBadge(1, QStringLiteral("3"), true);
+    tabs->setBadge(1, QStringLiteral("3"));
+    tabs->setBadgeVisible(1, true);
     layout->addWidget(tabs);
 
     auto* content = new QHBoxLayout;
