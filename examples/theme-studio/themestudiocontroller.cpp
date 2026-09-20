@@ -14,6 +14,9 @@ using namespace QtMaterial;
 ThemeStudioController::ThemeStudioController(QObject* parent)
     : QObject(parent)
 {
+    // Theme Studio owns application of pending edits. Keep SystemTheme observation
+    // enabled, but do not let the bridge bypass the explicit Apply workflow.
+    SystemTheme::instance().setAutoApplyToThemeManager(false);
     syncFromThemeManager();
 
     connect(&ThemeManager::instance(),
@@ -24,6 +27,29 @@ ThemeStudioController::ThemeStudioController(QObject* parent)
                 emit pendingOptionsChanged(m_pendingOptions);
                 emit themeApplied(theme);
                 emitThemeJson();
+            });
+
+    connect(&SystemTheme::instance(),
+            &SystemTheme::systemThemeChanged,
+            this,
+            [this]() {
+                if (m_pendingOptions.preference != ThemePreference::FollowSystem) {
+                    return;
+                }
+
+                const ThemeMode resolved = SystemTheme::instance().systemMode();
+                if (m_pendingOptions.mode == resolved) {
+                    return;
+                }
+
+                m_pendingOptions.mode = resolved;
+                emit pendingOptionsChanged(m_pendingOptions);
+
+                if (!m_dirty
+                    && ThemeManager::instance().options().preference
+                        == ThemePreference::FollowSystem) {
+                    ThemeManager::instance().setThemeOptions(m_pendingOptions);
+                }
             });
 }
 
@@ -82,9 +108,13 @@ void ThemeStudioController::setPreference(ThemePreference preference)
         resolvedMode = ThemeMode::Dark;
         break;
     case ThemePreference::FollowSystem:
-        resolvedMode = SystemTheme::instance().effectiveMode();
+        resolvedMode = SystemTheme::instance().systemMode();
         break;
     }
+
+    // Keep the observer bridge aligned with the UI preference. Auto-apply is
+    // disabled above, so this never bypasses the Theme Studio Apply action.
+    SystemTheme::instance().setPreference(preference);
 
     if (m_pendingOptions.preference == preference
         && m_pendingOptions.mode == resolvedMode) {
@@ -170,7 +200,8 @@ void ThemeStudioController::applyPending()
     }
 
     if (m_pendingOptions.preference == ThemePreference::FollowSystem) {
-        m_pendingOptions.mode = SystemTheme::instance().effectiveMode();
+        SystemTheme::instance().setPreference(ThemePreference::FollowSystem);
+        m_pendingOptions.mode = SystemTheme::instance().systemMode();
     }
 
     ThemeManager::instance().setThemeOptions(m_pendingOptions);

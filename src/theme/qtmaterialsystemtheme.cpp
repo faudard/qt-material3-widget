@@ -140,14 +140,18 @@ SystemThemeSnapshot SystemTheme::snapshot() const {
     return value;
 }
 
-ThemeMode SystemTheme::effectiveMode() const {
-    ThemeMode systemMode = modeFromPalette();
+ThemeMode SystemTheme::systemMode() const {
+    ThemeMode detected = modeFromPalette();
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     if (const auto* hints = QGuiApplication::styleHints()) {
-        systemMode = modeFromQtColorScheme(hints->colorScheme());
+        detected = modeFromQtColorScheme(hints->colorScheme());
     }
 #endif
-    return resolveMode(m_preference, systemMode);
+    return detected;
+}
+
+ThemeMode SystemTheme::effectiveMode() const {
+    return resolveMode(m_preference, systemMode());
 }
 
 ContrastMode SystemTheme::effectiveContrast() const {

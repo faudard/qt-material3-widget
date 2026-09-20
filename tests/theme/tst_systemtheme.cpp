@@ -12,6 +12,7 @@ private slots:
     void policyResolutionIsDeterministic();
     void contrastResolutionIsDeterministic();
     void manualPreferencesResolveToExplicitModes();
+    void systemModeIsAlwaysConcrete();
     void followSystemAlwaysResolvesConcreteMode();
     void snapshotIsInternallyConsistent();
     void platformFontCanBeAppliedToTypography();
@@ -56,6 +57,12 @@ void tst_SystemTheme::manualPreferencesResolveToExplicitModes()
 
     system.setPreference(ThemePreference::Dark);
     QCOMPARE(system.effectiveMode(), ThemeMode::Dark);
+}
+
+void tst_SystemTheme::systemModeIsAlwaysConcrete()
+{
+    const ThemeMode mode = SystemTheme::instance().systemMode();
+    QVERIFY(mode == ThemeMode::Light || mode == ThemeMode::Dark);
 }
 
 void tst_SystemTheme::followSystemAlwaysResolvesConcreteMode()

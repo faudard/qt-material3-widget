@@ -32,6 +32,7 @@ public:
     bool usePlatformFont() const noexcept;
     void setUsePlatformFont(bool enabled);
     SystemThemeSnapshot snapshot() const;
+    ThemeMode systemMode() const;
     ThemeMode effectiveMode() const;
     ContrastMode effectiveContrast() const;
     bool isHighContrastEnabled() const;
