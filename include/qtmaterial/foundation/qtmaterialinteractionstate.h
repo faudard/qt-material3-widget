@@ -29,6 +29,11 @@ public:
     bool isBusy() const noexcept { return m_busy; }
     bool isExpanded() const noexcept { return m_expanded; }
     bool isInvalid() const noexcept { return m_invalid; }
+    bool isInteractive() const noexcept { return m_enabled && !m_readOnly; }
+    bool hasTransientState() const noexcept
+    {
+        return m_hovered || m_focused || m_pressed || m_dragged;
+    }
 
     void setHovered(bool value) noexcept
     {
@@ -42,7 +47,7 @@ public:
 
     void setPressed(bool value) noexcept
     {
-        m_pressed = m_enabled && value;
+        m_pressed = m_enabled && !m_readOnly && value;
     }
 
     void setChecked(bool value) noexcept
@@ -64,7 +69,6 @@ public:
         m_enabled = value;
         if (!m_enabled) {
             clearTransientState();
-            m_selected = false;
         }
     }
 
@@ -81,6 +85,10 @@ public:
     void setReadOnly(bool value) noexcept
     {
         m_readOnly = value;
+        if (m_readOnly) {
+            m_pressed = false;
+            m_dragged = false;
+        }
     }
 
     void setIndeterminate(bool value) noexcept
@@ -90,7 +98,7 @@ public:
 
     void setDragged(bool value) noexcept
     {
-        m_dragged = m_enabled && value;
+        m_dragged = m_enabled && !m_readOnly && value;
     }
 
     void setBusy(bool value) noexcept

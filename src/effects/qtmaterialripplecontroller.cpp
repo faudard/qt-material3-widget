@@ -58,15 +58,73 @@ qreal QtMaterialRippleController::baseOpacity() const noexcept
     return m_baseOpacity;
 }
 
-void QtMaterialRippleController::addRipple(const QPointF& center)
+void QtMaterialRippleController::setBoundsMode(BoundsMode mode) noexcept
 {
+    m_boundsMode = mode;
+}
+
+QtMaterialRippleController::BoundsMode
+QtMaterialRippleController::boundsMode() const noexcept
+{
+    return m_boundsMode;
+}
+
+void QtMaterialRippleController::setOriginMode(OriginMode mode) noexcept
+{
+    m_originMode = mode;
+}
+
+QtMaterialRippleController::OriginMode
+QtMaterialRippleController::originMode() const noexcept
+{
+    return m_originMode;
+}
+
+void QtMaterialRippleController::setEnabled(bool enabled)
+{
+    if (m_enabled == enabled) {
+        return;
+    }
+    m_enabled = enabled;
+    if (!m_enabled) {
+        clear();
+    }
+}
+
+bool QtMaterialRippleController::isEnabled() const noexcept
+{
+    return m_enabled;
+}
+
+void QtMaterialRippleController::setReducedMotion(bool reducedMotion)
+{
+    if (m_reducedMotion == reducedMotion) {
+        return;
+    }
+    m_reducedMotion = reducedMotion;
+    if (m_reducedMotion) {
+        clear();
+    }
+}
+
+bool QtMaterialRippleController::reducedMotion() const noexcept
+{
+    return m_reducedMotion;
+}
+
+void QtMaterialRippleController::addRipple(const QPointF& pointerPosition)
+{
+    if (!m_enabled || m_reducedMotion || !m_target || !m_target->isEnabled()) {
+        return;
+    }
+
     if (!m_clock.isValid()) {
         m_clock.start();
     }
 
     Ripple ripple;
-    ripple.center = center;
-    ripple.endRadius = targetRadiusFor(center);
+    ripple.center = resolvedCenterFor(pointerPosition);
+    ripple.endRadius = targetRadiusFor(ripple.center);
     ripple.startedMs = m_clock.elapsed();
 
     m_ripples.push_back(ripple);
@@ -75,9 +133,7 @@ void QtMaterialRippleController::addRipple(const QPointF& center)
         m_timer->start();
     }
 
-    if (m_target) {
-        m_target->update();
-    }
+    m_target->update();
 }
 
 void QtMaterialRippleController::clear()
@@ -111,7 +167,7 @@ void QtMaterialRippleController::paint(QPainter* painter, const QColor& color)
 
     painter->save();
 
-    if (!m_clipPath.isEmpty()) {
+    if (m_boundsMode == BoundsMode::Bounded && !m_clipPath.isEmpty()) {
         painter->setClipPath(m_clipPath);
     }
 
@@ -169,6 +225,24 @@ void QtMaterialRippleController::advance()
     if (m_target) {
         m_target->update();
     }
+}
+
+QPointF QtMaterialRippleController::resolvedCenterFor(
+    const QPointF& pointerPosition) const
+{
+    if (m_originMode == OriginMode::Pointer) {
+        return pointerPosition;
+    }
+
+    if (!m_clipPath.isEmpty()) {
+        return m_clipPath.boundingRect().center();
+    }
+
+    if (m_target) {
+        return QRectF(QPointF(0.0, 0.0), QSizeF(m_target->size())).center();
+    }
+
+    return pointerPosition;
 }
 
 qreal QtMaterialRippleController::targetRadiusFor(const QPointF& center) const

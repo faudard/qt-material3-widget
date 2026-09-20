@@ -1,13 +1,14 @@
 #include "qtmaterial/effects/qtmaterialtransitioncontroller.h"
 
 #include "qtmaterial/theme/qtmaterialtheme.h"
+
+#include <QAbstractAnimation>
 #include <QVariantAnimation>
 #include <QtGlobal>
 
 namespace QtMaterial {
 
 namespace {
-constexpr int kFallbackDurationMs = 180;
 constexpr qreal kEpsilon = 0.0001;
 }
 
@@ -23,17 +24,8 @@ QtMaterialTransitionController::QtMaterialTransitionController(QObject* parent)
     });
 
     connect(m_animation, &QVariantAnimation::finished, this, [this]() {
-        if (m_animation) {
-            const qreal target = qBound(0.0, m_animation->endValue().toReal(), 1.0);
-
-            if (!qFuzzyCompare(m_progress + 1.0, target + 1.0)) {
-                m_progress = target;
-                emit progressChanged(m_progress);
-            } else {
-                m_progress = target;
-            }
-        }
-
+        m_progress = qBound<qreal>(0.0, m_targetProgress, 1.0);
+        emit progressChanged(m_progress);
         emit finished();
     });
 }
@@ -60,7 +52,7 @@ void QtMaterialTransitionController::setDuration(int durationMs)
 {
     m_durationMs = qMax(0, durationMs);
     if (m_animation) {
-        m_animation->setDuration(m_durationMs > 0 ? m_durationMs : kFallbackDurationMs);
+        m_animation->setDuration(m_durationMs);
     }
 }
 
@@ -82,6 +74,51 @@ QEasingCurve QtMaterialTransitionController::easingCurve() const noexcept
     return m_easing;
 }
 
+void QtMaterialTransitionController::setReducedMotion(bool reducedMotion)
+{
+    if (m_reducedMotion == reducedMotion) {
+        return;
+    }
+
+    m_reducedMotion = reducedMotion;
+    if (m_reducedMotion && isRunning()) {
+        finish();
+    }
+}
+
+bool QtMaterialTransitionController::reducedMotion() const noexcept
+{
+    return m_reducedMotion;
+}
+
+bool QtMaterialTransitionController::isRunning() const noexcept
+{
+    return m_animation
+        && m_animation->state() == QAbstractAnimation::Running;
+}
+
+void QtMaterialTransitionController::stop()
+{
+    if (m_animation) {
+        m_animation->stop();
+    }
+}
+
+void QtMaterialTransitionController::finish()
+{
+    if (m_animation) {
+        m_animation->stop();
+    }
+
+    const qreal target = qBound<qreal>(0.0, m_targetProgress, 1.0);
+    const bool changed = qAbs(m_progress - target) >= kEpsilon;
+    m_progress = target;
+    if (changed) {
+        emit progressChanged(m_progress);
+    }
+    emit finished();
+}
+
 void QtMaterialTransitionController::startForward()
 {
     startTo(1.0);
@@ -94,23 +131,23 @@ void QtMaterialTransitionController::startBackward()
 
 void QtMaterialTransitionController::startTo(qreal target)
 {
-    const qreal clampedTarget = qBound<qreal>(0.0, target, 1.0);
+    m_targetProgress = qBound<qreal>(0.0, target, 1.0);
 
     if (!m_animation) {
-        setProgress(clampedTarget);
+        setProgress(m_targetProgress);
         emit finished();
         return;
     }
 
-    if (qAbs(m_progress - clampedTarget) < kEpsilon) {
-        setProgress(clampedTarget);
+    if (qAbs(m_progress - m_targetProgress) < kEpsilon) {
+        setProgress(m_targetProgress);
         emit finished();
         return;
     }
 
-    if (m_durationMs <= 0) {
+    if (m_reducedMotion || m_durationMs <= 0) {
         m_animation->stop();
-        setProgress(clampedTarget);
+        setProgress(m_targetProgress);
         emit finished();
         return;
     }
@@ -119,7 +156,7 @@ void QtMaterialTransitionController::startTo(qreal target)
     m_animation->setDuration(m_durationMs);
     m_animation->setEasingCurve(m_easing);
     m_animation->setStartValue(m_progress);
-    m_animation->setEndValue(clampedTarget);
+    m_animation->setEndValue(m_targetProgress);
     m_animation->start();
 }
 
@@ -129,9 +166,12 @@ void QtMaterialTransitionController::applyMotionStyle(const MotionStyle& style)
     setEasingCurve(style.easing);
 }
 
-void QtMaterialTransitionController::applyMotionToken(const Theme& theme, MotionToken token)
+void QtMaterialTransitionController::applyMotionToken(
+    const Theme& theme,
+    MotionToken token)
 {
     applyMotionStyle(theme.motion().style(token));
+    setReducedMotion(theme.accessibility().reducedMotion);
 }
 
 } // namespace QtMaterial
