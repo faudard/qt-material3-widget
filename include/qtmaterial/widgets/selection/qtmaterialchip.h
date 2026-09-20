@@ -8,6 +8,8 @@
 
 namespace QtMaterial {
 
+class QtMaterialRippleController;
+
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialChip
     : public QtMaterialAbstractButton
 {
@@ -82,6 +84,7 @@ private:
 
     mutable bool m_specDirty = true;
     mutable ChipSpec m_spec;
+    QtMaterialRippleController* m_ripple = nullptr;
 };
 
 } // namespace QtMaterial
