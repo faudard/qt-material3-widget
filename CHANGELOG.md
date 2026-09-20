@@ -5,7 +5,25 @@ All notable changes to qt-material3-widget are documented here.
 The project follows semantic versioning while it remains pre-1.0: minor releases may contain
 source or ABI changes, and those changes must be called out explicitly.
 
-## [0.7.0] - Unreleased
+## [0.8.0] - Unreleased
+
+### Added
+- Search Bar and Search View backed by Qt Model/View and QSortFilterProxyModel.
+- Combo Box, Slider and Range Slider families for desktop form workflows.
+- Time Field, Time Picker and Date Range Picker built from native Qt input primitives.
+- Component-expansion release contract and CI gate covering the complete 0.8 scope.
+
+### Changed
+- Chip is promoted from planned to usable and reuses the shared 0.7 ripple, state-layer and focus policies.
+- Menu supports exclusive check groups for radio-style actions.
+- Table exposes explicit multi-selection while preserving QTableView sorting, headers and Model/View behavior.
+- Component registry expands from 32 to 40 tracked components.
+
+### Compatibility
+- Minimum supported Qt remains Qt 5.14.2.
+- C++17 and CMake 3.21+ remain required.
+
+## [0.7.0] - 2026-09-20
 
 ### Added
 - Unified interaction-state certification for enabled, disabled, hover, focus, press, checked/selected, indeterminate, drag, error, and read-only states.
