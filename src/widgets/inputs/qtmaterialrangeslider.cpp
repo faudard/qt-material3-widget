@@ -1,6 +1,7 @@
 #include "qtmaterial/widgets/inputs/qtmaterialrangeslider.h"
 
 #include <QKeyEvent>
+#include <QLineF>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QtMath>
