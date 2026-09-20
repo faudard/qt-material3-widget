@@ -40,6 +40,11 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTable
         QString accessibilitySummary
         READ accessibilitySummary
         NOTIFY accessibilitySummaryChanged)
+    Q_PROPERTY(
+        bool multiSelectionEnabled
+        READ multiSelectionEnabled
+        WRITE setMultiSelectionEnabled
+        NOTIFY multiSelectionEnabledChanged)
 
 public:
     explicit QtMaterialTable(
@@ -67,6 +72,9 @@ public:
     bool dense() const;
     void setDense(bool dense);
 
+    bool multiSelectionEnabled() const noexcept;
+    void setMultiSelectionEnabled(bool enabled);
+
     QString accessibilitySummary() const;
     QString currentCellAccessibleText() const;
     QString rowAccessibleText(int row) const;
@@ -84,6 +92,7 @@ Q_SIGNALS:
         QtMaterial::ThemeContext* context);
 
     void denseChanged(bool dense);
+    void multiSelectionEnabledChanged(bool enabled);
     void accessibilitySummaryChanged(
         const QString& summary);
     void rowActivated(int row);
