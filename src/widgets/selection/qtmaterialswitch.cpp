@@ -357,7 +357,10 @@ void QtMaterialSwitch::paintEvent(QPaintEvent*)
 
     const bool enabled = isEnabled();
     const qreal progress = d->m_transition ? d->m_transition->progress() : (isChecked() ? 1.0 : 0.0);
-    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(d->m_spec, interactionState());
+    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(
+        d->m_spec,
+        interactionState(),
+        theme().interactions());
 
     const QColor offTrack = enabled
                                 ? d->m_spec.unselectedTrackColor

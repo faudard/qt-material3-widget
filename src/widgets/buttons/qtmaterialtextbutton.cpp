@@ -140,13 +140,20 @@ void QtMaterialTextButton::stateChangedEvent()
 void QtMaterialTextButton::syncStateLayerAnimation()
 {
  ensureSpecResolved();
- ButtonMotionHelper::syncStateLayerTransition(currentButtonSpec(), interactionState(), d->stateLayerTransition);
+ ButtonMotionHelper::syncStateLayerTransition(
+  currentButtonSpec(),
+  interactionState(),
+  d->stateLayerTransition,
+  theme().accessibility().reducedMotion);
 }
 
 qreal QtMaterialTextButton::animatedStateLayerOpacity() const noexcept
 {
  if (!d->stateLayerTransition) {
-  return ButtonMotionHelper::targetStateLayerOpacity(currentButtonSpec(), interactionState());
+  return ButtonMotionHelper::targetStateLayerOpacity(
+   currentButtonSpec(),
+   interactionState(),
+   theme().accessibility().reducedMotion);
  }
  return d->stateLayerTransition->progress();
 }

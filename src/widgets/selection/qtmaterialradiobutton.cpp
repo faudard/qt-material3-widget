@@ -294,7 +294,10 @@ void QtMaterialRadioButton::paintEvent(QPaintEvent*)
 
     const bool enabled = isEnabled();
     const qreal progress = d->transition ? d->transition->progress() : (isChecked() ? 1.0 : 0.0);
-    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(d->spec, interactionState());
+    const qreal stateOpacity = SelectionRenderHelper::stateLayerOpacity(
+        d->spec,
+        interactionState(),
+        theme().interactions());
 
     SelectionRenderHelper::paintCircularStateLayer(
         &painter,

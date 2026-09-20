@@ -231,7 +231,10 @@ void QtMaterialCheckbox::paintEvent(QPaintEvent*)
     const QRectF stateLayerRect =
         SelectionRenderHelper::centeredStateLayerRect(box, d->m_spec.stateLayerSize);
     const qreal stateOpacity =
-        SelectionRenderHelper::stateLayerOpacity(d->m_spec, interactionState());
+        SelectionRenderHelper::stateLayerOpacity(
+        d->m_spec,
+        interactionState(),
+        theme().interactions());
     const qreal progress =
         d->m_transition ? d->m_transition->progress() : targetTransitionProgress();
 

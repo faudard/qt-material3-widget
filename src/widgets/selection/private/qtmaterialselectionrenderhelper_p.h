@@ -13,6 +13,7 @@
 #include "qtmaterial/specs/qtmaterialradiobuttonspec.h"
 #include "qtmaterial/specs/qtmaterialswitchspec.h"
 #include "qtmaterial/specs/qtmaterialselectionruntimespec.h"
+#include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 
 namespace QtMaterial {
 class QtMaterialRippleController;
@@ -24,7 +25,8 @@ namespace QtMaterial::SelectionRenderHelper {
 
 qreal stateLayerOpacity(
     const SelectionRuntimeSpec& spec,
-    const QtMaterialInteractionState& state);
+    const QtMaterialInteractionState& state,
+    const InteractionStateTokens& policy);
 
 QFont resolvedLabelFont(
     const QFont& fallback,
