@@ -8,6 +8,7 @@
 #include <QStyle>
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
+#include "qtmaterial/effects/qtmaterialripplecontroller.h"
 #include "qtmaterial/effects/qtmaterialstatelayerpainter.h"
 #include "qtmaterial/specs/qtmaterialchipspecresolver.h"
 
@@ -17,25 +18,15 @@ namespace {
 
 qreal stateOpacity(
     const ChipSpec& spec,
-    const QtMaterialInteractionState& state)
+    const QtMaterialInteractionState& state,
+    const InteractionStateTokens& policy)
 {
-    if (!state.isEnabled()) {
-        return 0.0;
-    }
-
-    if (state.isPressed()) {
-        return spec.pressStateLayerOpacity;
-    }
-
-    if (state.isFocused()) {
-        return spec.focusStateLayerOpacity;
-    }
-
-    if (state.isHovered()) {
-        return spec.hoverStateLayerOpacity;
-    }
-
-    return 0.0;
+    StateLayer layer;
+    layer.hoverOpacity = spec.hoverStateLayerOpacity;
+    layer.focusOpacity = spec.focusStateLayerOpacity;
+    layer.pressOpacity = spec.pressStateLayerOpacity;
+    layer.dragOpacity = spec.dragStateLayerOpacity;
+    return QtMaterialStateLayerPainter::opacityForState(state, layer, policy);
 }
 
 QString variantName(ChipVariant variant)
@@ -106,6 +97,7 @@ QtMaterialChip::QtMaterialChip(
         QStringLiteral("chip"));
     setMaterialVariant(
         QStringLiteral("assist"));
+    m_ripple = new QtMaterialRippleController(this);
 }
 
 QtMaterialChip::QtMaterialChip(
@@ -209,6 +201,14 @@ void QtMaterialChip::stateChangedEvent()
 {
     QtMaterialAbstractButton::
         stateChangedEvent();
+    ensureSpecResolved();
+    if (m_ripple) {
+        m_ripple->setEnabled(isEnabled());
+        m_ripple->setReducedMotion(theme().accessibility().reducedMotion);
+        if (interactionState().isPressed() && !m_ripple->isActive()) {
+            m_ripple->addRipple(containerRect().center());
+        }
+    }
     update();
 }
 
@@ -236,6 +236,13 @@ void QtMaterialChip::ensureSpecResolved() const
     }
 
     m_spec = resolveSpec();
+    if (m_ripple) {
+        m_ripple->setBaseOpacity(m_spec.pressStateLayerOpacity);
+        if (m_spec.hasResolvedMotionStyle && m_spec.motionStyle.durationMs > 0) {
+            m_ripple->setDuration(m_spec.motionStyle.durationMs);
+        }
+        m_ripple->setReducedMotion(theme().accessibility().reducedMotion);
+    }
     m_specDirty = false;
 }
 
@@ -437,7 +444,8 @@ void QtMaterialChip::paintEvent(
     const qreal opacity =
         stateOpacity(
             spec,
-            interactionState());
+            interactionState(),
+            theme().interactions());
 
     if (opacity > 0.0) {
         QtMaterialStateLayerPainter::
@@ -446,6 +454,11 @@ void QtMaterialChip::paintEvent(
                 path,
                 spec.stateLayerColor,
                 opacity);
+    }
+
+    if (m_ripple && isEnabled()) {
+        m_ripple->setClipPath(path);
+        m_ripple->paint(&painter, spec.stateLayerColor);
     }
 
     painter.setFont(
@@ -581,8 +594,11 @@ void QtMaterialChip::paintEvent(
     }
 
     if (
-        interactionState().isFocused()
-        && spec.focusRingWidth > 0.0) {
+        spec.focusRingWidth > 0.0
+        && QtMaterialFocusIndicator::shouldShow(
+            interactionState(),
+            focusReason(),
+            theme().interactions())) {
         QtMaterialFocusIndicator::
             paintPathFocusRing(
                 &painter,
