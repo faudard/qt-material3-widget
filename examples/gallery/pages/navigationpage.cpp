@@ -5,6 +5,7 @@
 
 #include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
+#include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialbanner.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
@@ -17,6 +18,20 @@ NavigationPage::NavigationPage(QWidget* parent)
     auto* layout = new QVBoxLayout(this);
 
     layout->addWidget(new QtMaterialTopAppBar(this));
+
+    auto* tabs = new QtMaterial::QtMaterialTabs(this);
+    tabs->addTab(new QWidget(tabs), QStringLiteral("Overview"));
+    tabs->addTab(new QWidget(tabs), QStringLiteral("Activity"));
+    tabs->addTab(new QWidget(tabs), QStringLiteral("Settings"));
+    tabs->setTabId(0, QStringLiteral("gallery.navigation.overview"));
+    tabs->setTabId(1, QStringLiteral("gallery.navigation.activity"));
+    tabs->setTabId(2, QStringLiteral("gallery.navigation.settings"));
+    tabs->setRoute(0, QStringLiteral("navigation/overview"));
+    tabs->setRoute(1, QStringLiteral("navigation/activity"));
+    tabs->setRoute(2, QStringLiteral("navigation/settings"));
+    tabs->setBadge(1, QStringLiteral("3"));
+    tabs->setBadgeVisible(1, true);
+    layout->addWidget(tabs);
 
     auto* content = new QHBoxLayout;
 

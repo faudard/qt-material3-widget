@@ -24,7 +24,7 @@ private slots:
 
         const auto* snackbar = QtMaterial::findComponentDescriptor(registry, QStringLiteral("surface.snackbar"));
         QVERIFY(snackbar != nullptr);
-        QCOMPARE(snackbar->maturity, QtMaterial::ComponentMaturity::Partial);
+        QCOMPARE(snackbar->maturity, QtMaterial::ComponentMaturity::Usable);
 
         const auto* chip = QtMaterial::findComponentDescriptor(registry, QStringLiteral("compact.chip"));
         QVERIFY(chip != nullptr);

@@ -23,7 +23,8 @@ Use the narrative pages to understand concepts, layering, and supported workflow
 - [Architecture overview](architecture/01-overview.md)
 - [Development rules](development/coding-rules.md)
 - [Accessibility and keyboard rules](development/accessibility-keyboard-rules.md)
-- [Release process](development/release-process.md)
+- [Development release rules](development/release-process.md)
+- [0.5.x release checklist](release-process.md)
 
 ## Installation and downstream usage
 
@@ -55,6 +56,7 @@ public-api/index
 api/index
 material3/references
 migration/from-qt-material-widgets
+release-process
 ```
 
 ```{toctree}

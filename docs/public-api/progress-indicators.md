@@ -1,83 +1,76 @@
 # Progress indicators
 
-Progress indicators expose Material 3 compatible feedback widgets for operations whose duration is known or unknown.
-
-The implementation follows the project layering rule: widgets render from a resolved `ProgressIndicatorSpec`, while the public widgets expose safe convenience setters for application code and the gallery.
+Progress indicators expose Material 3 style feedback for operations whose duration is known or
+unknown. Widgets render from a resolved `ProgressIndicatorSpec`.
 
 ## Public widgets
 
 - `QtMaterial::QtMaterialLinearProgressIndicator`
 - `QtMaterial::QtMaterialCircularProgressIndicator`
 
-## Shared API
+Both are release-scoped as **usable** for 0.5.0.
 
-Both widgets expose:
+## Shared behavior
 
-- `value`: normalized progress in `[0.0, 1.0]`; invalid or NaN input is clamped to `0.0`.
-- `mode`: `Determinate` or `Indeterminate`.
-- `activeColor`: explicit indicator color override.
-- `trackColor`: explicit track color override.
-- `trackGap`: visual gap between active and inactive track portions.
-- `spec`: full immutable-style visual input for colors, dimensions, margins and motion defaults.
+Both widgets support:
 
-`QtMaterialLinearProgressIndicator` additionally exposes:
+- normalized determinate progress in `[0.0, 1.0]`;
+- `Determinate` and `Indeterminate` modes;
+- active and track color overrides;
+- track gap configuration;
+- asynchronous status text;
+- resolved theme/spec behavior;
+- accessible progress/status descriptions.
 
-- `invertedAppearance`: paints progress from the trailing edge.
-- `stopIndicatorSize`: size of the Material 3 stop indicator in determinate mode.
+Indeterminate animation runs only while needed and stops when the widget is hidden or returns to
+determinate mode.
 
-`QtMaterialCircularProgressIndicator` additionally exposes:
+## Linear Progress Indicator
 
-- `strokeWidth`: circular stroke width.
+`QtMaterialLinearProgressIndicator` additionally supports:
 
-## Usage
+- `invertedAppearance`;
+- a Material stop indicator;
+- RTL-aware active-track rendering.
 
-```cpp
-#include <qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h>
-#include <qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h>
+In normal LTR mode, determinate progress grows from the leading left edge. In RTL, the active
+segment is mirrored and grows from the trailing right edge. `invertedAppearance` reverses that
+choice explicitly.
 
-using namespace QtMaterial;
+Its accessibility value is a rounded percentage in determinate mode, optionally prefixed by
+`statusText`. Indeterminate mode exposes the status text or `In progress`.
 
-ProgressIndicatorSpec spec;
-spec.linearHeight = 4;
-spec.circularSize = QSize(48, 48);
-spec.circularStrokeWidth = 4;
-spec.trackGap = 4;
-spec.stopIndicatorSize = 4;
-
-auto* linear = new QtMaterialLinearProgressIndicator(spec, parent);
-linear->setValue(0.65);
-linear->setActiveColor(QColor("#6750A4"));
-
-auto* circular = new QtMaterialCircularProgressIndicator(spec, parent);
-circular->setMode(QtMaterialCircularProgressIndicator::Mode::Indeterminate);
-```
-
-## Behavior
-
-Determinate mode paints a stable progress value. Indeterminate mode starts an internal animation while the widget is visible and stops it when hidden or switched back to determinate mode.
-
-Explicit spec colors are used first. If no explicit colors are provided, the widgets fall back to the current Qt palette, which keeps them usable before deeper theme-manager integration.
-
-## Gallery
-
-The overlay adds a `ProgressIndicatorsPage` with determinate linear/circular indicators, a slider-driven value demo, and indeterminate linear/circular indicators.
-
-If the local gallery uses a central navigation registry, run the patch script and then add `ProgressIndicatorsPage` to the registry if the automatic insertion marker was not found.
-
-## Tests
+### 0.5.0 maturity evidence
 
 `tst_progressindicators` covers:
 
-- value clamping for linear and circular indicators;
-- duplicate mode changes not emitting duplicate signals;
-- public API setters and resetters;
-- size hints driven by `ProgressIndicatorSpec`;
-- full spec round-trip behavior;
-- show/hide safety for indeterminate mode.
+- clamping and duplicate-signal behavior;
+- public spec setters and resetters;
+- spec round trips;
+- determinate/indeterminate state;
+- show/hide animation lifecycle;
+- linear accessibility text;
+- explicit LTR/RTL rendering direction;
+- DPR 2.0 render smoke.
 
-## Circular progress indicator accessibility
+Deterministic reviewed visual references and broader animation end-state certification remain
+before `complete` maturity.
 
-`QtMaterialCircularProgressIndicator` exposes `accessibleValueText()` and `accessibilitySummary()`.
-Determinate mode reports a rounded percentage, optionally prefixed by `statusText()`.
-Indeterminate mode reports `statusText()` or `In progress` when no status text is set.
+## Circular Progress Indicator
 
+The circular widget provides determinate and indeterminate rendering, stroke-width control,
+accessible percentage/status reporting, and async-state integration.
+
+## Example
+
+```cpp
+#include <qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h>
+
+auto* progress =
+    new QtMaterial::QtMaterialLinearProgressIndicator(parent);
+progress->setStatusText(QStringLiteral("Uploading"));
+progress->setValue(0.65);
+```
+
+The gallery Progress Indicators page demonstrates determinate and indeterminate linear/circular
+variants.

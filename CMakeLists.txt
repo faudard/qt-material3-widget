@@ -5,7 +5,7 @@ option(BUILD_SHARED_LIBS "Build QtMaterial3 libraries as shared libraries" ON)
 
 project(
     qt-material3-widgets
-    VERSION 0.4.1
+    VERSION 0.5.0
     DESCRIPTION "Material 3 widgets for Qt Widgets"
     LANGUAGES CXX
 )
@@ -129,6 +129,14 @@ if(QTMATERIAL3_INSTALL)
             "${CMAKE_CURRENT_SOURCE_DIR}/packaging/QtMaterial3WidgetsMacros.cmake"
         DESTINATION "${QTMATERIAL3_CMAKE_INSTALL_DIR}"
     )
+
+    install(
+        FILES
+            "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE"
+            "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
+            "${CMAKE_CURRENT_SOURCE_DIR}/CHANGELOG.md"
+        DESTINATION "${CMAKE_INSTALL_DATADIR}/doc/qt-material3-widget"
+    )
 endif()
 
 if(QTMATERIAL3_BUILD_TESTS)
@@ -161,4 +169,26 @@ endif()
 
 if(QTMATERIAL3_BUILD_BENCHMARKS)
     add_subdirectory(benchmarks)
+endif()
+
+if(QTMATERIAL3_IS_TOP_LEVEL AND QTMATERIAL3_INSTALL)
+    set(CPACK_PACKAGE_NAME "qt-material3-widget")
+    set(CPACK_PACKAGE_VENDOR "faudard")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
+    set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+    set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+    set(CPACK_PACKAGE_CHECKSUM "SHA256")
+    set(CPACK_GENERATOR "TGZ;ZIP")
+    set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+    set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${PROJECT_VERSION}-source")
+    set(CPACK_SOURCE_IGNORE_FILES
+        "/\\.git/"
+        "/build[^/]*/"
+        "/docs/_build/"
+        "/overlay/"
+        "/\\.specify/patch-backup/"
+        "~$"
+    )
+    include(CPack)
 endif()

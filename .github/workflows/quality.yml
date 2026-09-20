@@ -33,6 +33,12 @@ jobs:
       - name: Check repository health
         run: python tools/repo_health.py --strict
 
+      - name: Check 0.5.0 release contract
+        run: python tools/check_release_contract.py --root . --expected-version 0.5.0
+
+      - name: Check patch whitespace
+        run: git diff --check
+
   docs:
     name: docs
     runs-on: ubuntu-latest

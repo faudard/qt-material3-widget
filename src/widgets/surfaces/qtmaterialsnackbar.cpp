@@ -76,10 +76,12 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
 
     d_ptr->actionButton = new QPushButton(this);
     d_ptr->actionButton->setFlat(true);
+    d_ptr->actionButton->installEventFilter(this);
     d_ptr->actionButton->hide();
 
     d_ptr->dismissButton = new QPushButton(QString(QChar(0x2715)), this);
     d_ptr->dismissButton->setFlat(true);
+    d_ptr->dismissButton->installEventFilter(this);
     d_ptr->dismissButton->hide();
 
     d_ptr->layout = new QHBoxLayout(this);
@@ -710,6 +712,7 @@ void QtMaterialSnackbar::applyRequestToUi()
 
     d_ptr->dismissButton->setVisible(d_ptr->request.showDismissButton);
 
+    syncAccessibilityState();
     updateGeometry();
     syncGeometryToHost();
     update();

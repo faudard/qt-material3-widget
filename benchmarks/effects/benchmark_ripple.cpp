@@ -9,7 +9,7 @@ private slots:
     void createAndClear()
     {
         QWidget widget;
-        QtMaterialRippleController controller(&widget);
+        QtMaterial::QtMaterialRippleController controller(&widget);
         QBENCHMARK {
             controller.addRipple(QPointF(12.0, 12.0));
             controller.clear();

@@ -668,16 +668,36 @@
         "Register focused widget tests and complete the public behavior contract before release scope is enabled."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/selection/qtmaterialchip.h."],
-        "rendering": ["No release-scoped rendering assessment is claimed."],
-        "states": ["No release-scoped state assessment is claimed."],
-        "accessibility": ["No release-scoped accessibility assessment is claimed."],
-        "keyboard": ["No release-scoped keyboard assessment is claimed."],
-        "hidpi": ["No release-scoped HiDPI assessment is claimed."],
-        "rtl": ["No release-scoped RTL assessment is claimed."],
-        "tests": ["tests/widgets/compact/tst_chip.cpp is not registered as the component test target."],
-        "example": ["examples/gallery/pages/selectionpage.cpp instantiates Chip examples."],
-        "docs": ["docs/public-api/compact-controls.md documents the planned boundary."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialchip.h."
+        ],
+        "rendering": [
+          "No release-scoped rendering assessment is claimed."
+        ],
+        "states": [
+          "No release-scoped state assessment is claimed."
+        ],
+        "accessibility": [
+          "No release-scoped accessibility assessment is claimed."
+        ],
+        "keyboard": [
+          "No release-scoped keyboard assessment is claimed."
+        ],
+        "hidpi": [
+          "No release-scoped HiDPI assessment is claimed."
+        ],
+        "rtl": [
+          "No release-scoped RTL assessment is claimed."
+        ],
+        "tests": [
+          "tests/widgets/compact/tst_chip.cpp is not registered as the component test target."
+        ],
+        "example": [
+          "examples/gallery/pages/selectionpage.cpp instantiates Chip examples."
+        ],
+        "docs": [
+          "docs/public-api/compact-controls.md documents the planned boundary."
+        ]
       }
     }
   },
@@ -714,16 +734,36 @@
         "Add Carousel reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/data/qtmaterialcarousel.h."],
-        "rendering": ["Production implementation exists: src/widgets/data/qtmaterialcarousel.cpp."],
-        "states": ["tests/widgets/data/tst_carousel.cpp exercises the current widget behavior."],
-        "accessibility": ["Accessibility remains basic and has no dedicated conformance suite."],
-        "keyboard": ["Keyboard behavior remains basic and has no dedicated conformance suite."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_carousel and resolved-spec tests provide simple-case coverage."],
-        "example": ["examples/gallery/pages/datapage.cpp instantiates QtMaterialCarousel."],
-        "docs": ["docs/public-api/data-widgets.md documents the public data-widget contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/data/qtmaterialcarousel.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/data/qtmaterialcarousel.cpp."
+        ],
+        "states": [
+          "tests/widgets/data/tst_carousel.cpp exercises the current widget behavior."
+        ],
+        "accessibility": [
+          "Accessibility remains basic and has no dedicated conformance suite."
+        ],
+        "keyboard": [
+          "Keyboard behavior remains basic and has no dedicated conformance suite."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_carousel and resolved-spec tests provide simple-case coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/datapage.cpp instantiates QtMaterialCarousel."
+        ],
+        "docs": [
+          "docs/public-api/data-widgets.md documents the public data-widget contract."
+        ]
       }
     }
   },
@@ -760,16 +800,36 @@
         "Add Grid List reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/data/qtmaterialgridlist.h."],
-        "rendering": ["Production implementation exists: src/widgets/data/qtmaterialgridlist.cpp."],
-        "states": ["tests/widgets/data/tst_gridlist.cpp exercises the current widget behavior."],
-        "accessibility": ["Accessibility remains basic and has no dedicated conformance suite."],
-        "keyboard": ["Keyboard behavior remains basic and has no dedicated conformance suite."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_gridlist provides simple-case widget coverage."],
-        "example": ["examples/gallery/pages/datapage.cpp instantiates QtMaterialGridList."],
-        "docs": ["docs/public-api/data-widgets.md documents the public data-widget contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/data/qtmaterialgridlist.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/data/qtmaterialgridlist.cpp."
+        ],
+        "states": [
+          "tests/widgets/data/tst_gridlist.cpp exercises the current widget behavior."
+        ],
+        "accessibility": [
+          "Accessibility remains basic and has no dedicated conformance suite."
+        ],
+        "keyboard": [
+          "Keyboard behavior remains basic and has no dedicated conformance suite."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_gridlist provides simple-case widget coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/datapage.cpp instantiates QtMaterialGridList."
+        ],
+        "docs": [
+          "docs/public-api/data-widgets.md documents the public data-widget contract."
+        ]
       }
     }
   },
@@ -806,16 +866,36 @@
         "Add Table reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/data/qtmaterialtable.h."],
-        "rendering": ["Production implementation exists: src/widgets/data/qtmaterialtable.cpp."],
-        "states": ["tests/widgets/data/tst_table.cpp exercises selection and table behavior."],
-        "accessibility": ["Accessibility remains basic and has no dedicated conformance suite."],
-        "keyboard": ["Keyboard behavior remains basic and has no dedicated conformance suite."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_table and resolved-spec tests provide simple-case coverage."],
-        "example": ["examples/gallery/pages/datapage.cpp instantiates QtMaterialTable."],
-        "docs": ["docs/public-api/data-widgets.md documents the public data-widget contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/data/qtmaterialtable.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/data/qtmaterialtable.cpp."
+        ],
+        "states": [
+          "tests/widgets/data/tst_table.cpp exercises selection and table behavior."
+        ],
+        "accessibility": [
+          "Accessibility remains basic and has no dedicated conformance suite."
+        ],
+        "keyboard": [
+          "Keyboard behavior remains basic and has no dedicated conformance suite."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_table and resolved-spec tests provide simple-case coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/datapage.cpp instantiates QtMaterialTable."
+        ],
+        "docs": [
+          "docs/public-api/data-widgets.md documents the public data-widget contract."
+        ]
       }
     }
   },
@@ -852,16 +932,36 @@
         "Add Divider token, RTL and HiDPI reference evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/data/qtmaterialdivider.h."],
-        "rendering": ["Production implementation exists: src/widgets/data/qtmaterialdivider.cpp."],
-        "states": ["tests/widgets/data/tst_divider.cpp exercises orientation and inset behavior."],
-        "accessibility": ["docs/public-api/divider-release-readiness.md defines decorative and semantic exposure."],
-        "keyboard": ["Divider is non-interactive; keyboard activation does not apply."],
-        "hidpi": ["Custom separator rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["The release-readiness contract documents leading/trailing RTL insets."],
-        "tests": ["Registered target tst_divider provides simple-case widget coverage."],
-        "example": ["examples/gallery/pages/datapage.cpp instantiates QtMaterialDivider."],
-        "docs": ["docs/public-api/divider-release-readiness.md documents the public contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/data/qtmaterialdivider.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/data/qtmaterialdivider.cpp."
+        ],
+        "states": [
+          "tests/widgets/data/tst_divider.cpp exercises orientation and inset behavior."
+        ],
+        "accessibility": [
+          "docs/public-api/divider-release-readiness.md defines decorative and semantic exposure."
+        ],
+        "keyboard": [
+          "Divider is non-interactive; keyboard activation does not apply."
+        ],
+        "hidpi": [
+          "Custom separator rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "The release-readiness contract documents leading/trailing RTL insets."
+        ],
+        "tests": [
+          "Registered target tst_divider provides simple-case widget coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/datapage.cpp instantiates QtMaterialDivider."
+        ],
+        "docs": [
+          "docs/public-api/divider-release-readiness.md documents the public contract."
+        ]
       }
     }
   },
@@ -898,16 +998,36 @@
         "Add Date Field state, accessibility and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/inputs/qtmaterialdatefield.h."],
-        "rendering": ["Production implementation exists: src/widgets/inputs/qtmaterialdatefield.cpp."],
-        "states": ["tests/widgets/inputs/tst_datefield.cpp exercises the current field behavior."],
-        "accessibility": ["docs/public-api/inputs.md documents the date accessibility summary."],
-        "keyboard": ["Keyboard behavior remains basic and has no dedicated conformance suite."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Input RTL behavior is documented without dedicated Date Field conformance evidence."],
-        "tests": ["Registered targets tst_datefield and tst_datefield_affordances provide focused coverage."],
-        "example": ["examples/gallery/pages/inputspage.cpp instantiates QtMaterialDateField."],
-        "docs": ["docs/public-api/inputs.md documents the Date Field contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/inputs/qtmaterialdatefield.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/inputs/qtmaterialdatefield.cpp."
+        ],
+        "states": [
+          "tests/widgets/inputs/tst_datefield.cpp exercises the current field behavior."
+        ],
+        "accessibility": [
+          "docs/public-api/inputs.md documents the date accessibility summary."
+        ],
+        "keyboard": [
+          "Keyboard behavior remains basic and has no dedicated conformance suite."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Input RTL behavior is documented without dedicated Date Field conformance evidence."
+        ],
+        "tests": [
+          "Registered targets tst_datefield and tst_datefield_affordances provide focused coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialDateField."
+        ],
+        "docs": [
+          "docs/public-api/inputs.md documents the Date Field contract."
+        ]
       }
     }
   },
@@ -944,16 +1064,36 @@
         "Add Text Field state, accessibility and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h."],
-        "rendering": ["Production implementation exists: src/widgets/inputs/qtmaterialfilledtextfield.cpp."],
-        "states": ["tests/widgets/inputs/tst_filledtextfield.cpp exercises the current field behavior."],
-        "accessibility": ["Focused Text Field accessibility tests and documentation exist."],
-        "keyboard": ["Read-only and validation tests provide basic keyboard-interaction evidence."],
-        "hidpi": ["Focused render tests exist without deterministic target HiDPI conformance."],
-        "rtl": ["tests/widgets/inputs/tst_textfieldshellhelper_rtl.cpp covers shared shell direction."],
-        "tests": ["Registered target tst_filledtextfield plus validation/render tests provide simple-case coverage."],
-        "example": ["examples/gallery/pages/inputspage.cpp instantiates QtMaterialFilledTextField."],
-        "docs": ["docs/public-api/inputs.md and focused Text Field guides document the contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/inputs/qtmaterialfilledtextfield.cpp."
+        ],
+        "states": [
+          "tests/widgets/inputs/tst_filledtextfield.cpp exercises the current field behavior."
+        ],
+        "accessibility": [
+          "Focused Text Field accessibility tests and documentation exist."
+        ],
+        "keyboard": [
+          "Read-only and validation tests provide basic keyboard-interaction evidence."
+        ],
+        "hidpi": [
+          "Focused render tests exist without deterministic target HiDPI conformance."
+        ],
+        "rtl": [
+          "tests/widgets/inputs/tst_textfieldshellhelper_rtl.cpp covers shared shell direction."
+        ],
+        "tests": [
+          "Registered target tst_filledtextfield plus validation/render tests provide simple-case coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialFilledTextField."
+        ],
+        "docs": [
+          "docs/public-api/inputs.md and focused Text Field guides document the contract."
+        ]
       }
     }
   },
@@ -990,16 +1130,36 @@
         "Add Text Field state, accessibility and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h."],
-        "rendering": ["Production implementation exists: src/widgets/inputs/qtmaterialoutlinedtextfield.cpp."],
-        "states": ["tests/widgets/inputs/tst_outlinedtextfield.cpp exercises the current field behavior."],
-        "accessibility": ["Focused Text Field accessibility tests and documentation exist."],
-        "keyboard": ["Read-only and validation tests provide basic keyboard-interaction evidence."],
-        "hidpi": ["Focused render tests exist without deterministic target HiDPI conformance."],
-        "rtl": ["tests/widgets/inputs/tst_textfieldshellhelper_rtl.cpp covers shared shell direction."],
-        "tests": ["Registered target tst_outlinedtextfield plus validation/render tests provide simple-case coverage."],
-        "example": ["examples/gallery/pages/inputspage.cpp instantiates QtMaterialOutlinedTextField."],
-        "docs": ["docs/public-api/inputs.md and focused Text Field guides document the contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/inputs/qtmaterialoutlinedtextfield.cpp."
+        ],
+        "states": [
+          "tests/widgets/inputs/tst_outlinedtextfield.cpp exercises the current field behavior."
+        ],
+        "accessibility": [
+          "Focused Text Field accessibility tests and documentation exist."
+        ],
+        "keyboard": [
+          "Read-only and validation tests provide basic keyboard-interaction evidence."
+        ],
+        "hidpi": [
+          "Focused render tests exist without deterministic target HiDPI conformance."
+        ],
+        "rtl": [
+          "tests/widgets/inputs/tst_textfieldshellhelper_rtl.cpp covers shared shell direction."
+        ],
+        "tests": [
+          "Registered target tst_outlinedtextfield plus validation/render tests provide simple-case coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialOutlinedTextField."
+        ],
+        "docs": [
+          "docs/public-api/inputs.md and focused Text Field guides document the contract."
+        ]
       }
     }
   },
@@ -1036,16 +1196,36 @@
         "Add Navigation Rail reference-model, RTL and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/navigation/qtmaterialnavigationrail.h."],
-        "rendering": ["Production implementation exists: src/widgets/navigation/qtmaterialnavigationrail.cpp."],
-        "states": ["tests/widgets/navigation/tst_navigationrail.cpp exercises destinations and selection."],
-        "accessibility": ["The release-readiness guide documents accessibility summaries."],
-        "keyboard": ["The release-readiness guide documents navigation keys."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_navigationrail plus resolved-spec tests provide simple-case coverage."],
-        "example": ["examples/gallery/pages/navigationpage.cpp instantiates QtMaterialNavigationRail."],
-        "docs": ["docs/public-api/navigation.md links the focused release-readiness contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/navigation/qtmaterialnavigationrail.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/navigation/qtmaterialnavigationrail.cpp."
+        ],
+        "states": [
+          "tests/widgets/navigation/tst_navigationrail.cpp exercises destinations and selection."
+        ],
+        "accessibility": [
+          "The release-readiness guide documents accessibility summaries."
+        ],
+        "keyboard": [
+          "The release-readiness guide documents navigation keys."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_navigationrail plus resolved-spec tests provide simple-case coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialNavigationRail."
+        ],
+        "docs": [
+          "docs/public-api/navigation.md links the focused release-readiness contract."
+        ]
       }
     }
   },
@@ -1053,7 +1233,7 @@
     "id": "navigation.tabs",
     "name": "Tabs",
     "family": "Navigation",
-    "maturity": "partial",
+    "maturity": "usable",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/navigation/qtmaterialtabs.h",
     "specType": "TabsSpec",
@@ -1066,32 +1246,56 @@
     "maturityAxes": {
       "api": 2,
       "rendering": 2,
-      "states": 1,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "states": 2,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 0,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-09-19",
       "gaps": [
-        "Tabs has no gallery example and its complete interaction-state contract is not yet certified."
+        "Complete visual-reference and full state-matrix certification remain before Tabs can be marked complete."
       ],
       "nextActions": [
-        "Add a Tabs gallery page and certify keyboard, route, RTL and visual state coverage."
+        "Add deterministic visual-reference coverage and broaden the full state matrix for complete maturity."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/navigation/qtmaterialtabs.h."],
-        "rendering": ["Production implementation exists: src/widgets/navigation/qtmaterialtabs.cpp."],
-        "states": ["Focused route and resolved-lifecycle tests cover an incomplete state subset."],
-        "accessibility": ["The public navigation guide defines metadata and automation surfaces."],
-        "keyboard": ["Keyboard coverage has not reached a complete conformance contract."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_tabs plus route/theme/resolved-lifecycle tests provide focused coverage."],
-        "example": ["No QtMaterialTabs instance exists in the current gallery sources."],
-        "docs": ["docs/public-api/navigation.md documents the Tabs public contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/navigation/qtmaterialtabs.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/navigation/qtmaterialtabs.cpp."
+        ],
+        "states": [
+          "Route/resolved-lifecycle tests cover authored and resolved state.",
+          "tst_tabs certifies disabled-tab skipping, LTR/RTL keyboard state transitions and wrapping."
+        ],
+        "accessibility": [
+          "The material tab bar exposes a stable accessible name and native tab labels.",
+          "tst_tabs certifies the accessible tab-bar surface."
+        ],
+        "keyboard": [
+          "tst_tabs certifies Home/End, disabled-tab skipping, wrapping and LTR/RTL arrow navigation."
+        ],
+        "hidpi": [
+          "tst_tabs includes DPR 2.0 rendering smoke coverage."
+        ],
+        "rtl": [
+          "QtMaterialTabsBar maps horizontal arrow navigation to visual direction under RTL.",
+          "tst_tabs includes dedicated RTL keyboard coverage."
+        ],
+        "tests": [
+          "Registered tst_tabs plus route/theme/resolved-lifecycle tests provide focused coverage.",
+          "Tabs maturity coverage includes keyboard, accessibility, RTL and HiDPI."
+        ],
+        "example": [
+          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialTabs with routes, IDs and a badge."
+        ],
+        "docs": [
+          "docs/public-api/navigation.md documents the Tabs public contract."
+        ]
       }
     }
   },
@@ -1128,16 +1332,36 @@
         "Add progress token, animation, accessibility and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h."],
-        "rendering": ["Production implementation exists: src/widgets/progress/qtmaterialcircularprogressindicator.cpp."],
-        "states": ["The shared progress test exercises determinate and indeterminate modes."],
-        "accessibility": ["docs/public-api/progress-indicators.md documents value text and summaries."],
-        "keyboard": ["Progress indicators are display-only; keyboard activation does not apply."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["The circular geometry has no leading/trailing layout axis."],
-        "tests": ["Registered target tst_progressindicators provides simple-case coverage."],
-        "example": ["examples/gallery/pages/progressindicatorspage.cpp instantiates circular modes."],
-        "docs": ["docs/public-api/progress-indicators.md documents the public contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/progress/qtmaterialcircularprogressindicator.cpp."
+        ],
+        "states": [
+          "The shared progress test exercises determinate and indeterminate modes."
+        ],
+        "accessibility": [
+          "docs/public-api/progress-indicators.md documents value text and summaries."
+        ],
+        "keyboard": [
+          "Progress indicators are display-only; keyboard activation does not apply."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "The circular geometry has no leading/trailing layout axis."
+        ],
+        "tests": [
+          "Registered target tst_progressindicators provides simple-case coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/progressindicatorspage.cpp instantiates circular modes."
+        ],
+        "docs": [
+          "docs/public-api/progress-indicators.md documents the public contract."
+        ]
       }
     }
   },
@@ -1145,7 +1369,7 @@
     "id": "progress.linear",
     "name": "Linear Progress Indicator",
     "family": "Progress",
-    "maturity": "partial",
+    "maturity": "usable",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h",
     "specType": "ProgressIndicatorSpec",
@@ -1158,32 +1382,54 @@
     "maturityAxes": {
       "api": 2,
       "rendering": 2,
-      "states": 1,
-      "accessibility": 1,
+      "states": 2,
+      "accessibility": 2,
       "keyboard": "N/A",
-      "hidpi": 1,
-      "rtl": 1,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-09-19",
       "gaps": [
-        "Linear Progress state, animation and RTL behavior are not yet conformantly certified."
+        "Deterministic visual-reference coverage remains before Linear Progress can be marked complete."
       ],
       "nextActions": [
-        "Certify determinate, indeterminate, RTL and target-rendering behavior before promoting to usable."
+        "Add reviewed visual references and broader animation-end-state coverage for complete maturity."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h."],
-        "rendering": ["Production implementation exists: src/widgets/progress/qtmateriallinearprogressindicator.cpp."],
-        "states": ["The shared progress test covers modes without a complete state conformance matrix."],
-        "accessibility": ["Shared progress documentation provides basic accessibility guidance."],
-        "keyboard": ["Progress indicators are display-only; keyboard activation does not apply."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional rendering is not backed by a dedicated RTL conformance suite."],
-        "tests": ["Registered target tst_progressindicators provides focused shared coverage."],
-        "example": ["examples/gallery/pages/progressindicatorspage.cpp instantiates linear modes."],
-        "docs": ["docs/public-api/progress-indicators.md documents the public contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/progress/qtmateriallinearprogressindicator.cpp."
+        ],
+        "states": [
+          "tst_progressindicators covers determinate and indeterminate modes, clamping and show/hide animation state."
+        ],
+        "accessibility": [
+          "Linear progress exposes a stable accessible name and determinate/indeterminate value text.",
+          "tst_progressindicators certifies status text and percentage descriptions."
+        ],
+        "keyboard": [
+          "Progress indicators are display-only; keyboard activation does not apply."
+        ],
+        "hidpi": [
+          "tst_progressindicators includes DPR 2.0 render smoke coverage."
+        ],
+        "rtl": [
+          "Production rendering mirrors the active segment for RTL layouts.",
+          "tst_progressindicators samples LTR and RTL active/track placement."
+        ],
+        "tests": [
+          "Registered tst_progressindicators covers public API, modes, accessibility, RTL and HiDPI."
+        ],
+        "example": [
+          "examples/gallery/pages/progressindicatorspage.cpp instantiates linear modes."
+        ],
+        "docs": [
+          "docs/public-api/progress-indicators.md documents the public contract."
+        ]
       }
     }
   },
@@ -1220,16 +1466,36 @@
         "Add Checkbox state, keyboard, accessibility, RTL and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/selection/qtmaterialcheckbox.h."],
-        "rendering": ["Production implementation exists: src/widgets/selection/qtmaterialcheckbox.cpp."],
-        "states": ["tests/widgets/selection/tst_checkbox.cpp exercises the current selection behavior."],
-        "accessibility": ["docs/public-api/selection.md defines basic accessible-name guidance."],
-        "keyboard": ["Registered widget tests provide basic interaction coverage."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_checkbox provides simple-case widget coverage."],
-        "example": ["examples/gallery/pages/selectionpage.cpp instantiates QtMaterialCheckbox."],
-        "docs": ["docs/public-api/selection.md documents the public selection contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialcheckbox.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/selection/qtmaterialcheckbox.cpp."
+        ],
+        "states": [
+          "tests/widgets/selection/tst_checkbox.cpp exercises the current selection behavior."
+        ],
+        "accessibility": [
+          "docs/public-api/selection.md defines basic accessible-name guidance."
+        ],
+        "keyboard": [
+          "Registered widget tests provide basic interaction coverage."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_checkbox provides simple-case widget coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/selectionpage.cpp instantiates QtMaterialCheckbox."
+        ],
+        "docs": [
+          "docs/public-api/selection.md documents the public selection contract."
+        ]
       }
     }
   },
@@ -1266,16 +1532,36 @@
         "Add Radio Button state, keyboard, accessibility, RTL and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/selection/qtmaterialradiobutton.h."],
-        "rendering": ["Production implementation exists: src/widgets/selection/qtmaterialradiobutton.cpp."],
-        "states": ["tests/widgets/selection/tst_radiobutton.cpp exercises the current selection behavior."],
-        "accessibility": ["docs/public-api/selection.md defines basic accessible-name guidance."],
-        "keyboard": ["Registered widget tests provide basic interaction coverage."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_radiobutton provides simple-case widget coverage."],
-        "example": ["examples/gallery/pages/selectionpage.cpp instantiates QtMaterialRadioButton."],
-        "docs": ["docs/public-api/selection.md documents the public selection contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialradiobutton.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/selection/qtmaterialradiobutton.cpp."
+        ],
+        "states": [
+          "tests/widgets/selection/tst_radiobutton.cpp exercises the current selection behavior."
+        ],
+        "accessibility": [
+          "docs/public-api/selection.md defines basic accessible-name guidance."
+        ],
+        "keyboard": [
+          "Registered widget tests provide basic interaction coverage."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_radiobutton provides simple-case widget coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/selectionpage.cpp instantiates QtMaterialRadioButton."
+        ],
+        "docs": [
+          "docs/public-api/selection.md documents the public selection contract."
+        ]
       }
     }
   },
@@ -1312,16 +1598,36 @@
         "Add Segmented Button state, keyboard, accessibility, RTL and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h."],
-        "rendering": ["Production implementation exists: src/widgets/selection/qtmaterialsegmentedbutton.cpp."],
-        "states": ["tests/widgets/selection/tst_segmentedbutton.cpp exercises selection behavior."],
-        "accessibility": ["The focused release-readiness guide documents accessibility behavior."],
-        "keyboard": ["Registered widget and spec tests provide basic interaction coverage."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_segmentedbutton plus resolver tests provide simple-case coverage."],
-        "example": ["examples/gallery/pages/selectionpage.cpp instantiates QtMaterialSegmentedButton."],
-        "docs": ["docs/public-api/selection.md links the Segmented Button release contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/selection/qtmaterialsegmentedbutton.cpp."
+        ],
+        "states": [
+          "tests/widgets/selection/tst_segmentedbutton.cpp exercises selection behavior."
+        ],
+        "accessibility": [
+          "The focused release-readiness guide documents accessibility behavior."
+        ],
+        "keyboard": [
+          "Registered widget and spec tests provide basic interaction coverage."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_segmentedbutton plus resolver tests provide simple-case coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/selectionpage.cpp instantiates QtMaterialSegmentedButton."
+        ],
+        "docs": [
+          "docs/public-api/selection.md links the Segmented Button release contract."
+        ]
       }
     }
   },
@@ -1358,16 +1664,36 @@
         "Add Switch state, keyboard, accessibility, RTL and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/selection/qtmaterialswitch.h."],
-        "rendering": ["Production implementation exists: src/widgets/selection/qtmaterialswitch.cpp."],
-        "states": ["tests/widgets/selection/tst_switch.cpp exercises the current selection behavior."],
-        "accessibility": ["docs/public-api/selection.md defines basic accessible-name guidance."],
-        "keyboard": ["Registered widget tests provide basic interaction coverage."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_switch provides simple-case widget coverage."],
-        "example": ["examples/gallery/pages/selectionpage.cpp instantiates QtMaterialSwitch."],
-        "docs": ["docs/public-api/selection.md documents the public selection contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialswitch.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/selection/qtmaterialswitch.cpp."
+        ],
+        "states": [
+          "tests/widgets/selection/tst_switch.cpp exercises the current selection behavior."
+        ],
+        "accessibility": [
+          "docs/public-api/selection.md defines basic accessible-name guidance."
+        ],
+        "keyboard": [
+          "Registered widget tests provide basic interaction coverage."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_switch provides simple-case widget coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/selectionpage.cpp instantiates QtMaterialSwitch."
+        ],
+        "docs": [
+          "docs/public-api/selection.md documents the public selection contract."
+        ]
       }
     }
   },
@@ -1404,16 +1730,36 @@
         "Add Banner state, focus, RTL and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialbanner.h."],
-        "rendering": ["Production implementation exists: src/widgets/surfaces/qtmaterialbanner.cpp."],
-        "states": ["tests/widgets/surfaces/tst_banner.cpp exercises current surface behavior."],
-        "accessibility": ["The release-readiness guide documents accessible summaries and actions."],
-        "keyboard": ["The release-readiness guide documents focusable actions."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_banner provides simple-case widget coverage."],
-        "example": ["Gallery navigation and surfaces pages instantiate QtMaterialBanner."],
-        "docs": ["docs/public-api/banner-release-readiness.md documents the public contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialbanner.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/surfaces/qtmaterialbanner.cpp."
+        ],
+        "states": [
+          "tests/widgets/surfaces/tst_banner.cpp exercises current surface behavior."
+        ],
+        "accessibility": [
+          "The release-readiness guide documents accessible summaries and actions."
+        ],
+        "keyboard": [
+          "The release-readiness guide documents focusable actions."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_banner provides simple-case widget coverage."
+        ],
+        "example": [
+          "Gallery navigation and surfaces pages instantiate QtMaterialBanner."
+        ],
+        "docs": [
+          "docs/public-api/banner-release-readiness.md documents the public contract."
+        ]
       }
     }
   },
@@ -1450,16 +1796,36 @@
         "Add App Bar state, action, RTL and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h."],
-        "rendering": ["Production implementation exists: src/widgets/surfaces/qtmaterialbottomappbar.cpp."],
-        "states": ["tests/widgets/surfaces/tst_bottomappbar.cpp exercises current app-bar behavior."],
-        "accessibility": ["The AppBar release-readiness guide documents accessible action names."],
-        "keyboard": ["The AppBar release-readiness guide documents basic activation keys."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional action layout exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_bottomappbar provides simple-case widget coverage."],
-        "example": ["examples/gallery/pages/navigationpage.cpp instantiates QtMaterialBottomAppBar."],
-        "docs": ["docs/public-api/appbars-release-readiness.md documents the shared AppBar contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/surfaces/qtmaterialbottomappbar.cpp."
+        ],
+        "states": [
+          "tests/widgets/surfaces/tst_bottomappbar.cpp exercises current app-bar behavior."
+        ],
+        "accessibility": [
+          "The AppBar release-readiness guide documents accessible action names."
+        ],
+        "keyboard": [
+          "The AppBar release-readiness guide documents basic activation keys."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional action layout exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_bottomappbar provides simple-case widget coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialBottomAppBar."
+        ],
+        "docs": [
+          "docs/public-api/appbars-release-readiness.md documents the shared AppBar contract."
+        ]
       }
     }
   },
@@ -1496,16 +1862,36 @@
         "Add drag, focus, RTL and visual conformance evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h."],
-        "rendering": ["Production implementation exists: src/widgets/surfaces/qtmaterialbottomsheet.cpp."],
-        "states": ["tests/widgets/surfaces/tst_bottomsheet.cpp exercises current sheet states."],
-        "accessibility": ["The release-readiness guide documents accessible sheet summaries."],
-        "keyboard": ["The release-readiness guide documents Escape and Ctrl+Down behavior."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_bottomsheet plus drag-robustness coverage exercise simple cases."],
-        "example": ["examples/gallery/pages/navigationpage.cpp instantiates QtMaterialBottomSheet."],
-        "docs": ["docs/public-api/bottomsheet-release-readiness.md documents the public contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/surfaces/qtmaterialbottomsheet.cpp."
+        ],
+        "states": [
+          "tests/widgets/surfaces/tst_bottomsheet.cpp exercises current sheet states."
+        ],
+        "accessibility": [
+          "The release-readiness guide documents accessible sheet summaries."
+        ],
+        "keyboard": [
+          "The release-readiness guide documents Escape and Ctrl+Down behavior."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_bottomsheet plus drag-robustness coverage exercise simple cases."
+        ],
+        "example": [
+          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialBottomSheet."
+        ],
+        "docs": [
+          "docs/public-api/bottomsheet-release-readiness.md documents the public contract."
+        ]
       }
     }
   },
@@ -1542,16 +1928,36 @@
         "Add Card variant, interaction, accessibility and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialcard.h."],
-        "rendering": ["Production implementation exists: src/widgets/surfaces/qtmaterialcard.cpp."],
-        "states": ["tests/widgets/surfaces/tst_card.cpp exercises current card behavior."],
-        "accessibility": ["The surfaces guide links the focused Card release-readiness contract."],
-        "keyboard": ["Registered widget tests provide basic interaction coverage."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional content behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_card provides simple-case widget coverage."],
-        "example": ["Gallery surfaces and data pages instantiate QtMaterialCard."],
-        "docs": ["docs/public-api/surfaces.md documents and links the Card contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialcard.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/surfaces/qtmaterialcard.cpp."
+        ],
+        "states": [
+          "tests/widgets/surfaces/tst_card.cpp exercises current card behavior."
+        ],
+        "accessibility": [
+          "The surfaces guide links the focused Card release-readiness contract."
+        ],
+        "keyboard": [
+          "Registered widget tests provide basic interaction coverage."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional content behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_card provides simple-case widget coverage."
+        ],
+        "example": [
+          "Gallery surfaces and data pages instantiate QtMaterialCard."
+        ],
+        "docs": [
+          "docs/public-api/surfaces.md documents and links the Card contract."
+        ]
       }
     }
   },
@@ -1588,16 +1994,36 @@
         "Add Dialog focus, accessibility, RTL and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialdialog.h."],
-        "rendering": ["Production implementation exists: src/widgets/surfaces/qtmaterialdialog.cpp."],
-        "states": ["tests/widgets/surfaces/tst_dialog.cpp exercises current modal behavior."],
-        "accessibility": ["docs/public-api/surfaces.md documents accessible name and description mapping."],
-        "keyboard": ["The public guide documents modal focus and keyboard behavior."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional content behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_dialog plus resolver tests provide simple-case coverage."],
-        "example": ["examples/gallery/pages/surfacespage.cpp instantiates QtMaterialDialog."],
-        "docs": ["docs/public-api/surfaces.md documents the Dialog public contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialdialog.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/surfaces/qtmaterialdialog.cpp."
+        ],
+        "states": [
+          "tests/widgets/surfaces/tst_dialog.cpp exercises current modal behavior."
+        ],
+        "accessibility": [
+          "docs/public-api/surfaces.md documents accessible name and description mapping."
+        ],
+        "keyboard": [
+          "The public guide documents modal focus and keyboard behavior."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional content behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_dialog plus resolver tests provide simple-case coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/surfacespage.cpp instantiates QtMaterialDialog."
+        ],
+        "docs": [
+          "docs/public-api/surfaces.md documents the Dialog public contract."
+        ]
       }
     }
   },
@@ -1634,16 +2060,36 @@
         "Add Drawer state, focus, RTL and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h."],
-        "rendering": ["Production implementation exists: src/widgets/surfaces/qtmaterialnavigationdrawer.cpp."],
-        "states": ["tests/widgets/surfaces/tst_navigationdrawer.cpp exercises destinations and selection."],
-        "accessibility": ["The release-readiness guide documents drawer and destination summaries."],
-        "keyboard": ["The release-readiness guide documents arrow, Home and End behavior."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_navigationdrawer provides simple-case widget coverage."],
-        "example": ["examples/gallery/pages/navigationpage.cpp instantiates QtMaterialNavigationDrawer."],
-        "docs": ["docs/public-api/navigationdrawer-release-readiness.md documents the public contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/surfaces/qtmaterialnavigationdrawer.cpp."
+        ],
+        "states": [
+          "tests/widgets/surfaces/tst_navigationdrawer.cpp exercises destinations and selection."
+        ],
+        "accessibility": [
+          "The release-readiness guide documents drawer and destination summaries."
+        ],
+        "keyboard": [
+          "The release-readiness guide documents arrow, Home and End behavior."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional behavior exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_navigationdrawer provides simple-case widget coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialNavigationDrawer."
+        ],
+        "docs": [
+          "docs/public-api/navigationdrawer-release-readiness.md documents the public contract."
+        ]
       }
     }
   },
@@ -1651,7 +2097,7 @@
     "id": "surface.snackbar",
     "name": "Snackbar",
     "family": "Surfaces",
-    "maturity": "partial",
+    "maturity": "usable",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialsnackbar.h",
     "specType": "SnackbarSpec",
@@ -1664,32 +2110,56 @@
     "maturityAxes": {
       "api": 2,
       "rendering": 2,
-      "states": 1,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "states": 2,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-09-19",
       "gaps": [
-        "Snackbar lifecycle, action, focus and target-rendering behavior are not yet conformantly certified."
+        "Reviewed visual-reference coverage and a broader transient-surface matrix remain before complete maturity."
       ],
       "nextActions": [
-        "Certify Snackbar host lifecycle, action states, accessibility and visual rendering before promoting to usable."
+        "Add deterministic visual references and extended transient-surface state coverage for complete maturity."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h."],
-        "rendering": ["Production implementation exists: src/widgets/surfaces/qtmaterialsnackbar.cpp."],
-        "states": ["Snackbar widget, host and lifecycle tests cover an incomplete state subset."],
-        "accessibility": ["The surfaces API provides only basic Snackbar documentation."],
-        "keyboard": ["Action and focus behavior has no complete keyboard conformance contract."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional content behavior exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered tst_snackbar plus host and lifecycle tests provide focused coverage."],
-        "example": ["examples/gallery/pages/surfacespage.cpp exercises QtMaterialSnackbarHost."],
-        "docs": ["docs/public-api/surfaces.md documents the current Snackbar surface."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/surfaces/qtmaterialsnackbar.cpp."
+        ],
+        "states": [
+          "Snackbar widget, host and lifecycle tests cover show/dismiss/action behavior.",
+          "Action and dismiss controls now feed focus/hover events into auto-hide pause state."
+        ],
+        "accessibility": [
+          "Snackbar synchronizes accessible name/description whenever request content changes.",
+          "tst_snackbar certifies message, action and dismissibility accessibility."
+        ],
+        "keyboard": [
+          "Escape dismissal is covered.",
+          "Action-control focus interaction is covered by tst_snackbar."
+        ],
+        "hidpi": [
+          "tst_snackbar includes DPR 2.0 render smoke coverage."
+        ],
+        "rtl": [
+          "tst_snackbar includes right-to-left layout render coverage."
+        ],
+        "tests": [
+          "Registered tst_snackbar plus host and lifecycle tests provide focused coverage.",
+          "Maturity coverage now includes accessibility, interaction pause, RTL and HiDPI."
+        ],
+        "example": [
+          "examples/gallery/pages/surfacespage.cpp exercises QtMaterialSnackbarHost."
+        ],
+        "docs": [
+          "docs/public-api/surfaces.md documents the current Snackbar surface."
+        ]
       }
     }
   },
@@ -1726,16 +2196,36 @@
         "Add App Bar state, action, RTL and visual evidence before raising maturity axes."
       ],
       "evidence": {
-        "api": ["Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialtopappbar.h."],
-        "rendering": ["Production implementation exists: src/widgets/surfaces/qtmaterialtopappbar.cpp."],
-        "states": ["tests/widgets/surfaces/tst_topappbar.cpp exercises current app-bar behavior."],
-        "accessibility": ["The AppBar release-readiness guide documents accessible action names."],
-        "keyboard": ["The AppBar release-readiness guide documents basic activation keys."],
-        "hidpi": ["Custom rendering exists without deterministic target HiDPI evidence."],
-        "rtl": ["Directional action layout exists without dedicated RTL conformance evidence."],
-        "tests": ["Registered target tst_topappbar provides simple-case widget coverage."],
-        "example": ["examples/gallery/pages/navigationpage.cpp instantiates QtMaterialTopAppBar."],
-        "docs": ["docs/public-api/appbars-release-readiness.md documents the shared AppBar contract."]
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialtopappbar.h."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/surfaces/qtmaterialtopappbar.cpp."
+        ],
+        "states": [
+          "tests/widgets/surfaces/tst_topappbar.cpp exercises current app-bar behavior."
+        ],
+        "accessibility": [
+          "The AppBar release-readiness guide documents accessible action names."
+        ],
+        "keyboard": [
+          "The AppBar release-readiness guide documents basic activation keys."
+        ],
+        "hidpi": [
+          "Custom rendering exists without deterministic target HiDPI evidence."
+        ],
+        "rtl": [
+          "Directional action layout exists without dedicated RTL conformance evidence."
+        ],
+        "tests": [
+          "Registered target tst_topappbar provides simple-case widget coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialTopAppBar."
+        ],
+        "docs": [
+          "docs/public-api/appbars-release-readiness.md documents the shared AppBar contract."
+        ]
       }
     }
   }

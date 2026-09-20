@@ -1026,7 +1026,7 @@ QJsonObject metadataToJson()
 {
     QJsonObject object;
     object.insert(QStringLiteral("generatorVersion"), QStringLiteral("qt-material3-widget ThemeSerializer v1"));
-    object.insert(QStringLiteral("libraryVersion"), QStringLiteral("0.4.1"));
+    object.insert(QStringLiteral("libraryVersion"), QStringLiteral("0.5.0"));
     object.insert(QStringLiteral("qtVersion"), QString::fromLatin1(QT_VERSION_STR));
     return object;
 }

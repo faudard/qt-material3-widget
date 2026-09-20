@@ -1,5 +1,9 @@
 # qt-material3-widget — Future Roadmap and Current Status
 
+> **Historical planning document.** This file records an earlier repository assessment and may contain stale status statements.
+> Use [ROADMAP.md](ROADMAP.md) for the active release roadmap, [STATUS.md](STATUS.md) for generated component status,
+> and `docs/components/component-registry.json` as the canonical component maturity source.
+
 Repository: <https://github.com/faudard/qt-material3-widget>
 
 This document combines two prior responses:

@@ -10,6 +10,7 @@ namespace QtMaterial {
 struct QtMaterialTextFieldValidationGroupPrivate {
 
     QList<QPointer<QtMaterialOutlinedTextField>> m_fields;
+    QList<QtMaterialOutlinedTextField*> m_fieldAddresses;
     QHash<QtMaterialOutlinedTextField*, QString> m_fieldLabels;
     QHash<QtMaterialOutlinedTextField*, QString> m_fieldErrorMessages;
     QStringList m_validationSummary;
@@ -44,11 +45,12 @@ void QtMaterialTextFieldValidationGroup::addField(QtMaterialOutlinedTextField* f
     }
 
     d_ptr->m_fields.append(QPointer<QtMaterialOutlinedTextField>(field));
+    d_ptr->m_fieldAddresses.append(field);
 
     connect(field, &QObject::destroyed, this, [this, field]() {
-        for (int i = d_ptr->m_fields.size() - 1; i >= 0; --i) {
-            const auto& candidate = d_ptr->m_fields.at(i);
-            if (!candidate || candidate.data() == field) {
+        for (int i = d_ptr->m_fieldAddresses.size() - 1; i >= 0; --i) {
+            if (d_ptr->m_fieldAddresses.at(i) == field) {
+                d_ptr->m_fieldAddresses.removeAt(i);
                 d_ptr->m_fields.removeAt(i);
             }
         }
@@ -88,6 +90,7 @@ void QtMaterialTextFieldValidationGroup::removeField(QtMaterialOutlinedTextField
     d_ptr->m_fieldLabels.remove(field);
     d_ptr->m_fieldErrorMessages.remove(field);
     d_ptr->m_fields.removeAt(idx);
+    d_ptr->m_fieldAddresses.removeAt(idx);
     d_ptr->refreshAcceptable(this);
     d_ptr->refreshValidationSummary(this);
     emit fieldRemoved(field);
@@ -299,8 +302,8 @@ int QtMaterialTextFieldValidationGroupPrivate::indexOf(QtMaterialOutlinedTextFie
         return -1;
     }
 
-    for (int i = 0; i < m_fields.size(); ++i) {
-        if (m_fields.at(i) == field) {
+    for (int i = 0; i < m_fieldAddresses.size(); ++i) {
+        if (m_fieldAddresses.at(i) == field) {
             return i;
         }
     }
@@ -312,6 +315,7 @@ void QtMaterialTextFieldValidationGroupPrivate::removeNullFields()
     for (int i = m_fields.size() - 1; i >= 0; --i) {
         if (!m_fields.at(i)) {
             m_fields.removeAt(i);
+            m_fieldAddresses.removeAt(i);
         }
     }
 }

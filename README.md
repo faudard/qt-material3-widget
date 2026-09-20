@@ -2,10 +2,10 @@
 
 Material 3 widget toolkit for Qt Widgets.
 
-> **Status:** experimental / design-in-progress.
-> The repository already exposes the intended module layout, public API families,
-> and consumer examples, but several components are still under active
-> implementation and API stabilization.
+> **Status:** 0.5.0 foundation release in stabilization.
+> The package and public API are validated through a cross-platform consumer matrix.
+> Component maturity is tracked from the canonical registry; APIs remain pre-1.0 and
+> may still change between minor releases.
 
 ## Why this project exists
 
@@ -80,7 +80,7 @@ Some files are intentionally skeletal so the public architecture and module boun
 
 ## Requirements
 
-- Qt >5.14.x or Qt 6.x
+- Qt 5.14.2+ or Qt 6.x
 - CMake 3.21+
 - C++ toolchain compatible with the selected Qt release
 
@@ -156,7 +156,7 @@ This repository documentation should cover:
 Start here for public usage guidance:
 
 - [Public API guide](docs/public-api/index.md)
-- [Theming guide](docs/public-api/theming.md)
+- [Theming guide](docs/public-api/theming.md)\n- [Roadmap](ROADMAP.md)\n- [Release process](docs/release-process.md)\n- [Changelog](CHANGELOG.md)
 
 ## Public API families
 
