@@ -113,7 +113,7 @@ def validate(root: Path, expected_version: str | None = None) -> list[str]:
         "Slider",
         "Date",
         "Menu",
-        "Data",
+        "desktop-data",
     ]:
         if marker not in roadmap:
             errors.append(f"ROADMAP.md missing 0.8 marker: {marker}")
