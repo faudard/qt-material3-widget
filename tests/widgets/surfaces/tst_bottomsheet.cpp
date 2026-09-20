@@ -17,6 +17,8 @@ private slots:
     void accessibilitySummary();
     void escapePolicy();
     void initialFocusAndRestoreFocus();
+    void modalTabFocusStaysInsideSheet();
+    void nonModalTabCanLeaveSheet();
     void dragDownCollapsesOrDismisses();
 };
 
@@ -130,6 +132,74 @@ void tst_QtMaterialBottomSheet::initialFocusAndRestoreFocus()
     sheet.close();
     QTRY_VERIFY(!sheet.isOpen());
     QTRY_COMPARE(QApplication::focusWidget(), outsideButton);
+}
+
+void tst_QtMaterialBottomSheet::modalTabFocusStaysInsideSheet()
+{
+    QWidget host;
+    auto* hostLayout = new QVBoxLayout(&host);
+    auto* outside = new QPushButton(QStringLiteral("Outside"), &host);
+    hostLayout->addWidget(outside);
+    host.resize(800, 600);
+    host.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&host));
+
+    QtMaterial::QtMaterialBottomSheet sheet(&host);
+    sheet.setModal(true);
+
+    auto* layout = new QVBoxLayout(sheet.contentWidget());
+    auto* first = new QPushButton(QStringLiteral("First"), sheet.contentWidget());
+    auto* second = new QPushButton(QStringLiteral("Second"), sheet.contentWidget());
+    layout->addWidget(first);
+    layout->addWidget(second);
+    sheet.setInitialFocusWidget(first);
+
+    sheet.open();
+    QTRY_COMPARE(
+        sheet.state(),
+        QtMaterial::QtMaterialBottomSheet::SheetState::Open);
+    QTRY_COMPARE(QApplication::focusWidget(), first);
+
+    QTest::keyClick(first, Qt::Key_Tab);
+    QTRY_COMPARE(QApplication::focusWidget(), second);
+
+    QTest::keyClick(second, Qt::Key_Tab);
+    QTRY_COMPARE(QApplication::focusWidget(), first);
+
+    QTest::keyClick(first, Qt::Key_Backtab);
+    QTRY_COMPARE(QApplication::focusWidget(), second);
+
+    sheet.close();
+    QTRY_COMPARE(
+        sheet.state(),
+        QtMaterial::QtMaterialBottomSheet::SheetState::Closed);
+}
+
+void tst_QtMaterialBottomSheet::nonModalTabCanLeaveSheet()
+{
+    QWidget host;
+    auto* hostLayout = new QVBoxLayout(&host);
+    auto* outside = new QPushButton(QStringLiteral("Outside"), &host);
+    hostLayout->addWidget(outside);
+    host.resize(800, 600);
+    host.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&host));
+
+    QtMaterial::QtMaterialBottomSheet sheet(&host);
+    sheet.setModal(false);
+    auto* inside = new QPushButton(QStringLiteral("Inside"), sheet.contentWidget());
+    inside->setFocusPolicy(Qt::StrongFocus);
+    sheet.setInitialFocusWidget(inside);
+
+    sheet.open();
+    QTRY_COMPARE(
+        sheet.state(),
+        QtMaterial::QtMaterialBottomSheet::SheetState::Open);
+    QTRY_COMPARE(QApplication::focusWidget(), inside);
+
+    QVERIFY(!sheet.focusNextChild() || QApplication::focusWidget() != inside);
+
+    sheet.close();
 }
 
 void tst_QtMaterialBottomSheet::dragDownCollapsesOrDismisses()
