@@ -197,7 +197,8 @@ void tst_QtMaterialBottomSheet::nonModalTabCanLeaveSheet()
         QtMaterial::QtMaterialBottomSheet::SheetState::Open);
     QTRY_COMPARE(QApplication::focusWidget(), inside);
 
-    QVERIFY(!sheet.focusNextChild() || QApplication::focusWidget() != inside);
+    QTest::keyClick(inside, Qt::Key_Tab);
+    QTRY_VERIFY(QApplication::focusWidget() != inside);
 
     sheet.close();
 }

@@ -252,6 +252,7 @@ jobs:
         run: |
           python3 tools/check_release_contract.py --root . --expected-version 0.7.0
           python3 tools/check_theme_release_contract.py --root . --expected-version 0.7.0
+          python3 tools/check_interaction_release_contract.py --root . --expected-version 0.7.0
 
       - name: Configure release package
         run: >

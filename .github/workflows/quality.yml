@@ -39,6 +39,9 @@ jobs:
       - name: Check 0.7.0 theme release contract
         run: python tools/check_theme_release_contract.py --root . --expected-version 0.7.0
 
+      - name: Check 0.7.0 interaction release contract
+        run: python tools/check_interaction_release_contract.py --root . --expected-version 0.7.0
+
       - name: Check patch whitespace
         run: git diff --check
 
