@@ -5,7 +5,26 @@ All notable changes to qt-material3-widget are documented here.
 The project follows semantic versioning while it remains pre-1.0: minor releases may contain
 source or ABI changes, and those changes must be called out explicitly.
 
-## [0.6.0] - Unreleased
+## [0.7.0] - Unreleased
+
+### Added
+- Unified interaction-state certification for enabled, disabled, hover, focus, press, checked/selected, indeterminate, drag, error, and read-only states.
+- Ripple origin/bounds/reduced-motion policies.
+- Focus visibility, trapping, and restoration contracts for transient surfaces.
+- Device-pixel-ratio-aware shadow cache keys and performance coverage.
+- Central reduced-motion behavior for transition controllers and deterministic tests.
+- Interaction/effects release checker and CI gate.
+
+### Changed
+- Shared effects consume the same interaction and accessibility policies instead of widget-local timing/painting conventions.
+- Motion cancellation and end-state behavior are deterministic.
+- Shadow and ripple benchmarks cover DPR and reduced-motion paths.
+
+### Compatibility
+- Minimum supported Qt remains Qt 5.14.2.
+- C++17 and CMake 3.21+ remain required.
+
+## [0.6.0] - 2026-09-20
 
 ### Added
 - Frozen Theme JSON formatVersion 1 contract with deterministic serializer fixtures and strict validation.

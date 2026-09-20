@@ -49,10 +49,27 @@ Release gates:
 
 ## 0.7.0 — Interaction and Effects
 
-- Common interaction-state conformance across all interactive widgets.
-- Focus restoration/trapping contracts for transient surfaces.
-- Reduced-motion policy.
-- HiDPI shadow/cache performance certification.
+Goal: make interactive behavior and effects consistent, deterministic, accessible, and
+performance-safe across the widget library.
+
+Release gates:
+
+- A shared interaction-state contract covers enabled/disabled, hover, focus, press,
+  checked/selected, indeterminate, dragged, error, read-only, busy, and expanded states.
+- State transitions clear impossible transient combinations and expose stable automation metadata.
+- Ripple supports bounded/unbounded painting, pointer/center origins, disabled suppression,
+  high-DPI correctness, and reduced-motion completion.
+- State layers resolve one canonical opacity from the interaction state and theme tokens.
+- Focus indication follows keyboard-focus visibility policy and shared focus-ring tokens.
+- Dialog and modal transient surfaces trap focus while open and restore the previous focus target
+  when dismissed.
+- Tabs, menus, lists, selection controls, and buttons retain deterministic keyboard navigation.
+- Motion uses theme motion tokens, supports cancellation/re-targeting, has deterministic final states,
+  and collapses to immediate completion under reduced motion.
+- Shadow cache identity includes device pixel ratio; cache/render benchmarks exercise 1x and 2x paths.
+- Effects do not request unnecessary animation frames when inactive or reduced motion is enabled.
+- Windows Qt 5.14.2/MSVC v142, Windows Qt 6, Ubuntu Qt 6, macOS Qt 6, ASan/UBSan,
+  examples/benchmarks, documentation, package, and installed-consumer gates remain green.
 
 ## 0.8.0 — Component Expansion
 
