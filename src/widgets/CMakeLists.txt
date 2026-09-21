@@ -55,8 +55,13 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     inputs/qtmaterialautocomplete.cpp
     qtmaterialdatepicker.cpp
     data/qtmaterialtable.cpp
+    data/qtmaterialtreeview.cpp
+    data/qtmaterialpagination.cpp
     data/qtmaterialgridlist.cpp
     data/qtmaterialcarousel.cpp
+    layouts/qtmaterialsplitview.cpp
+    navigation/qtmaterialbreadcrumb.cpp
+    navigation/qtmaterialcommandpalette.cpp
 )
 
 set(QTMATERIAL3_WIDGETS_HEADERS
@@ -115,8 +120,13 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialautocomplete.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/qtmaterialdatepicker.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialtable.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialtreeview.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialpagination.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialgridlist.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialcarousel.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/layouts/qtmaterialsplitview.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialcommandpalette.h
 )
 
 qtm3_add_module(

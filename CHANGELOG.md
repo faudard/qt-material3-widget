@@ -5,6 +5,25 @@ All notable changes to qt-material3-widget are documented here.
 The project follows semantic versioning while it remains pre-1.0: minor releases may contain
 source or ABI changes, and those changes must be called out explicitly.
 
+## [0.9.0] - Unreleased
+
+### Added
+- QtMaterialTreeView for large hierarchical Model/View workloads.
+- QtMaterialPagination with backend-neutral page/page-size/total-count state.
+- QtMaterialSplitView on top of QSplitter with explicit pane collapse policies.
+- QtMaterialBreadcrumb and QtMaterialCommandPalette for desktop navigation and command workflows.
+- Desktop/productivity release contract and 100000-row virtual-model certification.
+
+### Changed
+- QtMaterialTable exposes explicit column-reordering, cell-selection and native internal drag/drop policies.
+- Advanced data/navigation gallery pages demonstrate the 0.9 desktop workflows.
+- Component registry expands with the 0.9 desktop/productivity surface.
+
+### Compatibility
+- Minimum supported Qt remains Qt 5.14.2.
+- C++17 and CMake 3.21+ remain required.
+- New desktop components preserve native Qt Model/View, QSplitter and drag/drop contracts.
+
 ## [0.8.0] - Unreleased
 
 ### Added

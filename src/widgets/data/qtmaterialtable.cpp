@@ -261,6 +261,8 @@ QtMaterialTable::QtMaterialTable(
     setShowGrid(true);
     setFocusPolicy(Qt::StrongFocus);
     setSortingEnabled(true);
+    horizontalHeader()->setSectionsMovable(false);
+    setDragDropMode(QAbstractItemView::NoDragDrop);
 
     d_ptr->delegate =
         new MaterialTableDelegate(this);
@@ -396,6 +398,59 @@ void QtMaterialTable::setMultiSelectionEnabled(bool enabled)
             : QAbstractItemView::SingleSelection);
     syncAccessibility();
     Q_EMIT multiSelectionEnabledChanged(enabled);
+}
+
+bool QtMaterialTable::columnReorderingEnabled() const noexcept
+{
+    return horizontalHeader()->sectionsMovable();
+}
+
+void QtMaterialTable::setColumnReorderingEnabled(bool enabled)
+{
+    if (columnReorderingEnabled() == enabled) {
+        return;
+    }
+    horizontalHeader()->setSectionsMovable(enabled);
+    Q_EMIT columnReorderingEnabledChanged(enabled);
+}
+
+bool QtMaterialTable::cellSelectionEnabled() const noexcept
+{
+    return selectionBehavior() == QAbstractItemView::SelectItems;
+}
+
+void QtMaterialTable::setCellSelectionEnabled(bool enabled)
+{
+    if (cellSelectionEnabled() == enabled) {
+        return;
+    }
+    setSelectionBehavior(
+        enabled
+            ? QAbstractItemView::SelectItems
+            : QAbstractItemView::SelectRows);
+    Q_EMIT cellSelectionEnabledChanged(enabled);
+}
+
+bool QtMaterialTable::dragDropEnabled() const noexcept
+{
+    return dragDropMode() == QAbstractItemView::InternalMove;
+}
+
+void QtMaterialTable::setDragDropEnabled(bool enabled)
+{
+    if (dragDropEnabled() == enabled) {
+        return;
+    }
+
+    setDragEnabled(enabled);
+    viewport()->setAcceptDrops(enabled);
+    setDropIndicatorShown(enabled);
+    setDefaultDropAction(Qt::MoveAction);
+    setDragDropMode(
+        enabled
+            ? QAbstractItemView::InternalMove
+            : QAbstractItemView::NoDragDrop);
+    Q_EMIT dragDropEnabledChanged(enabled);
 }
 
 QString

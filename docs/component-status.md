@@ -30,7 +30,9 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 |---|---|---:|---|---|---|---|---|
 | `data.carousel` | Carousel | `usable` | `qtmaterial/widgets/data/qtmaterialcarousel.h` | `DataComponentSpec` | `tst_carousel` | `docs/public-api/data-widgets.md` | `/data/carousel` |
 | `data.grid-list` | Grid List | `usable` | `qtmaterial/widgets/data/qtmaterialgridlist.h` | `DataComponentSpec` | `tst_gridlist` | `docs/public-api/data-widgets.md` | `/data/grid-list` |
+| `data.pagination` | Pagination | `usable` | `qtmaterial/widgets/data/qtmaterialpagination.h` | `PaginationPolicy` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/pagination` |
 | `data.table` | Table | `usable` | `qtmaterial/widgets/data/qtmaterialtable.h` | `TableSpec` | `tst_table` | `docs/public-api/data-widgets.md` | `/data/table` |
+| `data.tree-view` | Tree View | `usable` | `qtmaterial/widgets/data/qtmaterialtreeview.h` | `NativeQtViewPolicy` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/tree-view` |
 
 ## Data display
 
@@ -54,10 +56,18 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 | `input.time-field` | Time Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialtimefield.h` | `DateFieldSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/time-field` |
 | `input.time-picker` | Time Picker | `usable` | `qtmaterial/widgets/inputs/qtmaterialtimepicker.h` | `DateFieldSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/time-picker` |
 
+## Layouts
+
+| ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
+|---|---|---:|---|---|---|---|---|
+| `layout.split-view` | Split View | `usable` | `qtmaterial/widgets/layouts/qtmaterialsplitview.h` | `NativeQtLayoutPolicy` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/layouts/split-view` |
+
 ## Navigation
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
+| `navigation.breadcrumb` | Breadcrumb | `usable` | `qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h` | `NavigationPolicy` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/navigation/breadcrumb` |
+| `navigation.command-palette` | Command Palette | `usable` | `qtmaterial/widgets/navigation/qtmaterialcommandpalette.h` | `AutocompletePopupSpec` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/navigation/command-palette` |
 | `navigation.rail` | Navigation Rail | `usable` | `qtmaterial/widgets/navigation/qtmaterialnavigationrail.h` | `NavigationRailSpec` | `tst_navigationrail` | `docs/public-api/navigation.md` | `/navigation/rail` |
 | `navigation.tabs` | Tabs | `usable` | `qtmaterial/widgets/navigation/qtmaterialtabs.h` | `TabsSpec` | `tst_tabs` | `docs/public-api/navigation.md` | `/navigation/tabs` |
 

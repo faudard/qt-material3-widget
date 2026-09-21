@@ -92,6 +92,32 @@ Release gates:
 - Windows Qt 5.14.2/MSVC v142, Windows Qt 6, Ubuntu Qt 6, macOS Qt 6, ASan/UBSan,
   examples/benchmarks, documentation, package and installed-consumer gates remain green.
 
+## 0.9.0 — Desktop and Productivity
+
+Goal: make qt-material3-widget suitable for large professional Qt Widgets applications
+without replacing Qt Model/View, QSplitter, drag/drop or application command models.
+
+Release gates:
+
+- TreeView remains a QTreeView and preserves external QAbstractItemModel ownership, lazy loading,
+  delegates, expansion state, keyboard navigation and large-model behavior.
+- Data Table keeps QTableView semantics while exposing explicit column reordering, cell selection
+  and drag/drop desktop policies.
+- Pagination exposes page/page-size/total-count state without owning or slicing application models.
+- Split View remains QSplitter-compatible and supports explicit pane collapsibility/collapse state
+  while preserving saveState()/restoreState().
+- Breadcrumb exposes hierarchical path activation with keyboard-focusable segments.
+- Command Palette filters an externally owned command model through QSortFilterProxyModel and
+  reports source-model indexes on activation.
+- Drag & Drop uses Qt MIME/model contracts and native QAbstractItemView drop indicators rather
+  than a library-specific transfer protocol.
+- Certification includes a 100000-row virtual model, keyboard/accessibility smoke coverage,
+  public-header/install checks and the existing cross-platform/sanitizer/package matrix.
+- Every 0.9 release-scoped component is at least usable and has public header, production source,
+  tests, documentation and registry evidence.
+- Windows Qt 5.14.2/MSVC v142, Windows Qt 6, Ubuntu Qt 6, macOS Qt 6, ASan/UBSan,
+  examples/benchmarks, documentation, package and installed-consumer gates remain green.
+
 ## 1.0 preparation
 
 - Public source-compatibility policy.
