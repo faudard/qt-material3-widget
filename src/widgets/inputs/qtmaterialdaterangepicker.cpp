@@ -70,13 +70,23 @@ void QtMaterialDateRangePicker::setEndDate(const QDate& date)
 void QtMaterialDateRangePicker::setDateRange(const QDate& start, const QDate& end)
 {
     if (!start.isValid() || !end.isValid()) return;
+
     const QDate normalizedStart = qMin(start, end);
     const QDate normalizedEnd = qMax(start, end);
+
     m_syncing = true;
+
+    // Widen the constraints before moving either endpoint. Otherwise the
+    // constraints from the previous range can clamp a valid new range.
+    m_startPicker->setMaximumDate(normalizedEnd);
+    m_endPicker->setMinimumDate(normalizedStart);
+
     m_startPicker->setSelectedDate(normalizedStart);
     m_endPicker->setSelectedDate(normalizedEnd);
+
     synchronizeConstraints();
     m_syncing = false;
+
     emit startDateChanged(normalizedStart);
     emit endDateChanged(normalizedEnd);
     emit dateRangeChanged(normalizedStart, normalizedEnd);
