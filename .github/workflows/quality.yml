@@ -33,17 +33,20 @@ jobs:
       - name: Check repository health
         run: python tools/repo_health.py --strict
 
-      - name: Check 0.8.0 release contract
-        run: python tools/check_release_contract.py --root . --expected-version 0.8.0
+      - name: Check 0.9.0 release contract
+        run: python tools/check_release_contract.py --root . --expected-version 0.9.0
 
-      - name: Check 0.8.0 theme release contract
-        run: python tools/check_theme_release_contract.py --root . --expected-version 0.8.0
+      - name: Check 0.9.0 theme release contract
+        run: python tools/check_theme_release_contract.py --root . --expected-version 0.9.0
 
-      - name: Check 0.8.0 interaction release contract
-        run: python tools/check_interaction_release_contract.py --root . --expected-version 0.8.0
+      - name: Check 0.9.0 interaction release contract
+        run: python tools/check_interaction_release_contract.py --root . --expected-version 0.9.0
 
-      - name: Check 0.8.0 component expansion release contract
-        run: python tools/check_component_expansion_release_contract.py --root . --expected-version 0.8.0
+      - name: Check 0.9.0 component expansion release contract
+        run: python tools/check_component_expansion_release_contract.py --root . --expected-version 0.9.0
+
+      - name: Check 0.9.0 desktop productivity release contract
+        run: python tools/check_desktop_productivity_release_contract.py --root . --expected-version 0.9.0
 
       - name: Check patch whitespace
         run: git diff --check
