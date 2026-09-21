@@ -2,6 +2,7 @@
 
 #include <QAbstractTableModel>
 #include <QHeaderView>
+#include <QListView>
 #include <QStringListModel>
 #include <QStandardItemModel>
 #include <QWidget>
