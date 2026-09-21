@@ -2799,20 +2799,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 3,
-      "states": 3,
-      "accessibility": 3,
-      "keyboard": 3,
-      "hidpi": 3,
-      "rtl": 3,
-      "tests": 3,
-      "example": 3,
-      "docs": 3,
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
       "lastReviewed": "2026-09-21",
-      "gaps": [],
+      "gaps": [
+        "Needs dedicated visual-regression and screen-reader evidence before complete maturity."
+      ],
       "nextActions": [
-        "Keep native Qt behavior and cross-platform certification green through 1.0."
+        "Close the declared 0.9 maturity gap before promoting this component to complete."
       ],
       "evidence": {
         "api": [
@@ -2866,20 +2868,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 3,
-      "states": 3,
-      "accessibility": 3,
-      "keyboard": 3,
-      "hidpi": 3,
-      "rtl": 3,
-      "tests": 3,
-      "example": 3,
-      "docs": 3,
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
       "lastReviewed": "2026-09-21",
-      "gaps": [],
+      "gaps": [
+        "Needs theme-token specialization and visual-regression evidence before complete maturity."
+      ],
       "nextActions": [
-        "Keep native Qt behavior and cross-platform certification green through 1.0."
+        "Close the declared 0.9 maturity gap before promoting this component to complete."
       ],
       "evidence": {
         "api": [
@@ -2933,20 +2937,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 3,
-      "states": 3,
-      "accessibility": 3,
-      "keyboard": 3,
-      "hidpi": 3,
-      "rtl": 3,
-      "tests": 3,
-      "example": 3,
-      "docs": 3,
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
       "lastReviewed": "2026-09-21",
-      "gaps": [],
+      "gaps": [
+        "Needs dedicated keyboard-resize affordance and visual-regression evidence before complete maturity."
+      ],
       "nextActions": [
-        "Keep native Qt behavior and cross-platform certification green through 1.0."
+        "Close the declared 0.9 maturity gap before promoting this component to complete."
       ],
       "evidence": {
         "api": [
@@ -3000,20 +3006,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 3,
-      "states": 3,
-      "accessibility": 3,
-      "keyboard": 3,
-      "hidpi": 3,
-      "rtl": 3,
-      "tests": 3,
-      "example": 3,
-      "docs": 3,
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
       "lastReviewed": "2026-09-21",
-      "gaps": [],
+      "gaps": [
+        "Needs dedicated overflow/elision behavior and visual-regression evidence before complete maturity."
+      ],
       "nextActions": [
-        "Keep native Qt behavior and cross-platform certification green through 1.0."
+        "Close the declared 0.9 maturity gap before promoting this component to complete."
       ],
       "evidence": {
         "api": [
@@ -3067,20 +3075,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 3,
-      "rendering": 3,
-      "states": 3,
-      "accessibility": 3,
-      "keyboard": 3,
-      "hidpi": 3,
-      "rtl": 3,
-      "tests": 3,
-      "example": 3,
-      "docs": 3,
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
       "lastReviewed": "2026-09-21",
-      "gaps": [],
+      "gaps": [
+        "Needs shortcut-discovery, empty-state and visual-regression evidence before complete maturity."
+      ],
       "nextActions": [
-        "Keep native Qt behavior and cross-platform certification green through 1.0."
+        "Close the declared 0.9 maturity gap before promoting this component to complete."
       ],
       "evidence": {
         "api": [
