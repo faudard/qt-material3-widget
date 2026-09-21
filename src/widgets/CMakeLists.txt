@@ -105,10 +105,8 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/selection/qtmaterialchip.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/compact/qtmaterialchip.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/compact/qtmaterialfilterchip.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/compact/qtmaterialinputchip.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/compact/qtmaterialsegmentedbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationrail.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialmenu.h

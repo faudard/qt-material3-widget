@@ -1,6 +1,6 @@
 #include <QtTest>
 
-#include "qtmaterial/specs/qtmaterialdatacomponentspecresolver.h"
+#include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 
@@ -32,7 +32,7 @@ void tst_DataComponentDefaultsLinkage::resolvesThemeAwareSpecs()
 {
     const Theme theme = ThemeBuilder().buildLightFromSeed(
         QColor(QStringLiteral("#6750A4")));
-    const DataComponentSpecResolver resolver;
+    const DataSpecResolver resolver;
 
     QCOMPARE(
         resolver.tableSpec(theme).backgroundColor,

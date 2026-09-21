@@ -600,7 +600,7 @@
     {
       "name": "compact-chip-header-forwards-canonical-control",
       "files": [
-        "include/qtmaterial/widgets/compact/qtmaterialchip.h"
+        "include/qtmaterial/widgets/selection/qtmaterialchip.h"
       ],
       "required_regex": [
         "qtmaterial/widgets/selection/qtmaterialchip\\.h"
@@ -612,7 +612,7 @@
     {
       "name": "compact-segmented-header-forwards-canonical-control",
       "files": [
-        "include/qtmaterial/widgets/compact/qtmaterialsegmentedbutton.h"
+        "include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
       ],
       "required_regex": [
         "qtmaterial/widgets/selection/qtmaterialsegmentedbutton\\.h"
@@ -873,7 +873,7 @@
     {
       "name": "date-picker-compatibility-header-has-no-duplicate-type",
       "files": [
-        "include/qtmaterial/specs/qtmaterialdatepickerspec.h"
+        "include/qtmaterial/specs/qtmaterialdatacomponentspecs.h"
       ],
       "required_regex": [
         "qtmaterial/specs/qtmaterialdatacomponentspecs\\.h"
@@ -1561,7 +1561,7 @@
         "qtmaterialspecfactory"
       ],
       "required_regex": [
-        "qtmaterialdatacomponentspecresolver\\.cpp",
+        "qtmaterialdataspecresolver\\.cpp",
         "qtmaterialdatacomponentspecs\\.cpp"
       ]
     },

@@ -2,10 +2,10 @@
 
 #include <type_traits>
 
-#include "qtmaterial/widgets/compact/qtmaterialchip.h"
+#include "qtmaterial/widgets/selection/qtmaterialchip.h"
 #include "qtmaterial/widgets/compact/qtmaterialfilterchip.h"
 #include "qtmaterial/widgets/compact/qtmaterialinputchip.h"
-#include "qtmaterial/widgets/compact/qtmaterialsegmentedbutton.h"
+#include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
 
 using namespace QtMaterial;
 
@@ -14,25 +14,25 @@ class tst_CompactControls : public QObject
     Q_OBJECT
 
 private slots:
-    void forwardingHeadersExposeCanonicalTypes();
+    void canonicalHeadersExposeTypes();
     void convenienceChipsConfigureVariants();
     void densityChangesResolvedMetrics();
     void inputChipRequestsRemoval();
 };
 
-void tst_CompactControls::forwardingHeadersExposeCanonicalTypes()
+void tst_CompactControls::canonicalHeadersExposeTypes()
 {
     static_assert(
         std::is_base_of<
             QtMaterialAbstractButton,
             QtMaterialChip>::value,
-        "Compact chip header must expose the canonical chip.");
+        "Canonical chip header must expose QtMaterialChip.");
 
     static_assert(
         std::is_base_of<
             QtMaterialControl,
             QtMaterialSegmentedButton>::value,
-        "Compact segmented button header must forward the canonical type.");
+        "Canonical segmented button header must expose QtMaterialSegmentedButton.");
 
     QtMaterialChip chip;
     QtMaterialSegmentedButton segmented;

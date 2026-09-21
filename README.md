@@ -1,88 +1,15 @@
 # qt-material3-widget
 
-Material 3 widget toolkit for Qt Widgets.
+Material 3 widgets for Qt Widgets, with a typed theme/spec architecture and support for Qt 5.14.2 and Qt 6.
 
-> **Status:** 0.5.0 foundation release in stabilization.
-> The package and public API are validated through a cross-platform consumer matrix.
-> Component maturity is tracked from the canonical registry; APIs remain pre-1.0 and
-> may still change between minor releases.
-
-## Why this project exists
-
-`qt-material3-widget` brings Material 3 concepts to the Qt Widgets stack with a layered, typed architecture.
-
-Core rule:
-
-> Widgets render from resolved specs, not from ad hoc theme lookups.
-
-That design makes widget behavior more predictable, easier to test, and easier to extend consistently across component families.
-
-## Relationship to Material 3
-
-This project is guided by the official Material 3 design system, but it is a Qt Widgets library, not an Android or Jetpack Compose port.
-
-That means:
-
-- component behavior should align with Material 3 intent where practical
-- theming should use Material 3 concepts such as color roles, typography, shape, and motion
-- public C++ APIs should remain idiomatic for Qt Widgets
-- some interactions and rendering details require Qt-specific adaptation
-
-## Material 3 references
-
-For upstream design guidance, see:
-
-- [Material 3 overview](https://m3.material.io/)
-- [Get started with Material 3](https://m3.material.io/get-started)
-- [Styles overview](https://m3.material.io/styles)
-- [Color overview](https://m3.material.io/styles/color/overview)
-- [Color roles](https://m3.material.io/styles/color/roles)
-- [Typography](https://m3.material.io/styles/typography)
-- [Type scale tokens](https://m3.material.io/styles/typography/type-scale-tokens)
-- [Shape](https://m3.material.io/styles/shape)
-- [Motion](https://m3.material.io/styles/motion/overview/how-it-works)
-- [Usability foundations](https://m3.material.io/foundations/usability)
-
-These pages describe Material 3 design intent.
-
-The generated API reference in this repository documents the actual C++ API exposed by `qt-material3-widget`.
-
-## Module layout
-- `qtmaterial3_foundation` — dependency-light shared value types (`Density` and `QtMaterialInteractionState`)
-
-- `qtmaterial3_theme` â€” tokens, schemes, builder, serializer, manager
-- `qtmaterial3_core` â€” widget bases and interaction state
-- `qtmaterial3_specs` â€” immutable component specs and resolver infrastructure
-- `qtmaterial3_effects` â€” ripple, focus, shadow, transitions, scrim
-- `qtmaterial3_widgets` â€” public widget implementations
-
-## Current direction
-
-### Focus areas
-
-- packaging and install/export
-- accessibility and keyboard correctness
-- performance and memory review
-- public API stabilization
-- documentation and release readiness
-
-### Advanced families planned in the current tree
-
-- advanced inputs (`DatePicker`, autocomplete maturity)
-- navigation (`NavigationRail`, `Menu`)
-- compact controls (`Chip`, `SegmentedButton`)
-- data widgets (`Table`, `GridList`, `Carousel`)
-
-## Project maturity
-
-This repository currently contains both working building blocks and design scaffolding.
-Some files are intentionally skeletal so the public architecture and module boundaries remain clear while implementation is still progressing.
+> **Status:** 0.8.0, pre-1.0 API cleanup.
+> Public APIs may still change before 1.0. Pre-1.0 compatibility shims are intentionally removed rather than deprecated.
 
 ## Requirements
 
 - Qt 5.14.2+ or Qt 6.x
 - CMake 3.21+
-- C++ toolchain compatible with the selected Qt release
+- C++17
 
 ## Build
 
@@ -91,7 +18,10 @@ git clone https://github.com/faudard/qt-material3-widget.git
 cd qt-material3-widget
 cmake -S . -B build
 cmake --build build
+ctest --test-dir build --output-on-failure
 ```
+
+Material Color Utilities is optional and disabled by default. The built-in fallback backend remains available without an external MCU checkout.
 
 ## Consume from CMake
 
@@ -104,88 +34,35 @@ target_link_libraries(my_app PRIVATE
 )
 ```
 
-A minimal consumer example already exists in `examples/minimal-consumer`.
+The repository validates source, `add_subdirectory`, FetchContent and installed-package consumers in CI.
 
-## Theming highlights
+## Architecture
 
-The theme layer is now useful as a standalone consumer surface, not only as an internal widget dependency.
+Widgets render from resolved specs rather than performing ad hoc theme lookups during paint/layout.
 
-Main theming capabilities:
+Primary modules:
 
-- deterministic theme generation from `ThemeOptions`
-- light and dark theme generation from a seed color
-- direct color-scheme generation from a seed color
-- runtime theme application through `ThemeManager`
-- JSON import/export for theme persistence and tooling workflows
+- `QtMaterial3::Foundation` — dependency-light shared value types
+- `QtMaterial3::ThemeModel` — theme values, tokens and generation
+- `QtMaterial3::ThemeIO` — theme serialization
+- `QtMaterial3::ThemeRuntime` — runtime contexts and system integration
+- `QtMaterial3::Theme` — public theme umbrella
+- `QtMaterial3::Core` — common widget/control infrastructure
+- `QtMaterial3::Specs` — component specs and resolvers
+- `QtMaterial3::Effects` — ripple, focus, elevation, shadow and transitions
+- `QtMaterial3::Widgets` — public Material 3 widgets
 
-Typical consumer scenarios:
+## Documentation
 
-- ship a default Material 3 theme generated from a single brand seed color
-- let users customize and persist the active theme as JSON
-- export a resolved theme snapshot for debugging or design review
-- build a theme editor or playground around `ThemeManager`
+- [Public API](docs/public-api/index.md)
+- [Theming](docs/public-api/theming.md)
+- [Architecture](docs/architecture/)
+- [Roadmap](ROADMAP.md)
+- [Release process](docs/release-process.md)
+- [Changelog](CHANGELOG.md)
 
-See the dedicated guide: [docs/public-api/theming.md](docs/public-api/theming.md)
-
-## Examples
-  * `examples/theming-seed-workflow` — public seed color, light/dark, contrast, and JSON inspection workflow
-  * `examples/theming-runtime-switch` — runtime theme application and revision tracking
-  * `examples/theming-json-workflow` — strict JSON export/import workflow
-  * `examples/theming-component-overrides` — component-local override serialization workflow
-  * `examples/theming-backend-report` — MCU/fallback backend status workflow
-
-- `examples/gallery` â€” showcase / component gallery
-- `examples/minimal-consumer` â€” smallest integration example
-- `examples/install-consumer` â€” install/export validation
-- `examples/theme-playground` â€” theme experimentation, seed color workflow, JSON import/export
-- `examples/core-playground` â€” low-level behavior validation
-
-## Documentation map
-
-This repository documentation should cover:
-
-- getting started
-- build and installation
-- theming guide
-- widget-family guides
-- architecture overview
-- migration from `qt-material-widgets`
-- generated C++ API reference
-- Material 3 reference mapping
-
-Start here for public usage guidance:
-
-- [Public API guide](docs/public-api/index.md)
-- [Theming guide](docs/public-api/theming.md)\n- [Roadmap](ROADMAP.md)\n- [Release process](docs/release-process.md)\n- [Changelog](CHANGELOG.md)
-
-## Public API families
-
-- Buttons
-- Inputs
-- Navigation
-- Selection
-- Surfaces
-- Compact controls
-- Data widgets
-- Theming
-
-## Contributing
-
-Contributions are especially useful in:
-
-- widget implementation
-- accessibility
-- documentation
-- tests and examples
-- API review and cleanup
+Component maturity is generated from `docs/components/component-registry.json` into `STATUS.md`.
 
 ## License
 
-This project is licensed under the **GNU Lesser General Public License v3.0 only**.
-
-See [LICENSE](LICENSE) for the LGPLv3 text and [COPYING](COPYING) for the GPLv3 text incorporated by the LGPLv3.
-
-SPDX-License-Identifier: 
-```text
-LGPL-3.0-only
-```
+GNU Lesser General Public License v3.0 only (`LGPL-3.0-only`). See [LICENSE](LICENSE).

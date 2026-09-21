@@ -1,4 +1,14 @@
 build*/
-docs/_build
-_install*
+cmake-build-*/
+docs/_build/
+_install*/
 .aider*
+.qtcreator/
+*.user
+*.user.*
+.vscode/
+.idea/
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
