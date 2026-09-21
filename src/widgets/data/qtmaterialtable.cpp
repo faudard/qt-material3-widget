@@ -275,12 +275,14 @@ QtMaterialTable::QtMaterialTable(
     ensureSpecResolved();
     applyResolvedSpec();
 
-    connect(
-        selectionModel(),
-        &QItemSelectionModel::selectionChanged,
-        this,
-        &QtMaterialTable::
-            syncAccessibility);
+    if (selectionModel()) {
+        connect(
+            selectionModel(),
+            &QItemSelectionModel::selectionChanged,
+            this,
+            &QtMaterialTable::
+                syncAccessibility);
+    }
 
     syncAccessibility();
 }
@@ -847,7 +849,6 @@ syncAccessibility()
     QAccessibleEvent event(
         this,
         QAccessible::DescriptionChanged);
-    event.setChild(0);
 
     QAccessible::updateAccessibility(
         &event);
