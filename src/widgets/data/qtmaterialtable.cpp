@@ -275,12 +275,14 @@ QtMaterialTable::QtMaterialTable(
     ensureSpecResolved();
     applyResolvedSpec();
 
-    connect(
-        selectionModel(),
-        &QItemSelectionModel::selectionChanged,
-        this,
-        &QtMaterialTable::
-            syncAccessibility);
+    if (selectionModel()) {
+        connect(
+            selectionModel(),
+            &QItemSelectionModel::selectionChanged,
+            this,
+            &QtMaterialTable::
+                syncAccessibility);
+    }
 
     syncAccessibility();
 }
@@ -374,6 +376,26 @@ void QtMaterialTable::setDense(
 
     Q_EMIT denseChanged(
         d_ptr->dense);
+}
+
+bool QtMaterialTable::multiSelectionEnabled() const noexcept
+{
+    return selectionMode() == QAbstractItemView::ExtendedSelection
+        || selectionMode() == QAbstractItemView::MultiSelection;
+}
+
+void QtMaterialTable::setMultiSelectionEnabled(bool enabled)
+{
+    const bool current = multiSelectionEnabled();
+    if (current == enabled) {
+        return;
+    }
+    setSelectionMode(
+        enabled
+            ? QAbstractItemView::ExtendedSelection
+            : QAbstractItemView::SingleSelection);
+    syncAccessibility();
+    Q_EMIT multiSelectionEnabledChanged(enabled);
 }
 
 QString
@@ -827,7 +849,6 @@ syncAccessibility()
     QAccessibleEvent event(
         this,
         QAccessible::DescriptionChanged);
-    event.setChild(0);
 
     QAccessible::updateAccessibility(
         &event);

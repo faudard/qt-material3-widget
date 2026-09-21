@@ -73,11 +73,24 @@ Release gates:
 
 ## 0.8.0 — Component Expansion
 
-- Chip family.
-- Search, combo-box and slider families.
-- Date/time picker maturity.
-- Menu/navigation expansion.
-- Data-widget maturity for desktop-heavy applications.
+Goal: expand the library into the common input, selection, navigation and desktop-data
+workflows needed by production Qt Widgets applications while reusing the 0.5-0.7
+foundation instead of introducing parallel infrastructure.
+
+Release gates:
+
+- Chip Assist, Filter, Input and Suggestion variants are release-scoped and at least usable.
+- Search Bar and Search View preserve external QAbstractItemModel ownership and proxy filtering.
+- Combo Box remains compatible with the native QComboBox model/delegate/editable contracts.
+- Slider and Range Slider support keyboard, pointer, RTL and range invariants.
+- DatePicker remains canonical; Time Field, Time Picker and Date Range Picker share Qt date/time primitives.
+- Menu supports separators, disabled actions, shortcuts, checkable actions and exclusive action groups.
+- Table preserves QTableView sorting/selection/model semantics and supports dense and multi-selection modes.
+- GridList and Carousel remain Model/View-friendly desktop data components.
+- Every 0.8 release-scoped component has a public header, production source, test target, docs and registry evidence.
+- No 0.8 release-scoped component may remain planned, skeleton or partial.
+- Windows Qt 5.14.2/MSVC v142, Windows Qt 6, Ubuntu Qt 6, macOS Qt 6, ASan/UBSan,
+  examples/benchmarks, documentation, package and installed-consumer gates remain green.
 
 ## 1.0 preparation
 

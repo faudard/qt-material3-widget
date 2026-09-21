@@ -13,15 +13,15 @@ SPEC.loader.exec_module(MODULE)
 
 class ThemeReleaseContractTests(unittest.TestCase):
     def test_current_checkout_satisfies_theme_release_contract(self):
-        self.assertEqual(MODULE.validate(ROOT, "0.7.0"), [])
+        self.assertEqual(MODULE.validate(ROOT, "0.8.0"), [])
 
     def test_wrong_expected_version_is_reported(self):
         errors = MODULE.validate(ROOT, "9.9.9")
         self.assertTrue(any("expected 9.9.9" in error for error in errors))
 
     def test_project_version_parser(self):
-        text = "project(qt-material3-widgets VERSION 0.7.0 LANGUAGES CXX)"
-        self.assertEqual(MODULE.project_version(text), "0.7.0")
+        text = "project(qt-material3-widgets VERSION 0.8.0 LANGUAGES CXX)"
+        self.assertEqual(MODULE.project_version(text), "0.8.0")
 
 if __name__ == "__main__":
     unittest.main()

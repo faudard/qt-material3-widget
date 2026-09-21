@@ -50,6 +50,7 @@ public:
         bool enabled = true;
         bool checkable = false;
         bool checked = false;
+        int exclusiveGroup = -1;
     };
 
     explicit QtMaterialMenu(QWidget* parent = nullptr);
@@ -93,6 +94,8 @@ public:
     void setItemCheckable(int index, bool checkable);
     bool isItemChecked(int index) const;
     void setItemChecked(int index, bool checked);
+    int itemExclusiveGroup(int index) const;
+    void setItemExclusiveGroup(int index, int group);
 
     int currentIndex() const noexcept;
     void setCurrentIndex(int index);

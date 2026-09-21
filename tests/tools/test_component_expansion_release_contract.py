@@ -5,16 +5,16 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location(
-    "check_interaction_release_contract",
-    ROOT / "tools" / "check_interaction_release_contract.py",
+    "check_component_expansion_release_contract",
+    ROOT / "tools" / "check_component_expansion_release_contract.py",
 )
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
 SPEC.loader.exec_module(MODULE)
 
 
-class InteractionReleaseContractTests(unittest.TestCase):
-    def test_current_checkout_satisfies_interaction_contract(self):
+class ComponentExpansionReleaseContractTests(unittest.TestCase):
+    def test_current_checkout_satisfies_contract(self):
         self.assertEqual(MODULE.validate(ROOT, "0.8.0"), [])
 
     def test_wrong_expected_version_is_reported(self):

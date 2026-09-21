@@ -1,2 +1,4 @@
 #include "qtmaterial/widgets/inputs/qtmaterialdatepicker.h"
-// Phase 6 skeleton placeholder.
+
+// Compatibility translation unit.
+// The canonical implementation lives in src/widgets/qtmaterialdatepicker.cpp.

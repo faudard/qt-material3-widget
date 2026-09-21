@@ -22,7 +22,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `compact.chip` | Chip | `planned` | `qtmaterial/widgets/selection/qtmaterialchip.h` | `ChipSpec` | `` | `docs/public-api/compact-controls.md` | `/compact/chip` |
+| `compact.chip` | Chip | `usable` | `qtmaterial/widgets/selection/qtmaterialchip.h` | `ChipSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/compact/chip` |
 
 ## Data
 
@@ -42,9 +42,17 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
+| `input.combo-box` | Combo Box | `usable` | `qtmaterial/widgets/inputs/qtmaterialcombobox.h` | `AutocompleteSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/combo-box` |
+| `input.date-range-picker` | Date Range Picker | `usable` | `qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h` | `DatePickerSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/date-range-picker` |
 | `input.date.field` | Date Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialdatefield.h` | `TextFieldSpec` | `tst_datefield` | `docs/public-api/inputs.md` | `/inputs/date-field` |
+| `input.range-slider` | Range Slider | `usable` | `qtmaterial/widgets/inputs/qtmaterialrangeslider.h` | `SelectionRuntimeSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/range-slider` |
+| `input.search-bar` | Search Bar | `usable` | `qtmaterial/widgets/inputs/qtmaterialsearchbar.h` | `AutocompleteSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/search-bar` |
+| `input.search-view` | Search View | `usable` | `qtmaterial/widgets/inputs/qtmaterialsearchview.h` | `AutocompleteSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/search-view` |
+| `input.slider` | Slider | `usable` | `qtmaterial/widgets/inputs/qtmaterialslider.h` | `SelectionRuntimeSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/slider` |
 | `input.text.filled` | Filled Text Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h` | `TextFieldSpec` | `tst_filledtextfield` | `docs/public-api/inputs.md` | `/inputs/filled-text-field` |
 | `input.text.outlined` | Outlined Text Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h` | `TextFieldSpec` | `tst_outlinedtextfield` | `docs/public-api/inputs.md` | `/inputs/outlined-text-field` |
+| `input.time-field` | Time Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialtimefield.h` | `DateFieldSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/time-field` |
+| `input.time-picker` | Time Picker | `usable` | `qtmaterial/widgets/inputs/qtmaterialtimepicker.h` | `DateFieldSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/time-picker` |
 
 ## Navigation
 

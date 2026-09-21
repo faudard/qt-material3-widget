@@ -28,6 +28,14 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     inputs/qtmaterialtextfieldvalidationgroup.cpp
     inputs/qtmaterialautocompletepopup.cpp
     inputs/qtmaterialdatefield.cpp
+    inputs/qtmaterialsearchbar.cpp
+    inputs/qtmaterialsearchview.cpp
+    inputs/qtmaterialcombobox.cpp
+    inputs/qtmaterialslider.cpp
+    inputs/qtmaterialrangeslider.cpp
+    inputs/qtmaterialtimefield.cpp
+    inputs/qtmaterialtimepicker.cpp
+    inputs/qtmaterialdaterangepicker.cpp
     data/qtmateriallistitem.cpp
     data/qtmateriallist.cpp
     data/qtmaterialdivider.cpp
@@ -75,6 +83,14 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialtextfieldvalidationgroup.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialdatefield.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialsearchbar.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialsearchview.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialcombobox.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialslider.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialrangeslider.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialtimefield.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialtimepicker.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmateriallistitem.h

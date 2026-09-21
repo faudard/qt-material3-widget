@@ -156,6 +156,7 @@ qtm3_add_test(tst_autocompletepopup_themecontext widgets/inputs/tst_autocomplete
 qtm3_add_test(tst_autocompleteresolvedwidget widgets/inputs/tst_autocompleteresolvedwidget.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_datefield widgets/inputs/tst_datefield.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_datefield_affordances widgets/inputs/tst_datefield_affordances.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_component_expansion widgets/inputs/tst_component_expansion.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_listitem widgets/data/tst_listitem.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_data_resolved_widgets widgets/data/tst_data_resolved_widgets.cpp qtmaterial3_widgets)

@@ -28,7 +28,7 @@ private slots:
 
         const auto* chip = QtMaterial::findComponentDescriptor(registry, QStringLiteral("compact.chip"));
         QVERIFY(chip != nullptr);
-        QCOMPARE(chip->maturity, QtMaterial::ComponentMaturity::Planned);
+        QCOMPARE(chip->maturity, QtMaterial::ComponentMaturity::Usable);
     }
 
     void maturityRoundTrip()
