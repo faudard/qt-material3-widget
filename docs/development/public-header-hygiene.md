@@ -40,7 +40,7 @@ The CMake integration adds:
 
 1. `public_private_header_contract` — full source/install contract validation.
 2. `public_header_self_contained/<header>` — one generated translation unit for
-   each of the 166 declared public headers.
+   every header currently declared public.
 
 Run them with:
 

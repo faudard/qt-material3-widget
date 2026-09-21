@@ -6,9 +6,9 @@ QtMaterial3's header surface is explicit and version-controlled.
 
 Phase 012.B seals the source and CMake package contracts:
 
-- all 167 headers are classified by the manifest (166 public, 1 private);
+- every header is classified by the manifest as public or private;
 - public headers are checked for private and source-tree implementation includes;
-- only the 166 public entries are installed, preserving their relative paths;
+- only public entries are installed, preserving their relative paths;
 - one-header-per-translation-unit tests are generated from the public manifest;
 - installed and invalid-component consumer scenarios compare the installed prefix exactly;
 - the full source/install contract runs in repository health.

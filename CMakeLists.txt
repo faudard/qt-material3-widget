@@ -31,7 +31,7 @@ option(QTMATERIAL3_BUILD_TESTS "Build tests" ${_qtm3_default_build_tests})
 option(QTMATERIAL3_BUILD_EXAMPLES "Build examples" ${QTMATERIAL3_IS_TOP_LEVEL})
 option(QTMATERIAL3_BUILD_BENCHMARKS "Build benchmark executables" OFF)
 option(QTMATERIAL3_INSTALL "Install QtMaterial3 targets and package config" ${QTMATERIAL3_IS_TOP_LEVEL})
-option(QTMATERIAL3_USE_MCU "Use Material Color Utilities backend" ON)
+option(QTMATERIAL3_USE_MCU "Use Material Color Utilities backend" OFF)
 
 if(QTMATERIAL3_BUILD_TESTS AND NOT QTMATERIAL3_IS_TOP_LEVEL)
     enable_testing()
@@ -126,7 +126,6 @@ if(QTMATERIAL3_INSTALL)
         FILES
             "${CMAKE_CURRENT_BINARY_DIR}/QtMaterial3WidgetsConfig.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/QtMaterial3WidgetsConfigVersion.cmake"
-            "${CMAKE_CURRENT_SOURCE_DIR}/packaging/QtMaterial3WidgetsMacros.cmake"
         DESTINATION "${QTMATERIAL3_CMAKE_INSTALL_DIR}"
     )
 
@@ -186,8 +185,6 @@ if(QTMATERIAL3_IS_TOP_LEVEL AND QTMATERIAL3_INSTALL)
         "/\\.git/"
         "/build[^/]*/"
         "/docs/_build/"
-        "/overlay/"
-        "/\\.specify/patch-backup/"
         "~$"
     )
     include(CPack)

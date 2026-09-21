@@ -179,23 +179,7 @@ bool equalTypography(const TypographyScale& lhs, const TypographyScale& rhs)
         }
     }
 
-    // Compatibility aliases are currently public mutable state and therefore
-    // participate in Theme value identity until they are removed/migrated.
-    return lhs.displayLarge == rhs.displayLarge
-        && lhs.displayMedium == rhs.displayMedium
-        && lhs.displaySmall == rhs.displaySmall
-        && lhs.headlineLarge == rhs.headlineLarge
-        && lhs.headlineMedium == rhs.headlineMedium
-        && lhs.headlineSmall == rhs.headlineSmall
-        && lhs.titleLarge == rhs.titleLarge
-        && lhs.titleMedium == rhs.titleMedium
-        && lhs.titleSmall == rhs.titleSmall
-        && lhs.bodyLarge == rhs.bodyLarge
-        && lhs.bodyMedium == rhs.bodyMedium
-        && lhs.bodySmall == rhs.bodySmall
-        && lhs.labelLarge == rhs.labelLarge
-        && lhs.labelMedium == rhs.labelMedium
-        && lhs.labelSmall == rhs.labelSmall;
+    return true;
 }
 
 bool equalShapes(const ShapeScale& lhs, const ShapeScale& rhs)

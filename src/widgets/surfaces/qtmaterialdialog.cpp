@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include <QPainter>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -244,8 +245,33 @@ void QtMaterialDialog::close()
 
     if (d_ptr->restoreFocusOnClose
         && d_ptr->previousFocusWidget) {
-        d_ptr->previousFocusWidget->setFocus(
-            Qt::OtherFocusReason);
+        const QPointer<QWidget> target =
+            d_ptr->previousFocusWidget;
+        d_ptr->previousFocusWidget.clear();
+
+        const auto restoreFocus = [target]() {
+            if (!target) {
+                return;
+            }
+
+            if (QWidget* window = target->window()) {
+                window->activateWindow();
+            }
+
+            target->setFocus(Qt::OtherFocusReason);
+        };
+
+        // Restore once immediately for platforms where QWidget focus changes
+        // synchronously, then once on the next event-loop turn. Cocoa may
+        // finalize the native first-responder transition after hide(), which
+        // can otherwise clear a synchronous setFocus() performed here.
+        restoreFocus();
+        QTimer::singleShot(
+            0,
+            this,
+            [restoreFocus]() {
+                restoreFocus();
+            });
     }
 
     Q_EMIT closed();

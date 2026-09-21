@@ -14,6 +14,7 @@ source or ABI changes, and those changes must be called out explicitly.
 - Component-expansion release contract and CI gate covering the complete 0.8 scope.
 
 ### Changed
+- Pre-1.0 cleanup removes repository scaffolding, forwarding headers, duplicate resolver/spec surfaces, placeholder tests, and accidental public APIs instead of deprecating them.
 - Chip is promoted from planned to usable and reuses the shared 0.7 ripple, state-layer and focus policies.
 - Menu supports exclusive check groups for radio-style actions.
 - Table exposes explicit multi-selection while preserving QTableView sorting, headers and Model/View behavior.

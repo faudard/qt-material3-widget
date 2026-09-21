@@ -40,7 +40,6 @@ set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialautocompletespecresolver.cpp
     private/qtmaterialdensitymetrics_p.h
     qtmaterialdatacomponentspecs.cpp
-    qtmaterialdatacomponentspecresolver.cpp
     qtmaterialspecvalidation.cpp
 )
 
@@ -90,7 +89,6 @@ set(QTMATERIAL3_SPECS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletespec.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialautocompletespecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatacomponentspecs.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialdatacomponentspecresolver.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspeccontext.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/specs/qtmaterialspecvalidation.h
 )

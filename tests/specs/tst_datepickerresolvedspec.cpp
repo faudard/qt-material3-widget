@@ -1,7 +1,6 @@
 #include <QtTest>
 
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
-#include "qtmaterial/specs/qtmaterialdatepickerspec.h"
 #include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 #include "qtmaterial/theme/qtmaterialcomponenttokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
@@ -13,12 +12,12 @@ class tst_DatePickerResolvedSpec : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
-    void compatibilityHeaderUsesCanonicalSpec();
+    void canonicalSpecHeaderIsUsable();
     void resolvesCompleteRuntimeValues();
     void componentOverridesWin();
 };
 
-void tst_DatePickerResolvedSpec::compatibilityHeaderUsesCanonicalSpec()
+void tst_DatePickerResolvedSpec::canonicalSpecHeaderIsUsable()
 {
     DatePickerSpec spec;
     spec.weekdayTextColor = QColor(Qt::red);

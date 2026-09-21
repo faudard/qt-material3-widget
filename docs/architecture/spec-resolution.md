@@ -26,7 +26,7 @@ Examples of the active resolver surface include:
 - `AppBarSpecResolver`;
 - `TabsSpecResolver`;
 - `NavigationRailSpecResolver`;
-- `DataComponentSpecResolver`.
+- `DataSpecResolver`.
 
 ## Why there is no central factory facade
 
@@ -34,17 +34,11 @@ A generic facade hides dependencies and encourages unrelated component rules to
 accumulate behind one global-looking API. Dedicated resolvers make the dependency
 graph, inputs, tests and component ownership explicit.
 
-## Public compatibility policy
+## Pre-1.0 cleanup policy
 
-The old factory facade is retired before 1.0. It is not:
-- compiled;
-- installed;
-- exported;
-- documented as supported API;
-- retained as a compatibility alias.
-
-If downstream pre-1.0 code used the old facade, it must migrate to the appropriate
-dedicated resolver.
+Pre-1.0 compatibility shims are intentionally not retained. Retired facades,
+forwarding headers and duplicate resolver surfaces are removed before the 1.0
+public API is frozen.
 
 ## Guardrail
 
