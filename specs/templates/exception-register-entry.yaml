@@ -1,9 +1,0 @@
-exception: EXAMPLE-0001
-rule: example-rule-id
-scope: path/or/component
-reason: explain-why-temporary-exception-is-needed
-owner: maintainer-or-team
-introduced: 0.0.0
-expires: 0.0.0
-tracking: issue-or-spec-reference
-status: active
