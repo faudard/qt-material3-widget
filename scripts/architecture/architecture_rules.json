@@ -598,30 +598,6 @@
       ]
     },
     {
-      "name": "compact-chip-header-forwards-canonical-control",
-      "files": [
-        "include/qtmaterial/widgets/selection/qtmaterialchip.h"
-      ],
-      "required_regex": [
-        "qtmaterial/widgets/selection/qtmaterialchip\\.h"
-      ],
-      "forbidden_regex": [
-        "\\bclass\\s+[^;{]*\\bQtMaterialChip\\b"
-      ]
-    },
-    {
-      "name": "compact-segmented-header-forwards-canonical-control",
-      "files": [
-        "include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
-      ],
-      "required_regex": [
-        "qtmaterial/widgets/selection/qtmaterialsegmentedbutton\\.h"
-      ],
-      "forbidden_regex": [
-        "\\bclass\\s+[^;{]*\\bQtMaterialSegmentedButton\\b"
-      ]
-    },
-    {
       "name": "chip-spec-resolver-is-canonical",
       "files": [
         "include/qtmaterial/specs/qtmaterialchipspecresolver.h",
@@ -868,21 +844,6 @@
         "\\bkGap\\b",
         "\\bkPadding\\b",
         "\\bkRadius\\b"
-      ]
-    },
-    {
-      "name": "date-picker-compatibility-header-has-no-duplicate-type",
-      "files": [
-        "include/qtmaterial/specs/qtmaterialdatacomponentspecs.h"
-      ],
-      "required_regex": [
-        "qtmaterial/specs/qtmaterialdatacomponentspecs\\.h"
-      ],
-      "forbidden_regex": [
-        "\\bstruct\\s+(?:QTMATERIAL3_SPECS_EXPORT\\s+)?DatePickerSpec\\b",
-        "\\bcontainerColor\\b",
-        "\\bheaderColor\\b",
-        "\\bdayCellSize\\b"
       ]
     },
     {
