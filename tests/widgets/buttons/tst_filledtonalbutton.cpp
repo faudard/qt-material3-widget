@@ -1,5 +1,8 @@
 #include <QtTest/QtTest>
 
+#include <QVBoxLayout>
+#include <QWidget>
+
 #include "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h"
 
 class tst_FilledTonalButton : public QObject
@@ -19,12 +22,19 @@ void tst_FilledTonalButton::constructs()
 
 void tst_FilledTonalButton::keyboardActivation()
 {
+    QWidget window;
+    QVBoxLayout layout(&window);
+
     QtMaterial::QtMaterialFilledTonalButton widget(QStringLiteral("Tonal"));
     widget.resize(widget.sizeHint());
-    widget.show();
-    QVERIFY(QTest::qWaitForWindowExposed(&widget));
-    widget.setFocus();
-    QVERIFY(widget.hasFocus());
+    layout.addWidget(&widget);
+
+    window.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&window));
+
+    window.activateWindow();
+    widget.setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(widget.hasFocus());
 
     QSignalSpy clickedSpy(&widget, &QAbstractButton::clicked);
     QVERIFY(clickedSpy.isValid());
