@@ -88,7 +88,7 @@ void tst_Dialog::openFocusesInitialWidgetAndRestoresPreviousFocusOnClose()
 
     dialog.close();
     QVERIFY(!dialog.isVisible());
-    QCOMPARE(QApplication::focusWidget(), outside);
+    QTRY_COMPARE(QApplication::focusWidget(), outside);
 }
 
 void tst_Dialog::escapeRejectsDialogWhenEnabled()
