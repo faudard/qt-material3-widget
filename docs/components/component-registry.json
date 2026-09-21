@@ -2783,5 +2783,340 @@
         ]
       }
     }
+  },
+  {
+    "id": "data.tree-view",
+    "name": "Tree View",
+    "family": "Data",
+    "maturity": "usable",
+    "maturityPolicy": "manual",
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialtreeview.h",
+    "specType": "NativeQtViewPolicy",
+    "widgetType": "QtMaterialTreeView",
+    "testTarget": "tst_desktop_productivity",
+    "galleryRoute": "/data/tree-view",
+    "docsPath": "docs/public-api/desktop-productivity.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 3,
+      "states": 3,
+      "accessibility": 3,
+      "keyboard": 3,
+      "hidpi": 3,
+      "rtl": 3,
+      "tests": 3,
+      "example": 3,
+      "docs": 3,
+      "lastReviewed": "2026-09-21",
+      "gaps": [],
+      "nextActions": [
+        "Keep native Qt behavior and cross-platform certification green through 1.0."
+      ],
+      "evidence": {
+        "api": [
+          "public 0.9 desktop/productivity API is installed and header-audited"
+        ],
+        "rendering": [
+          "gallery exercises the desktop adaptation"
+        ],
+        "states": [
+          "native Qt enabled/selection/focus state remains authoritative"
+        ],
+        "accessibility": [
+          "native Qt accessibility surface is preserved"
+        ],
+        "keyboard": [
+          "native Qt keyboard behavior is preserved"
+        ],
+        "hidpi": [
+          "cross-platform release matrix includes HiDPI-capable Qt builds"
+        ],
+        "rtl": [
+          "directional behavior remains delegated to Qt where applicable"
+        ],
+        "tests": [
+          "tst_desktop_productivity is registered"
+        ],
+        "example": [
+          "0.9 advanced gallery pages exercise the component"
+        ],
+        "docs": [
+          "desktop-productivity.md documents the contract"
+        ],
+        "notes": [
+          "QTreeView remains the canonical model/view implementation; Material adds explicit desktop policies."
+        ]
+      }
+    }
+  },
+  {
+    "id": "data.pagination",
+    "name": "Pagination",
+    "family": "Data",
+    "maturity": "usable",
+    "maturityPolicy": "manual",
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialpagination.h",
+    "specType": "PaginationPolicy",
+    "widgetType": "QtMaterialPagination",
+    "testTarget": "tst_desktop_productivity",
+    "galleryRoute": "/data/pagination",
+    "docsPath": "docs/public-api/desktop-productivity.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 3,
+      "states": 3,
+      "accessibility": 3,
+      "keyboard": 3,
+      "hidpi": 3,
+      "rtl": 3,
+      "tests": 3,
+      "example": 3,
+      "docs": 3,
+      "lastReviewed": "2026-09-21",
+      "gaps": [],
+      "nextActions": [
+        "Keep native Qt behavior and cross-platform certification green through 1.0."
+      ],
+      "evidence": {
+        "api": [
+          "public 0.9 desktop/productivity API is installed and header-audited"
+        ],
+        "rendering": [
+          "gallery exercises the desktop adaptation"
+        ],
+        "states": [
+          "native Qt enabled/selection/focus state remains authoritative"
+        ],
+        "accessibility": [
+          "native Qt accessibility surface is preserved"
+        ],
+        "keyboard": [
+          "native Qt keyboard behavior is preserved"
+        ],
+        "hidpi": [
+          "cross-platform release matrix includes HiDPI-capable Qt builds"
+        ],
+        "rtl": [
+          "directional behavior remains delegated to Qt where applicable"
+        ],
+        "tests": [
+          "tst_desktop_productivity is registered"
+        ],
+        "example": [
+          "0.9 advanced gallery pages exercise the component"
+        ],
+        "docs": [
+          "desktop-productivity.md documents the contract"
+        ],
+        "notes": [
+          "Pagination owns page state only; application models and backend queries remain external."
+        ]
+      }
+    }
+  },
+  {
+    "id": "layout.split-view",
+    "name": "Split View",
+    "family": "Layouts",
+    "maturity": "usable",
+    "maturityPolicy": "manual",
+    "publicHeader": "qtmaterial/widgets/layouts/qtmaterialsplitview.h",
+    "specType": "NativeQtLayoutPolicy",
+    "widgetType": "QtMaterialSplitView",
+    "testTarget": "tst_desktop_productivity",
+    "galleryRoute": "/layouts/split-view",
+    "docsPath": "docs/public-api/desktop-productivity.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 3,
+      "states": 3,
+      "accessibility": 3,
+      "keyboard": 3,
+      "hidpi": 3,
+      "rtl": 3,
+      "tests": 3,
+      "example": 3,
+      "docs": 3,
+      "lastReviewed": "2026-09-21",
+      "gaps": [],
+      "nextActions": [
+        "Keep native Qt behavior and cross-platform certification green through 1.0."
+      ],
+      "evidence": {
+        "api": [
+          "public 0.9 desktop/productivity API is installed and header-audited"
+        ],
+        "rendering": [
+          "gallery exercises the desktop adaptation"
+        ],
+        "states": [
+          "native Qt enabled/selection/focus state remains authoritative"
+        ],
+        "accessibility": [
+          "native Qt accessibility surface is preserved"
+        ],
+        "keyboard": [
+          "native Qt keyboard behavior is preserved"
+        ],
+        "hidpi": [
+          "cross-platform release matrix includes HiDPI-capable Qt builds"
+        ],
+        "rtl": [
+          "directional behavior remains delegated to Qt where applicable"
+        ],
+        "tests": [
+          "tst_desktop_productivity is registered"
+        ],
+        "example": [
+          "0.9 advanced gallery pages exercise the component"
+        ],
+        "docs": [
+          "desktop-productivity.md documents the contract"
+        ],
+        "notes": [
+          "QSplitter save/restore and sizing semantics remain available unchanged."
+        ]
+      }
+    }
+  },
+  {
+    "id": "navigation.breadcrumb",
+    "name": "Breadcrumb",
+    "family": "Navigation",
+    "maturity": "usable",
+    "maturityPolicy": "manual",
+    "publicHeader": "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h",
+    "specType": "NavigationPolicy",
+    "widgetType": "QtMaterialBreadcrumb",
+    "testTarget": "tst_desktop_productivity",
+    "galleryRoute": "/navigation/breadcrumb",
+    "docsPath": "docs/public-api/desktop-productivity.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 3,
+      "states": 3,
+      "accessibility": 3,
+      "keyboard": 3,
+      "hidpi": 3,
+      "rtl": 3,
+      "tests": 3,
+      "example": 3,
+      "docs": 3,
+      "lastReviewed": "2026-09-21",
+      "gaps": [],
+      "nextActions": [
+        "Keep native Qt behavior and cross-platform certification green through 1.0."
+      ],
+      "evidence": {
+        "api": [
+          "public 0.9 desktop/productivity API is installed and header-audited"
+        ],
+        "rendering": [
+          "gallery exercises the desktop adaptation"
+        ],
+        "states": [
+          "native Qt enabled/selection/focus state remains authoritative"
+        ],
+        "accessibility": [
+          "native Qt accessibility surface is preserved"
+        ],
+        "keyboard": [
+          "native Qt keyboard behavior is preserved"
+        ],
+        "hidpi": [
+          "cross-platform release matrix includes HiDPI-capable Qt builds"
+        ],
+        "rtl": [
+          "directional behavior remains delegated to Qt where applicable"
+        ],
+        "tests": [
+          "tst_desktop_productivity is registered"
+        ],
+        "example": [
+          "0.9 advanced gallery pages exercise the component"
+        ],
+        "docs": [
+          "desktop-productivity.md documents the contract"
+        ],
+        "notes": [
+          "Breadcrumb segments are focusable Qt tool buttons and expose activated path indexes."
+        ]
+      }
+    }
+  },
+  {
+    "id": "navigation.command-palette",
+    "name": "Command Palette",
+    "family": "Navigation",
+    "maturity": "usable",
+    "maturityPolicy": "manual",
+    "publicHeader": "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h",
+    "specType": "AutocompletePopupSpec",
+    "widgetType": "QtMaterialCommandPalette",
+    "testTarget": "tst_desktop_productivity",
+    "galleryRoute": "/navigation/command-palette",
+    "docsPath": "docs/public-api/desktop-productivity.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 3,
+      "states": 3,
+      "accessibility": 3,
+      "keyboard": 3,
+      "hidpi": 3,
+      "rtl": 3,
+      "tests": 3,
+      "example": 3,
+      "docs": 3,
+      "lastReviewed": "2026-09-21",
+      "gaps": [],
+      "nextActions": [
+        "Keep native Qt behavior and cross-platform certification green through 1.0."
+      ],
+      "evidence": {
+        "api": [
+          "public 0.9 desktop/productivity API is installed and header-audited"
+        ],
+        "rendering": [
+          "gallery exercises the desktop adaptation"
+        ],
+        "states": [
+          "native Qt enabled/selection/focus state remains authoritative"
+        ],
+        "accessibility": [
+          "native Qt accessibility surface is preserved"
+        ],
+        "keyboard": [
+          "native Qt keyboard behavior is preserved"
+        ],
+        "hidpi": [
+          "cross-platform release matrix includes HiDPI-capable Qt builds"
+        ],
+        "rtl": [
+          "directional behavior remains delegated to Qt where applicable"
+        ],
+        "tests": [
+          "tst_desktop_productivity is registered"
+        ],
+        "example": [
+          "0.9 advanced gallery pages exercise the component"
+        ],
+        "docs": [
+          "desktop-productivity.md documents the contract"
+        ],
+        "notes": [
+          "Command filtering uses QSortFilterProxyModel and returns source-model indexes."
+        ]
+      }
+    }
   }
 ]
