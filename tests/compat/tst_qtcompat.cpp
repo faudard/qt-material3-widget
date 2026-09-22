@@ -1,40 +1,32 @@
 #include <QtTest/QtTest>
 #include <type_traits>
-#include "qtmaterial/foundation/qtmaterialqtcompat.h"
+
+#include "qtmaterial/core/qtmaterialeventcompat.h"
 
 class QtCompatTest : public QObject
 {
     Q_OBJECT
+
 private slots:
-    void compileTimeMajorContract();
-    void helperSurfaceCompiles();
-    void dprNullEventIsSafe();
+    void enterEventTypeMatchesQtMajor();
+    void mousePositionHelperCompiles();
 };
 
-void QtCompatTest::compileTimeMajorContract()
+void QtCompatTest::enterEventTypeMatchesQtMajor()
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    static_assert(QtMaterial::QtCompat::QtMajorVersion == 5, "Qt5 mismatch");
-    static_assert(std::is_same<QtMaterial::QtCompat::EnterEvent, QEvent>::value,
+    static_assert(std::is_same<QtMaterial::EnterEvent, QEvent>::value,
                   "Qt5 enter event must be QEvent");
 #else
-    static_assert(QtMaterial::QtCompat::QtMajorVersion == 6, "Qt6 mismatch");
-    static_assert(std::is_same<QtMaterial::QtCompat::EnterEvent, QEnterEvent>::value,
+    static_assert(std::is_same<QtMaterial::EnterEvent, QEnterEvent>::value,
                   "Qt6 enter event must be QEnterEvent");
 #endif
     QVERIFY(true);
 }
 
-void QtCompatTest::helperSurfaceCompiles()
+void QtCompatTest::mousePositionHelperCompiles()
 {
-    QVERIFY(&QtMaterial::QtCompat::mousePosition != nullptr);
-    QVERIFY(&QtMaterial::QtCompat::mouseGlobalPosition != nullptr);
-    QVERIFY(&QtMaterial::QtCompat::wheelPosition != nullptr);
-}
-
-void QtCompatTest::dprNullEventIsSafe()
-{
-    QVERIFY(!QtMaterial::QtCompat::isDevicePixelRatioChange(nullptr));
+    QVERIFY(&QtMaterial::mousePosition != nullptr);
 }
 
 QTEST_MAIN(QtCompatTest)

@@ -51,7 +51,7 @@ def validate_repository_contract() -> list[str]:
          "check-qt-toolchain.py"])
     for rel in [
         "cmake/QtMaterial3QtCompatibility.cmake",
-        "include/qtmaterial/foundation/qtmaterialqtcompat.h",
+        "include/qtmaterial/core/qtmaterialeventcompat.h",
         "tests/compat/tst_qtcompat.cpp",
         "scripts/ci/check-qt-toolchain.py",
     ]:

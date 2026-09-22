@@ -6,11 +6,19 @@
 #include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
+#if defined(QTMATERIAL3_STATIC)
+#  define QTMATERIAL3_TESTING_INTERNAL_EXPORT
+#elif defined(QTMATERIAL3_TESTING_LIBRARY)
+#  define QTMATERIAL3_TESTING_INTERNAL_EXPORT Q_DECL_EXPORT
+#else
+#  define QTMATERIAL3_TESTING_INTERNAL_EXPORT Q_DECL_IMPORT
+#endif
+
 class QObject;
 
 namespace QtMaterial {
 
-class QTMATERIAL3_TESTING_EXPORT QtMaterialAutomation final
+class QTMATERIAL3_TESTING_INTERNAL_EXPORT QtMaterialAutomation final
 {
 public:
     QtMaterialAutomation() = delete;

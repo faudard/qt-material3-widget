@@ -26,7 +26,6 @@ set(QTMATERIAL3_PUBLIC_HEADERS
     "qtmaterial/foundation/qtmaterialdensity.h"
     "qtmaterial/foundation/qtmaterialinteractionstate.h"
     "qtmaterial/foundation/qtmaterialmetadataproperties.h"
-    "qtmaterial/foundation/qtmaterialqtcompat.h"
     "qtmaterial/foundation/qtmaterialtokenid.h"
     "qtmaterial/integration/qtmaterialpaletteadapter.h"
     "qtmaterial/qtmaterialglobal.h"

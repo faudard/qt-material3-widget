@@ -45,7 +45,7 @@
   "compatibilityPolicy": {
     "qt5PythonBindings": false,
     "qt6PythonBindings": "future PySide6/Shiboken6 workstream",
-    "versionSpecificCode": "centralize in qtmaterialqtcompat.h or narrow guarded private helpers",
+    "versionSpecificCode": "centralize in qtmaterialeventcompat.h or narrow guarded private helpers",
     "exactQt5ClaimRequiresGreenCI": true
   }
 }
