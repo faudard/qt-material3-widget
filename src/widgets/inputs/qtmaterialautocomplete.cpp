@@ -84,6 +84,10 @@ void updatePaletteFromSpec(QtMaterialAutocompletePrivate* d, const Theme& theme)
 
 void updateFilterText(QtMaterialAutocomplete* q, QtMaterialAutocompletePrivate* d)
 {
+    if (!d || !d->m_lineEdit || !d->m_popup) {
+        return;
+    }
+
     d->m_popup->setFilterText(d->m_lineEdit->text());
     q->setPopupVisible(
         d->m_opensOnFocus && !d->m_lineEdit->text().isEmpty());
@@ -150,14 +154,24 @@ QtMaterialAutocomplete::QtMaterialAutocomplete(QWidget* parent)
 
 QtMaterialAutocomplete::~QtMaterialAutocomplete()
 {
-    // QWidget destroys child widgets from its base destructor, after the
-    // QtMaterialAutocomplete subobject has already been torn down. Destroy the
-    // popup while the derived object is still alive so its hide notification
-    // cannot target a partially destroyed QtMaterialAutocomplete instance.
-    if (d_ptr && d_ptr->m_popup) {
-        QObject::disconnect(d_ptr->m_popup, nullptr, this, nullptr);
-        delete d_ptr->m_popup;
-        d_ptr->m_popup = nullptr;
+    if (!d_ptr) {
+        return;
+    }
+
+    // Closing a Qt::Popup can synchronously restore focus to the line edit.
+    // Remove this object's filter and signal callbacks before destroying the
+    // popup so that focus restoration cannot re-enter Autocomplete while the
+    // popup's derived subobject is already being torn down.
+    if (d_ptr->m_lineEdit) {
+        d_ptr->m_lineEdit->removeEventFilter(this);
+        QObject::disconnect(d_ptr->m_lineEdit, nullptr, this, nullptr);
+    }
+
+    auto* popup = d_ptr->m_popup;
+    d_ptr->m_popup = nullptr;
+    if (popup) {
+        QObject::disconnect(popup, nullptr, this, nullptr);
+        delete popup;
     }
 }
 
@@ -191,12 +205,16 @@ QAbstractItemModel* QtMaterialAutocomplete::model() const noexcept
 
 bool QtMaterialAutocomplete::isPopupVisible() const noexcept
 {
-    return d_ptr->m_popup->isPopupVisible();
+    return d_ptr && d_ptr->m_popup
+        ? d_ptr->m_popup->isPopupVisible()
+        : false;
 }
 
 void QtMaterialAutocomplete::setPopupVisible(bool visible)
 {
-    d_ptr->m_popup->setPopupVisible(visible);
+    if (d_ptr && d_ptr->m_popup) {
+        d_ptr->m_popup->setPopupVisible(visible);
+    }
 }
 
 void QtMaterialAutocomplete::themeChangedEvent(const Theme& theme)
@@ -259,7 +277,7 @@ bool QtMaterialAutocomplete::eventFilter(QObject* watched, QEvent* event)
         }
         if (event->type() == QEvent::FocusOut) {
             // Popup owns its own focus while visible. Hide only when the popup is not active.
-            if (!d_ptr->m_popup->isActiveWindow()) {
+            if (!d_ptr->m_popup || !d_ptr->m_popup->isActiveWindow()) {
                 setPopupVisible(false);
             }
         }
