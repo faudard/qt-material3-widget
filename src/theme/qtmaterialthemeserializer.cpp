@@ -1,7 +1,6 @@
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
 #include "qtmaterial/theme/qtmaterialthemetextcodec.h"
 #include "qtmaterial/theme/qtmaterialtokenids.h"
-#include "qtmaterial/theme/qtmaterialthemetextcodec.h"
 #include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 
 #include <QColor>
@@ -147,45 +146,6 @@ bool rejectUnknownKeys(const QJsonObject& object,
     return true;
 }
 
-QJsonObject normalizeThemeRootForRead(QJsonObject root)
-{
-    const QJsonValue resolvedValue = root.value(QStringLiteral("resolved"));
-    if (!resolvedValue.isObject()) {
-        return root;
-    }
-
-    const QJsonObject resolved = resolvedValue.toObject();
-
-    const char* const resolvedKeys[] = {
-        "colorScheme",
-        "typographyScale",
-        "shapeScale",
-        "elevationScale",
-        "motionTokens",
-        "stateLayer",
-        "accessibility",
-        "interactions",
-        "density",
-        "iconSizes",
-        "componentOverrides",
-    };
-
-    for (const char* keyName : resolvedKeys) {
-        const QString key = QString::fromLatin1(keyName);
-        if (!root.contains(key) && resolved.contains(key)) {
-            root.insert(key, resolved.value(key));
-        }
-    }
-
-    // Keep Strict mode strict for the legacy reader below:
-    // after flattening the v2 resolved block into the legacy root-level keys,
-    // "resolved" itself must not be seen as an unknown root key.
-    root.remove(QStringLiteral("resolved"));
-
-    return root;
-}
-
-
 bool requireObjectMember(const QJsonObject& object, const QString& key, QJsonObject* outObject, QString* errorString)
 {
     if (!object.contains(key) || !object.value(key).isObject()) {
@@ -299,13 +259,9 @@ bool optionsFromJson(const QJsonObject& object, ThemeOptions* outOptions, QStrin
 
     ThemeOptions options;
 
-    const QString seedKey = object.contains(QStringLiteral("seedColor"))
-        ? QStringLiteral("seedColor")
-        : QStringLiteral("sourceColor");
-
-    if (object.contains(seedKey)) {
+    if (object.contains(QStringLiteral("seedColor"))) {
         QColor sourceColor;
-        if (!jsonToColor(object.value(seedKey), &sourceColor)) {
+        if (!jsonToColor(object.value(QStringLiteral("seedColor")), &sourceColor)) {
             if (errorString) {
                 *errorString = QStringLiteral("Invalid source seed color value.");
             }
@@ -1066,32 +1022,32 @@ bool applyResolvedToTheme(const QJsonObject& resolved, Theme* theme, QString* er
         }
         theme->colorScheme() = scheme;
     }
-    if (resolved.contains(QStringLiteral("typographyScale")) || resolved.contains(QStringLiteral("typography"))) {
-        const QString key = resolved.contains(QStringLiteral("typographyScale")) ? QStringLiteral("typographyScale") : QStringLiteral("typography");
+    if (resolved.contains(QStringLiteral("typographyScale"))) {
+        const QString key = QStringLiteral("typographyScale");
         TypographyScale typography;
         if (!typographyFromJson(resolved.value(key).toObject(), &typography, errorString)) {
             return false;
         }
         theme->typography() = typography;
     }
-    if (resolved.contains(QStringLiteral("shapeScale")) || resolved.contains(QStringLiteral("shapes"))) {
-        const QString key = resolved.contains(QStringLiteral("shapeScale")) ? QStringLiteral("shapeScale") : QStringLiteral("shapes");
+    if (resolved.contains(QStringLiteral("shapeScale"))) {
+        const QString key = QStringLiteral("shapeScale");
         ShapeScale shapes;
         if (!shapesFromJson(resolved.value(key).toObject(), &shapes, errorString)) {
             return false;
         }
         theme->shapes() = shapes;
     }
-    if (resolved.contains(QStringLiteral("elevationScale")) || resolved.contains(QStringLiteral("elevations"))) {
-        const QString key = resolved.contains(QStringLiteral("elevationScale")) ? QStringLiteral("elevationScale") : QStringLiteral("elevations");
+    if (resolved.contains(QStringLiteral("elevationScale"))) {
+        const QString key = QStringLiteral("elevationScale");
         ElevationScale elevations;
         if (!elevationsFromJson(resolved.value(key).toObject(), &elevations, errorString)) {
             return false;
         }
         theme->elevations() = elevations;
     }
-    if (resolved.contains(QStringLiteral("motionTokens")) || resolved.contains(QStringLiteral("motion"))) {
-        const QString key = resolved.contains(QStringLiteral("motionTokens")) ? QStringLiteral("motionTokens") : QStringLiteral("motion");
+    if (resolved.contains(QStringLiteral("motionTokens"))) {
+        const QString key = QStringLiteral("motionTokens");
         MotionTokens motion;
         if (!motionFromJson(resolved.value(key).toObject(), &motion, errorString)) {
             return false;
@@ -1298,7 +1254,7 @@ bool validateStrictV2(const QJsonObject& object, QString* errorString)
     return true;
 }
 
-Theme parseV2Theme(const QJsonObject& object, ThemeReadMode mode, bool* ok, QString* errorString)
+Theme parseCurrentTheme(const QJsonObject& object, ThemeReadMode mode, bool* ok, QString* errorString)
 {
     if (mode == ThemeReadMode::Strict && !validateStrictV2(object, errorString)) {
         if (ok) {
@@ -1334,76 +1290,6 @@ Theme parseV2Theme(const QJsonObject& object, ThemeReadMode mode, bool* ok, QStr
 
     const QJsonObject resolved = object.value(QStringLiteral("resolved")).toObject();
     if (!resolved.isEmpty() && !applyResolvedToTheme(resolved, &theme, errorString)) {
-        if (ok) {
-            *ok = false;
-        }
-        return Theme();
-    }
-
-    succeed(ok, errorString);
-    return theme;
-}
-
-Theme parseV1Theme(const QJsonObject& object, ThemeReadMode mode, bool* ok, QString* errorString)
-{
-    if (mode == ThemeReadMode::Strict) {
-        fail(ok, errorString, QStringLiteral("Strict mode only accepts current theme formatVersion %1.").arg(ThemeSerializer::kCurrentFormatVersion));
-        return Theme();
-    }
-
-    ThemeOptions options;
-    if (object.contains(QStringLiteral("options"))) {
-        const QJsonValue optionsValue = object.value(QStringLiteral("options"));
-        if (!optionsValue.isObject()) {
-            fail(ok, errorString, QStringLiteral("Theme options entry must be an object."));
-            return Theme();
-        }
-        QString localError;
-        if (!optionsFromJson(optionsValue.toObject(), &options, &localError)) {
-            fail(ok, errorString, localError);
-            return Theme();
-        }
-    }
-
-    if (object.contains(QStringLiteral("mode"))) {
-        ThemeMode modeValue = ThemeMode::Light;
-        if (!stringToEnum(object.value(QStringLiteral("mode")).toString(), kThemeModes, &modeValue)) {
-            fail(ok, errorString, QStringLiteral("Invalid top-level mode value."));
-            return Theme();
-        }
-        options.mode = modeValue;
-    }
-
-    if (object.contains(QStringLiteral("contrast"))) {
-        ContrastMode contrast = ContrastMode::Standard;
-        if (!stringToEnum(object.value(QStringLiteral("contrast")).toString(), kContrastModes, &contrast)) {
-            fail(ok, errorString, QStringLiteral("Invalid top-level contrast value."));
-            return Theme();
-        }
-        options.contrast = contrast;
-    }
-
-    Theme theme(options);
-    theme.setMode(options.mode);
-    theme.setContrastMode(options.contrast);
-    theme.setOptions(options);
-
-    QJsonObject resolved;
-    const QStringList legacyResolvedKeys = {
-        QStringLiteral("colorScheme"),
-        QStringLiteral("typography"),
-        QStringLiteral("shapes"),
-        QStringLiteral("elevations"),
-        QStringLiteral("motion"),
-        QStringLiteral("stateLayer")
-    };
-    for (const QString& key : legacyResolvedKeys) {
-        if (object.contains(key)) {
-            resolved.insert(key, object.value(key));
-        }
-    }
-
-    if (!applyResolvedToTheme(resolved, &theme, errorString)) {
         if (ok) {
             *ok = false;
         }
@@ -1475,46 +1361,27 @@ Theme ThemeSerializer::fromJsonObject(const QJsonObject& object, ThemeReadMode m
         return Theme();
     }
 
-    const int formatVersion =
-        object.value(QStringLiteral("formatVersion"))
-            .toInt(ThemeSerializer::kMinimumReadableFormatVersion);
-
-    const bool currentShape =
-        object.contains(QStringLiteral("source"))
-        || object.contains(QStringLiteral("resolved"));
-
-    if (formatVersion == kCurrentFormatVersion && currentShape) {
-        return parseV2Theme(object, mode, ok, errorString);
+    const QJsonValue versionValue = object.value(QStringLiteral("formatVersion"));
+    if (!versionValue.isDouble()
+        || versionValue.toInt(-1) != kCurrentFormatVersion) {
+        fail(
+            ok,
+            errorString,
+            QStringLiteral("Unsupported or missing theme formatVersion; expected %1.")
+                .arg(kCurrentFormatVersion));
+        return Theme();
     }
 
-    const bool legacyShape =
-        object.contains(QStringLiteral("options"))
-        || object.contains(QStringLiteral("colorScheme"))
-        || object.contains(QStringLiteral("typography"))
-        || object.contains(QStringLiteral("shapes"))
-        || object.contains(QStringLiteral("elevations"))
-        || object.contains(QStringLiteral("motion"))
-        || object.contains(QStringLiteral("stateLayer"));
-
-    if (formatVersion == 1 && legacyShape) {
-        if (mode == ThemeReadMode::Strict) {
-            fail(
-                ok,
-                errorString,
-                QStringLiteral(
-                    "Strict mode only accepts the current theme JSON shape."));
-            return Theme();
-        }
-        return parseV1Theme(object, mode, ok, errorString);
+    if (!object.value(QStringLiteral("source")).isObject()
+        || !object.value(QStringLiteral("resolved")).isObject()) {
+        fail(
+            ok,
+            errorString,
+            QStringLiteral("Theme JSON must use the canonical source/resolved shape."));
+        return Theme();
     }
 
-    fail(
-        ok,
-        errorString,
-        QStringLiteral(
-            "Unsupported theme formatVersion %1 or document shape.")
-            .arg(formatVersion));
-    return Theme();
+    return parseCurrentTheme(object, mode, ok, errorString);
 }
 
 Theme ThemeSerializer::fromJsonDocument(const QJsonDocument& document, bool* ok, QString* errorString)

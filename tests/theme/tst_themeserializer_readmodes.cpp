@@ -13,7 +13,7 @@ class tst_ThemeSerializerReadModes : public QObject {
 
 private slots:
     void strict_rejectsUnknownRootKeys();
-    void upgradeIfPossible_acceptsV1Theme();
+    void lenient_rejectsLegacyShape();
     void lenient_acceptsUnknownRootKeys();
 };
 
@@ -32,33 +32,20 @@ void tst_ThemeSerializerReadModes::strict_rejectsUnknownRootKeys()
     QVERIFY(error.contains(QStringLiteral("Unknown key")));
 }
 
-void tst_ThemeSerializerReadModes::upgradeIfPossible_acceptsV1Theme()
+void tst_ThemeSerializerReadModes::lenient_rejectsLegacyShape()
 {
-    QJsonObject v1;
-    v1.insert(QStringLiteral("formatVersion"), 1);
+    QJsonObject legacy;
+    legacy.insert(QStringLiteral("formatVersion"), 1);
+    legacy.insert(QStringLiteral("options"), QJsonObject{});
+    legacy.insert(QStringLiteral("colorScheme"), QJsonObject{});
 
-    QJsonObject options;
-    options.insert(QStringLiteral("sourceColor"), QStringLiteral("#ff6750a4"));
-    options.insert(QStringLiteral("mode"), QStringLiteral("Dark"));
-    options.insert(QStringLiteral("contrast"), QStringLiteral("High"));
-    options.insert(QStringLiteral("expressive"), false);
-    options.insert(QStringLiteral("useMaterialColorUtilities"), false);
-    v1.insert(QStringLiteral("options"), options);
-
-    QJsonObject colorScheme;
-    colorScheme.insert(QStringLiteral("Primary"), QStringLiteral("#ff6750a4"));
-    colorScheme.insert(QStringLiteral("OnSurface"), QStringLiteral("#ffe6e1e5"));
-    v1.insert(QStringLiteral("colorScheme"), colorScheme);
-
-    bool ok = false;
+    bool ok = true;
     QString error;
-    const Theme theme = ThemeSerializer::fromJsonObject(v1, ThemeReadMode::Lenient, &ok, &error);
+    ThemeSerializer::fromJsonObject(
+        legacy, ThemeReadMode::Lenient, &ok, &error);
 
-    QVERIFY2(ok, qPrintable(error));
-    QCOMPARE(theme.mode(), ThemeMode::Dark);
-    QCOMPARE(theme.contrastMode(), ContrastMode::High);
-    QCOMPARE(theme.options().sourceColor, QColor(QStringLiteral("#ff6750a4")));
-    QCOMPARE(theme.colorScheme().color(ColorRole::Primary), QColor(QStringLiteral("#ff6750a4")));
+    QVERIFY(!ok);
+    QVERIFY(error.contains(QStringLiteral("canonical source/resolved shape")));
 }
 
 void tst_ThemeSerializerReadModes::lenient_acceptsUnknownRootKeys()

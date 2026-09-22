@@ -13,7 +13,7 @@ namespace QtMaterial {
  * Sole public boundary for textual component identifiers used by theme IO.
  *
  * Specs/ThemeModel consume ComponentId only. ThemeSerializer uses this codec
- * for canonical names, legacy aliases and opaque third-party extension names.
+ * for canonical first-party names and opaque third-party extension names.
  */
 class QTMATERIAL3_THEME_IO_EXPORT ThemeTextCodec final {
 public:

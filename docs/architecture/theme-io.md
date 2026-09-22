@@ -12,8 +12,8 @@ JSON / XML / textual aliases
 
 ## Component override identifiers
 
-ThemeModel/Specs use `ComponentId`. Legacy JSON aliases are accepted only by
-`ThemeTextCodec` and canonical serialization emits one stable name per typed ID.
+ThemeModel/Specs use `ComponentId`. First-party JSON identifiers are accepted only in canonical form by
+`ThemeTextCodec`; serialization emits that same stable name per typed ID.
 
 Unknown third-party component names are preserved as an opaque extension map inside
 `ComponentTokenOverrides`; only ThemeIO may enumerate/read/write those textual names.
