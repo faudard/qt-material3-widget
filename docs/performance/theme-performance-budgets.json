@@ -5,7 +5,7 @@
   "budgets": {
     "themeBuildSeedMatrixBudgetMs": 5000,
     "jsonRoundTripBudgetMs": 5000,
-    "specFactoryHotLoopBudgetMs": 5000
+    "specResolutionHotLoopBudgetMs": 5000
   },
   "notes": [
     "Budgets are deliberately loose until the project has stable CI timing data.",

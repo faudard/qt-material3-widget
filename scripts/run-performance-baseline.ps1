@@ -23,7 +23,7 @@ ctest --test-dir $BuildDir --output-on-failure -R 'performance|theme_performance
 $Executables = @(
   "benchmark_theme_pipeline",
   "benchmark_theme_manager_fanout",
-  "benchmark_spec_factory_pipeline",
+  "benchmark_spec_resolution_pipeline",
   "benchmark_shadow_cache_pipeline",
   "benchmark_theme_switch",
   "benchmark_ripple",

@@ -101,7 +101,7 @@ private slots:
                           budgetMs(QStringLiteral("QTMATERIAL3_JSON_ROUNDTRIP_BUDGET_MS"), 5000));
     }
 
-    void specFactoryHotLoopBudget()
+    void specResolutionHotLoopBudget()
     {
         QtMaterial::ThemeBuilder builder;
         const auto theme = builder.buildLightFromSeed(QColor(QStringLiteral("#00639B")));
@@ -117,9 +117,9 @@ private slots:
             Q_UNUSED(card);
         }
 
-        maybeVerifyBudget("specFactoryHotLoopBudget",
+        maybeVerifyBudget("specResolutionHotLoopBudget",
                           timer.elapsed(),
-                          budgetMs(QStringLiteral("QTMATERIAL3_SPEC_FACTORY_BUDGET_MS"), 5000));
+                          budgetMs(QStringLiteral("QTMATERIAL3_SPEC_RESOLUTION_BUDGET_MS"), 5000));
     }
 };
 
