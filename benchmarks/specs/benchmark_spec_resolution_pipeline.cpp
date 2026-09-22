@@ -33,4 +33,4 @@ void benchmark_ResolverPipeline::resolvesFilledButtonSpec()
 }
 
 QTEST_MAIN(benchmark_ResolverPipeline)
-#include "benchmark_spec_factory_pipeline.moc"
+#include "benchmark_spec_resolution_pipeline.moc"

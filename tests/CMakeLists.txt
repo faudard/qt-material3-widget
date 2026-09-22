@@ -30,6 +30,9 @@ qtm3_add_test(
 )
 
 qtm3_add_test(tst_themebuilder theme/tst_themebuilder.cpp qtmaterial3_theme)
+qtm3_add_test(tst_shapes theme/tst_shapes.cpp qtmaterial3_theme)
+qtm3_add_test(tst_statelayer theme/tst_statelayer.cpp qtmaterial3_theme)
+qtm3_add_test(tst_xmlthemeadapter theme/tst_xmlthemeadapter.cpp qtmaterial3_theme)
 qtm3_add_test(tst_thememanager theme/tst_thememanager.cpp qtmaterial3_theme)
 qtm3_add_test(tst_themecontext theme/tst_themecontext.cpp qtmaterial3_theme)
 qtm3_add_test(tst_themecontextbinding core/tst_themecontextbinding.cpp qtmaterial3_core)
@@ -67,7 +70,6 @@ qtm3_add_test(tst_buttonelevationspec specs/tst_buttonelevationspec.cpp qtmateri
 qtm3_add_test(tst_selectionspecresolver specs/tst_selectionspecresolver.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_selectionresolvedspec specs/tst_selectionresolvedspec.cpp qtmaterial3_theme qtmaterial3_specs)
 qtm3_add_test(tst_componenttokenoverrides specs/tst_componenttokenoverrides.cpp qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
-qtm3_add_test(tst_phase4specs specs/tst_phase4specs.cpp qtmaterial3_theme qtmaterial3_core qtmaterial3_specs)
 
 qtm3_add_test(tst_statelayerpainter effects/tst_statelayerpainter.cpp qtmaterial3_effects)
 qtm3_add_test(tst_ripplecontroller effects/tst_ripplecontroller.cpp qtmaterial3_effects)
@@ -118,6 +120,8 @@ qtm3_add_test(tst_outlinedtextfield widgets/inputs/tst_outlinedtextfield.cpp qtm
 qtm3_add_test(tst_filledtextfield widgets/inputs/tst_filledtextfield.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_textfield_validation_group widgets/inputs/tst_textfield_validation_group.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_textfield_validation_summary widgets/inputs/tst_textfield_validation_summary.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_textfield_helper_error widgets/inputs/tst_textfield_helper_error.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_textfield_validation_group_lifecycle widgets/inputs/tst_textfield_validation_group_lifecycle.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_textfield_accessibility widgets/inputs/tst_textfield_accessibility.cpp qtmaterial3_widgets)
 
@@ -153,6 +157,7 @@ qtm3_add_textfieldshellhelper_private_test(
 qtm3_add_test(tst_autocompletepopup widgets/inputs/tst_autocompletepopup.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_autocompletepopup_themecontext widgets/inputs/tst_autocompletepopup_themecontext.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_autocompleteresolvedwidget widgets/inputs/tst_autocompleteresolvedwidget.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_autocomplete widgets/inputs/tst_autocomplete.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_datefield widgets/inputs/tst_datefield.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_datefield_affordances widgets/inputs/tst_datefield_affordances.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_component_expansion widgets/inputs/tst_component_expansion.cpp qtmaterial3_widgets)
@@ -177,8 +182,6 @@ qtm3_add_test(tst_carousel_resolvedspec widgets/data/tst_carousel_resolvedspec.c
 
 qtm3_add_test(tst_divider widgets/data/tst_divider.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_filledtextfield_render render/inputs/tst_filledtextfield_render.cpp qtmaterial3_widgets)
-
-# Phase 5 note: add accessibility, keyboard, and installed-package consumer checks here.
 
 qtm3_add_test(tst_filledbutton_render render/buttons/tst_filledbutton_render.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_outlinedbutton_render render/buttons/tst_outlinedbutton_render.cpp qtmaterial3_widgets)
@@ -210,12 +213,10 @@ qtm3_add_test(tst_overlaysurface core/tst_overlaysurface.cpp qtmaterial3_core)
 qtm3_add_test(tst_selectioncontrol_layout core/tst_selectioncontrol_layout.cpp qtmaterial3_core)
 qtm3_add_test(tst_inputcontrol widgets/inputs/common/tst_inputcontrol.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_scrimwidget effects/tst_scrimwidget.cpp qtmaterial3_effects)
-# Baseline deployment for this legacy render test is not deterministic yet;
-# keep visual coverage in tst_visual_smoke_contracts until its baseline path is normalized.
-# qtm3_add_test(tst_filledtonalbutton_render render/buttons/tst_filledtonalbutton_render.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_progressindicators widgets/progress/tst_progressindicators.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_tabs widgets/navigation/tst_tabs.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_themedmenu widgets/navigation/tst_themedmenu.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_menu widgets/navigation/tst_menu.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_tabs_themecontext widgets/navigation/tst_tabs_themecontext.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_tabsgenericthemebinding widgets/navigation/tst_tabsgenericthemebinding.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_tabsresolvedlifecycle widgets/navigation/tst_tabsresolvedlifecycle.cpp qtmaterial3_widgets)

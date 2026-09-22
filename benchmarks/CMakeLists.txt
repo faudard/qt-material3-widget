@@ -30,7 +30,6 @@ target_link_libraries(benchmark_widget_creation
     PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme qtmaterial3_core qtmaterial3_specs qtmaterial3_effects qtmaterial3_widgets
 )
 
-# Slice 11: expanded performance and cache benchmarks.
 if(NOT TARGET benchmark_theme_pipeline)
   qtmaterial3_add_benchmark_executable(benchmark_theme_pipeline
     theme/benchmark_theme_pipeline.cpp
@@ -57,11 +56,11 @@ if(NOT TARGET benchmark_theme_manager_fanout)
   )
 endif()
 
-if(NOT TARGET benchmark_spec_factory_pipeline)
-  qtmaterial3_add_benchmark_executable(benchmark_spec_factory_pipeline
-    specs/benchmark_spec_factory_pipeline.cpp
+if(NOT TARGET benchmark_spec_resolution_pipeline)
+  qtmaterial3_add_benchmark_executable(benchmark_spec_resolution_pipeline
+    specs/benchmark_spec_resolution_pipeline.cpp
   )
-  target_link_libraries(benchmark_spec_factory_pipeline PRIVATE
+  target_link_libraries(benchmark_spec_resolution_pipeline PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
