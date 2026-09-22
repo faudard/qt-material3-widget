@@ -3,6 +3,8 @@
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h"
 
+using namespace QtMaterial;
+
 class tst_TextFieldHelperError : public QObject
 {
     Q_OBJECT
