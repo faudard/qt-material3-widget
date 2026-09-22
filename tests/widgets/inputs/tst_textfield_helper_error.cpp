@@ -19,7 +19,7 @@ void tst_TextFieldHelperError::outlinedPrefersErrorText()
     QtMaterialOutlinedTextField field;
     field.setSupportingText(QStringLiteral("Helper text"));
     field.setErrorText(QStringLiteral("Error text"));
-    field.setHasError(true);
+    field.setHasErrorState(true);
 
     QVERIFY(field.errorText() == QStringLiteral("Error text"));
 }
