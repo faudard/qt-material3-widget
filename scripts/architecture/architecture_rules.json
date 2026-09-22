@@ -63,7 +63,6 @@
     {
       "name": "tooling-does-not-depend-on-runtime-layers",
       "paths": [
-        "include/qtmaterial/tooling",
         "src/tooling"
       ],
       "forbidden_include_prefixes": [
@@ -122,7 +121,6 @@
     {
       "name": "testing-does-not-depend-on-core",
       "paths": [
-        "include/qtmaterial/testing",
         "src/testing"
       ],
       "forbidden_include_prefixes": [
@@ -1485,7 +1483,7 @@
       "file": "src/tooling/CMakeLists.txt",
       "required_regex": [
         "qtmaterialcomponentregistry\\.cpp",
-        "qtmaterial/tooling/qtmaterialcomponentregistry\\.h"
+        "qtmaterialcomponentregistry\\.h"
       ],
       "forbidden_regex": [
         "qtmaterial3_theme",
@@ -1507,13 +1505,15 @@
       "forbidden_regex": []
     },
     {
-      "name": "package-installs-cleanup-modules",
+      "name": "package-excludes-internal-support-modules",
       "file": "CMakeLists.txt",
       "required_regex": [
-        "qtmaterial3_tooling",
         "qtmaterial3_integration"
       ],
-      "forbidden_regex": []
+      "forbidden_regex": [
+        "QTMATERIAL3_INSTALL_TARGETS[\\s\\S]*qtmaterial3_tooling",
+        "QTMATERIAL3_INSTALL_TARGETS[\\s\\S]*qtmaterial3_testing"
+      ]
     },
     {
       "name": "specs-cmake-does-not-build-spec-factory",

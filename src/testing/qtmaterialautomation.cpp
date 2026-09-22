@@ -1,4 +1,4 @@
-#include "qtmaterial/testing/qtmaterialautomation.h"
+#include "qtmaterialautomation.h"
 #include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
 
 #include <QObject>

@@ -2,7 +2,7 @@
 
 #include <QObject>
 
-#include "qtmaterial/testing/qtmaterialautomation.h"
+#include "qtmaterialautomation.h"
 #include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 
 class tst_InteractionStateContracts : public QObject
