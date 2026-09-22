@@ -1100,7 +1100,7 @@ bool applyResolvedToTheme(const QJsonObject& resolved, Theme* theme, QString* er
     return true;
 }
 
-bool validateStrictV2(const QJsonObject& object, QString* errorString)
+bool validateStrictCurrent(const QJsonObject& object, QString* errorString)
 {
     const QJsonValue versionValue = object.value(QStringLiteral("formatVersion"));
     if (!versionValue.isDouble()
@@ -1256,7 +1256,7 @@ bool validateStrictV2(const QJsonObject& object, QString* errorString)
 
 Theme parseCurrentTheme(const QJsonObject& object, ThemeReadMode mode, bool* ok, QString* errorString)
 {
-    if (mode == ThemeReadMode::Strict && !validateStrictV2(object, errorString)) {
+    if (mode == ThemeReadMode::Strict && !validateStrictCurrent(object, errorString)) {
         if (ok) {
             *ok = false;
         }

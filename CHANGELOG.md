@@ -17,6 +17,9 @@ source or ABI changes, and those changes must be called out explicitly.
 - Pre-1.0 cleanup removes repository scaffolding, forwarding headers, duplicate resolver/spec surfaces, placeholder tests, and accidental public APIs instead of deprecating them.
 - Repository-only Tooling/Testing targets are no longer installed as public CMake components; dead spec translation units, private placeholders, orphan tests, and placeholder examples are removed.
 - Repository health no longer reports missing Material conformance tooling as a passing check.
+- Theme JSON reading now accepts only the canonical formatVersion 1 source/resolved shape; unpublished pre-1.0 aliases and legacy layouts are removed.
+- Spec resolution terminology replaces retired SpecFactory compatibility tests, migration scripts, and historical hardening checklists.
+- Qt 5/Qt 6 adaptation is consolidated on the active core event compatibility layer; repository-only Tooling/Testing exports no longer leak into the public global header.
 - Chip is promoted from planned to usable and reuses the shared 0.7 ripple, state-layer and focus policies.
 - Menu supports exclusive check groups for radio-style actions.
 - Table exposes explicit multi-selection while preserving QTableView sorting, headers and Model/View behavior.
