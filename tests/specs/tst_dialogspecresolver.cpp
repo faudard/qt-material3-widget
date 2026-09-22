@@ -13,7 +13,6 @@ class tst_DialogSpecResolver : public QObject
 private slots:
     void resolvesRuntimeValues();
     void resolvesComponentOverrides();
-    void remainsCompatibleWithSpecFactory();
 };
 
 void tst_DialogSpecResolver::resolvesRuntimeValues()
@@ -117,29 +116,6 @@ void tst_DialogSpecResolver::resolvesComponentOverrides()
     QCOMPARE(spec.cornerRadius, 18.0);
     QCOMPARE(spec.maxWidth, 640);
     QVERIFY(spec.scrimColor.alphaF() <= 0.2401);
-}
-
-void tst_DialogSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme =
-        builder.buildLightFromSeed(
-            QColor(QStringLiteral("#6750A4")));
-
-    const DialogSpec resolved =
-        DialogSpecResolver().dialogSpec(theme);
-    const DialogSpec legacy =
-        DialogSpecResolver().dialogSpec(theme);
-
-    QCOMPARE(resolved.containerColor, legacy.containerColor);
-    QCOMPARE(resolved.cornerRadius, legacy.cornerRadius);
-    QCOMPARE(
-        resolved.elevationStyle.shadowBlur,
-        legacy.elevationStyle.shadowBlur);
-    QCOMPARE(
-        resolved.enterMotionStyle.durationMs,
-        legacy.enterMotionStyle.durationMs);
-    QCOMPARE(resolved.maxWidth, legacy.maxWidth);
 }
 
 QTEST_MAIN(tst_DialogSpecResolver)

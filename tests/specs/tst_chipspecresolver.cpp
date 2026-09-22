@@ -12,7 +12,6 @@ class tst_ChipSpecResolver : public QObject
 private slots:
     void resolvesAllVariants();
     void resolvesDensity();
-    void remainsCompatibleWithSpecFactory();
 };
 
 void tst_ChipSpecResolver::resolvesAllVariants()
@@ -57,24 +56,6 @@ void tst_ChipSpecResolver::resolvesDensity()
     QCOMPARE(
         resolver.assistChipSpec(theme, Density::Comfortable).containerHeight,
         36);
-}
-
-void tst_ChipSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    const Theme theme = ThemeBuilder().buildDarkFromSeed(
-        QColor(QStringLiteral("#6750A4")));
-    const ChipSpec resolved =
-        ChipSpecResolver().filterChipSpec(theme, Density::Compact);
-    const ChipSpec legacy =
-        ChipSpecResolver().filterChipSpec(theme, Density::Compact);
-
-    QCOMPARE(static_cast<int>(resolved.variant),
-             static_cast<int>(legacy.variant));
-    QCOMPARE(resolved.containerColor, legacy.containerColor);
-    QCOMPARE(resolved.selectedContainerColor, legacy.selectedContainerColor);
-    QCOMPARE(resolved.labelColor, legacy.labelColor);
-    QCOMPARE(resolved.containerHeight, legacy.containerHeight);
-    QCOMPARE(resolved.touchTarget, legacy.touchTarget);
 }
 
 QTEST_MAIN(tst_ChipSpecResolver)

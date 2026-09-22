@@ -12,7 +12,6 @@ class tst_OverlaySurfaceSpecResolver : public QObject
 private slots:
     void resolvesNavigationDrawer();
     void resolvesBottomSheet();
-    void remainsCompatibleWithSpecFactory();
     void returnsIndependentValues();
 };
 
@@ -88,46 +87,6 @@ void tst_OverlaySurfaceSpecResolver::resolvesBottomSheet()
     QCOMPARE(
         spec.shadowColor,
         theme.colorScheme().color(ColorRole::Shadow));
-}
-
-void tst_OverlaySurfaceSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme =
-        builder.buildLightFromSeed(
-            QColor(QStringLiteral("#6750A4")));
-
-    OverlaySurfaceSpecResolver resolver;
-
-    const NavigationDrawerSpec resolvedDrawer =
-        resolver.navigationDrawerSpec(theme);
-    const NavigationDrawerSpec legacyDrawer =
-        OverlaySurfaceSpecResolver().navigationDrawerSpec(theme);
-
-    QCOMPARE(
-        resolvedDrawer.containerColor,
-        legacyDrawer.containerColor);
-    QCOMPARE(
-        resolvedDrawer.cornerRadius,
-        legacyDrawer.cornerRadius);
-    QCOMPARE(
-        resolvedDrawer.preferredWidth,
-        legacyDrawer.preferredWidth);
-
-    const BottomSheetSpec resolvedSheet =
-        resolver.bottomSheetSpec(theme);
-    const BottomSheetSpec legacySheet =
-        OverlaySurfaceSpecResolver().bottomSheetSpec(theme);
-
-    QCOMPARE(
-        resolvedSheet.containerColor,
-        legacySheet.containerColor);
-    QCOMPARE(
-        resolvedSheet.cornerRadius,
-        legacySheet.cornerRadius);
-    QCOMPARE(
-        resolvedSheet.topPadding,
-        legacySheet.topPadding);
 }
 
 void tst_OverlaySurfaceSpecResolver::returnsIndependentValues()

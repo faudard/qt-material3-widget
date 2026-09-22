@@ -15,7 +15,6 @@ private slots:
     void resolvesFilledRuntimeValues();
     void isolatesVariantOverrides();
     void preservesGenericOverrides();
-    void remainsCompatibleWithSpecFactory();
 };
 
 void tst_TextFieldSpecResolver::resolvesOutlinedRuntimeValues()
@@ -123,38 +122,6 @@ void tst_TextFieldSpecResolver::preservesGenericOverrides()
         resolver.filledTextFieldSpec(theme)
             .supportingTopSpacing,
         9);
-}
-
-void tst_TextFieldSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme =
-        builder.buildLightFromSeed(
-            QColor(QStringLiteral("#6750A4")));
-
-    TextFieldSpecResolver resolver;
-
-    const TextFieldSpec outlined =
-        resolver.outlinedTextFieldSpec(theme);
-    const TextFieldSpec legacyOutlined =
-        TextFieldSpecResolver().outlinedTextFieldSpec(theme);
-    QCOMPARE(
-        outlined.containerColor,
-        legacyOutlined.containerColor);
-    QCOMPARE(
-        outlined.cornerRadius,
-        legacyOutlined.cornerRadius);
-
-    const TextFieldSpec filled =
-        resolver.filledTextFieldSpec(theme);
-    const TextFieldSpec legacyFilled =
-        TextFieldSpecResolver().filledTextFieldSpec(theme);
-    QCOMPARE(
-        filled.containerColor,
-        legacyFilled.containerColor);
-    QCOMPARE(
-        filled.motionStyle.durationMs,
-        legacyFilled.motionStyle.durationMs);
 }
 
 QTEST_MAIN(tst_TextFieldSpecResolver)
