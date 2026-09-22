@@ -85,7 +85,8 @@ void updatePaletteFromSpec(QtMaterialAutocompletePrivate* d, const Theme& theme)
 void updateFilterText(QtMaterialAutocomplete* q, QtMaterialAutocompletePrivate* d)
 {
     d->m_popup->setFilterText(d->m_lineEdit->text());
-    q->setPopupVisible(!d->m_lineEdit->text().isEmpty());
+    q->setPopupVisible(
+        d->m_opensOnFocus && !d->m_lineEdit->text().isEmpty());
 }
 
 void updateAccessibilityState(QtMaterialAutocomplete* q, QtMaterialAutocompletePrivate* d)
@@ -129,6 +130,7 @@ QtMaterialAutocomplete::QtMaterialAutocomplete(QWidget* parent)
 
     connect(d_ptr->m_lineEdit, &QLineEdit::textChanged, this, [this](const QString& text) {
         updateFilterText(this, d_ptr.get());
+        updateAccessibilityState(this, d_ptr.get());
         emit textChanged(text);
     });
     connect(d_ptr->m_popup, &::QtMaterialAutocompletePopup::completionActivated, this, [this](const QString& completion) {
@@ -136,11 +138,28 @@ QtMaterialAutocomplete::QtMaterialAutocomplete(QWidget* parent)
         d_ptr->m_lineEdit->setCursorPosition(completion.size());
         emit completionActivated(completion);
     });
-    connect(d_ptr->m_popup, &::QtMaterialAutocompletePopup::popupVisibilityChanged,
-            this, &QtMaterialAutocomplete::popupVisibilityChanged);
+    connect(
+        d_ptr->m_popup,
+        &::QtMaterialAutocompletePopup::popupVisibilityChanged,
+        this,
+        [this](bool visible) {
+            updateAccessibilityState(this, d_ptr.get());
+            emit popupVisibilityChanged(visible);
+        });
 }
 
-QtMaterialAutocomplete::~QtMaterialAutocomplete() = default;
+QtMaterialAutocomplete::~QtMaterialAutocomplete()
+{
+    // QWidget destroys child widgets from its base destructor, after the
+    // QtMaterialAutocomplete subobject has already been torn down. Destroy the
+    // popup while the derived object is still alive so its hide notification
+    // cannot target a partially destroyed QtMaterialAutocomplete instance.
+    if (d_ptr && d_ptr->m_popup) {
+        QObject::disconnect(d_ptr->m_popup, nullptr, this, nullptr);
+        delete d_ptr->m_popup;
+        d_ptr->m_popup = nullptr;
+    }
+}
 
 QLineEdit* QtMaterialAutocomplete::lineEdit() const noexcept { return d_ptr->m_lineEdit; }
 
@@ -220,12 +239,16 @@ bool QtMaterialAutocomplete::eventFilter(QObject* watched, QEvent* event)
                 key->accept();
                 return true;
             }
-            if ((key->key() == Qt::Key_Return || key->key() == Qt::Key_Enter) && isPopupVisible()) {
+            if ((key->key() == Qt::Key_Return || key->key() == Qt::Key_Enter)
+                && isPopupVisible()
+                && d_ptr->m_completesOnReturn) {
                 d_ptr->m_popup->acceptCurrent();
                 key->accept();
                 return true;
             }
-            if (key->key() == Qt::Key_Escape && isPopupVisible()) {
+            if (key->key() == Qt::Key_Escape
+                && isPopupVisible()
+                && d_ptr->m_hidePopupOnEscape) {
                 setPopupVisible(false);
                 key->accept();
                 return true;
@@ -308,7 +331,7 @@ void QtMaterialAutocomplete::setOpensOnFocus(bool enabled) {
         return;
     }
     d_ptr->m_opensOnFocus = enabled;
-    if (!d_ptr->m_opensOnFocus && !d_ptr->m_lineEdit->hasFocus()) {
+    if (!d_ptr->m_opensOnFocus) {
         setPopupVisible(false);
     }
 }
