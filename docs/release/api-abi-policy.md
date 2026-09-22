@@ -14,3 +14,5 @@
 - once a stable API needs replacement, a deprecation mechanism may be introduced with an explicit removal window.
 
 The 1.0 public-header manifest is the source of truth for the supported C++ surface.
+
+Repository-only support targets such as `qtmaterial3_tooling` and `qtmaterial3_testing` are intentionally excluded from the installed package and do not form part of the public compatibility contract.

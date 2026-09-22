@@ -3,7 +3,7 @@ set(QTMATERIAL3_TOOLING_SOURCES
 )
 
 set(QTMATERIAL3_TOOLING_HEADERS
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/tooling/qtmaterialcomponentregistry.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/qtmaterialcomponentregistry.h
 )
 
 qtm3_add_module(
@@ -18,4 +18,8 @@ qtm3_add_module(
 target_link_libraries(qtmaterial3_tooling
     PUBLIC
         Qt${QT_VERSION_MAJOR}::Core
+)
+
+target_include_directories(qtmaterial3_tooling
+    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 )

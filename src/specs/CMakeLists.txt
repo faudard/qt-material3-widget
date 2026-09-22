@@ -1,36 +1,19 @@
 set(QTMATERIAL3_SPECS_SOURCES
     qtmaterialnavigationrailspecresolver.cpp
     qtmaterialcomponenttokenapplier.cpp
-    qtmaterialbuttonspec.cpp
     qtmaterialbuttonspecresolver.cpp
-    qtmaterialiconbuttonspec.cpp
     qtmaterialactionbuttonspecresolver.cpp
-    qtmaterialcheckboxspec.cpp
-    qtmaterialradiobuttonspec.cpp
     qtmaterialselectionspecresolver.cpp
     qtmaterialcompactspecresolver.cpp
-    qtmaterialswitchspec.cpp
-    qtmaterialdialogspec.cpp
     qtmaterialdialogspecresolver.cpp
-    qtmaterialtextfieldspec.cpp
     qtmaterialtextfieldspecresolver.cpp
-    qtmaterialfabspec.cpp
-    qtmaterialcardspec.cpp
-    qtmaterialnavigationdrawerspec.cpp
     qtmaterialoverlaysurfacespecresolver.cpp
-    qtmaterialbottomsheetspec.cpp
-    qtmaterialbannerspec.cpp
-    qtmaterialappbarspec.cpp
     qtmaterialappbarspecresolver.cpp
-    qtmateriallistitemspec.cpp
-    qtmaterialdividerspec.cpp qtmaterialdataspecresolver.cpp
-    qtmaterialautocompletepopupspec.cpp
+    qtmaterialdividerspec.cpp
+    qtmaterialdataspecresolver.cpp
     qtmaterialautocompletepopupspecresolver.cpp
-    qtmaterialdatefieldspec.cpp
     qtmaterialdatefieldspecresolver.cpp
-    qtmaterialtabsspec.cpp
     qtmaterialtabsspecresolver.cpp
-    qtmaterialsnackbarspec.cpp
     qtmaterialsurfacespecresolver.cpp
     qtmaterialprogressindicatorspec.cpp
     qtmaterialprogressspecresolver.cpp

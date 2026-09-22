@@ -86,11 +86,11 @@ class CommandCheckTests(unittest.TestCase):
             "--source-only",
             dict(commands)["public-private-headers"],
         )
-        self.assertIn("material-reference-model", names)
-        self.assertIn("material-structural-conformance", names)
-        self.assertIn("material-renderer-conformance", names)
-        self.assertIn("material-visual-contract", names)
-        self.assertIn("material-conformance-harness", names)
+        self.assertNotIn("material-reference-model", names)
+        self.assertNotIn("material-structural-conformance", names)
+        self.assertNotIn("material-renderer-conformance", names)
+        self.assertNotIn("material-visual-contract", names)
+        self.assertNotIn("material-conformance-harness", names)
         self.assertIn("theme-runtime", names)
         self.assertIn("typed-token-system", names)
 
@@ -99,6 +99,13 @@ class CommandCheckTests(unittest.TestCase):
         strict = dict(repo_health.health_commands(sys.executable, strict=True))
         self.assertNotIn("--strict", normal["component-registry"])
         self.assertIn("--strict", strict["component-registry"])
+
+    def test_missing_command_is_a_failure(self) -> None:
+        result = repo_health.run_command_check(
+            "missing", [sys.executable, "definitely_missing_repo_health_check.py"],
+            cwd=Path.cwd(),
+        )
+        self.assertFalse(result.ok)
 
     def test_command_exit_code_is_propagated(self) -> None:
         ok = repo_health.run_command_check(

@@ -58,17 +58,6 @@ def check_quality_workflow_structure(path: Path = QUALITY_WORKFLOW) -> CheckResu
     return CheckResult("quality-workflow", True)
 
 def run_command_check(name: str, command: Sequence[str], cwd: Path = ROOT) -> CheckResult:
-    if (
-        name.startswith("material-")
-        and len(command) > 1
-        and not Path(command[1]).is_file()
-    ):
-        return CheckResult(
-            name,
-            True,
-            f"skipped: tooling not implemented ({Path(command[1]).name})",
-        )
-
     completed = subprocess.run(
         list(command), cwd=str(cwd), text=True,
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False
@@ -90,21 +79,6 @@ def health_commands(python: str, strict: bool = False) -> list[tuple[str, list[s
         ("component-registry",
          [python, str(ROOT/"tools/check_component_registry.py"), "--check-generated"] +
          (["--strict"] if strict else [])),
-        ("material-reference-model",
-         [python, str(ROOT/"tools/check_material_reference_model.py"),
-          "--root", str(ROOT)]),
-        ("material-structural-conformance",
-         [python, str(ROOT/"tools/check_material_structural_conformance.py"),
-          "--root", str(ROOT)]),
-        ("material-renderer-conformance",
-         [python, str(ROOT/"tools/check_material_renderer_conformance.py"),
-          "--root", str(ROOT)]),
-        ("material-visual-contract",
-         [python, str(ROOT/"tools/check_material_visual_contract.py"),
-          "--root", str(ROOT)]),
-        ("material-conformance-harness",
-         [python, str(ROOT/"tools/check_material_conformance_harness.py"),
-          "--root", str(ROOT)]),
         ("build-consumer-matrix-contract",
          [python, str(ROOT/"tools/check_build_consumer_matrix.py")]),
         ("qt5-qt6-compatibility-contract",

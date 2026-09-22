@@ -20,8 +20,6 @@ set(_QtMaterial3Widgets_supported_components
     Effects
     Widgets
     Integration
-    Tooling
-    Testing
 )
 
 foreach(_QtMaterial3Widgets_component IN LISTS QtMaterial3Widgets_FIND_COMPONENTS)

@@ -1,7 +1,7 @@
 #include <QtTest/QtTest>
 #include <QObject>
 
-#include "qtmaterial/testing/qtmaterialautomation.h"
+#include "qtmaterialautomation.h"
 
 class tst_AutomationMetadata : public QObject
 {

@@ -47,7 +47,9 @@ void tst_Menu::keyboardNavigationSkipsDisabledItemsAndSeparators()
     menu.resize(menu.sizeHint());
     menu.show();
     QVERIFY(QTest::qWaitForWindowExposed(&menu));
+    menu.activateWindow();
     menu.setFocus();
+    QTRY_VERIFY(menu.hasFocus());
 
     QCOMPARE(menu.currentIndex(), 0);
     QTest::keyClick(&menu, Qt::Key_Down);
@@ -71,7 +73,9 @@ void tst_Menu::activationTogglesCheckableItemAndEmitsSignal()
     menu.resize(menu.sizeHint());
     menu.show();
     QVERIFY(QTest::qWaitForWindowExposed(&menu));
+    menu.activateWindow();
     menu.setFocus();
+    QTRY_VERIFY(menu.hasFocus());
 
     QTest::keyClick(&menu, Qt::Key_Return);
     QCOMPARE(activatedSpy.count(), 1);
@@ -92,7 +96,9 @@ void tst_Menu::escapeDismissesMenu()
     menu.resize(menu.sizeHint());
     menu.show();
     QVERIFY(QTest::qWaitForWindowExposed(&menu));
+    menu.activateWindow();
     menu.setFocus();
+    QTRY_VERIFY(menu.hasFocus());
 
     QTest::keyClick(&menu, Qt::Key_Escape);
     QCOMPARE(dismissedSpy.count(), 1);

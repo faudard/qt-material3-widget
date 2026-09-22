@@ -19,6 +19,7 @@ private slots:
  void canDisableCompletionOnReturn();
  void canDisableOpenOnFocus();
  void accessibilitySummaryTracksPopupState();
+ void destroyingVisiblePopupIsSafe();
 };
 
 void tst_Autocomplete::placeholderAndTextRoundTrip() {
@@ -38,7 +39,9 @@ void tst_Autocomplete::suggestionsOpenPopupAndExposeCurrentCompletion() {
  field.show();
  QVERIFY(QTest::qWaitForWindowExposed(&field));
 
+ field.activateWindow();
  field.lineEdit()->setFocus();
+ QTRY_VERIFY(field.lineEdit()->hasFocus());
  QTest::keyClicks(field.lineEdit(), "Al");
 
  QVERIFY(field.isPopupVisible());
@@ -52,7 +55,9 @@ void tst_Autocomplete::escapeHidesPopupByDefault() {
  field.show();
  QVERIFY(QTest::qWaitForWindowExposed(&field));
 
+ field.activateWindow();
  field.lineEdit()->setFocus();
+ QTRY_VERIFY(field.lineEdit()->hasFocus());
  QTest::keyClicks(field.lineEdit(), "A");
  QVERIFY(field.isPopupVisible());
 
@@ -67,7 +72,9 @@ void tst_Autocomplete::returnAcceptsCurrentCompletionByDefault() {
  QVERIFY(QTest::qWaitForWindowExposed(&field));
 
  QSignalSpy activated(&field, &QtMaterialAutocomplete::completionActivated);
+ field.activateWindow();
  field.lineEdit()->setFocus();
+ QTRY_VERIFY(field.lineEdit()->hasFocus());
  QTest::keyClicks(field.lineEdit(), "A");
  QVERIFY(field.isPopupVisible());
 
@@ -84,7 +91,9 @@ void tst_Autocomplete::canDisableCompletionOnReturn() {
  QVERIFY(QTest::qWaitForWindowExposed(&field));
 
  QSignalSpy activated(&field, &QtMaterialAutocomplete::completionActivated);
+ field.activateWindow();
  field.lineEdit()->setFocus();
+ QTRY_VERIFY(field.lineEdit()->hasFocus());
  QTest::keyClicks(field.lineEdit(), "A");
  QVERIFY(field.isPopupVisible());
 
@@ -100,9 +109,27 @@ void tst_Autocomplete::canDisableOpenOnFocus() {
  field.show();
  QVERIFY(QTest::qWaitForWindowExposed(&field));
 
+ field.activateWindow();
  field.lineEdit()->setFocus();
+ QTRY_VERIFY(field.lineEdit()->hasFocus());
  QTest::keyClicks(field.lineEdit(), "A");
  QVERIFY(!field.isPopupVisible());
+}
+
+void tst_Autocomplete::destroyingVisiblePopupIsSafe() {
+ auto* field = new QtMaterialAutocomplete;
+ field->setSuggestions({QStringLiteral("Alpha"), QStringLiteral("Beta")});
+ field->show();
+ QVERIFY(QTest::qWaitForWindowExposed(field));
+
+ field->activateWindow();
+ field->lineEdit()->setFocus();
+ QTRY_VERIFY(field->lineEdit()->hasFocus());
+ QTest::keyClicks(field->lineEdit(), "A");
+ QVERIFY(field->isPopupVisible());
+
+ delete field;
+ QCoreApplication::processEvents();
 }
 
 void tst_Autocomplete::accessibilitySummaryTracksPopupState() {

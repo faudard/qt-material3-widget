@@ -92,9 +92,22 @@ Release gates:
 - Windows Qt 5.14.2/MSVC v142, Windows Qt 6, Ubuntu Qt 6, macOS Qt 6, ASan/UBSan,
   examples/benchmarks, documentation, package and installed-consumer gates remain green.
 
+## 0.9.0 — API Freeze Candidate
+
+Goal: reduce the remaining pre-1.0 surface to the API that is intended to survive into 1.0.
+
+Release gates:
+
+- No placeholder, compatibility-only, or unowned public API remains.
+- Installed CMake components expose application-facing modules only.
+- Every checked repository-health command is implemented and fail-closed.
+- Every retained C++ test is registered with CTest or explicitly belongs to a standalone harness.
+- Public headers and package targets receive a final ownership and naming audit.
+- Windows Qt 5.14.2/MSVC v142, Windows Qt 6, Ubuntu Qt 6 and macOS Qt 6 remain green.
+
 ## 1.0 preparation
 
-- Public source-compatibility policy.
-- Deprecation lifecycle.
-- Final public API inventory.
-- ABI policy decision and published support matrix.
+- Publish the final source-compatibility policy.
+- Define the post-1.0 deprecation lifecycle; no pre-1.0 compatibility shims are retained.
+- Freeze the final public API inventory.
+- Publish the ABI policy and supported platform/toolchain matrix.
