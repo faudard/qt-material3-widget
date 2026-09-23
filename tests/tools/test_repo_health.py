@@ -80,19 +80,21 @@ class CommandCheckTests(unittest.TestCase):
         names = [name for name, _ in commands]
         self.assertIn("architecture", names)
         self.assertNotIn("architecture-contracts", names)
-        self.assertIn("public-private-headers", names)
-        self.assertNotIn("public-private-headers-source", names)
-        self.assertNotIn(
-            "--source-only",
-            dict(commands)["public-private-headers"],
-        )
+        self.assertIn("api-surface", names)
+        self.assertNotIn("public-private-headers", names)
+        self.assertIn("--scope", dict(commands)["api-surface"])
         self.assertNotIn("material-reference-model", names)
         self.assertNotIn("material-structural-conformance", names)
         self.assertNotIn("material-renderer-conformance", names)
         self.assertNotIn("material-visual-contract", names)
         self.assertNotIn("material-conformance-harness", names)
-        self.assertIn("theme-runtime", names)
-        self.assertIn("typed-token-system", names)
+        self.assertIn("theme", names)
+        self.assertNotIn("theme-model", names)
+        self.assertNotIn("theme-io", names)
+        self.assertNotIn("theme-runtime", names)
+        self.assertNotIn("theme-target-decomposition", names)
+        self.assertNotIn("typed-token-system", names)
+        self.assertIn("release", names)
 
     def test_strict_health_propagates_to_component_registry(self) -> None:
         normal = dict(repo_health.health_commands(sys.executable, strict=False))
