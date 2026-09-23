@@ -10,6 +10,10 @@ import sys
 from pathlib import Path
 from typing import Any, Sequence
 
+TOOLS = Path(__file__).resolve().parent
+if str(TOOLS) not in sys.path:
+    sys.path.insert(0, str(TOOLS))
+
 import component_registry
 
 ROOT = Path(__file__).resolve().parents[1]
