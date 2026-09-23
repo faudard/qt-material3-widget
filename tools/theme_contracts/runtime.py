@@ -17,7 +17,7 @@ RUNTIME_SOURCES = (
     "qtmaterialthemeobserver.cpp","qtmaterialsystemtheme.cpp",
 )
 FORBIDDEN_IO = (
-    "ThemeSerializer","XmlThemeAdapter","QJsonDocument","QJsonObject",
+    "ThemeSerializer","QJsonDocument","QJsonObject",
     "ThemeReadMode","exportThemeJson","exportThemeToFile",
     "importThemeJson","importThemeFromFile",
     "themePreferenceFromString","QString toString(ThemePreference",

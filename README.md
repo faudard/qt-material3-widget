@@ -53,8 +53,6 @@ Primary modules:
 - `QtMaterial3::Integration` — optional Qt palette/theme integration helpers
 - `QtMaterial3::Widgets` — public Material 3 widgets
 
-`Tooling` and `Testing` are repository-internal support targets. They are built for this repository's checks but are not part of the installed package contract.
-
 ## Documentation
 
 - [Public API](docs/public-api/index.md)

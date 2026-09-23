@@ -4,7 +4,7 @@
 #include <QWidget>
 
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
-#include "qtmaterialautomation.h"
+#include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
 #include "qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h"
 #include "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h"
 #include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
@@ -85,11 +85,11 @@ void tst_WidgetArchitectureContracts::progressIndicatorsExposeAsyncStateAndMater
     QCOMPARE(circular.statusText(), QStringLiteral("Loading"));
     QVERIFY(circular.materialState().contains(QStringLiteral("statusText")));
 
-    QCOMPARE(linear.property(QtMaterial::QtMaterialAutomation::componentPropertyName()).toString(),
+    QCOMPARE(linear.property(QtMaterial::QtMaterialMetadataPropertyNames::component()).toString(),
              QStringLiteral("LinearProgressIndicator"));
 
     linear.setBusy(true);
-    QVERIFY(linear.property(QtMaterial::QtMaterialAutomation::statePropertyName())
+    QVERIFY(linear.property(QtMaterial::QtMaterialMetadataPropertyNames::state())
                 .toString()
                 .contains(QStringLiteral("busy")));
 }
@@ -126,14 +126,14 @@ void tst_WidgetArchitectureContracts::abstractButtonExposesAutomationMetadata() 
     button.setMaterialTestId(QStringLiteral("save-button"));
 
     QCOMPARE(button.materialComponent(), QStringLiteral("Button"));
-    QCOMPARE(button.property(QtMaterial::QtMaterialAutomation::componentPropertyName()).toString(), QStringLiteral("Button"));
+    QCOMPARE(button.property(QtMaterial::QtMaterialMetadataPropertyNames::component()).toString(), QStringLiteral("Button"));
     QCOMPARE(button.materialVariant(), QStringLiteral("Filled"));
     QCOMPARE(button.materialRole(), QStringLiteral("primaryAction"));
     QCOMPARE(button.materialTestId(), QStringLiteral("save-button"));
 
     button.setCheckable(true);
     button.setChecked(true);
-    QVERIFY(button.property(QtMaterial::QtMaterialAutomation::statePropertyName()).toString().contains(QStringLiteral("checked"))); 
+    QVERIFY(button.property(QtMaterial::QtMaterialMetadataPropertyNames::state()).toString().contains(QStringLiteral("checked"))); 
 }
 
 QTEST_MAIN(tst_WidgetArchitectureContracts)

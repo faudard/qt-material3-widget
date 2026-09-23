@@ -31,7 +31,6 @@ MODEL_HEADERS = (
 )
 IO_HEADERS = (
     "qtmaterialthemeserializer.h",
-    "qtmaterialxmlthemeadapter.h",
 )
 RUNTIME_HEADERS = (
     "qtmaterialthemecontext.h",

@@ -28,7 +28,7 @@ It has no ThemeManager, QObject observation or serialization responsibility.
 
 ### `QtMaterial3::ThemeIO`
 
-Owns JSON theme serialization/deserialization, textual codecs and XML import/export.
+Owns JSON theme serialization/deserialization and textual codecs.
 
 It depends on `ThemeModel`.
 

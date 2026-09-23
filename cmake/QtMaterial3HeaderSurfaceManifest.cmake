@@ -104,7 +104,6 @@ set(QTMATERIAL3_PUBLIC_HEADERS
     "qtmaterial/theme/qtmaterialthemevalidation.h"
     "qtmaterial/theme/qtmaterialtokenids.h"
     "qtmaterial/theme/qtmaterialtypographyscale.h"
-    "qtmaterial/theme/qtmaterialxmlthemeadapter.h"
     "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h"
     "qtmaterial/widgets/buttons/qtmaterialextendedfab.h"
     "qtmaterial/widgets/buttons/qtmaterialfab.h"

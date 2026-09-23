@@ -30,9 +30,7 @@ private type is complete.
 
 ## Validation
 
-The historical standalone `check_pimpl_contract.py` integration was removed
-because the backing checker no longer existed. Public-header publication and
-include boundaries are enforced by the unified API gate:
+Public-header publication and include boundaries are enforced by the unified API gate:
 
 ```bash
 python3 tools/check_api_surface.py --root . --scope source

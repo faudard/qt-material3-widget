@@ -16,14 +16,12 @@ Use the narrative pages to understand concepts, layering, and supported workflow
 - [Public API guide](public-api/index.md)
 - [C++ API reference](api/index.md)
 - [Material 3 upstream references](material3/references.md)
-- [Migration from Qt Material Widgets](migration/from-qt-material-widgets.md)
 
 ### For contributors
 
 - [Architecture overview](architecture/01-overview.md)
 - [Development rules](development/coding-rules.md)
 - [Accessibility and keyboard rules](development/accessibility-keyboard-rules.md)
-- [Development release rules](development/release-process.md)
 - [Release checklist](release-process.md)
 
 ## Installation and downstream usage
@@ -56,7 +54,6 @@ target_link_libraries(my-app
 public-api/index
 api/index
 material3/references
-migration/from-qt-material-widgets
 release-process
 ```
 
@@ -93,7 +90,6 @@ development/accessibility-keyboard-rules
 development/advanced-component-rules
 development/rendering-rules
 development/testing-rules
-development/release-process
 ```
 
 Material conformance pages document research and future harness contracts. They are not reported as active repository-health gates until their executable tooling exists.
