@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the 0.7 Interaction & Effects release contract."""
+"""Validate the permanent Interaction & Effects release contract."""
 
 from __future__ import annotations
 
@@ -150,11 +150,12 @@ def validate(root: Path, expected_version: str | None = None) -> list[str]:
     for relative, markers in contracts.items():
         require_markers(root, relative, markers, errors)
 
+    theme_cmake = read(root / "src/theme/CMakeLists.txt")
     serializer = read(root / "src/theme/qtmaterialthemeserializer.cpp")
-    if f'QStringLiteral("{version}")' not in serializer:
-        errors.append(
-            f"theme serializer libraryVersion is not aligned with {version}"
-        )
+    if 'QTMATERIAL3_VERSION_STRING="${PROJECT_VERSION}"' not in theme_cmake:
+        errors.append("ThemeIO does not source serializer version from PROJECT_VERSION")
+    if "QTMATERIAL3_VERSION_STRING" not in serializer:
+        errors.append("theme serializer does not use the project version definition")
 
     return errors
 
