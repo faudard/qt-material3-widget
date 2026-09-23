@@ -24,7 +24,7 @@ Use the narrative pages to understand concepts, layering, and supported workflow
 - [Development rules](development/coding-rules.md)
 - [Accessibility and keyboard rules](development/accessibility-keyboard-rules.md)
 - [Development release rules](development/release-process.md)
-- [0.8.x release checklist](release-process.md)
+- [Release checklist](release-process.md)
 
 ## Installation and downstream usage
 
@@ -41,7 +41,8 @@ target_link_libraries(my-app
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
-    QtMaterial3::Theme
+    QtMaterial3::ThemeModel
+    QtMaterial3::ThemeRuntime
     QtMaterial3::Widgets
 )
 ```
