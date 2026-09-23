@@ -17,8 +17,8 @@ def load(name: str, path: Path):
 
 ROOT = Path(__file__).resolve().parents[2]
 manifest = load(
-    "qtm3_header_manifest_test",
-    ROOT / "tools/update_header_surface_manifest.py",
+    "qtm3_header_surface_domain_test",
+    ROOT / "tools/header_surface.py",
 )
 surface = load(
     "qtm3_api_surface_test",
@@ -42,9 +42,8 @@ class HeaderSurfaceTests(unittest.TestCase):
         ]:
             (root / d).mkdir(parents=True, exist_ok=True)
 
-        # Make helper importable from the temporary root.
-        (root / "tools/update_header_surface_manifest.py").write_text(
-            (ROOT / "tools/update_header_surface_manifest.py").read_text(
+        (root / "tools/header_surface.py").write_text(
+            (ROOT / "tools/header_surface.py").read_text(
                 encoding="utf-8"
             ),
             encoding="utf-8",
