@@ -52,9 +52,8 @@ jobs:
             os: macos-15-intel
             qt-version: "6.8.3"
             qt-arch: clang_64
-            expected-qt-version: "6.8.3"
+            compat-profile: "qt6-macos"
             msvc-toolset: ""
-            expected-msvc-prefix: ""
             use-mcu: "OFF"
             build-extra-examples: "OFF"
 
