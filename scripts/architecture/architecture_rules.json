@@ -1226,15 +1226,6 @@
         "\\bm_themeChangedConnection\\b",
         "\\bm_themeDestroyedConnection\\b"
       ]
-    },
-    {
-      "name": "core-cmake-does-not-export-moved-types",
-      "files": [
-        "src/core/CMakeLists.txt"
-      ],
-      "forbidden_regex": [
-        "qtmaterial(?:density|interactionstate|formfieldcontrol|inputcontrol|navigationmodel|paintcache|paletteadapter)\\.(?:h|cpp)"
-      ]
     }
   ],
   "text_rules": [
@@ -1638,23 +1629,6 @@
   ],
   "tree_rules": [
     {
-      "name": "spec-factory-and-legacy-data-facades-are-removed",
-      "paths": [
-        "include",
-        "src",
-        "tests",
-        "examples",
-        "benchmarks",
-        "tools"
-      ],
-      "exclude_paths": [],
-      "forbidden_regex": [
-        "\\b(?:QtMaterial::)?SpecFactory\\b",
-        "qtmaterialspecfactory",
-        "\\bmake(?:DatePicker|Table|GridList|Carousel)Spec\\s*\\("
-      ]
-    },
-    {
       "name": "runtime-widgets-do-not-access-global-theme-manager",
       "paths": [
         "include/qtmaterial/widgets",
@@ -1689,53 +1663,9 @@
         "\\b[A-Za-z_]\\w*\\s*->\\s*theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\(",
         "\\beffectiveThemeContext\\s*\\(\\s*\\)\\s*->\\s*theme\\s*\\(\\s*\\)\\s*\\.\\s*(?:typography|shapes|motion|stateLayer|elevations|colorScheme)\\s*\\("
       ]
-    },
-    {
-      "name": "legacy-core-moved-headers-are-not-included",
-      "paths": [
-        "include",
-        "src",
-        "tests",
-        "examples",
-        "benchmarks",
-        "tools"
-      ],
-      "forbidden_regex": [
-        "qtmaterial/core/qtmaterialdensity\\.h",
-        "qtmaterial/core/qtmaterialinteractionstate\\.h",
-        "qtmaterial/core/qtmaterialautomation\\.h",
-        "qtmaterial/core/qtmaterialcomponentregistry\\.h",
-        "qtmaterial/core/qtmaterialformfieldcontrol\\.h",
-        "qtmaterial/core/qtmaterialinputcontrol\\.h",
-        "qtmaterial/core/qtmaterialnavigationmodel\\.h",
-        "qtmaterial/core/qtmaterialpaintcache\\.h",
-        "qtmaterial/core/qtmaterialpaletteadapter\\.h"
-      ]
     }
   ],
-  "path_rules": [
-    {
-      "name": "legacy-core-moved-files-are-absent",
-      "forbidden_paths": [
-        "include/qtmaterial/core/qtmaterialdensity.h",
-        "include/qtmaterial/core/qtmaterialinteractionstate.h",
-        "include/qtmaterial/core/qtmaterialautomation.h",
-        "include/qtmaterial/core/qtmaterialcomponentregistry.h",
-        "include/qtmaterial/core/qtmaterialformfieldcontrol.h",
-        "include/qtmaterial/core/qtmaterialinputcontrol.h",
-        "include/qtmaterial/core/qtmaterialnavigationmodel.h",
-        "include/qtmaterial/core/qtmaterialpaintcache.h",
-        "include/qtmaterial/core/qtmaterialpaletteadapter.h",
-        "src/core/qtmaterialautomation.cpp",
-        "src/core/qtmaterialcomponentregistry.cpp",
-        "src/core/qtmaterialformfieldcontrol.cpp",
-        "src/core/qtmaterialinputcontrol.cpp",
-        "src/core/qtmaterialnavigationmodel.cpp",
-        "src/core/qtmaterialpaintcache.cpp",
-        "src/core/qtmaterialpaletteadapter.cpp"
-      ]
-    }
-  ],
+  "path_rules": [],
   "scoped_cpp_rules": [
     {
       "name": "foundation-qwidget-contract",

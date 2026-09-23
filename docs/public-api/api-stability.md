@@ -9,7 +9,7 @@ The following names are treated as stable within the current minor release line:
 - public token group names;
 - `ThemeReadMode` values;
 - JSON schema `formatVersion` field;
-- JSON schema v2 top-level object names;
+- JSON schema v1 top-level object names;
 - color backend status names;
 - `ThemeManager` runtime notification semantics;
 - component-local override key names documented in the public API.
