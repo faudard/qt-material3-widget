@@ -34,6 +34,7 @@ ctest --test-dir build -L architecture --output-on-failure
 ```
 
 When migrating another component family, extend
-`scripts/architecture/architecture_rules.json` in the same change. Keep rules
-strict for migrated code and avoid baselining new violations.
+`scripts/architecture/architecture_rules.json` in the same change. The checker
+uses a zero-debt policy: architecture violations must be fixed in the change that
+introduces them; there is no baseline or local suppression mechanism.
 
