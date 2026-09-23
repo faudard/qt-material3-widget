@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import json
 import re
+import shlex
 import sys
 import tempfile
 from dataclasses import dataclass
@@ -96,6 +98,460 @@ def cpp_files(path: Path):
         if any(part in ignored for part in candidate.parts):
             continue
         yield candidate
+
+
+
+def path_matches(relative: str, pattern: str) -> bool:
+    normalized = str(pattern).replace("\\", "/")
+    return fnmatch.fnmatchcase(relative, normalized)
+
+
+def iter_source_files(root: Path):
+    for base_name in ("include", "src"):
+        base = root / base_name
+        if not base.exists():
+            continue
+        yield from cpp_files(base)
+
+
+def strip_cpp_comments(text: str) -> str:
+    out = []
+    i = 0
+    state = "code"
+    quote = ""
+    while i < len(text):
+        ch = text[i]
+        nxt = text[i + 1] if i + 1 < len(text) else ""
+        if state == "code":
+            if ch == "/" and nxt == "/":
+                out.extend("  ")
+                i += 2
+                state = "line_comment"
+            elif ch == "/" and nxt == "*":
+                out.extend("  ")
+                i += 2
+                state = "block_comment"
+            elif ch in ('"', "'"):
+                quote = ch
+                out.append(ch)
+                i += 1
+                state = "string"
+            else:
+                out.append(ch)
+                i += 1
+        elif state == "line_comment":
+            if ch == "\n":
+                out.append("\n")
+                state = "code"
+            else:
+                out.append(" ")
+            i += 1
+        elif state == "block_comment":
+            if ch == "*" and nxt == "/":
+                out.extend("  ")
+                i += 2
+                state = "code"
+            else:
+                out.append("\n" if ch == "\n" else " ")
+                i += 1
+        else:
+            out.append(ch)
+            if ch == "\\" and i + 1 < len(text):
+                out.append(text[i + 1])
+                i += 2
+            elif ch == quote:
+                i += 1
+                state = "code"
+            else:
+                i += 1
+    return "".join(out)
+
+
+def strip_cpp_strings(text: str) -> str:
+    out = []
+    i = 0
+    state = "code"
+    quote = ""
+    while i < len(text):
+        ch = text[i]
+        if state == "code":
+            if ch in ('"', "'"):
+                quote = ch
+                out.append(" ")
+                i += 1
+                state = "string"
+            else:
+                out.append(ch)
+                i += 1
+        else:
+            if ch == "\\" and i + 1 < len(text):
+                out.extend("  ")
+                i += 2
+            elif ch == quote:
+                out.append(" ")
+                i += 1
+                state = "code"
+            else:
+                out.append("\n" if ch == "\n" else " ")
+                i += 1
+    return "".join(out)
+
+
+def check_scoped_cpp_rule(root: Path, rule: dict):
+    name = str(rule.get("name", "<unnamed>"))
+    paths = rule.get("paths", [])
+    excluded = rule.get("exclude_paths", [])
+    checks = rule.get("checks", [])
+    if not isinstance(paths, list) or not paths:
+        raise ConfigurationError(
+            f"{name}: scoped_cpp rule must define paths"
+        )
+    if not isinstance(excluded, list):
+        raise ConfigurationError(
+            f"{name}: exclude_paths must be an array"
+        )
+    if not isinstance(checks, list) or not checks:
+        raise ConfigurationError(
+            f"{name}: scoped_cpp rule must define checks"
+        )
+
+    violations = []
+    for path in iter_source_files(root):
+        relative = path.relative_to(root).as_posix()
+        if not any(path_matches(relative, pattern) for pattern in paths):
+            continue
+        if any(path_matches(relative, pattern) for pattern in excluded):
+            continue
+
+        original = read_text(path)
+        code = strip_cpp_comments(original)
+        symbols = strip_cpp_strings(code)
+        views = {
+            "original": original,
+            "code": code,
+            "symbols": symbols,
+        }
+        for check in checks:
+            expression = str(check.get("regex", ""))
+            if not expression:
+                raise ConfigurationError(
+                    f"{name}: scoped_cpp check is missing regex"
+                )
+            input_mode = str(check.get("input", "original"))
+            if input_mode not in views:
+                raise ConfigurationError(
+                    f"{name}: invalid scoped_cpp input {input_mode!r}"
+                )
+            flags = re.MULTILINE
+            if check.get("dotall", False):
+                flags |= re.DOTALL
+            try:
+                pattern = re.compile(expression, flags)
+            except re.error as error:
+                raise ConfigurationError(
+                    f"{name}: invalid regex {expression!r}: {error}"
+                ) from error
+            text = views[input_mode]
+            message = str(
+                check.get(
+                    "message",
+                    f"forbidden pattern matched: {expression}",
+                )
+            )
+            for match in pattern.finditer(text):
+                violations.append(
+                    Violation(
+                        name,
+                        relative,
+                        line_of(text, match.start()),
+                        message,
+                    )
+                )
+    return violations
+
+
+TEXT_EXTENSIONS = {
+    ".h", ".hh", ".hpp", ".hxx",
+    ".c", ".cc", ".cpp", ".cxx",
+    ".inl", ".ipp", ".tpp",
+    ".cmake", ".py", ".json", ".md",
+}
+
+
+def text_files(path: Path):
+    if not path.exists():
+        return
+    candidates = [path] if path.is_file() else sorted(path.rglob("*"))
+    ignored = {
+        ".git", "build", "_build", "__pycache__",
+        "third_party", "_deps",
+        "cmake-build-debug", "cmake-build-release",
+    }
+    for candidate in candidates:
+        if not candidate.is_file():
+            continue
+        if any(part in ignored or part.startswith("build")
+               for part in candidate.parts):
+            continue
+        if (
+            candidate.name == "CMakeLists.txt"
+            or candidate.suffix.lower() in TEXT_EXTENSIONS
+        ):
+            yield candidate
+
+
+def check_repository_text_rule(root: Path, rule: dict):
+    name = str(rule.get("name", "<unnamed>"))
+    paths = rule.get("paths", [])
+    excluded = rule.get("exclude_paths", [])
+    expressions = rule.get("forbidden_regex", [])
+    if not isinstance(paths, list) or not paths:
+        raise ConfigurationError(
+            f"{name}: repository_text rule must define paths"
+        )
+    if not isinstance(excluded, list):
+        raise ConfigurationError(
+            f"{name}: exclude_paths must be an array"
+        )
+    if not isinstance(expressions, list) or not expressions:
+        raise ConfigurationError(
+            f"{name}: repository_text rule must define forbidden_regex"
+        )
+
+    patterns = [
+        (str(expression), compile_regex(str(expression), name))
+        for expression in expressions
+    ]
+    seen = set()
+    violations = []
+    for configured in paths:
+        base = safe_path(root, str(configured))
+        for path in text_files(base):
+            relative = path.relative_to(root).as_posix()
+            if relative in seen:
+                continue
+            seen.add(relative)
+            if any(path_matches(relative, pattern) for pattern in excluded):
+                continue
+            text = read_text(path)
+            for expression, pattern in patterns:
+                for match in pattern.finditer(text):
+                    violations.append(
+                        Violation(
+                            name,
+                            relative,
+                            line_of(text, match.start()),
+                            str(
+                                rule.get(
+                                    "message",
+                                    f"forbidden repository pattern: {expression}",
+                                )
+                            ),
+                        )
+                    )
+    return violations
+
+
+def iter_cmake_files(root: Path):
+    ignored = {
+        ".git", "build", "_build", "__pycache__",
+        "third_party", "_deps",
+        "cmake-build-debug", "cmake-build-release",
+    }
+    for path in sorted(root.rglob("*")):
+        if not path.is_file():
+            continue
+        if any(part in ignored or part.startswith("build")
+               for part in path.relative_to(root).parts[:-1]):
+            continue
+        if path.name == "CMakeLists.txt" or path.suffix.lower() == ".cmake":
+            yield path
+
+
+def remove_cmake_comments(text: str) -> str:
+    lines = []
+    for line in text.splitlines(True):
+        in_quote = False
+        escaped = False
+        out = []
+        for ch in line:
+            if escaped:
+                out.append(ch)
+                escaped = False
+                continue
+            if ch == "\\":
+                out.append(ch)
+                escaped = True
+                continue
+            if ch == '"':
+                in_quote = not in_quote
+                out.append(ch)
+                continue
+            if ch == "#" and not in_quote:
+                out.append("\n" if line.endswith("\n") else "")
+                break
+            out.append(ch)
+        lines.append("".join(out))
+    return "".join(lines)
+
+
+def extract_cmake_calls(text: str, names: set[str]):
+    calls = []
+    clean = remove_cmake_comments(text)
+    name_re = re.compile(
+        r"\b("
+        + "|".join(
+            re.escape(name)
+            for name in sorted(names, key=len, reverse=True)
+        )
+        + r")\s*\(",
+        re.IGNORECASE,
+    )
+    pos = 0
+    while True:
+        match = name_re.search(clean, pos)
+        if not match:
+            break
+        depth = 1
+        i = match.end()
+        in_quote = False
+        escaped = False
+        while i < len(clean) and depth:
+            ch = clean[i]
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_quote = not in_quote
+            elif not in_quote:
+                if ch == "(":
+                    depth += 1
+                elif ch == ")":
+                    depth -= 1
+            i += 1
+        body = (
+            clean[match.end():i - 1]
+            if depth == 0
+            else clean[match.end():]
+        )
+        calls.append(
+            (
+                match.group(1).lower(),
+                body,
+                line_of(clean, match.start()),
+            )
+        )
+        pos = max(i, match.end())
+    return calls
+
+
+def cmake_tokens(body: str):
+    try:
+        return shlex.split(body.replace(";", " "), posix=True)
+    except ValueError:
+        return re.findall(r"[^\s;]+", body)
+
+
+def normalize_dependency(token: str) -> str:
+    token = token.strip().strip('"')
+    token = token.replace("$<LINK_ONLY:", "").rstrip(">")
+    return token
+
+
+def dependency_matches(actual: str, forbidden: str) -> bool:
+    actual_lower = actual.lower()
+    forbidden_lower = forbidden.lower()
+    if actual_lower == forbidden_lower:
+        return True
+    return (
+        forbidden_lower in actual_lower
+        and ("$<" in actual_lower or "$" + "{" in actual_lower)
+    )
+
+
+def check_cmake_target_rule(root: Path, rule: dict):
+    name = str(rule.get("name", "<unnamed>"))
+    required_targets = rule.get("required_targets", [])
+    forbidden_links = rule.get("forbidden_links", {})
+    if not isinstance(required_targets, list):
+        raise ConfigurationError(
+            f"{name}: required_targets must be an array"
+        )
+    if not isinstance(forbidden_links, dict):
+        raise ConfigurationError(
+            f"{name}: forbidden_links must be an object"
+        )
+
+    definitions = {}
+    links = {}
+    call_names = {
+        "add_library", "qtm3_add_library", "qtm3_add_module",
+        "target_link_libraries",
+    }
+
+    for path in iter_cmake_files(root):
+        relative = path.relative_to(root).as_posix()
+        text = read_text(path)
+        for call_name, body, call_line in extract_cmake_calls(
+            text, call_names
+        ):
+            tokens = cmake_tokens(body)
+            if not tokens:
+                continue
+            target = normalize_dependency(tokens[0])
+            if call_name in {
+                "add_library", "qtm3_add_library", "qtm3_add_module"
+            }:
+                if (
+                    target
+                    and "$" + "{" not in target
+                    and "$<" not in target
+                ):
+                    definitions.setdefault(
+                        target, (relative, call_line)
+                    )
+            elif call_name == "target_link_libraries":
+                for token in tokens[1:]:
+                    dependency = normalize_dependency(token)
+                    if (
+                        not dependency
+                        or dependency.upper() in {
+                            "PUBLIC", "PRIVATE", "INTERFACE",
+                            "DEBUG", "OPTIMIZED", "GENERAL",
+                        }
+                    ):
+                        continue
+                    links.setdefault(target, []).append(
+                        (dependency, relative, call_line)
+                    )
+
+    violations = []
+    for target in required_targets:
+        if target not in definitions:
+            violations.append(
+                Violation(
+                    name,
+                    "CMakeLists.txt",
+                    1,
+                    f"required architecture target is not defined: {target}",
+                )
+            )
+
+    for target, forbidden_dependencies in forbidden_links.items():
+        for dependency, source_path, line in links.get(target, []):
+            for forbidden in forbidden_dependencies:
+                if dependency_matches(dependency, str(forbidden)):
+                    violations.append(
+                        Violation(
+                            name,
+                            source_path,
+                            line,
+                            f"target {target} must not link {forbidden}",
+                        )
+                    )
+    return violations
+
 
 
 def check_layer(root: Path, rule: dict):
@@ -284,7 +740,16 @@ def load_rules(path: Path):
         raise ConfigurationError(
             "only architecture schema_version 1 is supported"
         )
-    for key in ("path_rules", "layer_rules", "tree_rules", "file_rules", "text_rules"):
+    for key in (
+        "path_rules",
+        "layer_rules",
+        "tree_rules",
+        "file_rules",
+        "text_rules",
+        "scoped_cpp_rules",
+        "repository_text_rules",
+        "cmake_target_rules",
+    ):
         if not isinstance(document.get(key, []), list):
             raise ConfigurationError(f"{key} must be an array")
     return document
@@ -292,7 +757,16 @@ def load_rules(path: Path):
 
 def rule_names(document: dict):
     names = []
-    for category in ("path_rules", "layer_rules", "tree_rules", "file_rules", "text_rules"):
+    for category in (
+        "path_rules",
+        "layer_rules",
+        "tree_rules",
+        "file_rules",
+        "text_rules",
+        "scoped_cpp_rules",
+        "repository_text_rules",
+        "cmake_target_rules",
+    ):
         for rule in document.get(category, []):
             names.append(str(rule.get("name", "<unnamed>")))
     return names
@@ -320,6 +794,15 @@ def run_checks(root: Path, document: dict, selected=None):
         for rule in document.get(category, []):
             if enabled(rule):
                 violations.extend(check_file_rule(root, rule))
+    for rule in document.get("scoped_cpp_rules", []):
+        if enabled(rule):
+            violations.extend(check_scoped_cpp_rule(root, rule))
+    for rule in document.get("repository_text_rules", []):
+        if enabled(rule):
+            violations.extend(check_repository_text_rule(root, rule))
+    for rule in document.get("cmake_target_rules", []):
+        if enabled(rule):
+            violations.extend(check_cmake_target_rule(root, rule))
 
     return sorted(
         violations,
