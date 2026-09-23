@@ -359,8 +359,8 @@ jobs:
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
             bash -c 'openbox >/tmp/openbox-sanitize.log 2>&1 & ctest --test-dir build-sanitize --output-on-failure'
 
-  architecture-zero-debt:
-    name: architecture-zero-debt
+  architecture:
+    name: architecture
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -369,9 +369,9 @@ jobs:
         run: >
           python3 -m unittest discover
           -s tests/tools
-          -p "test_architecture_zero_debt.py"
+          -p "test_architecture_checker.py"
           -v
 
-      - name: Zero-debt architecture gate
-        run: python3 tools/check_architecture_zero_debt.py --root .
+      - name: Architecture checker
+        run: python3 scripts/architecture/check_architecture.py --root .
 
