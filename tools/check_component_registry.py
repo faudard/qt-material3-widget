@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Governance checker for the QtMaterial3 component registry.
 
-This tool layers project-governance invariants on top of the authoritative
-existing generator/validator in scripts/generate_component_status.py.
+Domain semantics (loading, maturity scoring and base validation) live in
+tools/component_registry.py. This checker adds schema/governance invariants and
+optionally verifies the generated documentation/runtime registry are in sync.
 
-No third-party Python package is required. The JSON Schema file is published
-for editors/tooling; this script enforces the critical invariants in CI.
+No third-party Python package is required.
 """
 
 from __future__ import annotations
