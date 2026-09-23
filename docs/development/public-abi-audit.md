@@ -1,43 +1,27 @@
-# Public widget ABI audit
+# Public API and ABI guidance
 
-The public widget headers under `include/qtmaterial/widgets` should expose API, not implementation state.
+Public widget headers under `include/qtmaterial/widgets` should expose API,
+not implementation state. Resolved specs, rendering/layout caches, child widget
+internals, effects/controllers and private navigation state belong in
+implementation or private headers.
 
-Allowed pattern:
+## Validation
 
-```cpp
-class QtMaterialFooPrivate;
-
-class QTMATERIAL_WIDGETS_EXPORT QtMaterialFoo : public QWidget {
-    Q_OBJECT
-public:
-    explicit QtMaterialFoo(QWidget *parent = nullptr);
-    ~QtMaterialFoo() override;
-
-private:
-    std::unique_ptr<QtMaterialFooPrivate> d_ptr;
-};
-```
-
-Implementation details that should remain in the `.cpp` or in a private header:
-
-- resolved component specs such as `ButtonSpec`, `TextFieldSpec`, `NavigationRailSpec`;
-- painting/layout caches such as `QPainterPath`, cached `QRectF`, elided text, dirty flags;
-- child widgets and popup internals such as `QLineEdit`, `QCalendarWidget`, `QLabel`, `QToolButton`;
-- effects and controllers such as ripple, state-layer, transition or shadow controllers;
-- internal queues, descriptors, models and navigation state.
-
-Run the audit manually:
+The old `check_public_widget_abi.py` CMake hook was retired because its backing
+script was no longer present. The maintained automated contract is the unified
+API/header-surface gate:
 
 ```bash
-python3 tools/check_public_widget_abi.py --root . --strict
+python3 tools/check_api_surface.py --root . --scope source
 ```
 
-Add a temporary baseline only when migrating incrementally:
+It validates the reviewed public/private manifest, public include boundaries,
+explicit install contract and CTest self-contained-header coverage. Installed
+packages are checked with:
 
 ```bash
-python3 tools/check_public_widget_abi.py --root . \
-  --baseline tools/public_widget_abi_audit_baseline.json \
-  --update-baseline
+python3 tools/check_api_surface.py --root . --scope installed --prefix <prefix>
 ```
 
-Prefer fixing findings over extending the baseline. The baseline exists to make large migrations reviewable, not to normalize ABI leaks.
+This is a source/API-surface guardrail, not a promise of automated binary ABI
+compatibility. Binary compatibility changes still require explicit review.
