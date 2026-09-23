@@ -84,6 +84,15 @@ void tst_OverlaySurface::topLevelOverlayUsesGlobalGeometry()
         host.size());
 
     QTRY_COMPARE(overlay.geometry(), expected);
+
+    const QPoint originalWindowPosition = window.pos();
+    window.move(originalWindowPosition + QPoint(40, 30));
+
+    const QRect expectedAfterWindowMove(
+        host.mapToGlobal(QPoint(0, 0)),
+        host.size());
+
+    QTRY_COMPARE(overlay.geometry(), expectedAfterWindowMove);
 }
 
 void tst_OverlaySurface::hostHideAndShowRestoresOverlayVisibilityIntent()

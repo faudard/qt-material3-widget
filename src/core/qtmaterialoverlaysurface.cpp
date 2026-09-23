@@ -17,9 +17,7 @@ QtMaterialOverlaySurface::QtMaterialOverlaySurface(QWidget* parent)
 
 QtMaterialOverlaySurface::~QtMaterialOverlaySurface()
 {
-    if (m_hostWidget) {
-        m_hostWidget->removeEventFilter(this);
-    }
+    clearHostGeometryWatchers();
 }
 
 QWidget* QtMaterialOverlaySurface::hostWidget() const noexcept
@@ -33,9 +31,7 @@ void QtMaterialOverlaySurface::setHostWidget(QWidget* host)
         return;
     }
 
-    if (m_hostWidget) {
-        m_hostWidget->removeEventFilter(this);
-    }
+    clearHostGeometryWatchers();
 
     m_hostWidget = host;
     m_restoreVisibilityOnHostShow = false;
@@ -44,7 +40,7 @@ void QtMaterialOverlaySurface::setHostWidget(QWidget* host)
         return;
     }
 
-    m_hostWidget->installEventFilter(this);
+    rebuildHostGeometryWatchers();
     syncGeometryToHost();
 
     if (!m_hostWidget->isVisible()) {
@@ -57,26 +53,39 @@ void QtMaterialOverlaySurface::setHostWidget(QWidget* host)
 
 bool QtMaterialOverlaySurface::eventFilter(QObject* watched, QEvent* event)
 {
-    if (watched == m_hostWidget && event) {
+    if (!event) {
+        return QtMaterialSurface::eventFilter(watched, event);
+    }
+
+    const bool isHost = watched == m_hostWidget.data();
+    const bool isGeometryWatcher = isHostGeometryWatcher(watched);
+
+    if (isGeometryWatcher) {
         switch (event->type()) {
         case QEvent::Resize:
         case QEvent::Move:
+            syncGeometryToHost();
+            break;
+
         case QEvent::ParentChange:
+            rebuildHostGeometryWatchers();
             syncGeometryToHost();
             break;
 
         case QEvent::Show:
             syncGeometryToHost();
-            if (m_restoreVisibilityOnHostShow) {
+            if (isHost && m_restoreVisibilityOnHostShow) {
                 m_restoreVisibilityOnHostShow = false;
                 show();
             }
             break;
 
         case QEvent::Hide:
-            m_restoreVisibilityOnHostShow = isVisible();
-            if (isVisible()) {
-                hide();
+            if (isHost) {
+                m_restoreVisibilityOnHostShow = isVisible();
+                if (isVisible()) {
+                    hide();
+                }
             }
             break;
 
@@ -86,6 +95,39 @@ bool QtMaterialOverlaySurface::eventFilter(QObject* watched, QEvent* event)
     }
 
     return QtMaterialSurface::eventFilter(watched, event);
+}
+
+void QtMaterialOverlaySurface::rebuildHostGeometryWatchers()
+{
+    clearHostGeometryWatchers();
+
+    for (QWidget* widget = m_hostWidget.data();
+         widget;
+         widget = widget->parentWidget()) {
+        widget->installEventFilter(this);
+        m_hostGeometryWatchers.append(widget);
+    }
+}
+
+void QtMaterialOverlaySurface::clearHostGeometryWatchers()
+{
+    for (const QPointer<QWidget>& widget : m_hostGeometryWatchers) {
+        if (widget) {
+            widget->removeEventFilter(this);
+        }
+    }
+    m_hostGeometryWatchers.clear();
+}
+
+bool QtMaterialOverlaySurface::isHostGeometryWatcher(
+    QObject* object) const noexcept
+{
+    for (const QPointer<QWidget>& widget : m_hostGeometryWatchers) {
+        if (widget.data() == object) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void QtMaterialOverlaySurface::showEvent(QShowEvent* event)
