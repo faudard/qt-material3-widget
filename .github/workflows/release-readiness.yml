@@ -103,16 +103,11 @@ jobs:
           cmake --install build --config Release --prefix "$PWD/install"
 
       - name: Validate installed package consumer
-        run: |
-          if [ -x scripts/validate-install-consumer.sh ]; then
-            bash scripts/validate-install-consumer.sh
-          else
-            cmake -S examples/install-consumer -B consumer-build -G Ninja \
-              -DCMAKE_BUILD_TYPE=Release \
-              -DCMAKE_PREFIX_PATH="$PWD/install"
-
-            cmake --build consumer-build --config Release --parallel
-          fi
+        run: >
+          python3 scripts/ci/run-consumer-matrix.py
+          --scenario install-shared
+          --build-root "$PWD/build/release-consumer"
+          --generator Ninja
 
       - name: Upload install tree
         if: always()
