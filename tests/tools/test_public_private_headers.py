@@ -53,7 +53,6 @@ class HeaderSurfaceTests(unittest.TestCase):
 
     def write_valid_install_contract(self, root: Path) -> None:
         (root / "CMakeLists.txt").write_text(
-            'include("cmake/QtMaterial3HeaderSurface.cmake")\n'
             'include("cmake/QtMaterial3ApiChecks.cmake")\n'
             "qtmaterial3_install_public_headers()\n"
             "qtmaterial3_add_api_checks()\n"
@@ -62,12 +61,11 @@ class HeaderSurfaceTests(unittest.TestCase):
             "write_basic_package_version_file(output)\n",
             encoding="utf-8",
         )
-        (root / "cmake/QtMaterial3HeaderSurface.cmake").write_text(
-            "set(QTMATERIAL3_PUBLIC_HEADERS public.h)\n"
-            "install(FILES public.h DESTINATION include)\n",
-            encoding="utf-8",
-        )
         (root / "cmake/QtMaterial3ApiChecks.cmake").write_text(
+            "set(QTMATERIAL3_PUBLIC_HEADERS public.h)\n"
+            "function(qtmaterial3_install_public_headers)\n"
+            "  install(FILES public.h DESTINATION include)\n"
+            "endfunction()\n"
             "foreach(header IN LISTS QTMATERIAL3_PUBLIC_HEADERS)\n"
             "endforeach()\n",
             encoding="utf-8",
@@ -156,9 +154,12 @@ class HeaderSurfaceTests(unittest.TestCase):
     def test_install_contract_rejects_private_install_loop(self):
         root = self.make_root()
         self.write_valid_install_contract(root)
-        (root / "cmake/QtMaterial3HeaderSurface.cmake").write_text(
+        (root / "cmake/QtMaterial3ApiChecks.cmake").write_text(
             "set(QTMATERIAL3_PUBLIC_HEADERS public.h)\n"
             "set(QTMATERIAL3_PRIVATE_HEADERS helper_p.h)\n"
+            "function(qtmaterial3_install_public_headers)\n"
+            "  install(FILES public.h DESTINATION include)\n"
+            "endfunction()\n"
             "foreach(header IN LISTS QTMATERIAL3_PRIVATE_HEADERS)\n"
             "  install(FILES ${header} DESTINATION include)\n"
             "endforeach()\n",
