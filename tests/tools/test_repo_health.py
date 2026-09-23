@@ -75,10 +75,10 @@ class WorkflowStructureTests(unittest.TestCase):
 
 
 class CommandCheckTests(unittest.TestCase):
-    def test_health_commands_use_zero_debt_and_typed_contracts(self) -> None:
+    def test_health_commands_use_unified_architecture_and_typed_contracts(self) -> None:
         commands = repo_health.health_commands(sys.executable)
         names = [name for name, _ in commands]
-        self.assertIn("architecture-zero-debt", names)
+        self.assertIn("architecture", names)
         self.assertNotIn("architecture-contracts", names)
         self.assertIn("public-private-headers", names)
         self.assertNotIn("public-private-headers-source", names)

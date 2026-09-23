@@ -394,12 +394,6 @@ qtm3_add_test(
 
 qtm3_add_test(tst_button_icon_size_api widgets/buttons/tst_button_icon_size_api.cpp qtmaterial3_widgets)
 
-# Architecture rules are executable release guardrails.
-include(
-    "${CMAKE_SOURCE_DIR}/cmake/QtMaterial3ArchitectureGuard.cmake"
-)
-qtmaterial3_add_architecture_guard()
-
 qtm3_add_test(tst_datalistgridresolver specs/tst_datalistgridresolver.cpp qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime qtmaterial3_specs)
 qtm3_add_test(tst_data_list_grid_resolved widgets/data/tst_data_list_grid_resolved.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_compactspecresolver specs/tst_compactspecresolver.cpp qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime qtmaterial3_specs)

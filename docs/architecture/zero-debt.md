@@ -1,38 +1,37 @@
 # Architecture Zero-Debt Policy
 
-QtMaterial3 enforces architecture rules with a zero-debt policy: a violation is fixed in
-the same change that introduces it. New baselines, per-file waivers and suppression
-markers are not accepted.
+QtMaterial3 enforces architecture rules with a zero-debt policy: a violation is
+fixed in the same change that introduces it. Baselines, per-file waivers and
+suppression markers are not accepted.
 
 ## Authoritative gate
 
 Run:
 
 ```bash
-python tools/check_architecture_zero_debt.py --root .
+python scripts/architecture/check_architecture.py --root .
 ```
 
-The aggregate gate currently runs both architecture engines:
+The repository has one architecture authority:
 
-- `tools/check_architecture_contracts.py --strict`;
-- `scripts/architecture/check_architecture.py`.
+- `scripts/architecture/check_architecture.py` is the checker engine;
+- `scripts/architecture/architecture_rules.json` is the reviewed rule set;
+- `cmake/QtMaterial3Architecture.cmake` exposes the same check through CMake
+  and one CTest named `architecture`.
 
-Both must report zero violations. They remain separate only because their rule sets are
-not yet identical; consolidation must preserve rule coverage.
+The checker covers source layering, scoped source contracts, repository-wide
+forbidden markers, target graph boundaries and migrated component contracts.
 
-## Baseline
+## Baselines and suppressions
 
-`tools/architecture_contracts_baseline.txt` is a historical empty tombstone. It must
-contain no active entries and must not be used to accept new debt.
-
-## Suppressions
+There is no architecture baseline. A detected violation is a failure.
 
 Inline architecture suppressions, waivers, exceptions and architecture-specific
-`NOLINT` markers are forbidden. Necessary architectural adaptations belong in the
-reviewed architecture rules rather than in local escape hatches.
+`NOLINT` markers are forbidden. Necessary architectural adaptations belong in
+the reviewed architecture rules rather than in local escape hatches.
 
 ## Resolution boundary
 
-Widgets and render helpers consume resolved specs. Theme-to-spec conversion belongs in
-the designated resolver boundary; rendering, layout and motion code must not perform
-ad-hoc theme resolution.
+Widgets and render helpers consume resolved specs. Theme-to-spec conversion
+belongs in the designated resolver boundary; rendering, layout and motion code
+must not perform ad-hoc theme resolution.

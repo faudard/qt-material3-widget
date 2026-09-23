@@ -54,17 +54,15 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(QtMaterial3Build)
 
-# BEGIN QTMATERIAL3 ARCHITECTURE CONTRACTS
 option(
-    QTMATERIAL3_ENABLE_ARCHITECTURE_CONTRACTS
-    "Enable static architecture contract checks"
+    QTMATERIAL3_ENABLE_ARCHITECTURE_CHECKS
+    "Enable static architecture checks"
     ON
 )
-if(QTMATERIAL3_ENABLE_ARCHITECTURE_CONTRACTS)
-    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3ArchitectureContracts.cmake")
-    qtmaterial3_add_architecture_contracts()
+if(QTMATERIAL3_ENABLE_ARCHITECTURE_CHECKS)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3Architecture.cmake")
+    qtmaterial3_add_architecture_check()
 endif()
-# END QTMATERIAL3 ARCHITECTURE CONTRACTS
 
 if(QTMATERIAL3_BUILD_TESTS)
     # QtMaterial3 public widget PIMPL contract audit.
@@ -151,13 +149,6 @@ if(QTMATERIAL3_BUILD_TESTS)
     endif()
 endif()
 
-
-if(QTMATERIAL3_BUILD_TESTS)
-    include(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3ArchitectureChecks.cmake"
-    )
-    qtmaterial3_add_architecture_checks()
-endif()
 
 if(QTMATERIAL3_BUILD_EXAMPLES)
     add_subdirectory(examples)
