@@ -19,7 +19,7 @@ Fallback behavior is intentionally deterministic:
 
 `QTMATERIAL3_USE_MCU` is the build-time request to use the Material Color Utilities adapter.
 
-`QTMATERIAL3_HAS_MCU` means the library was actually compiled with a valid MCU C++ checkout and the adapter is linked into `qtmaterial3_theme`.
+`QTMATERIAL3_HAS_MCU` means the library was actually compiled with a valid MCU C++ checkout and the adapter is linked into `qtmaterial3_theme_model`.
 
 By default the build looks for MCU here:
 
