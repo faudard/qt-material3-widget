@@ -13,7 +13,6 @@ private slots:
     void variantOverridesDoNotLeak();
     void resolvesAllVariants();
     void resolvesDensity();
-    void remainsCompatibleWithSpecFactory();
 };
 
 void tst_ButtonSpecResolver::resolvesAllVariants()
@@ -141,27 +140,6 @@ void tst_ButtonSpecResolver::resolvesDensity()
     QCOMPARE(
         resolver.textButtonSpec(theme, Density::Comfortable).containerHeight,
         44);
-}
-
-void tst_ButtonSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme =
-        builder.buildDarkFromSeed(QColor(QStringLiteral("#6750A4")));
-    ButtonSpecResolver resolver;
-
-    const ButtonSpec resolved =
-        resolver.filledTonalButtonSpec(theme, Density::Compact);
-    const ButtonSpec legacy =
-        ButtonSpecResolver().filledTonalButtonSpec(theme, Density::Compact);
-
-    QCOMPARE(resolved.containerColor, legacy.containerColor);
-    QCOMPARE(resolved.labelColor, legacy.labelColor);
-    QCOMPARE(resolved.stateLayerColor, legacy.stateLayerColor);
-    QCOMPARE(resolved.containerHeight, legacy.containerHeight);
-    QCOMPARE(
-        static_cast<int>(resolved.elevationRole),
-        static_cast<int>(legacy.elevationRole));
 }
 
 void tst_ButtonSpecResolver::variantOverridesDoNotLeak()

@@ -12,7 +12,6 @@ class tst_AppBarSpecResolver : public QObject
 private slots:
     void resolvesTopAppBar();
     void resolvesBottomAppBar();
-    void remainsCompatibleWithSpecFactory();
     void constructsVariantsIndependently();
     void returnsIndependentValues();
 };
@@ -51,26 +50,6 @@ void tst_AppBarSpecResolver::resolvesBottomAppBar()
     QCOMPARE(spec.titleTypeRole, TypeRole::TitleMedium);
     QVERIFY(spec.hasResolvedTitleFont);
     QVERIFY(spec.hasResolvedElevatedElevationStyle);
-}
-
-void tst_AppBarSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme = builder.buildLightFromSeed(
-        QColor(QStringLiteral("#6750A4")));
-    AppBarSpecResolver resolver;
-
-    const AppBarSpec resolvedTop = resolver.topAppBarSpec(theme);
-    const AppBarSpec legacyTop = AppBarSpecResolver().topAppBarSpec(theme);
-    QCOMPARE(resolvedTop.containerColor, legacyTop.containerColor);
-    QCOMPARE(resolvedTop.titleColor, legacyTop.titleColor);
-    QCOMPARE(resolvedTop.preferredHeight, legacyTop.preferredHeight);
-
-    const AppBarSpec resolvedBottom = resolver.bottomAppBarSpec(theme);
-    const AppBarSpec legacyBottom = AppBarSpecResolver().bottomAppBarSpec(theme);
-    QCOMPARE(resolvedBottom.containerColor, legacyBottom.containerColor);
-    QCOMPARE(resolvedBottom.elevationRole, legacyBottom.elevationRole);
-    QCOMPARE(resolvedBottom.preferredHeight, legacyBottom.preferredHeight);
 }
 
 void tst_AppBarSpecResolver::constructsVariantsIndependently()

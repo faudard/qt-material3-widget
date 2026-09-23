@@ -13,7 +13,6 @@ class tst_AutocompletePopupSpecResolver : public QObject
 private slots:
     void resolvesRuntimeValues();
     void resolvesComponentOverrides();
-    void remainsCompatibleWithSpecFactory();
 };
 
 void tst_AutocompletePopupSpecResolver::resolvesRuntimeValues()
@@ -93,33 +92,6 @@ void tst_AutocompletePopupSpecResolver::resolvesComponentOverrides()
     QCOMPARE(spec.visibleItemCount, 8);
     QCOMPARE(spec.itemMinSize.height(), 52);
     QCOMPARE(spec.pressStateLayerOpacity, 0.18);
-}
-
-void tst_AutocompletePopupSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme =
-        builder.buildLightFromSeed(
-            QColor(QStringLiteral("#6750A4")));
-
-    const AutocompletePopupSpec resolved =
-        AutocompletePopupSpecResolver()
-            .autocompletePopupSpec(theme);
-    const AutocompletePopupSpec legacy =
-        AutocompletePopupSpecResolver().autocompletePopupSpec(theme);
-
-    QCOMPARE(
-        resolved.containerColor,
-        legacy.containerColor);
-    QCOMPARE(
-        resolved.cornerRadius,
-        legacy.cornerRadius);
-    QCOMPARE(
-        resolved.elevationStyle.shadowBlur,
-        legacy.elevationStyle.shadowBlur);
-    QCOMPARE(
-        resolved.motionStyle.durationMs,
-        legacy.motionStyle.durationMs);
 }
 
 QTEST_MAIN(tst_AutocompletePopupSpecResolver)

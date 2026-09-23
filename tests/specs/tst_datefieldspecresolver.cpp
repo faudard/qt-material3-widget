@@ -13,7 +13,6 @@ class tst_DateFieldSpecResolver : public QObject
 private slots:
     void resolvesRuntimeValues();
     void resolvesComponentOverrides();
-    void remainsCompatibleWithSpecFactory();
 };
 
 void tst_DateFieldSpecResolver::resolvesRuntimeValues()
@@ -94,32 +93,6 @@ void tst_DateFieldSpecResolver::resolvesComponentOverrides()
         spec.clearIconColor,
         QColor(QStringLiteral("#ff0000")));
     QCOMPARE(spec.motionStyle.durationMs, 280);
-}
-
-void tst_DateFieldSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme =
-        builder.buildLightFromSeed(
-            QColor(QStringLiteral("#6750A4")));
-
-    const DateFieldSpec resolved =
-        DateFieldSpecResolver().dateFieldSpec(theme);
-    const DateFieldSpec legacy =
-        DateFieldSpecResolver().dateFieldSpec(theme);
-
-    QCOMPARE(
-        resolved.trailingIconColor,
-        legacy.trailingIconColor);
-    QCOMPARE(
-        resolved.placeholderColor,
-        legacy.placeholderColor);
-    QCOMPARE(
-        resolved.actionIconSize,
-        legacy.actionIconSize);
-    QCOMPARE(
-        resolved.motionStyle.durationMs,
-        legacy.motionStyle.durationMs);
 }
 
 QTEST_MAIN(tst_DateFieldSpecResolver)

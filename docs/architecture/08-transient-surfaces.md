@@ -98,7 +98,7 @@ A transient widget should:
 
 - own its visual state
 - own its transition progress usage
-- resolve its spec from `SpecFactory`
+- resolve its spec through the component resolver
 - react to theme changes
 - expose meaningful signals such as:
   - `shown`
@@ -220,7 +220,7 @@ Prefer **small private helpers** over a large inheritance hierarchy.
 
 Transient widgets should follow the standard project theming model:
 
-1. resolve a component spec from `SpecFactory`
+1. resolve a component spec through its resolver
 2. read shape, color, elevation, and motion from the resolved spec
 3. use theme fallbacks only when needed
 4. update on `themeChangedEvent(...)`

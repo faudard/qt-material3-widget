@@ -54,7 +54,7 @@ Supported budget overrides:
 ```bash
 QTMATERIAL3_THEME_BUILD_BUDGET_MS=3000
 QTMATERIAL3_JSON_ROUNDTRIP_BUDGET_MS=3000
-QTMATERIAL3_SPEC_FACTORY_BUDGET_MS=3000
+QTMATERIAL3_SPEC_RESOLUTION_BUDGET_MS=3000
 ```
 
 The default budget file is stored at:
@@ -73,7 +73,7 @@ Recommended cache boundaries:
    - Keep immutable base token defaults cached.
    - Never cache mutable resolved themes by reference.
 
-2. **SpecFactory**
+2. **Spec resolution**
    - Prefer pure value generation for simple specs.
    - Add cache only after measured evidence shows repeated generation cost.
    - Cache keys must include theme revision or a stable theme fingerprint plus density/component variant.

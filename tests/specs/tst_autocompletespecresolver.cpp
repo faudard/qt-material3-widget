@@ -12,7 +12,6 @@ class tst_AutocompleteSpecResolver : public QObject
 private slots:
     void resolvesThemeRoles();
     void resolvesDensity();
-    void remainsCompatibleWithSpecFactory();
 };
 
 void tst_AutocompleteSpecResolver::resolvesThemeRoles()
@@ -48,22 +47,6 @@ void tst_AutocompleteSpecResolver::resolvesDensity()
     QCOMPARE(
         resolver.autocompleteSpec(theme, Density::Comfortable).inputMinHeight,
         60);
-}
-
-void tst_AutocompleteSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    const Theme theme = ThemeBuilder().buildDarkFromSeed(
-        QColor(QStringLiteral("#6750A4")));
-    const AutocompleteSpec resolved =
-        AutocompleteSpecResolver().autocompleteSpec(
-            theme, Density::Compact);
-    const AutocompleteSpec legacy =
-        AutocompleteSpecResolver().autocompleteSpec(theme, Density::Compact);
-
-    QCOMPARE(resolved.inputContainerColor, legacy.inputContainerColor);
-    QCOMPARE(resolved.popupContainerColor, legacy.popupContainerColor);
-    QCOMPARE(resolved.focusRingColor, legacy.focusRingColor);
-    QCOMPARE(resolved.inputMinHeight, legacy.inputMinHeight);
 }
 
 QTEST_MAIN(tst_AutocompleteSpecResolver)

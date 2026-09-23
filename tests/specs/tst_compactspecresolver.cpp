@@ -15,7 +15,6 @@ private slots:
     void resolvesVariants();
     void resolvesDensity();
     void variantOverridesDoNotLeak();
-    void remainsCompatibleWithSpecFactory();
 };
 
 void tst_CompactSpecResolver::resolvesVariants()
@@ -135,39 +134,6 @@ void tst_CompactSpecResolver::variantOverridesDoNotLeak()
     QVERIFY(
         assist.containerColor
         != filterOnly);
-}
-
-void tst_CompactSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme =
-        builder.buildDarkFromSeed(
-            QColor(QStringLiteral("#6750A4")));
-
-    CompactSpecResolver resolver;
-
-    const ChipSpec resolved =
-        resolver.inputChipSpec(
-            theme,
-            Density::Compact);
-
-    const ChipSpec legacy =
-        ChipSpecResolver().inputChipSpec(
-            theme,
-            Density::Compact);
-
-    QCOMPARE(
-        resolved.containerColor,
-        legacy.containerColor);
-    QCOMPARE(
-        resolved.labelColor,
-        legacy.labelColor);
-    QCOMPARE(
-        resolved.containerHeight,
-        legacy.containerHeight);
-    QCOMPARE(
-        resolved.cornerRadius,
-        legacy.cornerRadius);
 }
 
 QTEST_MAIN(tst_CompactSpecResolver)

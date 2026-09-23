@@ -69,7 +69,7 @@ def validate(root: Path, expected_version: str | None = None) -> list[str]:
         f'QStringLiteral("{version}")',
         "extensionComponentNames(overrides)",
         "extensionOverrideFor(overrides, extensionName)",
-        "validateStrictV2",
+        "validateStrictCurrent",
     ):
         if marker not in serializer:
             errors.append(f"theme serializer contract missing marker: {marker}")

@@ -18,7 +18,7 @@ private slots:
     void semanticRoundTripIsLossless();
     void compactSerializationIsDeterministic();
     void opaqueExtensionOverrideRoundTrips();
-    void typedAliasesSerializeCanonically();
+    void canonicalComponentNamesRoundTrip();
     void strictRejectsMissingVersion();
     void strictRejectsMissingMetadata();
     void strictRejectsInvalidResolvedBlockType();
@@ -112,17 +112,19 @@ void tst_ThemeJsonContract::opaqueExtensionOverrideRoundTrips()
         42);
 }
 
-void tst_ThemeJsonContract::typedAliasesSerializeCanonically()
+void tst_ThemeJsonContract::canonicalComponentNamesRoundTrip()
 {
-    QJsonObject root = ThemeSerializer::toJsonObject(ThemeBuilder().build(ThemeOptions{}));
+    QJsonObject root =
+        ThemeSerializer::toJsonObject(ThemeBuilder().build(ThemeOptions{}));
     QJsonObject resolved = root.value(QStringLiteral("resolved")).toObject();
-    QJsonObject overrides = resolved.value(QStringLiteral("componentOverrides")).toObject();
+    QJsonObject overrides =
+        resolved.value(QStringLiteral("componentOverrides")).toObject();
 
     QJsonObject shapes;
     shapes.insert(QStringLiteral("Full"), 777);
-    QJsonObject aliasOverride;
-    aliasOverride.insert(QStringLiteral("shapes"), shapes);
-    overrides.insert(QStringLiteral("FilledButton"), aliasOverride);
+    QJsonObject componentOverride;
+    componentOverride.insert(QStringLiteral("shapes"), shapes);
+    overrides.insert(QStringLiteral("button.filled"), componentOverride);
     resolved.insert(QStringLiteral("componentOverrides"), overrides);
     root.insert(QStringLiteral("resolved"), resolved);
 
@@ -140,7 +142,6 @@ void tst_ThemeJsonContract::typedAliasesSerializeCanonically()
             .toObject();
 
     QVERIFY(emitted.contains(QStringLiteral("button.filled")));
-    QVERIFY(!emitted.contains(QStringLiteral("FilledButton")));
 }
 
 void tst_ThemeJsonContract::strictRejectsMissingVersion()

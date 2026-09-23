@@ -24,7 +24,7 @@ Typed maps (`colors`, `typography`, `shapes`, `elevations`, `motion`, `density`,
 ## Serialization
 
 First-party component IDs serialize with canonical names owned by `ThemeTextCodec`.
-Legacy aliases may be accepted while reading but are written back canonically.
+First-party component identifiers must use their canonical serialized names.
 
 Unknown third-party component names are kept opaque inside ThemeIO. They survive a Theme JSON read/write round-trip without adding QString-key APIs to ThemeModel.
 
