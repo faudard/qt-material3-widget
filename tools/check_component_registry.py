@@ -21,6 +21,10 @@ from pathlib import Path
 from typing import Any, Iterable, Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
+TOOLS = Path(__file__).resolve().parent
+if str(TOOLS) not in sys.path:
+    sys.path.insert(0, str(TOOLS))
+
 GENERATOR_PATH = ROOT / "scripts" / "generate_component_status.py"
 
 import component_registry as registry
