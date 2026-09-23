@@ -51,4 +51,10 @@ that directly construct themes or use runtime context APIs may link `ThemeModel`
 `QtMaterial3::Specs` links `QtMaterial3::ThemeModel`, never `ThemeIO` or
 `ThemeRuntime`.
 
-That boundary is enforced by `tools/check_theme_target_decomposition.py`.
+That boundary is enforced through the unified Theme gate:
+
+```bash
+python3 tools/check_theme.py --root . --scope targets
+```
+
+Run all Theme contracts with `--scope all`.

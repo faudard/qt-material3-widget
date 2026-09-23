@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 from typing import Sequence
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 RUNTIME_HEADERS = (
     "qtmaterialthemecontext.h","qtmaterialthemecontextdefaults.h",

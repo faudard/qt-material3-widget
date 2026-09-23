@@ -2,6 +2,11 @@
 
 `docs/components/component-registry.json` is the release source of truth for public component status.
 
+`tools/component_registry.py` is the single Python domain model for registry
+loading, maturity scoring and base validation. The status generator,
+governance checker and release gate all consume that module rather than
+reimplementing maturity policy.
+
 The registry tracks:
 
 - public component id

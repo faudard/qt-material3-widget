@@ -248,12 +248,6 @@ jobs:
       - name: Install Qt/build dependencies
         run: bash scripts/ci/install-ubuntu-deps.sh
 
-      - name: Validate release contract
-        run: |
-          python3 tools/check_release_contract.py --root .
-          python3 tools/check_theme_release_contract.py --root .
-          python3 tools/check_interaction_release_contract.py --root .
-
       - name: Configure release package
         run: >
           cmake -S . -B build-release -G Ninja

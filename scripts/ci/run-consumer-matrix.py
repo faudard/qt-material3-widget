@@ -87,8 +87,9 @@ def execute(name: str, scenario: dict[str, Any], *, build_root: Path,
 
         run([
             sys.executable,
-            str(ROOT / "tools" / "check_installed_header_surface.py"),
+            str(ROOT / "tools" / "check_api_surface.py"),
             "--root", str(ROOT),
+            "--scope", "installed",
             "--prefix", str(prefix),
         ])
 

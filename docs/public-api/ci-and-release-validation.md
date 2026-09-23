@@ -34,24 +34,29 @@ This verifies that:
 
 ## GitHub Actions
 
-The repository provides dedicated build, documentation and repository-quality
-workflows. Static repository health is authoritative in strict mode:
+The workflows have distinct responsibilities:
+
+- `Quality` runs the Python tooling tests, strict repository health and
+  documentation validation. `tools/repo_health.py --strict` is the single
+  static-quality orchestrator.
+- `CI` owns the cross-platform build/test matrix, consumer scenarios,
+  sanitizers, examples/benchmarks and package construction. It does not rerun
+  the static release contracts already covered by Quality.
+- `release-readiness` runs on tags, schedule or manual dispatch. A single
+  `tools/check_release.py --scope all` gate runs before its Qt 5/Qt 6 release
+  build/install/consumer matrix.
+
+The consolidated static entry points are:
 
 ```bash
 python tools/repo_health.py --strict
+python tools/check_release.py --root . --scope all
+python tools/check_theme.py --root . --scope all
+python tools/check_api_surface.py --root . --scope source
 ```
 
-The Quality workflow is itself audited and fails if that explicit `--strict`
-argument is removed. The component-maturity workflow separately executes
-`check_component_registry.py --check-generated --strict`, requiring all 32
-components to have explicit metadata, evaluated maturity axes, evidence, gaps
-and synchronized generated status files.
-
-The build-oriented workflows include:
-
-- `CI`: regular library builds and tests on Linux, Windows, and macOS;
-- `Examples`: example application build validation;
-- `Install Consumer`: package install/export and downstream consumer validation.
+Component maturity and generated status drift are included in repository health
+through `tools/check_component_registry.py --check-generated --strict`.
 
 ## Visual validation
 

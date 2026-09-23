@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "base": {
+    "required_files": [
+      "LICENSE",
+      "README.md",
+      "CHANGELOG.md",
+      "ROADMAP.md",
+      "CONTRIBUTING.md",
+      "SECURITY.md",
+      "packaging/QtMaterial3WidgetsConfig.cmake.in",
+      "docs/components/component-registry.json"
+    ],
+    "version_surfaces": {
+      "docs/conf.py": "release = _version_match.group(1)",
+      "src/theme/CMakeLists.txt": "QTMATERIAL3_VERSION_STRING=\"${PROJECT_VERSION}\"",
+      "src/theme/qtmaterialthemeserializer.cpp": "QStringLiteral(QTMATERIAL3_VERSION_STRING)"
+    },
+    "cmake_markers": [
+      "set(CPACK_GENERATOR \"TGZ;ZIP\")",
+      "set(CPACK_SOURCE_GENERATOR \"TGZ;ZIP\")",
+      "include(CPack)"
+    ]
+  },
+  "theme": {
+    "schema": {
+      "root_required": [
+        "formatVersion",
+        "source",
+        "resolved",
+        "metadata"
+      ],
+      "source_required": [
+        "seedColor",
+        "mode",
+        "preference",
+        "contrast",
+        "variant",
+        "colorBackendPolicy"
+      ],
+      "resolved_required": [
+        "colorScheme",
+        "typographyScale",
+        "shapeScale",
+        "elevationScale",
+        "motionTokens",
+        "stateLayer",
+        "accessibility",
+        "interactions",
+        "density",
+        "iconSizes",
+        "componentOverrides"
+      ],
+      "metadata_required": [
+        "generatorVersion",
+        "libraryVersion",
+        "qtVersion"
+      ]
+    },
+    "required_files": {
+      "tests/theme/tst_theme_json_contract.cpp": [
+        "semanticRoundTripIsLossless",
+        "opaqueExtensionOverrideRoundTrips",
+        "compactSerializationIsDeterministic"
+      ],
+      "tests/theme/tst_theme_token_matrix.cpp": [
+        "fallbackMatrix",
+        "mcuMatrixWhenAvailable"
+      ],
+      "tests/theme/tst_systemtheme.cpp": [
+        "policyResolutionIsDeterministic",
+        "contrastResolutionIsDeterministic"
+      ],
+      "examples/theme-studio/themestudiocontroller.cpp": [
+        "ThemeReadMode::Strict",
+        "setBackendPolicy",
+        "setPreference",
+        "validateJson"
+      ],
+      "benchmarks/theme/benchmark_theme_manager_fanout.cpp": [
+        "500-observers",
+        "1000-observers"
+      ],
+      "docs/public-api/component-overrides.md": [
+        "Precedence"
+      ],
+      "docs/public-api/system-theme.md": [
+        "FollowSystem"
+      ]
+    }
+  },
+  "interaction": {
+    "required_files": {
+      "include/qtmaterial/foundation/qtmaterialinteractionstate.h": [
+        "isHovered()",
+        "isFocused()",
+        "isPressed()",
+        "isChecked()",
+        "isSelected()",
+        "isIndeterminate()",
+        "isDragged()",
+        "hasError()",
+        "isReadOnly()",
+        "isBusy()",
+        "isExpanded()",
+        "isInteractive()",
+        "hasTransientState()"
+      ],
+      "include/qtmaterial/effects/qtmaterialripplecontroller.h": [
+        "enum class BoundsMode",
+        "enum class OriginMode",
+        "setReducedMotion",
+        "setEnabled"
+      ],
+      "include/qtmaterial/effects/qtmaterialstatelayerpainter.h": [
+        "opacityForState",
+        "paintPathForState"
+      ],
+      "include/qtmaterial/effects/qtmaterialfocusindicator.h": [
+        "shouldShow",
+        "FocusRingTokens"
+      ],
+      "include/qtmaterial/effects/qtmaterialtransitioncontroller.h": [
+        "setReducedMotion",
+        "isRunning",
+        "startTo",
+        "finish()"
+      ],
+      "include/qtmaterial/effects/qtmaterialshadowcache.h": [
+        "devicePixelRatio"
+      ],
+      "include/qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h": [
+        "focusNextPrevChild",
+        "focusableSheetChildren",
+        "restoreFocusOnClose"
+      ],
+      "src/widgets/buttons/qtmaterialtextbutton.cpp": [
+        "focusReason()",
+        "accessibility().reducedMotion"
+      ],
+      "src/widgets/selection/qtmaterialcheckbox.cpp": [
+        "setIndeterminate",
+        "accessibility().reducedMotion",
+        "focusReason()"
+      ],
+      "tests/core/tst_interactionstate_contracts.cpp": [
+        "readOnlySuppressesPressAndDrag",
+        "persistentStatesSurviveDisabled"
+      ],
+      "tests/effects/tst_ripplecontroller.cpp": [
+        "disabledSuppressesRipple",
+        "reducedMotionSuppressesAnimatedRipple",
+        "boundedAndUnboundedPaint"
+      ],
+      "tests/effects/tst_statelayerpainter.cpp": [
+        "interactionPriority",
+        "policyCanSuppressPointerFeedback"
+      ],
+      "tests/effects/tst_focusindicator.cpp": [
+        "keyboardVisibilityPolicy",
+        "tokenizedRingPaints"
+      ],
+      "tests/effects/tst_transitioncontroller.cpp": [
+        "reducedMotionCompletesImmediately",
+        "retargetingEndsAtLatestTarget",
+        "themeMotionTokenAppliesReducedMotion"
+      ],
+      "tests/widgets/surfaces/tst_bottomsheet.cpp": [
+        "modalTabFocusStaysInsideSheet",
+        "initialFocusAndRestoreFocus"
+      ],
+      "tests/widgets/surfaces/tst_dialog.cpp": [
+        "tabFocusStaysInsideDialog",
+        "openFocusesInitialWidgetAndRestoresPreviousFocusOnClose"
+      ],
+      "benchmarks/effects/benchmark_shadow_cache_pipeline.cpp": [
+        "dpr-1x",
+        "dpr-2x",
+        "dprProducesDistinctCacheIdentity"
+      ],
+      "benchmarks/effects/benchmark_ripple.cpp": [
+        "animated",
+        "reduced-motion"
+      ],
+      "docs/public-api/interaction-effects.md": [
+        "Interaction state",
+        "Reduced motion",
+        "Transient focus",
+        "Device-pixel-ratio"
+      ]
+    }
+  }
+}

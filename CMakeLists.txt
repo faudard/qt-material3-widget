@@ -18,7 +18,7 @@ endif()
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
-include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3HeaderSurface.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3ApiChecks.cmake")
 
 if(QTMATERIAL3_IS_TOP_LEVEL)
     include(CTest)
@@ -62,11 +62,6 @@ option(
 if(QTMATERIAL3_ENABLE_ARCHITECTURE_CHECKS)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3Architecture.cmake")
     qtmaterial3_add_architecture_check()
-endif()
-
-if(QTMATERIAL3_BUILD_TESTS)
-    # QtMaterial3 public widget PIMPL contract audit.
-    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3PimplContract.cmake" OPTIONAL)
 endif()
 
 add_subdirectory(src)
@@ -136,17 +131,7 @@ endif()
 if(QTMATERIAL3_BUILD_TESTS)
     add_subdirectory(tests)
 
-    # qt-material3-widget public ABI audit.
-    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3PublicAbiAudit.cmake" OPTIONAL)
-    if(COMMAND qtmaterial3_add_public_abi_audit)
-        qtmaterial3_add_public_abi_audit()
-    endif()
-
-    # qt-material3-widget public header hygiene.
-    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3PublicHeaderHygiene.cmake" OPTIONAL)
-    if(COMMAND qtmaterial3_add_public_header_hygiene_tests)
-        qtmaterial3_add_public_header_hygiene_tests()
-    endif()
+    qtmaterial3_add_api_checks()
 endif()
 
 

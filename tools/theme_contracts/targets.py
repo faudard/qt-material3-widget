@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from typing import Iterable, Sequence
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 MODEL_HEADERS = (
     "qtmaterialcolortoken.h",

@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-SCRIPT = Path(__file__).resolve().parents[2] / "tools/check_theme_model.py"
+SCRIPT = Path(__file__).resolve().parents[2] / "tools/theme_contracts/model.py"
 SPEC = importlib.util.spec_from_file_location("qtm3_theme_model_checker", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None
 checker = importlib.util.module_from_spec(SPEC)

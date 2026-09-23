@@ -8,7 +8,7 @@ import re
 from pathlib import Path
 from typing import Sequence
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 EXPECTED_CATEGORIES = {
     "Invalid": "0x00",

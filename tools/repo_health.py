@@ -68,31 +68,76 @@ def run_command_check(name: str, command: Sequence[str], cwd: Path = ROOT) -> Ch
     return CheckResult(name, completed.returncode == 0,
                        f"exit={completed.returncode}")
 
-def health_commands(python: str, strict: bool = False) -> list[tuple[str, list[str]]]:
+def health_commands(
+    python: str,
+    strict: bool = False,
+) -> list[tuple[str, list[str]]]:
     return [
-        ("architecture",
-         [python, str(ROOT/"scripts/architecture/check_architecture.py"),
-          "--root", str(ROOT)]),
-        ("public-private-headers",
-         [python, str(ROOT/"tools/check_public_private_headers.py"),
-          "--root", str(ROOT)]),
-        ("component-registry",
-         [python, str(ROOT/"tools/check_component_registry.py"), "--check-generated"] +
-         (["--strict"] if strict else [])),
-        ("build-consumer-matrix-contract",
-         [python, str(ROOT/"tools/check_build_consumer_matrix.py")]),
-        ("qt5-qt6-compatibility-contract",
-         [python, str(ROOT/"tools/check_qt_compatibility_contract.py")]),
-        ("theme-target-decomposition",
-         [python, str(ROOT/"tools/check_theme_target_decomposition.py")]),
-        ("theme-model",
-         [python, str(ROOT/"tools/check_theme_model.py")]),
-        ("theme-io",
-         [python, str(ROOT/"tools/check_theme_io.py")]),
-        ("theme-runtime",
-         [python, str(ROOT/"tools/check_theme_runtime.py")]),
-        ("typed-token-system",
-         [python, str(ROOT/"tools/check_typed_token_system.py")]),
+        (
+            "architecture",
+            [
+                python,
+                str(ROOT / "scripts/architecture/check_architecture.py"),
+                "--root",
+                str(ROOT),
+            ],
+        ),
+        (
+            "api-surface",
+            [
+                python,
+                str(ROOT / "tools/check_api_surface.py"),
+                "--root",
+                str(ROOT),
+                "--scope",
+                "source",
+            ],
+        ),
+        (
+            "component-registry",
+            [
+                python,
+                str(ROOT / "tools/check_component_registry.py"),
+                "--check-generated",
+            ]
+            + (["--strict"] if strict else []),
+        ),
+        (
+            "build-consumer-matrix-contract",
+            [
+                python,
+                str(ROOT / "tools/check_build_consumer_matrix.py"),
+            ],
+        ),
+        (
+            "qt5-qt6-compatibility-contract",
+            [
+                python,
+                str(ROOT / "tools/check_qt_compatibility_contract.py"),
+            ],
+        ),
+        (
+            "theme",
+            [
+                python,
+                str(ROOT / "tools/check_theme.py"),
+                "--root",
+                str(ROOT),
+                "--scope",
+                "all",
+            ],
+        ),
+        (
+            "release",
+            [
+                python,
+                str(ROOT / "tools/check_release.py"),
+                "--root",
+                str(ROOT),
+                "--scope",
+                "all",
+            ],
+        ),
     ]
 
 def main(argv: Sequence[str] | None = None) -> int:

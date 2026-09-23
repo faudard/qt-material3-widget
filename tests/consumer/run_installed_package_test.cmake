@@ -55,8 +55,9 @@ endif()
 execute_process(
     COMMAND
         "${PYTHON_EXECUTABLE}"
-        "${REPO_SOURCE_DIR}/tools/check_installed_header_surface.py"
+        "${REPO_SOURCE_DIR}/tools/check_api_surface.py"
         --root "${REPO_SOURCE_DIR}"
+        --scope installed
         --prefix "${INSTALL_PREFIX}"
     RESULT_VARIABLE _header_surface_result
 )

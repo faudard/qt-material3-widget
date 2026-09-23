@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 """Governance checker for the QtMaterial3 component registry.
 
-This tool layers project-governance invariants on top of the authoritative
-existing generator/validator in scripts/generate_component_status.py.
+Domain semantics (loading, maturity scoring and base validation) live in
+tools/component_registry.py. This checker adds schema/governance invariants and
+optionally verifies the generated documentation/runtime registry are in sync.
 
-No third-party Python package is required. The JSON Schema file is published
-for editors/tooling; this script enforces the critical invariants in CI.
+No third-party Python package is required.
 """
 
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import re
 import subprocess
@@ -22,7 +21,13 @@ from pathlib import Path
 from typing import Any, Iterable, Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
+TOOLS = Path(__file__).resolve().parent
+if str(TOOLS) not in sys.path:
+    sys.path.insert(0, str(TOOLS))
+
 GENERATOR_PATH = ROOT / "scripts" / "generate_component_status.py"
+
+import component_registry as registry
 REGISTRY_PATH = ROOT / "docs" / "components" / "component-registry.json"
 SCHEMA_PATH = ROOT / "docs" / "components" / "component-registry.schema.json"
 
@@ -32,16 +37,6 @@ COMPONENT_FIELDS = {
     "specType", "widgetType", "testTarget", "galleryRoute", "docsPath",
     "releaseScope", "referenceCandidate", "maturityAxes",
 }
-
-
-def load_generator():
-    spec = importlib.util.spec_from_file_location("qtm3_component_status_generator", GENERATOR_PATH)
-    if spec is None or spec.loader is None:
-        raise RuntimeError(f"cannot load {GENERATOR_PATH}")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
 
 
 def validate_schema_contract(path: Path = SCHEMA_PATH) -> list[str]:
@@ -103,8 +98,6 @@ def _valid_iso_date(value: Any) -> bool:
 def validate_governance(components: list[dict[str, Any]], *, axes: Sequence[str]) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
-    generator = load_generator()
-
     for item in components:
         cid = str(item.get("id", ""))
         for field in sorted(set(item) - COMPONENT_FIELDS):
@@ -135,7 +128,7 @@ def validate_governance(components: list[dict[str, Any]], *, axes: Sequence[str]
                 errors.append(f"{cid}: maturityAxes.{axis} must be evaluated")
 
         declared = str(item.get("maturity", "planned"))
-        derived = generator.derived_maturity(maturity_axes)
+        derived = registry.derived_maturity(maturity_axes)
         if declared != derived:
             errors.append(
                 f"{cid}: declared maturity `{declared}` differs from "
@@ -256,15 +249,22 @@ def main(argv: Sequence[str] | None = None) -> int:
     schema_errors = validate_schema_contract()
 
     try:
-        generator = load_generator()
-        components = generator.load_registry()
-        base_errors, base_warnings = generator.validate_registry(components, strict=False)
+        components = registry.load_registry(ROOT)
+        base_errors, base_warnings = registry.validate_registry(
+            components,
+            strict=False,
+            root=ROOT,
+        )
     except Exception as exc:
-        print(f"component registry validation failed to initialize: {exc}", file=sys.stderr)
+        print(
+            f"component registry validation failed to initialize: {exc}",
+            file=sys.stderr,
+        )
         return 2
 
     governance_errors, governance_warnings = validate_governance(
-        components, axes=generator.AXES
+        components,
+        axes=registry.AXES,
     )
 
     errors = schema_errors + list(base_errors) + governance_errors
