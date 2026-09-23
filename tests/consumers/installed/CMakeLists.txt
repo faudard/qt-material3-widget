@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.21)
 project(qtm3_installed_consumer LANGUAGES CXX)
 
-find_package(QtMaterial3Widgets REQUIRED CONFIG COMPONENTS Theme Widgets)
+find_package(QtMaterial3Widgets REQUIRED CONFIG COMPONENTS ThemeModel Widgets)
 
-if(NOT TARGET QtMaterial3::Theme)
-    message(FATAL_ERROR "QtMaterial3::Theme is missing from installed package")
+if(NOT TARGET QtMaterial3::ThemeModel)
+    message(FATAL_ERROR "QtMaterial3::ThemeModel is missing from installed package")
 endif()
 if(NOT TARGET QtMaterial3::Widgets)
     message(FATAL_ERROR "QtMaterial3::Widgets is missing from installed package")
