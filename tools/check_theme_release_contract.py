@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the 0.6 Theme & Tokens release contract."""
+"""Validate the permanent Theme & Tokens release contract."""
 
 from __future__ import annotations
 
@@ -64,9 +64,13 @@ def validate(root: Path, expected_version: str | None = None) -> list[str]:
     if "validateJson" not in header:
         errors.append("ThemeSerializer has no public validateJson contract")
 
+    theme_cmake = read(root / "src/theme/CMakeLists.txt")
+    if 'QTMATERIAL3_VERSION_STRING="${PROJECT_VERSION}"' not in theme_cmake:
+        errors.append("ThemeIO does not source serializer version from PROJECT_VERSION")
+
     serializer = read(root / "src/theme/qtmaterialthemeserializer.cpp")
     for marker in (
-        f'QStringLiteral("{version}")',
+        "QTMATERIAL3_VERSION_STRING",
         "extensionComponentNames(overrides)",
         "extensionOverrideFor(overrides, extensionName)",
         "validateStrictCurrent",
