@@ -13,21 +13,21 @@ qtmaterial3_add_benchmark_executable(benchmark_theme_switch
     theme/benchmark_theme_switch.cpp
 )
 target_link_libraries(benchmark_theme_switch
-    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme
+    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime
 )
 
 qtmaterial3_add_benchmark_executable(benchmark_ripple
     effects/benchmark_ripple.cpp
 )
 target_link_libraries(benchmark_ripple
-    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme qtmaterial3_core qtmaterial3_effects
+    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime qtmaterial3_core qtmaterial3_effects
 )
 
 qtmaterial3_add_benchmark_executable(benchmark_widget_creation
     widgets/benchmark_widget_creation.cpp
 )
 target_link_libraries(benchmark_widget_creation
-    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme qtmaterial3_core qtmaterial3_specs qtmaterial3_effects qtmaterial3_widgets
+    PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime qtmaterial3_core qtmaterial3_specs qtmaterial3_effects qtmaterial3_widgets
 )
 
 if(NOT TARGET benchmark_theme_pipeline)
@@ -39,7 +39,7 @@ if(NOT TARGET benchmark_theme_pipeline)
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Test
-    qtmaterial3_theme
+    qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime
   )
 endif()
 
@@ -52,7 +52,7 @@ if(NOT TARGET benchmark_theme_manager_fanout)
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Test
-    qtmaterial3_theme
+    qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime
   )
 endif()
 
@@ -65,7 +65,7 @@ if(NOT TARGET benchmark_spec_resolution_pipeline)
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Test
-    qtmaterial3_theme
+    qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime
     qtmaterial3_core
     qtmaterial3_specs
   )
@@ -80,7 +80,7 @@ if(NOT TARGET benchmark_shadow_cache_pipeline)
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Test
-    qtmaterial3_theme
+    qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime
     qtmaterial3_core
     qtmaterial3_effects
   )
