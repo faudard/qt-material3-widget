@@ -7,7 +7,7 @@ The theming subsystem is only considered merge-ready when it passes the same che
 Run the focused theming validation script:
 
 ```bash
-scripts/validate-theming-subsystem.sh
+python3 scripts/validate_theming_subsystem.py
 ```
 
 This performs two builds:
@@ -22,7 +22,7 @@ The MCU-requested build must pass even when Material Color Utilities is not vend
 Run:
 
 ```bash
-scripts/validate-install-consumer.sh
+python3 scripts/ci/run-consumer-matrix.py --scenario install-shared
 ```
 
 This verifies that:
