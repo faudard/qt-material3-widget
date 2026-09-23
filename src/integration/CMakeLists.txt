@@ -19,5 +19,5 @@ target_link_libraries(qtmaterial3_integration
     PUBLIC
         #Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
-        qtmaterial3_theme
+        qtmaterial3_theme_model
 )
