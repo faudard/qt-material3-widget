@@ -35,7 +35,7 @@ Component-grid rendering uses real QtMaterial widgets. These tests always produc
 ## Updating goldens
 
 ```bash
-scripts/update-visual-goldens.sh build
+python3 scripts/update_visual_goldens.py build
 ```
 
 or manually:
