@@ -49,7 +49,8 @@ def producer_defs(linkage: str, install_enabled: bool) -> dict[str, str]:
     }
 
 def execute(name: str, scenario: dict[str, Any], *, build_root: Path,
-            generator: str | None, config: str) -> None:
+            generator: str | None, config: str,
+            producer_build_dir: Path | None = None) -> None:
     kind = scenario["kind"]
     linkage = scenario["linkage"]
     scenario_root = build_root / name
@@ -78,11 +79,16 @@ def execute(name: str, scenario: dict[str, Any], *, build_root: Path,
         return
 
     if kind in {"install", "invalid_component"}:
-        producer = scenario_root / "producer"
         prefix = scenario_root / "prefix"
-        configure(ROOT, producer, generator=generator,
-                  definitions=producer_defs(linkage, True))
-        build(producer, config)
+        if producer_build_dir is None:
+            producer = scenario_root / "producer"
+            configure(ROOT, producer, generator=generator,
+                      definitions=producer_defs(linkage, True))
+            build(producer, config)
+        else:
+            producer = producer_build_dir
+            if not producer.is_dir():
+                raise RuntimeError(f"producer build directory does not exist: {producer}")
         install(producer, prefix, config)
 
         run([
@@ -113,6 +119,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--scenario", action="append")
     parser.add_argument("--build-root", type=Path, default=ROOT / "build" / "consumer-matrix")
     parser.add_argument("--generator", default=os.environ.get("QTM3_GENERATOR", "Ninja"))
+    parser.add_argument(
+        "--producer-build-dir",
+        type=Path,
+        help="Reuse an already configured and built producer for install scenarios",
+    )
     parser.add_argument("--config", default="Release")
     parser.add_argument("--list", action="store_true")
     args = parser.parse_args(argv)
@@ -133,8 +144,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     for name in selected:
         print(f"\n=== consumer scenario: {name} ===", flush=True)
         try:
-            execute(name, scenarios[name], build_root=args.build_root,
-                    generator=args.generator or None, config=args.config)
+            execute(
+                name,
+                scenarios[name],
+                build_root=args.build_root,
+                generator=args.generator or None,
+                config=args.config,
+                producer_build_dir=args.producer_build_dir,
+            )
         except Exception as exc:
             failures.append((name, str(exc)))
 

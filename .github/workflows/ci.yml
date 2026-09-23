@@ -30,6 +30,9 @@ jobs:
             expected-msvc-prefix: "19.29"
             use-mcu: "OFF"
             build-extra-examples: "OFF"
+            build-tests: "ON"
+            build-examples: "ON"
+            build-parallel-level: "2"
 
           - name: ubuntu-qt6
             os: ubuntu-latest
@@ -40,6 +43,9 @@ jobs:
             expected-msvc-prefix: ""
             use-mcu: "OFF"
             build-extra-examples: "OFF"
+            build-tests: "ON"
+            build-examples: "ON"
+            build-parallel-level: "2"
 
           - name: windows-qt6.7.3-v142
             os: windows-2022
@@ -50,8 +56,24 @@ jobs:
             expected-msvc-prefix: "19.29"
             use-mcu: "OFF"
             build-extra-examples: "OFF"
+            build-tests: "ON"
+            build-examples: "ON"
+            build-parallel-level: "2"
 
           - name: macos-qt6.8.3
+            os: macos-15
+            qt-version: "6.8.3"
+            qt-arch: clang_64
+            expected-qt-version: "6.8.3"
+            msvc-toolset: ""
+            expected-msvc-prefix: ""
+            use-mcu: "OFF"
+            build-extra-examples: "OFF"
+            build-tests: "ON"
+            build-examples: "OFF"
+            build-parallel-level: "3"
+
+          - name: macos-intel-qt6.8.3-smoke
             os: macos-15-intel
             qt-version: "6.8.3"
             qt-arch: clang_64
@@ -60,9 +82,12 @@ jobs:
             expected-msvc-prefix: ""
             use-mcu: "OFF"
             build-extra-examples: "OFF"
+            build-tests: "OFF"
+            build-examples: "OFF"
+            build-parallel-level: "2"
 
     env:
-      CMAKE_BUILD_PARALLEL_LEVEL: 2
+      CMAKE_BUILD_PARALLEL_LEVEL: ${{ matrix.build-parallel-level }}
       CTEST_OUTPUT_ON_FAILURE: 1
 
     steps:
@@ -131,11 +156,12 @@ jobs:
           -DCMAKE_C_COMPILER=cl
           -DCMAKE_CXX_COMPILER=cl
           "-DQTMATERIAL3_EXPECT_QT_VERSION=${{ matrix.expected-qt-version }}"
-          -DQTMATERIAL3_BUILD_TESTS=ON
-          -DQTMATERIAL3_BUILD_EXAMPLES=ON
+          -DQTMATERIAL3_BUILD_TESTS=${{ matrix.build-tests }}
+          -DQTMATERIAL3_BUILD_EXAMPLES=${{ matrix.build-examples }}
           -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=${{ matrix.build-extra-examples }}
           -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=${{ matrix.build-extra-examples }}
           -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
+          -DQTMATERIAL3_INSTALL=ON
           -DQTMATERIAL3_USE_MCU=${{ matrix.use-mcu }}
 
       - name: Configure Unix
@@ -144,11 +170,12 @@ jobs:
         run: >
           cmake -S . -B build -G Ninja
           -DCMAKE_BUILD_TYPE=Release
-          -DQTMATERIAL3_BUILD_TESTS=ON
-          -DQTMATERIAL3_BUILD_EXAMPLES=ON
+          -DQTMATERIAL3_BUILD_TESTS=${{ matrix.build-tests }}
+          -DQTMATERIAL3_BUILD_EXAMPLES=${{ matrix.build-examples }}
           -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=${{ matrix.build-extra-examples }}
           -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=${{ matrix.build-extra-examples }}
           -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
+          -DQTMATERIAL3_INSTALL=ON
           -DQTMATERIAL3_USE_MCU=${{ matrix.use-mcu }}
 
       - name: Build
@@ -169,7 +196,7 @@ jobs:
         run: ctest --test-dir build --build-config Release --output-on-failure
 
       - name: Test macOS
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && matrix.build-tests == 'ON'
         shell: bash
         run: ctest --test-dir build --build-config Release --output-on-failure
 
@@ -182,6 +209,7 @@ jobs:
           python scripts/ci/run-consumer-matrix.py
           --scenario install-shared
           --build-root "${{ github.workspace }}/build/consumer-qt5142"
+          --producer-build-dir "${{ github.workspace }}/build"
           --generator Ninja
 
       - name: Validate installed consumer on Windows Qt 6
@@ -193,6 +221,7 @@ jobs:
           python scripts/ci/run-consumer-matrix.py
           --scenario install-shared
           --build-root "${{ github.workspace }}/build/consumer-windows-qt6"
+          --producer-build-dir "${{ github.workspace }}/build"
           --generator Ninja
 
       - name: Validate installed consumer on macOS
@@ -202,6 +231,7 @@ jobs:
           python3 scripts/ci/run-consumer-matrix.py
           --scenario install-shared
           --build-root "${{ github.workspace }}/build/consumer-macos"
+          --producer-build-dir "${{ github.workspace }}/build"
           --generator Ninja
 
   consumer-contract:
