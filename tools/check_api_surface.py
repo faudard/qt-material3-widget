@@ -4,14 +4,19 @@
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import re
 import sys
 from pathlib import Path
 from typing import Sequence
 
+TOOLS = Path(__file__).resolve().parent
+if str(TOOLS) not in sys.path:
+    sys.path.insert(0, str(TOOLS))
+
+import header_surface
+
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST = Path("cmake/QtMaterial3HeaderSurfaceManifest.cmake")
+MANIFEST = header_surface.MANIFEST
 
 INCLUDE_RE = re.compile(
     r'^\s*#\s*include\s*[<"]([^>"]+)[>"]',
@@ -21,19 +26,6 @@ PRIVATE_NAME_RE = re.compile(
     r"(?:^|/)private/|_p\.(?:h|hh|hpp|hxx)$",
     re.IGNORECASE,
 )
-
-
-def load_manifest_helper(root: Path):
-    script = root / "tools/update_header_surface_manifest.py"
-    spec = importlib.util.spec_from_file_location(
-        "qtm3_header_manifest", script
-    )
-    if spec is None or spec.loader is None:
-        raise RuntimeError("cannot load header manifest helper")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
 
 
 def check_public_includes(
@@ -183,12 +175,11 @@ def validate_source(
     *,
     source_only: bool = False,
 ) -> list[str]:
-    helper = load_manifest_helper(root)
     manifest = root / MANIFEST
-    errors = helper.validate_manifest(root, manifest)
+    errors = header_surface.validate_manifest(root, manifest)
     if errors:
         return errors
-    public, private = helper.parse_manifest(manifest)
+    public, private = header_surface.parse_manifest(manifest)
     errors.extend(check_public_includes(root, public, private))
     if not source_only:
         errors.extend(check_install_contract(root))
@@ -196,16 +187,15 @@ def validate_source(
 
 
 def validate_installed(root: Path, prefix: Path) -> list[str]:
-    helper = load_manifest_helper(root)
     manifest = root / MANIFEST
-    manifest_errors = helper.validate_manifest(root, manifest)
+    manifest_errors = header_surface.validate_manifest(root, manifest)
     if manifest_errors:
         return [
             "source manifest invalid: " + error
             for error in manifest_errors
         ]
 
-    public, private = helper.parse_manifest(manifest)
+    public, private = header_surface.parse_manifest(manifest)
     actual = installed_headers(prefix)
     errors: list[str] = []
     missing = sorted(set(public) - set(actual))
