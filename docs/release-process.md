@@ -8,17 +8,15 @@ Required checks:
 
 1. Run the normal CI matrix.
 2. Run repository-health and documentation gates.
-3. Run `python tools/check_release_contract.py --root .`.
-4. Run `python tools/check_theme_release_contract.py --root .`.
-5. Run `python tools/check_interaction_release_contract.py --root .`.
-6. Verify the release-scoped component registry contains no `partial`, `skeleton`, or `planned` component.
-7. Verify Theme JSON fixtures, token matrix, SystemTheme, Theme Studio, and runtime propagation tests are green.
-8. Verify interaction-state, ripple, focus, motion, shadow/DPR and transient-focus tests are green.
-9. Build and install the project with `QTMATERIAL3_INSTALL=ON`.
-10. Run CPack for ZIP and TGZ binary archives.
-11. Run CPack source packaging for ZIP and TGZ.
-12. Build an external installed-package consumer.
-13. Review `CHANGELOG.md` and remove the `Unreleased` marker when publishing.
+3. Run `python tools/check_release.py --root . --scope all`.
+4. Verify the release-scoped component registry contains no `partial`, `skeleton`, or `planned` component.
+5. Verify Theme JSON fixtures, token matrix, SystemTheme, Theme Studio, and runtime propagation tests are green.
+6. Verify interaction-state, ripple, focus, motion, shadow/DPR and transient-focus tests are green.
+7. Build and install the project with `QTMATERIAL3_INSTALL=ON`.
+8. Run CPack for ZIP and TGZ binary archives.
+9. Run CPack source packaging for ZIP and TGZ.
+10. Build an external installed-package consumer.
+11. Review `CHANGELOG.md` and remove the `Unreleased` marker when publishing.
 
 Example:
 
