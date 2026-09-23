@@ -1,6 +1,6 @@
 # Navigation
 
-The 0.5.0 navigation surface currently exposes two release-scoped widgets:
+The navigation surface exposes:
 
 - `QtMaterial::QtMaterialTabs`
 - `QtMaterial::QtMaterialNavigationRail`
@@ -61,7 +61,7 @@ Page widgets expose dynamic automation metadata:
 - `materialTabRoute`
 - `materialTabIndex`
 
-### 0.5.0 maturity evidence
+### Maturity evidence
 
 `tst_tabs` and the focused route/theme/lifecycle suites cover:
 
@@ -76,14 +76,18 @@ Page widgets expose dynamic automation metadata:
 
 The gallery navigation page includes a Tabs example with routes, IDs, and a badge.
 
-Tabs is therefore release-scoped as **usable** in 0.5.0. Reviewed visual-reference coverage and
-a broader full state matrix remain before `complete` maturity.
+`QtMaterialTabs` is tracked as **usable**. Reviewed visual-reference coverage and a broader
+full state matrix remain before `complete` maturity.
 
 ## Navigation Rail
 
-`QtMaterialNavigationRail` is release-scoped as **usable**. Its focused release contract covers
-destination selection, disabled destinations, keyboard navigation, resolved specs, and
-accessibility summaries.
+`QtMaterialNavigationRail` is tracked as **usable**. Destinations are ordered and addressable by
+index; disabled destinations are skipped. Up/Left and Down/Right navigate enabled destinations,
+Home/End jump to the boundary, and Space/Return/Enter activate the current destination. The rail
+keeps a default accessible name and exposes per-destination accessible summaries.
 
-See [Navigation Rail release readiness](navigationrail-release-readiness.md) for the detailed
-contract.
+## Menu
+
+`QtMaterialMenu` supports action items and separators, disabled-item skipping, checkable items,
+mouse activation, directional/Home/End keyboard navigation, Space/Return/Enter activation,
+Escape dismissal, RTL-aware layout and accessible summary text.
