@@ -21,7 +21,7 @@ flowchart TB
 
     core["qtmaterial3_core<br/><small>Widget bases and interaction state<br/>Widget / Surface bases<br/>AbstractButton<br/>SelectionControl<br/>InputControl<br/>InteractionState</small>"]
 
-    specs["qtmaterial3_specs<br/><small>Immutable component specs + factory<br/>SpecFactory<br/>Button / Dialog / TextField<br/>Card / NavigationDrawer<br/>Banner / AppBar / List / DateField</small>"]
+    specs["qtmaterial3_specs<br/><small>Immutable component specs + resolvers<br/>Spec resolvers<br/>Button / Dialog / TextField<br/>Card / NavigationDrawer<br/>Banner / AppBar / List / DateField</small>"]
 
     effects["qtmaterial3_effects<br/><small>Visual effects and motion<br/>Ripple · State layer painter · Focus indicator<br/>Shadow · Transition controller · Scrim</small>"]
 
@@ -84,16 +84,16 @@ sequenceDiagram
     participant App as Application
     participant Manager as ThemeManager
     participant Theme as Theme
-    participant Factory as SpecFactory
+    participant Resolver as Spec resolver
     participant Spec as Component Spec
     participant Widget as Material Widget
     participant Effects as Effects
 
     App->>Manager: setTheme(...) / applyTheme(...)
     Manager->>Theme: resolve color, typography, shape, elevation, motion tokens
-    Widget->>Factory: request component spec
-    Factory->>Theme: read resolved tokens
-    Factory-->>Spec: build immutable spec
+    Widget->>Resolver: request component spec
+    Resolver->>Theme: read resolved tokens
+    Resolver-->>Spec: build immutable spec
     Spec-->>Widget: resolved rendering contract
     Widget->>Effects: configure ripple, state layer, focus, shadow, transition
     Widget-->>App: render Qt Widget

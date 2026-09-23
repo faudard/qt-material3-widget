@@ -15,7 +15,6 @@ private slots:
     void resolvesExtendedFab();
     void resolvesFabColorVariants();
     void resolvesIconButtonRuntimeValues();
-    void remainsCompatibleWithSpecFactory();
     void resolvesComponentOverrides();
 };
 
@@ -128,36 +127,6 @@ void tst_ActionButtonSpecResolver::resolvesIconButtonRuntimeValues()
     QCOMPARE(
         spec.pressStateLayerOpacity,
         theme.stateLayer().pressOpacity);
-}
-
-void tst_ActionButtonSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme =
-        builder.buildLightFromSeed(
-            QColor(QStringLiteral("#6750A4")));
-
-    ActionButtonSpecResolver resolver;
-
-    const FabSpec resolvedFab = resolver.fabSpec(theme);
-    const FabSpec legacyFab = ActionButtonSpecResolver().fabSpec(theme);
-    QCOMPARE(
-        resolvedFab.containerColor,
-        legacyFab.containerColor);
-    QCOMPARE(
-        resolvedFab.cornerRadius,
-        legacyFab.cornerRadius);
-
-    const IconButtonSpec resolvedIcon =
-        resolver.iconButtonSpec(theme);
-    const IconButtonSpec legacyIcon =
-        ActionButtonSpecResolver().iconButtonSpec(theme);
-    QCOMPARE(
-        resolvedIcon.iconColor,
-        legacyIcon.iconColor);
-    QCOMPARE(
-        resolvedIcon.cornerRadius,
-        legacyIcon.cornerRadius);
 }
 
 void tst_ActionButtonSpecResolver::resolvesComponentOverrides()

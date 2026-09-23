@@ -109,9 +109,9 @@ def validate(root: Path, expected_version: str | None = None) -> list[str]:
         errors.append(f"project version is {version}, expected {expected_version}")
 
     version_surfaces = {
-        "docs/conf.py": f'release = "{version}"',
-        "Doxyfile": f"PROJECT_NUMBER         = {version}",
-        "src/theme/qtmaterialthemeserializer.cpp": f'QStringLiteral("{version}")',
+        "docs/conf.py": "release = _version_match.group(1)",
+        "src/theme/CMakeLists.txt": 'QTMATERIAL3_VERSION_STRING="${PROJECT_VERSION}"',
+        "src/theme/qtmaterialthemeserializer.cpp": "QStringLiteral(QTMATERIAL3_VERSION_STRING)",
     }
     for relative, marker in version_surfaces.items():
         path = root / relative
@@ -119,7 +119,7 @@ def validate(root: Path, expected_version: str | None = None) -> list[str]:
             errors.append(f"missing version surface: {relative}")
             continue
         if marker not in path.read_text(encoding="utf-8", errors="replace"):
-            errors.append(f"{relative} does not report release version {version}")
+            errors.append(f"{relative} is not wired to the project release version")
 
     for marker in [
         'set(CPACK_GENERATOR "TGZ;ZIP")',

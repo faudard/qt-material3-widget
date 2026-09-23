@@ -12,7 +12,6 @@ class tst_SegmentedButtonSpecResolver : public QObject
 private slots:
     void resolvesThemeRoles();
     void resolvesDensity();
-    void remainsCompatibleWithSpecFactory();
 };
 
 void tst_SegmentedButtonSpecResolver::resolvesThemeRoles()
@@ -47,23 +46,6 @@ void tst_SegmentedButtonSpecResolver::resolvesDensity()
     QCOMPARE(
         resolver.segmentedButtonSpec(theme, Density::Comfortable).segmentHeight,
         44);
-}
-
-void tst_SegmentedButtonSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    const Theme theme = ThemeBuilder().buildDarkFromSeed(
-        QColor(QStringLiteral("#6750A4")));
-    const SegmentedButtonSpec resolved =
-        SegmentedButtonSpecResolver().segmentedButtonSpec(
-            theme, Density::Comfortable);
-    const SegmentedButtonSpec legacy =
-        SegmentedButtonSpecResolver().segmentedButtonSpec(theme, Density::Comfortable);
-
-    QCOMPARE(resolved.containerColor, legacy.containerColor);
-    QCOMPARE(resolved.selectedContainerColor, legacy.selectedContainerColor);
-    QCOMPARE(resolved.labelColor, legacy.labelColor);
-    QCOMPARE(resolved.segmentHeight, legacy.segmentHeight);
-    QCOMPARE(resolved.touchTarget, legacy.touchTarget);
 }
 
 QTEST_MAIN(tst_SegmentedButtonSpecResolver)

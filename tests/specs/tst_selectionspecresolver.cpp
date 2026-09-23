@@ -12,7 +12,6 @@ class tst_SelectionSpecResolver : public QObject
 private slots:
     void resolvesDefaultColors();
     void resolvesDensity();
-    void remainsCompatibleWithSpecFactory();
 };
 
 void tst_SelectionSpecResolver::resolvesDefaultColors()
@@ -59,51 +58,6 @@ void tst_SelectionSpecResolver::resolvesDensity()
     QCOMPARE(
         resolver.switchSpec(theme, Density::Comfortable).spacing,
         14);
-}
-
-void tst_SelectionSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme =
-        builder.buildDarkFromSeed(QColor(QStringLiteral("#6750A4")));
-    SelectionSpecResolver resolver;
-
-    const CheckboxSpec resolvedCheckbox =
-        resolver.checkboxSpec(theme, Density::Compact);
-    const CheckboxSpec legacyCheckbox =
-        SelectionSpecResolver().checkboxSpec(theme, Density::Compact);
-
-    QCOMPARE(
-        resolvedCheckbox.selectedContainerColor,
-        legacyCheckbox.selectedContainerColor);
-    QCOMPARE(
-        resolvedCheckbox.unselectedOutlineColor,
-        legacyCheckbox.unselectedOutlineColor);
-    QCOMPARE(resolvedCheckbox.spacing, legacyCheckbox.spacing);
-
-    const RadioButtonSpec resolvedRadio =
-        resolver.radioButtonSpec(theme, Density::Comfortable);
-    const RadioButtonSpec legacyRadio =
-        SelectionSpecResolver().radioButtonSpec(theme, Density::Comfortable);
-
-    QCOMPARE(resolvedRadio.selectedColor, legacyRadio.selectedColor);
-    QCOMPARE(
-        resolvedRadio.unselectedOutlineColor,
-        legacyRadio.unselectedOutlineColor);
-    QCOMPARE(resolvedRadio.spacing, legacyRadio.spacing);
-
-    const SwitchSpec resolvedSwitch =
-        resolver.switchSpec(theme, Density::Default);
-    const SwitchSpec legacySwitch =
-        SelectionSpecResolver().switchSpec(theme, Density::Default);
-
-    QCOMPARE(
-        resolvedSwitch.selectedTrackColor,
-        legacySwitch.selectedTrackColor);
-    QCOMPARE(
-        resolvedSwitch.unselectedHandleColor,
-        legacySwitch.unselectedHandleColor);
-    QCOMPARE(resolvedSwitch.spacing, legacySwitch.spacing);
 }
 
 QTEST_MAIN(tst_SelectionSpecResolver)

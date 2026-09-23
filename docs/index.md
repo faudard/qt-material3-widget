@@ -92,8 +92,6 @@ development/accessibility-keyboard-rules
 development/advanced-component-rules
 development/rendering-rules
 development/testing-rules
-development/build-reconciliation-checklist
-development/compile-fix-reconciliation-pass
 development/release-process
 ```
 

@@ -12,7 +12,6 @@ class tst_MenuSpecResolver : public QObject
 private slots:
     void resolvesThemeRoles();
     void resolvesDensity();
-    void remainsCompatibleWithSpecFactory();
 };
 
 void tst_MenuSpecResolver::resolvesThemeRoles()
@@ -47,21 +46,6 @@ void tst_MenuSpecResolver::resolvesDensity()
     QCOMPARE(
         resolver.menuSpec(theme, Density::Comfortable).minItemSize.height(),
         52);
-}
-
-void tst_MenuSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    const Theme theme = ThemeBuilder().buildDarkFromSeed(
-        QColor(QStringLiteral("#6750A4")));
-    const MenuSpec resolved =
-        MenuSpecResolver().menuSpec(theme, Density::Compact);
-    const MenuSpec legacy =
-        MenuSpecResolver().menuSpec(theme, Density::Compact);
-
-    QCOMPARE(resolved.containerColor, legacy.containerColor);
-    QCOMPARE(resolved.itemLabelColor, legacy.itemLabelColor);
-    QCOMPARE(resolved.focusRingColor, legacy.focusRingColor);
-    QCOMPARE(resolved.minItemSize, legacy.minItemSize);
 }
 
 QTEST_MAIN(tst_MenuSpecResolver)

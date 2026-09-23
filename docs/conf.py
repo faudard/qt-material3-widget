@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 
 DOCS_DIR = Path(__file__).resolve().parent
@@ -9,7 +10,16 @@ DOXYGEN_XML_DIR = ROOT_DIR / "build" / "doxygen" / "xml"
 
 project = "qt-material3-widget"
 author = "faudard"
-release = "0.8.0"
+
+_cmake_text = (ROOT_DIR / "CMakeLists.txt").read_text(encoding="utf-8")
+_version_match = re.search(
+    r"project\s*\(\s*qt-material3-widgets\s+VERSION\s+([0-9]+\.[0-9]+\.[0-9]+)",
+    _cmake_text,
+    flags=re.IGNORECASE | re.MULTILINE,
+)
+if _version_match is None:
+    raise RuntimeError("Cannot resolve project version from CMakeLists.txt")
+release = _version_match.group(1)
 
 extensions = [
     "myst_parser",

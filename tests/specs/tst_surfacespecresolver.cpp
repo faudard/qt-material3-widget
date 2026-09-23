@@ -11,7 +11,6 @@ class tst_SurfaceSpecResolver : public QObject
 
 private slots:
     void resolvesSurfaceColors();
-    void remainsCompatibleWithSpecFactory();
     void returnsIndependentValues();
 };
 
@@ -37,34 +36,6 @@ void tst_SurfaceSpecResolver::resolvesSurfaceColors()
         theme.colorScheme().color(ColorRole::InverseSurface));
     QCOMPARE(snackbar.shapeRole, ShapeRole::Small);
     QCOMPARE(snackbar.elevationRole, ElevationRole::Level3);
-}
-
-void tst_SurfaceSpecResolver::remainsCompatibleWithSpecFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme =
-        builder.buildDarkFromSeed(QColor(QStringLiteral("#6750A4")));
-    SurfaceSpecResolver resolver;
-
-    const BannerSpec resolvedBanner = resolver.bannerSpec(theme);
-    const BannerSpec legacyBanner = SurfaceSpecResolver().bannerSpec(theme);
-    QCOMPARE(resolvedBanner.containerColor, legacyBanner.containerColor);
-    QCOMPARE(resolvedBanner.headlineColor, legacyBanner.headlineColor);
-    QCOMPARE(resolvedBanner.padding, legacyBanner.padding);
-
-    const CardSpec resolvedCard = resolver.cardSpec(theme);
-    const CardSpec legacyCard = SurfaceSpecResolver().cardSpec(theme);
-    QCOMPARE(resolvedCard.containerColor, legacyCard.containerColor);
-    QCOMPARE(resolvedCard.outlineColor, legacyCard.outlineColor);
-    QCOMPARE(resolvedCard.contentPadding, legacyCard.contentPadding);
-
-    const SnackbarSpec resolvedSnackbar = resolver.snackbarSpec(theme);
-    const SnackbarSpec legacySnackbar = SurfaceSpecResolver().snackbarSpec(theme);
-    QCOMPARE(
-        resolvedSnackbar.containerColor,
-        legacySnackbar.containerColor);
-    QCOMPARE(resolvedSnackbar.enterMotion, legacySnackbar.enterMotion);
-    QCOMPARE(resolvedSnackbar.maxWidth, legacySnackbar.maxWidth);
 }
 
 void tst_SurfaceSpecResolver::returnsIndependentValues()
