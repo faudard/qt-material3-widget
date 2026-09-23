@@ -5,8 +5,7 @@
 #       |
 #      Specs
 #
-# QtMaterial3::Theme remains an INTERFACE umbrella for downstream compatibility.
-# New architecture-sensitive targets should link the narrowest layer they need.
+# Consumers and internal targets link the narrowest physical theme layer they need.
 
 set(QTMATERIAL3_THEME_MODEL_SOURCES
     qtmaterialcolorscheme.cpp
@@ -189,15 +188,4 @@ target_link_libraries(qtmaterial3_theme_runtime
         qtmaterial3_theme_model
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
-)
-
-# Compatibility/meta target: no source code lives here.
-add_library(qtmaterial3_theme INTERFACE)
-add_library(QtMaterial3::Theme ALIAS qtmaterial3_theme)
-set_target_properties(qtmaterial3_theme PROPERTIES EXPORT_NAME Theme)
-target_link_libraries(qtmaterial3_theme
-    INTERFACE
-        qtmaterial3_theme_model
-        qtmaterial3_theme_io
-        qtmaterial3_theme_runtime
 )
