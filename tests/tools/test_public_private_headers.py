@@ -79,7 +79,8 @@ class HeaderSurfaceTests(unittest.TestCase):
             encoding="utf-8",
         )
         (root / "tests/consumer/run_installed_package_test.cmake").write_text(
-            "set(checker check_installed_header_surface.py)\n"
+            "set(checker check_api_surface.py)\n"
+            "set(scope installed)\n"
             "set(prefix ${INSTALL_PREFIX})\n",
             encoding="utf-8",
         )
