@@ -22,7 +22,7 @@ the public list.
 Validate the complete source/install contract:
 
 ```bash
-python3 tools/check_public_private_headers.py --root .
+python3 tools/check_api_surface.py --root . --scope source
 ```
 
 Validate that the checked-in manifest exactly matches the source tree:
@@ -38,14 +38,14 @@ the resulting public/private diff has been reviewed.
 
 The CMake integration adds:
 
-1. `public_private_header_contract` — full source/install contract validation.
+1. `api_surface` — full source/install contract validation.
 2. `public_header_self_contained/<header>` — one generated translation unit for
    every header currently declared public.
 
 Run them with:
 
 ```bash
-ctest --test-dir build -R "public_private_header_contract|public_header_self_contained" --output-on-failure
+ctest --test-dir build -R "api_surface|public_header_self_contained" --output-on-failure
 ```
 
 There is no exception or suppression mechanism. A violation must be resolved by
