@@ -8,7 +8,7 @@ unknown. Widgets render from a resolved `ProgressIndicatorSpec`.
 - `QtMaterial::QtMaterialLinearProgressIndicator`
 - `QtMaterial::QtMaterialCircularProgressIndicator`
 
-Both are release-scoped as **usable** for 0.5.0.
+Both are tracked as **usable**.
 
 ## Shared behavior
 
@@ -40,7 +40,7 @@ choice explicitly.
 Its accessibility value is a rounded percentage in determinate mode, optionally prefixed by
 `statusText`. Indeterminate mode exposes the status text or `In progress`.
 
-### 0.5.0 maturity evidence
+### Maturity evidence
 
 `tst_progressindicators` covers:
 
