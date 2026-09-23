@@ -18,7 +18,7 @@ endif()
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
-include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3HeaderSurface.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3ApiChecks.cmake")
 
 if(QTMATERIAL3_IS_TOP_LEVEL)
     include(CTest)
@@ -131,9 +131,6 @@ endif()
 if(QTMATERIAL3_BUILD_TESTS)
     add_subdirectory(tests)
 
-    include(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3ApiChecks.cmake"
-    )
     qtmaterial3_add_api_checks()
 endif()
 
