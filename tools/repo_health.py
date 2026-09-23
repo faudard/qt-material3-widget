@@ -70,8 +70,8 @@ def run_command_check(name: str, command: Sequence[str], cwd: Path = ROOT) -> Ch
 
 def health_commands(python: str, strict: bool = False) -> list[tuple[str, list[str]]]:
     return [
-        ("architecture-zero-debt",
-         [python, str(ROOT/"tools/check_architecture_zero_debt.py"),
+        ("architecture",
+         [python, str(ROOT/"scripts/architecture/check_architecture.py"),
           "--root", str(ROOT)]),
         ("public-private-headers",
          [python, str(ROOT/"tools/check_public_private_headers.py"),
