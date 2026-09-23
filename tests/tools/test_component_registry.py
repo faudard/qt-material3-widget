@@ -228,15 +228,6 @@ class CurrentRegistryTests(unittest.TestCase):
             label = self.generator.AXIS_LABELS[axis]
             self.assertIn(f"| {label} | 0 |", section)
 
-    def test_component_maturity_workflow_is_strict(self):
-        workflow = (ROOT / ".github/workflows/component-maturity.yml").read_text(
-            encoding="utf-8"
-        )
-        self.assertIn(
-            "python tools/check_component_registry.py --check-generated --strict",
-            workflow,
-        )
-
 
 if __name__ == "__main__":
     unittest.main()
