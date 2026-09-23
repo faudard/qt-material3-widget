@@ -16,6 +16,16 @@ checker = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = checker
 SPEC.loader.exec_module(checker)
 
+DOMAIN_SCRIPT = ROOT / "tools" / "component_registry.py"
+DOMAIN_SPEC = importlib.util.spec_from_file_location(
+    "qtm3_component_registry_domain",
+    DOMAIN_SCRIPT,
+)
+assert DOMAIN_SPEC is not None and DOMAIN_SPEC.loader is not None
+domain = importlib.util.module_from_spec(DOMAIN_SPEC)
+sys.modules[DOMAIN_SPEC.name] = domain
+DOMAIN_SPEC.loader.exec_module(domain)
+
 AXES = [
     "api","rendering","states","accessibility","keyboard",
     "hidpi","rtl","tests","example","docs",
@@ -161,12 +171,12 @@ class GovernanceTests(unittest.TestCase):
 class CurrentRegistryTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.generator = checker.load_generator()
-        cls.components = cls.generator.load_registry()
+        cls.generator = domain
+        cls.components = domain.load_registry(ROOT)
 
     def test_current_registry_has_zero_strict_debt(self):
         base_errors, base_warnings = self.generator.validate_registry(
-            self.components, strict=False
+            self.components, strict=False, root=ROOT
         )
         governance_errors, governance_warnings = checker.validate_governance(
             self.components, axes=self.generator.AXES
