@@ -781,7 +781,7 @@
     "widgetType": "QtMaterialDivider",
     "testTarget": "tst_divider",
     "galleryRoute": "/data/divider",
-    "docsPath": "docs/public-api/divider-release-readiness.md",
+    "docsPath": "docs/public-api/data-widgets.md",
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
@@ -813,7 +813,7 @@
           "tests/widgets/data/tst_divider.cpp exercises orientation and inset behavior."
         ],
         "accessibility": [
-          "docs/public-api/divider-release-readiness.md defines decorative and semantic exposure."
+          "docs/public-api/data-widgets.md defines decorative and semantic exposure."
         ],
         "keyboard": [
           "Divider is non-interactive; keyboard activation does not apply."
@@ -831,7 +831,7 @@
           "examples/gallery/pages/datapage.cpp instantiates QtMaterialDivider."
         ],
         "docs": [
-          "docs/public-api/divider-release-readiness.md documents the public contract."
+          "docs/public-api/data-widgets.md documents the public contract."
         ]
       }
     }
@@ -2264,7 +2264,7 @@
     "widgetType": "QtMaterialBanner",
     "testTarget": "tst_banner",
     "galleryRoute": "/surfaces/banner",
-    "docsPath": "docs/public-api/banner-release-readiness.md",
+    "docsPath": "docs/public-api/surfaces.md",
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 2,
@@ -2313,7 +2313,7 @@
           "Gallery navigation and surfaces pages instantiate QtMaterialBanner."
         ],
         "docs": [
-          "docs/public-api/banner-release-readiness.md documents the public contract."
+          "docs/public-api/surfaces.md documents the public contract."
         ]
       }
     }
@@ -2329,7 +2329,7 @@
     "widgetType": "QtMaterialBottomAppBar",
     "testTarget": "tst_bottomappbar",
     "galleryRoute": "/surfaces/bottom-app-bar",
-    "docsPath": "docs/public-api/appbars-release-readiness.md",
+    "docsPath": "docs/public-api/surfaces.md",
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
@@ -2379,7 +2379,7 @@
           "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialBottomAppBar."
         ],
         "docs": [
-          "docs/public-api/appbars-release-readiness.md documents the shared AppBar contract."
+          "docs/public-api/surfaces.md documents the shared AppBar contract."
         ]
       }
     }
@@ -2395,7 +2395,7 @@
     "widgetType": "QtMaterialBottomSheet",
     "testTarget": "tst_bottomsheet",
     "galleryRoute": "/surfaces/bottom-sheet",
-    "docsPath": "docs/public-api/bottomsheet-release-readiness.md",
+    "docsPath": "docs/public-api/surfaces.md",
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
@@ -2445,7 +2445,7 @@
           "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialBottomSheet."
         ],
         "docs": [
-          "docs/public-api/bottomsheet-release-readiness.md documents the public contract."
+          "docs/public-api/surfaces.md documents the public contract."
         ]
       }
     }
@@ -2593,7 +2593,7 @@
     "widgetType": "QtMaterialNavigationDrawer",
     "testTarget": "tst_navigationdrawer",
     "galleryRoute": "/surfaces/navigation-drawer",
-    "docsPath": "docs/public-api/navigationdrawer-release-readiness.md",
+    "docsPath": "docs/public-api/surfaces.md",
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
@@ -2643,7 +2643,7 @@
           "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialNavigationDrawer."
         ],
         "docs": [
-          "docs/public-api/navigationdrawer-release-readiness.md documents the public contract."
+          "docs/public-api/surfaces.md documents the public contract."
         ]
       }
     }
@@ -2729,7 +2729,7 @@
     "widgetType": "QtMaterialTopAppBar",
     "testTarget": "tst_topappbar",
     "galleryRoute": "/surfaces/top-app-bar",
-    "docsPath": "docs/public-api/appbars-release-readiness.md",
+    "docsPath": "docs/public-api/surfaces.md",
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
@@ -2779,7 +2779,7 @@
           "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialTopAppBar."
         ],
         "docs": [
-          "docs/public-api/appbars-release-readiness.md documents the shared AppBar contract."
+          "docs/public-api/surfaces.md documents the shared AppBar contract."
         ]
       }
     }

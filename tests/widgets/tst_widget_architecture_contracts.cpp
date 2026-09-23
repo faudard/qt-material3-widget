@@ -20,7 +20,7 @@ protected:
     void paintEvent(QPaintEvent*) override {}
 };
 
-class tst_WidgetMigrationContracts : public QObject {
+class tst_WidgetArchitectureContracts : public QObject {
     Q_OBJECT
 private slots:
     void inputControlIsFormFieldControl();
@@ -30,7 +30,7 @@ private slots:
     void abstractButtonExposesAutomationMetadata();
 };
 
-void tst_WidgetMigrationContracts::inputControlIsFormFieldControl() {
+void tst_WidgetArchitectureContracts::inputControlIsFormFieldControl() {
     QtMaterial::QtMaterialInputControl input;
     auto* formField = qobject_cast<QtMaterial::QtMaterialFormFieldControl*>(&input);
     QVERIFY(formField != nullptr);
@@ -49,7 +49,7 @@ void tst_WidgetMigrationContracts::inputControlIsFormFieldControl() {
     QCOMPARE(input.errorText(), formField->errorText());
 }
 
-void tst_WidgetMigrationContracts::textFieldUsesFormFieldContract() {
+void tst_WidgetArchitectureContracts::textFieldUsesFormFieldContract() {
     QtMaterial::QtMaterialOutlinedTextField field;
     auto* formField = qobject_cast<QtMaterial::QtMaterialFormFieldControl*>(&field);
     QVERIFY(formField != nullptr);
@@ -65,7 +65,7 @@ void tst_WidgetMigrationContracts::textFieldUsesFormFieldContract() {
     QVERIFY(formField->isInvalid());
 }
 
-void tst_WidgetMigrationContracts::progressIndicatorsExposeAsyncStateAndMaterialMetadata() {
+void tst_WidgetArchitectureContracts::progressIndicatorsExposeAsyncStateAndMaterialMetadata() {
     QtMaterial::QtMaterialLinearProgressIndicator linear;
     QCOMPARE(linear.materialComponent(), QStringLiteral("LinearProgressIndicator"));
     linear.setBusy(true);
@@ -94,7 +94,7 @@ void tst_WidgetMigrationContracts::progressIndicatorsExposeAsyncStateAndMaterial
                 .contains(QStringLiteral("busy")));
 }
 
-void tst_WidgetMigrationContracts::tabsBindToNavigationModel() {
+void tst_WidgetArchitectureContracts::tabsBindToNavigationModel() {
     QtMaterial::QtMaterialTabs tabs;
     tabs.addTab(new QWidget(&tabs), QStringLiteral("Home"));
     tabs.addTab(new QWidget(&tabs), QStringLiteral("Settings"));
@@ -118,7 +118,7 @@ void tst_WidgetMigrationContracts::tabsBindToNavigationModel() {
     QCOMPARE(model.selectedRoute(), QStringLiteral("/home"));
 }
 
-void tst_WidgetMigrationContracts::abstractButtonExposesAutomationMetadata() {
+void tst_WidgetArchitectureContracts::abstractButtonExposesAutomationMetadata() {
     TestMaterialButton button;
     button.setMaterialComponent(QStringLiteral("Button"));
     button.setMaterialVariant(QStringLiteral("Filled"));
@@ -136,5 +136,5 @@ void tst_WidgetMigrationContracts::abstractButtonExposesAutomationMetadata() {
     QVERIFY(button.property(QtMaterial::QtMaterialAutomation::statePropertyName()).toString().contains(QStringLiteral("checked"))); 
 }
 
-QTEST_MAIN(tst_WidgetMigrationContracts)
-#include "tst_widget_migration_contracts.moc"
+QTEST_MAIN(tst_WidgetArchitectureContracts)
+#include "tst_widget_architecture_contracts.moc"

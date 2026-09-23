@@ -131,7 +131,6 @@ target_link_libraries(qtmaterial3_widgets
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
         Qt${QT_VERSION_MAJOR}::Widgets
-        qtmaterial3_theme
         qtmaterial3_core
         qtmaterial3_specs
         qtmaterial3_effects

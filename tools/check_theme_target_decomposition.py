@@ -131,9 +131,6 @@ def validate_contract(repo_root: Path = ROOT) -> list[str]:
                 "ThemeIO",
                 "qtmaterial3_theme_runtime",
                 "ThemeRuntime",
-                "add_library(qtmaterial3_theme INTERFACE)",
-                "QtMaterial3::Theme",
-                "qtmaterial3_theme_model\n        qtmaterial3_theme_io",
             ],
         )
         errors += require_tokens(
@@ -150,13 +147,19 @@ def validate_contract(repo_root: Path = ROOT) -> list[str]:
                 "qtmaterial3_theme_model",
                 "qtmaterial3_theme_io",
                 "qtmaterial3_theme_runtime",
-                "qtmaterial3_theme",
             ],
         )
         errors += require_tokens(
             ROOT/"packaging/QtMaterial3WidgetsConfig.cmake.in",
-            ["ThemeModel", "ThemeIO", "ThemeRuntime", "Theme"],
+            ["ThemeModel", "ThemeIO", "ThemeRuntime"],
         )
+        theme_cmake = read(ROOT/"src/theme/CMakeLists.txt")
+        if "add_library(qtmaterial3_theme INTERFACE)" in theme_cmake or "QtMaterial3::Theme" in theme_cmake:
+            errors.append("pre-1.0 Theme umbrella target must not be reintroduced")
+        package_config = read(ROOT/"packaging/QtMaterial3WidgetsConfig.cmake.in")
+        if re.search(r"^\\s*Theme\\s*$", package_config, re.MULTILINE):
+            errors.append("Theme compatibility component must not be exported")
+
         errors += validate_header_exports()
         errors += validate_specs_boundary()
         return errors

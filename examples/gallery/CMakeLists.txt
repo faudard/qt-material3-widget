@@ -38,7 +38,7 @@ qtmaterial3_add_example_executable(qtmaterial3_gallery
 target_link_libraries(qtmaterial3_gallery
     PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
-        qtmaterial3_theme
+        qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime
         qtmaterial3_core
         qtmaterial3_specs
         qtmaterial3_effects

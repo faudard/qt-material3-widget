@@ -22,7 +22,6 @@ private slots:
         QVERIFY(grid.spacing >= 0);
 
         const auto carousel = QtMaterial::defaultCarouselSpec();
-        QVERIFY(carousel.preferredPageSize.isValid());
         QVERIFY(carousel.indicatorSize > 0);
     }
 };

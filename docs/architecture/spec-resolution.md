@@ -42,8 +42,9 @@ public API is frozen.
 
 ## Guardrail
 
-`tools/check_no_legacy_specfactory.py` scans active public/API/build/test/example
-surfaces and fails if the retired facade or filename is reintroduced.
+The architecture rule set rejects the retired `SpecFactory` facade and header from active
+public/API/build/test/example surfaces. The rule lives with the other layer-boundary checks
+instead of in a one-off migration checker.
 
-Historical ADR/spec/migration material may name the retired facade when documenting
-why it was removed; that is not a supported API surface.
+Historical ADR/spec/migration material may name the retired facade when documenting why it was
+removed; that is not a supported API surface.

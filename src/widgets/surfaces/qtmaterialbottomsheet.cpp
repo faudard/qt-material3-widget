@@ -1238,9 +1238,7 @@ void QtMaterialBottomSheet::syncAccessibility()
     const QString autoName = d_ptr->titleText.trimmed().isEmpty() ? tr("Bottom sheet") : d_ptr->titleText.trimmed();
     const QString currentName = accessibleName().trimmed();
     const QString previousAutoName = property(autoAccessibleNameProperty).toString().trimmed();
-    const bool hasLegacyFallbackAutoName = previousAutoName.isEmpty() && currentName == tr("Bottom sheet");
     const bool currentNameIsAuto = currentName.isEmpty()
-        || hasLegacyFallbackAutoName
         || (!previousAutoName.isEmpty() && currentName == previousAutoName);
 
     if (currentNameIsAuto) {

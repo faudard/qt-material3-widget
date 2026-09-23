@@ -152,17 +152,12 @@ void QtMaterialExtendedFab::syncExtendedFabAccessibility()
 
     const bool currentDescriptionIsPreviousAuto =
         !previousAutoDescription.isEmpty() && currentDescription == previousAutoDescription;
-    const bool currentDescriptionIsLegacyAutoWarning =
-        currentDescription == QStringLiteral(
-            "Extended floating action button requires visible text or an accessible name for assistive technologies")
-        || currentDescription == QString::fromLatin1(missingAccessibilityDescription);
     const bool currentDescriptionIsDefaultAuto =
         currentDescription == QString::fromLatin1(defaultAccessibilityDescription);
 
     const bool currentDescriptionIsAuto =
         currentDescription.isEmpty()
         || currentDescriptionIsPreviousAuto
-        || currentDescriptionIsLegacyAutoWarning
         || currentDescriptionIsDefaultAuto;
 
     QString desiredDescription;

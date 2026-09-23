@@ -31,10 +31,7 @@ class ThemeTargetDecompositionTests(unittest.TestCase):
         (root/"src/theme/CMakeLists.txt").write_text(
             "qtmaterial3_theme_model\nThemeModel\n"
             "qtmaterial3_theme_io\nThemeIO\n"
-            "qtmaterial3_theme_runtime\nThemeRuntime\n"
-            "add_library(qtmaterial3_theme INTERFACE)\n"
-            "add_library(QtMaterial3::Theme ALIAS qtmaterial3_theme)\n"
-            "qtmaterial3_theme_model\n        qtmaterial3_theme_io\n",
+            "qtmaterial3_theme_runtime\nThemeRuntime\n",
             encoding="utf-8",
         )
         (root/"src/specs/CMakeLists.txt").write_text(
@@ -43,11 +40,11 @@ class ThemeTargetDecompositionTests(unittest.TestCase):
         )
         (root/"CMakeLists.txt").write_text(
             "qtmaterial3_theme_model\nqtmaterial3_theme_io\n"
-            "qtmaterial3_theme_runtime\nqtmaterial3_theme\n",
+            "qtmaterial3_theme_runtime\n",
             encoding="utf-8",
         )
         (root/"packaging/QtMaterial3WidgetsConfig.cmake.in").write_text(
-            "ThemeModel\nThemeIO\nThemeRuntime\nTheme\n",
+            "ThemeModel\nThemeIO\nThemeRuntime\n",
             encoding="utf-8",
         )
         (root/"include/qtmaterial/qtmaterialglobal.h").write_text(
@@ -73,16 +70,18 @@ class ThemeTargetDecompositionTests(unittest.TestCase):
         self.write_minimum_valid_tree(root)
         self.assertEqual([], checker.validate_contract(root))
 
-    def test_specs_linking_umbrella_theme_fails(self):
+    def test_reintroduced_theme_umbrella_fails(self):
         root = self.root()
         self.write_minimum_valid_tree(root)
-        (root/"src/specs/CMakeLists.txt").write_text(
-            "target_link_libraries(qtmaterial3_specs PUBLIC "
-            "qtmaterial3_theme_model qtmaterial3_theme\n)\n",
+        path = root/"src/theme/CMakeLists.txt"
+        path.write_text(
+            path.read_text(encoding="utf-8")
+            + "add_library(qtmaterial3_theme INTERFACE)\n"
+            + "add_library(QtMaterial3::Theme ALIAS qtmaterial3_theme)\n",
             encoding="utf-8",
         )
         errors = checker.validate_contract(root)
-        self.assertTrue(any("Specs must not link qtmaterial3_theme" in e for e in errors))
+        self.assertTrue(any("umbrella target" in e for e in errors))
 
     def test_specs_including_serializer_fails(self):
         root = self.root()

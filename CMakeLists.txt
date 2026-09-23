@@ -78,7 +78,6 @@ set(QTMATERIAL3_INSTALL_TARGETS
     qtmaterial3_theme_model
     qtmaterial3_theme_io
     qtmaterial3_theme_runtime
-    qtmaterial3_theme
     qtmaterial3_integration
     qtmaterial3_core
     qtmaterial3_specs

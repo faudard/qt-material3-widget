@@ -8,7 +8,7 @@
 
 using namespace QtMaterial;
 
-class tst_TextFieldValidationHardening : public QObject
+class tst_TextFieldValidationContracts : public QObject
 {
     Q_OBJECT
 
@@ -23,7 +23,7 @@ private slots:
     void filledTextFieldUsesSameValidationContract();
 };
 
-void tst_TextFieldValidationHardening::requiredNonBlankRejectsWhitespace()
+void tst_TextFieldValidationContracts::requiredNonBlankRejectsWhitespace()
 {
     QtMaterialOutlinedTextField field;
     field.setRequired(true);
@@ -42,7 +42,7 @@ void tst_TextFieldValidationHardening::requiredNonBlankRejectsWhitespace()
     QVERIFY(!field.hasErrorState());
 }
 
-void tst_TextFieldValidationHardening::requiredNonEmptyAllowsWhitespace()
+void tst_TextFieldValidationContracts::requiredNonEmptyAllowsWhitespace()
 {
     QtMaterialOutlinedTextField field;
     field.setRequired(true);
@@ -55,7 +55,7 @@ void tst_TextFieldValidationHardening::requiredNonEmptyAllowsWhitespace()
     QVERIFY(!field.hasErrorState());
 }
 
-void tst_TextFieldValidationHardening::requiredTextOverridesDefaultMessage()
+void tst_TextFieldValidationContracts::requiredTextOverridesDefaultMessage()
 {
     QtMaterialOutlinedTextField field;
     field.setRequired(true);
@@ -65,7 +65,7 @@ void tst_TextFieldValidationHardening::requiredTextOverridesDefaultMessage()
     QCOMPARE(field.effectiveErrorText(), QStringLiteral("Email is required"));
 }
 
-void tst_TextFieldValidationHardening::validatorErrorTextIsUsedForValidatorFailures()
+void tst_TextFieldValidationContracts::validatorErrorTextIsUsedForValidatorFailures()
 {
     QtMaterialOutlinedTextField field;
     QRegularExpressionValidator validator(QRegularExpression(QStringLiteral("\\d{3}")), &field);
@@ -82,7 +82,7 @@ void tst_TextFieldValidationHardening::validatorErrorTextIsUsedForValidatorFailu
     QVERIFY(!field.hasAutomaticValidationError());
 }
 
-void tst_TextFieldValidationHardening::inputMaskErrorTextIsUsedForIncompleteMasks()
+void tst_TextFieldValidationContracts::inputMaskErrorTextIsUsedForIncompleteMasks()
 {
     QtMaterialOutlinedTextField field;
     field.setInputMask(QStringLiteral("0000;_"));
@@ -97,7 +97,7 @@ void tst_TextFieldValidationHardening::inputMaskErrorTextIsUsedForIncompleteMask
     QVERIFY(!field.hasAutomaticValidationError());
 }
 
-void tst_TextFieldValidationHardening::optionalEmptyInputMaskDoesNotError()
+void tst_TextFieldValidationContracts::optionalEmptyInputMaskDoesNotError()
 {
     QtMaterialOutlinedTextField field;
     field.setInputMask(QStringLiteral("0000;_"));
@@ -110,7 +110,7 @@ void tst_TextFieldValidationHardening::optionalEmptyInputMaskDoesNotError()
     QVERIFY(!field.hasErrorState());
 }
 
-void tst_TextFieldValidationHardening::requiredTakesPriorityOverInputMask()
+void tst_TextFieldValidationContracts::requiredTakesPriorityOverInputMask()
 {
     QtMaterialOutlinedTextField field;
     field.setRequired(true);
@@ -122,7 +122,7 @@ void tst_TextFieldValidationHardening::requiredTakesPriorityOverInputMask()
     QCOMPARE(field.effectiveErrorText(), QStringLiteral("Required"));
 }
 
-void tst_TextFieldValidationHardening::filledTextFieldUsesSameValidationContract()
+void tst_TextFieldValidationContracts::filledTextFieldUsesSameValidationContract()
 {
     QtMaterialFilledTextField field;
     field.setRequired(true);
@@ -137,5 +137,5 @@ void tst_TextFieldValidationHardening::filledTextFieldUsesSameValidationContract
     QVERIFY(!field.hasErrorState());
 }
 
-QTEST_MAIN(tst_TextFieldValidationHardening)
-#include "tst_textfield_validation_hardening.moc"
+QTEST_MAIN(tst_TextFieldValidationContracts)
+#include "tst_textfield_validation_contracts.moc"

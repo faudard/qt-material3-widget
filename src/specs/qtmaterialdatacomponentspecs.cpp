@@ -110,8 +110,6 @@ CarouselSpec defaultCarouselSpec()
     spec.foregroundColor = QColor("#1D1B20");
     spec.pageIndicatorColor = QColor("#CAC4D0");
     spec.activePageIndicatorColor = QColor("#6750A4");
-    spec.navigationButtonColor = QColor("#6750A4");
-    spec.navigationButtonTextColor = QColor("#FFFFFF");
     spec.focusRingColor = QColor("#6750A4");
     spec.labelFont = appFont(0, QFont::DemiBold);
 
@@ -128,7 +126,6 @@ CarouselSpec defaultCarouselSpec()
     spec.selectedIconColor = QColor("#1D192B");
     spec.supportingFont = appFont(-1);
 
-    spec.preferredPageSize = QSize(360, 220);
     spec.itemSize = QSize(176, 128);
     spec.minimumItemSize = QSize(72, 72);
     spec.outerMargins = QMargins(16, 16, 16, 16);

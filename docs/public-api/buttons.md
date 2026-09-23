@@ -235,7 +235,10 @@ extended->setFabVariant(QtMaterial::QtMaterialFabVariant::Surface);
 
 ## Floating Action Buttons
 
-See `docs/public-api/fab-release-readiness.md` for the FAB and Extended FAB release-readiness contract.
+`QtMaterialFab` is icon-only and therefore requires a usable accessible name from an explicit
+name, icon accessible name, or tooltip. `QtMaterialExtendedFab` uses its visible label as the
+default accessible name. Both variants are keyboard-focusable and activate with Space,
+Return, or Enter while preserving the shared FAB touch-target and interaction contract.
 
 <!-- BEGIN GENERATED BUTTONS MATURITY CONTRACT -->
 

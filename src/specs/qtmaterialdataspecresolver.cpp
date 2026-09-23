@@ -1034,14 +1034,6 @@ void applyCarouselOverrides(
         &spec->focusRingColor,
         tokens,
         ColorRole::Primary);
-    applyTokenColor(
-        &spec->navigationButtonColor,
-        tokens,
-        ColorRole::Primary);
-    applyTokenColor(
-        &spec->navigationButtonTextColor,
-        tokens,
-        ColorRole::OnPrimary);
 
     const QVariantMap& custom = tokens.custom;
 
@@ -1049,8 +1041,6 @@ void applyCarouselOverrides(
     readColor(custom, "foregroundColor", &spec->foregroundColor);
     readColor(custom, "pageIndicatorColor", &spec->pageIndicatorColor);
     readColor(custom, "activePageIndicatorColor", &spec->activePageIndicatorColor);
-    readColor(custom, "navigationButtonColor", &spec->navigationButtonColor);
-    readColor(custom, "navigationButtonTextColor", &spec->navigationButtonTextColor);
     readColor(custom, "focusRingColor", &spec->focusRingColor);
     readColor(custom, "itemBackgroundColor", &spec->itemBackgroundColor);
     readColor(custom, "itemHoverColor", &spec->itemHoverColor);
@@ -1701,16 +1691,6 @@ CarouselSpec DataSpecResolver::carouselSpec(
             theme,
             ColorRole::Primary,
             spec.activePageIndicatorColor);
-    spec.navigationButtonColor =
-        roleOr(
-            theme,
-            ColorRole::Primary,
-            spec.navigationButtonColor);
-    spec.navigationButtonTextColor =
-        roleOr(
-            theme,
-            ColorRole::OnPrimary,
-            spec.navigationButtonTextColor);
     spec.focusRingColor =
         roleOr(
             theme,

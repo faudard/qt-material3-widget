@@ -27,6 +27,5 @@ target_link_libraries(minimal-consumer
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
         Qt${QT_VERSION_MAJOR}::Widgets
-        QtMaterial3::Theme
         QtMaterial3::Widgets
 )

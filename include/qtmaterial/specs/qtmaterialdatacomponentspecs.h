@@ -103,16 +103,13 @@ struct GridListSpec
 
 struct CarouselSpec
 {
-    // Legacy page-carousel tokens retained for source compatibility.
+    // Carousel surface, label, indicator and focus tokens.
     QColor backgroundColor;
     QColor foregroundColor;
     QColor pageIndicatorColor;
     QColor activePageIndicatorColor;
-    QColor navigationButtonColor;
-    QColor navigationButtonTextColor;
     QColor focusRingColor;
     QFont labelFont;
-    QSize preferredPageSize = QSize(360, 220);
     int indicatorSize = 8;
 
     // Resolved item-carousel tokens used by QtMaterialCarousel.

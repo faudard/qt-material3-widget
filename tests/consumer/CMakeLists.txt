@@ -7,7 +7,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(QtMaterial3Widgets CONFIG REQUIRED COMPONENTS
-    Foundation Theme Core Specs Effects Widgets
+    Foundation ThemeModel ThemeIO ThemeRuntime Core Specs Effects Widgets
     Integration
 )
 

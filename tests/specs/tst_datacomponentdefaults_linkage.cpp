@@ -25,7 +25,6 @@ void tst_DataComponentDefaultsLinkage::importsDefaultFactoriesFromSpecsLibrary()
     QVERIFY(datePicker.cellSize > 0);
     QVERIFY(table.rowHeight > 0);
     QVERIFY(gridList.itemSize.isValid());
-    QVERIFY(carousel.preferredPageSize.isValid());
 }
 
 void tst_DataComponentDefaultsLinkage::resolvesThemeAwareSpecs()

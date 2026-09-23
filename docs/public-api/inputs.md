@@ -85,27 +85,24 @@ line edit emits `textEdited()` or when it receives `FocusOut` through the wrappe
 event filter. This is useful for forms that want to postpone visible validation
 until the user has interacted with a field at least once.
 
-<!-- textfield-release-readiness:start -->
-## Text fields release status
+## Text field contract
 
-`QtMaterialOutlinedTextField` and `QtMaterialFilledTextField` are registry-level `usable` components once the TextField patch series has been applied.
+`QtMaterialOutlinedTextField` and `QtMaterialFilledTextField` share the same public
+interaction, validation and accessibility contract:
 
-The usable contract covers:
+- label, placeholder, supporting text, error text, prefix/suffix and leading/trailing icons;
+- clear, password-visibility and custom trailing actions;
+- manual, edit-time and commit-time validation feedback;
+- required, validator and input-mask validation with deterministic error precedence;
+- dirty, touched and explicit validation-commit state;
+- accessibility descriptions synchronized with the feedback currently visible to the user;
+- grouped validation through `QtMaterialTextFieldValidationGroup`.
 
-- label, placeholder, supporting text and error text
-- prefix/suffix text and leading/trailing icons
-- clear action, password visibility action and custom trailing action
-- required validation, validator feedback, input mask feedback and manual errors
-- dirty, touched and explicit validation commit flows
-- accessibility descriptions synchronized with visible validation feedback
-- grouped form validation and validation summaries
-
-See `docs/public-api/textfield-release-readiness.md` for the checklist used to promote the components.
-<!-- textfield-release-readiness:end -->
 
 ## Date field
 
-`QtMaterialDateField` extends the outlined text field with date parsing, date
-formatting, clear/calendar affordances, minimum/maximum date validation and an
-accessibility summary for the selected date and range.
+`QtMaterialDateField` extends the outlined text field with date parsing and formatting,
+clear/calendar affordances, minimum/maximum date validation, parse-error reporting and
+an accessibility summary for the selected date and allowed range. Empty input remains
+valid unless inherited required validation is enabled.
 

@@ -29,7 +29,8 @@ Material Color Utilities is optional and disabled by default. The built-in fallb
 find_package(QtMaterial3Widgets REQUIRED)
 
 target_link_libraries(my_app PRIVATE
-    QtMaterial3::Theme
+    QtMaterial3::ThemeModel
+    QtMaterial3::ThemeRuntime
     QtMaterial3::Widgets
 )
 ```
@@ -46,7 +47,6 @@ Primary modules:
 - `QtMaterial3::ThemeModel` — theme values, tokens and generation
 - `QtMaterial3::ThemeIO` — theme serialization
 - `QtMaterial3::ThemeRuntime` — runtime contexts and system integration
-- `QtMaterial3::Theme` — public theme umbrella
 - `QtMaterial3::Core` — common widget/control infrastructure
 - `QtMaterial3::Specs` — component specs and resolvers
 - `QtMaterial3::Effects` — ripple, focus, elevation, shadow and transitions
