@@ -58,7 +58,10 @@ checkbox->setProperty("materialTestId", QStringLiteral("notifications-checkbox")
 
 Selection controls resolve colors, state layers, focus indication, shape, density, and disabled state from the active Material theme. They should not hard-code palette values in application code.
 
-## Segmented Button release readiness
+## Segmented Button
 
-See `docs/public-api/segmentedbutton-release-readiness.md`.
+`QtMaterialSegmentedButton` supports single selection, optional multi-selection, disabled
+segments, Left/Right/Home/End navigation, Space/Return/Enter activation and accessible summaries
+for the group and individual segments. Rendering covers selected/unselected, enabled/disabled,
+focus and RTL states through the normal component test and visual infrastructure.
 
