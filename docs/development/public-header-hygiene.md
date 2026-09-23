@@ -39,13 +39,15 @@ the resulting public/private diff has been reviewed.
 The CMake integration adds:
 
 1. `api_surface` — full source/install contract validation.
-2. `public_header_self_contained/<header>` — one generated translation unit for
-   every header currently declared public.
+2. `public_headers_self_contained` — one generated translation unit per declared
+   public header, compiled together through a single aggregate object target. This
+   preserves one-header-per-TU isolation while allowing the native build tool to
+   compile the full header set in parallel.
 
 Run them with:
 
 ```bash
-ctest --test-dir build -R "api_surface|public_header_self_contained" --output-on-failure
+ctest --test-dir build -R "api_surface|public_headers_self_contained" --output-on-failure
 ```
 
 There is no exception or suppression mechanism. A violation must be resolved by

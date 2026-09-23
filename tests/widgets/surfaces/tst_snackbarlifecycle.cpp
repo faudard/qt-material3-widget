@@ -115,6 +115,11 @@ void tst_SnackbarLifecycle::pausePreservesRemainingTime()
     snackbar.setText(QStringLiteral("Saved"));
     snackbar.setDuration(SnackbarDuration::Short);
 
+    // Keep native hover/cursor state from pausing the timer before this test
+    // explicitly sends its interaction event. This matters on hosted macOS
+    // runners, where showing the snackbar can synthesize an Enter event.
+    snackbar.setPauseAutoHideOnInteraction(false);
+
     QSignalSpy shownSpy(
         &snackbar,
         &QtMaterialSnackbar::shown);
@@ -130,7 +135,9 @@ void tst_SnackbarLifecycle::pausePreservesRemainingTime()
         snackbar.remainingAutoHideTimeMs();
     QVERIFY(beforePause > 0);
     QVERIFY(beforePause < 650);
+    QVERIFY(!snackbar.isAutoHidePaused());
 
+    snackbar.setPauseAutoHideOnInteraction(true);
     sendInteractionEvent(&snackbar, QEvent::Enter);
     QVERIFY(snackbar.isAutoHidePaused());
     QCOMPARE(pauseSpy.count(), 1);

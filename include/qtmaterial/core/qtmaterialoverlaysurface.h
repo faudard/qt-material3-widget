@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QList>
 #include <QPointer>
 
 #include "qtmaterial/core/qtmaterialsurface.h"
@@ -26,7 +27,12 @@ protected:
     virtual void syncGeometryToHost();
 
 private:
+    void rebuildHostGeometryWatchers();
+    void clearHostGeometryWatchers();
+    bool isHostGeometryWatcher(QObject* object) const noexcept;
+
     QPointer<QWidget> m_hostWidget;
+    QList<QPointer<QWidget>> m_hostGeometryWatchers;
     bool m_restoreVisibilityOnHostShow;
 };
 

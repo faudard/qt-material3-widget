@@ -96,6 +96,7 @@ function(qtmaterial3_add_api_checks)
     )
     file(MAKE_DIRECTORY "${_qtm3_header_gen_dir}")
 
+    set(_qtm3_header_sources)
     foreach(_qtm3_rel_header IN LISTS QTMATERIAL3_PUBLIC_HEADERS)
         string(MAKE_C_IDENTIFIER "${_qtm3_rel_header}" _qtm3_ident)
         set(
@@ -107,43 +108,46 @@ function(qtmaterial3_add_api_checks)
             "#include <${_qtm3_rel_header}>\n"
             "int main() { return 0; }\n"
         )
-
-        set(_qtm3_target "public_header_${_qtm3_ident}")
-        add_library(
-            "${_qtm3_target}"
-            OBJECT EXCLUDE_FROM_ALL "${_qtm3_src}"
-        )
-        target_compile_features(
-            "${_qtm3_target}" PRIVATE cxx_std_17
-        )
-        target_include_directories(
-            "${_qtm3_target}"
-            PRIVATE "${PROJECT_SOURCE_DIR}/include"
-        )
-        target_link_libraries(
-            "${_qtm3_target}"
-            PRIVATE
-                Qt${QT_VERSION_MAJOR}::Core
-                Qt${QT_VERSION_MAJOR}::Gui
-                Qt${QT_VERSION_MAJOR}::Widgets
-        )
-        if(NOT BUILD_SHARED_LIBS)
-            target_compile_definitions(
-                "${_qtm3_target}" PRIVATE QTMATERIAL3_STATIC
-            )
-        endif()
-
-        add_test(
-            NAME "public_header_self_contained/${_qtm3_rel_header}"
-            COMMAND
-                "${CMAKE_COMMAND}"
-                --build "${CMAKE_BINARY_DIR}"
-                --target "${_qtm3_target}"
-                --config "$<CONFIG>"
-        )
-        set_tests_properties(
-            "public_header_self_contained/${_qtm3_rel_header}"
-            PROPERTIES LABELS "api;headers;self-contained"
-        )
+        list(APPEND _qtm3_header_sources "${_qtm3_src}")
     endforeach()
+
+    set(_qtm3_target qtmaterial3_public_headers_self_contained)
+    add_library(
+        "${_qtm3_target}"
+        OBJECT EXCLUDE_FROM_ALL
+        ${_qtm3_header_sources}
+    )
+    target_compile_features(
+        "${_qtm3_target}" PRIVATE cxx_std_17
+    )
+    target_include_directories(
+        "${_qtm3_target}"
+        PRIVATE "${PROJECT_SOURCE_DIR}/include"
+    )
+    target_link_libraries(
+        "${_qtm3_target}"
+        PRIVATE
+            Qt${QT_VERSION_MAJOR}::Core
+            Qt${QT_VERSION_MAJOR}::Gui
+            Qt${QT_VERSION_MAJOR}::Widgets
+    )
+    if(NOT BUILD_SHARED_LIBS)
+        target_compile_definitions(
+            "${_qtm3_target}" PRIVATE QTMATERIAL3_STATIC
+        )
+    endif()
+
+    add_test(
+        NAME public_headers_self_contained
+        COMMAND
+            "${CMAKE_COMMAND}"
+            --build "${CMAKE_BINARY_DIR}"
+            --target "${_qtm3_target}"
+            --config "$<CONFIG>"
+            --parallel
+    )
+    set_tests_properties(
+        public_headers_self_contained
+        PROPERTIES LABELS "api;headers;self-contained"
+    )
 endfunction()
