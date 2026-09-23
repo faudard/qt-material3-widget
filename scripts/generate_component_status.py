@@ -18,6 +18,7 @@ if str(TOOLS) not in sys.path:
 from component_registry import (  # noqa: E402
     AXES,
     AXIS_LABELS,
+    BUTTON_IDS,
     CPP_MATURITY,
     MATURITY_ORDER,
     RegistryError,
