@@ -151,6 +151,11 @@ target_link_libraries(qtmaterial3_theme_io
         qtmaterial3_theme_model
 )
 
+target_compile_definitions(qtmaterial3_theme_io
+    PRIVATE
+        QTMATERIAL3_VERSION_STRING="${PROJECT_VERSION}"
+)
+
 set(QTMATERIAL3_THEME_RUNTIME_SOURCES
     qtmaterialthemecontext.cpp
     qtmaterialthemecontextdefaults.cpp
