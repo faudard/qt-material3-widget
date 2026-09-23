@@ -1,7 +1,42 @@
 include_guard(GLOBAL)
 
-set(QTMATERIAL3_QT5_MIN_VERSION "5.14.2")
-set(QTMATERIAL3_QT6_MIN_VERSION "6.4.0")
+get_filename_component(
+    _qtm3_qt_support_manifest
+    "${CMAKE_CURRENT_LIST_DIR}/../docs/compatibility/qt-support.json"
+    ABSOLUTE
+)
+if(NOT EXISTS "${_qtm3_qt_support_manifest}")
+    message(FATAL_ERROR
+        "QtMaterial3 Qt support manifest not found: "
+        "${_qtm3_qt_support_manifest}"
+    )
+endif()
+
+file(READ "${_qtm3_qt_support_manifest}" _qtm3_qt_support_json)
+
+string(
+    JSON QTMATERIAL3_QT5_MIN_VERSION
+    ERROR_VARIABLE _qtm3_qt5_json_error
+    GET "${_qtm3_qt_support_json}" qt 5 minimum
+)
+if(_qtm3_qt5_json_error)
+    message(FATAL_ERROR
+        "Cannot read Qt5 minimum from qt-support.json: "
+        "${_qtm3_qt5_json_error}"
+    )
+endif()
+
+string(
+    JSON QTMATERIAL3_QT6_MIN_VERSION
+    ERROR_VARIABLE _qtm3_qt6_json_error
+    GET "${_qtm3_qt_support_json}" qt 6 minimum
+)
+if(_qtm3_qt6_json_error)
+    message(FATAL_ERROR
+        "Cannot read Qt6 minimum from qt-support.json: "
+        "${_qtm3_qt6_json_error}"
+    )
+endif()
 
 set(
     QTMATERIAL3_EXPECT_QT_VERSION
@@ -29,7 +64,8 @@ function(qtmaterial3_detect_qt_version out_var)
         endif()
     else()
         message(FATAL_ERROR
-            "QtMaterial3 supports Qt 5 and Qt 6 only; detected major ${QT_VERSION_MAJOR}"
+            "QtMaterial3 supports Qt 5 and Qt 6 only; "
+            "detected major ${QT_VERSION_MAJOR}"
         )
     endif()
     set(${out_var} "${_qtm3_version}" PARENT_SCOPE)
@@ -60,7 +96,14 @@ function(qtmaterial3_validate_qt_compatibility)
         )
     endif()
 
-    set(QTMATERIAL3_DETECTED_QT_VERSION "${_qtm3_qt_version}"
-        CACHE INTERNAL "Detected Qt version" FORCE)
-    message(STATUS "QtMaterial3 Qt compatibility: Qt ${_qtm3_qt_version}")
+    set(
+        QTMATERIAL3_DETECTED_QT_VERSION
+        "${_qtm3_qt_version}"
+        CACHE INTERNAL "Detected Qt version" FORCE
+    )
+    message(
+        STATUS
+        "QtMaterial3 Qt compatibility: Qt ${_qtm3_qt_version} "
+        "(manifest: ${_qtm3_qt_support_manifest})"
+    )
 endfunction()

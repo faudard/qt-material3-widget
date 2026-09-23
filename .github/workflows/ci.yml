@@ -25,9 +25,8 @@ jobs:
             os: windows-2022
             qt-version: "5.14.2"
             qt-arch: win64_msvc2017_64
-            expected-qt-version: "5.14.2"
+            compat-profile: "qt5-primary"
             msvc-toolset: "14.29"
-            expected-msvc-prefix: "19.29"
             use-mcu: "OFF"
             build-extra-examples: "OFF"
             build-tests: "ON"
@@ -38,9 +37,8 @@ jobs:
             os: ubuntu-latest
             qt-version: "system"
             qt-arch: ""
-            expected-qt-version: ""
+            compat-profile: "qt6-linux-system"
             msvc-toolset: ""
-            expected-msvc-prefix: ""
             use-mcu: "OFF"
             build-extra-examples: "OFF"
             build-tests: "ON"
@@ -51,9 +49,8 @@ jobs:
             os: windows-2022
             qt-version: "6.7.3"
             qt-arch: win64_msvc2019_64
-            expected-qt-version: "6.7.3"
+            compat-profile: "qt6-windows"
             msvc-toolset: "14.29"
-            expected-msvc-prefix: "19.29"
             use-mcu: "OFF"
             build-extra-examples: "OFF"
             build-tests: "ON"
@@ -64,9 +61,8 @@ jobs:
             os: macos-15
             qt-version: "6.8.3"
             qt-arch: clang_64
-            expected-qt-version: "6.8.3"
+            compat-profile: "qt6-macos"
             msvc-toolset: ""
-            expected-msvc-prefix: ""
             use-mcu: "OFF"
             build-extra-examples: "OFF"
             build-tests: "ON"
@@ -77,9 +73,7 @@ jobs:
             os: macos-15-intel
             qt-version: "6.8.3"
             qt-arch: clang_64
-            expected-qt-version: "6.8.3"
             msvc-toolset: ""
-            expected-msvc-prefix: ""
             use-mcu: "OFF"
             build-extra-examples: "OFF"
             build-tests: "OFF"
@@ -144,8 +138,7 @@ jobs:
         shell: pwsh
         run: >
           python scripts/ci/check-qt-toolchain.py
-          --expected-qt "${{ matrix.expected-qt-version }}"
-          --allowed-msvc-prefix "${{ matrix.expected-msvc-prefix }}"
+          --profile "${{ matrix.compat-profile }}"
 
       - name: Configure Windows
         if: runner.os == 'Windows'
@@ -155,7 +148,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_C_COMPILER=cl
           -DCMAKE_CXX_COMPILER=cl
-          "-DQTMATERIAL3_EXPECT_QT_VERSION=${{ matrix.expected-qt-version }}"
+          "-DQTMATERIAL3_EXPECT_QT_VERSION=${{ matrix.qt-version }}"
           -DQTMATERIAL3_BUILD_TESTS=${{ matrix.build-tests }}
           -DQTMATERIAL3_BUILD_EXAMPLES=${{ matrix.build-examples }}
           -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=${{ matrix.build-extra-examples }}

@@ -2,6 +2,11 @@
 
 QtMaterial3's C++ contract is **Qt 5.14.2** as the exact Qt5 floor and **Qt 6.4+** as the Qt6 floor, with C++17.
 
+`docs/compatibility/qt-support.json` is the authoritative machine-readable
+compatibility contract. CMake reads its minimum versions directly, CI names
+certification profiles from it, and Python tooling rejects matrix drift from
+the manifest.
+
 The hosted Qt5 gate uses `windows-2022`, Qt **5.14.2** archive
 `win64_msvc2017_64`, and MSVC **v142/14.29**. GitHub retired its
 `windows-2019` image; the hosted job therefore uses a newer runner with the

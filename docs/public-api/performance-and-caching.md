@@ -20,13 +20,7 @@ The benchmark suite covers these hot paths:
 Run the full baseline locally:
 
 ```bash
-scripts/run-performance-baseline.sh
-```
-
-On Windows:
-
-```powershell
-scripts/run-performance-baseline.ps1
+python3 scripts/run_performance_baseline.py
 ```
 
 ## Build flags
@@ -92,7 +86,7 @@ Recommended cache boundaries:
 
 ## Regression workflow
 
-1. Run `scripts/run-performance-baseline.sh` before a theming change.
+1. Run `python3 scripts/run_performance_baseline.py` before a theming change.
 2. Apply the change.
 3. Run the script again.
 4. Compare `build-perf/performance-results`.

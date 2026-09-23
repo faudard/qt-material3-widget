@@ -17,8 +17,8 @@ def load(name: str, path: Path):
 
 ROOT = Path(__file__).resolve().parents[2]
 manifest = load(
-    "qtm3_header_manifest_test",
-    ROOT / "tools/update_header_surface_manifest.py",
+    "qtm3_header_surface_domain_test",
+    ROOT / "tools/header_surface.py",
 )
 surface = load(
     "qtm3_api_surface_test",
@@ -42,9 +42,8 @@ class HeaderSurfaceTests(unittest.TestCase):
         ]:
             (root / d).mkdir(parents=True, exist_ok=True)
 
-        # Make helper importable from the temporary root.
-        (root / "tools/update_header_surface_manifest.py").write_text(
-            (ROOT / "tools/update_header_surface_manifest.py").read_text(
+        (root / "tools/header_surface.py").write_text(
+            (ROOT / "tools/header_surface.py").read_text(
                 encoding="utf-8"
             ),
             encoding="utf-8",
@@ -116,7 +115,7 @@ class HeaderSurfaceTests(unittest.TestCase):
 
         manifest_path = root / "cmake/QtMaterial3HeaderSurfaceManifest.cmake"
         manifest_path.write_text(
-            manifest.render([], []),
+            manifest.render_manifest([], []),
             encoding="utf-8",
         )
         errors = manifest.validate_manifest(root, manifest_path)
@@ -233,7 +232,7 @@ class HeaderSurfaceTests(unittest.TestCase):
         manifest_path = root / "cmake/QtMaterial3HeaderSurfaceManifest.cmake"
         public, private = manifest.scan(root)
         manifest_path.write_text(
-            manifest.render(public, private),
+            manifest.render_manifest(public, private),
             encoding="utf-8",
         )
 
@@ -243,7 +242,7 @@ class HeaderSurfaceTests(unittest.TestCase):
             dst.parent.mkdir(parents=True, exist_ok=True)
             dst.write_text("#pragma once\n", encoding="utf-8")
 
-        # installed.validate loads the helper from root/tools.
+        # validate_installed uses the shared header-surface domain model.
         errors = surface.validate_installed(root, prefix)
         self.assertTrue(any("private headers leaked" in e for e in errors))
 
@@ -253,7 +252,7 @@ class HeaderSurfaceTests(unittest.TestCase):
             "#pragma once\n", encoding="utf-8"
         )
         manifest_path = root / "cmake/QtMaterial3HeaderSurfaceManifest.cmake"
-        manifest_path.write_text(manifest.render([], []), encoding="utf-8")
+        manifest_path.write_text(manifest.render_manifest([], []), encoding="utf-8")
 
         errors = surface.validate_installed(root, root / "prefix")
         self.assertTrue(any("source manifest invalid" in error for error in errors))
@@ -266,7 +265,7 @@ class HeaderSurfaceTests(unittest.TestCase):
         public, private = manifest.scan(root)
         manifest_path = root / "cmake/QtMaterial3HeaderSurfaceManifest.cmake"
         manifest_path.write_text(
-            manifest.render(public, private),
+            manifest.render_manifest(public, private),
             encoding="utf-8",
         )
 
