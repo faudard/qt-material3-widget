@@ -1820,5 +1820,321 @@
         "src/core/qtmaterialpaletteadapter.cpp"
       ]
     }
+  ],
+  "scoped_cpp_rules": [
+    {
+      "name": "foundation-qwidget-contract",
+      "paths": [
+        "include/qtmaterial/foundation/**",
+        "src/foundation/**"
+      ],
+      "checks": [
+        {
+          "input": "original",
+          "regex": "^\\s*#\\s*include\\s*[<\\\"](?:QtWidgets/)?(?:QWidget|qwidget\\.h)[>\\\"]",
+          "message": "foundation must not include QWidget"
+        },
+        {
+          "input": "original",
+          "regex": "^\\s*#\\s*include\\s*[<\\\"]QtWidgets/",
+          "message": "foundation must not include the QtWidgets module"
+        },
+        {
+          "input": "symbols",
+          "regex": "\\bQWidget\\b",
+          "message": "foundation must not reference QWidget"
+        }
+      ]
+    },
+    {
+      "name": "theme-model-qwidget-contract",
+      "paths": [
+        "include/qtmaterial/theme/model/**",
+        "src/theme/model/**",
+        "include/qtmaterial/theme/qtmaterialcolortoken.h",
+        "include/qtmaterial/theme/qtmaterialcolorbackend.h",
+        "include/qtmaterial/theme/qtmaterialcolorscheme.h",
+        "include/qtmaterial/theme/qtmaterialthemeoptions.h",
+        "include/qtmaterial/theme/qtmaterialtheme.h",
+        "include/qtmaterial/theme/qtmaterialthemeidentity.h",
+        "include/qtmaterial/theme/qtmaterialthemebuilder.h",
+        "include/qtmaterial/theme/qtmaterialthemevalidation.h",
+        "include/qtmaterial/theme/qtmaterialtypographyscale.h",
+        "include/qtmaterial/theme/qtmaterialshapescale.h",
+        "include/qtmaterial/theme/qtmaterialelevationscale.h",
+        "include/qtmaterial/theme/qtmaterialmotiontokens.h",
+        "include/qtmaterial/theme/qtmaterialstatelayer.h",
+        "include/qtmaterial/theme/qtmaterialdensitytokens.h",
+        "include/qtmaterial/theme/qtmaterialiconsizetokens.h",
+        "include/qtmaterial/theme/qtmaterialcomponenttokens.h",
+        "include/qtmaterial/theme/qtmaterialaccessibilitytokens.h",
+        "include/qtmaterial/theme/qtmaterialtokenids.h",
+        "src/theme/qtmaterialcolorbackend.cpp",
+        "src/theme/qtmaterialcolorscheme.cpp",
+        "src/theme/qtmaterialthemeoptions.cpp",
+        "src/theme/qtmaterialtheme.cpp",
+        "src/theme/qtmaterialthemeidentity.cpp",
+        "src/theme/qtmaterialthemebuilder.cpp",
+        "src/theme/qtmaterialthemevalidation.cpp",
+        "src/theme/qtmaterialtypographyscale.cpp",
+        "src/theme/qtmaterialshapescale.cpp",
+        "src/theme/qtmaterialelevationscale.cpp",
+        "src/theme/qtmaterialmotiontokens.cpp",
+        "src/theme/qtmaterialstatelayer.cpp",
+        "src/theme/qtmaterialdensitytokens.cpp",
+        "src/theme/qtmaterialiconsizetokens.cpp",
+        "src/theme/qtmaterialcomponenttokens.cpp",
+        "src/theme/qtmaterialaccessibilitytokens.cpp"
+      ],
+      "checks": [
+        {
+          "input": "original",
+          "regex": "^\\s*#\\s*include\\s*[<\\\"](?:QtWidgets/)?(?:QWidget|qwidget\\.h)[>\\\"]",
+          "message": "theme_model must not include QWidget"
+        },
+        {
+          "input": "original",
+          "regex": "^\\s*#\\s*include\\s*[<\\\"]QtWidgets/",
+          "message": "theme_model must not include the QtWidgets module"
+        },
+        {
+          "input": "symbols",
+          "regex": "\\bQWidget\\b",
+          "message": "theme_model must not reference QWidget"
+        }
+      ]
+    },
+    {
+      "name": "specs-runtime-boundary-contract",
+      "paths": [
+        "include/qtmaterial/specs/**",
+        "src/specs/**"
+      ],
+      "checks": [
+        {
+          "input": "original",
+          "regex": "^\\s*#\\s*include\\s*[<\\\"]qtmaterial/(?:core|widgets)/",
+          "message": "specs must depend only on foundation and theme_model, not core/widgets"
+        },
+        {
+          "input": "symbols",
+          "regex": "\\bThemeManager\\b|\\bQtMaterialThemeManager\\b",
+          "message": "specs must resolve from an explicit Theme value and never read ThemeManager"
+        },
+        {
+          "input": "original",
+          "regex": "qtmaterialthememanager\\.h",
+          "message": "specs must not include ThemeManager"
+        }
+      ]
+    },
+    {
+      "name": "renderers-resolved-data-contract",
+      "paths": [
+        "src/**/*render*.cpp",
+        "src/**/*renderer*.cpp",
+        "src/**/*renderhelper*.cpp",
+        "src/**/renderers/**"
+      ],
+      "checks": [
+        {
+          "input": "symbols",
+          "regex": "\\bThemeManager\\b|\\bQtMaterialThemeManager\\b",
+          "message": "renderers must consume resolved render data and never read ThemeManager"
+        },
+        {
+          "input": "original",
+          "regex": "qtmaterialthememanager\\.h",
+          "message": "renderers must not include ThemeManager"
+        }
+      ]
+    },
+    {
+      "name": "widgets-resolution-boundary-contract",
+      "paths": [
+        "include/qtmaterial/widgets/**",
+        "src/widgets/**"
+      ],
+      "exclude_paths": [
+        "src/widgets/resolution/**",
+        "src/widgets/**/*specresolver*.cpp",
+        "src/widgets/**/*specresolver*.h",
+        "src/widgets/qtmaterialwidget_datacomponent_spec_defaults.cpp"
+      ],
+      "checks": [
+        {
+          "input": "original",
+          "regex": "^\\s*#\\s*include\\s*[<\\\"]qtmaterial/theme/(?!qtmaterialthemecontext(?:host)?\\.h[>\\\"])",
+          "message": "widgets may read theme data only inside the dedicated spec-resolution boundary"
+        },
+        {
+          "input": "symbols",
+          "regex": "\\bThemeManager\\b|\\bThemeManager\\s*::\\s*instance\\b|(?:\\.|->)\\s*(?:theme|colorScheme|typographyScale|shapeScale|elevationScale|motionTokens|densityTokens|iconSizeTokens|componentTokens)\\s*\\(",
+          "message": "widget code after resolution must consume only its resolved spec"
+        }
+      ]
+    },
+    {
+      "name": "theme-io-textual-key-contract",
+      "paths": [
+        "include/qtmaterial/theme/**",
+        "src/theme/**",
+        "include/qtmaterial/specs/**",
+        "src/specs/**",
+        "include/qtmaterial/widgets/**",
+        "src/widgets/**",
+        "include/qtmaterial/core/**",
+        "src/core/**"
+      ],
+      "exclude_paths": [
+        "include/qtmaterial/theme/io/**",
+        "src/theme/io/**",
+        "include/qtmaterial/theme/qtmaterialthemeserializer.h",
+        "include/qtmaterial/theme/qtmaterialxmlthemeadapter.h",
+        "include/qtmaterial/theme/qtmaterialthemetextcodec.h",
+        "src/theme/qtmaterialthemeserializer.cpp",
+        "src/theme/qtmaterialxmlthemeadapter.cpp",
+        "src/theme/qtmaterialthemetextcodec.cpp"
+      ],
+      "checks": [
+        {
+          "input": "symbols",
+          "regex": "\\b(?:QJsonObject|QJsonDocument|QJsonValue|QJsonArray|QXmlStreamReader|QXmlStreamWriter|QDomDocument|QSettings)\\b",
+          "message": "ThemeIO is the only layer allowed to manipulate serialized textual keys"
+        },
+        {
+          "input": "symbols",
+          "regex": "\\b(?:componentId|colorRole|shapeRole|elevationRole|motionToken|themeMode)(?:ToString|FromString)\\b",
+          "message": "typed theme identifiers must be converted to/from text only by ThemeIO"
+        },
+        {
+          "input": "code",
+          "regex": "apply[A-Za-z0-9_]*ComponentTokens\\s*\\([^;]*?QStringList\\s*\\{\\s*(?:QStringLiteral|QLatin1String)\\s*\\(",
+          "dotall": true,
+          "message": "spec resolution must use typed component/token identifiers, not textual lookup keys"
+        },
+        {
+          "input": "symbols",
+          "regex": "\\b(?:contains|overrideFor|setOverride|removeOverride)\\s*\\(\\s*const\\s+QString\\s*&",
+          "message": "string-key theme APIs belong in ThemeIO; model/spec APIs must be typed"
+        }
+      ]
+    },
+    {
+      "name": "core-runtime-metadata-contract",
+      "paths": [
+        "include/qtmaterial/core/**",
+        "src/core/**"
+      ],
+      "checks": [
+        {
+          "input": "symbols",
+          "regex": "\\b(?:docsPath|galleryRoute|documentationUrl|galleryUrl|showcaseRoute)\\b",
+          "message": "core must not contain documentation or gallery metadata"
+        },
+        {
+          "input": "code",
+          "regex": "(?:QStringLiteral|QLatin1String)\\s*\\(\\s*[\\\"](?:docs/|examples/gallery/|gallery/)",
+          "message": "documentation/gallery paths belong in tooling, examples, or a catalog module"
+        },
+        {
+          "input": "original",
+          "regex": "^\\s*#\\s*include\\s*[<\\\"](?:docs/|examples/gallery/|gallery/)",
+          "message": "core must not include documentation or gallery resources"
+        }
+      ]
+    }
+  ],
+  "repository_text_rules": [
+    {
+      "name": "architecture-suppressions-are-forbidden",
+      "paths": [
+        "include",
+        "src",
+        "cmake",
+        "scripts"
+      ],
+      "exclude_paths": [
+        "scripts/architecture/architecture_rules.json"
+      ],
+      "forbidden_regex": [
+        "(?:ARCH(?:ITECTURE)?[-_ ]?(?:IGNORE|SUPPRESS|EXCEPTION)|NOLINT\\s*\\(\\s*ARCH|architecture[_ -]waiver|architecture[_ -]exception)"
+      ],
+      "message": "architecture suppression markers are forbidden"
+    }
+  ],
+  "cmake_target_rules": [
+    {
+      "name": "cmake-architecture-target-graph",
+      "required_targets": [
+        "qtmaterial3_foundation",
+        "qtmaterial3_theme_model",
+        "qtmaterial3_theme_io",
+        "qtmaterial3_theme_runtime",
+        "qtmaterial3_specs",
+        "qtmaterial3_core",
+        "qtmaterial3_widgets"
+      ],
+      "forbidden_links": {
+        "qtmaterial3_foundation": [
+          "Qt5::Widgets",
+          "Qt6::Widgets",
+          "Qt${QT_VERSION_MAJOR}::Widgets",
+          "qtmaterial3_theme_model",
+          "qtmaterial3_theme_io",
+          "qtmaterial3_theme_runtime",
+          "qtmaterial3_specs",
+          "qtmaterial3_core",
+          "qtmaterial3_widgets"
+        ],
+        "qtmaterial3_theme_model": [
+          "Qt5::Widgets",
+          "Qt6::Widgets",
+          "Qt${QT_VERSION_MAJOR}::Widgets",
+          "qtmaterial3_theme_io",
+          "qtmaterial3_theme_runtime",
+          "qtmaterial3_specs",
+          "qtmaterial3_core",
+          "qtmaterial3_widgets"
+        ],
+        "qtmaterial3_theme_io": [
+          "Qt5::Widgets",
+          "Qt6::Widgets",
+          "Qt${QT_VERSION_MAJOR}::Widgets",
+          "qtmaterial3_theme_runtime",
+          "qtmaterial3_specs",
+          "qtmaterial3_core",
+          "qtmaterial3_widgets"
+        ],
+        "qtmaterial3_theme_runtime": [
+          "Qt5::Widgets",
+          "Qt6::Widgets",
+          "Qt${QT_VERSION_MAJOR}::Widgets",
+          "qtmaterial3_theme_io",
+          "qtmaterial3_specs",
+          "qtmaterial3_core",
+          "qtmaterial3_widgets"
+        ],
+        "qtmaterial3_specs": [
+          "qtmaterial3_theme_io",
+          "QtMaterial3::ThemeIO",
+          "qtmaterial3_theme_runtime",
+          "QtMaterial3::ThemeRuntime",
+          "qtmaterial3_core",
+          "QtMaterial3::Core",
+          "qtmaterial3_widgets",
+          "QtMaterial3::Widgets",
+          "Qt5::Widgets",
+          "Qt6::Widgets",
+          "Qt${QT_VERSION_MAJOR}::Widgets"
+        ],
+        "qtmaterial3_core": [
+          "qtmaterial3_theme_io",
+          "QtMaterial3::ThemeIO",
+          "qtmaterial3_widgets",
+          "QtMaterial3::Widgets"
+        ]
+      }
+    }
   ]
 }
