@@ -21,12 +21,8 @@ manifest = load(
     ROOT / "tools/update_header_surface_manifest.py",
 )
 surface = load(
-    "qtm3_header_surface_test",
-    ROOT / "tools/check_public_private_headers.py",
-)
-installed = load(
-    "qtm3_installed_header_surface_test",
-    ROOT / "tools/check_installed_header_surface.py",
+    "qtm3_api_surface_test",
+    ROOT / "tools/check_api_surface.py",
 )
 
 
@@ -58,7 +54,9 @@ class HeaderSurfaceTests(unittest.TestCase):
     def write_valid_install_contract(self, root: Path) -> None:
         (root / "CMakeLists.txt").write_text(
             'include("cmake/QtMaterial3HeaderSurface.cmake")\n'
+            'include("cmake/QtMaterial3ApiChecks.cmake")\n'
             "qtmaterial3_install_public_headers()\n"
+            "qtmaterial3_add_api_checks()\n"
             "install(EXPORT QtMaterial3WidgetsTargets)\n"
             "configure_package_config_file(input output)\n"
             "write_basic_package_version_file(output)\n",
@@ -69,17 +67,14 @@ class HeaderSurfaceTests(unittest.TestCase):
             "install(FILES public.h DESTINATION include)\n",
             encoding="utf-8",
         )
-        (root / "cmake/QtMaterial3PublicHeaderHygiene.cmake").write_text(
+        (root / "cmake/QtMaterial3ApiChecks.cmake").write_text(
             "foreach(header IN LISTS QTMATERIAL3_PUBLIC_HEADERS)\n"
             "endforeach()\n",
             encoding="utf-8",
         )
-        (root / "tools/check_installed_header_surface.py").write_text(
-            "# installed surface checker\n",
-            encoding="utf-8",
-        )
         (root / "scripts/ci/run-consumer-matrix.py").write_text(
-            'checker = "check_installed_header_surface.py"\n'
+            'checker = "check_api_surface.py"\n'
+            'scope = "--scope installed"\n'
             'prefix_option = "--prefix"\n',
             encoding="utf-8",
         )
@@ -247,7 +242,7 @@ class HeaderSurfaceTests(unittest.TestCase):
             dst.write_text("#pragma once\n", encoding="utf-8")
 
         # installed.validate loads the helper from root/tools.
-        errors = installed.validate(root, prefix)
+        errors = surface.validate_installed(root, prefix)
         self.assertTrue(any("private headers leaked" in e for e in errors))
 
     def test_installed_check_rejects_invalid_source_manifest(self):
@@ -258,7 +253,7 @@ class HeaderSurfaceTests(unittest.TestCase):
         manifest_path = root / "cmake/QtMaterial3HeaderSurfaceManifest.cmake"
         manifest_path.write_text(manifest.render([], []), encoding="utf-8")
 
-        errors = installed.validate(root, root / "prefix")
+        errors = surface.validate_installed(root, root / "prefix")
         self.assertTrue(any("source manifest invalid" in error for error in errors))
 
     def test_exact_installed_public_surface_passes(self):
@@ -279,7 +274,7 @@ class HeaderSurfaceTests(unittest.TestCase):
             dst.parent.mkdir(parents=True, exist_ok=True)
             dst.write_text("#pragma once\n", encoding="utf-8")
 
-        self.assertEqual([], installed.validate(root, prefix))
+        self.assertEqual([], surface.validate_installed(root, prefix))
 
 
 if __name__ == "__main__":
