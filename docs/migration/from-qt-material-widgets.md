@@ -7,7 +7,7 @@ public widgets.
 
 ## Recommended migration path
 
-1. Add `QtMaterial3::Theme` and `QtMaterial3::Widgets` to the application.
+1. Add `QtMaterial3::ThemeModel`, `QtMaterial3::ThemeRuntime`, and `QtMaterial3::Widgets` to the application. Add `QtMaterial3::ThemeIO` only when serialization/import-export is needed.
 2. Migrate one widget family at a time instead of replacing the whole UI at once.
 3. Move ad-hoc colors, typography, shape, and motion values into the Material 3
    theme/token layer.
