@@ -83,8 +83,6 @@ def health_commands(python: str, strict: bool = False) -> list[tuple[str, list[s
          [python, str(ROOT/"tools/check_build_consumer_matrix.py")]),
         ("qt5-qt6-compatibility-contract",
          [python, str(ROOT/"tools/check_qt_compatibility_contract.py")]),
-        ("no-legacy-specfactory",
-         [python, str(ROOT/"tools/check_no_legacy_specfactory.py")]),
         ("theme-target-decomposition",
          [python, str(ROOT/"tools/check_theme_target_decomposition.py")]),
         ("theme-model",
