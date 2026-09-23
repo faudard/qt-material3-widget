@@ -30,14 +30,17 @@ dialog->open();
 The dialog contract includes Escape dismissal when enabled, focus containment, default-button
 activation, focus restoration, and accessible title/supporting text.
 
-See [Dialog release readiness](dialog-release-readiness.md).
+The dialog keeps keyboard focus inside the modal surface, supports Escape dismissal when
+enabled, activates an explicit default button on Return/Enter, and restores previous focus on
+close when configured.
 
 ## Card
 
 `QtMaterialCard` supports Elevated, Filled, and Outlined variants plus optional interactive
 behavior. Interactive cards can be activated by mouse, Space, Return, or Enter.
 
-See [Card release readiness](card-release-readiness.md).
+Cards are non-interactive by default. When interaction is enabled they expose mouse and
+Space/Return/Enter activation plus hover, press and focus state rendering.
 
 ## Snackbar
 
@@ -68,7 +71,7 @@ Whenever request content changes, the snackbar resynchronizes its accessible des
 The description combines the message, optional action, and dismissible state. Action and dismiss
 buttons expose their own accessible names/descriptions.
 
-### 0.5.0 maturity evidence
+### Maturity evidence
 
 `tst_snackbar`, `tst_snackbarhost`, and `tst_snackbarlifecycle` cover:
 
@@ -81,14 +84,30 @@ buttons expose their own accessible names/descriptions.
 - RTL layout render smoke;
 - DPR 2.0 render smoke.
 
-Snackbar is therefore release-scoped as **usable** for 0.5.0. Reviewed visual references and a
-broader transient-surface state matrix remain before `complete` maturity.
+`QtMaterialSnackbar` is tracked as **usable**. Reviewed visual references and a broader
+transient-surface state matrix remain before `complete` maturity.
 
-## Other surface contracts
+## Navigation Drawer
 
-Focused release-readiness documents are also available for:
+`QtMaterialNavigationDrawer` supports left/right placement, open/close lifecycle,
+destination insertion/removal, disabled-destination skipping, directional keyboard navigation,
+Space/Return/Enter activation, optional Escape dismissal, focus restoration and accessible
+destination summaries.
 
-- [Navigation Drawer](navigationdrawer-release-readiness.md)
-- [Bottom Sheet](bottomsheet-release-readiness.md)
-- [Banner](banner-release-readiness.md)
-- [App bars](appbars-release-readiness.md)
+## Bottom Sheet
+
+`QtMaterialBottomSheet` supports modal and non-modal presentation, expanded/collapsed states,
+scrim and Escape dismissal policies, drag collapse/dismiss behavior, keyboard expand/collapse,
+initial-focus handling, focus restoration and a stable `contentWidget()` container.
+
+## Banner
+
+`QtMaterialBanner` exposes title/body text, primary and secondary actions, optional dismissal,
+Escape behavior and deterministic accessibility summaries. Action controls remain keyboard
+focusable.
+
+## App bars
+
+`QtMaterialTopAppBar` and `QtMaterialBottomAppBar` provide title text, navigation/action
+controls, keyboard activation, deterministic size hints and accessible names. Bottom app bars
+also expose accessible text for an attached FAB.
