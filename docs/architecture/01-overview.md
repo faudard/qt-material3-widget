@@ -10,12 +10,12 @@ The core rule is:
 
 ```mermaid
 flowchart TB
-    app["Applications / Consumers<br/><small>Use QtMaterial3::Theme and QtMaterial3::Widgets</small>"]
+    app["Applications / Consumers<br/><small>Use physical theme targets and QtMaterial3::Widgets</small>"]
 
     inputs["Theme Inputs<br/><small>Seed color<br/>ThemeOptions<br/>JSON import / export</small>"]
     m3["Material 3 Guidance<br/><small>Color roles<br/>Typography<br/>Shape<br/>Motion</small>"]
 
-    theme["qtmaterial3_theme<br/><small>Tokens, schemes, builder, manager<br/>ColorScheme · TypographyScale · ShapeScale<br/>Shape · ElevationScale · MotionTokens<br/>ThemeBuilder · ThemeManager</small>"]
+    theme["ThemeModel + ThemeRuntime<br/><small>Tokens, schemes, builder, runtime context<br/>ColorScheme · TypographyScale · ShapeScale<br/>Elevation · Motion · ThemeBuilder · ThemeManager</small>"]
 
     rule["Core rule:<br/>Widgets render from resolved specs,<br/>not from ad hoc theme lookups."]
 
