@@ -82,7 +82,6 @@ def check_public_includes(
 def check_install_contract(root: Path) -> list[str]:
     errors: list[str] = []
     root_cmake = root / "CMakeLists.txt"
-    install_helper = root / "cmake/QtMaterial3HeaderSurface.cmake"
     api_checks = root / "cmake/QtMaterial3ApiChecks.cmake"
 
     if not root_cmake.is_file():
@@ -99,37 +98,13 @@ def check_install_contract(root: Path) -> list[str]:
         )
 
     for token in (
-        "QtMaterial3HeaderSurface.cmake",
-        "qtmaterial3_install_public_headers()",
         "QtMaterial3ApiChecks.cmake",
+        "qtmaterial3_install_public_headers()",
         "qtmaterial3_add_api_checks()",
     ):
         if token not in text:
             errors.append(
                 f"root CMake missing API/header token: {token}"
-            )
-
-    if not install_helper.is_file():
-        errors.append("missing cmake/QtMaterial3HeaderSurface.cmake")
-    else:
-        helper_text = install_helper.read_text(encoding="utf-8")
-        for token in (
-            "QTMATERIAL3_PUBLIC_HEADERS",
-            "install(",
-            "FILES",
-        ):
-            if token not in helper_text:
-                errors.append(
-                    f"header install helper missing {token}"
-                )
-        if re.search(
-            r"foreach\s*\([^\)]*QTMATERIAL3_PRIVATE_HEADERS[^\)]*\)"
-            r"(?:(?!endforeach\s*\().)*install\s*\(",
-            helper_text,
-            re.IGNORECASE | re.DOTALL,
-        ):
-            errors.append(
-                "private header list must never be installed"
             )
 
     if not api_checks.is_file():
@@ -138,13 +113,28 @@ def check_install_contract(root: Path) -> list[str]:
         checks_text = api_checks.read_text(
             encoding="utf-8", errors="replace"
         )
-        if "QTMATERIAL3_PUBLIC_HEADERS" not in checks_text:
+        for token in (
+            "QTMATERIAL3_PUBLIC_HEADERS",
+            "qtmaterial3_install_public_headers",
+            "install(",
+            "FILES",
+        ):
+            if token not in checks_text:
+                errors.append(
+                    f"API CMake module missing {token}"
+                )
+        if re.search(
+            r"foreach\s*\([^\)]*QTMATERIAL3_PRIVATE_HEADERS[^\)]*\)"
+            r"(?:(?!endforeach\s*\().)*install\s*\(",
+            checks_text,
+            re.IGNORECASE | re.DOTALL,
+        ):
             errors.append(
-                "public-header compile tests must be manifest-driven"
+                "private header list must never be installed"
             )
         if "GLOB_RECURSE" in checks_text:
             errors.append(
-                "public-header compile tests must not glob include/"
+                "public-header checks must not glob include/"
             )
 
     consumer_runner = root / "scripts/ci/run-consumer-matrix.py"
