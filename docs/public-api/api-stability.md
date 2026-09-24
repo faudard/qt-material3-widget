@@ -1,44 +1,27 @@
 # API stability policy
 
-The theming subsystem uses a staged stability policy until the first stable release.
+QtMaterial3 remains pre-1.0. Public C++ APIs may still change until the 1.0
+surface is frozen, while the Theme JSON persistence contract is already
+versioned independently.
 
-## Frozen after the theming stabilization work
+## Theme JSON
 
-The following names are treated as stable within the current minor release line:
+`formatVersion: 1` is the supported persistence format. Breaking persistence
+changes require a new format version; compatible additions must preserve strict
+validation and deterministic serialization guarantees documented by the schema
+tests.
 
-- public token group names;
-- `ThemeReadMode` values;
-- JSON schema `formatVersion` field;
-- JSON schema v1 top-level object names;
-- color backend status names;
-- `ThemeManager` runtime notification semantics;
-- component-local override key names documented in the public API.
+## Pre-1.0 C++ surface
 
-## Allowed additive changes
+Before 1.0 the project may remove or rename public C++ APIs directly when doing
+so reduces accidental surface area. Compatibility shims are intentionally not
+kept for unpublished APIs.
 
-The following changes are allowed without a schema-breaking migration:
+The 0.9 workstream performs the final public-header and package-component audit.
 
-- adding optional token fields;
-- adding optional metadata fields;
-- adding new component override groups;
-- adding new examples;
-- adding new non-required JSON fields;
-- adding new tests or diagnostics.
+## Backend behavior
 
-## Migration-required changes
-
-The following require a migration note and, when relevant, a schema version bump:
-
-- renaming public token fields;
-- removing public token fields;
-- changing strict JSON validation behavior;
-- changing golden seed outputs;
-- changing backend-selection semantics;
-- changing `ThemeManager` signal emission order;
-- changing default high-contrast or accessibility thresholds.
-
-## Backend stability
-
-`QTMATERIAL3_USE_MCU` means "request the MCU backend." It does not guarantee that MCU is available in the build tree. The actual runtime/build result is represented by the compiled backend status.
-
-A build that requests MCU but cannot compile the adapter must still produce deterministic fallback colors and expose that status through the backend diagnostic API.
+`QTMATERIAL3_USE_MCU` means "request the MCU backend." It does not guarantee
+that MCU sources are present. When unavailable, the library must produce the
+documented deterministic fallback colors and expose the effective backend
+through its diagnostic API.

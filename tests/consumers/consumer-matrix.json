@@ -64,7 +64,7 @@
       "kind": "install",
       "linkage": "shared",
       "components": [
-        "Theme",
+        "ThemeModel",
         "Widgets"
       ],
       "mcu": false
@@ -73,7 +73,7 @@
       "kind": "install",
       "linkage": "static",
       "components": [
-        "Theme",
+        "ThemeModel",
         "Widgets"
       ],
       "mcu": false

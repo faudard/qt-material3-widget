@@ -1,36 +1,41 @@
-# ThemeIO Ownership
+# ThemeIO ownership
 
-ThemeIO owns every conversion between typed theme semantics and persisted text.
+ThemeIO owns conversion between typed theme semantics and the persisted Theme
+JSON contract.
 
 ```text
 ThemeModel typed values
         ⇅
-ThemeTextCodec / ThemeSerializer / XML adapter
+ThemeSerializer + private textual codecs
         ⇅
-JSON / XML / textual aliases
+canonical Theme JSON
 ```
 
 ## Component override identifiers
 
-ThemeModel/Specs use `ComponentId`. First-party JSON identifiers are accepted only in canonical form by
-`ThemeTextCodec`; serialization emits that same stable name per typed ID.
+ThemeModel and Specs use typed `ComponentId` values. ThemeIO owns conversion to
+canonical first-party JSON identifiers and preserves unknown third-party
+component names as opaque extension data.
 
-Unknown third-party component names are preserved as an opaque extension map inside
-`ComponentTokenOverrides`; only ThemeIO may enumerate/read/write those textual names.
+Applications should use `ThemeSerializer` rather than depending on the
+serializer's internal text-key mapping helpers.
 
 ## Runtime
 
-ThemeManager is no longer a persistence façade. Application/tooling code composes:
+ThemeRuntime does not own persistence. Applications explicitly compose IO and
+runtime operations:
 
 ```cpp
-const QByteArray json = ThemeSerializer::toJson(manager.theme());
-Theme parsed = ThemeSerializer::fromJson(json, ...);
-manager.setTheme(parsed, ThemeChangeReason::ImportJson);
+const QByteArray json = QtMaterial::ThemeSerializer::toJson(manager.theme());
+
+bool ok = false;
+QString error;
+const QtMaterial::Theme parsed = QtMaterial::ThemeSerializer::fromJson(
+    json, QtMaterial::ThemeReadMode::Strict, &ok, &error);
+
+if (ok) {
+    manager.setTheme(parsed, QtMaterial::ThemeChangeReason::External);
+}
 ```
 
-This removes serialization responsibilities from ThemeRuntime.
-
-## Migration rule
-
-The architecture baseline for `ARCH-THEME-IO-OWNS-TEXT-KEYS` is removed by Spec 008.
-Any remaining occurrence becomes a new CI error rather than accepted debt.
+This keeps serialization isolated from runtime theme propagation.

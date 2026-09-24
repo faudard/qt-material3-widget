@@ -3,13 +3,17 @@
 - **Date**: 2026-08-15
 
 ## Context
-QtMaterial3 is a pre-1.0 brownfield library being reorganized around enforceable architecture and measurable Material conformance.
+Runtime/spec resolution needs stable typed identifiers without leaking persisted
+string keys into ThemeModel or Specs.
 
 ## Decision
-Runtime/spec resolution uses typed IDs. Text key conversion belongs to ThemeIO/tooling.
+Runtime/spec resolution uses typed IDs. Conversion between typed identifiers and
+persisted text belongs to ThemeIO internals.
 
 ## Consequences
-The decision is binding on new specs and migration plans. Breaking cleanup is acceptable before 1.0 when required to reach the target architecture.
+ThemeModel and Specs remain string-key free. The public persistence boundary is
+`ThemeSerializer`; internal codecs may evolve before 1.0 without becoming an
+application-facing API.
 
 ## Verification
-`ARCH-THEME-IO-OWNS-TEXT-KEYS` reaches zero.
+Architecture checks reject textual theme-key manipulation outside ThemeIO.

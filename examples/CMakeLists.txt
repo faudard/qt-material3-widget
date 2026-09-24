@@ -11,11 +11,7 @@ if(QTMATERIAL3_BUILD_CONSUMER_EXAMPLES)
 endif()
 
 
-option(QTMATERIAL3_BUILD_THEMING_EXAMPLES "Build public theming workflow examples" ON)
+option(QTMATERIAL3_BUILD_THEMING_EXAMPLES "Build the public theming workflow example" ON)
 if(QTMATERIAL3_BUILD_THEMING_EXAMPLES)
-    add_subdirectory(theming-seed-workflow)
-    add_subdirectory(theming-runtime-switch)
-    add_subdirectory(theming-json-workflow)
-    add_subdirectory(theming-component-overrides)
-    add_subdirectory(theming-backend-report)
+    add_subdirectory(theming-workflows)
 endif()
