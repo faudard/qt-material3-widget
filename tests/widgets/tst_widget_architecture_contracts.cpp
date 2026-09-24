@@ -4,7 +4,7 @@
 #include <QWidget>
 
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
-#include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
+#include "qtmaterial/core/private/qtmaterialmetadataproperties_p.h"
 #include "qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h"
 #include "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h"
 #include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
