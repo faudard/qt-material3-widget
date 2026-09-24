@@ -62,8 +62,8 @@ report zero unevaluated axes.
 
 Scores below `complete` remain deliberately conservative. A score of `1` means
 only basic or incomplete evidence; `2` means usable simple-case evidence.
-Neither is a Material-conformance claim. Material reference, renderer and
-visual evidence is tracked independently by the conformance harness.
+Neither is a full Material-conformance claim. Visual, accessibility, RTL and
+HiDPI evidence is recorded directly in the registry maturity axes and component tests.
 
 ## Complete maturity policy
 

@@ -70,16 +70,6 @@ architecture/06-widgets-layer
 architecture/07-advanced-components
 ```
 
-```{toctree}
-:maxdepth: 2
-:caption: Conformance research
-
-conformance/material-reference-model
-conformance/structural-conformance
-conformance/renderer-conformance
-conformance/visual-comparator
-conformance/material-conformance-report
-```
 
 ```{toctree}
 :maxdepth: 2
@@ -92,7 +82,6 @@ development/rendering-rules
 development/testing-rules
 ```
 
-Material conformance pages document research and future harness contracts. They are not reported as active repository-health gates until their executable tooling exists.
 
 ## Material 3 note
 
