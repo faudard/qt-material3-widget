@@ -1,5 +1,8 @@
 #include <QtTest/QtTest>
 
+#include <QVBoxLayout>
+#include <QWidget>
+
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
 
 class tst_QtMaterialCard : public QObject {
@@ -99,18 +102,24 @@ void tst_QtMaterialCard::interactiveControlsFocusPolicy()
 
 void tst_QtMaterialCard::keyboardActivationEmitsClicked()
 {
+    QWidget window;
+    QVBoxLayout layout(&window);
+
     QtMaterial::QtMaterialCard card;
     card.resize(240, 96);
     card.setInteractive(true);
-    card.show();
-    QVERIFY(QTest::qWaitForWindowExposed(&card));
+    layout.addWidget(&card);
+
+    window.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&window));
 
     QSignalSpy clickedSpy(&card, &QtMaterial::QtMaterialCard::clicked);
     QSignalSpy pressedSpy(&card, &QtMaterial::QtMaterialCard::pressed);
     QSignalSpy releasedSpy(&card, &QtMaterial::QtMaterialCard::released);
 
-    card.setFocus();
-    QVERIFY(card.hasFocus());
+    window.activateWindow();
+    card.setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(card.hasFocus());
 
     QTest::keyClick(&card, Qt::Key_Return);
 
