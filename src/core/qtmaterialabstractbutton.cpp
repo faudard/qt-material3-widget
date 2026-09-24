@@ -1,8 +1,8 @@
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
-#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include <QtGlobal>
 #include "private/qtmaterialmetadata_p.h"
-#include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
+#include "qtmaterial/core/private/qtmaterialmetadataproperties_p.h"
 
 #include <QFocusEvent>
 #include <QKeyEvent>

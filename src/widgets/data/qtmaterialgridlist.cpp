@@ -1,6 +1,6 @@
 #include "qtmaterial/widgets/data/qtmaterialgridlist.h"
 
-#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 
 #include <algorithm>
 

@@ -1,4 +1,4 @@
-#include "qtmaterial/effects/qtmaterialshadowcache.h"
+#include "qtmaterial/effects/private/qtmaterialshadowcache_p.h"
 
 #include <QPixmapCache>
 #include <QtGlobal>

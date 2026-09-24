@@ -36,7 +36,6 @@ class HeaderSurfaceTests(unittest.TestCase):
             "include/qtmaterial/widgets",
             "cmake",
             "scripts/ci",
-            "tests/consumer",
             "tests/consumers/installed",
             "tools",
         ]:
@@ -73,12 +72,6 @@ class HeaderSurfaceTests(unittest.TestCase):
             'checker = "check_api_surface.py"\n'
             'scope = "--scope installed"\n'
             'prefix_option = "--prefix"\n',
-            encoding="utf-8",
-        )
-        (root / "tests/consumer/run_installed_package_test.cmake").write_text(
-            "set(checker check_api_surface.py)\n"
-            "set(scope installed)\n"
-            "set(prefix ${INSTALL_PREFIX})\n",
             encoding="utf-8",
         )
         (root / "tests/CMakeLists.txt").write_text(

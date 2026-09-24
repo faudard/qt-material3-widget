@@ -20,12 +20,14 @@ class ThemeRuntimeCheckerTests(unittest.TestCase):
     def populate(self, r):
         (r/"src/theme/CMakeLists.txt").write_text(
             "qtmaterialthemecontextdefaults.cpp\n"
-            "qtmaterialthemecontextdefaults.h\n"
+            "private/qtmaterialthemecontextdefaults_p.h\n"
             "target_link_libraries(qtmaterial3_theme_runtime PUBLIC "
             "qtmaterial3_theme_model Qt6::Core Qt6::Gui)\n",
             encoding="utf-8")
         for n in checker.RUNTIME_HEADERS:
-            (r/"include/qtmaterial/theme"/n).write_text("// runtime\n", encoding="utf-8")
+            path = r/"include/qtmaterial/theme"/n
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("// runtime\n", encoding="utf-8")
         for n in checker.RUNTIME_SOURCES:
             (r/"src/theme"/n).write_text("// runtime\n", encoding="utf-8")
         (r/"src/theme/qtmaterialthememanager.cpp").write_text(

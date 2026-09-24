@@ -2,7 +2,7 @@
 #include <QSignalSpy>
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
-#include "qtmaterial/theme/qtmaterialthemecontextdefaults.h"
+#include "qtmaterial/theme/private/qtmaterialthemecontextdefaults_p.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 
 class ThemeRuntimeTest : public QObject {

@@ -14,7 +14,7 @@
 #include <QShowEvent>
 #include <QStringList>
 
-#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include "qtmaterial/effects/qtmaterialelevationrenderer.h"
 #include "qtmaterial/specs/qtmaterialmenuspecresolver.h"
 #include "../resolution/qtmaterialnavigationspecresolution_p.h"

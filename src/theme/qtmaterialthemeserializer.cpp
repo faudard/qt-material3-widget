@@ -1,6 +1,6 @@
 #include "qtmaterial/theme/qtmaterialthemeserializer.h"
-#include "qtmaterial/theme/qtmaterialthemetextcodec.h"
-#include "qtmaterial/theme/qtmaterialtokenids.h"
+#include "qtmaterial/theme/private/qtmaterialthemetextcodec_p.h"
+#include "qtmaterial/theme/private/qtmaterialtokenids_p.h"
 #include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 
 #include <QColor>

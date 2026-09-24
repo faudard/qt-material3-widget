@@ -45,7 +45,7 @@ def iter_files(root: Path):
 def validate(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
 
-    codec_h = root/"include/qtmaterial/theme/qtmaterialthemetextcodec.h"
+    codec_h = root/"include/qtmaterial/theme/private/qtmaterialthemetextcodec_p.h"
     codec_cpp = root/"src/theme/qtmaterialthemetextcodec.cpp"
     for path in (codec_h, codec_cpp):
         if not path.is_file():
@@ -81,7 +81,7 @@ def validate(root: Path = ROOT) -> list[str]:
     serializer = root/"src/theme/qtmaterialthemeserializer.cpp"
     if serializer.is_file():
         text = serializer.read_text(encoding="utf-8")
-        if "qtmaterialthemetextcodec.h" not in text:
+        if "qtmaterialthemetextcodec_p.h" not in text:
             errors.append("ThemeSerializer must use ThemeTextCodec")
         if "setOverride(it.key()" in text:
             errors.append("ThemeSerializer still passes serialized component name into ThemeModel")

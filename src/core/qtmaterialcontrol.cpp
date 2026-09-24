@@ -4,7 +4,7 @@
 #include <QFocusEvent>
 
 #include "private/qtmaterialmetadata_p.h"
-#include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
+#include "qtmaterial/core/private/qtmaterialmetadataproperties_p.h"
 
 namespace QtMaterial {
 

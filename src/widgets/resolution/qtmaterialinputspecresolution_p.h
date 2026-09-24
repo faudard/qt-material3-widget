@@ -2,7 +2,7 @@
 
 #include <QtGlobal>
 
-#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h"
 #include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 

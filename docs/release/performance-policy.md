@@ -12,7 +12,7 @@ Rules:
 6. Avoid repainting geometry-stable widgets for non-visual state changes.
 7. Provide benchmarks for hot paths.
 
-The shared cache helper is `QtMaterial::QtMaterialPaintCache`.
+Paint/shadow caches are internal implementation helpers and are benchmarked without being part of the installed API.
 
 Benchmark targets should cover:
 

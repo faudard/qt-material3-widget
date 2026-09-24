@@ -100,7 +100,7 @@ def validate(root: Path = ROOT) -> list[str]:
         ):
             errors.append("ThemeModel must link Foundation publicly")
 
-    ids_h = root/"include/qtmaterial/theme/qtmaterialtokenids.h"
+    ids_h = root/"include/qtmaterial/theme/private/qtmaterialtokenids_p.h"
     if not ids_h.is_file():
         errors.append("missing ThemeModel token-id mapping")
     else:
@@ -114,7 +114,7 @@ def validate(root: Path = ROOT) -> list[str]:
         if "QString" in data or "QLatin1String" in data or "QStringLiteral" in data:
             errors.append("ThemeModel token-id mapping must contain no textual names")
 
-    codec_h = root/"include/qtmaterial/theme/qtmaterialthemetextcodec.h"
+    codec_h = root/"include/qtmaterial/theme/private/qtmaterialthemetextcodec_p.h"
     codec_cpp = root/"src/theme/qtmaterialthemetextcodec.cpp"
     for path in (codec_h, codec_cpp):
         if not path.is_file():
@@ -158,8 +158,8 @@ def validate(root: Path = ROOT) -> list[str]:
             if table in data:
                 errors.append(f"ThemeSerializer duplicates token-name table {table}")
         for token in (
-            "qtmaterialthemetextcodec.h",
-            "qtmaterialtokenids.h",
+            "qtmaterialthemetextcodec_p.h",
+            "qtmaterialtokenids_p.h",
             "ThemeTextCodec::tokenIdToString",
             "allColorRoles()",
             "allTypeRoles()",
