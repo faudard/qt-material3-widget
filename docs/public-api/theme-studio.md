@@ -15,7 +15,6 @@
 - strict validation with parser diagnostics
 - apply edited JSON directly to the runtime theme
 - JSON import/export
-- legacy qt-material XML import/export
 - presets plus explicit Apply/Reset dirty-state workflow
 
 Theme Studio imports JSON with `ThemeReadMode::Strict`. A document that violates the frozen Theme JSON v1 contract is rejected before it can replace the active theme.

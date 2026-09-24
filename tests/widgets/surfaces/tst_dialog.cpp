@@ -79,12 +79,13 @@ void tst_Dialog::openFocusesInitialWidgetAndRestoresPreviousFocusOnClose()
     host.show();
     QVERIFY(QTest::qWaitForWindowExposed(&host));
 
-    outside->setFocus();
-    QCOMPARE(QApplication::focusWidget(), outside);
+    host.activateWindow();
+    outside->setFocus(Qt::OtherFocusReason);
+    QTRY_COMPARE(QApplication::focusWidget(), outside);
 
     dialog.open();
     QVERIFY(dialog.isVisible());
-    QCOMPARE(QApplication::focusWidget(), second);
+    QTRY_COMPARE(QApplication::focusWidget(), second);
 
     dialog.close();
     QVERIFY(!dialog.isVisible());

@@ -59,9 +59,6 @@
 #if __has_include(<qtmaterial/theme/qtmaterialaccessibilitytokens.h>)
 #  include <qtmaterial/theme/qtmaterialaccessibilitytokens.h>
 #endif
-#if __has_include(<qtmaterial/theme/qtmaterialxmlthemeadapter.h>)
-#  include <qtmaterial/theme/qtmaterialxmlthemeadapter.h>
-#endif
 
 class PublicThemingHeadersCompileTest : public QObject {
     Q_OBJECT

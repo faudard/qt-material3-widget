@@ -178,8 +178,6 @@ void ThemeStudioWindow::createMenus()
 
     m_importAction = fileMenu->addAction(tr("Import JSON..."));
     m_exportAction = fileMenu->addAction(tr("Export JSON..."));
-    auto* importXmlAction = fileMenu->addAction(tr("Import qt-material XML..."));
-    auto* exportXmlAction = fileMenu->addAction(tr("Export qt-material XML..."));
     fileMenu->addSeparator();
     auto* quitAction = fileMenu->addAction(tr("Quit"));
 
@@ -208,28 +206,6 @@ void ThemeStudioWindow::createMenus()
             QMessageBox::critical(this, tr("Export failed"), error);
         }
     });
-
-    connect(importXmlAction, &QAction::triggered, this, [this]() {
-        const QString path = QFileDialog::getOpenFileName(
-            this, tr("Import qt-material XML"), QString(), tr("XML files (*.xml)"));
-        if (path.isEmpty()) {
-            return;
-        }
-        m_controller->importQtMaterialXmlFile(path);
-    });
-
-    connect(exportXmlAction, &QAction::triggered, this, [this]() {
-        const QString path = QFileDialog::getSaveFileName(
-            this, tr("Export qt-material XML"), QStringLiteral("theme.xml"), tr("XML files (*.xml)"));
-        if (path.isEmpty()) {
-            return;
-        }
-
-        QString error;
-        if (!m_controller->exportQtMaterialXmlFile(path, &error) && !error.isEmpty()) {
-            QMessageBox::critical(this, tr("Export failed"), error);
-        }
-    });    
 
     connect(quitAction, &QAction::triggered, this, &QWidget::close);
 }

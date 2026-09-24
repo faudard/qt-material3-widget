@@ -7,9 +7,7 @@ implementation or private headers.
 
 ## Validation
 
-The old `check_public_widget_abi.py` CMake hook was retired because its backing
-script was no longer present. The maintained automated contract is the unified
-API/header-surface gate:
+The maintained automated contract is the unified API/header-surface gate:
 
 ```bash
 python3 tools/check_api_surface.py --root . --scope source

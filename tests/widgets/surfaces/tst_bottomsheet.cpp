@@ -118,8 +118,9 @@ void tst_QtMaterialBottomSheet::initialFocusAndRestoreFocus()
     host.show();
     QVERIFY(QTest::qWaitForWindowExposed(&host));
 
-    outsideButton->setFocus();
-    QCOMPARE(QApplication::focusWidget(), outsideButton);
+    host.activateWindow();
+    outsideButton->setFocus(Qt::OtherFocusReason);
+    QTRY_COMPARE(QApplication::focusWidget(), outsideButton);
 
     QtMaterial::QtMaterialBottomSheet sheet(&host);
     auto *insideButton = new QPushButton(QStringLiteral("Inside"), sheet.contentWidget());

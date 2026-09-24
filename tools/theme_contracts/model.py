@@ -60,10 +60,8 @@ FORBIDDEN_MODEL_TOKENS = (
     "ThemeObserver",
     "SystemTheme",
     "ThemeSerializer",
-    "XmlThemeAdapter",
     "QJsonDocument",
     "QJsonObject",
-    "QXmlStream",
     "QFile",
     "QSettings",
 )

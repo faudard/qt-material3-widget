@@ -36,8 +36,6 @@ public slots:
     bool applyJson(const QByteArray& json, QString* errorString = nullptr);
     bool validateJson(const QByteArray& json, QString* errorString = nullptr) const;
     bool exportJsonFile(const QString& path, QString* errorString = nullptr) const;
-    bool importQtMaterialXmlFile(const QString& path, QString* errorString = nullptr);
-    bool exportQtMaterialXmlFile(const QString& path, QString* errorString = nullptr) const;
 signals:
     void pendingOptionsChanged(const QtMaterial::ThemeOptions& options);
     void themeApplied(const QtMaterial::Theme& theme);

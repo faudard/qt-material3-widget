@@ -127,13 +127,11 @@ target_compile_definitions(qtmaterial3_theme_model
 set(QTMATERIAL3_THEME_IO_SOURCES
     qtmaterialthemeserializer.cpp
     qtmaterialthemetextcodec.cpp
-    qtmaterialxmlthemeadapter.cpp
 )
 
 set(QTMATERIAL3_THEME_IO_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemeserializer.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemetextcodec.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialxmlthemeadapter.h
 )
 
 qtm3_add_module(

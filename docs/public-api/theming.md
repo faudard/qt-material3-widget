@@ -439,7 +439,7 @@ That distinction matters because a resolved theme carries concrete token values 
 
 ## JSON schema contract
 
-The repository ships the frozen 0.6.x Theme JSON v1 schema:
+The repository ships the Theme JSON v1 schema:
 
 ```text
 docs/schema/theme.schema.json
@@ -447,7 +447,7 @@ docs/schema/theme.schema.json
 
 The schema documents the current `ThemeSerializer::kCurrentFormatVersion`, which is `1` for the first official theme JSON contract.
 
-`formatVersion: 1` is the supported persistence contract for 0.6.x. Compatible additions must preserve existing documents; breaking changes require a new format version and an explicit migration policy.
+`formatVersion: 1` is the persistence contract for the first public release. Future breaking persistence changes require a new format version.
 
 ## See also
 

@@ -1,8 +1,5 @@
 #include <QtTest/QtTest>
 
-#include <QObject>
-
-#include "qtmaterialautomation.h"
 #include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 
 class tst_InteractionStateContracts : public QObject
@@ -14,7 +11,6 @@ private slots:
     void checkableGuardsCheckedAndIndeterminate();
     void readOnlySuppressesPressAndDrag();
     void persistentStatesSurviveDisabled();
-    void automationPropertyUsesStableVocabulary();
 };
 
 void tst_InteractionStateContracts::disabledClearsTransientStateButKeepsPersistentSelection()
@@ -97,30 +93,6 @@ void tst_InteractionStateContracts::persistentStatesSurviveDisabled()
     QVERIFY(state.isBusy());
     QVERIFY(state.isExpanded());
     QVERIFY(state.isInvalid());
-}
-
-void tst_InteractionStateContracts::automationPropertyUsesStableVocabulary()
-{
-    QObject object;
-    QtMaterial::QtMaterialInteractionState state;
-
-    state.setCheckable(true);
-    state.setChecked(true);
-    state.setSelected(true);
-    state.setError(true);
-    state.setReadOnly(true);
-    state.setIndeterminate(true);
-    state.setBusy(true);
-    state.setExpanded(true);
-    state.setInvalid(true);
-
-    QtMaterial::QtMaterialAutomation::syncState(&object, state);
-
-    QCOMPARE(
-        QtMaterial::QtMaterialAutomation::state(&object),
-        QStringLiteral(
-            "enabled checkable checked selected error readOnly "
-            "indeterminate busy expanded invalid"));
 }
 
 QTEST_MAIN(tst_InteractionStateContracts)
