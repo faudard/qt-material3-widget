@@ -8,7 +8,7 @@
 
 namespace QtMaterial {
 
-class QTMATERIAL3_CORE_EXPORT QtMaterialProxyStyle : public QProxyStyle {
+class QTMATERIAL3_INTEGRATION_EXPORT QtMaterialProxyStyle : public QProxyStyle {
 public:
     explicit QtMaterialProxyStyle(QStyle* baseStyle = nullptr);
     explicit QtMaterialProxyStyle(const Theme& theme, QStyle* baseStyle = nullptr);

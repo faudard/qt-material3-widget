@@ -36,7 +36,6 @@ MODEL_HEADER_NAMES = {
     "qtmaterialcolorscheme.h",
     "qtmaterialthemeoptions.h",
     "qtmaterialtheme.h",
-    "qtmaterialthemeidentity.h",
     "qtmaterialthemebuilder.h",
     "qtmaterialthemevalidation.h",
     "qtmaterialtypographyscale.h",
@@ -127,7 +126,7 @@ def validate_contract(root: Path = ROOT) -> list[str]:
     )
     errors += require(
         root/"src/theme/CMakeLists.txt",
-        ("qtmaterialthemeidentity.cpp", "qtmaterialthemeidentity.h"),
+        ("qtmaterialthemeidentity.cpp",),
         root,
     )
     errors += require(

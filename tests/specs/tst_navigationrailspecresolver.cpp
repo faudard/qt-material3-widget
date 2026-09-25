@@ -14,7 +14,6 @@ class tst_NavigationRailSpecResolver
 private slots:
     void resolvesRuntimeValues();
     void resolvesOverrides();
-    void remainsCompatibleWithFactory();
 };
 
 void tst_NavigationRailSpecResolver::
@@ -71,31 +70,6 @@ resolvesOverrides()
     QCOMPARE(spec.railWidth, 96);
     QCOMPARE(spec.indicatorRadius, 14.0);
     QCOMPARE(spec.pressStateLayerOpacity, 0.18);
-}
-
-void tst_NavigationRailSpecResolver::
-remainsCompatibleWithFactory()
-{
-    ThemeBuilder builder;
-    const Theme theme =
-        builder.buildLightFromSeed(
-            QColor(QStringLiteral("#6750A4")));
-
-    const NavigationRailSpec resolved =
-        NavigationRailSpecResolver()
-            .navigationRailSpec(theme);
-    const NavigationRailSpec legacy =
-        NavigationRailSpecResolver().navigationRailSpec(theme);
-
-    QCOMPARE(
-        resolved.containerColor,
-        legacy.containerColor);
-    QCOMPARE(
-        resolved.indicatorRadius,
-        legacy.indicatorRadius);
-    QCOMPARE(
-        resolved.labelFont,
-        legacy.labelFont);
 }
 
 QTEST_MAIN(tst_NavigationRailSpecResolver)

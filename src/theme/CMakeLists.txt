@@ -36,7 +36,6 @@ set(QTMATERIAL3_THEME_MODEL_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialtheme.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemebuilder.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemevalidation.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemeidentity.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialtypographyscale.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialshapescale.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialelevationscale.h

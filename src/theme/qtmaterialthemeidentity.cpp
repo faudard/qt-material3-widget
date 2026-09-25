@@ -1,5 +1,3 @@
-#include "qtmaterial/theme/qtmaterialthemeidentity.h"
-
 #include "qtmaterial/theme/qtmaterialtheme.h"
 
 #include <QList>

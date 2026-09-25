@@ -12,7 +12,7 @@ class tst_TabsRouteRobustness : public QObject
 
 private slots:
     void routeValueNormalizesAtConstruction();
-    void routeLookupAcceptsLegacyForms();
+    void routeLookupNormalizesEquivalentForms();
     void urlNavigationUsesCanonicalRoute();
     void setRouteIsIdempotent();
     void currentRouteSignalIsDeduplicated();
@@ -50,7 +50,7 @@ routeValueNormalizesAtConstruction()
 }
 
 void tst_TabsRouteRobustness::
-routeLookupAcceptsLegacyForms()
+routeLookupNormalizesEquivalentForms()
 {
     QtMaterialTabs tabs;
     tabs.addTab(

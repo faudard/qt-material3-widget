@@ -3,7 +3,6 @@
 #include <type_traits>
 
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
-#include "qtmaterial/theme/qtmaterialthemeidentity.h"
 
 class ThemeIdentityTest : public QObject
 {

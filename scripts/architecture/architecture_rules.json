@@ -1423,16 +1423,18 @@
       "forbidden_regex": []
     },
     {
-      "name": "integration-owns-palette-adapter",
+      "name": "integration-owns-native-qt-bridge",
       "file": "src/integration/CMakeLists.txt",
       "required_regex": [
         "qtmaterialpaletteadapter\\.cpp",
         "qtmaterial/integration/qtmaterialpaletteadapter\\.h",
+        "qtmaterialproxystyle\\.cpp",
+        "qtmaterial/integration/qtmaterialproxystyle\\.h",
+        "Qt(?:\\$\\{QT_VERSION_MAJOR\\}|5|6)?::Widgets",
         "qtmaterial3_theme"
       ],
       "forbidden_regex": [
-        "qtmaterial3_core",
-        "Qt(?:\\$\\{QT_VERSION_MAJOR\\}|5|6)?::Widgets"
+        "qtmaterial3_core"
       ]
     },
     {
@@ -1699,7 +1701,6 @@
         "include/qtmaterial/theme/qtmaterialcolorscheme.h",
         "include/qtmaterial/theme/qtmaterialthemeoptions.h",
         "include/qtmaterial/theme/qtmaterialtheme.h",
-        "include/qtmaterial/theme/qtmaterialthemeidentity.h",
         "include/qtmaterial/theme/qtmaterialthemebuilder.h",
         "include/qtmaterial/theme/qtmaterialthemevalidation.h",
         "include/qtmaterial/theme/qtmaterialtypographyscale.h",
