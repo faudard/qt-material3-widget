@@ -2,9 +2,9 @@
 
 Widget resolution order is:
 
-`explicit ThemeContext -> nearest ancestor ThemeContextHost -> ThemeContextDefaults`.
+`explicit ThemeContext -> nearest ancestor ThemeContextHost -> private default context provider`.
 
-Core knows the default provider, not ThemeManager directly.
+Core uses a private default provider and does not depend on ThemeManager directly.
 
 ThemeContext is the sole revision authority: an equal Theme is a no-op; a successful
 different Theme increments revision exactly once and emits one change sequence.

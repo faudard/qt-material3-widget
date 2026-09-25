@@ -23,11 +23,11 @@ Typed maps (`colors`, `typography`, `shapes`, `elevations`, `motion`, `density`,
 
 ## Serialization
 
-First-party component IDs serialize with canonical names owned by `ThemeTextCodec`.
-First-party component identifiers must use their canonical serialized names.
+First-party component IDs serialize with canonical names owned by ThemeIO internals.
+Applications should use `ThemeSerializer`; the textual mapping helper is not part of the public API.
 
 Unknown third-party component names are kept opaque inside ThemeIO. They survive a Theme JSON read/write round-trip without adding QString-key APIs to ThemeModel.
 
 ## Compatibility rule
 
-A compatible 0.6.x change may add an optional component override token. It must not silently change the meaning, precedence, or canonical serialized name of an existing token.
+Compatible additions may add optional component override tokens. Breaking persistence changes require an explicit Theme JSON format-version change.

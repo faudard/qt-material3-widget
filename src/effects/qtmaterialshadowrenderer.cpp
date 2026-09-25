@@ -1,6 +1,6 @@
 #include "qtmaterial/effects/qtmaterialshadowrenderer.h"
 
-#include "qtmaterial/effects/qtmaterialshadowcache.h"
+#include "qtmaterial/effects/private/qtmaterialshadowcache_p.h"
 
 #include <QPainter>
 #include <QPixmap>

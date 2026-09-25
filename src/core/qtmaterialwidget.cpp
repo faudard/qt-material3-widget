@@ -1,7 +1,7 @@
 #include "qtmaterial/core/qtmaterialwidget.h"
-#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include "private/qtmaterialmetadata_p.h"
-#include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
+#include "qtmaterial/core/private/qtmaterialmetadataproperties_p.h"
 namespace QtMaterial {
 
 QtMaterialWidget::QtMaterialWidget(QWidget* parent)

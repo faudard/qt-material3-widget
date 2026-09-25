@@ -3,7 +3,7 @@
 #include <QtGlobal>
 #include <utility>
 
-#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include "qtmaterial/specs/qtmaterialmenuspecresolver.h"
 #include "qtmaterial/specs/qtmaterialtabsspecresolver.h"
 

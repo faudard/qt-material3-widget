@@ -131,7 +131,8 @@ set(QTMATERIAL3_THEME_IO_SOURCES
 
 set(QTMATERIAL3_THEME_IO_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemeserializer.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemetextcodec.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/private/qtmaterialthemetextcodec_p.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/private/qtmaterialtokenids_p.h
 )
 
 qtm3_add_module(
@@ -164,7 +165,7 @@ set(QTMATERIAL3_THEME_RUNTIME_SOURCES
 
 set(QTMATERIAL3_THEME_RUNTIME_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemecontext.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemecontextdefaults.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/private/qtmaterialthemecontextdefaults_p.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemecontexthost.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthememanager.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/theme/qtmaterialthemeobserver.h

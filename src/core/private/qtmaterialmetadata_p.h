@@ -6,7 +6,7 @@
 #include <QStringList>
 
 #include "qtmaterial/foundation/qtmaterialinteractionstate.h"
-#include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
+#include "qtmaterial/core/private/qtmaterialmetadataproperties_p.h"
 
 namespace QtMaterial {
 namespace MetadataPrivate {

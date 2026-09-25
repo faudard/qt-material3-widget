@@ -1,6 +1,6 @@
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
 #include "../resolution/qtmaterialnavigationspecresolution_p.h"
-#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 
 #include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h"

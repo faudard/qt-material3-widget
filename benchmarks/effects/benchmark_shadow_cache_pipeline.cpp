@@ -3,7 +3,7 @@
 #include <QPixmap>
 #include <QString>
 
-#include "qtmaterial/effects/qtmaterialshadowcache.h"
+#include "qtmaterial/effects/private/qtmaterialshadowcache_p.h"
 
 class benchmark_ShadowCachePipeline : public QObject
 {

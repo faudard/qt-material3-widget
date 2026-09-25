@@ -1,6 +1,6 @@
 #include "qtmaterial/theme/qtmaterialthemeobserver.h"
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
-#include "qtmaterial/theme/qtmaterialthemecontextdefaults.h"
+#include "qtmaterial/theme/private/qtmaterialthemecontextdefaults_p.h"
 namespace QtMaterial {
 ThemeObserver::ThemeObserver(QObject* parent) : QObject(parent)
 {

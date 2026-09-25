@@ -2,7 +2,7 @@
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
 #include "qtmaterial/core/qtmaterialwidget.h"
-#include "qtmaterial/foundation/qtmaterialmetadataproperties.h"
+#include "qtmaterial/core/private/qtmaterialmetadataproperties_p.h"
 
 using namespace QtMaterial;
 

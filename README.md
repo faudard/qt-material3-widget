@@ -41,17 +41,17 @@ The repository validates source, `add_subdirectory`, FetchContent and installed-
 
 Widgets render from resolved specs rather than performing ad hoc theme lookups during paint/layout.
 
-Primary modules:
+Supported CMake package components:
 
-- `QtMaterial3::Foundation` — dependency-light shared value types
 - `QtMaterial3::ThemeModel` — theme values, tokens and generation
 - `QtMaterial3::ThemeIO` — theme serialization
 - `QtMaterial3::ThemeRuntime` — runtime contexts and system integration
-- `QtMaterial3::Core` — common widget/control infrastructure
-- `QtMaterial3::Specs` — component specs and resolvers
-- `QtMaterial3::Effects` — ripple, focus, elevation, shadow and transitions
 - `QtMaterial3::Integration` — optional Qt palette/theme integration helpers
 - `QtMaterial3::Widgets` — public Material 3 widgets
+
+Foundation, Core, Specs and Effects remain exported dependency targets required
+by the installed target graph, but they are not supported `find_package(... COMPONENTS ...)`
+entry points for applications.
 
 ## Documentation
 

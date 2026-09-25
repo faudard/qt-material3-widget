@@ -126,7 +126,7 @@
         "startTo",
         "finish()"
       ],
-      "include/qtmaterial/effects/qtmaterialshadowcache.h": [
+      "include/qtmaterial/effects/private/qtmaterialshadowcache_p.h": [
         "devicePixelRatio"
       ],
       "include/qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h": [

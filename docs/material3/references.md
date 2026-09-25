@@ -1,84 +1,31 @@
-# Material 3 references
+# Material 3 upstream references
 
-This page maps the most useful upstream Material 3 references to the corresponding areas of `qt-material3-widget`.
+Use the upstream Material 3 documentation as the design-system reference when
+reviewing QtMaterial3 behavior. This repository documents the Qt Widgets API and
+its platform adaptations; it does not maintain a second, partially implemented
+Material reference model.
 
-For conformance work, do not treat this live-link index as a pinned baseline. Use
-the [versioned Material reference model](../conformance/material-reference-model.md),
-whose profiles, component models and case suites are validated in CI. The first
-[structural conformance vertical](../conformance/structural-conformance.md) is
-documented separately from renderer and visual conformance.
-The active [renderer conformance verticals](../conformance/renderer-conformance.md)
-record semantic colors, disabled alpha, interaction feedback and elevation for
-Text, Filled, Filled Tonal, Elevated and Outlined Buttons using the same
-deterministic fixture.
-The [visual comparator contract](../conformance/visual-comparator.md) closes the
-future capture environment, state phases, target matrix and reference paths;
-it is deliberately separate from runtime pixel evidence.
+## Foundations
 
-These links are **design-system references**, not the project API reference. Use them to understand Material semantics, token naming, and component behavior. Then use this repository’s own guides and generated C++ API pages to see how those ideas are implemented in Qt.
-
-## Start here
-
-- Material 3 get started: <https://m3.material.io/get-started>
-- Material 3 styles overview: <https://m3.material.io/styles>
-- Material 3 usability foundations: <https://m3.material.io/foundations/usability>
-- Material customization: <https://m3.material.io/foundations/customization>
-
-## Theme and design tokens
-
-### Color
-
-Use these pages when working with `ThemeOptions`, `Theme`, `ColorScheme`, and color-role mapping in widgets.
-
-- Color overview: <https://m3.material.io/styles/color/overview>
-- Color roles: <https://m3.material.io/styles/color/roles>
-- How the color system works: <https://m3.material.io/styles/color/system/how-the-system-works>
-- Choosing a color scheme: <https://m3.material.io/styles/color/choosing-a-scheme>
-- Static and branded color guidance: <https://m3.material.io/styles/color/static>
-
-### Typography
-
-Use these pages when working with `TypographyScale`, `TypographyStyle`, and text hierarchy in components.
-
-- Typography overview: <https://m3.material.io/styles/typography>
-- Type scale tokens: <https://m3.material.io/styles/typography/type-scale-tokens>
-- Applying type: <https://m3.material.io/styles/typography/applying-type>
-- Fonts: <https://m3.material.io/styles/typography/fonts>
-
-### Shape
-
-Use these pages when working with `ShapeScale` and component corner-radius decisions.
-
-- Shape overview: <https://m3.material.io/styles/shape>
-- Corner radius scale: <https://m3.material.io/styles/shape/corner-radius-scale>
-
-### Motion
-
-Use these pages when working with `MotionTokens`, transitions, and interaction timing.
-
-- Motion overview: <https://m3.material.io/styles/motion/overview/how-it-works>
-- Motion specifications: <https://m3.material.io/styles/motion/overview/specs>
-- Easing and duration: <https://m3.material.io/styles/motion/easing-and-duration>
-- Transitions: <https://m3.material.io/styles/motion/transitions>
+- Color system: <https://m3.material.io/styles/color/overview>
+- Typography: <https://m3.material.io/styles/typography/overview>
+- Shape: <https://m3.material.io/styles/shape/overview>
+- Motion: <https://m3.material.io/styles/motion/overview/how-it-works>
+- Accessibility: <https://m3.material.io/foundations/accessible-design/overview>
 
 ## Components
 
-Use these pages to cross-check component family behavior when designing or reviewing widgets.
+Use the corresponding upstream component page when changing a widget family.
+Examples:
 
-- Buttons overview: <https://m3.material.io/components/buttons/overview>
-- Cards specs: <https://m3.material.io/components/cards/specs>
+- Buttons: <https://m3.material.io/components/buttons/overview>
+- Cards: <https://m3.material.io/components/cards/overview>
+- Dialogs: <https://m3.material.io/components/dialogs/overview>
+- Navigation: <https://m3.material.io/components/navigation-bar/overview>
 
-Add more component-specific links here as new widget families mature.
+## Repository guidance
 
-## How to use these references in this repository
-
-A practical rule of thumb:
-
-- use **Material 3 docs** for visual semantics, token meaning, and interaction expectations
-- use **`docs/public-api/*`** for package-level guidance
-- use **`docs/api/index.md`** for exact C++ classes and members
-- use **`references/material3/`** for pinned, machine-readable conformance evidence
-
-## Documentation policy suggestion
-
-When a Qt API page claims that a class implements a Material 3 behavior, add one upstream Material 3 reference link near the top of the page. That keeps the project docs grounded in the design system without replacing the project’s own responsibility to document its public API.
+- use upstream Material 3 docs for visual semantics and interaction intent;
+- use `docs/public-api/` for supported QtMaterial3 usage;
+- use `docs/api/index.md` for exact C++ signatures;
+- use the component registry and executable tests for repository maturity evidence.

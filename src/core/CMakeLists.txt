@@ -15,9 +15,10 @@ set(QTMATERIAL3_CORE_SOURCES
 
 set(QTMATERIAL3_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialwidget.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialthemecontextbinding.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/private/qtmaterialthemecontextbinding_p.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialeventcompat.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/private/qtmaterialmetadataproperties_p.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialcontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialsurface.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialoverlaysurface.h

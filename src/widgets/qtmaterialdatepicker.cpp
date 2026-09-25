@@ -1,6 +1,6 @@
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
 #include "resolution/qtmaterialinputspecresolution_p.h"
-#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include <memory>
 
 #include <QCalendarWidget>

@@ -3,8 +3,7 @@
 namespace QtMaterial {
 
 /**
- * Stable QObject dynamic-property names shared by runtime widgets and
- * optional automation/testing utilities.
+ * Internal stable QObject dynamic-property names used by runtime widgets.
  *
  * This type deliberately has no Qt dependency.
  */

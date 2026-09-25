@@ -1,8 +1,8 @@
-#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include <QEvent>
 #include <QWidget>
 #include "private/qtmaterialthemecontextpropagation_p.h"
-#include "qtmaterial/theme/qtmaterialthemecontextdefaults.h"
+#include "qtmaterial/theme/private/qtmaterialthemecontextdefaults_p.h"
 #include "qtmaterial/theme/qtmaterialthemecontexthost.h"
 namespace QtMaterial {
 QtMaterialThemeContextBinding::QtMaterialThemeContextBinding(QWidget* host, QObject* parent)

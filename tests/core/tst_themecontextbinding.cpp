@@ -1,6 +1,6 @@
 #include <QtTest>
 
-#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include "qtmaterial/core/qtmaterialwidget.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemecontexthost.h"

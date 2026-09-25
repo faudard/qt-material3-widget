@@ -1,7 +1,7 @@
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
 
 
-#include "qtmaterial/core/qtmaterialthemecontextbinding.h"
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include <QAbstractItemModel>
 #include <QAccessible>
 #include <QFocusEvent>

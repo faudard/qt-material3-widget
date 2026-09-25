@@ -69,15 +69,8 @@ theme.tokenValue(TokenId(...)).value<QColor>();
 
 ThemeModel contains numeric mappings only. It contains no persistent token names.
 
-ThemeIO owns:
-
-```cpp
-ThemeTextCodec::tokenIdToString()
-ThemeTextCodec::tokenIdFromString()
-```
-
-The serializer therefore no longer has separate `kColorRoles`, `kTypeRoles`, etc. name
-tables. This gives one textual mapping boundary.
+ThemeIO owns the private typed-ID/text mapping used by `ThemeSerializer`.
+The serializer therefore has one textual mapping boundary and ThemeModel does not expose persistent string-key APIs.
 
 ## Component identity
 
@@ -97,6 +90,6 @@ TokenId(ColorRole::Primary)
 1. Existing raw IDs are never renumbered.
 2. Removed IDs become reserved; they are not reused for a different semantic token.
 3. New categories receive a new explicit category byte.
-4. Token textual names may gain read aliases in ThemeIO, but canonical names are versioned.
+4. Canonical token names are versioned through the Theme JSON contract.
 5. `TokenId::EncodingVersion` changes only for a deliberate encoding break.
 6. Enum ordinal values are never used as persistence identities.

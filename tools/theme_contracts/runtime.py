@@ -7,7 +7,7 @@ from typing import Sequence
 ROOT = Path(__file__).resolve().parents[2]
 
 RUNTIME_HEADERS = (
-    "qtmaterialthemecontext.h","qtmaterialthemecontextdefaults.h",
+    "qtmaterialthemecontext.h","private/qtmaterialthemecontextdefaults_p.h",
     "qtmaterialthemecontexthost.h","qtmaterialthememanager.h",
     "qtmaterialthemeobserver.h","qtmaterialsystemtheme.h",
 )
@@ -42,7 +42,7 @@ def validate(root: Path = ROOT) -> list[str]:
             if "qtmaterial3_theme_io" in block:
                 errors.append("ThemeRuntime must not link ThemeIO")
         for token in ("qtmaterialthemecontextdefaults.cpp",
-                      "qtmaterialthemecontextdefaults.h"):
+                      "private/qtmaterialthemecontextdefaults_p.h"):
             if token not in data:
                 errors.append(f"ThemeRuntime target missing {token}")
 

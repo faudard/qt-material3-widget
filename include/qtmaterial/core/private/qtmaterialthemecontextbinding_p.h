@@ -12,7 +12,7 @@ class QWidget;
 namespace QtMaterial {
 
 /**
- * Composition-based ThemeContext integration for widgets that already need a
+ * Internal composition-based ThemeContext integration for widgets that already need a
  * Qt base class such as QTableView or QListWidget.
  *
  * Resolution order is identical to QtMaterialWidget:

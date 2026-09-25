@@ -1,4 +1,4 @@
-#include "qtmaterial/effects/qtmaterialpaintcache.h"
+#include "qtmaterial/effects/private/qtmaterialpaintcache_p.h"
 
 #include <QPixmapCache>
 

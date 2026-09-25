@@ -696,7 +696,7 @@
     {
       "name": "theme-context-binding-is-composition-only",
       "files": [
-        "include/qtmaterial/core/qtmaterialthemecontextbinding.h",
+        "include/qtmaterial/core/private/qtmaterialthemecontextbinding_p.h",
         "src/core/qtmaterialthemecontextbinding.cpp"
       ],
       "required_regex": [
@@ -1420,7 +1420,7 @@
       "file": "src/effects/CMakeLists.txt",
       "required_regex": [
         "qtmaterialpaintcache\\.cpp",
-        "qtmaterial/effects/qtmaterialpaintcache\\.h"
+        "qtmaterial/effects/private/qtmaterialpaintcache_p\\.h"
       ],
       "forbidden_regex": []
     },
@@ -1538,7 +1538,7 @@
       "file": "src/core/CMakeLists.txt",
       "required_regex": [
         "qtmaterialthemecontextbinding\\.cpp",
-        "qtmaterial/core/qtmaterialthemecontextbinding\\.h",
+        "qtmaterial/core/private/qtmaterialthemecontextbinding_p\\.h",
         "private/qtmaterialthemecontextpropagation\\.cpp"
       ],
       "forbidden_regex": []
@@ -1713,7 +1713,7 @@
         "include/qtmaterial/theme/qtmaterialiconsizetokens.h",
         "include/qtmaterial/theme/qtmaterialcomponenttokens.h",
         "include/qtmaterial/theme/qtmaterialaccessibilitytokens.h",
-        "include/qtmaterial/theme/qtmaterialtokenids.h",
+        "include/qtmaterial/theme/private/qtmaterialtokenids_p.h",
         "src/theme/qtmaterialcolorbackend.cpp",
         "src/theme/qtmaterialcolorscheme.cpp",
         "src/theme/qtmaterialthemeoptions.cpp",
@@ -1835,7 +1835,7 @@
         "include/qtmaterial/theme/io/**",
         "src/theme/io/**",
         "include/qtmaterial/theme/qtmaterialthemeserializer.h",
-        "include/qtmaterial/theme/qtmaterialthemetextcodec.h",
+        "include/qtmaterial/theme/private/qtmaterialthemetextcodec_p.h",
         "src/theme/qtmaterialthemeserializer.cpp",
         "src/theme/qtmaterialthemetextcodec.cpp"
       ],
