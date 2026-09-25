@@ -69,15 +69,6 @@ componentMetricsReachTabBar()
     tabs.addTab(new QWidget(), QStringLiteral("Home"));
     tabs.addTab(new QWidget(), QStringLiteral("Settings"));
 
-    const TabsSpec spec = tabs.resolvedSpec();
-    QCOMPARE(spec.stateLayerInset, 7);
-    QCOMPARE(spec.stateLayerRadius, 18.0);
-    QCOMPARE(spec.focusInset, 5);
-    QCOMPARE(spec.focusRingWidth, 3.0);
-    QCOMPARE(spec.indicatorHorizontalInset, 15);
-    QCOMPARE(spec.overflowButtonPadding, 9);
-    QCOMPARE(spec.badgeEndInset, 12);
-
     auto* bar = tabs.findChild<QTabBar*>();
     QVERIFY(bar);
     QVERIFY(

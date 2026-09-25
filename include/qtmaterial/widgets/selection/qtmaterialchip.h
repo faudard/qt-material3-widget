@@ -46,7 +46,6 @@ public:
     QIcon trailingIcon() const;
     void setTrailingIcon(const QIcon& icon);
 
-    const ChipSpec& resolvedSpec() const;
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
@@ -70,6 +69,7 @@ protected:
     void contentChangedEvent() override;
 
 private:
+    const ChipSpec& resolvedSpec() const;
     void ensureSpecResolved() const;
     ChipSpec resolveSpec() const;
 
