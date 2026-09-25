@@ -9,13 +9,13 @@
 #include <memory>
 
 #include "qtmaterial/core/qtmaterialwidget.h"
-#include "qtmaterial/specs/qtmaterialdividerspec.h"
 
 class QEvent;
 class QPaintEvent;
 
 namespace QtMaterial {
 
+struct DividerSpec;
 class QtMaterialDividerPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDivider
@@ -99,7 +99,6 @@ public:
     QString accessibilitySummary() const;
 
     QRect lineRect() const;
-    const DividerSpec& resolvedSpec() const;
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
@@ -125,6 +124,7 @@ protected:
         const QtMaterial::Theme& theme) override;
 
 private:
+    const DividerSpec& resolvedSpec() const;
     void ensureSpecResolved() const;
     void invalidateResolvedSpec();
     void updateMinimumExtent();

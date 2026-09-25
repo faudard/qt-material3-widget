@@ -5,10 +5,10 @@
 #include <QIcon>
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
-#include "qtmaterial/specs/qtmaterialsegmentedbuttonspec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+struct SegmentedButtonSpec;
 struct QtMaterialSegmentedButtonPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSegmentedButton : public QtMaterialControl {
@@ -49,7 +49,6 @@ public:
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
-    const SegmentedButtonSpec& resolvedSpec() const;
 
 signals:
     void currentIndexChanged(int index);
@@ -66,6 +65,7 @@ protected:
     void invalidateResolvedSpec() override;
 
 private:
+    const SegmentedButtonSpec& resolvedSpec() const;
     void toggleIndex(int index);
     int firstEnabledIndex() const noexcept;
     int lastEnabledIndex() const noexcept;

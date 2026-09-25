@@ -8,10 +8,10 @@
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
 #include "qtmaterial/qtmaterialglobal.h"
-#include "qtmaterial/specs/qtmaterialnavigationrailspec.h"
 
 namespace QtMaterial {
 
+struct NavigationRailSpec;
 class QtMaterialNavigationRailPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialNavigationRail
@@ -64,7 +64,6 @@ public:
     bool labelsVisible() const noexcept;
     void setLabelsVisible(bool visible);
 
-    const NavigationRailSpec& resolvedSpec() const;
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
@@ -91,6 +90,7 @@ protected:
     void invalidateResolvedSpec() override;
 
 private:
+    const NavigationRailSpec& resolvedSpec() const;
     void ensureSpecResolved() const;
     void syncAccessibility();
 

@@ -9,6 +9,15 @@ HEADER_SUFFIXES = {".h", ".hh", ".hpp", ".hxx"}
 # paths do not use a private/ directory or _p suffix. They are never installed.
 INTERNAL_HEADER_PATHS = frozenset({
     "qtmaterial/core/qtmaterialeventcompat.h",
+    "qtmaterial/specs/qtmaterialautocompletepopupspec.h",
+    "qtmaterial/specs/qtmaterialautocompletespec.h",
+    "qtmaterial/specs/qtmaterialdatefieldspec.h",
+    "qtmaterial/specs/qtmaterialdividerspec.h",
+    "qtmaterial/specs/qtmateriallistitemspec.h",
+    "qtmaterial/specs/qtmateriallistspec.h",
+    "qtmaterial/specs/qtmaterialnavigationrailspec.h",
+    "qtmaterial/specs/qtmaterialsegmentedbuttonspec.h",
+    "qtmaterial/specs/qtmaterialsnackbarspec.h",
     "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h",
     "qtmaterial/specs/qtmaterialappbarspecresolver.h",
     "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h",

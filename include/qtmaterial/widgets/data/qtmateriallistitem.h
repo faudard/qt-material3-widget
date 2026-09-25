@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
-#include "qtmaterial/specs/qtmateriallistitemspec.h"
 
 class QEvent;
 class QKeyEvent;
@@ -17,6 +16,7 @@ class QPaintEvent;
 
 namespace QtMaterial {
 
+struct ListItemSpec;
 class QtMaterialListItemPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialListItem
@@ -91,7 +91,6 @@ public:
     DensityVariant densityVariant() const noexcept;
     void setDensityVariant(DensityVariant variant);
 
-    const ListItemSpec& resolvedSpec() const;
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
@@ -114,6 +113,7 @@ protected:
     void stateChangedEvent() override;
 
 private:
+    const ListItemSpec& resolvedSpec() const;
     void ensureSpecResolved() const;
     int resolvedHeight() const;
     void contentChangedEvent();
