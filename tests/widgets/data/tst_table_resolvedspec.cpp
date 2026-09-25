@@ -28,7 +28,7 @@ exposesResolvedSpec()
     QtMaterialTable table;
 
     const TableSpec& spec =
-        table.resolvedSpec();
+        table.spec();
 
     QVERIFY(spec.backgroundColor.isValid());
     QVERIFY(spec.foregroundColor.isValid());
@@ -53,7 +53,7 @@ themeContextRefreshesSpec()
     table.setThemeContext(&context);
 
     const QColor first =
-        table.resolvedSpec().focusRingColor;
+        table.spec().focusRingColor;
 
     context.setTheme(
         ThemeBuilder().buildLightFromSeed(
@@ -61,7 +61,7 @@ themeContextRefreshesSpec()
                 QStringLiteral("#006874"))));
 
     const QColor second =
-        table.resolvedSpec().focusRingColor;
+        table.spec().focusRingColor;
 
     QVERIFY(first != second);
     QCOMPARE(
@@ -82,7 +82,7 @@ explicitSpecRemainsStable()
     table.setThemeContext(&context);
 
     TableSpec explicitSpec =
-        table.resolvedSpec();
+        table.spec();
     explicitSpec.rowHeight = 71;
     explicitSpec.backgroundColor =
         QColor(Qt::yellow);
@@ -91,10 +91,10 @@ explicitSpecRemainsStable()
 
     QVERIFY(table.hasExplicitSpec());
     QCOMPARE(
-        table.resolvedSpec().rowHeight,
+        table.spec().rowHeight,
         71);
     QCOMPARE(
-        table.resolvedSpec().backgroundColor,
+        table.spec().backgroundColor,
         QColor(Qt::yellow));
 
     context.setTheme(
@@ -103,10 +103,10 @@ explicitSpecRemainsStable()
                 QStringLiteral("#006874"))));
 
     QCOMPARE(
-        table.resolvedSpec().rowHeight,
+        table.spec().rowHeight,
         71);
     QCOMPARE(
-        table.resolvedSpec().backgroundColor,
+        table.spec().backgroundColor,
         QColor(Qt::yellow));
 }
 
@@ -122,7 +122,7 @@ resetSpecRestoresThemeResolution()
     table.setThemeContext(&context);
 
     TableSpec explicitSpec =
-        table.resolvedSpec();
+        table.spec();
     explicitSpec.backgroundColor =
         QColor(Qt::yellow);
     table.setSpec(explicitSpec);
@@ -131,7 +131,7 @@ resetSpecRestoresThemeResolution()
 
     QVERIFY(!table.hasExplicitSpec());
     QCOMPARE(
-        table.resolvedSpec().backgroundColor,
+        table.spec().backgroundColor,
         context.theme().colorScheme().color(
             ColorRole::Surface));
 }
@@ -150,7 +150,7 @@ denseUsesCompactMetrics()
     QCOMPARE(
         table.verticalHeader()
             ->defaultSectionSize(),
-        table.resolvedSpec().denseRowHeight);
+        table.spec().denseRowHeight);
     QVERIFY(
         table.verticalHeader()
             ->defaultSectionSize()

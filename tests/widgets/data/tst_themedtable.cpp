@@ -32,10 +32,10 @@ void tst_ThemedTable::resolvesDefaultSpecFromParentContext()
     QVERIFY(!table.hasExplicitSpec());
     QCOMPARE(table.effectiveThemeContext(), &context);
     QCOMPARE(
-        table.resolvedSpec().backgroundColor,
+        table.spec().backgroundColor,
         theme.colorScheme().color(ColorRole::Surface));
     QCOMPARE(
-        table.resolvedSpec().bodyFont,
+        table.spec().bodyFont,
         theme.typography().style(TypeRole::BodyMedium).font);
 }
 
@@ -49,14 +49,14 @@ void tst_ThemedTable::followsThemeChangesInThemeMode()
 
     QtMaterialTable table;
     table.setThemeContext(&context);
-    const QColor before = table.resolvedSpec().backgroundColor;
+    const QColor before = table.spec().backgroundColor;
 
     QVERIFY(context.setTheme(second));
 
     QCOMPARE(
-        table.resolvedSpec().backgroundColor,
+        table.spec().backgroundColor,
         second.colorScheme().color(ColorRole::Surface));
-    QVERIFY(table.resolvedSpec().backgroundColor != before);
+    QVERIFY(table.spec().backgroundColor != before);
 }
 
 void tst_ThemedTable::explicitSpecRemainsPinned()
@@ -68,7 +68,7 @@ void tst_ThemedTable::explicitSpecRemainsPinned()
     QtMaterialTable table;
     table.setThemeContext(&context);
 
-    TableSpec explicitSpec = table.resolvedSpec();
+    TableSpec explicitSpec = table.spec();
     explicitSpec.backgroundColor = QColor(QStringLiteral("#123456"));
     explicitSpec.rowHeight = 77;
     table.setSpec(explicitSpec);
@@ -80,9 +80,9 @@ void tst_ThemedTable::explicitSpecRemainsPinned()
     QVERIFY(context.setTheme(replacement));
 
     QCOMPARE(
-        table.resolvedSpec().backgroundColor,
+        table.spec().backgroundColor,
         QColor(QStringLiteral("#123456")));
-    QCOMPARE(table.resolvedSpec().rowHeight, 77);
+    QCOMPARE(table.spec().rowHeight, 77);
 }
 
 void tst_ThemedTable::resetSpecReturnsToThemeMode()
@@ -94,14 +94,14 @@ void tst_ThemedTable::resetSpecReturnsToThemeMode()
     QtMaterialTable table;
     table.setThemeContext(&context);
 
-    TableSpec explicitSpec = table.resolvedSpec();
+    TableSpec explicitSpec = table.spec();
     explicitSpec.backgroundColor = QColor(QStringLiteral("#123456"));
     table.setSpec(explicitSpec);
     table.resetSpec();
 
     QVERIFY(!table.hasExplicitSpec());
     QCOMPARE(
-        table.resolvedSpec().backgroundColor,
+        table.spec().backgroundColor,
         theme.colorScheme().color(ColorRole::Surface));
 }
 

@@ -107,7 +107,6 @@ public:
     QString currentItemAccessibleText() const;
     QString accessibilitySummary() const;
 
-    const CarouselSpec& resolvedSpec() const;
     CarouselSpec spec() const;
     void setSpec(const CarouselSpec& spec);
     bool hasExplicitSpec() const noexcept;
@@ -146,6 +145,7 @@ protected:
     void changeEvent(QEvent* event) override;
 
 private:
+    const CarouselSpec& resolvedSpec() const;
     void ensureSpecResolved() const;
     int indexAtPosition(const QPoint& position) const;
 

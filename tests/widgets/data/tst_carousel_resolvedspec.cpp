@@ -35,7 +35,7 @@ exposesResolvedSpec()
     carousel.setThemeContext(&context);
 
     QCOMPARE(
-        carousel.resolvedSpec().itemSelectedColor,
+        carousel.spec().itemSelectedColor,
         QColor(Qt::green));
     QVERIFY(
         qobject_cast<QtMaterialControl*>(
@@ -63,13 +63,13 @@ refreshesAfterThemeChange()
     carousel.setThemeContext(&context);
 
     QCOMPARE(
-        carousel.resolvedSpec().backgroundColor,
+        carousel.spec().backgroundColor,
         QColor(Qt::red));
 
     QVERIFY(context.setTheme(second));
 
     QCOMPARE(
-        carousel.resolvedSpec().backgroundColor,
+        carousel.spec().backgroundColor,
         QColor(Qt::blue));
 }
 

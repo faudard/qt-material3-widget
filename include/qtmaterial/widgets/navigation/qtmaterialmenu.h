@@ -62,7 +62,6 @@ public:
     effectiveThemeContext() const noexcept override;
 
     QtMaterial::MenuSpec spec() const;
-    const QtMaterial::MenuSpec& resolvedSpec() const noexcept;
     void setSpec(const QtMaterial::MenuSpec& spec);
     bool hasExplicitSpec() const noexcept;
     void resetSpec();
@@ -129,6 +128,7 @@ protected:
     void changeEvent(QEvent* event) override;
 
 private:
+    const QtMaterial::MenuSpec& resolvedSpec() const noexcept;
     void resolveThemeSpec();
     void applySpec();
     void ensureCurrentIndex();

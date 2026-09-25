@@ -35,10 +35,10 @@ void tst_ThemedCarousel::resolvesSpecFromParentContext()
     QCOMPARE(carousel.effectiveThemeContext(), &context);
     QVERIFY(!carousel.hasExplicitSpec());
     QCOMPARE(
-        carousel.resolvedSpec().itemBackgroundColor,
+        carousel.spec().itemBackgroundColor,
         expected.itemBackgroundColor);
     QCOMPARE(
-        carousel.resolvedSpec().supportingFont,
+        carousel.spec().supportingFont,
         expected.supportingFont);
 }
 
@@ -72,16 +72,16 @@ void tst_ThemedCarousel::followsThemeChanges()
     QtMaterialCarousel carousel;
     carousel.setThemeContext(&context);
     const QColor before =
-        carousel.resolvedSpec().backgroundColor;
+        carousel.spec().backgroundColor;
 
     QVERIFY(context.setTheme(second));
 
     const CarouselSpec expected =
         DataSpecResolver().carouselSpec(second);
     QCOMPARE(
-        carousel.resolvedSpec().backgroundColor,
+        carousel.spec().backgroundColor,
         expected.backgroundColor);
-    QVERIFY(carousel.resolvedSpec().backgroundColor != before);
+    QVERIFY(carousel.spec().backgroundColor != before);
 }
 
 void tst_ThemedCarousel::explicitSpecRemainsPinned()
@@ -106,14 +106,14 @@ void tst_ThemedCarousel::explicitSpecRemainsPinned()
             QColor(QStringLiteral("#006874")))));
 
     QCOMPARE(
-        carousel.resolvedSpec().itemSelectedColor,
+        carousel.spec().itemSelectedColor,
         QColor(QStringLiteral("#123456")));
-    QCOMPARE(carousel.resolvedSpec().cornerRadius, 8);
+    QCOMPARE(carousel.spec().cornerRadius, 8);
 
     carousel.resetSpec();
     QVERIFY(!carousel.hasExplicitSpec());
     QVERIFY(
-        carousel.resolvedSpec().itemSelectedColor
+        carousel.spec().itemSelectedColor
         != QColor(QStringLiteral("#123456")));
 }
 

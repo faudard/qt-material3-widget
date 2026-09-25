@@ -43,7 +43,6 @@ public:
     void setMaximumDate(const QDate& date);
 
     DatePickerSpec spec() const;
-    const DatePickerSpec& resolvedSpec() const;
     void setSpec(const DatePickerSpec& spec);
     bool hasExplicitSpec() const noexcept;
     void resetSpec();
@@ -67,6 +66,7 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
+    const DatePickerSpec& resolvedSpec() const;
     void buildUi();
     void updateHeader();
     void updateTranslations();

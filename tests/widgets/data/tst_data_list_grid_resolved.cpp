@@ -118,7 +118,7 @@ gridListUsesResolvedSpec()
     grid.setThemeContext(&context);
 
     QCOMPARE(
-        grid.resolvedSpec().itemSelectedColor,
+        grid.spec().itemSelectedColor,
         QColor(Qt::green));
     QCOMPARE(
         grid.palette().color(
@@ -170,13 +170,13 @@ gridListRefreshesAfterThemeChange()
     grid.setThemeContext(&context);
 
     QCOMPARE(
-        grid.resolvedSpec().foregroundColor,
+        grid.spec().foregroundColor,
         QColor(Qt::red));
 
     QVERIFY(context.setTheme(second));
 
     QCOMPARE(
-        grid.resolvedSpec().foregroundColor,
+        grid.spec().foregroundColor,
         QColor(Qt::blue));
 }
 
