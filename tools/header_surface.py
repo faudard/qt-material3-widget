@@ -8,6 +8,7 @@ HEADER_SUFFIXES = {".h", ".hh", ".hpp", ".hxx"}
 # Source-tree headers that are implementation-only even though their historical
 # paths do not use a private/ directory or _p suffix. They are never installed.
 INTERNAL_HEADER_PATHS = frozenset({
+    "qtmaterial/core/qtmaterialeventcompat.h",
     "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h",
     "qtmaterial/specs/qtmaterialappbarspecresolver.h",
     "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h",

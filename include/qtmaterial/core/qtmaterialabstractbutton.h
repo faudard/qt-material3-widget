@@ -9,7 +9,6 @@ class QMouseEvent;
 #include <QIcon>
 #include <QString>
 
-#include "qtmaterial/core/qtmaterialeventcompat.h"
 #include "qtmaterial/foundation/qtmaterialdensity.h"
 #include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include <QString>
@@ -77,7 +76,6 @@ protected:
     virtual void contentChangedEvent();
 
     bool event(QEvent* event) override;
-    void enterEvent(EnterEvent* event) override;
     void leaveEvent(QEvent* event) override;
     void focusInEvent(QFocusEvent* event) override;
     void focusOutEvent(QFocusEvent* event) override;

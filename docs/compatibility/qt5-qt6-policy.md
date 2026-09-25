@@ -15,10 +15,11 @@ ABI-compatible v142 compiler family.
 The local/reference workstation contract additionally covers **MSVC 14.28 /
 cl 19.28**. Hosted CI MUST NOT pretend to test that exact compiler minor.
 
-Version-specific API differences belong in
-`include/qtmaterial/core/qtmaterialeventcompat.h` or a narrowly scoped
-private adapter. Examples include Qt5 `localPos()/screenPos()` versus Qt6
-`position()/globalPosition()`, QWidget enter-event signatures, and
-`QEvent::DevicePixelRatioChange` (Qt 6.6+ only).
+Version-specific API differences belong in narrowly scoped internal adapters.
+`include/qtmaterial/core/qtmaterialeventcompat.h` is source-tree implementation
+support and is not installed as part of the 0.9 API candidate. Public base classes
+avoid Qt-major-dependent enter-event signatures by using the stable `event(QEvent*)`
+boundary. Other examples include Qt5 `localPos()/screenPos()` versus Qt6
+`position()/globalPosition()` and `QEvent::DevicePixelRatioChange` (Qt 6.6+ only).
 
 Python bindings remain a separate Qt6/PySide6/Shiboken6 contract.
