@@ -10,7 +10,6 @@ set(QTMATERIAL3_CORE_SOURCES
     private/qtmaterialaccessibilityhelper.cpp
     private/qtmaterialmetadata_p.h
     qtmaterialasyncstate.cpp
-    qtmaterialproxystyle.cpp
 )
 
 set(QTMATERIAL3_CORE_HEADERS
@@ -25,7 +24,6 @@ set(QTMATERIAL3_CORE_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialabstractbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialselectioncontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialasyncstate.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/core/qtmaterialproxystyle.h
 )
 
 qtm3_add_module(
@@ -46,7 +44,5 @@ target_link_libraries(
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Gui
         Qt${QT_VERSION_MAJOR}::Widgets
-    PRIVATE
-        qtmaterial3_integration
 )
 

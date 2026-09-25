@@ -43,7 +43,7 @@ class ThemeModelCheckerTests(unittest.TestCase):
                 )
             (root/"include/qtmaterial/theme"/name).write_text(text, encoding="utf-8")
         (root/"src/theme/CMakeLists.txt").write_text(
-            "qtmaterialthemeidentity.cpp qtmaterialthemeidentity.h\n",
+            "qtmaterialthemeidentity.cpp\n",
             encoding="utf-8",
         )
         (root/"src/theme/qtmaterialthemecontext.cpp").write_text(

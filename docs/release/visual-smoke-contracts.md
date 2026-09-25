@@ -1,8 +1,9 @@
 # Visual smoke contracts
 
-This document defines the first release-level visual smoke tests for QtMaterial3Widgets.
+Visual smoke tests are the lightweight rendering guardrail for QtMaterial3.
+They complement, rather than replace, the maintained visual-regression harness.
 
-These tests are intentionally lighter than pixel-perfect visual regression. Their goal is to catch severe rendering regressions early:
+Their goal is to catch severe rendering regressions early:
 
 - widgets that crash during rendering;
 - widgets that render to an empty image;
@@ -11,41 +12,34 @@ These tests are intentionally lighter than pixel-perfect visual regression. Thei
 
 ## Scope
 
-The visual smoke suite covers a representative page made from:
+`tst_visual_smoke_contracts` renders representative controls including buttons,
+text fields, selection controls, progress indicators, and tabs/navigation
+content. Coverage includes left-to-right, right-to-left, and DPR 2.0 rendering.
 
-- filled, outlined, and text buttons;
-- outlined text fields;
-- checkbox, radio button, and switch;
-- linear and circular progress indicators;
-- tabs/navigation content.
+The related `tst_navigation_dialog_hidpi_contracts` suite exercises navigation,
+dialogs, accessibility, RTL, and high-DPI integration paths.
 
-Each page is rendered in:
+## Relationship to visual regression
 
-- left-to-right layout;
-- right-to-left layout;
-- high-DPI rendering with device pixel ratio `2.0`.
+Pixel/golden regression is maintained separately by
+`tst_theme_visual_regression`.
 
-## Non-goals
+That harness covers deterministic token-board snapshots and representative
+component-grid rendering. Strict pixel comparison remains opt-in because native
+font and rasterization output varies across platforms.
 
-This suite does not compare against golden screenshots yet. It does not enforce exact colors, shadows, typography metrics, or pixel positions.
-
-Those checks should come later in a dedicated visual regression system with explicit baselines per platform, Qt version, theme mode, density, and DPI scale.
+See [Visual regression testing](../public-api/visual-regression.md) for golden
+update and strict-comparison commands.
 
 ## Release expectation
 
-For a release candidate, this suite must pass together with the keyboard/accessibility and migration contract tests:
+For a release candidate, run the smoke, accessibility, and visual-regression
+contracts together:
 
 ```bash
-ctest --test-dir build -R "visual_smoke|keyboard_accessibility|navigation_dialog_hidpi|widget_migration" --output-on-failure
+ctest --test-dir build --output-on-failure \
+  -R "tst_visual_smoke_contracts|tst_keyboard_accessibility|tst_navigation_dialog_hidpi_contracts|tst_theme_visual_regression"
 ```
 
-## Future work
-
-The next visual QA step is to generate stable screenshot baselines for:
-
-- light and dark mode;
-- standard, medium, and high contrast;
-- comfortable and compact density;
-- disabled, hovered, pressed, focused, selected, error, and busy states;
-- high-DPI factors `1.25`, `1.5`, and `2.0`;
-- Windows, Linux, and macOS separately when required by font or style differences.
+The smoke suites validate catastrophic rendering/layout failures; the visual
+regression suite protects intentional visual baselines.

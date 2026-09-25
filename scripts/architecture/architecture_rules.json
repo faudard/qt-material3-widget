@@ -1699,7 +1699,6 @@
         "include/qtmaterial/theme/qtmaterialcolorscheme.h",
         "include/qtmaterial/theme/qtmaterialthemeoptions.h",
         "include/qtmaterial/theme/qtmaterialtheme.h",
-        "include/qtmaterial/theme/qtmaterialthemeidentity.h",
         "include/qtmaterial/theme/qtmaterialthemebuilder.h",
         "include/qtmaterial/theme/qtmaterialthemevalidation.h",
         "include/qtmaterial/theme/qtmaterialtypographyscale.h",

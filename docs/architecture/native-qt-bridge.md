@@ -2,9 +2,13 @@
 
 Real Qt Widgets applications often mix Material widgets with native Qt widgets such as `QPushButton`, `QLineEdit`, `QTableView`, `QTreeView`, `QMenu` and `QDialog`.
 
-This library now exposes a minimal bridge:
+This library exposes the native Qt bridge through the `Integration` module:
 
 ```cpp
+#include <qtmaterial/integration/qtmaterialpaletteadapter.h>
+#include <qtmaterial/integration/qtmaterialproxystyle.h>
+
+
 QApplication::setPalette(QtMaterial::QtMaterialPaletteAdapter::toPalette(theme));
 QApplication::setStyle(new QtMaterial::QtMaterialProxyStyle(theme));
 ```

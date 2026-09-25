@@ -1,4 +1,4 @@
-#include "qtmaterial/core/qtmaterialproxystyle.h"
+#include "qtmaterial/integration/qtmaterialproxystyle.h"
 
 #include "qtmaterial/integration/qtmaterialpaletteadapter.h"
 

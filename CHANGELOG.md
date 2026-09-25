@@ -23,6 +23,8 @@ source or ABI changes, and those changes must be called out explicitly.
 - Qt 5/Qt 6 adaptation is consolidated on the active core event compatibility layer; repository-only Tooling/Testing exports no longer leak into the public global header.
 - The public CMake component list is reduced to application-facing ThemeModel, ThemeIO, ThemeRuntime, Widgets and Integration; internal dependency targets remain exported transitively.
 - Internal theme-context glue, metadata names, ThemeIO codecs/token mappings and paint/shadow caches move to private headers and are removed from the installed API.
+- Redundant `qtmaterialthemeidentity.h` is removed; Theme equality remains declared by `qtmaterialtheme.h`.
+- `QtMaterialProxyStyle` moves from Core to the Integration module so the native Qt bridge has a single owner and Core no longer depends on Integration.
 - Five overlapping theming examples are consolidated into one public workflow example.
 - Chip is promoted from planned to usable and reuses the shared 0.7 ripple, state-layer and focus policies.
 - Menu supports exclusive check groups for radio-style actions.
