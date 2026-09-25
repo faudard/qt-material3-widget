@@ -1,9 +1,9 @@
 # Public API and ABI guidance
 
 Public widget headers under `include/qtmaterial/widgets` should expose API,
-not implementation state. Resolved specs, rendering/layout caches, child widget
-internals, effects/controllers and private navigation state belong in
-implementation or private headers.
+not implementation state. Component resolvers, resolution contexts, resolved specs,
+rendering/layout caches, child widget internals, effects/controllers and private
+navigation state belong in implementation or private headers.
 
 ## Validation
 
