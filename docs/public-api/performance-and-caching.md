@@ -2,7 +2,7 @@
 
 The theming subsystem should be deterministic and fast enough to use during application startup, live theme editing, and runtime light/dark transitions.
 
-This page documents the performance contracts introduced by the performance slice.
+This page documents the maintained performance and caching contracts.
 
 ## Measured paths
 

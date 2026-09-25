@@ -4,12 +4,11 @@ Component-local overrides are applied after the global resolved theme has produc
 
 ## Resolution order
 
-Each factory method resolves tokens in this order:
+Each component resolver applies tokens in this order:
 
 1. Global `Theme` tokens.
 2. Family-level override, for example `button`, `selection`, `input`, `surface`.
 3. Component-level override, for example `button.filled`, `checkbox`, `textField.outlined`, `dialog`.
-4. Legacy class-name aliases, for example `FilledButton`.
 
 Later entries win.
 
@@ -17,21 +16,21 @@ Later entries win.
 
 | Component | Keys |
 |---|---|
-| Text button | `button`, `button.text`, `TextButton` |
-| Filled button | `button`, `button.filled`, `FilledButton` |
-| Filled tonal button | `button`, `button.filledTonal`, `FilledTonalButton` |
-| Outlined button | `button`, `button.outlined`, `OutlinedButton` |
-| Elevated button | `button`, `button.elevated`, `ElevatedButton` |
-| FAB | `fab`, `Fab` |
-| Extended FAB | `fab`, `fab.extended`, `ExtendedFab` |
-| Icon button | `iconButton`, `IconButton` |
-| Checkbox | `selection`, `checkbox`, `Checkbox` |
-| Radio button | `selection`, `radioButton`, `RadioButton` |
-| Switch | `selection`, `switch`, `Switch` |
-| Outlined text field | `input`, `textField`, `textField.outlined`, `OutlinedTextField` |
-| Filled text field | `input`, `textField`, `textField.filled`, `FilledTextField` |
-| Card | `surface`, `card`, `Card` |
-| Dialog | `surface`, `dialog`, `Dialog` |
+| Text button | `button`, `button.text` |
+| Filled button | `button`, `button.filled` |
+| Filled tonal button | `button`, `button.filledTonal` |
+| Outlined button | `button`, `button.outlined` |
+| Elevated button | `button`, `button.elevated` |
+| FAB | `fab` |
+| Extended FAB | `fab`, `fab.extended` |
+| Icon button | `iconButton` |
+| Checkbox | `selection`, `checkbox` |
+| Radio button | `selection`, `radioButton` |
+| Switch | `selection`, `switch` |
+| Outlined text field | `input`, `textField`, `textField.outlined` |
+| Filled text field | `input`, `textField`, `textField.filled` |
+| Card | `surface`, `card` |
+| Dialog | `surface`, `dialog` |
 
 ## Custom scalar keys
 

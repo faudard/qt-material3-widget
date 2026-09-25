@@ -1,3 +1,7 @@
 # Advanced component rules
 
-No architectural rewrites in Phase 6. Advanced widgets must reuse theme, specs, effects, and existing base classes.
+Advanced widgets must reuse the existing theme, specs, effects, interaction,
+accessibility, and base-widget infrastructure.
+
+New components should extend the appropriate family resolver and existing
+runtime contracts instead of introducing parallel architecture.

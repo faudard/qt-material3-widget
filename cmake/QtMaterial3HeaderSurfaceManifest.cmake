@@ -40,7 +40,6 @@ set(QTMATERIAL3_PUBLIC_HEADERS
     "qtmaterial/specs/qtmaterialcheckboxspec.h"
     "qtmaterial/specs/qtmaterialchipspec.h"
     "qtmaterial/specs/qtmaterialchipspecresolver.h"
-    "qtmaterial/specs/qtmaterialcompactspecresolver.h"
     "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
     "qtmaterial/specs/qtmaterialdataspecresolver.h"
     "qtmaterial/specs/qtmaterialdatefieldspec.h"

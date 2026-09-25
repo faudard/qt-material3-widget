@@ -578,9 +578,7 @@
       ],
       "forbidden_regex": [
         "qtmaterial/specs/qtmaterialspecfactory\\.h",
-        "\\bSpecFactory\\b",
-        "\\bCompactSpecResolver\\b",
-        "qtmaterialcompactspecresolver"
+        "\\bSpecFactory\\b"
       ]
     },
     {

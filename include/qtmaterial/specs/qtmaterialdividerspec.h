@@ -11,12 +11,12 @@ namespace QtMaterial {
 
 struct QTMATERIAL3_SPECS_EXPORT DividerSpec
 {
-    DividerSpec();
-    DividerSpec(const DividerSpec& other);
-    DividerSpec(DividerSpec&& other);
-    DividerSpec& operator=(const DividerSpec& other);
-    DividerSpec& operator=(DividerSpec&& other);
-    ~DividerSpec();
+    DividerSpec() = default;
+    DividerSpec(const DividerSpec& other) = default;
+    DividerSpec(DividerSpec&& other) = default;
+    DividerSpec& operator=(const DividerSpec& other) = default;
+    DividerSpec& operator=(DividerSpec&& other) = default;
+    ~DividerSpec() = default;
 
     QColor color;
     QColor insetColor;

@@ -21,6 +21,7 @@ Examples of the active resolver surface include:
 - `ButtonSpecResolver`;
 - `ActionButtonSpecResolver`;
 - `SelectionSpecResolver`;
+- `ChipSpecResolver`;
 - `TextFieldSpecResolver`;
 - `DialogSpecResolver`;
 - `AppBarSpecResolver`;

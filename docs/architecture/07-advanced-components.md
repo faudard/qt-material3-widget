@@ -1,14 +1,14 @@
 # Advanced components
 
-Phase 6 extends the stable architecture with advanced inputs, navigation, compact controls, and data widgets.
+Advanced inputs, navigation, compact controls, and data widgets extend the same
+theme/spec/effects architecture used by the foundational widget families.
 
 ## Current architecture notes
 
 - [08 — Transient Surfaces](08-transient-surfaces.md)
 
-## Planned advanced component areas
+## Component-family rule
 
-- advanced inputs
-- navigation
-- compact controls
-- data widgets
+Advanced widgets must reuse the existing theme, resolver, effects, interaction,
+accessibility, and Model/View contracts. New families should extend the current
+architecture rather than introduce parallel infrastructure.
