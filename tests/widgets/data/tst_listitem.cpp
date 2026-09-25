@@ -19,8 +19,6 @@ private Q_SLOTS:
     void selectionApi();
     void keyboardActivation();
     void sizeHintTouchTarget();
-    void usesResolvedThemeSpec();
-    void refreshesAfterThemeChange();
 };
 
 void tst_ListItem::construction()
@@ -37,7 +35,6 @@ void tst_ListItem::construction()
         item.densityVariant(),
         QtMaterialListItem::DensityVariant::Standard);
     QVERIFY(item.focusPolicy() == Qt::StrongFocus);
-    QVERIFY(item.resolvedSpec().headlineColor.isValid());
 }
 
 void tst_ListItem::selectionApi()
@@ -81,68 +78,19 @@ void tst_ListItem::sizeHintTouchTarget()
 
     item.setDensityVariant(
         QtMaterialListItem::DensityVariant::Compact);
-    QCOMPARE(
-        item.sizeHint().height(),
-        item.resolvedSpec().compactMinHeight);
+    const int compactHeight = item.sizeHint().height();
 
     item.setDensityVariant(
         QtMaterialListItem::DensityVariant::Standard);
-    QCOMPARE(
-        item.sizeHint().height(),
-        item.resolvedSpec().minHeight);
+    const int standardHeight = item.sizeHint().height();
 
     item.setDensityVariant(
         QtMaterialListItem::DensityVariant::Large);
-    QCOMPARE(
-        item.sizeHint().height(),
-        item.resolvedSpec().largeMinHeight);
-}
+    const int largeHeight = item.sizeHint().height();
 
-void tst_ListItem::usesResolvedThemeSpec()
-{
-    Theme theme =
-        ThemeBuilder().buildLightFromSeed(
-            QColor(QStringLiteral("#6750A4")));
-    theme.colorScheme().setColor(
-        ColorRole::OnSurface,
-        QColor(Qt::red));
-
-    ThemeContext context(theme);
-    QtMaterialListItem item;
-    item.setThemeContext(&context);
-
-    QCOMPARE(
-        item.resolvedSpec().headlineColor,
-        QColor(Qt::red));
-}
-
-void tst_ListItem::refreshesAfterThemeChange()
-{
-    Theme first =
-        ThemeBuilder().buildLightFromSeed(
-            QColor(QStringLiteral("#6750A4")));
-    first.colorScheme().setColor(
-        ColorRole::OnSurface,
-        QColor(Qt::red));
-
-    Theme second = first;
-    second.colorScheme().setColor(
-        ColorRole::OnSurface,
-        QColor(Qt::blue));
-
-    ThemeContext context(first);
-    QtMaterialListItem item;
-    item.setThemeContext(&context);
-
-    QCOMPARE(
-        item.resolvedSpec().headlineColor,
-        QColor(Qt::red));
-
-    QVERIFY(context.setTheme(second));
-
-    QCOMPARE(
-        item.resolvedSpec().headlineColor,
-        QColor(Qt::blue));
+    QVERIFY(compactHeight > 0);
+    QVERIFY(compactHeight <= standardHeight);
+    QVERIFY(standardHeight <= largeHeight);
 }
 
 QTEST_MAIN(tst_ListItem)

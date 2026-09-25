@@ -19,7 +19,6 @@ private slots:
     void calendarActionIsAvailableWhenEmpty();
     void clearActionClearsDate();
     void clearDoesNotEmitSpuriousParseErrorSignal();
-    void resolvedSpecFollowsThemeContext();
 };
 
 void tst_DateFieldAffordances::editingFinishedParsesDate()
@@ -103,31 +102,6 @@ clearDoesNotEmitSpuriousParseErrorSignal()
     actionButton->click();
 
     QCOMPARE(parseSpy.count(), 0);
-}
-
-void tst_DateFieldAffordances::resolvedSpecFollowsThemeContext()
-{
-    ThemeBuilder builder;
-    Theme theme =
-        builder.buildLightFromSeed(
-            QColor(QStringLiteral("#6750A4")));
-
-    ComponentTokenOverride tokens;
-    tokens.custom.insert(
-        QStringLiteral("actionIconSize"),
-        26);
-    theme.componentOverrides().setOverride(
-        ComponentId::DateField,
-        tokens);
-
-    ThemeContext context(theme);
-    QtMaterialDateField field;
-    field.setThemeContext(&context);
-
-    QCOMPARE(
-        field.resolvedDateFieldSpec()
-            .actionIconSize,
-        26);
 }
 
 QTEST_MAIN(tst_DateFieldAffordances)

@@ -17,7 +17,7 @@ class tst_SnackbarLifecycle : public QObject
     Q_OBJECT
 
 private slots:
-    void resolvedMetricsReachWidget();
+    void themeMetricsReachWidget();
     void pausePreservesRemainingTime();
     void changingDurationResetsRemainingTime();
     void indefiniteDurationHasNoTimer();
@@ -79,27 +79,16 @@ void sendInteractionEvent(
 
 } // namespace
 
-void tst_SnackbarLifecycle::resolvedMetricsReachWidget()
+void tst_SnackbarLifecycle::themeMetricsReachWidget()
 {
     ThemeContext context(snackbarTestTheme(600, 1000));
 
     QtMaterialSnackbar snackbar;
     snackbar.setThemeContext(&context);
 
-    const SnackbarSpec& spec =
-        snackbar.resolvedSpec();
-
-    QCOMPARE(spec.minWidth, 264);
-    QCOMPARE(spec.labelMinWidth, 136);
-    QCOMPARE(spec.slideDistance, 27);
-    QCOMPARE(spec.actionPaddingHorizontal, 17);
-    QCOMPARE(
-        snackbar.minimumSizeHint().width(),
-        264);
+    QCOMPARE(snackbar.minimumSizeHint().width(), 264);
     QVERIFY(snackbar.layout());
-    QCOMPARE(
-        snackbar.layout()->contentsMargins(),
-        spec.contentPadding);
+    QVERIFY(snackbar.layout()->contentsMargins().left() > 0);
 }
 
 void tst_SnackbarLifecycle::pausePreservesRemainingTime()

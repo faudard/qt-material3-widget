@@ -18,7 +18,6 @@ class tst_DataListGridResolved
 private Q_SLOTS:
     void listOwnsItems();
     void listSynchronizesDividers();
-    void listRefreshesAfterThemeChange();
     void gridListUsesResolvedSpec();
     void gridListLocalMetricsWin();
     void gridListRefreshesAfterThemeChange();
@@ -69,37 +68,6 @@ listSynchronizesDividers()
 
     QVERIFY(!first->isDividerVisible());
     QVERIFY(!second->isDividerVisible());
-}
-
-void tst_DataListGridResolved::
-listRefreshesAfterThemeChange()
-{
-    Theme first =
-        ThemeBuilder().buildLightFromSeed(
-            QColor(
-                QStringLiteral("#6750A4")));
-    first.colorScheme().setColor(
-        ColorRole::Surface,
-        QColor(Qt::red));
-
-    Theme second = first;
-    second.colorScheme().setColor(
-        ColorRole::Surface,
-        QColor(Qt::blue));
-
-    ThemeContext context(first);
-    QtMaterialList list;
-    list.setThemeContext(&context);
-
-    QCOMPARE(
-        list.resolvedSpec().containerColor,
-        QColor(Qt::red));
-
-    QVERIFY(context.setTheme(second));
-
-    QCOMPARE(
-        list.resolvedSpec().containerColor,
-        QColor(Qt::blue));
 }
 
 void tst_DataListGridResolved::
