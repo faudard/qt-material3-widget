@@ -3,13 +3,16 @@
 - **Date**: 2026-08-15
 
 ## Context
-QtMaterial3 is a pre-1.0 brownfield library being reorganized around enforceable architecture and measurable Material conformance.
+Widgets need local/inherited theme contexts without forcing every renderer to
+depend directly on the global ThemeManager singleton.
 
 ## Decision
-Effective resolution is explicit context -> inherited context -> optional global/default provider. Renderers never query ThemeManager.
+Effective resolution is explicit context -> inherited context -> optional
+global/default provider. Renderers never query ThemeManager directly.
 
 ## Consequences
-The decision is binding on new specs and migration plans. Breaking cleanup is acceptable before 1.0 when required to reach the target architecture.
+Context-aware widgets resolve through ThemeContext boundaries; the global
+manager remains an application convenience rather than a rendering dependency.
 
 ## Verification
 Context lifecycle tests prove explicit/inherited/global precedence.

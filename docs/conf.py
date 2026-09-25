@@ -72,8 +72,8 @@ html_static_path = []
 
 nitpicky = False
 
-# Known documentation debt in legacy/generated fragments. Keep all other
-# Sphinx warnings fatal in CI.
+# Explicit documentation warning suppressions. Keep all other Sphinx warnings
+# fatal in CI.
 suppress_warnings = [
     "toc.not_included",
     "myst.header",

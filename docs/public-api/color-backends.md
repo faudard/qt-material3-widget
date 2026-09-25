@@ -35,7 +35,7 @@ cmake -S . -B build \
   -DQTMATERIAL3_MCU_ROOT=/absolute/path/to/material-color-utilities
 ```
 
-When MCU is found, the theme target compiles the upstream C++ sources, defines `QTMATERIAL3_HAS_MCU=1`, and `ThemeOptions::colorBackendPolicy=true` routes seed generation through the MCU adapter.
+When MCU is found, the theme target compiles the upstream C++ sources, defines `QTMATERIAL3_HAS_MCU=1`, and `ThemeOptions::backendPolicy` controls whether MCU is preferred, required, or bypassed.
 
 When MCU is requested but not found, `QTMATERIAL3_HAS_MCU=0`; the builder reports fallback through `ThemeBuilder::colorBackendStatus(options)` and uses the deterministic fallback backend.
 
@@ -50,7 +50,7 @@ When MCU is requested but not found, `QTMATERIAL3_HAS_MCU=0`; the builder report
 - whether fallback was used;
 - a diagnostic string.
 
-If `ThemeOptions::colorBackendPolicy` is true but `QTMATERIAL3_HAS_MCU` is false, the builder uses the fallback backend and reports that fallback was used.
+If `ThemeOptions::backendPolicy` requests MCU but `QTMATERIAL3_HAS_MCU` is false, the builder uses the deterministic fallback backend and reports that fallback was used.
 
 ## MCU scheme mapping
 

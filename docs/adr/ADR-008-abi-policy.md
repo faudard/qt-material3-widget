@@ -3,13 +3,19 @@
 - **Date**: 2026-08-15
 
 ## Context
-QtMaterial3 is a pre-1.0 brownfield library being reorganized around enforceable architecture and measurable Material conformance.
+The project is still reducing its public C++ surface before the first stable
+release, so premature compatibility shims would freeze accidental API.
 
 ## Decision
-Breaking changes are allowed pre-1.0 for architecture/API cleanup; 0.9 freezes API candidates; 1.0 creates ABI baseline.
+Breaking source and ABI changes are allowed before 1.0 for architecture/API
+cleanup. 0.9 is the API freeze candidate; 1.0 establishes the first supported
+public-header/API baseline.
 
 ## Consequences
-The decision is binding on new specs and migration plans. Breaking cleanup is acceptable before 1.0 when required to reach the target architecture.
+Pre-1.0 obsolete APIs are removed directly. Post-1.0 compatibility and
+deprecation policy applies only after the stable baseline is published.
 
 ## Verification
-ABI checker gates 1.x after baseline.
+The 0.9 audit freezes the intended public-header/package surface. The 1.0
+release process records the stable baseline before 1.x compatibility guarantees
+begin.

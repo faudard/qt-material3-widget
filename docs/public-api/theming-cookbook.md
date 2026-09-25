@@ -66,17 +66,19 @@ Recommended override ID order:
 1. family ID, for example `ComponentId::Button`
 2. component ID, for example `ComponentId::ButtonFilled`
 
-Textual names and legacy aliases are accepted only at the ThemeIO serialization boundary.
+Canonical textual names are used only at the ThemeIO serialization boundary; the runtime/model API remains typed.
 
 ## Check backend selection
 
 ```cpp
 QtMaterial::ThemeOptions options;
 options.sourceColor = QColor("#6750A4");
-options.colorBackendPolicy = true;
+options.backendPolicy =
+    QtMaterial::ColorBackendPolicy::PreferMaterialColorUtilities;
 
 QtMaterial::ThemeBuilder builder;
-const QtMaterial::ThemeColorBackendStatus status = builder.colorBackendStatus(options);
+const QtMaterial::ThemeColorBackendStatus status =
+    builder.colorBackendStatus(options);
 ```
 
 Applications should not infer MCU availability from the request flag alone. Always check the effective backend if behavior depends on MCU-specific output.
@@ -84,7 +86,7 @@ Applications should not infer MCU availability from the request flag alone. Alwa
 ## Recommended app startup flow
 
 1. Build default `ThemeOptions` from application branding.
-2. Load persisted JSON using `UpgradeIfPossible`.
+2. Load persisted JSON through `ThemeSerializer` using `ThemeReadMode::Strict` (or `Lenient` only when forward-compatible extra fields are intentionally accepted).
 3. Fall back to the default generated theme if loading fails.
 4. Install the theme through `ThemeManager`.
 5. Let widgets observe manager notifications and repolish once per revision.

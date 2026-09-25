@@ -15,6 +15,7 @@ source or ABI changes, and those changes must be called out explicitly.
 
 ### Changed
 - Pre-1.0 cleanup removes repository scaffolding, forwarding headers, duplicate resolver/spec surfaces, placeholder tests, and accidental public APIs instead of deprecating them.
+- The obsolete `CompactSpecResolver` duplicate is removed in favor of canonical `ChipSpecResolver`, and `DividerSpec` no longer requires a placeholder translation unit.
 - Repository-only Tooling/Testing C++ modules, legacy qt-material XML compatibility, redundant playgrounds, migration-only documentation, and dead compatibility tests are removed before the first public release.
 - Unfinished Material-conformance scaffolding and obsolete reference-model harnesses are removed; active visual regression remains the repository rendering guardrail.
 - Theme JSON reading now accepts only the canonical formatVersion 1 source/resolved shape; unpublished pre-1.0 aliases and legacy layouts are removed.

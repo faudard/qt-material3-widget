@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cross-platform updater for legacy QtMaterial3 visual goldens."""
+"""Cross-platform updater for QtMaterial3 visual regression goldens."""
 
 from __future__ import annotations
 

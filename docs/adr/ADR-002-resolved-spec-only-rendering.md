@@ -3,13 +3,16 @@
 - **Date**: 2026-08-15
 
 ## Context
-QtMaterial3 is a pre-1.0 brownfield library being reorganized around enforceable architecture and measurable Material conformance.
+Widget rendering needs one deterministic boundary between theme inputs and
+layout/paint behavior.
 
 ## Decision
-All render/paint helpers consume resolved values. Theme/ThemeContext/ThemeManager access is restricted to resolution/runtime boundaries.
+All render/paint helpers consume resolved values. Theme/ThemeContext/ThemeManager
+access is restricted to resolution/runtime boundaries.
 
 ## Consequences
-The decision is binding on new specs and migration plans. Breaking cleanup is acceptable before 1.0 when required to reach the target architecture.
+New component work must preserve resolved-spec rendering rather than introduce
+theme lookups inside paint/layout paths.
 
 ## Verification
 `ARCH-WIDGETS-RESOLVED-SPEC-ONLY` reaches zero and remains zero.

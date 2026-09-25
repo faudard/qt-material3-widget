@@ -28,7 +28,7 @@ cross-platform reduced-motion system preference through `QStyleHints`.
 
 ## Tests
 
-The slice adds:
+The maintained test coverage includes:
 
 - contrast-ratio utility tests;
 - high-contrast token-resolution tests;
