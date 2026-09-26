@@ -1,13 +1,15 @@
 #pragma once
 
+#include <memory>
+
 #include <QStringList>
 #include <QWidget>
 
 #include "qtmaterial/qtmaterialglobal.h"
 
-class QHBoxLayout;
-
 namespace QtMaterial {
+
+class QtMaterialBreadcrumbPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialBreadcrumb : public QWidget
 {
@@ -16,6 +18,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialBreadcrumb : public QWidget
 
 public:
     explicit QtMaterialBreadcrumb(QWidget* parent = nullptr);
+    ~QtMaterialBreadcrumb() override;
 
     QStringList items() const;
     void setItems(const QStringList& items);
@@ -31,10 +34,9 @@ Q_SIGNALS:
 
 private:
     void rebuild();
+    void refreshCurrentSegment();
 
-    QStringList m_items;
-    int m_currentIndex = -1;
-    QHBoxLayout* m_layout = nullptr;
+    std::unique_ptr<QtMaterialBreadcrumbPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

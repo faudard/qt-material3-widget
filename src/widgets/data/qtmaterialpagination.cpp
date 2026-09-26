@@ -8,15 +8,31 @@
 
 namespace QtMaterial {
 
+class QtMaterialPaginationPrivate final
+{
+public:
+    int page = 1;
+    int pageSize = 25;
+    int totalCount = 0;
+    QToolButton* firstButton = nullptr;
+    QToolButton* previousButton = nullptr;
+    QToolButton* nextButton = nullptr;
+    QToolButton* lastButton = nullptr;
+    QLabel* rangeLabel = nullptr;
+    QComboBox* pageSizeCombo = nullptr;
+};
+
 QtMaterialPagination::QtMaterialPagination(QWidget* parent)
     : QWidget(parent)
-    , m_firstButton(new QToolButton(this))
-    , m_previousButton(new QToolButton(this))
-    , m_nextButton(new QToolButton(this))
-    , m_lastButton(new QToolButton(this))
-    , m_rangeLabel(new QLabel(this))
-    , m_pageSizeCombo(new QComboBox(this))
+    , d_ptr(std::make_unique<QtMaterialPaginationPrivate>())
 {
+    d_ptr->firstButton = new QToolButton(this);
+    d_ptr->previousButton = new QToolButton(this);
+    d_ptr->nextButton = new QToolButton(this);
+    d_ptr->lastButton = new QToolButton(this);
+    d_ptr->rangeLabel = new QLabel(this);
+    d_ptr->pageSizeCombo = new QComboBox(this);
+
     setObjectName(QStringLiteral("QtMaterialPagination"));
     setAccessibleName(tr("Pagination"));
 
@@ -25,164 +41,171 @@ QtMaterialPagination::QtMaterialPagination(QWidget* parent)
     layout->setSpacing(4);
     layout->addStretch(1);
 
-    m_pageSizeCombo->setAccessibleName(tr("Rows per page"));
-    layout->addWidget(m_pageSizeCombo);
-    layout->addWidget(m_rangeLabel);
+    d_ptr->pageSizeCombo->setAccessibleName(tr("Rows per page"));
+    layout->addWidget(d_ptr->pageSizeCombo);
+    layout->addWidget(d_ptr->rangeLabel);
 
-    m_firstButton->setText(QStringLiteral("«"));
-    m_previousButton->setText(QStringLiteral("‹"));
-    m_nextButton->setText(QStringLiteral("›"));
-    m_lastButton->setText(QStringLiteral("»"));
+    d_ptr->firstButton->setText(QStringLiteral("«"));
+    d_ptr->previousButton->setText(QStringLiteral("‹"));
+    d_ptr->nextButton->setText(QStringLiteral("›"));
+    d_ptr->lastButton->setText(QStringLiteral("»"));
 
-    m_firstButton->setAccessibleName(tr("First page"));
-    m_previousButton->setAccessibleName(tr("Previous page"));
-    m_nextButton->setAccessibleName(tr("Next page"));
-    m_lastButton->setAccessibleName(tr("Last page"));
+    d_ptr->firstButton->setAccessibleName(tr("First page"));
+    d_ptr->previousButton->setAccessibleName(tr("Previous page"));
+    d_ptr->nextButton->setAccessibleName(tr("Next page"));
+    d_ptr->lastButton->setAccessibleName(tr("Last page"));
 
-    layout->addWidget(m_firstButton);
-    layout->addWidget(m_previousButton);
-    layout->addWidget(m_nextButton);
-    layout->addWidget(m_lastButton);
+    layout->addWidget(d_ptr->firstButton);
+    layout->addWidget(d_ptr->previousButton);
+    layout->addWidget(d_ptr->nextButton);
+    layout->addWidget(d_ptr->lastButton);
 
     setPageSizeOptions({10, 25, 50, 100});
 
-    connect(m_firstButton, &QToolButton::clicked, this, [this]() { setPage(1); });
-    connect(m_previousButton, &QToolButton::clicked, this, [this]() { setPage(m_page - 1); });
-    connect(m_nextButton, &QToolButton::clicked, this, [this]() { setPage(m_page + 1); });
-    connect(m_lastButton, &QToolButton::clicked, this, [this]() { setPage(pageCount()); });
+    connect(d_ptr->firstButton, &QToolButton::clicked, this, [this]() { setPage(1); });
+    connect(d_ptr->previousButton, &QToolButton::clicked, this, [this]() { setPage(d_ptr->page - 1); });
+    connect(d_ptr->nextButton, &QToolButton::clicked, this, [this]() { setPage(d_ptr->page + 1); });
+    connect(d_ptr->lastButton, &QToolButton::clicked, this, [this]() { setPage(pageCount()); });
     connect(
-        m_pageSizeCombo,
+        d_ptr->pageSizeCombo,
         QOverload<int>::of(&QComboBox::currentIndexChanged),
         this,
         [this](int index) {
             if (index >= 0) {
-                setPageSize(m_pageSizeCombo->itemData(index).toInt());
+                setPageSize(d_ptr->pageSizeCombo->itemData(index).toInt());
             }
         });
 
     updateUi();
 }
 
-int QtMaterialPagination::page() const noexcept { return m_page; }
-int QtMaterialPagination::pageSize() const noexcept { return m_pageSize; }
-int QtMaterialPagination::totalCount() const noexcept { return m_totalCount; }
+QtMaterialPagination::~QtMaterialPagination() = default;
+
+int QtMaterialPagination::page() const noexcept { return d_ptr->page; }
+int QtMaterialPagination::pageSize() const noexcept { return d_ptr->pageSize; }
+int QtMaterialPagination::totalCount() const noexcept { return d_ptr->totalCount; }
 
 int QtMaterialPagination::pageCount() const noexcept
 {
-    if (m_totalCount <= 0) {
+    if (d_ptr->totalCount <= 0) {
         return 1;
     }
-    return 1 + (m_totalCount - 1) / m_pageSize;
+    return 1 + (d_ptr->totalCount - 1) / d_ptr->pageSize;
 }
 
 void QtMaterialPagination::setPage(int page)
 {
     const int normalized = qBound(1, page, pageCount());
-    if (m_page == normalized) {
+    if (d_ptr->page == normalized) {
         return;
     }
-    m_page = normalized;
+    d_ptr->page = normalized;
     updateUi();
-    Q_EMIT pageChanged(m_page);
+    Q_EMIT pageChanged(d_ptr->page);
 }
 
 void QtMaterialPagination::setPageSize(int pageSize)
 {
-    if (pageSize <= 0 || m_pageSize == pageSize) {
+    if (pageSize <= 0 || d_ptr->pageSize == pageSize) {
         return;
     }
 
-    m_pageSize = pageSize;
-    const int normalizedPage = qBound(1, m_page, pageCount());
-    const bool pageDidChange = normalizedPage != m_page;
-    m_page = normalizedPage;
+    d_ptr->pageSize = pageSize;
+    const int normalizedPage = qBound(1, d_ptr->page, pageCount());
+    const bool pageDidChange = normalizedPage != d_ptr->page;
+    d_ptr->page = normalizedPage;
 
-    int index = m_pageSizeCombo->findData(m_pageSize);
+    int index = d_ptr->pageSizeCombo->findData(d_ptr->pageSize);
     if (index < 0) {
-        m_pageSizeCombo->addItem(QString::number(m_pageSize), m_pageSize);
-        index = m_pageSizeCombo->findData(m_pageSize);
+        d_ptr->pageSizeCombo->addItem(QString::number(d_ptr->pageSize), d_ptr->pageSize);
+        index = d_ptr->pageSizeCombo->findData(d_ptr->pageSize);
     }
     {
-        const QSignalBlocker blocker(m_pageSizeCombo);
-        m_pageSizeCombo->setCurrentIndex(index);
+        const QSignalBlocker blocker(d_ptr->pageSizeCombo);
+        d_ptr->pageSizeCombo->setCurrentIndex(index);
     }
 
     updateUi();
-    Q_EMIT pageSizeChanged(m_pageSize);
+    Q_EMIT pageSizeChanged(d_ptr->pageSize);
     if (pageDidChange) {
-        Q_EMIT pageChanged(m_page);
+        Q_EMIT pageChanged(d_ptr->page);
     }
 }
 
 void QtMaterialPagination::setTotalCount(int totalCount)
 {
     const int normalized = qMax(0, totalCount);
-    if (m_totalCount == normalized) {
+    if (d_ptr->totalCount == normalized) {
         return;
     }
 
-    m_totalCount = normalized;
-    const int normalizedPage = qBound(1, m_page, pageCount());
-    const bool pageDidChange = normalizedPage != m_page;
-    m_page = normalizedPage;
+    d_ptr->totalCount = normalized;
+    const int normalizedPage = qBound(1, d_ptr->page, pageCount());
+    const bool pageDidChange = normalizedPage != d_ptr->page;
+    d_ptr->page = normalizedPage;
     updateUi();
-    Q_EMIT totalCountChanged(m_totalCount);
+    Q_EMIT totalCountChanged(d_ptr->totalCount);
     if (pageDidChange) {
-        Q_EMIT pageChanged(m_page);
+        Q_EMIT pageChanged(d_ptr->page);
     }
 }
 
 QList<int> QtMaterialPagination::pageSizeOptions() const
 {
     QList<int> result;
-    for (int index = 0; index < m_pageSizeCombo->count(); ++index) {
-        result.push_back(m_pageSizeCombo->itemData(index).toInt());
+    for (int index = 0; index < d_ptr->pageSizeCombo->count(); ++index) {
+        result.push_back(d_ptr->pageSizeCombo->itemData(index).toInt());
     }
     return result;
 }
 
 void QtMaterialPagination::setPageSizeOptions(const QList<int>& options)
 {
-    const QSignalBlocker blocker(m_pageSizeCombo);
-    m_pageSizeCombo->clear();
+    const QSignalBlocker blocker(d_ptr->pageSizeCombo);
+    d_ptr->pageSizeCombo->clear();
 
     for (int value : options) {
-        if (value > 0 && m_pageSizeCombo->findData(value) < 0) {
-            m_pageSizeCombo->addItem(QString::number(value), value);
+        if (value > 0 && d_ptr->pageSizeCombo->findData(value) < 0) {
+            d_ptr->pageSizeCombo->addItem(QString::number(value), value);
         }
     }
 
-    int index = m_pageSizeCombo->findData(m_pageSize);
+    int index = d_ptr->pageSizeCombo->findData(d_ptr->pageSize);
     if (index < 0) {
-        m_pageSizeCombo->addItem(QString::number(m_pageSize), m_pageSize);
-        index = m_pageSizeCombo->findData(m_pageSize);
+        d_ptr->pageSizeCombo->addItem(QString::number(d_ptr->pageSize), d_ptr->pageSize);
+        index = d_ptr->pageSizeCombo->findData(d_ptr->pageSize);
     }
-    m_pageSizeCombo->setCurrentIndex(index);
+    d_ptr->pageSizeCombo->setCurrentIndex(index);
     updateUi();
 }
 
 QString QtMaterialPagination::rangeText() const
 {
-    if (m_totalCount == 0) {
+    if (d_ptr->totalCount == 0) {
         return QStringLiteral("0 / 0");
     }
 
-    const int first = (m_page - 1) * m_pageSize + 1;
-    const int last = qMin(m_totalCount, first + m_pageSize - 1);
-    return QStringLiteral("%1–%2 / %3").arg(first).arg(last).arg(m_totalCount);
+    const qint64 first =
+        qint64(d_ptr->page - 1) * qint64(d_ptr->pageSize) + 1;
+    const qint64 last =
+        qMin(qint64(d_ptr->totalCount), first + qint64(d_ptr->pageSize) - 1);
+    return QStringLiteral("%1–%2 / %3")
+        .arg(first)
+        .arg(last)
+        .arg(d_ptr->totalCount);
 }
 
 void QtMaterialPagination::updateUi()
 {
-    const bool hasPrevious = m_page > 1;
-    const bool hasNext = m_page < pageCount();
+    const bool hasPrevious = d_ptr->page > 1;
+    const bool hasNext = d_ptr->page < pageCount();
 
-    m_firstButton->setEnabled(hasPrevious);
-    m_previousButton->setEnabled(hasPrevious);
-    m_nextButton->setEnabled(hasNext);
-    m_lastButton->setEnabled(hasNext);
-    m_rangeLabel->setText(rangeText());
-    m_rangeLabel->setAccessibleName(tr("Items %1").arg(rangeText()));
+    d_ptr->firstButton->setEnabled(hasPrevious);
+    d_ptr->previousButton->setEnabled(hasPrevious);
+    d_ptr->nextButton->setEnabled(hasNext);
+    d_ptr->lastButton->setEnabled(hasNext);
+    d_ptr->rangeLabel->setText(rangeText());
+    d_ptr->rangeLabel->setAccessibleName(tr("Items %1").arg(rangeText()));
 }
 
 } // namespace QtMaterial

@@ -1,10 +1,13 @@
 #include <QtTest/QtTest>
 
+#include <limits>
+
 #include <QAbstractTableModel>
 #include <QHeaderView>
 #include <QListView>
 #include <QStringListModel>
 #include <QStandardItemModel>
+#include <QToolButton>
 #include <QWidget>
 
 #include "qtmaterial/widgets/data/qtmaterialpagination.h"
@@ -124,6 +127,21 @@ private slots:
         QCOMPARE(pagination.rangeText(), QStringLiteral("101–123 / 123"));
     }
 
+    void paginationHandlesIntLimitWithoutOverflow()
+    {
+        QtMaterialPagination pagination;
+        const int maximum = std::numeric_limits<int>::max();
+
+        pagination.setTotalCount(maximum);
+        pagination.setPageSize(maximum - 1);
+        QCOMPARE(pagination.pageCount(), 2);
+
+        pagination.setPage(2);
+        QCOMPARE(
+            pagination.rangeText(),
+            QStringLiteral("2147483647–2147483647 / 2147483647"));
+    }
+
     void paginationSignalsOnlyForActualChanges()
     {
         QtMaterialPagination pagination;
@@ -203,6 +221,37 @@ private slots:
         QCOMPARE(breadcrumb.items().at(1), QStringLiteral("Requirements"));
     }
 
+    void breadcrumbActivationDoesNotRebuildSender()
+    {
+        QtMaterialBreadcrumb breadcrumb;
+        breadcrumb.setItems({
+            QStringLiteral("Workspace"),
+            QStringLiteral("Requirements"),
+            QStringLiteral("REQ-42")
+        });
+
+        QToolButton* workspaceButton = nullptr;
+        const auto buttons = breadcrumb.findChildren<QToolButton*>();
+        for (QToolButton* button : buttons) {
+            if (button->text() == QStringLiteral("Workspace")) {
+                workspaceButton = button;
+                break;
+            }
+        }
+        QVERIFY(workspaceButton);
+
+        QSignalSpy activated(&breadcrumb, &QtMaterialBreadcrumb::activated);
+        workspaceButton->click();
+
+        QCOMPARE(breadcrumb.currentIndex(), 0);
+        QCOMPARE(activated.count(), 1);
+        QCOMPARE(activated.at(0).at(0).toInt(), 0);
+        QCOMPARE(activated.at(0).at(1).toString(), QStringLiteral("Workspace"));
+        QCOMPARE(
+            breadcrumb.findChildren<QToolButton*>().size(),
+            buttons.size());
+    }
+
     void commandPaletteFiltersExternalModel()
     {
         QStringListModel model({
@@ -216,7 +265,42 @@ private slots:
         QCOMPARE(palette.sourceModel(), &model);
 
         palette.setQuery(QStringLiteral("Build"));
-        QCOMPARE(palette.resultView()->model()->rowCount(), 1);
+
+        auto* resultView = palette.findChild<QListView*>();
+        QVERIFY(resultView);
+        QCOMPARE(resultView->model()->rowCount(), 1);
+    }
+
+    void commandPaletteUsesSingleNativeActivationPath()
+    {
+        QStringListModel model({
+            QStringLiteral("Open file"),
+            QStringLiteral("Build project")
+        });
+
+        QtMaterialCommandPalette palette;
+        palette.setSourceModel(&model);
+
+        auto* resultView = palette.findChild<QListView*>();
+        QVERIFY(resultView);
+        const QModelIndex proxyIndex = resultView->model()->index(0, 0);
+        QVERIFY(proxyIndex.isValid());
+
+        QSignalSpy activated(&palette, &QtMaterialCommandPalette::commandActivated);
+
+        QVERIFY(QMetaObject::invokeMethod(
+            resultView,
+            "activated",
+            Qt::DirectConnection,
+            Q_ARG(QModelIndex, proxyIndex)));
+        QCOMPARE(activated.count(), 1);
+
+        QVERIFY(QMetaObject::invokeMethod(
+            resultView,
+            "doubleClicked",
+            Qt::DirectConnection,
+            Q_ARG(QModelIndex, proxyIndex)));
+        QCOMPARE(activated.count(), 1);
     }
 };
 

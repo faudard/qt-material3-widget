@@ -1,10 +1,14 @@
 #pragma once
 
+#include <memory>
+
 #include <QTreeView>
 
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+class QtMaterialTreeViewPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTreeView : public QTreeView
 {
@@ -15,6 +19,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTreeView : public QTreeView
 
 public:
     explicit QtMaterialTreeView(QWidget* parent = nullptr);
+    ~QtMaterialTreeView() override;
 
     bool dense() const noexcept;
     void setDense(bool dense);
@@ -31,7 +36,7 @@ Q_SIGNALS:
     void dragDropEnabledChanged(bool enabled);
 
 private:
-    bool m_dense = false;
+    std::unique_ptr<QtMaterialTreeViewPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

@@ -40,7 +40,9 @@ pane collapsibility and collapsed state explicit.
 
 `QtMaterialCommandPalette` composes a search field, `QSortFilterProxyModel` and
 `QListView`. The source model remains externally owned and command activation returns a
-source-model index.
+source-model index. The composed search/list widgets are implementation details rather
+than public API; applications interact through the query, source-model and activation
+contracts.
 
 ## Drag and drop
 

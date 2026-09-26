@@ -1,11 +1,14 @@
 #pragma once
 
-#include <QHash>
+#include <memory>
+
 #include <QSplitter>
 
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+class QtMaterialSplitViewPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSplitView : public QSplitter
 {
@@ -14,6 +17,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSplitView : public QSplitter
 public:
     explicit QtMaterialSplitView(QWidget* parent = nullptr);
     explicit QtMaterialSplitView(Qt::Orientation orientation, QWidget* parent = nullptr);
+    ~QtMaterialSplitView() override;
 
     void setPaneCollapsible(int index, bool collapsible);
     bool paneCollapsible(int index) const;
@@ -25,8 +29,7 @@ Q_SIGNALS:
     void paneCollapsedChanged(int index, bool collapsed);
 
 private:
-    QHash<QWidget*, int> m_lastExpandedSize;
-    QHash<QWidget*, bool> m_preCollapseCollapsible;
+    std::unique_ptr<QtMaterialSplitViewPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

@@ -1,6 +1,15 @@
 #include "qtmaterial/widgets/layouts/qtmaterialsplitview.h"
 
+#include <QHash>
+
 namespace QtMaterial {
+
+class QtMaterialSplitViewPrivate final
+{
+public:
+    QHash<QWidget*, int> lastExpandedSize;
+    QHash<QWidget*, bool> preCollapseCollapsible;
+};
 
 QtMaterialSplitView::QtMaterialSplitView(QWidget* parent)
     : QtMaterialSplitView(Qt::Horizontal, parent)
@@ -9,12 +18,15 @@ QtMaterialSplitView::QtMaterialSplitView(QWidget* parent)
 
 QtMaterialSplitView::QtMaterialSplitView(Qt::Orientation orientation, QWidget* parent)
     : QSplitter(orientation, parent)
+    , d_ptr(std::make_unique<QtMaterialSplitViewPrivate>())
 {
     setObjectName(QStringLiteral("QtMaterialSplitView"));
     setAccessibleName(tr("Split view"));
     setChildrenCollapsible(false);
     setHandleWidth(8);
 }
+
+QtMaterialSplitView::~QtMaterialSplitView() = default;
 
 void QtMaterialSplitView::setPaneCollapsible(int index, bool collapsible)
 {
@@ -44,10 +56,10 @@ void QtMaterialSplitView::setPaneCollapsed(int index, bool collapsed)
     if (collapsed) {
         const int currentSize = currentSizes.value(index);
         if (currentSize > 0) {
-            m_lastExpandedSize.insert(pane, currentSize);
+            d_ptr->lastExpandedSize.insert(pane, currentSize);
         }
-        if (!m_preCollapseCollapsible.contains(pane)) {
-            m_preCollapseCollapsible.insert(pane, isCollapsible(index));
+        if (!d_ptr->preCollapseCollapsible.contains(pane)) {
+            d_ptr->preCollapseCollapsible.insert(pane, isCollapsible(index));
         }
 
         setCollapsible(index, true);
@@ -59,15 +71,15 @@ void QtMaterialSplitView::setPaneCollapsed(int index, bool collapsed)
                 ? pane->sizeHint().width()
                 : pane->sizeHint().height();
         const int restoredSize =
-            m_lastExpandedSize.value(pane, qMax(1, fallbackSize));
-        m_lastExpandedSize.remove(pane);
+            d_ptr->lastExpandedSize.value(pane, qMax(1, fallbackSize));
+        d_ptr->lastExpandedSize.remove(pane);
         currentSizes[index] = qMax(1, restoredSize);
         setSizes(currentSizes);
 
-        const auto collapsibleIt = m_preCollapseCollapsible.find(pane);
-        if (collapsibleIt != m_preCollapseCollapsible.end()) {
+        const auto collapsibleIt = d_ptr->preCollapseCollapsible.find(pane);
+        if (collapsibleIt != d_ptr->preCollapseCollapsible.end()) {
             setCollapsible(index, collapsibleIt.value());
-            m_preCollapseCollapsible.erase(collapsibleIt);
+            d_ptr->preCollapseCollapsible.erase(collapsibleIt);
         }
     }
 

@@ -1,15 +1,15 @@
 #pragma once
 
+#include <memory>
+
 #include <QList>
 #include <QWidget>
 
 #include "qtmaterial/qtmaterialglobal.h"
 
-class QComboBox;
-class QLabel;
-class QToolButton;
-
 namespace QtMaterial {
+
+class QtMaterialPaginationPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialPagination : public QWidget
 {
@@ -20,6 +20,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialPagination : public QWidget
 
 public:
     explicit QtMaterialPagination(QWidget* parent = nullptr);
+    ~QtMaterialPagination() override;
 
     int page() const noexcept;
     int pageSize() const noexcept;
@@ -43,15 +44,7 @@ Q_SIGNALS:
 private:
     void updateUi();
 
-    int m_page = 1;
-    int m_pageSize = 25;
-    int m_totalCount = 0;
-    QToolButton* m_firstButton = nullptr;
-    QToolButton* m_previousButton = nullptr;
-    QToolButton* m_nextButton = nullptr;
-    QToolButton* m_lastButton = nullptr;
-    QLabel* m_rangeLabel = nullptr;
-    QComboBox* m_pageSizeCombo = nullptr;
+    std::unique_ptr<QtMaterialPaginationPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

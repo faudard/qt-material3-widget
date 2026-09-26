@@ -4,8 +4,15 @@
 
 namespace QtMaterial {
 
+class QtMaterialTreeViewPrivate final
+{
+public:
+    bool dense = false;
+};
+
 QtMaterialTreeView::QtMaterialTreeView(QWidget* parent)
     : QTreeView(parent)
+    , d_ptr(std::make_unique<QtMaterialTreeViewPrivate>())
 {
     setObjectName(QStringLiteral("QtMaterialTreeView"));
     setAccessibleName(tr("Tree"));
@@ -20,22 +27,24 @@ QtMaterialTreeView::QtMaterialTreeView(QWidget* parent)
     setDragDropMode(QAbstractItemView::NoDragDrop);
 }
 
+QtMaterialTreeView::~QtMaterialTreeView() = default;
+
 bool QtMaterialTreeView::dense() const noexcept
 {
-    return m_dense;
+    return d_ptr->dense;
 }
 
 void QtMaterialTreeView::setDense(bool dense)
 {
-    if (m_dense == dense) {
+    if (d_ptr->dense == dense) {
         return;
     }
 
-    m_dense = dense;
-    setIndentation(m_dense ? 16 : 20);
-    setIconSize(m_dense ? QSize(18, 18) : QSize(20, 20));
+    d_ptr->dense = dense;
+    setIndentation(d_ptr->dense ? 16 : 20);
+    setIconSize(d_ptr->dense ? QSize(18, 18) : QSize(20, 20));
     viewport()->update();
-    Q_EMIT denseChanged(m_dense);
+    Q_EMIT denseChanged(d_ptr->dense);
 }
 
 bool QtMaterialTreeView::multiSelectionEnabled() const noexcept
