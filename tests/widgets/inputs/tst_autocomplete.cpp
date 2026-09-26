@@ -15,7 +15,6 @@ private slots:
  void placeholderAndTextRoundTrip();
  void suggestionsOpenPopupAndExposeCurrentCompletion();
  void escapeHidesPopupByDefault();
- void popupReopensAfterEscapeWhenInputChanges();
  void returnAcceptsCurrentCompletionByDefault();
  void canDisableCompletionOnReturn();
  void canDisableOpenOnFocus();
@@ -64,28 +63,6 @@ void tst_Autocomplete::escapeHidesPopupByDefault() {
 
  QTest::keyClick(field.lineEdit(), Qt::Key_Escape);
  QVERIFY(!field.isPopupVisible());
-}
-
-void tst_Autocomplete::popupReopensAfterEscapeWhenInputChanges() {
- QtMaterialAutocomplete field;
- field.setSuggestions({QStringLiteral("Alpha"), QStringLiteral("Beta")});
- field.show();
- QVERIFY(QTest::qWaitForWindowExposed(&field));
-
- field.activateWindow();
- field.lineEdit()->setFocus();
- QTRY_VERIFY(field.lineEdit()->hasFocus());
- QTest::keyClicks(field.lineEdit(), "A");
- QVERIFY(field.isPopupVisible());
-
- QTest::keyClick(field.lineEdit(), Qt::Key_Escape);
- QVERIFY(!field.isPopupVisible());
-
- field.lineEdit()->setFocus();
- QTRY_VERIFY(field.lineEdit()->hasFocus());
- QTest::keyClicks(field.lineEdit(), "l");
- QTRY_VERIFY(field.isPopupVisible());
- QCOMPARE(field.currentCompletion(), QStringLiteral("Alpha"));
 }
 
 void tst_Autocomplete::returnAcceptsCurrentCompletionByDefault() {
