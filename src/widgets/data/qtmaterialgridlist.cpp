@@ -196,7 +196,7 @@ public:
             return;
         }
 
-        const GridListSpec& spec = m_grid->resolvedSpec();
+        const GridListSpec spec = m_grid->spec();
         const bool enabled =
             option.state.testFlag(QStyle::State_Enabled);
         const bool selected =
