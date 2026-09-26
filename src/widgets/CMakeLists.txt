@@ -11,6 +11,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     selection/private/qtmaterialselectionrenderhelper.cpp
     surfaces/private/qtmaterialsurfacerenderhelper.cpp
     inputs/private/qtmaterialtextfieldshellhelper_p.cpp
+    inputs/private/qtmaterialautocompletepopup_p.h
     inputs/common/qtmaterialformfieldcontrol.cpp
     inputs/common/qtmaterialinputcontrol.cpp
     selection/qtmaterialcheckbox.cpp
@@ -81,7 +82,6 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialtextfieldvalidationgroup.h
-    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialdatefield.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialsearchbar.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialsearchview.h

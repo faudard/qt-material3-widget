@@ -73,7 +73,6 @@ set(QTMATERIAL3_PUBLIC_HEADERS
     "qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h"
     "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h"
     "qtmaterial/widgets/inputs/qtmaterialautocomplete.h"
-    "qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h"
     "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
     "qtmaterial/widgets/inputs/qtmaterialdatefield.h"
     "qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h"

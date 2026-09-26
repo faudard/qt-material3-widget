@@ -14,6 +14,7 @@ source or ABI changes, and those changes must be called out explicitly.
 
 ### Changed
 - Component spec resolvers and render-only spec types are internalized instead of being installed as application API.
+- `QtMaterialAutocompletePopup` is internalized as an implementation detail; applications use `QtMaterialAutocomplete` instead.
 - Public widget inspection hooks for resolved runtime specs are removed; authored configuration remains public where applicable.
 - Qt-major event compatibility details no longer leak through the public core headers.
 - `QtMaterialInputControl` now exposes only the canonical form-field base contract; TextField vocabulary such as `labelText()` and `supportingText()` lives on the public TextField API.

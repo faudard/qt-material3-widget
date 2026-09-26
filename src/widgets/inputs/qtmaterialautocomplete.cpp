@@ -10,7 +10,7 @@
 #include <QVBoxLayout>
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
-#include "qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h"
+#include "private/qtmaterialautocompletepopup_p.h"
 #include <memory>
 #include "qtmaterial/specs/qtmaterialautocompletespecresolver.h"
 

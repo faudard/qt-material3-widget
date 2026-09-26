@@ -152,8 +152,6 @@ qtm3_add_textfieldshellhelper_private_test(
     widgets/inputs/tst_textfieldshellhelper.cpp
 )
 
-qtm3_add_test(tst_autocompletepopup widgets/inputs/tst_autocompletepopup.cpp qtmaterial3_widgets)
-qtm3_add_test(tst_autocompletepopup_themecontext widgets/inputs/tst_autocompletepopup_themecontext.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_autocompleteresolvedwidget widgets/inputs/tst_autocompleteresolvedwidget.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_autocomplete widgets/inputs/tst_autocomplete.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_datefield widgets/inputs/tst_datefield.cpp qtmaterial3_widgets)

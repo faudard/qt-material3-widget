@@ -1,5 +1,8 @@
 #include <QtTest/QtTest>
 
+#include <QVBoxLayout>
+#include <QWidget>
+
 #include "qtmaterial/widgets/buttons/qtmaterialextendedfab.h"
 
 class tst_ExtendedFab : public QObject {
@@ -31,16 +34,25 @@ void tst_ExtendedFab::constructsWithIconAndText()
 
 void tst_ExtendedFab::keyboardActivation()
 {
-    QtMaterial::QtMaterialExtendedFab widget(QIcon(), QStringLiteral("Compose"));
+    QWidget window;
+    QVBoxLayout layout(&window);
+
+    QtMaterial::QtMaterialExtendedFab widget(
+        QIcon(),
+        QStringLiteral("Compose"));
     widget.resize(widget.sizeHint());
-    widget.show();
+    layout.addWidget(&widget);
 
-    QVERIFY(QTest::qWaitForWindowExposed(&widget));
+    window.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&window));
 
-    widget.setFocus();
-    QVERIFY(widget.hasFocus());
+    window.activateWindow();
+    widget.setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(widget.hasFocus());
 
-    QSignalSpy clickedSpy(&widget, &QAbstractButton::clicked);
+    QSignalSpy clickedSpy(
+        &widget,
+        &QAbstractButton::clicked);
     QVERIFY(clickedSpy.isValid());
 
     QTest::keyClick(&widget, Qt::Key_Return);

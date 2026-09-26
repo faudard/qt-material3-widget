@@ -3,7 +3,7 @@
 Input family:
 - `QtMaterialOutlinedTextField`
 - `QtMaterialFilledTextField`
-- `QtMaterialAutocompletePopup`
+- `QtMaterialAutocomplete`
 - `QtMaterialDateField`
 
 ### TextField RTL contract
