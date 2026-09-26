@@ -5,7 +5,7 @@
 #include "qtmaterial/core/qtmaterialwidget.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
-#include "qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h"
+#include "qtmaterialautocompletepopup_p.h"
 
 using namespace QtMaterial;
 
