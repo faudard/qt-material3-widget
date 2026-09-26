@@ -30,13 +30,15 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 |---|---|---:|---|---|---|---|---|
 | `data.carousel` | Carousel | `usable` | `qtmaterial/widgets/data/qtmaterialcarousel.h` | `DataComponentSpec` | `tst_carousel` | `docs/public-api/data-widgets.md` | `/data/carousel` |
 | `data.grid-list` | Grid List | `usable` | `qtmaterial/widgets/data/qtmaterialgridlist.h` | `DataComponentSpec` | `tst_gridlist` | `docs/public-api/data-widgets.md` | `/data/grid-list` |
+| `data.pagination` | Pagination | `usable` | `qtmaterial/widgets/data/qtmaterialpagination.h` | `PaginationPolicy` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/pagination` |
 | `data.table` | Table | `usable` | `qtmaterial/widgets/data/qtmaterialtable.h` | `TableSpec` | `tst_table` | `docs/public-api/data-widgets.md` | `/data/table` |
+| `data.tree-view` | Tree View | `usable` | `qtmaterial/widgets/data/qtmaterialtreeview.h` | `NativeQtViewPolicy` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/tree-view` |
 
 ## Data display
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `data.divider` | Divider | `usable` | `qtmaterial/widgets/data/qtmaterialdivider.h` | `DividerSpec` | `tst_divider` | `docs/public-api/data-widgets.md` | `/data/divider` |
+| `data.divider` | Divider | `usable` | `qtmaterial/widgets/data/qtmaterialdivider.h` | `DividerSpec` | `tst_divider` | `docs/public-api/divider-release-readiness.md` | `/data/divider` |
 
 ## Inputs
 
@@ -54,10 +56,18 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 | `input.time-field` | Time Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialtimefield.h` | `DateFieldSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/time-field` |
 | `input.time-picker` | Time Picker | `usable` | `qtmaterial/widgets/inputs/qtmaterialtimepicker.h` | `DateFieldSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/time-picker` |
 
+## Layouts
+
+| ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
+|---|---|---:|---|---|---|---|---|
+| `layout.split-view` | Split View | `usable` | `qtmaterial/widgets/layouts/qtmaterialsplitview.h` | `NativeQtLayoutPolicy` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/layouts/split-view` |
+
 ## Navigation
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
+| `navigation.breadcrumb` | Breadcrumb | `usable` | `qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h` | `NavigationPolicy` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/navigation/breadcrumb` |
+| `navigation.command-palette` | Command Palette | `usable` | `qtmaterial/widgets/navigation/qtmaterialcommandpalette.h` | `NativeQtCommandPolicy` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/navigation/command-palette` |
 | `navigation.rail` | Navigation Rail | `usable` | `qtmaterial/widgets/navigation/qtmaterialnavigationrail.h` | `NavigationRailSpec` | `tst_navigationrail` | `docs/public-api/navigation.md` | `/navigation/rail` |
 | `navigation.tabs` | Tabs | `usable` | `qtmaterial/widgets/navigation/qtmaterialtabs.h` | `TabsSpec` | `tst_tabs` | `docs/public-api/navigation.md` | `/navigation/tabs` |
 
@@ -81,11 +91,11 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `surface.banner` | Banner | `usable` | `qtmaterial/widgets/surfaces/qtmaterialbanner.h` | `BannerSpec` | `tst_banner` | `docs/public-api/surfaces.md` | `/surfaces/banner` |
-| `surface.bottom-app-bar` | Bottom App Bar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h` | `AppBarSpec` | `tst_bottomappbar` | `docs/public-api/surfaces.md` | `/surfaces/bottom-app-bar` |
-| `surface.bottom-sheet` | Bottom Sheet | `usable` | `qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h` | `BottomSheetSpec` | `tst_bottomsheet` | `docs/public-api/surfaces.md` | `/surfaces/bottom-sheet` |
+| `surface.banner` | Banner | `usable` | `qtmaterial/widgets/surfaces/qtmaterialbanner.h` | `BannerSpec` | `tst_banner` | `docs/public-api/banner-release-readiness.md` | `/surfaces/banner` |
+| `surface.bottom-app-bar` | Bottom App Bar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h` | `AppBarSpec` | `tst_bottomappbar` | `docs/public-api/appbars-release-readiness.md` | `/surfaces/bottom-app-bar` |
+| `surface.bottom-sheet` | Bottom Sheet | `usable` | `qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h` | `BottomSheetSpec` | `tst_bottomsheet` | `docs/public-api/bottomsheet-release-readiness.md` | `/surfaces/bottom-sheet` |
 | `surface.card` | Card | `usable` | `qtmaterial/widgets/surfaces/qtmaterialcard.h` | `CardSpec` | `tst_card` | `docs/public-api/surfaces.md` | `/surfaces/card` |
 | `surface.dialog` | Dialog | `usable` | `qtmaterial/widgets/surfaces/qtmaterialdialog.h` | `DialogSpec` | `tst_dialog` | `docs/public-api/surfaces.md` | `/surfaces/dialog` |
-| `surface.navigation-drawer` | Navigation Drawer | `usable` | `qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h` | `NavigationDrawerSpec` | `tst_navigationdrawer` | `docs/public-api/surfaces.md` | `/surfaces/navigation-drawer` |
+| `surface.navigation-drawer` | Navigation Drawer | `usable` | `qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h` | `NavigationDrawerSpec` | `tst_navigationdrawer` | `docs/public-api/navigationdrawer-release-readiness.md` | `/surfaces/navigation-drawer` |
 | `surface.snackbar` | Snackbar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialsnackbar.h` | `SnackbarSpec` | `tst_snackbar` | `docs/public-api/surfaces.md` | `/surfaces/snackbar` |
-| `surface.top-app-bar` | Top App Bar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialtopappbar.h` | `AppBarSpec` | `tst_topappbar` | `docs/public-api/surfaces.md` | `/surfaces/top-app-bar` |
+| `surface.top-app-bar` | Top App Bar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialtopappbar.h` | `AppBarSpec` | `tst_topappbar` | `docs/public-api/appbars-release-readiness.md` | `/surfaces/top-app-bar` |
