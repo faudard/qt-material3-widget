@@ -16,7 +16,7 @@ class tst_CompactControls : public QObject
 private slots:
     void canonicalHeadersExposeTypes();
     void convenienceChipsConfigureVariants();
-    void densityChangesPublicMetrics();
+    void densityPreservesPublicTouchTarget();
     void inputChipRequestsRemoval();
 };
 
@@ -64,19 +64,31 @@ void tst_CompactControls::convenienceChipsConfigureVariants()
     QVERIFY(input.isRemovable());
 }
 
-void tst_CompactControls::densityChangesPublicMetrics()
+void tst_CompactControls::densityPreservesPublicTouchTarget()
 {
     QtMaterialChip chip(
         QStringLiteral("Density"));
 
     chip.setDensity(Density::Compact);
-    const int compactHeight = chip.sizeHint().height();
+    QCOMPARE(chip.density(), Density::Compact);
+    const int compactHeight =
+        chip.sizeHint().height();
+    const int compactMinimumHeight =
+        chip.minimumSizeHint().height();
 
     chip.setDensity(Density::Comfortable);
-    const int comfortableHeight = chip.sizeHint().height();
+    QCOMPARE(chip.density(), Density::Comfortable);
+    const int comfortableHeight =
+        chip.sizeHint().height();
+    const int comfortableMinimumHeight =
+        chip.minimumSizeHint().height();
 
-    QVERIFY(compactHeight > 0);
-    QVERIFY(compactHeight < comfortableHeight);
+    QVERIFY(compactHeight >= 48);
+    QVERIFY(compactMinimumHeight >= 48);
+    QCOMPARE(compactHeight, comfortableHeight);
+    QCOMPARE(
+        compactMinimumHeight,
+        comfortableMinimumHeight);
 }
 
 void tst_CompactControls::inputChipRequestsRemoval()
