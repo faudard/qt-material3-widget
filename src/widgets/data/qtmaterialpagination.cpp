@@ -72,7 +72,7 @@ int QtMaterialPagination::pageCount() const noexcept
     if (m_totalCount <= 0) {
         return 1;
     }
-    return (m_totalCount + m_pageSize - 1) / m_pageSize;
+    return 1 + (m_totalCount - 1) / m_pageSize;
 }
 
 void QtMaterialPagination::setPage(int page)
@@ -93,7 +93,9 @@ void QtMaterialPagination::setPageSize(int pageSize)
     }
 
     m_pageSize = pageSize;
-    m_page = qBound(1, m_page, pageCount());
+    const int normalizedPage = qBound(1, m_page, pageCount());
+    const bool pageDidChange = normalizedPage != m_page;
+    m_page = normalizedPage;
 
     int index = m_pageSizeCombo->findData(m_pageSize);
     if (index < 0) {
@@ -107,7 +109,9 @@ void QtMaterialPagination::setPageSize(int pageSize)
 
     updateUi();
     Q_EMIT pageSizeChanged(m_pageSize);
-    Q_EMIT pageChanged(m_page);
+    if (pageDidChange) {
+        Q_EMIT pageChanged(m_page);
+    }
 }
 
 void QtMaterialPagination::setTotalCount(int totalCount)
