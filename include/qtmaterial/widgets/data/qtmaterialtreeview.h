@@ -32,7 +32,6 @@ Q_SIGNALS:
 
 private:
     bool m_dense = false;
-    bool m_dragDropEnabled = false;
 };
 
 } // namespace QtMaterial
