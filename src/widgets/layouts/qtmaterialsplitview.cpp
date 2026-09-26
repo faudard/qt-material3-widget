@@ -35,17 +35,38 @@ void QtMaterialSplitView::setPaneCollapsed(int index, bool collapsed)
         return;
     }
 
+    QWidget* pane = widget(index);
+    if (!pane) {
+        return;
+    }
+
     QList<int> currentSizes = sizes();
     if (collapsed) {
-        m_lastExpandedSizes = currentSizes;
-        currentSizes[index] = 0;
+        const int currentSize = currentSizes.value(index);
+        if (currentSize > 0) {
+            m_lastExpandedSize.insert(pane, currentSize);
+        }
+        if (!m_preCollapseCollapsible.contains(pane)) {
+            m_preCollapseCollapsible.insert(pane, isCollapsible(index));
+        }
+
         setCollapsible(index, true);
+        currentSizes[index] = 0;
         setSizes(currentSizes);
-    } else if (m_lastExpandedSizes.size() == count()) {
-        setSizes(m_lastExpandedSizes);
     } else {
-        currentSizes[index] = qMax(1, currentSizes.value(index));
+        const int fallbackSize =
+            orientation() == Qt::Horizontal
+                ? pane->sizeHint().width()
+                : pane->sizeHint().height();
+        currentSizes[index] =
+            qMax(1, m_lastExpandedSize.take(pane, qMax(1, fallbackSize)));
         setSizes(currentSizes);
+
+        const auto collapsibleIt = m_preCollapseCollapsible.find(pane);
+        if (collapsibleIt != m_preCollapseCollapsible.end()) {
+            setCollapsible(index, collapsibleIt.value());
+            m_preCollapseCollapsible.erase(collapsibleIt);
+        }
     }
 
     Q_EMIT paneCollapsedChanged(index, collapsed);
