@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QList>
+#include <QHash>
 #include <QSplitter>
 
 #include "qtmaterial/qtmaterialglobal.h"
@@ -25,7 +25,8 @@ Q_SIGNALS:
     void paneCollapsedChanged(int index, bool collapsed);
 
 private:
-    QList<int> m_lastExpandedSizes;
+    QHash<QWidget*, int> m_lastExpandedSize;
+    QHash<QWidget*, bool> m_preCollapseCollapsible;
 };
 
 } // namespace QtMaterial
