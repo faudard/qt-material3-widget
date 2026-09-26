@@ -5,12 +5,12 @@
 
 ## Component maturity summary
 
-Total tracked components: **40**.
+Total tracked components: **45**.
 
 | Maturity | Count |
 |---|---:|
 | `complete` | 8 |
-| `usable` | 32 |
+| `usable` | 37 |
 | `partial` | 0 |
 | `skeleton` | 0 |
 | `planned` | 0 |
@@ -23,3 +23,4 @@ No registry-level maturity blockers.
 
 - `docs/component-status.md` — compact component registry status.
 - `docs/components/maturity.md` — detailed maturity matrix.
+- `src/tooling/qtmaterialcomponentregistry_generated.inc` — runtime C++ registry entries.
