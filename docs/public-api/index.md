@@ -31,6 +31,7 @@ Use these pages for package-level guidance and family-level orientation. For exa
 - selection controls
 - surfaces
 - data widgets
+- desktop productivity and layouts
 
 ## Include style
 
