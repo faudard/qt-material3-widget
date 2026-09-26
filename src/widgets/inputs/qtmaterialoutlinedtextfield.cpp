@@ -1546,7 +1546,7 @@ refreshValidationState(bool commit)
 void QtMaterialOutlinedTextField::
 syncEffectiveErrorState()
 {
-    QtMaterialInputControl::setHasErrorState(
+    setInvalid(
         d_ptr->m_manualErrorState
         || d_ptr->m_automaticValidationError);
 }
