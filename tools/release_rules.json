@@ -213,7 +213,6 @@
       "qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h",
       "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h",
       "qtmaterial/widgets/inputs/qtmaterialautocomplete.h",
-      "qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h",
       "qtmaterial/widgets/inputs/qtmaterialtextfieldvalidationgroup.h",
       "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h",
       "qtmaterial/widgets/navigation/qtmaterialmenu.h",
