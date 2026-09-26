@@ -42,3 +42,8 @@ summaries, keyboard activation with Return/Enter/Space and a stable `rowActivate
 The table intentionally keeps Qt's model/view architecture. Applications continue to provide a
 `QAbstractItemModel`, optional sorting/filtering proxies and custom delegates where
 domain-specific rendering is required.
+
+For desktop workflows, `QtMaterialTable` also exposes explicit policies for column reordering,
+cell-vs-row selection and native internal drag/drop. These policies configure the underlying
+`QTableView` behavior rather than replacing Qt's model, delegate or MIME/drop contracts. See
+[Desktop and productivity components](desktop-productivity.md) for the wider 0.9 desktop surface.
