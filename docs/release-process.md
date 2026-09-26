@@ -8,7 +8,7 @@ Required checks:
 
 1. Run the normal CI matrix.
 2. Run repository-health and documentation gates.
-3. Run `python tools/check_release.py --root . --scope all`.
+3. Run `python tools/check_release.py --root . --scope all`; `all` includes the 0.9 API-freeze contract.
 4. Verify the release-scoped component registry contains no `partial`, `skeleton`, or `planned` component.
 5. Verify Theme JSON fixtures, token matrix, SystemTheme, Theme Studio, and runtime propagation tests are green.
 6. Verify interaction-state, ripple, focus, motion, shadow/DPR and transient-focus tests are green.
