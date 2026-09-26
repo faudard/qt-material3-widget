@@ -927,7 +927,7 @@
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-09-26",
       "gaps": [
         "No Table Material reference model or deterministic visual conformance evidence is available."
       ],
@@ -942,7 +942,7 @@
           "Production implementation exists: src/widgets/data/qtmaterialtable.cpp."
         ],
         "states": [
-          "tests/widgets/data/tst_table.cpp exercises selection and table behavior."
+          "tst_table and tst_desktop_productivity exercise selection plus desktop column, cell-selection and drag/drop policies."
         ],
         "accessibility": [
           "Accessibility remains basic and has no dedicated conformance suite."
@@ -957,13 +957,13 @@
           "Directional behavior exists without dedicated RTL conformance evidence."
         ],
         "tests": [
-          "Registered target tst_table and resolved-spec tests provide simple-case coverage."
+          "Registered tst_table, resolved-spec tests and tst_desktop_productivity cover the public table contract."
         ],
         "example": [
-          "examples/gallery/pages/datapage.cpp instantiates QtMaterialTable."
+          "examples/gallery/pages/datapage.cpp and advanceddatapage.cpp instantiate QtMaterialTable."
         ],
         "docs": [
-          "docs/public-api/data-widgets.md documents the public data-widget contract."
+          "docs/public-api/data-widgets.md and desktop-productivity.md document the public table contract."
         ]
       }
     }
@@ -2789,7 +2789,7 @@
     "name": "Tree View",
     "family": "Data",
     "maturity": "usable",
-    "maturityPolicy": "manual",
+    "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/data/qtmaterialtreeview.h",
     "specType": "NativeQtViewPolicy",
     "widgetType": "QtMaterialTreeView",
@@ -2802,12 +2802,12 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
       "tests": 2,
-      "example": 2,
+      "example": 1,
       "docs": 2,
       "lastReviewed": "2026-09-26",
       "gaps": [
@@ -2827,22 +2827,22 @@
           "native Qt enabled/selection/focus state remains authoritative"
         ],
         "accessibility": [
-          "native Qt accessibility surface is preserved"
+          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
         ],
         "keyboard": [
-          "native Qt keyboard behavior is preserved"
+          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
         ],
         "hidpi": [
-          "cross-platform release matrix includes HiDPI-capable Qt builds"
+          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
         ],
         "rtl": [
-          "directional behavior remains delegated to Qt where applicable"
+          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
         ],
         "tests": [
           "tst_desktop_productivity is registered"
         ],
         "example": [
-          "0.9 advanced gallery pages exercise the component"
+          "The advanced Gallery pages provide a simple integration example for the component."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
@@ -2858,7 +2858,7 @@
     "name": "Pagination",
     "family": "Data",
     "maturity": "usable",
-    "maturityPolicy": "manual",
+    "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/data/qtmaterialpagination.h",
     "specType": "PaginationPolicy",
     "widgetType": "QtMaterialPagination",
@@ -2871,12 +2871,12 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
       "tests": 2,
-      "example": 2,
+      "example": 1,
       "docs": 2,
       "lastReviewed": "2026-09-26",
       "gaps": [
@@ -2896,22 +2896,22 @@
           "native Qt enabled/selection/focus state remains authoritative"
         ],
         "accessibility": [
-          "native Qt accessibility surface is preserved"
+          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
         ],
         "keyboard": [
-          "native Qt keyboard behavior is preserved"
+          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
         ],
         "hidpi": [
-          "cross-platform release matrix includes HiDPI-capable Qt builds"
+          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
         ],
         "rtl": [
-          "directional behavior remains delegated to Qt where applicable"
+          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
         ],
         "tests": [
           "tst_desktop_productivity is registered"
         ],
         "example": [
-          "0.9 advanced gallery pages exercise the component"
+          "The advanced Gallery pages provide a simple integration example for the component."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
@@ -2927,7 +2927,7 @@
     "name": "Split View",
     "family": "Layouts",
     "maturity": "usable",
-    "maturityPolicy": "manual",
+    "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/layouts/qtmaterialsplitview.h",
     "specType": "NativeQtLayoutPolicy",
     "widgetType": "QtMaterialSplitView",
@@ -2940,12 +2940,12 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
       "tests": 2,
-      "example": 2,
+      "example": 1,
       "docs": 2,
       "lastReviewed": "2026-09-26",
       "gaps": [
@@ -2965,22 +2965,22 @@
           "native Qt enabled/selection/focus state remains authoritative"
         ],
         "accessibility": [
-          "native Qt accessibility surface is preserved"
+          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
         ],
         "keyboard": [
-          "native Qt keyboard behavior is preserved"
+          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
         ],
         "hidpi": [
-          "cross-platform release matrix includes HiDPI-capable Qt builds"
+          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
         ],
         "rtl": [
-          "directional behavior remains delegated to Qt where applicable"
+          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
         ],
         "tests": [
           "tst_desktop_productivity is registered"
         ],
         "example": [
-          "0.9 advanced gallery pages exercise the component"
+          "The advanced Gallery pages provide a simple integration example for the component."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
@@ -2996,7 +2996,7 @@
     "name": "Breadcrumb",
     "family": "Navigation",
     "maturity": "usable",
-    "maturityPolicy": "manual",
+    "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h",
     "specType": "NavigationPolicy",
     "widgetType": "QtMaterialBreadcrumb",
@@ -3009,12 +3009,12 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
       "tests": 2,
-      "example": 2,
+      "example": 1,
       "docs": 2,
       "lastReviewed": "2026-09-26",
       "gaps": [
@@ -3034,22 +3034,22 @@
           "native Qt enabled/selection/focus state remains authoritative"
         ],
         "accessibility": [
-          "native Qt accessibility surface is preserved"
+          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
         ],
         "keyboard": [
-          "native Qt keyboard behavior is preserved"
+          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
         ],
         "hidpi": [
-          "cross-platform release matrix includes HiDPI-capable Qt builds"
+          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
         ],
         "rtl": [
-          "directional behavior remains delegated to Qt where applicable"
+          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
         ],
         "tests": [
           "tst_desktop_productivity is registered"
         ],
         "example": [
-          "0.9 advanced gallery pages exercise the component"
+          "The advanced Gallery pages provide a simple integration example for the component."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
@@ -3065,7 +3065,7 @@
     "name": "Command Palette",
     "family": "Navigation",
     "maturity": "usable",
-    "maturityPolicy": "manual",
+    "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h",
     "specType": "NativeQtCommandPolicy",
     "widgetType": "QtMaterialCommandPalette",
@@ -3078,12 +3078,12 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
       "tests": 2,
-      "example": 2,
+      "example": 1,
       "docs": 2,
       "lastReviewed": "2026-09-26",
       "gaps": [
@@ -3103,22 +3103,22 @@
           "native Qt enabled/selection/focus state remains authoritative"
         ],
         "accessibility": [
-          "native Qt accessibility surface is preserved"
+          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
         ],
         "keyboard": [
-          "native Qt keyboard behavior is preserved"
+          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
         ],
         "hidpi": [
-          "cross-platform release matrix includes HiDPI-capable Qt builds"
+          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
         ],
         "rtl": [
-          "directional behavior remains delegated to Qt where applicable"
+          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
         ],
         "tests": [
           "tst_desktop_productivity is registered"
         ],
         "example": [
-          "0.9 advanced gallery pages exercise the component"
+          "The advanced Gallery pages provide a simple integration example for the component."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
