@@ -42,9 +42,9 @@
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `data.carousel` | Carousel | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Carousel Material reference model or deterministic visual conformance evidence is available. |
 | `data.grid-list` | Grid List | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Grid List Material reference model or deterministic visual conformance evidence is available. |
-| `data.pagination` | Pagination | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Needs theme-token specialization and visual-regression evidence before complete maturity. |
+| `data.pagination` | Pagination | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs theme-token specialization and visual-regression evidence before complete maturity. |
 | `data.table` | Table | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Table Material reference model or deterministic visual conformance evidence is available. |
-| `data.tree-view` | Tree View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Needs dedicated visual-regression and screen-reader evidence before complete maturity. |
+| `data.tree-view` | Tree View | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs dedicated visual-regression and screen-reader evidence before complete maturity. |
 
 ### Data display
 
@@ -72,14 +72,14 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `layout.split-view` | Split View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Needs dedicated keyboard-resize affordance and visual-regression evidence before complete maturity. |
+| `layout.split-view` | Split View | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs dedicated keyboard-resize affordance and visual-regression evidence before complete maturity. |
 
 ### Navigation
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `navigation.breadcrumb` | Breadcrumb | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Needs dedicated overflow/elision behavior and visual-regression evidence before complete maturity. |
-| `navigation.command-palette` | Command Palette | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Needs shortcut-discovery, empty-state and visual-regression evidence before complete maturity. |
+| `navigation.breadcrumb` | Breadcrumb | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs dedicated overflow/elision behavior and visual-regression evidence before complete maturity. |
+| `navigation.command-palette` | Command Palette | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs shortcut-discovery, empty-state and visual-regression evidence before complete maturity. |
 | `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Rail Material reference model or deterministic visual conformance evidence is available. |
 | `navigation.tabs` | Tabs | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Complete visual-reference and full state-matrix certification remain before Tabs can be marked complete. |
 
