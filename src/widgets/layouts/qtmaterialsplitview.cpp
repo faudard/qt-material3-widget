@@ -58,8 +58,10 @@ void QtMaterialSplitView::setPaneCollapsed(int index, bool collapsed)
             orientation() == Qt::Horizontal
                 ? pane->sizeHint().width()
                 : pane->sizeHint().height();
-        currentSizes[index] =
-            qMax(1, m_lastExpandedSize.take(pane, qMax(1, fallbackSize)));
+        const int restoredSize =
+            m_lastExpandedSize.value(pane, qMax(1, fallbackSize));
+        m_lastExpandedSize.remove(pane);
+        currentSizes[index] = qMax(1, restoredSize);
         setSizes(currentSizes);
 
         const auto collapsibleIt = m_preCollapseCollapsible.find(pane);
