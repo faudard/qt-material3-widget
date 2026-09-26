@@ -54,6 +54,7 @@ system-theme
 theme-studio
 interaction-effects
 component-expansion
+desktop-productivity
 buttons
 compact-controls
 data-widgets
