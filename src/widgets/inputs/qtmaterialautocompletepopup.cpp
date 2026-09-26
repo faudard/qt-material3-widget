@@ -1,4 +1,4 @@
-#include "qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h"
+#include "private/qtmaterialautocompletepopup_p.h"
 #include "../resolution/qtmaterialinputspecresolution_p.h"
 
 #include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
