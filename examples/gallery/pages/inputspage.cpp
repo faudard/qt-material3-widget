@@ -2,7 +2,7 @@
 
 #include <QVBoxLayout>
 
-#include "qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h"
+#include "qtmaterial/widgets/inputs/qtmaterialautocomplete.h"
 #include "qtmaterial/widgets/inputs/qtmaterialdatefield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
@@ -21,8 +21,11 @@ InputsPage::InputsPage(QWidget* parent)
     auto* date = new QtMaterialDateField(this);
     date->setLabelText(QStringLiteral("Date field"));
 
-    auto* popup = new QtMaterialAutocompletePopup(this);
-    popup->setSuggestions({
+    auto* autocomplete =
+        new QtMaterial::QtMaterialAutocomplete(this);
+    autocomplete->setPlaceholderText(
+        QStringLiteral("Autocomplete"));
+    autocomplete->setSuggestions({
         QStringLiteral("Alpha"),
         QStringLiteral("Beta"),
         QStringLiteral("Gamma"),
@@ -32,6 +35,6 @@ InputsPage::InputsPage(QWidget* parent)
     layout->addWidget(outlined);
     layout->addWidget(filled);
     layout->addWidget(date);
-    layout->addWidget(popup);
+    layout->addWidget(autocomplete);
     layout->addStretch(1);
 }
