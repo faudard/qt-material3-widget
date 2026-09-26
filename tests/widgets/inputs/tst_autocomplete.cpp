@@ -15,7 +15,7 @@ private slots:
  void placeholderAndTextRoundTrip();
  void suggestionsOpenPopupAndExposeCurrentCompletion();
  void escapeHidesPopupByDefault();
- void popupCanReopenAfterEscape();
+ void popupReopensAfterEscapeWhenInputChanges();
  void returnAcceptsCurrentCompletionByDefault();
  void canDisableCompletionOnReturn();
  void canDisableOpenOnFocus();
@@ -66,7 +66,7 @@ void tst_Autocomplete::escapeHidesPopupByDefault() {
  QVERIFY(!field.isPopupVisible());
 }
 
-void tst_Autocomplete::popupCanReopenAfterEscape() {
+void tst_Autocomplete::popupReopensAfterEscapeWhenInputChanges() {
  QtMaterialAutocomplete field;
  field.setSuggestions({QStringLiteral("Alpha"), QStringLiteral("Beta")});
  field.show();
@@ -81,11 +81,11 @@ void tst_Autocomplete::popupCanReopenAfterEscape() {
  QTest::keyClick(field.lineEdit(), Qt::Key_Escape);
  QVERIFY(!field.isPopupVisible());
 
- field.setPopupVisible(true);
+ field.lineEdit()->setFocus();
+ QTRY_VERIFY(field.lineEdit()->hasFocus());
+ QTest::keyClicks(field.lineEdit(), "l");
  QTRY_VERIFY(field.isPopupVisible());
-
- field.setPopupVisible(false);
- QTRY_VERIFY(!field.isPopupVisible());
+ QCOMPARE(field.currentCompletion(), QStringLiteral("Alpha"));
 }
 
 void tst_Autocomplete::returnAcceptsCurrentCompletionByDefault() {
