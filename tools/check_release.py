@@ -271,7 +271,7 @@ def validate_interaction(
 
 def parse_cmake_list(text: str, variable: str) -> list[str]:
     match = re.search(
-        rf"set\\(\\s*{re.escape(variable)}\\s*(.*?)\\)",
+        rf"set\(\s*{re.escape(variable)}\s*(.*?)\)",
         text,
         flags=re.DOTALL,
     )
