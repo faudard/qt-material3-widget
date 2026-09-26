@@ -8,6 +8,8 @@ source or ABI changes, and those changes must be called out explicitly.
 ## [0.9.0] - Unreleased
 
 ### Added
+- Desktop productivity components add Tree View, Pagination, Split View, Breadcrumb and Command Palette while preserving native Qt Model/View and layout ownership.
+- Table adds explicit column-reordering, cell-selection and internal drag/drop policies.
 - API-freeze validation is integrated into the unified release checker and repository-health gate.
 - Public widget-header ownership is explicit: component-registry entries plus a reviewed support-header allowlist.
 - Release validation requires every retained C++ test source to be registered with CTest or explicitly classified as a standalone consumer harness.

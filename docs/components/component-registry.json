@@ -927,7 +927,7 @@
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-09-26",
       "gaps": [
         "No Table Material reference model or deterministic visual conformance evidence is available."
       ],
@@ -942,7 +942,7 @@
           "Production implementation exists: src/widgets/data/qtmaterialtable.cpp."
         ],
         "states": [
-          "tests/widgets/data/tst_table.cpp exercises selection and table behavior."
+          "tst_table and tst_desktop_productivity exercise selection plus desktop column, cell-selection and drag/drop policies."
         ],
         "accessibility": [
           "Accessibility remains basic and has no dedicated conformance suite."
@@ -957,13 +957,13 @@
           "Directional behavior exists without dedicated RTL conformance evidence."
         ],
         "tests": [
-          "Registered target tst_table and resolved-spec tests provide simple-case coverage."
+          "Registered tst_table, resolved-spec tests and tst_desktop_productivity cover the public table contract."
         ],
         "example": [
-          "examples/gallery/pages/datapage.cpp instantiates QtMaterialTable."
+          "examples/gallery/pages/datapage.cpp and advanceddatapage.cpp instantiate QtMaterialTable."
         ],
         "docs": [
-          "docs/public-api/data-widgets.md documents the public data-widget contract."
+          "docs/public-api/data-widgets.md and desktop-productivity.md document the public table contract."
         ]
       }
     }
@@ -2780,6 +2780,351 @@
         ],
         "docs": [
           "docs/public-api/surfaces.md documents the shared AppBar contract."
+        ]
+      }
+    }
+  },
+  {
+    "id": "data.tree-view",
+    "name": "Tree View",
+    "family": "Data",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialtreeview.h",
+    "specType": "NativeQtViewPolicy",
+    "widgetType": "QtMaterialTreeView",
+    "testTarget": "tst_desktop_productivity",
+    "galleryRoute": "/data/tree-view",
+    "docsPath": "docs/public-api/desktop-productivity.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-26",
+      "gaps": [
+        "Needs dedicated visual-regression and screen-reader evidence before complete maturity."
+      ],
+      "nextActions": [
+        "Close the declared 0.9 maturity gap before promoting this component to complete."
+      ],
+      "evidence": {
+        "api": [
+          "public 0.9 desktop/productivity API is installed and header-audited"
+        ],
+        "rendering": [
+          "gallery exercises the desktop adaptation"
+        ],
+        "states": [
+          "native Qt enabled/selection/focus state remains authoritative"
+        ],
+        "accessibility": [
+          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
+        ],
+        "keyboard": [
+          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
+        ],
+        "hidpi": [
+          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
+        ],
+        "rtl": [
+          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
+        ],
+        "tests": [
+          "tst_desktop_productivity is registered"
+        ],
+        "example": [
+          "The advanced Gallery pages provide a simple integration example for the component."
+        ],
+        "docs": [
+          "desktop-productivity.md documents the contract"
+        ],
+        "notes": [
+          "QTreeView remains the canonical model/view implementation; Material adds explicit desktop policies."
+        ]
+      }
+    }
+  },
+  {
+    "id": "data.pagination",
+    "name": "Pagination",
+    "family": "Data",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialpagination.h",
+    "specType": "PaginationPolicy",
+    "widgetType": "QtMaterialPagination",
+    "testTarget": "tst_desktop_productivity",
+    "galleryRoute": "/data/pagination",
+    "docsPath": "docs/public-api/desktop-productivity.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-26",
+      "gaps": [
+        "Needs theme-token specialization and visual-regression evidence before complete maturity."
+      ],
+      "nextActions": [
+        "Close the declared 0.9 maturity gap before promoting this component to complete."
+      ],
+      "evidence": {
+        "api": [
+          "public 0.9 desktop/productivity API is installed and header-audited"
+        ],
+        "rendering": [
+          "gallery exercises the desktop adaptation"
+        ],
+        "states": [
+          "native Qt enabled/selection/focus state remains authoritative"
+        ],
+        "accessibility": [
+          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
+        ],
+        "keyboard": [
+          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
+        ],
+        "hidpi": [
+          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
+        ],
+        "rtl": [
+          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
+        ],
+        "tests": [
+          "tst_desktop_productivity is registered"
+        ],
+        "example": [
+          "The advanced Gallery pages provide a simple integration example for the component."
+        ],
+        "docs": [
+          "desktop-productivity.md documents the contract"
+        ],
+        "notes": [
+          "Pagination owns page state only; application models and backend queries remain external."
+        ]
+      }
+    }
+  },
+  {
+    "id": "layout.split-view",
+    "name": "Split View",
+    "family": "Layouts",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/layouts/qtmaterialsplitview.h",
+    "specType": "NativeQtLayoutPolicy",
+    "widgetType": "QtMaterialSplitView",
+    "testTarget": "tst_desktop_productivity",
+    "galleryRoute": "/layouts/split-view",
+    "docsPath": "docs/public-api/desktop-productivity.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-26",
+      "gaps": [
+        "Needs dedicated keyboard-resize affordance and visual-regression evidence before complete maturity."
+      ],
+      "nextActions": [
+        "Close the declared 0.9 maturity gap before promoting this component to complete."
+      ],
+      "evidence": {
+        "api": [
+          "public 0.9 desktop/productivity API is installed and header-audited"
+        ],
+        "rendering": [
+          "gallery exercises the desktop adaptation"
+        ],
+        "states": [
+          "native Qt enabled/selection/focus state remains authoritative"
+        ],
+        "accessibility": [
+          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
+        ],
+        "keyboard": [
+          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
+        ],
+        "hidpi": [
+          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
+        ],
+        "rtl": [
+          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
+        ],
+        "tests": [
+          "tst_desktop_productivity is registered"
+        ],
+        "example": [
+          "The advanced Gallery pages provide a simple integration example for the component."
+        ],
+        "docs": [
+          "desktop-productivity.md documents the contract"
+        ],
+        "notes": [
+          "QSplitter save/restore and sizing semantics remain available unchanged."
+        ]
+      }
+    }
+  },
+  {
+    "id": "navigation.breadcrumb",
+    "name": "Breadcrumb",
+    "family": "Navigation",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h",
+    "specType": "NavigationPolicy",
+    "widgetType": "QtMaterialBreadcrumb",
+    "testTarget": "tst_desktop_productivity",
+    "galleryRoute": "/navigation/breadcrumb",
+    "docsPath": "docs/public-api/desktop-productivity.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-26",
+      "gaps": [
+        "Needs dedicated overflow/elision behavior and visual-regression evidence before complete maturity."
+      ],
+      "nextActions": [
+        "Close the declared 0.9 maturity gap before promoting this component to complete."
+      ],
+      "evidence": {
+        "api": [
+          "public 0.9 desktop/productivity API is installed and header-audited"
+        ],
+        "rendering": [
+          "gallery exercises the desktop adaptation"
+        ],
+        "states": [
+          "native Qt enabled/selection/focus state remains authoritative"
+        ],
+        "accessibility": [
+          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
+        ],
+        "keyboard": [
+          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
+        ],
+        "hidpi": [
+          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
+        ],
+        "rtl": [
+          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
+        ],
+        "tests": [
+          "tst_desktop_productivity is registered"
+        ],
+        "example": [
+          "The advanced Gallery pages provide a simple integration example for the component."
+        ],
+        "docs": [
+          "desktop-productivity.md documents the contract"
+        ],
+        "notes": [
+          "Breadcrumb segments are focusable Qt tool buttons and expose activated path indexes."
+        ]
+      }
+    }
+  },
+  {
+    "id": "navigation.command-palette",
+    "name": "Command Palette",
+    "family": "Navigation",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h",
+    "specType": "NativeQtCommandPolicy",
+    "widgetType": "QtMaterialCommandPalette",
+    "testTarget": "tst_desktop_productivity",
+    "galleryRoute": "/navigation/command-palette",
+    "docsPath": "docs/public-api/desktop-productivity.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-09-26",
+      "gaps": [
+        "Needs shortcut-discovery, empty-state and visual-regression evidence before complete maturity."
+      ],
+      "nextActions": [
+        "Close the declared 0.9 maturity gap before promoting this component to complete."
+      ],
+      "evidence": {
+        "api": [
+          "public 0.9 desktop/productivity API is installed and header-audited"
+        ],
+        "rendering": [
+          "gallery exercises the desktop adaptation"
+        ],
+        "states": [
+          "native Qt enabled/selection/focus state remains authoritative"
+        ],
+        "accessibility": [
+          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
+        ],
+        "keyboard": [
+          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
+        ],
+        "hidpi": [
+          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
+        ],
+        "rtl": [
+          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
+        ],
+        "tests": [
+          "tst_desktop_productivity is registered"
+        ],
+        "example": [
+          "The advanced Gallery pages provide a simple integration example for the component."
+        ],
+        "docs": [
+          "desktop-productivity.md documents the contract"
+        ],
+        "notes": [
+          "Command filtering uses QSortFilterProxyModel and returns source-model indexes."
         ]
       }
     }

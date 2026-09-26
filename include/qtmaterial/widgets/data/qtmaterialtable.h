@@ -45,6 +45,21 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTable
         READ multiSelectionEnabled
         WRITE setMultiSelectionEnabled
         NOTIFY multiSelectionEnabledChanged)
+    Q_PROPERTY(
+        bool columnReorderingEnabled
+        READ columnReorderingEnabled
+        WRITE setColumnReorderingEnabled
+        NOTIFY columnReorderingEnabledChanged)
+    Q_PROPERTY(
+        bool cellSelectionEnabled
+        READ cellSelectionEnabled
+        WRITE setCellSelectionEnabled
+        NOTIFY cellSelectionEnabledChanged)
+    Q_PROPERTY(
+        bool dragDropEnabled
+        READ dragDropEnabled
+        WRITE setDragDropEnabled
+        NOTIFY dragDropEnabledChanged)
 
 public:
     explicit QtMaterialTable(
@@ -74,6 +89,15 @@ public:
     bool multiSelectionEnabled() const noexcept;
     void setMultiSelectionEnabled(bool enabled);
 
+    bool columnReorderingEnabled() const noexcept;
+    void setColumnReorderingEnabled(bool enabled);
+
+    bool cellSelectionEnabled() const noexcept;
+    void setCellSelectionEnabled(bool enabled);
+
+    bool dragDropEnabled() const noexcept;
+    void setDragDropEnabled(bool enabled);
+
     QString accessibilitySummary() const;
     QString currentCellAccessibleText() const;
     QString rowAccessibleText(int row) const;
@@ -92,6 +116,9 @@ Q_SIGNALS:
 
     void denseChanged(bool dense);
     void multiSelectionEnabledChanged(bool enabled);
+    void columnReorderingEnabledChanged(bool enabled);
+    void cellSelectionEnabledChanged(bool enabled);
+    void dragDropEnabledChanged(bool enabled);
     void accessibilitySummaryChanged(
         const QString& summary);
     void rowActivated(int row);

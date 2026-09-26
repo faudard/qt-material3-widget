@@ -98,6 +98,8 @@ Goal: reduce the remaining pre-1.0 surface to the API that is intended to surviv
 
 Release gates:
 
+- Tree View, Pagination, Split View, Breadcrumb and Command Palette are release-scoped only after registry ownership, public-header audit and cross-platform tests.
+- Desktop Table policies preserve native QTableView model/delegate ownership.
 - No placeholder, compatibility-only, or unowned public API remains.
 - Installed CMake components expose application-facing modules only.
 - Every checked repository-health command is implemented and fail-closed.

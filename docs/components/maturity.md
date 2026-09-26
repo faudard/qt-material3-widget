@@ -42,7 +42,9 @@
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `data.carousel` | Carousel | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Carousel Material reference model or deterministic visual conformance evidence is available. |
 | `data.grid-list` | Grid List | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Grid List Material reference model or deterministic visual conformance evidence is available. |
+| `data.pagination` | Pagination | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs theme-token specialization and visual-regression evidence before complete maturity. |
 | `data.table` | Table | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Table Material reference model or deterministic visual conformance evidence is available. |
+| `data.tree-view` | Tree View | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs dedicated visual-regression and screen-reader evidence before complete maturity. |
 
 ### Data display
 
@@ -66,10 +68,18 @@
 | `input.time-field` | Time Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Time Field has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
 | `input.time-picker` | Time Picker | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Time Picker has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
 
+### Layouts
+
+| ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| `layout.split-view` | Split View | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs dedicated keyboard-resize affordance and visual-regression evidence before complete maturity. |
+
 ### Navigation
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| `navigation.breadcrumb` | Breadcrumb | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs dedicated overflow/elision behavior and visual-regression evidence before complete maturity. |
+| `navigation.command-palette` | Command Palette | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs shortcut-discovery, empty-state and visual-regression evidence before complete maturity. |
 | `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Rail Material reference model or deterministic visual conformance evidence is available. |
 | `navigation.tabs` | Tabs | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Complete visual-reference and full state-matrix certification remain before Tabs can be marked complete. |
 
@@ -147,7 +157,9 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Chip | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Chip family. |
 | Carousel | Add Carousel reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
 | Grid List | Add Grid List reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
+| Pagination | Close the declared 0.9 maturity gap before promoting this component to complete. |
 | Table | Add Table reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
+| Tree View | Close the declared 0.9 maturity gap before promoting this component to complete. |
 | Divider | Add Divider token, RTL and HiDPI reference evidence before raising maturity axes. |
 | Combo Box | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Combo Box. |
 | Date Range Picker | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Date Range Picker. |
@@ -160,6 +172,9 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Outlined Text Field | Add Text Field state, accessibility and visual evidence before raising maturity axes. |
 | Time Field | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Time Field. |
 | Time Picker | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Time Picker. |
+| Split View | Close the declared 0.9 maturity gap before promoting this component to complete. |
+| Breadcrumb | Close the declared 0.9 maturity gap before promoting this component to complete. |
+| Command Palette | Close the declared 0.9 maturity gap before promoting this component to complete. |
 | Navigation Rail | Add Navigation Rail reference-model, RTL and visual evidence before raising maturity axes. |
 | Tabs | Add deterministic visual-reference coverage and broaden the full state matrix for complete maturity. |
 | Circular Progress Indicator | Add progress token, animation, accessibility and visual evidence before raising maturity axes. |
