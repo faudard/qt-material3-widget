@@ -8,7 +8,6 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 
-#include "qtmaterial/core/qtmaterialeventcompat.h"
 #include "qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h"
 
 namespace {
@@ -271,28 +270,23 @@ void QtMaterialAbstractButton::contentChangedEvent() {}
 
 bool QtMaterialAbstractButton::event(QEvent* event)
 {
+    const auto before = snapshotOf(m_state);
     const bool handled = QAbstractButton::event(event);
+
+    if (event && event->type() == QEvent::Enter) {
+        m_state.setHovered(true);
+        syncFromButtonState();
+        if (!sameSnapshot(before, snapshotOf(m_state))) {
+            syncAutomationState();
+            stateChangedEvent();
+        }
+    }
 
     if (event && event->type() == QEvent::ToolTipChange) {
         syncAccessibilityState();
     }
 
     return handled;
-}
-
-void QtMaterialAbstractButton::enterEvent(EnterEvent* event)
-{
-    const auto before = snapshotOf(m_state);
-
-    QAbstractButton::enterEvent(event);
-
-    m_state.setHovered(true);
-    syncFromButtonState();
-
-    if (!sameSnapshot(before, snapshotOf(m_state))) {
-        syncAutomationState();
-        stateChangedEvent();
-    }
 }
 
 void QtMaterialAbstractButton::leaveEvent(QEvent* event)

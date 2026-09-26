@@ -5,8 +5,56 @@ from pathlib import Path
 MANIFEST = Path("cmake/QtMaterial3HeaderSurfaceManifest.cmake")
 HEADER_SUFFIXES = {".h", ".hh", ".hpp", ".hxx"}
 
+# Source-tree headers that are implementation-only even though their historical
+# paths do not use a private/ directory or _p suffix. They are never installed.
+INTERNAL_HEADER_PATHS = frozenset({
+    "qtmaterial/core/qtmaterialeventcompat.h",
+    "qtmaterial/specs/qtmaterialappbarspec.h",
+    "qtmaterial/specs/qtmaterialbannerspec.h",
+    "qtmaterial/specs/qtmaterialbottomsheetspec.h",
+    "qtmaterial/specs/qtmaterialcardspec.h",
+    "qtmaterial/specs/qtmaterialcheckboxspec.h",
+    "qtmaterial/specs/qtmaterialdialogspec.h",
+    "qtmaterial/specs/qtmaterialfabspec.h",
+    "qtmaterial/specs/qtmaterialnavigationdrawerspec.h",
+    "qtmaterial/specs/qtmaterialradiobuttonspec.h",
+    "qtmaterial/specs/qtmaterialselectionruntimespec.h",
+    "qtmaterial/specs/qtmaterialswitchspec.h",
+    "qtmaterial/specs/qtmaterialautocompletepopupspec.h",
+    "qtmaterial/specs/qtmaterialautocompletespec.h",
+    "qtmaterial/specs/qtmaterialdatefieldspec.h",
+    "qtmaterial/specs/qtmaterialdividerspec.h",
+    "qtmaterial/specs/qtmateriallistitemspec.h",
+    "qtmaterial/specs/qtmateriallistspec.h",
+    "qtmaterial/specs/qtmaterialnavigationrailspec.h",
+    "qtmaterial/specs/qtmaterialsegmentedbuttonspec.h",
+    "qtmaterial/specs/qtmaterialsnackbarspec.h",
+    "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h",
+    "qtmaterial/specs/qtmaterialappbarspecresolver.h",
+    "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h",
+    "qtmaterial/specs/qtmaterialautocompletespecresolver.h",
+    "qtmaterial/specs/qtmaterialbuttonspecresolver.h",
+    "qtmaterial/specs/qtmaterialchipspecresolver.h",
+    "qtmaterial/specs/qtmaterialdataspecresolver.h",
+    "qtmaterial/specs/qtmaterialdatefieldspecresolver.h",
+    "qtmaterial/specs/qtmaterialdialogspecresolver.h",
+    "qtmaterial/specs/qtmaterialmenuspecresolver.h",
+    "qtmaterial/specs/qtmaterialnavigationrailspecresolver.h",
+    "qtmaterial/specs/qtmaterialoverlaysurfacespecresolver.h",
+    "qtmaterial/specs/qtmaterialprogressspecresolver.h",
+    "qtmaterial/specs/qtmaterialsegmentedbuttonspecresolver.h",
+    "qtmaterial/specs/qtmaterialselectionspecresolver.h",
+    "qtmaterial/specs/qtmaterialsurfacespecresolver.h",
+    "qtmaterial/specs/qtmaterialtabsspecresolver.h",
+    "qtmaterial/specs/qtmaterialtextfieldspecresolver.h",
+    "qtmaterial/specs/qtmaterialspeccontext.h",
+    "qtmaterial/specs/qtmaterialspecvalidation.h",
+})
+
 
 def is_private_header(rel: Path) -> bool:
+    if rel.as_posix() in INTERNAL_HEADER_PATHS:
+        return True
     parts = tuple(part.lower() for part in rel.parts)
     if "private" in parts:
         return True

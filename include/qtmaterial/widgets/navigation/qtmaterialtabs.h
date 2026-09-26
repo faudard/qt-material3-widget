@@ -57,7 +57,6 @@ public:
 
     TabsSpec spec() const;
     TabsSpec authoredSpec() const;
-    TabsSpec resolvedSpec() const;
     void setSpec(const TabsSpec& spec);
 
     TabsVariant variant() const;
@@ -172,6 +171,8 @@ private:
  TabDescriptor* descriptor(int index);
 
  const TabDescriptor* descriptor(int index) const;
+
+    TabsSpec resolvedSpec() const;
 
  void resolveSpecFromTheme();
 

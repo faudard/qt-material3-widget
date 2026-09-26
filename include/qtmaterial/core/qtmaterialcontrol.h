@@ -1,7 +1,6 @@
 #pragma once
 
 #include "qtmaterial/foundation/qtmaterialdensity.h"
-#include "qtmaterial/core/qtmaterialeventcompat.h"
 #include "qtmaterial/foundation/qtmaterialinteractionstate.h"
 #include "qtmaterial/core/qtmaterialwidget.h"
 
@@ -34,7 +33,7 @@ protected:
     virtual void invalidateResolvedSpec();
     virtual void stateChangedEvent();
 
-    void enterEvent(EnterEvent* event) override;
+    bool event(QEvent* event) override;
     void leaveEvent(QEvent* event) override;
     void focusInEvent(QFocusEvent* event) override;
     void focusOutEvent(QFocusEvent* event) override;

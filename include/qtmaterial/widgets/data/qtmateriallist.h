@@ -7,7 +7,6 @@
 
 #include "qtmaterial/core/qtmaterialwidget.h"
 #include "qtmaterial/qtmaterialglobal.h"
-#include "qtmaterial/specs/qtmateriallistspec.h"
 
 class QEvent;
 class QKeyEvent;
@@ -15,6 +14,7 @@ class QPaintEvent;
 
 namespace QtMaterial {
 
+struct ListSpec;
 class QtMaterialListItem;
 class QtMaterialListPrivate;
 class Theme;
@@ -74,7 +74,6 @@ public:
     bool dividersVisible() const noexcept;
     void setDividersVisible(bool visible);
 
-    const ListSpec& resolvedSpec() const;
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
@@ -115,6 +114,7 @@ private:
     int lastEnabledIndex() const;
     bool isValidIndex(int index) const noexcept;
 
+    const ListSpec& resolvedSpec() const;
     void ensureSpecResolved() const;
     void applyResolvedSpec();
     void synchronizeItemDividers();

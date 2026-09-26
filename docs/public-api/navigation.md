@@ -17,10 +17,11 @@ controllers.
 
 The widget keeps authored and resolved state separate:
 
-- `authoredSpec()` is the consumer-provided `TabsSpec`.
-- `resolvedSpec()` is the runtime spec after theme resolution.
+- `spec()` and `authoredSpec()` expose the consumer-authored `TabsSpec`.
+- theme resolution is an internal implementation boundary.
 
-Rendering uses the resolved spec.
+Rendering uses the internal resolved spec; `resolvedSpec()` is intentionally not part
+of the installed 0.9 API candidate.
 
 ### Routes and synchronization
 
@@ -66,7 +67,7 @@ Page widgets expose dynamic automation metadata:
 `tst_tabs` and the focused route/theme/lifecycle suites cover:
 
 - insertion/removal metadata stability;
-- authored/resolved spec separation;
+- authored-spec round-tripping and internal theme-resolution behavior;
 - stacked-widget and controller synchronization;
 - lazy loading;
 - routes and URL navigation;

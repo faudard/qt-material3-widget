@@ -2,7 +2,7 @@
 
 Material 3 widgets for Qt Widgets, with a typed theme/spec architecture and support for Qt 5.14.2 and Qt 6.
 
-> **Status:** 0.8.0, pre-1.0 API cleanup.
+> **Status:** 0.9.0 API-freeze candidate.
 > Public APIs may still change before 1.0. Pre-1.0 compatibility shims are intentionally removed rather than deprecated.
 
 ## Requirements

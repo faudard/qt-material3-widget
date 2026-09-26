@@ -26,7 +26,7 @@ class tst_TabsThemeContext : public QObject
 
 private slots:
     void explicitContextOverridesDefaultContext();
-    void contextThemeChangesRefreshResolvedSpec();
+    void contextThemeChangesRefreshRendering();
     void inheritsMaterialWidgetParentContext();
     void followsParentContextReplacement();
     void explicitContextStopsParentInheritance();
@@ -50,12 +50,9 @@ void tst_TabsThemeContext::explicitContextOverridesDefaultContext()
     QCOMPARE(tabs.effectiveThemeContext(), &context);
     QCOMPARE(explicitSpy.count(), 1);
     QCOMPARE(effectiveSpy.count(), 1);
-    QCOMPARE(
-        tabs.resolvedSpec().activeIndicatorColor,
-        context.theme().colorScheme().color(ColorRole::Primary));
 }
 
-void tst_TabsThemeContext::contextThemeChangesRefreshResolvedSpec()
+void tst_TabsThemeContext::contextThemeChangesRefreshRendering()
 {
     const Theme first = makeTheme(QStringLiteral("#6750A4"));
     const Theme second =
@@ -65,17 +62,11 @@ void tst_TabsThemeContext::contextThemeChangesRefreshResolvedSpec()
     QtMaterialTabs tabs;
     tabs.setThemeContext(&context);
 
-    const QColor firstIndicator =
-        tabs.resolvedSpec().activeIndicatorColor;
+    const QString before = tabs.styleSheet();
 
     QVERIFY(context.setTheme(second));
 
-    QCOMPARE(
-        tabs.resolvedSpec().activeIndicatorColor,
-        second.colorScheme().color(ColorRole::Primary));
-    QVERIFY(
-        tabs.resolvedSpec().activeIndicatorColor
-        != firstIndicator);
+    QVERIFY(tabs.styleSheet() != before);
 }
 
 void tst_TabsThemeContext::inheritsMaterialWidgetParentContext()
@@ -88,9 +79,6 @@ void tst_TabsThemeContext::inheritsMaterialWidgetParentContext()
 
     QCOMPARE(tabs->themeContext(), nullptr);
     QCOMPARE(tabs->effectiveThemeContext(), &context);
-    QCOMPARE(
-        tabs->resolvedSpec().activeIndicatorColor,
-        context.theme().colorScheme().color(ColorRole::Primary));
 }
 
 void tst_TabsThemeContext::followsParentContextReplacement()
@@ -111,9 +99,6 @@ void tst_TabsThemeContext::followsParentContextReplacement()
 
     QCOMPARE(tabs->effectiveThemeContext(), &second);
     QVERIFY(effectiveSpy.count() >= 1);
-    QCOMPARE(
-        tabs->resolvedSpec().activeIndicatorColor,
-        second.theme().colorScheme().color(ColorRole::Primary));
 }
 
 void tst_TabsThemeContext::explicitContextStopsParentInheritance()
@@ -133,9 +118,6 @@ void tst_TabsThemeContext::explicitContextStopsParentInheritance()
     parent.setThemeContext(&replacementParent);
 
     QCOMPARE(tabs->effectiveThemeContext(), &localContext);
-    QCOMPARE(
-        tabs->resolvedSpec().activeIndicatorColor,
-        localContext.theme().colorScheme().color(ColorRole::Primary));
 
     tabs->setThemeContext(nullptr);
 

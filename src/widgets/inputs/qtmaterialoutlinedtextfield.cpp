@@ -388,6 +388,26 @@ QtMaterialOutlinedTextField::~QtMaterialOutlinedTextField()
     }
 }
 
+QString QtMaterialOutlinedTextField::labelText() const
+{
+    return label();
+}
+
+void QtMaterialOutlinedTextField::setLabelText(const QString& text)
+{
+    setLabel(text);
+}
+
+QString QtMaterialOutlinedTextField::supportingText() const
+{
+    return helperText();
+}
+
+void QtMaterialOutlinedTextField::setSupportingText(const QString& text)
+{
+    setHelperText(text);
+}
+
 QString QtMaterialOutlinedTextField::text() const
 {
     return d_ptr->m_lineEdit ? d_ptr->m_lineEdit->text() : QString();
@@ -1526,7 +1546,7 @@ refreshValidationState(bool commit)
 void QtMaterialOutlinedTextField::
 syncEffectiveErrorState()
 {
-    QtMaterialInputControl::setHasErrorState(
+    setInvalid(
         d_ptr->m_manualErrorState
         || d_ptr->m_automaticValidationError);
 }

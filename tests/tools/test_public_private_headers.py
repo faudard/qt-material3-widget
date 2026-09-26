@@ -101,6 +101,20 @@ class HeaderSurfaceTests(unittest.TestCase):
             private,
         )
 
+    def test_explicit_internal_header_classification(self):
+        root = self.make_root()
+        internal = root / "include/qtmaterial/specs/qtmaterialbuttonspecresolver.h"
+        internal.parent.mkdir(parents=True, exist_ok=True)
+        internal.write_text("#pragma once\n", encoding="utf-8")
+
+        public, private = manifest.scan(root)
+        self.assertNotIn(
+            "qtmaterial/specs/qtmaterialbuttonspecresolver.h", public
+        )
+        self.assertIn(
+            "qtmaterial/specs/qtmaterialbuttonspecresolver.h", private
+        )
+
     def test_manifest_detects_new_unclassified_header(self):
         root = self.make_root()
         pub = root / "include/qtmaterial/widgets/public.h"

@@ -44,8 +44,6 @@ public:
     QtMaterial::ThemeContext*
     effectiveThemeContext() const noexcept override;
 
-    const QtMaterial::AutocompletePopupSpec&
-    resolvedSpec() const;
 
     void setAnchorLineEdit(QLineEdit* lineEdit);
     QLineEdit* anchorLineEdit() const noexcept;
@@ -86,6 +84,8 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
+    const QtMaterial::AutocompletePopupSpec&
+    resolvedSpec() const;
     void handleThemeChanged(const QtMaterial::Theme& theme);
     void refreshPopupVisibility();
     void setEffectivePopupVisible(bool visible);

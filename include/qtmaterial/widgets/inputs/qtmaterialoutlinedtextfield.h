@@ -55,6 +55,12 @@ public:
     explicit QtMaterialOutlinedTextField(QWidget* parent = nullptr);
     ~QtMaterialOutlinedTextField() override;
 
+    QString labelText() const;
+    void setLabelText(const QString& text);
+
+    QString supportingText() const;
+    void setSupportingText(const QString& text);
+
     QString text() const;
     void setText(const QString& text);
 

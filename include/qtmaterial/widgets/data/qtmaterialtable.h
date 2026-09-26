@@ -57,7 +57,6 @@ public:
     ThemeContext* effectiveThemeContext() const noexcept override;
 
     TableSpec spec() const;
-    const TableSpec& resolvedSpec() const;
 
     /**
      * Installs an explicit, already resolved spec.
@@ -107,6 +106,7 @@ protected:
         const QModelIndex& previous) override;
 
 private:
+    const TableSpec& resolvedSpec() const;
     void ensureSpecResolved() const;
     void applyResolvedSpec();
     void syncAccessibility();

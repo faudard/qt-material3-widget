@@ -48,10 +48,10 @@ void tst_InputControl::defaultTextsAndErrorState()
 {
     TestInputControl control;
 
-    QCOMPARE(control.labelText(), QString());
-    QCOMPARE(control.supportingText(), QString());
+    QCOMPARE(control.label(), QString());
+    QCOMPARE(control.helperText(), QString());
     QCOMPARE(control.errorText(), QString());
-    QVERIFY(!control.hasErrorState());
+    QVERIFY(!control.isInvalid());
     QVERIFY(!control.errorFlag());
 }
 
@@ -85,12 +85,12 @@ void tst_InputControl::errorFlagMirrorsInteractionState()
 {
     TestInputControl control;
 
-    control.setHasErrorState(true);
-    QVERIFY(control.hasErrorState());
+    control.setInvalid(true);
+    QVERIFY(control.isInvalid());
     QVERIFY(control.errorFlag());
 
-    control.setHasErrorState(false);
-    QVERIFY(!control.hasErrorState());
+    control.setInvalid(false);
+    QVERIFY(!control.isInvalid());
     QVERIFY(!control.errorFlag());
 }
 

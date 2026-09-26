@@ -39,7 +39,7 @@ class TestQtMaterialTabs : public QObject {
 private slots:
     void constructs();
     void keepsDescriptorMetadataStableAcrossInsertRemove();
-    void separatesAuthoredAndResolvedSpec();
+    void authoredSpecRoundTripsWhenThemeDisabled();
     void bindsToStackedWidget();
     void bindsToMultipleControllersBidirectionally();
     void supportsLazyLoading();
@@ -90,7 +90,7 @@ void TestQtMaterialTabs::keepsDescriptorMetadataStableAcrossInsertRemove()
     QCOMPARE(tabs.tabTestId(1), QStringLiteral("qa.b"));
 }
 
-void TestQtMaterialTabs::separatesAuthoredAndResolvedSpec()
+void TestQtMaterialTabs::authoredSpecRoundTripsWhenThemeDisabled()
 {
     QtMaterial::TabsSpec spec;
     spec.useGlobalTheme = false;
@@ -100,11 +100,11 @@ void TestQtMaterialTabs::separatesAuthoredAndResolvedSpec()
 
     QtMaterial::QtMaterialTabs tabs(spec);
     QCOMPARE(tabs.authoredSpec().variant, QtMaterial::TabsVariant::Secondary);
-    QCOMPARE(tabs.resolvedSpec().variant, QtMaterial::TabsVariant::Secondary);
+    QCOMPARE(tabs.spec().variant, QtMaterial::TabsVariant::Secondary);
     QCOMPARE(tabs.authoredSpec().activeLabelColor, QColor(QStringLiteral("#123456")));
-    QCOMPARE(tabs.resolvedSpec().activeLabelColor, QColor(QStringLiteral("#123456")));
+    QCOMPARE(tabs.spec().activeLabelColor, QColor(QStringLiteral("#123456")));
     QCOMPARE(tabs.authoredSpec().hoverOpacity, 0.22);
-    QCOMPARE(tabs.resolvedSpec().hoverOpacity, 0.22);
+    QCOMPARE(tabs.spec().hoverOpacity, 0.22);
 }
 
 void TestQtMaterialTabs::bindsToStackedWidget()

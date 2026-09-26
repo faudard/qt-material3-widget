@@ -67,11 +67,14 @@ void QtMaterialControl::stateChangedEvent()
     update();
 }
 
-void QtMaterialControl::enterEvent(EnterEvent* event)
+bool QtMaterialControl::event(QEvent* event)
 {
-    m_state.setHovered(true);
-    stateChangedEvent();
-    QtMaterialWidget::enterEvent(event);
+    const bool handled = QtMaterialWidget::event(event);
+    if (event && event->type() == QEvent::Enter) {
+        m_state.setHovered(true);
+        stateChangedEvent();
+    }
+    return handled;
 }
 
 void QtMaterialControl::leaveEvent(QEvent* event)

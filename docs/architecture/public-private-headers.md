@@ -48,10 +48,12 @@ A private header:
 - is never part of the public consumer contract;
 - may change without source/ABI compatibility guarantees.
 
-Private headers currently under `include/qtmaterial/**/private/` are tolerated as source-tree
-implementation details during the 0.x cleanup, but package consumers never receive them.
-Moving all private headers physically under `src/**/private/` remains the preferred final
-layout when doing so does not create unnecessary churn.
+Private headers may live under `include/qtmaterial/**/private/`, use an `_p` suffix, or be
+explicitly classified as internal by the header-surface domain model. Explicit internal
+classification is used for implementation-owned resolver/validation headers whose source-tree
+location is retained to avoid churn; package consumers never receive them.
+Moving implementation headers physically under `src/**/private/` remains optional when it
+improves ownership without creating unnecessary include-path churn.
 
 ## Install semantics
 

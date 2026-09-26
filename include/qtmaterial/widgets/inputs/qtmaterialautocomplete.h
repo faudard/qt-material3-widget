@@ -5,7 +5,6 @@
 #include <QStringList>
 
 #include "qtmaterial/core/qtmaterialwidget.h"
-#include "qtmaterial/specs/qtmaterialautocompletespec.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 QT_BEGIN_NAMESPACE
@@ -15,6 +14,7 @@ QT_END_NAMESPACE
 
 
 namespace QtMaterial {
+struct AutocompleteSpec;
 class QtMaterialAutocompletePrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialAutocomplete : public QtMaterialWidget {
@@ -67,7 +67,6 @@ public:
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
-    const AutocompleteSpec& resolvedSpec() const;
 
 signals:
     void textChanged(const QString& text);
@@ -84,6 +83,7 @@ protected:
 
 private:
 
+    const AutocompleteSpec& resolvedSpec() const;
     std::unique_ptr<QtMaterialAutocompletePrivate> d_ptr;
 
 };

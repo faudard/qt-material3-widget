@@ -1,6 +1,7 @@
 #include <QtTest>
 
 #include <QLineEdit>
+#include <QPalette>
 
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
@@ -13,11 +14,11 @@ class tst_AutocompleteResolvedWidget : public QObject
     Q_OBJECT
 
 private slots:
-    void appliesResolvedInputFontAndMetrics();
+    void appliesThemeToPublicWidgetSurface();
     void followsThemeContextChanges();
 };
 
-void tst_AutocompleteResolvedWidget::appliesResolvedInputFontAndMetrics()
+void tst_AutocompleteResolvedWidget::appliesThemeToPublicWidgetSurface()
 {
     Theme theme = ThemeBuilder().buildLightFromSeed(
         QColor(QStringLiteral("#6750A4")));
@@ -25,23 +26,12 @@ void tst_AutocompleteResolvedWidget::appliesResolvedInputFontAndMetrics()
     TypographyStyle typography;
     typography.font = QFont(QStringLiteral("Sans Serif"), 16);
     theme.typography().setStyle(TypeRole::BodyLarge, typography);
-    theme.shapes().setRadius(ShapeRole::ExtraSmall, 12);
 
     ThemeContext context(theme);
     QtMaterialAutocomplete field;
     field.setThemeContext(&context);
 
-    const AutocompleteSpec& spec = field.resolvedSpec();
-    QVERIFY(spec.hasResolvedInputFont);
-    QCOMPARE(
-        spec.inputFont.pointSize(),
-        typography.font.pointSize());
-    QCOMPARE(
-        spec.inputFont.weight(),
-        typography.font.weight());
-    QCOMPARE(
-        spec.inputFont.italic(),
-        typography.font.italic());
+    QVERIFY(field.lineEdit() != nullptr);
     QCOMPARE(
         field.lineEdit()->font().pointSize(),
         typography.font.pointSize());
@@ -51,30 +41,56 @@ void tst_AutocompleteResolvedWidget::appliesResolvedInputFontAndMetrics()
     QCOMPARE(
         field.lineEdit()->font().italic(),
         typography.font.italic());
-    QCOMPARE(spec.inputCornerRadius, 12.0);
-    QCOMPARE(field.sizeHint().height(), spec.inputMinHeight);
+
+    QCOMPARE(field.sizeHint().width(), 280);
+    QCOMPARE(field.minimumSizeHint().width(), 160);
+    QVERIFY(field.sizeHint().height() > 0);
+    QCOMPARE(
+        field.minimumSizeHint().height(),
+        field.sizeHint().height());
 }
 
 void tst_AutocompleteResolvedWidget::followsThemeContextChanges()
 {
     Theme first = ThemeBuilder().buildLightFromSeed(
         QColor(QStringLiteral("#6750A4")));
-    first.shapes().setRadius(ShapeRole::ExtraSmall, 6);
+    TypographyStyle firstTypography;
+    firstTypography.font = QFont(QStringLiteral("Sans Serif"), 13);
+    first.typography().setStyle(TypeRole::BodyLarge, firstTypography);
 
     ThemeContext context(first);
     QtMaterialAutocomplete field;
     field.setThemeContext(&context);
 
-    QCOMPARE(field.resolvedSpec().inputCornerRadius, 6.0);
+    QVERIFY(field.lineEdit() != nullptr);
+    QCOMPARE(
+        field.lineEdit()->font().pointSize(),
+        firstTypography.font.pointSize());
+    const QColor firstTextColor =
+        field.lineEdit()->palette().color(QPalette::Text);
 
     Theme second = ThemeBuilder().buildDarkFromSeed(
         QColor(QStringLiteral("#006874")));
-    second.shapes().setRadius(ShapeRole::ExtraSmall, 18);
-    second.stateLayer().pressOpacity = 0.23;
+    TypographyStyle secondTypography;
+    secondTypography.font = QFont(QStringLiteral("Sans Serif"), 19);
+    second.typography().setStyle(TypeRole::BodyLarge, secondTypography);
+
     QVERIFY(context.setTheme(second));
 
-    QCOMPARE(field.resolvedSpec().inputCornerRadius, 18.0);
-    QCOMPARE(field.resolvedSpec().pressStateLayerOpacity, 0.23);
+    QCOMPARE(
+        field.lineEdit()->font().pointSize(),
+        secondTypography.font.pointSize());
+    QCOMPARE(
+        field.lineEdit()->font().weight(),
+        secondTypography.font.weight());
+    QCOMPARE(
+        field.lineEdit()->font().italic(),
+        secondTypography.font.italic());
+
+    const QColor secondTextColor =
+        field.lineEdit()->palette().color(QPalette::Text);
+    QVERIFY(secondTextColor.isValid());
+    QVERIFY(firstTextColor != secondTextColor);
 }
 
 QTEST_MAIN(tst_AutocompleteResolvedWidget)

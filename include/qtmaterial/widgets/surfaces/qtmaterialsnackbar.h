@@ -7,7 +7,6 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
-#include "qtmaterial/specs/qtmaterialsnackbarspec.h"
 
 class QKeyEvent;
 class QResizeEvent;
@@ -15,6 +14,7 @@ class QObject;
 
 namespace QtMaterial {
 
+struct SnackbarSpec;
 
 class QtMaterialSnackbarPrivate;
 
@@ -70,7 +70,6 @@ public:
     void dismiss(SnackbarDismissReason reason = SnackbarDismissReason::Manual);
 
     qreal progress() const noexcept;
-    const SnackbarSpec& resolvedSpec() const;
 
     QString accessibilitySummary() const;
     bool pauseAutoHideOnInteraction() const noexcept;
@@ -100,6 +99,7 @@ protected:
 
 private:
 
+    const SnackbarSpec& resolvedSpec() const;
  friend class QtMaterialSnackbarPrivate;
 
  enum class State {

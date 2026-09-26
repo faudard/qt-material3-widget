@@ -35,10 +35,10 @@ void tst_ThemedDatePicker::resolvesSpecFromParentContext()
     QCOMPARE(picker.effectiveThemeContext(), &context);
     QVERIFY(!picker.hasExplicitSpec());
     QCOMPARE(
-        picker.resolvedSpec().backgroundColor,
+        picker.spec().backgroundColor,
         expected.backgroundColor);
     QCOMPARE(
-        picker.resolvedSpec().headlineFont,
+        picker.spec().headlineFont,
         expected.headlineFont);
 }
 
@@ -52,16 +52,16 @@ void tst_ThemedDatePicker::followsThemeChanges()
 
     QtMaterialDatePicker picker;
     picker.setThemeContext(&context);
-    const QColor before = picker.resolvedSpec().backgroundColor;
+    const QColor before = picker.spec().backgroundColor;
 
     QVERIFY(context.setTheme(second));
 
     const DatePickerSpec expected =
         DataSpecResolver().datePickerSpec(second);
     QCOMPARE(
-        picker.resolvedSpec().backgroundColor,
+        picker.spec().backgroundColor,
         expected.backgroundColor);
-    QVERIFY(picker.resolvedSpec().backgroundColor != before);
+    QVERIFY(picker.spec().backgroundColor != before);
 }
 
 void tst_ThemedDatePicker::explicitSpecRemainsPinned()
@@ -86,9 +86,9 @@ void tst_ThemedDatePicker::explicitSpecRemainsPinned()
             QColor(QStringLiteral("#006874")))));
 
     QCOMPARE(
-        picker.resolvedSpec().backgroundColor,
+        picker.spec().backgroundColor,
         QColor(QStringLiteral("#123456")));
-    QCOMPARE(picker.resolvedSpec().cornerRadius, 9);
+    QCOMPARE(picker.spec().cornerRadius, 9);
 }
 
 void tst_ThemedDatePicker::resetSpecReturnsToThemeMode()
@@ -111,7 +111,7 @@ void tst_ThemedDatePicker::resetSpecReturnsToThemeMode()
 
     QVERIFY(!picker.hasExplicitSpec());
     QCOMPARE(
-        picker.resolvedSpec().backgroundColor,
+        picker.spec().backgroundColor,
         expected.backgroundColor);
 }
 

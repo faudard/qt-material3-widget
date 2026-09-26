@@ -67,7 +67,6 @@ public:
     ThemeContext* themeContext() const noexcept override;
     ThemeContext* effectiveThemeContext() const noexcept override;
 
-    const GridListSpec& resolvedSpec() const;
     GridListSpec spec() const;
     void setSpec(const GridListSpec& spec);
     bool hasExplicitSpec() const noexcept;
@@ -157,6 +156,7 @@ protected:
 
 private:
 
+    const GridListSpec& resolvedSpec() const;
     void ensureSpecResolved() const;
     void applyResolvedSpec();
     void updateGridSize();

@@ -35,17 +35,17 @@ void tst_WidgetArchitectureContracts::inputControlIsFormFieldControl() {
     auto* formField = qobject_cast<QtMaterial::QtMaterialFormFieldControl*>(&input);
     QVERIFY(formField != nullptr);
 
-    input.setLabelText(QStringLiteral("Name"));
-    input.setSupportingText(QStringLiteral("Required"));
+    input.setLabel(QStringLiteral("Name"));
+    input.setHelperText(QStringLiteral("Required"));
     input.setErrorText(QStringLiteral("Invalid"));
-    input.setHasErrorState(true);
+    input.setInvalid(true);
 
     QCOMPARE(formField->label(), QStringLiteral("Name"));
     QCOMPARE(formField->helperText(), QStringLiteral("Required"));
     QCOMPARE(formField->errorText(), QStringLiteral("Invalid"));
     QVERIFY(formField->isInvalid());
-    QCOMPARE(input.labelText(), formField->label());
-    QCOMPARE(input.supportingText(), formField->helperText());
+    QCOMPARE(input.label(), formField->label());
+    QCOMPARE(input.helperText(), formField->helperText());
     QCOMPARE(input.errorText(), formField->errorText());
 }
 

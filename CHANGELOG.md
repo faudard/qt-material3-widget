@@ -5,7 +5,26 @@ All notable changes to qt-material3-widget are documented here.
 The project follows semantic versioning while it remains pre-1.0: minor releases may contain
 source or ABI changes, and those changes must be called out explicitly.
 
-## [0.8.0] - Unreleased
+## [0.9.0] - Unreleased
+
+### Added
+- API-freeze validation is integrated into the unified release checker and repository-health gate.
+- Public widget-header ownership is explicit: component-registry entries plus a reviewed support-header allowlist.
+- Release validation requires every retained C++ test source to be registered with CTest or explicitly classified as a standalone consumer harness.
+
+### Changed
+- Component spec resolvers and render-only spec types are internalized instead of being installed as application API.
+- Public widget inspection hooks for resolved runtime specs are removed; authored configuration remains public where applicable.
+- Qt-major event compatibility details no longer leak through the public core headers.
+- `QtMaterialInputControl` now exposes only the canonical form-field base contract; TextField vocabulary such as `labelText()` and `supportingText()` lives on the public TextField API.
+- Supported `find_package(... COMPONENTS ...)` entry points are frozen to ThemeModel, ThemeIO, ThemeRuntime, Widgets and Integration.
+
+### Compatibility
+- 0.9 is the final pre-1.0 source-API candidate; obsolete compatibility shims remain intentionally removed.
+- Minimum supported Qt remains Qt 5.14.2.
+- C++17 and CMake 3.21+ remain required.
+
+## [0.8.0] - 2026-09-21
 
 ### Added
 - Search Bar and Search View backed by Qt Model/View and QSortFilterProxyModel.

@@ -17,7 +17,10 @@ Before 1.0 the project may remove or rename public C++ APIs directly when doing
 so reduces accidental surface area. Compatibility shims are intentionally not
 kept for unpublished APIs.
 
-The 0.9 workstream performs the final public-header and package-component audit.
+The 0.9 release is the API-freeze candidate. Its release checker locks the intended
+public-header ownership, application-facing package components, resolver visibility,
+compatibility-shim policy, and retained C++ test registration. 1.0 will establish the
+first stable source/API baseline from that candidate.
 
 ## Backend behavior
 

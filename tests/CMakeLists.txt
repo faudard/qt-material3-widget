@@ -104,7 +104,6 @@ qtm3_add_test(tst_checkbox widgets/selection/tst_checkbox.cpp qtmaterial3_widget
 qtm3_add_test(tst_switch widgets/selection/tst_switch.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_radiobutton widgets/selection/tst_radiobutton.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_segmentedbutton widgets/selection/tst_segmentedbutton.cpp qtmaterial3_widgets)
-qtm3_add_test(tst_compactresolvedwidgets widgets/selection/tst_compactresolvedwidgets.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_dialog widgets/surfaces/tst_dialog.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_navigationdrawer widgets/surfaces/tst_navigationdrawer.cpp qtmaterial3_widgets)
@@ -162,7 +161,6 @@ qtm3_add_test(tst_datefield_affordances widgets/inputs/tst_datefield_affordances
 qtm3_add_test(tst_component_expansion widgets/inputs/tst_component_expansion.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_listitem widgets/data/tst_listitem.cpp qtmaterial3_widgets)
-qtm3_add_test(tst_data_resolved_widgets widgets/data/tst_data_resolved_widgets.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_list widgets/data/tst_list.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_table widgets/data/tst_table.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_themedtable widgets/data/tst_themedtable.cpp qtmaterial3_widgets)
@@ -217,8 +215,6 @@ qtm3_add_test(tst_tabsgenericthemebinding widgets/navigation/tst_tabsgenericthem
 qtm3_add_test(tst_tabsresolvedlifecycle widgets/navigation/tst_tabsresolvedlifecycle.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_tabs_route_robustness widgets/navigation/tst_tabs_route_robustness.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_navigationrail widgets/navigation/tst_navigationrail.cpp qtmaterial3_widgets)
-qtm3_add_test(tst_navigationrailresolvedwidget widgets/navigation/tst_navigationrailresolvedwidget.cpp qtmaterial3_widgets)
-qtm3_add_test(tst_navigationrail_resolvedspec widgets/navigation/tst_navigationrail_resolvedspec.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_data_component_specs specs/tst_data_component_specs.cpp qtmaterial3_specs)
 qtm3_add_test(tst_data_components widgets/tst_data_components.cpp qtmaterial3_widgets)

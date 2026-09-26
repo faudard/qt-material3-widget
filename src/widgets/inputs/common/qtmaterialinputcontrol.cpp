@@ -23,43 +23,6 @@ QtMaterialInputControl::QtMaterialInputControl(QWidget* parent)
 
 QtMaterialInputControl::~QtMaterialInputControl() = default;
 
-QString QtMaterialInputControl::labelText() const {
-    return label();
-}
-
-void QtMaterialInputControl::setLabelText(const QString& text) {
-    setLabel(text);
-}
-
-QString QtMaterialInputControl::supportingText() const {
-    return helperText();
-}
-
-void QtMaterialInputControl::setSupportingText(const QString& text) {
-    setHelperText(text);
-}
-
-QString QtMaterialInputControl::errorText() const {
-    return QtMaterialFormFieldControl::errorText();
-}
-
-void QtMaterialInputControl::setErrorText(const QString& text) {
-    QtMaterialFormFieldControl::setErrorText(text);
-}
-
-bool QtMaterialInputControl::hasErrorState() const noexcept {
-    return isInvalid();
-}
-
-void QtMaterialInputControl::setHasErrorState(bool value) {
-    if (isInvalid() == value) {
-        return;
-    }
-    setInvalid(value);
-    syncAccessibilityState();
-    stateChangedEvent();
-}
-
 void QtMaterialInputControl::formFieldChangedEvent() {
     QtMaterialFormFieldControl::formFieldChangedEvent();
     syncAccessibilityState();

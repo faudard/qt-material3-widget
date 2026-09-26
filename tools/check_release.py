@@ -15,6 +15,7 @@ if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
 
 import component_registry
+import header_surface
 
 ROOT = Path(__file__).resolve().parents[1]
 RULES = Path("tools/release_rules.json")
@@ -52,7 +53,7 @@ def load_rules(path: Path) -> dict[str, Any]:
         raise ReleaseConfigurationError(
             "release rules must use schema_version 1"
         )
-    for scope in ("base", "theme", "interaction"):
+    for scope in ("base", "theme", "interaction", "api_freeze"):
         if not isinstance(data.get(scope), dict):
             raise ReleaseConfigurationError(
                 f"release rules missing scope: {scope}"
@@ -267,12 +268,160 @@ def validate_interaction(
     )
 
 
+
+def parse_cmake_list(text: str, variable: str) -> list[str]:
+    match = re.search(
+        rf"set\(\s*{re.escape(variable)}\s*(.*?)\)",
+        text,
+        flags=re.DOTALL,
+    )
+    if not match:
+        return []
+    body = re.sub(r"#.*", "", match.group(1))
+    return re.findall(r"[A-Za-z][A-Za-z0-9_.:+-]*", body)
+
+
+def validate_api_freeze(
+    root: Path,
+    rules: dict[str, Any],
+) -> list[str]:
+    errors: list[str] = []
+    config = rules["api_freeze"]
+
+    manifest = root / header_surface.MANIFEST
+    try:
+        public_headers, _ = header_surface.parse_manifest(manifest)
+    except (OSError, ValueError) as exc:
+        return [f"cannot parse public-header manifest: {exc}"]
+
+    public_set = set(public_headers)
+
+    forbidden_suffixes = tuple(
+        str(value)
+        for value in config.get("forbidden_public_header_suffixes", [])
+    )
+    for header in public_headers:
+        if forbidden_suffixes and header.endswith(forbidden_suffixes):
+            errors.append(
+                f"API freeze: internal resolver/header is public: {header}"
+            )
+
+    forbidden_text = [
+        str(value)
+        for value in config.get("forbidden_public_text", [])
+    ]
+    for header in public_headers:
+        path = root / "include" / header
+        if not path.is_file():
+            errors.append(f"API freeze: missing public header: {header}")
+            continue
+        content = read(path)
+        for marker in forbidden_text:
+            if marker in content:
+                errors.append(
+                    f"API freeze: public header {header} contains "
+                    f"compatibility-only marker: {marker}"
+                )
+
+    try:
+        registry_headers = {
+            str(item.get("publicHeader"))
+            for item in component_registry.load_registry(root)
+            if item.get("publicHeader")
+        }
+    except Exception as exc:
+        errors.append(f"API freeze: cannot load component registry: {exc}")
+        registry_headers = set()
+
+    support_headers = {
+        str(value)
+        for value in config.get("public_support_headers", [])
+    }
+    widget_headers = {
+        header
+        for header in public_headers
+        if header.startswith("qtmaterial/widgets/")
+    }
+    unowned = sorted(
+        widget_headers - registry_headers - support_headers
+    )
+    if unowned:
+        errors.append(
+            "API freeze: unowned public widget headers: "
+            + ", ".join(unowned)
+        )
+
+    stale_support = sorted(support_headers - public_set)
+    if stale_support:
+        errors.append(
+            "API freeze: support-header allowlist contains non-public "
+            "entries: " + ", ".join(stale_support)
+        )
+
+    package_config = (
+        root / "packaging" / "QtMaterial3WidgetsConfig.cmake.in"
+    )
+    if not package_config.is_file():
+        errors.append("API freeze: missing package config template")
+    else:
+        actual_components = parse_cmake_list(
+            read(package_config),
+            "_QtMaterial3Widgets_supported_components",
+        )
+        expected_components = [
+            str(value)
+            for value in config.get("package_components", [])
+        ]
+        if actual_components != expected_components:
+            errors.append(
+                "API freeze: public CMake components differ from frozen "
+                f"contract: {actual_components!r}"
+            )
+
+    tests_root = root / "tests"
+    tests_cmake = tests_root / "CMakeLists.txt"
+    standalone = {
+        str(value)
+        for value in config.get("standalone_cpp_tests", [])
+    }
+    if tests_root.is_dir() and tests_cmake.is_file():
+        cmake_text = read(tests_cmake)
+        unregistered: list[str] = []
+        for source in sorted(tests_root.rglob("*.cpp")):
+            relative = source.relative_to(root).as_posix()
+            if relative in standalone:
+                continue
+            source_token = source.relative_to(tests_root).as_posix()
+            if source_token not in cmake_text:
+                unregistered.append(relative)
+        if unregistered:
+            errors.append(
+                "API freeze: retained C++ tests are not registered: "
+                + ", ".join(unregistered)
+            )
+
+        missing_standalone = sorted(
+            relative
+            for relative in standalone
+            if not (root / relative).is_file()
+        )
+        if missing_standalone:
+            errors.append(
+                "API freeze: standalone C++ test allowlist is stale: "
+                + ", ".join(missing_standalone)
+            )
+    else:
+        errors.append("API freeze: tests/CMakeLists.txt is missing")
+
+    return errors
+
+
 def normalize_scopes(scopes: Sequence[str] | None) -> tuple[str, ...]:
     if not scopes or "all" in scopes:
-        return ("base", "theme", "interaction")
+        return ("base", "theme", "interaction", "api-freeze")
     result = tuple(dict.fromkeys(scopes))
     unknown = sorted(
-        set(result) - {"base", "theme", "interaction"}
+        set(result) - {"base", "theme", "interaction", "api-freeze"}
     )
     if unknown:
         raise ReleaseConfigurationError(
@@ -308,6 +457,8 @@ def validate(
         errors.extend(validate_theme(root, rules))
     if "interaction" in selected:
         errors.extend(validate_interaction(root, rules))
+    if "api-freeze" in selected:
+        errors.extend(validate_api_freeze(root, rules))
     return errors
 
 
@@ -318,7 +469,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--scope",
         action="append",
-        choices=("all", "base", "theme", "interaction"),
+        choices=("all", "base", "theme", "interaction", "api-freeze"),
         default=[],
     )
     parser.add_argument("--rules", type=Path)

@@ -37,10 +37,10 @@ void tst_ThemedMenu::resolvesSpecFromParentContext()
     QCOMPARE(menu.effectiveThemeContext(), &context);
     QVERIFY(!menu.hasExplicitSpec());
     QCOMPARE(
-        menu.resolvedSpec().containerColor,
+        menu.spec().containerColor,
         expected.containerColor);
     QCOMPARE(
-        menu.resolvedSpec().labelFont,
+        menu.spec().labelFont,
         expected.labelFont);
 }
 
@@ -55,17 +55,17 @@ void tst_ThemedMenu::followsThemeChanges()
     QtMaterialMenu menu;
     menu.setThemeContext(&context);
     const QColor before =
-        menu.resolvedSpec().containerColor;
+        menu.spec().containerColor;
 
     QVERIFY(context.setTheme(second));
 
     const MenuSpec expected =
         MenuSpecResolver().menuSpec(second);
     QCOMPARE(
-        menu.resolvedSpec().containerColor,
+        menu.spec().containerColor,
         expected.containerColor);
     QVERIFY(
-        menu.resolvedSpec().containerColor != before);
+        menu.spec().containerColor != before);
 }
 
 void tst_ThemedMenu::explicitSpecRemainsPinned()
@@ -90,14 +90,14 @@ void tst_ThemedMenu::explicitSpecRemainsPinned()
             QColor(QStringLiteral("#006874")))));
 
     QCOMPARE(
-        menu.resolvedSpec().containerColor,
+        menu.spec().containerColor,
         QColor(QStringLiteral("#123456")));
-    QCOMPARE(menu.resolvedSpec().cornerRadius, 19.0);
+    QCOMPARE(menu.spec().cornerRadius, 19.0);
 
     menu.resetSpec();
     QVERIFY(!menu.hasExplicitSpec());
     QVERIFY(
-        menu.resolvedSpec().containerColor
+        menu.spec().containerColor
         != QColor(QStringLiteral("#123456")));
 }
 

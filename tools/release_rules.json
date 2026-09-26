@@ -189,5 +189,41 @@
         "Device-pixel-ratio"
       ]
     }
+  },
+  "api_freeze": {
+    "package_components": [
+      "ThemeModel",
+      "ThemeIO",
+      "ThemeRuntime",
+      "Widgets",
+      "Integration"
+    ],
+    "forbidden_public_header_suffixes": [
+      "specresolver.h"
+    ],
+    "forbidden_public_text": [
+      "Backward-compatible",
+      "compatibility-only"
+    ],
+    "public_support_headers": [
+      "qtmaterial/widgets/compact/qtmaterialfilterchip.h",
+      "qtmaterial/widgets/compact/qtmaterialinputchip.h",
+      "qtmaterial/widgets/data/qtmateriallist.h",
+      "qtmaterial/widgets/data/qtmateriallistitem.h",
+      "qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h",
+      "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h",
+      "qtmaterial/widgets/inputs/qtmaterialautocomplete.h",
+      "qtmaterial/widgets/inputs/qtmaterialautocompletepopup.h",
+      "qtmaterial/widgets/inputs/qtmaterialtextfieldvalidationgroup.h",
+      "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h",
+      "qtmaterial/widgets/navigation/qtmaterialmenu.h",
+      "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h",
+      "qtmaterial/widgets/navigation/qtmaterialroute.h",
+      "qtmaterial/widgets/qtmaterialdatepicker.h",
+      "qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h"
+    ],
+    "standalone_cpp_tests": [
+      "tests/consumers/common/main.cpp"
+    ]
   }
 }

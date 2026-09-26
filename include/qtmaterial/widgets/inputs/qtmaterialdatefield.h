@@ -7,8 +7,9 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
-#include "qtmaterial/specs/qtmaterialdatefieldspec.h"
 
+
+namespace QtMaterial { struct DateFieldSpec; }
 
 class QtMaterialDateFieldPrivate;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDateField : public QtMaterial::QtMaterialOutlinedTextField
@@ -53,7 +54,6 @@ public:
 
   QString accessibilitySummary() const;
 
-    const QtMaterial::DateFieldSpec& resolvedDateFieldSpec() const;
 
 signals:
     void dateChanged(const QDate& date);
@@ -80,6 +80,7 @@ private slots:
 
 private:
     void notifyDateAcceptableIfChanged();
+    const QtMaterial::DateFieldSpec& resolvedDateFieldSpec() const;
     void ensureDateFieldSpecResolved() const;
     friend class QtMaterialDateFieldPrivate;
     std::unique_ptr<QtMaterialDateFieldPrivate> d_ptr;

@@ -35,7 +35,7 @@ void tst_ThemedGridList::resolvesSpecFromParentContext()
     QCOMPARE(grid.effectiveThemeContext(), &context);
     QVERIFY(!grid.hasExplicitSpec());
     QCOMPARE(
-        grid.resolvedSpec().itemBackgroundColor,
+        grid.spec().itemBackgroundColor,
         expected.itemBackgroundColor);
     QCOMPARE(grid.cellExtent(), expected.itemSize);
     QCOMPARE(grid.spacing(), expected.spacing);
@@ -51,16 +51,16 @@ void tst_ThemedGridList::followsThemeChanges()
 
     QtMaterialGridList grid;
     grid.setThemeContext(&context);
-    const QColor before = grid.resolvedSpec().backgroundColor;
+    const QColor before = grid.spec().backgroundColor;
 
     QVERIFY(context.setTheme(second));
 
     const GridListSpec expected =
         DataSpecResolver().gridListSpec(second);
     QCOMPARE(
-        grid.resolvedSpec().backgroundColor,
+        grid.spec().backgroundColor,
         expected.backgroundColor);
-    QVERIFY(grid.resolvedSpec().backgroundColor != before);
+    QVERIFY(grid.spec().backgroundColor != before);
 }
 
 void tst_ThemedGridList::explicitSpecRemainsPinned()
@@ -85,21 +85,21 @@ void tst_ThemedGridList::explicitSpecRemainsPinned()
             QColor(QStringLiteral("#006874")))));
 
     QCOMPARE(
-        grid.resolvedSpec().itemBackgroundColor,
+        grid.spec().itemBackgroundColor,
         QColor(QStringLiteral("#123456")));
-    QCOMPARE(grid.resolvedSpec().itemRadius, 7);
+    QCOMPARE(grid.spec().itemRadius, 7);
 
     grid.resetSpec();
     QVERIFY(!grid.hasExplicitSpec());
     QVERIFY(
-        grid.resolvedSpec().itemBackgroundColor
+        grid.spec().itemBackgroundColor
         != QColor(QStringLiteral("#123456")));
 }
 
 void tst_ThemedGridList::cellExtentOverrideCanBeReset()
 {
     QtMaterialGridList grid;
-    const QSize themedSize = grid.resolvedSpec().itemSize;
+    const QSize themedSize = grid.spec().itemSize;
 
     grid.setCellExtent(QSize(210, 132));
     QVERIFY(grid.hasCellExtentOverride());
