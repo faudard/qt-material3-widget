@@ -6,7 +6,6 @@
 #include <QStringList>
 #include <QWidget>
 
-#include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/theme/qtmaterialthemecontexthost.h"
 
 class QAbstractItemModel;
@@ -24,7 +23,7 @@ class ThemeContext;
 
 class QtMaterialAutocompletePopupPrivate;
 
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialAutocompletePopup
+class QtMaterialAutocompletePopup
     : public QWidget
     , public QtMaterial::ThemeContextHost
 {
