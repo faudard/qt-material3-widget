@@ -59,16 +59,15 @@ void QtMaterialTreeView::setMultiSelectionEnabled(bool enabled)
 
 bool QtMaterialTreeView::dragDropEnabled() const noexcept
 {
-    return m_dragDropEnabled;
+    return dragDropMode() == QAbstractItemView::InternalMove;
 }
 
 void QtMaterialTreeView::setDragDropEnabled(bool enabled)
 {
-    if (m_dragDropEnabled == enabled) {
+    if (dragDropEnabled() == enabled) {
         return;
     }
 
-    m_dragDropEnabled = enabled;
     setDragEnabled(enabled);
     viewport()->setAcceptDrops(enabled);
     setDropIndicatorShown(enabled);
