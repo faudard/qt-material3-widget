@@ -69,6 +69,17 @@ private slots:
         QVERIFY(tree.showDropIndicator());
     }
 
+    void treeViewReflectsNativeDragDropState()
+    {
+        QtMaterialTreeView tree;
+
+        tree.setDragDropMode(QAbstractItemView::InternalMove);
+        QVERIFY(tree.dragDropEnabled());
+
+        tree.setDragDropMode(QAbstractItemView::NoDragDrop);
+        QVERIFY(!tree.dragDropEnabled());
+    }
+
     void largeModelDoesNotRequireMaterialization()
     {
         LargeModel model;
@@ -113,6 +124,28 @@ private slots:
         QCOMPARE(pagination.rangeText(), QStringLiteral("101–123 / 123"));
     }
 
+    void paginationSignalsOnlyForActualChanges()
+    {
+        QtMaterialPagination pagination;
+        pagination.setTotalCount(100);
+
+        QSignalSpy pageChanged(&pagination, &QtMaterialPagination::pageChanged);
+        QSignalSpy pageSizeChanged(&pagination, &QtMaterialPagination::pageSizeChanged);
+
+        pagination.setPageSize(50);
+        QCOMPARE(pageSizeChanged.count(), 1);
+        QCOMPARE(pageChanged.count(), 0);
+        QCOMPARE(pagination.page(), 1);
+
+        pagination.setPage(2);
+        QCOMPARE(pageChanged.count(), 1);
+
+        pagination.setPageSize(100);
+        QCOMPARE(pageSizeChanged.count(), 2);
+        QCOMPARE(pageChanged.count(), 2);
+        QCOMPARE(pagination.page(), 1);
+    }
+
     void splitViewUsesQSplitterState()
     {
         QtMaterialSplitView split;
@@ -121,6 +154,38 @@ private slots:
         split.setPaneCollapsible(0, true);
         QVERIFY(split.paneCollapsible(0));
         QCOMPARE(split.count(), 2);
+    }
+
+    void splitViewTracksCollapsedPanesIndependently()
+    {
+        QtMaterialSplitView split;
+        split.resize(600, 200);
+
+        split.addWidget(new QWidget);
+        split.addWidget(new QWidget);
+        split.addWidget(new QWidget);
+
+        split.setPaneCollapsible(0, false);
+        split.setPaneCollapsible(1, false);
+
+        split.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&split));
+        split.setSizes({200, 200, 200});
+        QCoreApplication::processEvents();
+
+        split.setPaneCollapsed(0, true);
+        split.setPaneCollapsed(1, true);
+        QVERIFY(split.paneCollapsed(0));
+        QVERIFY(split.paneCollapsed(1));
+
+        split.setPaneCollapsed(0, false);
+        QVERIFY(!split.paneCollapsed(0));
+        QVERIFY(split.paneCollapsed(1));
+        QVERIFY(!split.paneCollapsible(0));
+
+        split.setPaneCollapsed(1, false);
+        QVERIFY(!split.paneCollapsed(1));
+        QVERIFY(!split.paneCollapsible(1));
     }
 
     void breadcrumbTracksCurrentSegment()
