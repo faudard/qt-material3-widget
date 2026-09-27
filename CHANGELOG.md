@@ -2,10 +2,11 @@
 
 All notable changes to qt-material3-widget are documented here.
 
-The project follows semantic versioning while it remains pre-1.0: minor releases may contain
-source or ABI changes, and those changes must be called out explicitly.
+The project follows semantic versioning. Starting with 1.0, documented installed public
+headers are source-compatible within the 1.x line; binary compatibility is best-effort
+unless a stricter ABI policy is published.
 
-## [0.9.0] - Unreleased
+## [1.0.0] - 2026-09-27
 
 ### Added
 - Desktop productivity components add Tree View, Pagination, Split View, Breadcrumb and Command Palette while preserving native Qt Model/View and layout ownership.
@@ -13,6 +14,8 @@ source or ABI changes, and those changes must be called out explicitly.
 - API-freeze validation is integrated into the unified release checker and repository-health gate.
 - Public widget-header ownership is explicit: component-registry entries plus a reviewed support-header allowlist.
 - Release validation requires every retained C++ test source to be registered with CTest or explicitly classified as a standalone consumer harness.
+- The first stable API signature baseline is checked in from Doxygen XML and restricted to the canonical installed-public-header manifest.
+- Seven reviewed visual goldens cover deterministic token boards and representative component grids in the pinned Qt 6.4.0/Fusion release environment.
 
 ### Changed
 - Component spec resolvers and render-only spec types are internalized instead of being installed as application API.
@@ -21,10 +24,15 @@ source or ABI changes, and those changes must be called out explicitly.
 - Qt-major event compatibility details no longer leak through the public core headers.
 - `QtMaterialInputControl` now exposes only the canonical form-field base contract; TextField vocabulary such as `labelText()` and `supportingText()` lives on the public TextField API.
 - Supported `find_package(... COMPONENTS ...)` entry points are frozen to ThemeModel, ThemeIO, ThemeRuntime, Widgets and Integration.
+- Remaining stateful public widgets use PIMPL where needed so implementation state is not part of the supported source surface.
+- Native child-widget accessors retained for 1.x are explicitly documented as parent-owned extension points.
+- Stable component-grid goldens use reduced-motion final states and are re-run with exact zero-pixel tolerance before release.
 
 ### Compatibility
-- 0.9 is the final pre-1.0 source-API candidate; obsolete compatibility shims remain intentionally removed.
-- Minimum supported Qt remains Qt 5.14.2.
+- 1.0 establishes the first stable source-API baseline for documented installed public headers.
+- Additive declarations are allowed within 1.x; removing or changing a baseline signature is treated as a breaking change by CI.
+- Binary compatibility is best-effort for 1.x unless a stricter ABI policy is published.
+- Minimum supported versions are Qt 5.14.2 for Qt 5 and Qt 6.4.0 for Qt 6.
 - C++17 and CMake 3.21+ remain required.
 
 ## [0.8.0] - 2026-09-21

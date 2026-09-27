@@ -107,9 +107,22 @@ Release gates:
 - Public headers and package targets receive a final ownership and naming audit.
 - Windows Qt 5.14.2/MSVC v142, Windows Qt 6, Ubuntu Qt 6 and macOS Qt 6 remain green.
 
-## 1.0 preparation
+## 1.0.0 — Stable API Baseline
 
-- Publish the final source-compatibility policy.
-- Define the post-1.0 deprecation lifecycle; no pre-1.0 compatibility shims are retained.
-- Freeze the final public API inventory.
-- Publish the ABI policy and supported platform/toolchain matrix.
+Goal: publish the first stable QtMaterial3 source API with reproducible release
+certification across the supported Qt 5 and Qt 6 toolchains.
+
+Release gates:
+
+- Freeze the installed public-header inventory as the canonical 1.x source surface.
+- Check in a Doxygen-derived signature baseline for that installed surface; removals or
+  signature changes are breaking while additive declarations remain allowed in 1.x.
+- Keep implementation state behind private/PIMPL boundaries and exclude internal headers
+  from the stable baseline.
+- Check in reviewed visual goldens generated with pinned Qt 6.4.0 and Fusion, and verify
+  them with exact zero-pixel strict comparison.
+- Certify Qt 5.14.2/MSVC v142 and the exact Qt 6.4.0 minimum in CI alongside the broader
+  Windows, Linux and macOS matrix.
+- Publish the source-compatibility, ABI and deprecation policies for the 1.x line.
+- Require release packaging, consumers, sanitizers, documentation, architecture and
+  repository-health gates to remain green before tagging.
