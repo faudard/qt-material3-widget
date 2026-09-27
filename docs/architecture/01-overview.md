@@ -19,13 +19,13 @@ flowchart TB
 
     rule["Core rule:<br/>Widgets render from resolved specs,<br/>not from ad hoc theme lookups."]
 
-    core["qtmaterial3_core<br/><small>Widget bases and interaction state<br/>Widget / Surface bases<br/>AbstractButton<br/>SelectionControl<br/>InputControl<br/>InteractionState</small>"]
+    core["qtmaterial3_core<br/><small>Widget bases and interaction state<br/>Widget / Surface bases<br/>AbstractButton<br/>SelectionControl<br/>InteractionState</small>"]
 
     specs["qtmaterial3_specs<br/><small>Immutable component specs + resolvers<br/>Spec resolvers<br/>Button / Dialog / TextField<br/>Card / NavigationDrawer<br/>Banner / AppBar / List / DateField</small>"]
 
     effects["qtmaterial3_effects<br/><small>Visual effects and motion<br/>Ripple · State layer painter · Focus indicator<br/>Shadow · Transition controller · Scrim</small>"]
 
-    widgets["qtmaterial3_widgets<br/><small>Public widget implementations<br/>Buttons · Selection · Inputs · Surfaces · Data<br/>TextButton, FilledButton, FAB, Checkbox, Switch, RadioButton,<br/>Dialog, NavigationDrawer, BottomSheet, Banner, Card,<br/>AppBars, TextFields, List, Divider</small>"]
+    widgets["qtmaterial3_widgets<br/><small>Public widget implementations<br/>Buttons · Selection · Inputs · Surfaces · Data<br/>InputControl, TextButton, FilledButton, FAB, Checkbox, Switch, RadioButton,<br/>Dialog, NavigationDrawer, BottomSheet, Banner, Card,<br/>AppBars, TextFields, List, Divider</small>"]
 
     qt["Qt Platform<br/><small>Qt Core · Qt Gui · Qt Widgets</small>"]
 
@@ -45,7 +45,6 @@ flowchart TB
     theme --> effects
     theme --> widgets
 
-    core --> specs
     core --> effects
     core --> widgets
 

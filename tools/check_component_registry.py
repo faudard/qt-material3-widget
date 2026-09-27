@@ -32,6 +32,10 @@ REGISTRY_PATH = ROOT / "docs" / "components" / "component-registry.json"
 SCHEMA_PATH = ROOT / "docs" / "components" / "component-registry.schema.json"
 
 ID_RE = re.compile(r"^[a-z0-9]+(?:[.-][a-z0-9]+)*$")
+SPEC_DECLARATION_RE = re.compile(
+    r"^\s*(?:struct|class)\s+(?:QTMATERIAL3_SPECS_EXPORT\s+)?([A-Za-z_]\w*)\b",
+    re.MULTILINE,
+)
 COMPONENT_FIELDS = {
     "id", "name", "family", "maturity", "maturityPolicy", "publicHeader",
     "specType", "widgetType", "testTarget", "galleryRoute", "docsPath",
@@ -95,9 +99,19 @@ def _valid_iso_date(value: Any) -> bool:
     return True
 
 
+def public_spec_types() -> set[str]:
+    headers = ROOT / "include" / "qtmaterial" / "specs"
+    return {
+        name
+        for header in headers.glob("*.h")
+        for name in SPEC_DECLARATION_RE.findall(header.read_text(encoding="utf-8"))
+    }
+
+
 def validate_governance(components: list[dict[str, Any]], *, axes: Sequence[str]) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
+    spec_types = public_spec_types()
     for item in components:
         cid = str(item.get("id", ""))
         for field in sorted(set(item) - COMPONENT_FIELDS):
@@ -108,6 +122,10 @@ def validate_governance(components: list[dict[str, Any]], *, axes: Sequence[str]
         header = item.get("publicHeader")
         if isinstance(header, str) and header and not header.startswith("qtmaterial/widgets/"):
             errors.append(f"{cid}: publicHeader must live under qtmaterial/widgets/")
+
+        spec_type = item.get("specType")
+        if isinstance(spec_type, str) and spec_type != "N/A" and spec_type not in spec_types:
+            errors.append(f"{cid}: specType `{spec_type}` is not declared in a public specs header")
 
         if "maturityPolicy" not in item:
             errors.append(f"{cid}: maturityPolicy must be explicit")

@@ -28,8 +28,8 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `data.carousel` | Carousel | `usable` | `qtmaterial/widgets/data/qtmaterialcarousel.h` | `DataComponentSpec` | `tst_carousel` | `docs/public-api/data-widgets.md` | `/data/carousel` |
-| `data.grid-list` | Grid List | `usable` | `qtmaterial/widgets/data/qtmaterialgridlist.h` | `DataComponentSpec` | `tst_gridlist` | `docs/public-api/data-widgets.md` | `/data/grid-list` |
+| `data.carousel` | Carousel | `usable` | `qtmaterial/widgets/data/qtmaterialcarousel.h` | `CarouselSpec` | `tst_carousel` | `docs/public-api/data-widgets.md` | `/data/carousel` |
+| `data.grid-list` | Grid List | `usable` | `qtmaterial/widgets/data/qtmaterialgridlist.h` | `GridListSpec` | `tst_gridlist` | `docs/public-api/data-widgets.md` | `/data/grid-list` |
 | `data.pagination` | Pagination | `usable` | `qtmaterial/widgets/data/qtmaterialpagination.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/pagination` |
 | `data.table` | Table | `usable` | `qtmaterial/widgets/data/qtmaterialtable.h` | `TableSpec` | `tst_table` | `docs/public-api/data-widgets.md` | `/data/table` |
 | `data.tree-view` | Tree View | `usable` | `qtmaterial/widgets/data/qtmaterialtreeview.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/tree-view` |
