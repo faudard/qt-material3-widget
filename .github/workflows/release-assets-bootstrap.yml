@@ -6,10 +6,11 @@ on:
       - "release/1.0.0"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   generate-release-assets:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-24.04
 
     env:
@@ -68,6 +69,14 @@ jobs:
           test -f tools/api-baseline-1.0.json
           test "$(find tests/visual/goldens -maxdepth 1 -name '*.png' | wc -l)" -eq 7
           sha256sum tools/api-baseline-1.0.json tests/visual/goldens/*.png
+
+      - name: Commit release assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/api-baseline-1.0.json tests/visual/goldens/*.png
+          git commit -m "build: add 1.0 API and visual baselines"
+          git push origin HEAD:release/1.0.0
 
       - name: Upload release assets
         uses: actions/upload-artifact@v6
