@@ -22,11 +22,12 @@ public-header ownership, application-facing package components, resolver visibil
 compatibility-shim policy, and retained C++ test registration. 1.0 establishes the
 first stable source/API baseline from that candidate.
 
-The stable baseline is generated from Doxygen XML and records public/protected class
-surface plus namespace-level enums, typedefs, variables and free functions. Signatures
-also retain public-header ownership and enum initializers rather than hashing whole
-headers. Comments and private PIMPL state may therefore evolve without creating false
-source-compatibility drift.
+The stable baseline is generated from Doxygen XML and is restricted to the canonical
+`QTMATERIAL3_PUBLIC_HEADERS` install manifest. It records public/protected class
+surface plus namespace-level enums, typedefs, variables and free functions from those
+installed headers. Signatures also retain public-header ownership and enum initializers
+rather than hashing whole headers. Private/internal source headers and PIMPL state are
+therefore excluded from the stable contract.
 
 Within the same stable major, removing or changing a baseline signature is a breaking
 change and fails the gate. New declarations are additive and are allowed without

@@ -11,6 +11,14 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Iterable
 
+TOOLS = Path(__file__).resolve().parent
+if str(TOOLS) not in sys.path:
+    sys.path.insert(0, str(TOOLS))
+
+import header_surface
+
+ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_MANIFEST = ROOT / header_surface.MANIFEST
 SCHEMA_VERSION = 1
 
 CLASS_SECTIONS = {
@@ -72,6 +80,18 @@ def _location_file(node: ET.Element) -> str:
     return file_name
 
 
+def _normalize_public_header_path(path: str) -> str:
+    path = path.replace("\\", "/")
+    if path.startswith("include/"):
+        return path
+    return "include/" + path.lstrip("/")
+
+
+def load_public_headers(manifest: Path = DEFAULT_MANIFEST) -> set[str]:
+    public, _ = header_surface.parse_manifest(manifest)
+    return {_normalize_public_header_path(path) for path in public}
+
+
 def _qualified_name(compound: str, member: ET.Element) -> str:
     qualified = _normalize(_text(member.find("qualifiedname")))
     if qualified:
@@ -91,7 +111,13 @@ def _enum_values(member: ET.Element) -> str:
     return ",".join(values)
 
 
-def _member_signature(compound: str, section: str, member: ET.Element) -> str:
+def _member_signature(
+    compound: str,
+    section: str,
+    member: ET.Element,
+    *,
+    origin_file: str = "",
+) -> str:
     kind = member.get("kind", "")
     qualified_name = _qualified_name(compound, member)
     type_text = _normalize(_text(member.find("type")))
@@ -102,6 +128,7 @@ def _member_signature(compound: str, section: str, member: ET.Element) -> str:
         if member.get(key) is not None
     )
     template = _normalize(_text(member.find("templateparamlist")))
+    location = _location_file(member) or origin_file
     pieces = [
         qualified_name,
         section,
@@ -111,18 +138,24 @@ def _member_signature(compound: str, section: str, member: ET.Element) -> str:
         attrs,
         "template=" + template,
         "enum=" + _enum_values(member),
-        "file=" + _location_file(member),
+        "file=" + location,
     ]
     return "|".join(pieces)
 
 
-def _compound_signature(compound_def: ET.Element, compound_name: str) -> str:
+def _compound_signature(
+    compound_def: ET.Element,
+    compound_name: str,
+    *,
+    origin_file: str = "",
+) -> str:
     kind = compound_def.get("kind", "")
     bases = sorted(
         f"{base.get('prot', '')}:{base.get('virt', '')}:{_normalize(_text(base))}"
         for base in compound_def.findall("basecompoundref")
     )
     template = _normalize(_text(compound_def.find("templateparamlist")))
+    location = _location_file(compound_def) or origin_file
     return "|".join(
         [
             compound_name,
@@ -130,15 +163,28 @@ def _compound_signature(compound_def: ET.Element, compound_name: str) -> str:
             kind,
             "bases=" + ",".join(bases),
             "template=" + template,
-            "file=" + _location_file(compound_def),
+            "file=" + location,
         ]
     )
 
 
-def extract_signatures(xml_dir: Path) -> list[str]:
+def _allowed(file_name: str, public_headers: set[str] | None) -> bool:
+    return public_headers is None or file_name in public_headers
+
+
+def extract_signatures(
+    xml_dir: Path,
+    public_headers: set[str] | None = None,
+) -> list[str]:
     index_path = xml_dir / "index.xml"
     if not index_path.is_file():
         raise FileNotFoundError(f"missing Doxygen index: {index_path}")
+
+    allowed_headers = (
+        None
+        if public_headers is None
+        else {_normalize_public_header_path(path) for path in public_headers}
+    )
 
     root = ET.parse(index_path).getroot()
     signatures: set[str] = set()
@@ -161,8 +207,18 @@ def extract_signatures(xml_dir: Path) -> list[str]:
             continue
 
         compound_name = _normalize(_text(compound_def.find("compoundname")))
+        compound_file = _location_file(compound_def)
+
         if compound_kind in {"class", "struct", "union"}:
-            signatures.add(_compound_signature(compound_def, compound_name))
+            if not _allowed(compound_file, allowed_headers):
+                continue
+            signatures.add(
+                _compound_signature(
+                    compound_def,
+                    compound_name,
+                    origin_file=compound_file,
+                )
+            )
 
         for section in compound_def.findall("sectiondef"):
             section_kind = section.get("kind", "")
@@ -178,13 +234,31 @@ def extract_signatures(xml_dir: Path) -> list[str]:
                     prot = member.get("prot", "")
                     if prot not in {"", "public", "protected"}:
                         continue
-                signatures.add(_member_signature(compound_name, section_kind, member))
+
+                member_file = _location_file(member) or compound_file
+                if not _allowed(member_file, allowed_headers):
+                    continue
+
+                signatures.add(
+                    _member_signature(
+                        compound_name,
+                        section_kind,
+                        member,
+                        origin_file=member_file,
+                    )
+                )
 
     return sorted(signatures)
 
 
-def make_baseline(xml_dir: Path, baseline_major: int) -> dict[str, object]:
-    signatures = extract_signatures(xml_dir)
+def make_baseline(
+    xml_dir: Path,
+    baseline_major: int,
+    public_headers: set[str] | None = None,
+) -> dict[str, object]:
+    if public_headers is None:
+        public_headers = load_public_headers()
+    signatures = extract_signatures(xml_dir, public_headers)
     return {
         "schemaVersion": SCHEMA_VERSION,
         "baselineMajor": baseline_major,
