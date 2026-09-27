@@ -28,7 +28,7 @@ jobs:
         run: python3 tools/check_release.py --root . --scope all
 
   stable-visual-baseline:
-    if: startsWith(github.ref, 'refs/tags/v1.')
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v1.')
     needs: release-contract
     name: stable-visual-baseline
     runs-on: ubuntu-24.04
@@ -37,6 +37,7 @@ jobs:
       CMAKE_BUILD_PARALLEL_LEVEL: 2
       CTEST_OUTPUT_ON_FAILURE: 1
       QTMATERIAL3_VISUAL_STRICT: 1
+      QT_STYLE_OVERRIDE: Fusion
 
     steps:
       - name: Checkout

@@ -54,4 +54,7 @@ python tools/api_signature_baseline.py \
 ```
 
 The 1.0 release checker intentionally fails if the baseline or reviewed visual
-goldens are missing. The release tag format is `vMAJOR.MINOR.PATCH`.
+goldens are missing. Before creating the tag, run `release-readiness` manually with
+`workflow_dispatch` on the exact release commit so the pinned Qt 6.4.0 strict visual
+gate executes before publication; the same gate runs again for `v1.*` tags. The
+release tag format is `vMAJOR.MINOR.PATCH`.
