@@ -20,7 +20,20 @@
       "set(CPACK_GENERATOR \"TGZ;ZIP\")",
       "set(CPACK_SOURCE_GENERATOR \"TGZ;ZIP\")",
       "include(CPack)"
-    ]
+    ],
+    "stable_release": {
+      "api_baseline": "tools/api-baseline-1.0.json",
+      "api_baseline_major": 1,
+      "visual_goldens": [
+        "tests/visual/goldens/token_seed_6750A4_light_standard.png",
+        "tests/visual/goldens/token_seed_6750A4_dark_standard.png",
+        "tests/visual/goldens/token_seed_00639B_light_high.png",
+        "tests/visual/goldens/token_seed_FF0000_dark_high.png",
+        "tests/visual/goldens/component_grid_light_standard.png",
+        "tests/visual/goldens/component_grid_dark_standard.png",
+        "tests/visual/goldens/component_grid_light_high.png"
+      ]
+    }
   },
   "theme": {
     "schema": {

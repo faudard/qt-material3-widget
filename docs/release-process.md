@@ -16,7 +16,12 @@ Required checks:
 8. Run CPack for ZIP and TGZ binary archives.
 9. Run CPack source packaging for ZIP and TGZ.
 10. Build an external installed-package consumer.
-11. Review `CHANGELOG.md` and remove the `Unreleased` marker when publishing.
+11. For the first stable release, generate and review the Doxygen-derived public
+    API signature baseline with `tools/api_signature_baseline.py`.
+12. Commit and review the required visual PNG goldens, then run
+    `tst_theme_visual_regression` with `QTMATERIAL3_VISUAL_STRICT=1` in the
+    pinned release environment.
+13. Review `CHANGELOG.md` and remove the `Unreleased` marker when publishing.
 
 Example:
 
@@ -38,4 +43,15 @@ cpack --config build-release/CPackSourceConfig.cmake -G TGZ
 cpack --config build-release/CPackSourceConfig.cmake -G ZIP
 ```
 
-The release tag format is `vMAJOR.MINOR.PATCH`.
+Before the 1.0 version bump, generate the stable API baseline after Doxygen XML is available:
+
+```bash
+python tools/api_signature_baseline.py \
+  --xml-dir build/doxygen/xml \
+  --baseline tools/api-baseline-1.0.json \
+  --baseline-major 1 \
+  --write
+```
+
+The 1.0 release checker intentionally fails if the baseline or reviewed visual
+goldens are missing. The release tag format is `vMAJOR.MINOR.PATCH`.

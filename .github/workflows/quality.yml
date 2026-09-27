@@ -90,6 +90,16 @@ jobs:
           find build/doxygen/xml -name '*.xml' -print0 \
             | xargs -0 -n1 xmllint --noout
 
+      - name: Validate stable API signature baseline
+        run: |
+          if [ -f tools/api-baseline-1.0.json ]; then
+            python tools/api_signature_baseline.py \
+              --xml-dir build/doxygen/xml \
+              --baseline tools/api-baseline-1.0.json
+          else
+            echo "Stable API baseline is not required until the 1.0 version bump."
+          fi
+
       - name: Build Sphinx documentation
         run: |
           sphinx-build \

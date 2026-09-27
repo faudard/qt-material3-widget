@@ -19,6 +19,20 @@ focus and reduced-motion behavior.
 `QtMaterialComboBox` remains a `QComboBox`, preserving the normal Qt model,
 delegate and editable-combo contracts.
 
+### Native Qt extension points
+
+The following composed-widget accessors are intentionally retained as stable
+Qt-native extension points for 1.x: `QtMaterialSearchBar::lineEdit()`,
+`QtMaterialSearchView::searchBar()`, `QtMaterialSearchView::resultView()`,
+`QtMaterialDateRangePicker::startPicker()` / `endPicker()`, and
+`QtMaterialTimePicker::timeField()`. The returned child objects remain owned
+by their parent QtMaterial widget; callers may configure documented Qt behavior
+but must not delete or reparent them.
+
+Text-field and Autocomplete `lineEdit()` accessors are retained for the same
+reason: validators, input methods, completers, selection, and other native Qt
+editor integration remain valid application extension points.
+
 ## Slider family
 
 `QtMaterialSlider` keeps the complete `QSlider` API and adds a value-label policy.

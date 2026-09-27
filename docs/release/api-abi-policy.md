@@ -13,4 +13,8 @@
 - binary compatibility is best-effort unless a stricter ABI policy is published;
 - once a stable API needs replacement, a deprecation mechanism may be introduced with an explicit removal window.
 
-The 1.0 public-header manifest is the source of truth for the supported C++ surface.
+The 1.0 public-header manifest defines which headers are supported. A checked-in
+Doxygen-derived signature baseline records the public/protected C++ declarations
+within that inventory and is compared by the documentation CI once present.
+Private PIMPL state is deliberately excluded from that source-compatibility
+baseline.

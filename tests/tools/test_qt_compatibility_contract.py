@@ -61,6 +61,8 @@ class QtCompatibilityManifestTests(unittest.TestCase):
         profiles = qt_support.certification_profiles(data)
         self.assertIn("qt5-primary", profiles)
         self.assertIn("qt6-linux-system", profiles)
+        self.assertIn("qt6-linux-floor", profiles)
+        self.assertEqual(profiles["qt6-linux-floor"]["qtVersion"], "6.4.0")
         self.assertIn("qt6-windows", profiles)
         self.assertIn("qt6-macos", profiles)
 
