@@ -20,7 +20,7 @@ Each tracked component owns:
 - `family`;
 - declared/effective `maturity`;
 - `publicHeader`;
-- `specType`;
+- `specType` (an actual C++ spec type, or `N/A` when the widget has no spec);
 - `widgetType`;
 - `testTarget`;
 - `galleryRoute`;
