@@ -205,6 +205,8 @@ protected:
     const TextFieldSpec& spec() const;
 
 private:
+    friend class QtMaterialOutlinedTextFieldPrivate;
+
     void invalidateLayoutCache();
     void updateModifiedStateFromLineEdit();
     void updateTouchedState(bool touched);

@@ -27,6 +27,51 @@ jobs:
       - name: Validate release contract
         run: python3 tools/check_release.py --root . --scope all
 
+  stable-visual-baseline:
+    if: startsWith(github.ref, 'refs/tags/v1.')
+    needs: release-contract
+    name: stable-visual-baseline
+    runs-on: ubuntu-24.04
+
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+      CTEST_OUTPUT_ON_FAILURE: 1
+      QTMATERIAL3_VISUAL_STRICT: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Linux runtime packages
+        run: bash scripts/ci/install-ubuntu-deps.sh
+
+      - name: Install pinned Qt 6.4.0
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.4.0"
+          host: linux
+          target: desktop
+          arch: gcc_64
+          cache: true
+
+      - name: Configure visual baseline validation
+        run: >
+          cmake -S . -B build-visual -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DQTMATERIAL3_BUILD_TESTS=ON
+          -DQTMATERIAL3_BUILD_EXAMPLES=OFF
+          -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
+          -DQTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS=ON
+          -DQTMATERIAL3_USE_MCU=OFF
+
+      - name: Build visual regression target
+        run: cmake --build build-visual --target tst_theme_visual_regression --parallel
+
+      - name: Compare reviewed visual goldens
+        run: |
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            bash -c 'openbox >/tmp/openbox-visual.log 2>&1 & ctest --test-dir build-visual --output-on-failure -R tst_theme_visual_regression'
+
   linux:
     needs: release-contract
     name: ${{ matrix.name }}

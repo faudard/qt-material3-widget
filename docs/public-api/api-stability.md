@@ -19,8 +19,12 @@ kept for unpublished APIs.
 
 The 0.9 release is the API-freeze candidate. Its release checker locks the intended
 public-header ownership, application-facing package components, resolver visibility,
-compatibility-shim policy, and retained C++ test registration. 1.0 will establish the
+compatibility-shim policy, and retained C++ test registration. 1.0 establishes the
 first stable source/API baseline from that candidate.
+
+The stable baseline is generated from Doxygen XML and records public/protected C++
+declarations rather than hashing whole headers. Comments and private PIMPL state may
+therefore evolve without creating false source-compatibility drift.
 
 ## Backend behavior
 
