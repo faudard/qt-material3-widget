@@ -726,16 +726,16 @@ void QtMaterialOutlinedTextField::setRequired(bool required)
 
 QString QtMaterialOutlinedTextField::requiredText() const
 {
-    return d_ptr->d_ptr->m_requiredText.isEmpty() ? tr("Required") : d_ptr->d_ptr->m_requiredText;
+    return d_ptr->m_requiredText.isEmpty() ? tr("Required") : d_ptr->m_requiredText;
 }
 
 void QtMaterialOutlinedTextField::setRequiredText(const QString& text)
 {
-    if (d_ptr->d_ptr->m_requiredText == text) {
+    if (d_ptr->m_requiredText == text) {
         return;
     }
 
-    d_ptr->d_ptr->m_requiredText = text;
+    d_ptr->m_requiredText = text;
     syncAccessibilityState();
     invalidateLayoutCache();
     updateGeometry();
@@ -1377,16 +1377,16 @@ int QtMaterialOutlinedTextField::effectiveTrailingReserve() const
 
 QtMaterialOutlinedTextField::RequiredValidationMode QtMaterialOutlinedTextField::requiredValidationMode() const noexcept
 {
-    return d_ptr->d_ptr->m_requiredValidationMode;
+    return d_ptr->m_requiredValidationMode;
 }
 
 void QtMaterialOutlinedTextField::setRequiredValidationMode(RequiredValidationMode mode)
 {
-    if (d_ptr->d_ptr->m_requiredValidationMode == mode) {
+    if (d_ptr->m_requiredValidationMode == mode) {
         return;
     }
 
-    d_ptr->d_ptr->m_requiredValidationMode = mode;
+    d_ptr->m_requiredValidationMode = mode;
     refreshValidationState(false);
     syncAccessibilityState();
     invalidateLayoutCache();
@@ -1438,7 +1438,7 @@ bool QtMaterialOutlinedTextField::isRequiredValidationError() const
 
     const QString value = d_ptr->m_lineEdit->text();
 
-    switch (d_ptr->d_ptr->m_requiredValidationMode) {
+    switch (d_ptr->m_requiredValidationMode) {
     case RequiredValidationMode::NonEmpty:
         return value.isEmpty();
     case RequiredValidationMode::NonBlank:
