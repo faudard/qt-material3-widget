@@ -51,9 +51,12 @@ class ApiSignatureBaselineTests(unittest.TestCase):
             xml = Path(tmp) / "xml"
             self.write_xml(xml)
             signatures = api.extract_signatures(xml)
-            self.assertEqual(len(signatures), 1)
-            self.assertIn("Foo|public-func|function|bar|int|(int value)const", signatures[0])
-            self.assertNotIn("hidden", signatures[0])
+            self.assertEqual(len(signatures), 2)
+            self.assertTrue(
+                any("Foo|public-func|function|bar|int|(int value)const" in item for item in signatures)
+            )
+            self.assertTrue(any("Foo|compound|class|" in item for item in signatures))
+            self.assertFalse(any("hidden" in item for item in signatures))
 
     def test_compare_detects_signature_drift(self):
         removed, added = api.compare(["a", "b"], ["a", "c"])
