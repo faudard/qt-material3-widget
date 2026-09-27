@@ -70,6 +70,14 @@ jobs:
           test "$(find tests/visual/goldens -maxdepth 1 -name '*.png' | wc -l)" -eq 7
           sha256sum tools/api-baseline-1.0.json tests/visual/goldens/*.png
 
+      - name: Prove zero-diff visual reproducibility
+        env:
+          QTMATERIAL3_UPDATE_VISUAL_GOLDENS: 0
+          QTMATERIAL3_VISUAL_STRICT: 1
+        run: |
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            bash -c 'openbox >/tmp/openbox-release-strict.log 2>&1 & ctest --test-dir build-visual --output-on-failure -R tst_theme_visual_regression'
+
       - name: Commit release assets
         run: |
           git config user.name "github-actions[bot]"
