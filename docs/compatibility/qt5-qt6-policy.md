@@ -15,6 +15,10 @@ ABI-compatible v142 compiler family.
 The local/reference workstation contract additionally covers **MSVC 14.28 /
 cl 19.28**. Hosted CI MUST NOT pretend to test that exact compiler minor.
 
+The Qt 6 floor is also compiled and tested explicitly on Ubuntu with the
+**Qt 6.4.0** `gcc_64` archive. The separate system-Qt job continues to catch
+integration drift against the distribution Qt package.
+
 Version-specific API differences belong in narrowly scoped internal adapters.
 `include/qtmaterial/core/qtmaterialeventcompat.h` is source-tree implementation
 support and is not installed as part of the 0.9 API candidate. Public base classes

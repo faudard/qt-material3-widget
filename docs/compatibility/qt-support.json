@@ -28,6 +28,13 @@
       "certification": [
         {
           "os": "Ubuntu",
+          "qtVersion": "6.4.0",
+          "qtArchive": "gcc_64",
+          "source": "Qt online archive",
+          "profile": "qt6-linux-floor"
+        },
+        {
+          "os": "Ubuntu",
           "source": "system Qt 6",
           "profile": "qt6-linux-system"
         },

@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <QtGlobal>
 
 #include <QIcon>
@@ -9,6 +10,8 @@
 class QEvent;
 
 namespace QtMaterial {
+
+class QtMaterialFabPrivate;
 
 enum class QtMaterialFabVariant
 {
@@ -57,11 +60,7 @@ private:
     void initializeFab();
     void syncFabAccessibility();
 
-    QString m_iconAccessibleName;
-    QString m_lastAccessibilitySummary;
-    bool m_requiresAccessibleName = true;
-
-    QtMaterialFabVariant m_fabVariant = QtMaterialFabVariant::Primary;
+    std::unique_ptr<QtMaterialFabPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

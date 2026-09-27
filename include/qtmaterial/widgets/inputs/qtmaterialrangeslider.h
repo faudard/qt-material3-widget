@@ -1,10 +1,14 @@
 #pragma once
 
+#include <memory>
+
 #include <QWidget>
 
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+class QtMaterialRangeSliderPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialRangeSlider : public QWidget
 {
@@ -57,13 +61,8 @@ private:
     QPointF handleCenter(Handle handle) const noexcept;
     void moveActiveHandleTo(int value);
 
-    int m_minimum = 0;
-    int m_maximum = 100;
-    int m_lowerValue = 25;
-    int m_upperValue = 75;
-    Qt::Orientation m_orientation = Qt::Horizontal;
-    Handle m_activeHandle = Handle::Lower;
-    bool m_dragging = false;
+    friend class QtMaterialRangeSliderPrivate;
+    std::unique_ptr<QtMaterialRangeSliderPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

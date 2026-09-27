@@ -45,6 +45,18 @@ jobs:
             build-examples: "ON"
             build-parallel-level: "2"
 
+          - name: ubuntu-qt6.4.0-floor
+            os: ubuntu-24.04
+            qt-version: "6.4.0"
+            qt-arch: gcc_64
+            compat-profile: "qt6-linux-floor"
+            msvc-toolset: ""
+            use-mcu: "OFF"
+            build-extra-examples: "OFF"
+            build-tests: "ON"
+            build-examples: "OFF"
+            build-parallel-level: "2"
+
           - name: windows-qt6.7.3-v142
             os: windows-2022
             qt-version: "6.7.3"
@@ -124,7 +136,7 @@ jobs:
           }
 
       - name: Install Qt
-        if: runner.os != 'Linux'
+        if: runner.os != 'Linux' || matrix.qt-version != 'system'
         uses: jurplel/install-qt-action@v4
         with:
           version: ${{ matrix.qt-version }}

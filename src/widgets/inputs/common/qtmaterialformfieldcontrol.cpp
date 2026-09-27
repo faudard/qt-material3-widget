@@ -2,71 +2,83 @@
 
 namespace QtMaterial {
 
+class QtMaterialFormFieldControlPrivate final
+{
+public:
+    QString label;
+    QString helperText;
+    QString errorText;
+    bool required = false;
+    bool invalid = false;
+    bool readOnly = false;
+};
+
 QtMaterialFormFieldControl::QtMaterialFormFieldControl(QWidget* parent)
     : QtMaterialControl(parent)
+    , d_ptr(std::make_unique<QtMaterialFormFieldControlPrivate>())
 {
 }
 
 QtMaterialFormFieldControl::~QtMaterialFormFieldControl() = default;
 
-QString QtMaterialFormFieldControl::label() const { return m_label; }
+QString QtMaterialFormFieldControl::label() const { return d_ptr->label; }
 
 void QtMaterialFormFieldControl::setLabel(const QString& label)
 {
-    if (m_label == label) return;
-    m_label = label;
-    emit labelChanged(m_label);
+    if (d_ptr->label == label) return;
+    d_ptr->label = label;
+    emit labelChanged(d_ptr->label);
     notifyFormFieldChanged();
 }
 
-QString QtMaterialFormFieldControl::helperText() const { return m_helperText; }
+QString QtMaterialFormFieldControl::helperText() const { return d_ptr->helperText; }
 
 void QtMaterialFormFieldControl::setHelperText(const QString& helperText)
 {
-    if (m_helperText == helperText) return;
-    m_helperText = helperText;
-    emit helperTextChanged(m_helperText);
+    if (d_ptr->helperText == helperText) return;
+    d_ptr->helperText = helperText;
+    emit helperTextChanged(d_ptr->helperText);
     notifyFormFieldChanged();
 }
 
-QString QtMaterialFormFieldControl::errorText() const { return m_errorText; }
+QString QtMaterialFormFieldControl::errorText() const { return d_ptr->errorText; }
 
 void QtMaterialFormFieldControl::setErrorText(const QString& errorText)
 {
-    if (m_errorText == errorText) return;
-    m_errorText = errorText;
-    emit errorTextChanged(m_errorText);
+    if (d_ptr->errorText == errorText) return;
+    d_ptr->errorText = errorText;
+    emit errorTextChanged(d_ptr->errorText);
     notifyFormFieldChanged();
 }
 
-bool QtMaterialFormFieldControl::isRequired() const noexcept { return m_required; }
+bool QtMaterialFormFieldControl::isRequired() const noexcept { return d_ptr->required; }
 
 void QtMaterialFormFieldControl::setRequired(bool required)
 {
-    if (m_required == required) return;
-    m_required = required;
-    emit requiredChanged(m_required);
+    if (d_ptr->required == required) return;
+    d_ptr->required = required;
+    emit requiredChanged(d_ptr->required);
     notifyFormFieldChanged();
 }
 
-bool QtMaterialFormFieldControl::isInvalid() const noexcept { return m_invalid; }
+bool QtMaterialFormFieldControl::isInvalid() const noexcept { return d_ptr->invalid; }
 
 void QtMaterialFormFieldControl::setInvalid(bool invalid)
 {
-    if (m_invalid == invalid) return;
-    m_invalid = invalid;
+    if (d_ptr->invalid == invalid) return;
+    d_ptr->invalid = invalid;
     interactionState().setError(invalid);
-    emit invalidChanged(m_invalid);
+    emit invalidChanged(d_ptr->invalid);
     notifyFormFieldChanged();
 }
 
-bool QtMaterialFormFieldControl::isReadOnly() const noexcept { return m_readOnly; }
+bool QtMaterialFormFieldControl::isReadOnly() const noexcept { return d_ptr->readOnly; }
 
 void QtMaterialFormFieldControl::setReadOnly(bool readOnly)
 {
-    if (m_readOnly == readOnly) return;
-    m_readOnly = readOnly;
-    emit readOnlyChanged(m_readOnly);
+    if (d_ptr->readOnly == readOnly) return;
+    d_ptr->readOnly = readOnly;
+    emit readOnlyChanged(d_ptr->readOnly);
     notifyFormFieldChanged();
 }
 

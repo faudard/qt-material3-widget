@@ -1,11 +1,15 @@
 #pragma once
 
+#include <memory>
+
 #include <QString>
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+class QtMaterialFormFieldControlPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialFormFieldControl : public QtMaterialControl {
     Q_OBJECT
@@ -52,12 +56,7 @@ protected:
 private:
     void notifyFormFieldChanged();
 
-    QString m_label;
-    QString m_helperText;
-    QString m_errorText;
-    bool m_required = false;
-    bool m_invalid = false;
-    bool m_readOnly = false;
+    std::unique_ptr<QtMaterialFormFieldControlPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

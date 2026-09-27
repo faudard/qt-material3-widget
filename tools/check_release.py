@@ -139,6 +139,37 @@ def validate_base(
     if changelog.is_file() and f"## [{version}]" not in read(changelog):
         errors.append(f"CHANGELOG.md has no [{version}] section")
 
+    major = int(version.split(".", 1)[0])
+    stable = base.get("stable_release", {})
+    if major >= 1:
+        baseline_relative = str(stable.get("api_baseline", ""))
+        baseline_path = root / baseline_relative
+        if not baseline_relative or not baseline_path.is_file():
+            errors.append(
+                "stable release requires a checked-in API signature baseline"
+            )
+        else:
+            try:
+                baseline = json.loads(read(baseline_path))
+            except (OSError, json.JSONDecodeError) as exc:
+                errors.append(f"invalid stable API baseline: {exc}")
+            else:
+                if baseline.get("schemaVersion") != 1:
+                    errors.append("stable API baseline schemaVersion must be 1")
+                if baseline.get("baselineMajor") != major:
+                    errors.append(
+                        "stable API baseline major does not match project major"
+                    )
+                signatures = baseline.get("signatures")
+                if not isinstance(signatures, list) or not signatures:
+                    errors.append("stable API baseline has no signatures")
+
+        for relative in stable.get("visual_goldens", []):
+            if not (root / str(relative)).is_file():
+                errors.append(
+                    f"stable release missing reviewed visual golden: {relative}"
+                )
+
     return errors
 
 

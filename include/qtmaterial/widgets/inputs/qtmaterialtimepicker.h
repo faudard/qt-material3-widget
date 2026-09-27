@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QDialog>
 #include <QTime>
 
@@ -8,6 +10,7 @@
 namespace QtMaterial {
 
 class QtMaterialTimeField;
+class QtMaterialTimePickerPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTimePicker : public QDialog
 {
@@ -28,7 +31,7 @@ signals:
     void timeAccepted(const QTime& time);
 
 private:
-    QtMaterialTimeField* m_timeField = nullptr;
+    std::unique_ptr<QtMaterialTimePickerPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

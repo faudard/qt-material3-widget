@@ -52,6 +52,16 @@ class ReleaseCheckerTests(unittest.TestCase):
             any("expected 9.9.9" in error for error in errors)
         )
 
+    def test_stable_release_requires_api_baseline_and_visual_goldens(self):
+        rules = release.load_rules(ROOT / "tools/release_rules.json")
+        errors = release.validate_base(ROOT, rules, "1.0.0")
+        self.assertTrue(
+            any("checked-in API signature baseline" in error for error in errors)
+        )
+        self.assertTrue(
+            any("reviewed visual golden" in error for error in errors)
+        )
+
     def test_derived_usable_requires_state_and_example_evidence(self):
         axes = {
             "api": 2,

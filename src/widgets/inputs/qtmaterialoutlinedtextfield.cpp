@@ -248,6 +248,27 @@ struct QtMaterialOutlinedTextFieldPrivate {
     bool m_syncingGeometry = false;
     bool m_syncingCounter = false;
     bool m_refreshingValidation = false;
+
+    mutable QRect m_cachedCharacterCounterRect;
+    QPointer<QLabel> m_characterCounterLabel;
+    QtMaterialOutlinedTextField::RequiredValidationMode m_requiredValidationMode =
+        QtMaterialOutlinedTextField::RequiredValidationMode::NonBlank;
+    QString m_validatorErrorText;
+    QString m_inputMaskErrorText;
+    QtMaterialOutlinedTextField::AutomaticValidationErrorKind m_automaticValidationErrorKind =
+        QtMaterialOutlinedTextField::AutomaticValidationErrorKind::None;
+    QtMaterialOutlinedTextField::ErrorDisplayMode m_errorDisplayMode =
+        QtMaterialOutlinedTextField::ErrorDisplayMode::Always;
+    bool m_errorVisibilityForced = false;
+    bool m_effectiveErrorVisible = false;
+    bool m_lastEmittedAutomaticValidationError = false;
+    bool m_lastEmittedEffectiveErrorState = false;
+    bool m_lastEmittedAcceptableInput = true;
+    bool m_required = false;
+    QString m_requiredText;
+    bool m_characterCounterEnabled = false;
+    bool m_lastKnownModified = false;
+    bool m_touched = false;
 };
 
 
@@ -595,7 +616,7 @@ QLineEdit* QtMaterialOutlinedTextField::lineEdit() const
 
 bool QtMaterialOutlinedTextField::isTouched() const noexcept
 {
-    return m_touched;
+    return d_ptr->m_touched;
 }
 
 void QtMaterialOutlinedTextField::setTouched(bool touched)
@@ -610,11 +631,11 @@ void QtMaterialOutlinedTextField::resetTouched()
 
 void QtMaterialOutlinedTextField::updateTouchedState(bool touched)
 {
-    if (m_touched == touched) {
+    if (d_ptr->m_touched == touched) {
         return;
     }
 
-    m_touched = touched;
+    d_ptr->m_touched = touched;
     Q_EMIT touchedChanged(touched);
 }
 
@@ -684,16 +705,16 @@ void QtMaterialOutlinedTextField::setReadOnly(bool readOnly)
 
 bool QtMaterialOutlinedTextField::isRequired() const noexcept
 {
-    return m_required;
+    return d_ptr->m_required;
 }
 
 void QtMaterialOutlinedTextField::setRequired(bool required)
 {
-    if (m_required == required) {
+    if (d_ptr->m_required == required) {
         return;
     }
 
-    m_required = required;
+    d_ptr->m_required = required;
 
     refreshValidationState(false);
     syncAccessibilityState();
@@ -705,16 +726,16 @@ void QtMaterialOutlinedTextField::setRequired(bool required)
 
 QString QtMaterialOutlinedTextField::requiredText() const
 {
-    return m_requiredText.isEmpty() ? tr("Required") : m_requiredText;
+    return d_ptr->m_requiredText.isEmpty() ? tr("Required") : d_ptr->m_requiredText;
 }
 
 void QtMaterialOutlinedTextField::setRequiredText(const QString& text)
 {
-    if (m_requiredText == text) {
+    if (d_ptr->m_requiredText == text) {
         return;
     }
 
-    m_requiredText = text;
+    d_ptr->m_requiredText = text;
     syncAccessibilityState();
     invalidateLayoutCache();
     updateGeometry();
@@ -758,18 +779,18 @@ void QtMaterialOutlinedTextField::setMaxLength(
 
 bool QtMaterialOutlinedTextField::isCharacterCounterEnabled() const noexcept
 {
-    return m_characterCounterEnabled;
+    return d_ptr->m_characterCounterEnabled;
 }
 
 void QtMaterialOutlinedTextField::
 ensureCharacterCounterLabel()
 {
-    if (m_characterCounterLabel) {
+    if (d_ptr->m_characterCounterLabel) {
         return;
     }
 
     auto* counterLabel = new QLabel(this);
-    m_characterCounterLabel = counterLabel;
+    d_ptr->m_characterCounterLabel = counterLabel;
 
     counterLabel->setObjectName(
         QStringLiteral(
@@ -791,12 +812,12 @@ ensureCharacterCounterLabel()
 void QtMaterialOutlinedTextField::
 setCharacterCounterEnabled(bool enabled)
 {
-    if (m_characterCounterEnabled == enabled) {
+    if (d_ptr->m_characterCounterEnabled == enabled) {
         syncCharacterCounterWidget();
         return;
     }
 
-    m_characterCounterEnabled = enabled;
+    d_ptr->m_characterCounterEnabled = enabled;
     ensureCharacterCounterLabel();
 
     invalidateLayoutCache();
@@ -838,12 +859,12 @@ syncCharacterCounterWidget()
     ensureCharacterCounterLabel();
 
     QLabel* counterLabel =
-        m_characterCounterLabel.data();
+        d_ptr->m_characterCounterLabel.data();
     if (!counterLabel) {
         return;
     }
 
-    if (!m_characterCounterEnabled) {
+    if (!d_ptr->m_characterCounterEnabled) {
         counterLabel->hide();
         return;
     }
@@ -881,8 +902,8 @@ syncCharacterCounterWidget()
 
     const bool shouldShow =
         isVisible()
-        && m_cachedCharacterCounterRect.isValid()
-        && !m_cachedCharacterCounterRect.isEmpty();
+        && d_ptr->m_cachedCharacterCounterRect.isValid()
+        && !d_ptr->m_cachedCharacterCounterRect.isEmpty();
 
     if (!shouldShow) {
         counterLabel->hide();
@@ -890,7 +911,7 @@ syncCharacterCounterWidget()
     }
 
     counterLabel->setGeometry(
-        m_cachedCharacterCounterRect);
+        d_ptr->m_cachedCharacterCounterRect);
     counterLabel->show();
     counterLabel->raise();
 }
@@ -916,7 +937,7 @@ setValidationFeedbackMode(
     } else {
         d_ptr->m_validationCommitted = false;
         d_ptr->m_automaticValidationError = false;
-        m_automaticValidationErrorKind =
+        d_ptr->m_automaticValidationErrorKind =
             AutomaticValidationErrorKind::None;
 
         syncEffectiveErrorState();
@@ -933,41 +954,41 @@ setValidationFeedbackMode(
 
 QtMaterialOutlinedTextField::ErrorDisplayMode QtMaterialOutlinedTextField::errorDisplayMode() const noexcept
 {
-    return m_errorDisplayMode;
+    return d_ptr->m_errorDisplayMode;
 }
 
 void QtMaterialOutlinedTextField::setErrorDisplayMode(ErrorDisplayMode mode)
 {
-    if (m_errorDisplayMode == mode) {
+    if (d_ptr->m_errorDisplayMode == mode) {
         return;
     }
 
-    m_errorDisplayMode = mode;
+    d_ptr->m_errorDisplayMode = mode;
     syncEffectiveErrorVisibility();
 }
 
 void QtMaterialOutlinedTextField::
 showValidationError()
 {
-    m_errorVisibilityForced = true;
+    d_ptr->m_errorVisibilityForced = true;
     refreshValidationState(true);
     syncEffectiveErrorVisibility();
 }
 
 void QtMaterialOutlinedTextField::resetValidationErrorVisibility()
 {
-    if (!m_errorVisibilityForced) {
+    if (!d_ptr->m_errorVisibilityForced) {
         return;
     }
 
-    m_errorVisibilityForced = false;
+    d_ptr->m_errorVisibilityForced = false;
     syncEffectiveErrorVisibility();
 }
 
 
 bool QtMaterialOutlinedTextField::validateInput()
 {
-    m_errorVisibilityForced = true;
+    d_ptr->m_errorVisibilityForced = true;
     refreshValidationState(true);
     syncEffectiveErrorVisibility();
     syncAccessibilityState();
@@ -993,10 +1014,10 @@ resetValidationFeedback()
 
     d_ptr->m_validationCommitted = false;
     d_ptr->m_automaticValidationError = false;
-    m_automaticValidationErrorKind =
+    d_ptr->m_automaticValidationErrorKind =
         AutomaticValidationErrorKind::None;
 
-    m_errorVisibilityForced = false;
+    d_ptr->m_errorVisibilityForced = false;
 
     syncEffectiveErrorState();
     syncEffectiveErrorVisibility();
@@ -1016,7 +1037,7 @@ resetValidationFeedback()
 
 bool QtMaterialOutlinedTextField::isEffectiveErrorVisible() const noexcept
 {
-    return m_effectiveErrorVisible;
+    return d_ptr->m_effectiveErrorVisible;
 }
 
 bool QtMaterialOutlinedTextField::hasAutomaticValidationError() const noexcept
@@ -1356,16 +1377,16 @@ int QtMaterialOutlinedTextField::effectiveTrailingReserve() const
 
 QtMaterialOutlinedTextField::RequiredValidationMode QtMaterialOutlinedTextField::requiredValidationMode() const noexcept
 {
-    return m_requiredValidationMode;
+    return d_ptr->m_requiredValidationMode;
 }
 
 void QtMaterialOutlinedTextField::setRequiredValidationMode(RequiredValidationMode mode)
 {
-    if (m_requiredValidationMode == mode) {
+    if (d_ptr->m_requiredValidationMode == mode) {
         return;
     }
 
-    m_requiredValidationMode = mode;
+    d_ptr->m_requiredValidationMode = mode;
     refreshValidationState(false);
     syncAccessibilityState();
     invalidateLayoutCache();
@@ -1375,16 +1396,16 @@ void QtMaterialOutlinedTextField::setRequiredValidationMode(RequiredValidationMo
 
 QString QtMaterialOutlinedTextField::validatorErrorText() const
 {
-    return m_validatorErrorText;
+    return d_ptr->m_validatorErrorText;
 }
 
 void QtMaterialOutlinedTextField::setValidatorErrorText(const QString& text)
 {
-    if (m_validatorErrorText == text) {
+    if (d_ptr->m_validatorErrorText == text) {
         return;
     }
 
-    m_validatorErrorText = text;
+    d_ptr->m_validatorErrorText = text;
     syncAccessibilityState();
     invalidateLayoutCache();
     updateGeometry();
@@ -1393,16 +1414,16 @@ void QtMaterialOutlinedTextField::setValidatorErrorText(const QString& text)
 
 QString QtMaterialOutlinedTextField::inputMaskErrorText() const
 {
-    return m_inputMaskErrorText;
+    return d_ptr->m_inputMaskErrorText;
 }
 
 void QtMaterialOutlinedTextField::setInputMaskErrorText(const QString& text)
 {
-    if (m_inputMaskErrorText == text) {
+    if (d_ptr->m_inputMaskErrorText == text) {
         return;
     }
 
-    m_inputMaskErrorText = text;
+    d_ptr->m_inputMaskErrorText = text;
     syncAccessibilityState();
     invalidateLayoutCache();
     updateGeometry();
@@ -1411,13 +1432,13 @@ void QtMaterialOutlinedTextField::setInputMaskErrorText(const QString& text)
 
 bool QtMaterialOutlinedTextField::isRequiredValidationError() const
 {
-    if (!m_required || !d_ptr->m_lineEdit || !isEnabled()) {
+    if (!d_ptr->m_required || !d_ptr->m_lineEdit || !isEnabled()) {
         return false;
     }
 
     const QString value = d_ptr->m_lineEdit->text();
 
-    switch (m_requiredValidationMode) {
+    switch (d_ptr->m_requiredValidationMode) {
     case RequiredValidationMode::NonEmpty:
         return value.isEmpty();
     case RequiredValidationMode::NonBlank:
@@ -1466,17 +1487,17 @@ QString QtMaterialOutlinedTextField::effectiveErrorText() const
     }
 
     if (d_ptr->m_automaticValidationError) {
-        switch (m_automaticValidationErrorKind) {
+        switch (d_ptr->m_automaticValidationErrorKind) {
         case AutomaticValidationErrorKind::Required:
             return requiredText();
         case AutomaticValidationErrorKind::InputMask:
-            if (!m_inputMaskErrorText.isEmpty()) {
-                return m_inputMaskErrorText;
+            if (!d_ptr->m_inputMaskErrorText.isEmpty()) {
+                return d_ptr->m_inputMaskErrorText;
             }
             break;
         case AutomaticValidationErrorKind::Validator:
-            if (!m_validatorErrorText.isEmpty()) {
-                return m_validatorErrorText;
+            if (!d_ptr->m_validatorErrorText.isEmpty()) {
+                return d_ptr->m_validatorErrorText;
             }
             break;
         case AutomaticValidationErrorKind::None:
@@ -1532,7 +1553,7 @@ refreshValidationState(bool commit)
         break;
     }
 
-    m_automaticValidationErrorKind =
+    d_ptr->m_automaticValidationErrorKind =
         errorKind;
     d_ptr->m_automaticValidationError =
         errorKind
@@ -1557,17 +1578,17 @@ void QtMaterialOutlinedTextField::emitValidationStateSignalsIfChanged()
     const bool effectiveError = d_ptr->m_manualErrorState || d_ptr->m_automaticValidationError;
     const bool acceptableInput = isAcceptableInput();
 
-    if (m_lastEmittedAutomaticValidationError != automaticError) {
-        m_lastEmittedAutomaticValidationError = automaticError;
+    if (d_ptr->m_lastEmittedAutomaticValidationError != automaticError) {
+        d_ptr->m_lastEmittedAutomaticValidationError = automaticError;
         emit automaticValidationErrorChanged(automaticError);
     }
-    if (m_lastEmittedEffectiveErrorState != effectiveError) 
-        {        m_lastEmittedEffectiveErrorState = effectiveError;
+    if (d_ptr->m_lastEmittedEffectiveErrorState != effectiveError) 
+        {        d_ptr->m_lastEmittedEffectiveErrorState = effectiveError;
     emit effectiveErrorStateChanged(effectiveError);
 }
 
-if (m_lastEmittedAcceptableInput != acceptableInput) 
-    {        m_lastEmittedAcceptableInput = acceptableInput;
+if (d_ptr->m_lastEmittedAcceptableInput != acceptableInput) 
+    {        d_ptr->m_lastEmittedAcceptableInput = acceptableInput;
 emit acceptableInputChanged(acceptableInput);
 }
 }
@@ -1586,11 +1607,11 @@ bool QtMaterialOutlinedTextField::shouldShowEffectiveError() const noexcept
         return true;
     }
 
-    if (m_errorVisibilityForced) {
+    if (d_ptr->m_errorVisibilityForced) {
         return true;
     }
 
-    switch (m_errorDisplayMode) {
+    switch (d_ptr->m_errorDisplayMode) {
     case ErrorDisplayMode::Always:
         return true;
     case ErrorDisplayMode::WhenTouched:
@@ -1607,11 +1628,11 @@ bool QtMaterialOutlinedTextField::shouldShowEffectiveError() const noexcept
 void QtMaterialOutlinedTextField::syncEffectiveErrorVisibility()
 {
     const bool visible = shouldShowEffectiveError();
-    if (m_effectiveErrorVisible == visible) {
+    if (d_ptr->m_effectiveErrorVisible == visible) {
         return;
     }
 
-    m_effectiveErrorVisible = visible;
+    d_ptr->m_effectiveErrorVisible = visible;
     syncAccessibilityState();
     invalidateLayoutCache();
     syncLineEditGeometry();
@@ -1643,11 +1664,11 @@ void QtMaterialOutlinedTextField::resetModified()
 void QtMaterialOutlinedTextField::updateModifiedStateFromLineEdit()
 {
     const bool modified = isModified();
-    if (m_lastKnownModified == modified) {
+    if (d_ptr->m_lastKnownModified == modified) {
         return;
     }
 
-    m_lastKnownModified = modified;
+    d_ptr->m_lastKnownModified = modified;
     Q_EMIT modifiedChanged(modified);
 }
 
@@ -1731,7 +1752,7 @@ ensureLayoutResolved() const
     TextFieldSpec layoutSpec = spec();
     layoutSpec.reserveSupportingLine =
         layoutSpec.reserveSupportingLine
-        || m_characterCounterEnabled;
+        || d_ptr->m_characterCounterEnabled;
 
     const QtMaterialTextFieldShellHelper::Layout
         layout =
@@ -1763,9 +1784,9 @@ ensureLayoutResolved() const
     d_ptr->m_cachedSupportingRect =
         layout.supportingRect;
 
-    m_cachedCharacterCounterRect = QRect();
+    d_ptr->m_cachedCharacterCounterRect = QRect();
 
-    if (m_characterCounterEnabled
+    if (d_ptr->m_characterCounterEnabled
         && d_ptr->m_cachedSupportingRect.isValid()) {
         QFont counterFont =
             spec().hasResolvedSupportingFont
@@ -1797,17 +1818,17 @@ ensureLayoutResolved() const
                 == Qt::RightToLeft;
 
             if (rtl) {
-                m_cachedCharacterCounterRect =
+                d_ptr->m_cachedCharacterCounterRect =
                     QRect(
                         d_ptr->m_cachedSupportingRect.left(),
                         d_ptr->m_cachedSupportingRect.top(),
                         boundedCounterWidth,
                         d_ptr->m_cachedSupportingRect.height());
                 d_ptr->m_cachedSupportingRect.setLeft(
-                    m_cachedCharacterCounterRect.right()
+                    d_ptr->m_cachedCharacterCounterRect.right()
                     + 4);
             } else {
-                m_cachedCharacterCounterRect =
+                d_ptr->m_cachedCharacterCounterRect =
                     QRect(
                         d_ptr->m_cachedSupportingRect.right()
                             - boundedCounterWidth
@@ -1816,7 +1837,7 @@ ensureLayoutResolved() const
                         boundedCounterWidth,
                         d_ptr->m_cachedSupportingRect.height());
                 d_ptr->m_cachedSupportingRect.setRight(
-                    m_cachedCharacterCounterRect.left()
+                    d_ptr->m_cachedCharacterCounterRect.left()
                     - 4);
             }
         }

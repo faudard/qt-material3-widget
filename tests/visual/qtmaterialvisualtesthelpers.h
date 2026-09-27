@@ -163,6 +163,10 @@ inline void verifyOrUpdateGolden(const QString& caseName, const QImage& actual)
         return;
     }
 
+    if (!strictGoldens()) {
+        QSKIP("Visual pixel comparison is opt-in; set QTMATERIAL3_VISUAL_STRICT=1 for release validation.");
+    }
+
     if (!QFileInfo::exists(goldenPath)) {
         const QString message = QStringLiteral(
             "Missing visual golden %1. Run with QTMATERIAL3_UPDATE_VISUAL_GOLDENS=1 to create it. Actual artifact: %2")

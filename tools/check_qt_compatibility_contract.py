@@ -86,7 +86,7 @@ def validate_repository_contract(
                     + token
                 )
 
-        for profile_name in ("qt6-windows", "qt6-macos"):
+        for profile_name in ("qt6-linux-floor", "qt6-windows", "qt6-macos"):
             profile = profiles.get(profile_name)
             if not profile:
                 errors.append(

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QModelIndex>
 #include <QWidget>
 
@@ -12,6 +14,7 @@ class QSortFilterProxyModel;
 namespace QtMaterial {
 
 class QtMaterialSearchBar;
+class QtMaterialSearchViewPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSearchView : public QWidget
 {
@@ -40,10 +43,7 @@ signals:
     void activated(const QModelIndex& sourceIndex);
 
 private:
-    QtMaterialSearchBar* m_searchBar = nullptr;
-    QListView* m_view = nullptr;
-    QSortFilterProxyModel* m_proxy = nullptr;
-    QAbstractItemModel* m_sourceModel = nullptr;
+    std::unique_ptr<QtMaterialSearchViewPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

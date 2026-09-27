@@ -1,4 +1,6 @@
 #pragma once
+
+#include <memory>
 #include "qtmaterial/widgets/buttons/qtmaterialfab.h"
 
 #include <QIcon>
@@ -9,6 +11,8 @@
 class QEvent;
 
 namespace QtMaterial {
+
+class QtMaterialExtendedFabPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialExtendedFab : public QtMaterialFilledButton
 {
@@ -40,7 +44,7 @@ private:
     void initializeExtendedFab();
     void syncExtendedFabAccessibility();
 
-    QtMaterialFabVariant m_fabVariant = QtMaterialFabVariant::Primary;
+    std::unique_ptr<QtMaterialExtendedFabPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

@@ -6,43 +6,52 @@
 
 namespace QtMaterial {
 
+class QtMaterialSearchBarPrivate final
+{
+public:
+    QLineEdit* lineEdit = nullptr;
+    QToolButton* clearButton = nullptr;
+    bool clearButtonVisible = true;
+};
+
 QtMaterialSearchBar::QtMaterialSearchBar(QWidget* parent)
     : QWidget(parent)
-    , m_lineEdit(new QLineEdit(this))
-    , m_clearButton(new QToolButton(this))
+    , d_ptr(std::make_unique<QtMaterialSearchBarPrivate>())
 {
+    d_ptr->lineEdit = new QLineEdit(this);
+    d_ptr->clearButton = new QToolButton(this);
     setObjectName(QStringLiteral("qtmaterial_search_bar"));
-    setFocusProxy(m_lineEdit);
+    setFocusProxy(d_ptr->lineEdit);
     setAccessibleName(tr("Search"));
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(12, 4, 8, 4);
     layout->setSpacing(4);
 
-    m_lineEdit->setFrame(false);
-    m_lineEdit->setClearButtonEnabled(false);
-    m_lineEdit->setAccessibleName(tr("Search query"));
+    d_ptr->lineEdit->setFrame(false);
+    d_ptr->lineEdit->setClearButtonEnabled(false);
+    d_ptr->lineEdit->setAccessibleName(tr("Search query"));
 
-    m_clearButton->setText(QString::fromUtf8("\xC3\x97"));
-    m_clearButton->setAutoRaise(true);
-    m_clearButton->setFocusPolicy(Qt::StrongFocus);
-    m_clearButton->setAccessibleName(tr("Clear search"));
+    d_ptr->clearButton->setText(QString::fromUtf8("\xC3\x97"));
+    d_ptr->clearButton->setAutoRaise(true);
+    d_ptr->clearButton->setFocusPolicy(Qt::StrongFocus);
+    d_ptr->clearButton->setAccessibleName(tr("Clear search"));
 
-    layout->addWidget(m_lineEdit, 1);
-    layout->addWidget(m_clearButton);
+    layout->addWidget(d_ptr->lineEdit, 1);
+    layout->addWidget(d_ptr->clearButton);
 
-    connect(m_lineEdit, &QLineEdit::textChanged, this, [this](const QString& value) {
+    connect(d_ptr->lineEdit, &QLineEdit::textChanged, this, [this](const QString& value) {
         syncClearButton();
         emit textChanged(value);
     });
-    connect(m_lineEdit, &QLineEdit::returnPressed, this, [this]() {
-        emit searchRequested(m_lineEdit->text());
+    connect(d_ptr->lineEdit, &QLineEdit::returnPressed, this, [this]() {
+        emit searchRequested(d_ptr->lineEdit->text());
     });
-    connect(m_clearButton, &QToolButton::clicked, this, [this]() {
-        if (!m_lineEdit->text().isEmpty()) {
-            m_lineEdit->clear();
+    connect(d_ptr->clearButton, &QToolButton::clicked, this, [this]() {
+        if (!d_ptr->lineEdit->text().isEmpty()) {
+            d_ptr->lineEdit->clear();
         }
-        m_lineEdit->setFocus(Qt::ShortcutFocusReason);
+        d_ptr->lineEdit->setFocus(Qt::ShortcutFocusReason);
         emit cleared();
     });
 
@@ -51,26 +60,26 @@ QtMaterialSearchBar::QtMaterialSearchBar(QWidget* parent)
 
 QtMaterialSearchBar::~QtMaterialSearchBar() = default;
 
-QString QtMaterialSearchBar::text() const { return m_lineEdit->text(); }
-void QtMaterialSearchBar::setText(const QString& text) { m_lineEdit->setText(text); }
-QString QtMaterialSearchBar::placeholderText() const { return m_lineEdit->placeholderText(); }
-void QtMaterialSearchBar::setPlaceholderText(const QString& text) { m_lineEdit->setPlaceholderText(text); }
-bool QtMaterialSearchBar::isClearButtonVisible() const noexcept { return m_clearButtonVisible; }
+QString QtMaterialSearchBar::text() const { return d_ptr->lineEdit->text(); }
+void QtMaterialSearchBar::setText(const QString& text) { d_ptr->lineEdit->setText(text); }
+QString QtMaterialSearchBar::placeholderText() const { return d_ptr->lineEdit->placeholderText(); }
+void QtMaterialSearchBar::setPlaceholderText(const QString& text) { d_ptr->lineEdit->setPlaceholderText(text); }
+bool QtMaterialSearchBar::isClearButtonVisible() const noexcept { return d_ptr->clearButtonVisible; }
 
 void QtMaterialSearchBar::setClearButtonVisible(bool visible)
 {
-    if (m_clearButtonVisible == visible) {
+    if (d_ptr->clearButtonVisible == visible) {
         return;
     }
-    m_clearButtonVisible = visible;
+    d_ptr->clearButtonVisible = visible;
     syncClearButton();
 }
 
-QLineEdit* QtMaterialSearchBar::lineEdit() const noexcept { return m_lineEdit; }
+QLineEdit* QtMaterialSearchBar::lineEdit() const noexcept { return d_ptr->lineEdit; }
 
 QSize QtMaterialSearchBar::sizeHint() const
 {
-    const QSize editHint = m_lineEdit->sizeHint();
+    const QSize editHint = d_ptr->lineEdit->sizeHint();
     return QSize(qMax(240, editHint.width() + 56), qMax(48, editHint.height() + 8));
 }
 
@@ -81,7 +90,7 @@ QSize QtMaterialSearchBar::minimumSizeHint() const
 
 void QtMaterialSearchBar::syncClearButton()
 {
-    m_clearButton->setVisible(m_clearButtonVisible && !m_lineEdit->text().isEmpty());
+    d_ptr->clearButton->setVisible(d_ptr->clearButtonVisible && !d_ptr->lineEdit->text().isEmpty());
 }
 
 } // namespace QtMaterial

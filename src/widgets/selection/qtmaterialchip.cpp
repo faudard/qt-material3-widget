@@ -13,6 +13,18 @@
 #include "qtmaterial/specs/qtmaterialchipspecresolver.h"
 
 namespace QtMaterial {
+
+class QtMaterialChipPrivate final
+{
+public:
+    ChipVariant variant = ChipVariant::Assist;
+    bool removable = false;
+    QIcon trailingIcon;
+    bool specDirty = true;
+    ChipSpec spec;
+    QtMaterialRippleController* ripple = nullptr;
+};
+
 namespace {
 
 
@@ -89,6 +101,7 @@ void paintTintedIcon(
 QtMaterialChip::QtMaterialChip(
     QWidget* parent)
     : QtMaterialAbstractButton(parent)
+    , d_ptr(std::make_unique<QtMaterialChipPrivate>())
 {
     setCheckable(false);
     setFocusPolicy(Qt::StrongFocus);
@@ -97,7 +110,7 @@ QtMaterialChip::QtMaterialChip(
         QStringLiteral("chip"));
     setMaterialVariant(
         QStringLiteral("assist"));
-    m_ripple = new QtMaterialRippleController(this);
+    d_ptr->ripple = new QtMaterialRippleController(this);
 }
 
 QtMaterialChip::QtMaterialChip(
@@ -112,17 +125,17 @@ QtMaterialChip::~QtMaterialChip() = default;
 
 ChipVariant QtMaterialChip::variant() const noexcept
 {
-    return m_variant;
+    return d_ptr->variant;
 }
 
 void QtMaterialChip::setVariant(
     ChipVariant variant)
 {
-    if (m_variant == variant) {
+    if (d_ptr->variant == variant) {
         return;
     }
 
-    m_variant = variant;
+    d_ptr->variant = variant;
 
     const bool filter =
         variant == ChipVariant::Filter;
@@ -144,17 +157,17 @@ void QtMaterialChip::setVariant(
 
 bool QtMaterialChip::isRemovable() const noexcept
 {
-    return m_removable;
+    return d_ptr->removable;
 }
 
 void QtMaterialChip::setRemovable(
     bool removable)
 {
-    if (m_removable == removable) {
+    if (d_ptr->removable == removable) {
         return;
     }
 
-    m_removable = removable;
+    d_ptr->removable = removable;
     updateGeometry();
     update();
 
@@ -163,17 +176,17 @@ void QtMaterialChip::setRemovable(
 
 QIcon QtMaterialChip::trailingIcon() const
 {
-    return m_trailingIcon;
+    return d_ptr->trailingIcon;
 }
 
 void QtMaterialChip::setTrailingIcon(
     const QIcon& icon)
 {
-    if (m_trailingIcon.cacheKey() == icon.cacheKey()) {
+    if (d_ptr->trailingIcon.cacheKey() == icon.cacheKey()) {
         return;
     }
 
-    m_trailingIcon = icon;
+    d_ptr->trailingIcon = icon;
     updateGeometry();
     update();
 }
@@ -181,7 +194,7 @@ void QtMaterialChip::setTrailingIcon(
 const ChipSpec& QtMaterialChip::resolvedSpec() const
 {
     ensureSpecResolved();
-    return m_spec;
+    return d_ptr->spec;
 }
 
 void QtMaterialChip::themeChangedEvent(
@@ -194,7 +207,7 @@ void QtMaterialChip::themeChangedEvent(
 
 void QtMaterialChip::invalidateResolvedSpec()
 {
-    m_specDirty = true;
+    d_ptr->specDirty = true;
 }
 
 void QtMaterialChip::stateChangedEvent()
@@ -202,11 +215,11 @@ void QtMaterialChip::stateChangedEvent()
     QtMaterialAbstractButton::
         stateChangedEvent();
     ensureSpecResolved();
-    if (m_ripple) {
-        m_ripple->setEnabled(isEnabled());
-        m_ripple->setReducedMotion(theme().accessibility().reducedMotion);
-        if (interactionState().isPressed() && !m_ripple->isActive()) {
-            m_ripple->addRipple(containerRect().center());
+    if (d_ptr->ripple) {
+        d_ptr->ripple->setEnabled(isEnabled());
+        d_ptr->ripple->setReducedMotion(theme().accessibility().reducedMotion);
+        if (interactionState().isPressed() && !d_ptr->ripple->isActive()) {
+            d_ptr->ripple->addRipple(containerRect().center());
         }
     }
     update();
@@ -224,26 +237,26 @@ ChipSpec QtMaterialChip::resolveSpec() const
 {
     const ChipSpecResolver resolver;
     return resolver.resolve(
-        m_variant,
+        d_ptr->variant,
         theme(),
         density());
 }
 
 void QtMaterialChip::ensureSpecResolved() const
 {
-    if (!m_specDirty) {
+    if (!d_ptr->specDirty) {
         return;
     }
 
-    m_spec = resolveSpec();
-    if (m_ripple) {
-        m_ripple->setBaseOpacity(m_spec.pressStateLayerOpacity);
-        if (m_spec.hasResolvedMotionStyle && m_spec.motionStyle.durationMs > 0) {
-            m_ripple->setDuration(m_spec.motionStyle.durationMs);
+    d_ptr->spec = resolveSpec();
+    if (d_ptr->ripple) {
+        d_ptr->ripple->setBaseOpacity(d_ptr->spec.pressStateLayerOpacity);
+        if (d_ptr->spec.hasResolvedMotionStyle && d_ptr->spec.motionStyle.durationMs > 0) {
+            d_ptr->ripple->setDuration(d_ptr->spec.motionStyle.durationMs);
         }
-        m_ripple->setReducedMotion(theme().accessibility().reducedMotion);
+        d_ptr->ripple->setReducedMotion(theme().accessibility().reducedMotion);
     }
-    m_specDirty = false;
+    d_ptr->specDirty = false;
 }
 
 QRectF QtMaterialChip::containerRect() const
@@ -310,8 +323,8 @@ QSize QtMaterialChip::sizeHint() const
     }
 
     if (
-        m_removable
-        || !m_trailingIcon.isNull()) {
+        d_ptr->removable
+        || !d_ptr->trailingIcon.isNull()) {
         width +=
             spec.iconSize
             + spec.iconSpacing;
@@ -340,8 +353,8 @@ void QtMaterialChip::mouseReleaseEvent(
         && isEnabled()
         && event->button() == Qt::LeftButton
         && (
-            m_removable
-            || !m_trailingIcon.isNull())
+            d_ptr->removable
+            || !d_ptr->trailingIcon.isNull())
         && trailingIconRect(
                containerRect())
                .contains(event->pos())) {
@@ -456,9 +469,9 @@ void QtMaterialChip::paintEvent(
                 opacity);
     }
 
-    if (m_ripple && isEnabled()) {
-        m_ripple->setClipPath(path);
-        m_ripple->paint(&painter, spec.stateLayerColor);
+    if (d_ptr->ripple && isEnabled()) {
+        d_ptr->ripple->setClipPath(path);
+        d_ptr->ripple->paint(&painter, spec.stateLayerColor);
     }
 
     painter.setFont(
@@ -509,8 +522,8 @@ void QtMaterialChip::paintEvent(
 
     QRect closeRect;
     if (
-        m_removable
-        || !m_trailingIcon.isNull()) {
+        d_ptr->removable
+        || !d_ptr->trailingIcon.isNull()) {
         const QRect logicalClose(
             logicalRight
                 - spec.iconSize
@@ -559,10 +572,10 @@ void QtMaterialChip::paintEvent(
         text());
 
     if (!closeRect.isNull()) {
-        if (!m_trailingIcon.isNull()) {
+        if (!d_ptr->trailingIcon.isNull()) {
             paintTintedIcon(
                 &painter,
-                m_trailingIcon,
+                d_ptr->trailingIcon,
                 closeRect,
                 iconColor,
                 isEnabled());

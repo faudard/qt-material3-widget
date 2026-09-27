@@ -6,6 +6,15 @@
 
 namespace QtMaterial {
 
+class QtMaterialFabPrivate final
+{
+public:
+    QString iconAccessibleName;
+    QString lastAccessibilitySummary;
+    bool requiresAccessibleName = true;
+    QtMaterialFabVariant fabVariant = QtMaterialFabVariant::Primary;
+};
+
 namespace {
 FabColorVariant toFabColorVariant(QtMaterialFabVariant variant) noexcept
 {
@@ -28,12 +37,14 @@ FabColorVariant toFabColorVariant(QtMaterialFabVariant variant) noexcept
 
 QtMaterialFab::QtMaterialFab(QWidget* parent)
     : QtMaterialFilledButton(parent)
+    , d_ptr(std::make_unique<QtMaterialFabPrivate>())
 {
     initializeFab();
 }
 
 QtMaterialFab::QtMaterialFab(const QIcon& icon, QWidget* parent)
     : QtMaterialFilledButton(parent)
+    , d_ptr(std::make_unique<QtMaterialFabPrivate>())
 {
     initializeFab();
     setIcon(icon);
@@ -42,16 +53,16 @@ QtMaterialFab::QtMaterialFab(const QIcon& icon, QWidget* parent)
 
 QtMaterialFabVariant QtMaterialFab::fabVariant() const noexcept
 {
-    return m_fabVariant;
+    return d_ptr->fabVariant;
 }
 
 void QtMaterialFab::setFabVariant(QtMaterialFabVariant variant)
 {
-    if (m_fabVariant == variant) {
+    if (d_ptr->fabVariant == variant) {
         return;
     }
 
-    m_fabVariant = variant;
+    d_ptr->fabVariant = variant;
     invalidateResolvedSpec();
     updateGeometry();
     update();
@@ -72,32 +83,32 @@ void QtMaterialFab::initializeFab()
 
 bool QtMaterialFab::requiresAccessibleName() const noexcept
 {
-    return m_requiresAccessibleName;
+    return d_ptr->requiresAccessibleName;
 }
 
 void QtMaterialFab::setRequiresAccessibleName(bool required)
 {
-    if (m_requiresAccessibleName == required) {
+    if (d_ptr->requiresAccessibleName == required) {
         return;
     }
 
-    m_requiresAccessibleName = required;
+    d_ptr->requiresAccessibleName = required;
     syncFabAccessibility();
 }
 
 QString QtMaterialFab::iconAccessibleName() const
 {
-    return m_iconAccessibleName;
+    return d_ptr->iconAccessibleName;
 }
 
 void QtMaterialFab::setIconAccessibleName(const QString& name)
 {
     const QString normalized = name.trimmed();
-    if (m_iconAccessibleName == normalized) {
+    if (d_ptr->iconAccessibleName == normalized) {
         return;
     }
 
-    m_iconAccessibleName = normalized;
+    d_ptr->iconAccessibleName = normalized;
     syncFabAccessibility();
 }
 
@@ -111,8 +122,8 @@ QString QtMaterialFab::effectiveAccessibleName() const
         return currentName;
     }
 
-    if (!m_iconAccessibleName.trimmed().isEmpty()) {
-        return m_iconAccessibleName.trimmed();
+    if (!d_ptr->iconAccessibleName.trimmed().isEmpty()) {
+        return d_ptr->iconAccessibleName.trimmed();
     }
 
     const QString tooltipName = toolTip().trimmed();
@@ -147,8 +158,8 @@ void QtMaterialFab::syncFabAccessibility()
     constexpr const char* autoAccessibleNameProperty = "_qtm3_auto_accessible_name";
 
     const QString summary = accessibilitySummary();
-    if (m_lastAccessibilitySummary != summary) {
-        m_lastAccessibilitySummary = summary;
+    if (d_ptr->lastAccessibilitySummary != summary) {
+        d_ptr->lastAccessibilitySummary = summary;
         emit accessibilitySummaryChanged(summary);
     }
 
@@ -208,7 +219,7 @@ ButtonSpec QtMaterialFab::resolveButtonSpec() const
     return ActionButtonSpecResolver().fabButtonSpec(
         theme(),
         density(),
-        toFabColorVariant(m_fabVariant));
+        toFabColorVariant(d_ptr->fabVariant));
 }
 
 QSize QtMaterialFab::sizeHint() const

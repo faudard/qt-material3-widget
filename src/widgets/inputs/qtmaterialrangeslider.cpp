@@ -7,6 +7,19 @@
 #include <QtMath>
 
 namespace QtMaterial {
+
+class QtMaterialRangeSliderPrivate final
+{
+public:
+    int minimum = 0;
+    int maximum = 100;
+    int lowerValue = 25;
+    int upperValue = 75;
+    Qt::Orientation orientation = Qt::Horizontal;
+    QtMaterialRangeSlider::Handle activeHandle = QtMaterialRangeSlider::Handle::Lower;
+    bool dragging = false;
+};
+
 namespace {
 constexpr int kMargin = 14;
 constexpr qreal kTrackThickness = 4.0;
@@ -15,6 +28,7 @@ constexpr qreal kHandleRadius = 10.0;
 
 QtMaterialRangeSlider::QtMaterialRangeSlider(QWidget* parent)
     : QWidget(parent)
+    , d_ptr(std::make_unique<QtMaterialRangeSliderPrivate>())
 {
     setObjectName(QStringLiteral("qtmaterial_range_slider"));
     setFocusPolicy(Qt::StrongFocus);
@@ -24,109 +38,109 @@ QtMaterialRangeSlider::QtMaterialRangeSlider(QWidget* parent)
 
 QtMaterialRangeSlider::~QtMaterialRangeSlider() = default;
 
-int QtMaterialRangeSlider::minimum() const noexcept { return m_minimum; }
-int QtMaterialRangeSlider::maximum() const noexcept { return m_maximum; }
+int QtMaterialRangeSlider::minimum() const noexcept { return d_ptr->minimum; }
+int QtMaterialRangeSlider::maximum() const noexcept { return d_ptr->maximum; }
 
-void QtMaterialRangeSlider::setMinimum(int value) { setRange(value, m_maximum); }
-void QtMaterialRangeSlider::setMaximum(int value) { setRange(m_minimum, value); }
+void QtMaterialRangeSlider::setMinimum(int value) { setRange(value, d_ptr->maximum); }
+void QtMaterialRangeSlider::setMaximum(int value) { setRange(d_ptr->minimum, value); }
 
 void QtMaterialRangeSlider::setRange(int minimum, int maximum)
 {
     if (minimum > maximum) {
         qSwap(minimum, maximum);
     }
-    if (m_minimum == minimum && m_maximum == maximum) {
+    if (d_ptr->minimum == minimum && d_ptr->maximum == maximum) {
         return;
     }
-    m_minimum = minimum;
-    m_maximum = maximum;
-    const int lower = qBound(m_minimum, m_lowerValue, m_maximum);
-    const int upper = qBound(lower, m_upperValue, m_maximum);
-    m_lowerValue = lower;
-    m_upperValue = upper;
+    d_ptr->minimum = minimum;
+    d_ptr->maximum = maximum;
+    const int lower = qBound(d_ptr->minimum, d_ptr->lowerValue, d_ptr->maximum);
+    const int upper = qBound(lower, d_ptr->upperValue, d_ptr->maximum);
+    d_ptr->lowerValue = lower;
+    d_ptr->upperValue = upper;
     update();
-    emit rangeChanged(m_minimum, m_maximum);
-    emit valuesChanged(m_lowerValue, m_upperValue);
+    emit rangeChanged(d_ptr->minimum, d_ptr->maximum);
+    emit valuesChanged(d_ptr->lowerValue, d_ptr->upperValue);
 }
 
-int QtMaterialRangeSlider::lowerValue() const noexcept { return m_lowerValue; }
-int QtMaterialRangeSlider::upperValue() const noexcept { return m_upperValue; }
+int QtMaterialRangeSlider::lowerValue() const noexcept { return d_ptr->lowerValue; }
+int QtMaterialRangeSlider::upperValue() const noexcept { return d_ptr->upperValue; }
 
 void QtMaterialRangeSlider::setLowerValue(int value)
 {
-    const int bounded = qBound(m_minimum, value, m_upperValue);
-    if (m_lowerValue == bounded) {
+    const int bounded = qBound(d_ptr->minimum, value, d_ptr->upperValue);
+    if (d_ptr->lowerValue == bounded) {
         return;
     }
-    m_lowerValue = bounded;
+    d_ptr->lowerValue = bounded;
     update();
     emit lowerValueChanged(bounded);
-    emit valuesChanged(m_lowerValue, m_upperValue);
+    emit valuesChanged(d_ptr->lowerValue, d_ptr->upperValue);
 }
 
 void QtMaterialRangeSlider::setUpperValue(int value)
 {
-    const int bounded = qBound(m_lowerValue, value, m_maximum);
-    if (m_upperValue == bounded) {
+    const int bounded = qBound(d_ptr->lowerValue, value, d_ptr->maximum);
+    if (d_ptr->upperValue == bounded) {
         return;
     }
-    m_upperValue = bounded;
+    d_ptr->upperValue = bounded;
     update();
     emit upperValueChanged(bounded);
-    emit valuesChanged(m_lowerValue, m_upperValue);
+    emit valuesChanged(d_ptr->lowerValue, d_ptr->upperValue);
 }
 
 void QtMaterialRangeSlider::setValues(int lower, int upper)
 {
-    lower = qBound(m_minimum, lower, m_maximum);
-    upper = qBound(m_minimum, upper, m_maximum);
+    lower = qBound(d_ptr->minimum, lower, d_ptr->maximum);
+    upper = qBound(d_ptr->minimum, upper, d_ptr->maximum);
     if (lower > upper) {
         qSwap(lower, upper);
     }
 
-    const bool lowerChanged = m_lowerValue != lower;
-    const bool upperChanged = m_upperValue != upper;
+    const bool lowerChanged = d_ptr->lowerValue != lower;
+    const bool upperChanged = d_ptr->upperValue != upper;
     if (!lowerChanged && !upperChanged) {
         return;
     }
 
-    m_lowerValue = lower;
-    m_upperValue = upper;
+    d_ptr->lowerValue = lower;
+    d_ptr->upperValue = upper;
     update();
     if (lowerChanged) emit lowerValueChanged(lower);
     if (upperChanged) emit upperValueChanged(upper);
     emit valuesChanged(lower, upper);
 }
 
-Qt::Orientation QtMaterialRangeSlider::orientation() const noexcept { return m_orientation; }
+Qt::Orientation QtMaterialRangeSlider::orientation() const noexcept { return d_ptr->orientation; }
 
 void QtMaterialRangeSlider::setOrientation(Qt::Orientation orientation)
 {
-    if (m_orientation == orientation) {
+    if (d_ptr->orientation == orientation) {
         return;
     }
-    m_orientation = orientation;
+    d_ptr->orientation = orientation;
     updateGeometry();
     update();
 }
 
 QSize QtMaterialRangeSlider::sizeHint() const
 {
-    return m_orientation == Qt::Horizontal ? QSize(200, 48) : QSize(48, 200);
+    return d_ptr->orientation == Qt::Horizontal ? QSize(200, 48) : QSize(48, 200);
 }
 
 QSize QtMaterialRangeSlider::minimumSizeHint() const
 {
-    return m_orientation == Qt::Horizontal ? QSize(80, 32) : QSize(32, 80);
+    return d_ptr->orientation == Qt::Horizontal ? QSize(80, 32) : QSize(32, 80);
 }
 
 qreal QtMaterialRangeSlider::normalizedForValue(int value) const noexcept
 {
-    if (m_maximum <= m_minimum) {
+    if (d_ptr->maximum <= d_ptr->minimum) {
         return 0.0;
     }
-    qreal t = qreal(value - m_minimum) / qreal(m_maximum - m_minimum);
-    if (m_orientation == Qt::Horizontal && layoutDirection() == Qt::RightToLeft) {
+    qreal t = qreal(value - d_ptr->minimum) / qreal(d_ptr->maximum - d_ptr->minimum);
+    if (d_ptr->orientation == Qt::Horizontal && layoutDirection() == Qt::RightToLeft) {
         t = 1.0 - t;
     }
     return qBound<qreal>(0.0, t, 1.0);
@@ -134,9 +148,9 @@ qreal QtMaterialRangeSlider::normalizedForValue(int value) const noexcept
 
 QPointF QtMaterialRangeSlider::handleCenter(Handle handle) const noexcept
 {
-    const int value = handle == Handle::Lower ? m_lowerValue : m_upperValue;
+    const int value = handle == Handle::Lower ? d_ptr->lowerValue : d_ptr->upperValue;
     const qreal t = normalizedForValue(value);
-    if (m_orientation == Qt::Horizontal) {
+    if (d_ptr->orientation == Qt::Horizontal) {
         const qreal x = kMargin + t * qMax(1, width() - 2 * kMargin);
         return QPointF(x, height() / 2.0);
     }
@@ -147,7 +161,7 @@ QPointF QtMaterialRangeSlider::handleCenter(Handle handle) const noexcept
 int QtMaterialRangeSlider::valueForPosition(const QPoint& position) const noexcept
 {
     qreal t = 0.0;
-    if (m_orientation == Qt::Horizontal) {
+    if (d_ptr->orientation == Qt::Horizontal) {
         t = qreal(position.x() - kMargin) / qMax(1, width() - 2 * kMargin);
         if (layoutDirection() == Qt::RightToLeft) {
             t = 1.0 - t;
@@ -156,12 +170,12 @@ int QtMaterialRangeSlider::valueForPosition(const QPoint& position) const noexce
         t = qreal(height() - kMargin - position.y()) / qMax(1, height() - 2 * kMargin);
     }
     t = qBound<qreal>(0.0, t, 1.0);
-    return m_minimum + qRound(t * (m_maximum - m_minimum));
+    return d_ptr->minimum + qRound(t * (d_ptr->maximum - d_ptr->minimum));
 }
 
 void QtMaterialRangeSlider::moveActiveHandleTo(int value)
 {
-    if (m_activeHandle == Handle::Lower) {
+    if (d_ptr->activeHandle == Handle::Lower) {
         setLowerValue(value);
     } else {
         setUpperValue(value);
@@ -179,7 +193,7 @@ void QtMaterialRangeSlider::paintEvent(QPaintEvent*)
     const QColor active = palette().color(QPalette::Highlight);
 
     painter.setPen(QPen(inactive, kTrackThickness, Qt::SolidLine, Qt::RoundCap));
-    if (m_orientation == Qt::Horizontal) {
+    if (d_ptr->orientation == Qt::Horizontal) {
         painter.drawLine(QPointF(kMargin, height() / 2.0), QPointF(width() - kMargin, height() / 2.0));
     } else {
         painter.drawLine(QPointF(width() / 2.0, kMargin), QPointF(width() / 2.0, height() - kMargin));
@@ -194,7 +208,7 @@ void QtMaterialRangeSlider::paintEvent(QPaintEvent*)
     painter.drawEllipse(upper, kHandleRadius, kHandleRadius);
 
     if (hasFocus()) {
-        const QPointF focusCenter = handleCenter(m_activeHandle);
+        const QPointF focusCenter = handleCenter(d_ptr->activeHandle);
         painter.setBrush(Qt::NoBrush);
         painter.setPen(QPen(active, 2.0));
         painter.drawEllipse(focusCenter, kHandleRadius + 4.0, kHandleRadius + 4.0);
@@ -210,8 +224,8 @@ void QtMaterialRangeSlider::mousePressEvent(QMouseEvent* event)
     const QPointF p = event->pos();
     const qreal lowerDistance = QLineF(p, handleCenter(Handle::Lower)).length();
     const qreal upperDistance = QLineF(p, handleCenter(Handle::Upper)).length();
-    m_activeHandle = lowerDistance <= upperDistance ? Handle::Lower : Handle::Upper;
-    m_dragging = true;
+    d_ptr->activeHandle = lowerDistance <= upperDistance ? Handle::Lower : Handle::Upper;
+    d_ptr->dragging = true;
     setFocus(Qt::MouseFocusReason);
     moveActiveHandleTo(valueForPosition(event->pos()));
     event->accept();
@@ -219,7 +233,7 @@ void QtMaterialRangeSlider::mousePressEvent(QMouseEvent* event)
 
 void QtMaterialRangeSlider::mouseMoveEvent(QMouseEvent* event)
 {
-    if (!m_dragging || !event) {
+    if (!d_ptr->dragging || !event) {
         QWidget::mouseMoveEvent(event);
         return;
     }
@@ -229,8 +243,8 @@ void QtMaterialRangeSlider::mouseMoveEvent(QMouseEvent* event)
 
 void QtMaterialRangeSlider::mouseReleaseEvent(QMouseEvent* event)
 {
-    if (event && event->button() == Qt::LeftButton && m_dragging) {
-        m_dragging = false;
+    if (event && event->button() == Qt::LeftButton && d_ptr->dragging) {
+        d_ptr->dragging = false;
         moveActiveHandleTo(valueForPosition(event->pos()));
         event->accept();
         return;
@@ -255,15 +269,15 @@ void QtMaterialRangeSlider::keyPressEvent(QKeyEvent* event)
         delta = 1;
         break;
     case Qt::Key_Home:
-        moveActiveHandleTo(m_activeHandle == Handle::Lower ? m_minimum : m_lowerValue);
+        moveActiveHandleTo(d_ptr->activeHandle == Handle::Lower ? d_ptr->minimum : d_ptr->lowerValue);
         event->accept();
         return;
     case Qt::Key_End:
-        moveActiveHandleTo(m_activeHandle == Handle::Upper ? m_maximum : m_upperValue);
+        moveActiveHandleTo(d_ptr->activeHandle == Handle::Upper ? d_ptr->maximum : d_ptr->upperValue);
         event->accept();
         return;
     case Qt::Key_Tab:
-        m_activeHandle = m_activeHandle == Handle::Lower ? Handle::Upper : Handle::Lower;
+        d_ptr->activeHandle = d_ptr->activeHandle == Handle::Lower ? Handle::Upper : Handle::Lower;
         update();
         event->accept();
         return;
@@ -272,10 +286,10 @@ void QtMaterialRangeSlider::keyPressEvent(QKeyEvent* event)
         return;
     }
 
-    if (m_orientation == Qt::Horizontal && layoutDirection() == Qt::RightToLeft) {
+    if (d_ptr->orientation == Qt::Horizontal && layoutDirection() == Qt::RightToLeft) {
         delta = -delta;
     }
-    moveActiveHandleTo((m_activeHandle == Handle::Lower ? m_lowerValue : m_upperValue) + delta);
+    moveActiveHandleTo((d_ptr->activeHandle == Handle::Lower ? d_ptr->lowerValue : d_ptr->upperValue) + delta);
     event->accept();
 }
 

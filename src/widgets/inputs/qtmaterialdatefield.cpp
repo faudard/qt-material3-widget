@@ -90,6 +90,8 @@ QIcon makeClearIcon(
 
 struct QtMaterialDateFieldPrivate {
 
+    bool m_lastDateAcceptable = true;
+
     QDate m_date;
     QDate m_minimumDate;
     QDate m_maximumDate;
@@ -514,11 +516,11 @@ void QtMaterialDateField::changeEvent(
 void QtMaterialDateField::notifyDateAcceptableIfChanged()
 {
     const bool acceptable = isDateAcceptable();
-    if (acceptable == m_lastDateAcceptable) {
+    if (acceptable == d_ptr->m_lastDateAcceptable) {
         return;
     }
 
-    m_lastDateAcceptable = acceptable;
+    d_ptr->m_lastDateAcceptable = acceptable;
     emit dateAcceptableChanged(acceptable);
 }
 
