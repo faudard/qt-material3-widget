@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QString>
 #include <QWidget>
 
@@ -9,6 +11,8 @@ class QLineEdit;
 class QToolButton;
 
 namespace QtMaterial {
+
+class QtMaterialSearchBarPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSearchBar : public QWidget
 {
@@ -43,9 +47,7 @@ signals:
 private:
     void syncClearButton();
 
-    QLineEdit* m_lineEdit = nullptr;
-    QToolButton* m_clearButton = nullptr;
-    bool m_clearButtonVisible = true;
+    std::unique_ptr<QtMaterialSearchBarPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

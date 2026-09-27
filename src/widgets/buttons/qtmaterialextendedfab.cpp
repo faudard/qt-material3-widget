@@ -7,6 +7,12 @@
 
 namespace QtMaterial {
 
+class QtMaterialExtendedFabPrivate final
+{
+public:
+    QtMaterialFabVariant fabVariant = QtMaterialFabVariant::Primary;
+};
+
 namespace {
 FabColorVariant resolverVariant(
     QtMaterialFabVariant variant)
@@ -51,6 +57,7 @@ QtMaterialExtendedFab::QtMaterialExtendedFab(const QString& text, QWidget* paren
 
 QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& text, QWidget* parent)
     : QtMaterialFilledButton(parent)
+    , d_ptr(std::make_unique<QtMaterialExtendedFabPrivate>())
 {
     initializeExtendedFab();
     setIcon(icon);
@@ -61,16 +68,16 @@ QtMaterialExtendedFab::QtMaterialExtendedFab(const QIcon& icon, const QString& t
 
 QtMaterialFabVariant QtMaterialExtendedFab::fabVariant() const noexcept
 {
-    return m_fabVariant;
+    return d_ptr->fabVariant;
 }
 
 void QtMaterialExtendedFab::setFabVariant(QtMaterialFabVariant variant)
 {
-    if (m_fabVariant == variant) {
+    if (d_ptr->fabVariant == variant) {
         return;
     }
 
-    m_fabVariant = variant;
+    d_ptr->fabVariant = variant;
     invalidateResolvedSpec();
     updateGeometry();
     update();
@@ -209,7 +216,7 @@ ButtonSpec QtMaterialExtendedFab::resolveButtonSpec() const
         .extendedFabButtonSpec(
             theme(),
             density(),
-            resolverVariant(m_fabVariant));
+            resolverVariant(d_ptr->fabVariant));
 }
 
 QSize QtMaterialExtendedFab::sizeHint() const

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QDate>
 #include <QWidget>
 
@@ -8,6 +10,7 @@
 namespace QtMaterial {
 
 class QtMaterialDatePicker;
+class QtMaterialDateRangePickerPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialDateRangePicker : public QWidget
 {
@@ -37,9 +40,7 @@ signals:
 private:
     void synchronizeConstraints();
 
-    QtMaterialDatePicker* m_startPicker = nullptr;
-    QtMaterialDatePicker* m_endPicker = nullptr;
-    bool m_syncing = false;
+    std::unique_ptr<QtMaterialDateRangePickerPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

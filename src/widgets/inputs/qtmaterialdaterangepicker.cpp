@@ -6,43 +6,52 @@
 
 namespace QtMaterial {
 
+class QtMaterialDateRangePickerPrivate final
+{
+public:
+    QtMaterialDatePicker* startPicker = nullptr;
+    QtMaterialDatePicker* endPicker = nullptr;
+    bool syncing = false;
+};
+
 QtMaterialDateRangePicker::QtMaterialDateRangePicker(QWidget* parent)
     : QWidget(parent)
-    , m_startPicker(new QtMaterialDatePicker(this))
-    , m_endPicker(new QtMaterialDatePicker(this))
+    , d_ptr(std::make_unique<QtMaterialDateRangePickerPrivate>())
 {
+    d_ptr->startPicker = new QtMaterialDatePicker(this);
+    d_ptr->endPicker = new QtMaterialDatePicker(this);
     setObjectName(QStringLiteral("qtmaterial_date_range_picker"));
     setAccessibleName(tr("Date range"));
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(12);
-    layout->addWidget(m_startPicker, 1);
-    layout->addWidget(m_endPicker, 1);
+    layout->addWidget(d_ptr->startPicker, 1);
+    layout->addWidget(d_ptr->endPicker, 1);
 
     const QDate today = QDate::currentDate();
-    m_startPicker->setSelectedDate(today);
-    m_endPicker->setSelectedDate(today);
+    d_ptr->startPicker->setSelectedDate(today);
+    d_ptr->endPicker->setSelectedDate(today);
 
-    connect(m_startPicker, &QtMaterialDatePicker::selectedDateChanged, this, [this](const QDate& date) {
-        if (m_syncing) return;
-        m_syncing = true;
-        if (m_endPicker->selectedDate() < date) {
-            m_endPicker->setSelectedDate(date);
+    connect(d_ptr->startPicker, &QtMaterialDatePicker::selectedDateChanged, this, [this](const QDate& date) {
+        if (d_ptr->syncing) return;
+        d_ptr->syncing = true;
+        if (d_ptr->endPicker->selectedDate() < date) {
+            d_ptr->endPicker->setSelectedDate(date);
         }
         synchronizeConstraints();
-        m_syncing = false;
+        d_ptr->syncing = false;
         emit startDateChanged(date);
         emit dateRangeChanged(startDate(), endDate());
     });
-    connect(m_endPicker, &QtMaterialDatePicker::selectedDateChanged, this, [this](const QDate& date) {
-        if (m_syncing) return;
-        m_syncing = true;
-        if (m_startPicker->selectedDate() > date) {
-            m_startPicker->setSelectedDate(date);
+    connect(d_ptr->endPicker, &QtMaterialDatePicker::selectedDateChanged, this, [this](const QDate& date) {
+        if (d_ptr->syncing) return;
+        d_ptr->syncing = true;
+        if (d_ptr->startPicker->selectedDate() > date) {
+            d_ptr->startPicker->setSelectedDate(date);
         }
         synchronizeConstraints();
-        m_syncing = false;
+        d_ptr->syncing = false;
         emit endDateChanged(date);
         emit dateRangeChanged(startDate(), endDate());
     });
@@ -52,8 +61,8 @@ QtMaterialDateRangePicker::QtMaterialDateRangePicker(QWidget* parent)
 
 QtMaterialDateRangePicker::~QtMaterialDateRangePicker() = default;
 
-QDate QtMaterialDateRangePicker::startDate() const { return m_startPicker->selectedDate(); }
-QDate QtMaterialDateRangePicker::endDate() const { return m_endPicker->selectedDate(); }
+QDate QtMaterialDateRangePicker::startDate() const { return d_ptr->startPicker->selectedDate(); }
+QDate QtMaterialDateRangePicker::endDate() const { return d_ptr->endPicker->selectedDate(); }
 
 void QtMaterialDateRangePicker::setStartDate(const QDate& date)
 {
@@ -74,31 +83,31 @@ void QtMaterialDateRangePicker::setDateRange(const QDate& start, const QDate& en
     const QDate normalizedStart = qMin(start, end);
     const QDate normalizedEnd = qMax(start, end);
 
-    m_syncing = true;
+    d_ptr->syncing = true;
 
     // Widen the constraints before moving either endpoint. Otherwise the
     // constraints from the previous range can clamp a valid new range.
-    m_startPicker->setMaximumDate(normalizedEnd);
-    m_endPicker->setMinimumDate(normalizedStart);
+    d_ptr->startPicker->setMaximumDate(normalizedEnd);
+    d_ptr->endPicker->setMinimumDate(normalizedStart);
 
-    m_startPicker->setSelectedDate(normalizedStart);
-    m_endPicker->setSelectedDate(normalizedEnd);
+    d_ptr->startPicker->setSelectedDate(normalizedStart);
+    d_ptr->endPicker->setSelectedDate(normalizedEnd);
 
     synchronizeConstraints();
-    m_syncing = false;
+    d_ptr->syncing = false;
 
     emit startDateChanged(normalizedStart);
     emit endDateChanged(normalizedEnd);
     emit dateRangeChanged(normalizedStart, normalizedEnd);
 }
 
-QtMaterialDatePicker* QtMaterialDateRangePicker::startPicker() const noexcept { return m_startPicker; }
-QtMaterialDatePicker* QtMaterialDateRangePicker::endPicker() const noexcept { return m_endPicker; }
+QtMaterialDatePicker* QtMaterialDateRangePicker::startPicker() const noexcept { return d_ptr->startPicker; }
+QtMaterialDatePicker* QtMaterialDateRangePicker::endPicker() const noexcept { return d_ptr->endPicker; }
 
 void QtMaterialDateRangePicker::synchronizeConstraints()
 {
-    m_endPicker->setMinimumDate(m_startPicker->selectedDate());
-    m_startPicker->setMaximumDate(m_endPicker->selectedDate());
+    d_ptr->endPicker->setMinimumDate(d_ptr->startPicker->selectedDate());
+    d_ptr->startPicker->setMaximumDate(d_ptr->endPicker->selectedDate());
 }
 
 } // namespace QtMaterial

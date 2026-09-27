@@ -8,10 +8,17 @@
 
 namespace QtMaterial {
 
+class QtMaterialTimePickerPrivate final
+{
+public:
+    QtMaterialTimeField* timeField = nullptr;
+};
+
 QtMaterialTimePicker::QtMaterialTimePicker(QWidget* parent)
     : QDialog(parent)
-    , m_timeField(new QtMaterialTimeField(this))
+    , d_ptr(std::make_unique<QtMaterialTimePickerPrivate>())
 {
+    d_ptr->timeField = new QtMaterialTimeField(this);
     setObjectName(QStringLiteral("qtmaterial_time_picker"));
     setWindowTitle(tr("Choose time"));
     setModal(true);
@@ -25,10 +32,10 @@ QtMaterialTimePicker::QtMaterialTimePicker(QWidget* parent)
 
     auto* layout = new QVBoxLayout(this);
     layout->addWidget(title);
-    layout->addWidget(m_timeField);
+    layout->addWidget(d_ptr->timeField);
     layout->addWidget(buttons);
 
-    connect(m_timeField, &QTimeEdit::timeChanged, this, &QtMaterialTimePicker::selectedTimeChanged);
+    connect(d_ptr->timeField, &QTimeEdit::timeChanged, this, &QtMaterialTimePicker::selectedTimeChanged);
     connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
         emit timeAccepted(selectedTime());
         accept();
@@ -38,15 +45,15 @@ QtMaterialTimePicker::QtMaterialTimePicker(QWidget* parent)
 
 QtMaterialTimePicker::~QtMaterialTimePicker() = default;
 
-QTime QtMaterialTimePicker::selectedTime() const { return m_timeField->time(); }
+QTime QtMaterialTimePicker::selectedTime() const { return d_ptr->timeField->time(); }
 
 void QtMaterialTimePicker::setSelectedTime(const QTime& time)
 {
     if (time.isValid()) {
-        m_timeField->setTime(time);
+        d_ptr->timeField->setTime(time);
     }
 }
 
-QtMaterialTimeField* QtMaterialTimePicker::timeField() const noexcept { return m_timeField; }
+QtMaterialTimeField* QtMaterialTimePicker::timeField() const noexcept { return d_ptr->timeField; }
 
 } // namespace QtMaterial

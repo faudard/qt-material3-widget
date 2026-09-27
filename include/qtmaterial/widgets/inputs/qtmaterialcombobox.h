@@ -1,10 +1,14 @@
 #pragma once
 
+#include <memory>
+
 #include <QComboBox>
 
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+class QtMaterialComboBoxPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialComboBox : public QComboBox
 {
@@ -22,7 +26,7 @@ signals:
     void labelTextChanged(const QString& text);
 
 private:
-    QString m_labelText;
+    std::unique_ptr<QtMaterialComboBoxPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

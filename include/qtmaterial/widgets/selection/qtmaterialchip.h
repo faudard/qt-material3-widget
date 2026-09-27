@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <QIcon>
 
 #include "qtmaterial/core/qtmaterialabstractbutton.h"
@@ -9,6 +11,7 @@
 namespace QtMaterial {
 
 class QtMaterialRippleController;
+class QtMaterialChipPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialChip
     : public QtMaterialAbstractButton
@@ -77,14 +80,7 @@ private:
     QRect trailingIconRect(
         const QRectF& visualRect) const;
 
-    ChipVariant m_variant =
-        ChipVariant::Assist;
-    bool m_removable = false;
-    QIcon m_trailingIcon;
-
-    mutable bool m_specDirty = true;
-    mutable ChipSpec m_spec;
-    QtMaterialRippleController* m_ripple = nullptr;
+    std::unique_ptr<QtMaterialChipPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

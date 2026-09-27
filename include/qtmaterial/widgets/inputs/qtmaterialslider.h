@@ -1,10 +1,14 @@
 #pragma once
 
+#include <memory>
+
 #include <QSlider>
 
 #include "qtmaterial/qtmaterialglobal.h"
 
 namespace QtMaterial {
+
+class QtMaterialSliderPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSlider : public QSlider
 {
@@ -22,7 +26,7 @@ signals:
     void valueLabelVisibleChanged(bool visible);
 
 private:
-    bool m_valueLabelVisible = true;
+    std::unique_ptr<QtMaterialSliderPrivate> d_ptr;
 };
 
 } // namespace QtMaterial

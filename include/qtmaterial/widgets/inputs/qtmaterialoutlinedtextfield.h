@@ -235,25 +235,6 @@ private:
     void syncEffectiveErrorVisibility();
     void emitValidationStateSignalsIfChanged();
     std::unique_ptr<QtMaterialOutlinedTextFieldPrivate> d_ptr;
-
-    mutable QRect m_cachedCharacterCounterRect;
-    QPointer<QLabel> m_characterCounterLabel;
-    RequiredValidationMode m_requiredValidationMode = RequiredValidationMode::NonBlank;
-    QString m_validatorErrorText;
-    QString m_inputMaskErrorText;
-    AutomaticValidationErrorKind m_automaticValidationErrorKind = AutomaticValidationErrorKind::None;
-    ErrorDisplayMode m_errorDisplayMode = ErrorDisplayMode::Always;
-    bool m_errorVisibilityForced = false;
-    bool m_effectiveErrorVisible = false;
-    bool m_lastEmittedAutomaticValidationError = false;
-    bool m_lastEmittedEffectiveErrorState = false;
-    bool m_lastEmittedAcceptableInput = true;    
-    bool m_required = false;
-    QString m_requiredText;
-
-    bool m_characterCounterEnabled = false;
-    bool m_lastKnownModified = false;
-    bool m_touched = false;
 };
 
 } // namespace QtMaterial

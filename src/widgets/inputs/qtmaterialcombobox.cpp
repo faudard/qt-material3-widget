@@ -2,8 +2,15 @@
 
 namespace QtMaterial {
 
+class QtMaterialComboBoxPrivate final
+{
+public:
+    QString labelText;
+};
+
 QtMaterialComboBox::QtMaterialComboBox(QWidget* parent)
     : QComboBox(parent)
+    , d_ptr(std::make_unique<QtMaterialComboBoxPrivate>())
 {
     setObjectName(QStringLiteral("qtmaterial_combo_box"));
     setFocusPolicy(Qt::StrongFocus);
@@ -13,14 +20,14 @@ QtMaterialComboBox::QtMaterialComboBox(QWidget* parent)
 
 QtMaterialComboBox::~QtMaterialComboBox() = default;
 
-QString QtMaterialComboBox::labelText() const { return m_labelText; }
+QString QtMaterialComboBox::labelText() const { return d_ptr->labelText; }
 
 void QtMaterialComboBox::setLabelText(const QString& text)
 {
-    if (m_labelText == text) {
+    if (d_ptr->labelText == text) {
         return;
     }
-    m_labelText = text;
+    d_ptr->labelText = text;
     if (!text.isEmpty()) {
         setAccessibleName(text);
     }

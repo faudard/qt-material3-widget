@@ -84,6 +84,4 @@ private:
     void ensureDateFieldSpecResolved() const;
     friend class QtMaterialDateFieldPrivate;
     std::unique_ptr<QtMaterialDateFieldPrivate> d_ptr;
-
-    bool m_lastDateAcceptable = true;
 };
