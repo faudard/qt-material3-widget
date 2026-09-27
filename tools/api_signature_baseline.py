@@ -15,15 +15,19 @@ SCHEMA_VERSION = 1
 SUPPORTED_SECTIONS = {
     "public-type",
     "public-func",
+    "public-static-func",
     "public-attrib",
     "public-static-attrib",
     "public-slot",
     "protected-type",
     "protected-func",
+    "protected-static-func",
     "protected-attrib",
     "protected-static-attrib",
     "protected-slot",
     "signal",
+    "property",
+    "event",
 }
 
 
@@ -57,6 +61,18 @@ def _member_signature(compound: str, section: str, member: ET.Element) -> str:
     return "|".join(pieces)
 
 
+def _compound_signature(compound_def: ET.Element, compound_name: str) -> str:
+    kind = compound_def.get("kind", "")
+    bases = sorted(
+        f"{base.get('prot', '')}:{base.get('virt', '')}:{_normalize(_text(base))}"
+        for base in compound_def.findall("basecompoundref")
+    )
+    template = _normalize(_text(compound_def.find("templateparamlist")))
+    return "|".join(
+        [compound_name, "compound", kind, "bases=" + ",".join(bases), "template=" + template]
+    )
+
+
 def extract_signatures(xml_dir: Path) -> list[str]:
     index_path = xml_dir / "index.xml"
     if not index_path.is_file():
@@ -76,6 +92,7 @@ def extract_signatures(xml_dir: Path) -> list[str]:
         if compound_def is None:
             continue
         compound_name = _normalize(_text(compound_def.find("compoundname")))
+        signatures.add(_compound_signature(compound_def, compound_name))
         for section in compound_def.findall("sectiondef"):
             section_kind = section.get("kind", "")
             if section_kind not in SUPPORTED_SECTIONS:
