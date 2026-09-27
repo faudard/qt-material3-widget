@@ -1,13 +1,13 @@
 # qt-material3-widget
 
-Material 3 widgets for Qt Widgets, with a typed theme/spec architecture and support for Qt 5.14.2 and Qt 6.
+Material 3 widgets for Qt Widgets, with a typed theme/spec architecture and support for Qt 5.14.2+ and Qt 6.4+.
 
 > **Status:** 0.9.0 API-freeze candidate.
 > Public APIs may still change before 1.0. Pre-1.0 compatibility shims are intentionally removed rather than deprecated.
 
 ## Requirements
 
-- Qt 5.14.2+ or Qt 6.x
+- Qt 5.14.2+ or Qt 6.4+ ([support policy](docs/compatibility/qt5-qt6-policy.md))
 - CMake 3.21+
 - C++17
 

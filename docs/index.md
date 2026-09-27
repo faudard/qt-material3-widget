@@ -23,6 +23,7 @@ Use the narrative pages to understand concepts, layering, and supported workflow
 - [Development rules](development/coding-rules.md)
 - [Accessibility and keyboard rules](development/accessibility-keyboard-rules.md)
 - [Release checklist](release-process.md)
+- [API and ABI policy](release/api-abi-policy.md)
 
 ## Installation and downstream usage
 
@@ -55,6 +56,7 @@ public-api/index
 api/index
 material3/references
 release-process
+release/api-abi-policy
 ```
 
 ```{toctree}

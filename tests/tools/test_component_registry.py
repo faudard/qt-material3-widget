@@ -65,6 +65,19 @@ class GovernanceTests(unittest.TestCase):
         self.assertEqual([], errors)
         self.assertEqual([], warnings)
 
+    def test_spec_type_names_a_public_spec_or_is_not_applicable(self):
+        item = complete_component()
+        item["specType"] = "ImaginarySpec"
+        errors, _ = checker.validate_governance([item], axes=AXES)
+        self.assertIn(
+            "button.filled: specType `ImaginarySpec` is not declared in a public specs header",
+            errors,
+        )
+
+        item["specType"] = "N/A"
+        errors, _ = checker.validate_governance([item], axes=AXES)
+        self.assertEqual([], errors)
+
     def test_duplicate_public_header_fails(self):
         a = complete_component("button.a")
         b = complete_component("button.b")

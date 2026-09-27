@@ -7,4 +7,3 @@ Important classes:
 - `QtMaterialControl`
 - `QtMaterialAbstractButton`
 - `QtMaterialSelectionControl`
-- `QtMaterialInputControl`

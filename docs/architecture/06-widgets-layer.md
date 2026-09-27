@@ -8,3 +8,5 @@ Families:
 - surfaces
 - inputs
 - data
+
+The inputs family includes the shared `QtMaterialInputControl` base.
