@@ -36,20 +36,24 @@ InputsPage::InputsPage(QWidget* parent)
     calendarLayout->addWidget(datePicker);
 
     auto* calendarButtons =
-        new QDialogButtonBox(QDialogButtonBox::Close, calendarDialog);
+        new QDialogButtonBox(
+            QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+            calendarDialog);
     calendarLayout->addWidget(calendarButtons);
 
     connect(
         calendarButtons,
+        &QDialogButtonBox::accepted,
+        calendarDialog,
+        [date, datePicker, calendarDialog]() {
+            date->setDate(datePicker->selectedDate());
+            calendarDialog->accept();
+        });
+    connect(
+        calendarButtons,
         &QDialogButtonBox::rejected,
         calendarDialog,
-        &QDialog::close);
-
-    connect(
-        datePicker,
-        &QtMaterial::QtMaterialDatePicker::selectedDateChanged,
-        date,
-        &QtMaterialDateField::setDate);
+        &QDialog::reject);
 
     connect(
         datePicker,
