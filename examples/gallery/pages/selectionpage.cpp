@@ -35,6 +35,12 @@ SelectionPage::SelectionPage(QWidget* parent)
     auto* inputChip = new QtMaterial::QtMaterialChip(QStringLiteral("Input chip"), this);
     inputChip->setVariant(QtMaterial::ChipVariant::Input);
     inputChip->setRemovable(true);
+    inputChip->setToolTip(QStringLiteral("Remove input chip"));
+    connect(
+        inputChip,
+        &QtMaterial::QtMaterialChip::removeRequested,
+        inputChip,
+        &QWidget::hide);
 
     auto* segmented = new QtMaterial::QtMaterialSegmentedButton(this);
     segmented->addSegment(QStringLiteral("Day"));
