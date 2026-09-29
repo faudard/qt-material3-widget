@@ -148,6 +148,7 @@ private:
     const CarouselSpec& resolvedSpec() const;
     void ensureSpecResolved() const;
     int indexAtPosition(const QPoint& position) const;
+    int indicatorIndexAtPosition(const QPoint& position) const;
 
     std::unique_ptr<QtMaterialCarouselPrivate> d_ptr;
 };
