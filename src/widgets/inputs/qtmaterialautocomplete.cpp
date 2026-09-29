@@ -30,6 +30,7 @@ struct QtMaterialAutocompletePrivate {
     bool m_completesOnReturn = true;
     bool m_opensOnFocus = true;
     bool m_hidePopupOnEscape = true;
+    bool m_acceptingCompletion = false;
     QString m_lastAccessibilitySummary;
     mutable bool m_specDirty = true;
     mutable AutocompleteSpec m_spec;
@@ -90,7 +91,9 @@ void updateFilterText(QtMaterialAutocomplete* q, QtMaterialAutocompletePrivate* 
 
     d->m_popup->setFilterText(d->m_lineEdit->text());
     q->setPopupVisible(
-        d->m_opensOnFocus && !d->m_lineEdit->text().isEmpty());
+        !d->m_acceptingCompletion
+        && d->m_opensOnFocus
+        && !d->m_lineEdit->text().isEmpty());
 }
 
 void updateAccessibilityState(QtMaterialAutocomplete* q, QtMaterialAutocompletePrivate* d)
@@ -138,8 +141,11 @@ QtMaterialAutocomplete::QtMaterialAutocomplete(QWidget* parent)
         emit textChanged(text);
     });
     connect(d_ptr->m_popup, &::QtMaterialAutocompletePopup::completionActivated, this, [this](const QString& completion) {
+        d_ptr->m_acceptingCompletion = true;
         d_ptr->m_lineEdit->setText(completion);
         d_ptr->m_lineEdit->setCursorPosition(completion.size());
+        d_ptr->m_acceptingCompletion = false;
+        setPopupVisible(false);
         emit completionActivated(completion);
     });
     connect(

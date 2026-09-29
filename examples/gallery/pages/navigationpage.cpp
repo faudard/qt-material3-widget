@@ -1,28 +1,68 @@
 #include "navigationpage.h"
 
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QStackedWidget>
 #include <QVBoxLayout>
 
-#include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
-#include "qtmaterial/widgets/surfaces/qtmaterialbanner.h"
-#include "qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h"
-#include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
-#include "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h"
-#include "qtmaterial/widgets/surfaces/qtmaterialtopappbar.h"
+
+namespace {
+
+QWidget* contentPage(
+    const QString& title,
+    const QString& description,
+    QWidget* parent)
+{
+    auto* page = new QWidget(parent);
+    auto* layout = new QVBoxLayout(page);
+    layout->setContentsMargins(20, 16, 20, 16);
+    layout->setSpacing(8);
+
+    auto* heading = new QLabel(title, page);
+    QFont headingFont = heading->font();
+    headingFont.setBold(true);
+    headingFont.setPointSize(headingFont.pointSize() + 2);
+    heading->setFont(headingFont);
+
+    auto* body = new QLabel(description, page);
+    body->setWordWrap(true);
+
+    layout->addWidget(heading);
+    layout->addWidget(body);
+    layout->addStretch(1);
+    return page;
+}
+
+} // namespace
 
 NavigationPage::NavigationPage(QWidget* parent)
     : QWidget(parent)
 {
     auto* layout = new QVBoxLayout(this);
-
-    layout->addWidget(new QtMaterialTopAppBar(this));
+    layout->setContentsMargins(16, 16, 16, 16);
+    layout->setSpacing(16);
 
     auto* tabs = new QtMaterial::QtMaterialTabs(this);
-    tabs->addTab(new QWidget(tabs), QStringLiteral("Overview"));
-    tabs->addTab(new QWidget(tabs), QStringLiteral("Activity"));
-    tabs->addTab(new QWidget(tabs), QStringLiteral("Settings"));
+    tabs->addTab(
+        contentPage(
+            QStringLiteral("Overview"),
+            QStringLiteral("Overview content. Click Activity or Settings to verify pointer navigation."),
+            tabs),
+        QStringLiteral("Overview"));
+    tabs->addTab(
+        contentPage(
+            QStringLiteral("Activity"),
+            QStringLiteral("Three recent activities are available. The badge belongs to this tab."),
+            tabs),
+        QStringLiteral("Activity"));
+    tabs->addTab(
+        contentPage(
+            QStringLiteral("Settings"),
+            QStringLiteral("Settings content. Tabs now expose visibly different pages in the gallery."),
+            tabs),
+        QStringLiteral("Settings"));
     tabs->setTabId(0, QStringLiteral("gallery.navigation.overview"));
     tabs->setTabId(1, QStringLiteral("gallery.navigation.activity"));
     tabs->setTabId(2, QStringLiteral("gallery.navigation.settings"));
@@ -31,9 +71,11 @@ NavigationPage::NavigationPage(QWidget* parent)
     tabs->setRoute(2, QStringLiteral("navigation/settings"));
     tabs->setBadge(1, QStringLiteral("3"));
     tabs->setBadgeVisible(1, true);
+    tabs->setMinimumHeight(170);
     layout->addWidget(tabs);
 
-    auto* content = new QHBoxLayout;
+    auto* railRow = new QHBoxLayout;
+    railRow->setSpacing(16);
 
     auto* rail = new QtMaterial::QtMaterialNavigationRail(this);
     rail->addDestination(QStringLiteral("Home"));
@@ -41,22 +83,31 @@ NavigationPage::NavigationPage(QWidget* parent)
     rail->addDestination(QStringLiteral("Settings"));
     rail->setCurrentIndex(0);
 
-    auto* surfaces = new QVBoxLayout;
-    surfaces->addWidget(new QtMaterial::QtMaterialNavigationDrawer(this));
-    surfaces->addWidget(new QtMaterial::QtMaterialBottomSheet(this));
+    auto* railContent = new QStackedWidget(this);
+    railContent->addWidget(
+        contentPage(
+            QStringLiteral("Home"),
+            QStringLiteral("Home destination selected."),
+            railContent));
+    railContent->addWidget(
+        contentPage(
+            QStringLiteral("Search"),
+            QStringLiteral("Search destination selected. This page changes when the rail is clicked."),
+            railContent));
+    railContent->addWidget(
+        contentPage(
+            QStringLiteral("Settings"),
+            QStringLiteral("Navigation-rail settings destination selected."),
+            railContent));
 
-    auto* banner = new QtMaterialBanner(this);
-    surfaces->addWidget(banner);
+    connect(
+        rail,
+        &QtMaterial::QtMaterialNavigationRail::currentIndexChanged,
+        railContent,
+        &QStackedWidget::setCurrentIndex);
 
-    auto* menu = new QtMaterialMenu(this);
-    menu->setMinimumHeight(72);
-    surfaces->addWidget(menu);
+    railRow->addWidget(rail);
+    railRow->addWidget(railContent, 1);
 
-    surfaces->addWidget(new QtMaterialBottomAppBar(this));
-    surfaces->addStretch(1);
-
-    content->addWidget(rail);
-    content->addLayout(surfaces, 1);
-
-    layout->addLayout(content);
+    layout->addLayout(railRow, 1);
 }

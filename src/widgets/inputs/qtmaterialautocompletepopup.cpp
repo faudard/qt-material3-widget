@@ -688,6 +688,10 @@ bool QtMaterialAutocompletePopup::event(QEvent* event)
             break;
 
         case QEvent::Hide:
+            // Qt::Popup can be dismissed natively by clicking outside it.
+            // Keep the requested state synchronized so a later resize/move
+            // cannot immediately reopen a popup the user already dismissed.
+            d_ptr->m_popupVisible = false;
             setEffectivePopupVisible(false);
             break;
 

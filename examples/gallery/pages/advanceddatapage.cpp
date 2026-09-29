@@ -1,5 +1,6 @@
 #include "advanceddatapage.h"
 
+#include <QHeaderView>
 #include <QLabel>
 #include <QStandardItem>
 #include <QStandardItemModel>
@@ -19,19 +20,17 @@ AdvancedDataPage::AdvancedDataPage(QWidget* parent)
 
     layout->addWidget(new QLabel(tr("0.9 — Desktop & productivity"), this));
 
-    auto* tableModel = new QStandardItemModel(20, 3, this);
+    auto* tableModel = new QStandardItemModel(0, 3, this);
     tableModel->setHorizontalHeaderLabels({tr("Name"), tr("State"), tr("Value")});
-    for (int row = 0; row < tableModel->rowCount(); ++row) {
-        tableModel->setData(tableModel->index(row, 0), tr("Item %1").arg(row + 1));
-        tableModel->setData(tableModel->index(row, 1), row % 2 ? tr("Ready") : tr("Pending"));
-        tableModel->setData(tableModel->index(row, 2), row * 10);
-    }
 
     auto* table = new QtMaterial::QtMaterialTable(this);
     table->setModel(tableModel);
     table->setDense(true);
     table->setMultiSelectionEnabled(true);
     table->setColumnReorderingEnabled(true);
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
 
     auto* treeModel = new QStandardItemModel(this);
     auto* workspace = new QStandardItem(tr("Workspace"));
@@ -50,7 +49,45 @@ AdvancedDataPage::AdvancedDataPage(QWidget* parent)
     layout->addWidget(split, 1);
 
     auto* pagination = new QtMaterial::QtMaterialPagination(this);
+    pagination->setPageSize(10);
     pagination->setTotalCount(1234);
-    pagination->setPageSize(25);
     layout->addWidget(pagination);
+
+    const auto refreshPage = [tableModel, pagination]() {
+        const int firstItem =
+            (pagination->page() - 1) * pagination->pageSize();
+        const int remaining =
+            qMax(0, pagination->totalCount() - firstItem);
+        const int visibleRows =
+            qMin(pagination->pageSize(), remaining);
+
+        tableModel->setRowCount(visibleRows);
+        for (int row = 0; row < visibleRows; ++row) {
+            const int itemIndex = firstItem + row;
+            tableModel->setData(
+                tableModel->index(row, 0),
+                QObject::tr("Item %1").arg(itemIndex + 1));
+            tableModel->setData(
+                tableModel->index(row, 1),
+                itemIndex % 2
+                    ? QObject::tr("Ready")
+                    : QObject::tr("Pending"));
+            tableModel->setData(
+                tableModel->index(row, 2),
+                itemIndex * 10);
+        }
+    };
+
+    connect(
+        pagination,
+        &QtMaterial::QtMaterialPagination::pageChanged,
+        this,
+        [refreshPage](int) { refreshPage(); });
+    connect(
+        pagination,
+        &QtMaterial::QtMaterialPagination::pageSizeChanged,
+        this,
+        [refreshPage](int) { refreshPage(); });
+
+    refreshPage();
 }

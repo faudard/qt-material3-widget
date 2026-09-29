@@ -96,6 +96,7 @@ void QtMaterialCommandPalette::activateProxyIndex(const QModelIndex& proxyIndex)
     }
 
     Q_EMIT commandActivated(sourceIndex);
+    accept();
 }
 
 } // namespace QtMaterial

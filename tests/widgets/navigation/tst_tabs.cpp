@@ -46,6 +46,7 @@ private slots:
     void supportsRoutesAndUrlNavigation();
     void exposesAutomationProperties();
     void supportsKeyboardNavigation();
+    void supportsPointerNavigation();
     void supportsRtlKeyboardNavigation();
     void exposesAccessibleTabBar();
     void rendersAtHighDpi();
@@ -223,6 +224,30 @@ void TestQtMaterialTabs::supportsKeyboardNavigation()
 
     QTest::keyClick(bar, Qt::Key_End);
     QCOMPARE(tabs.currentIndex(), 2);
+}
+
+void TestQtMaterialTabs::supportsPointerNavigation()
+{
+    QtMaterial::QtMaterialTabs tabs;
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("Overview"));
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("Activity"));
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("Settings"));
+    tabs.resize(480, 180);
+    tabs.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&tabs));
+
+    QTabBar* bar =
+        tabs.findChild<QTabBar*>(
+            QStringLiteral("qtmaterial_tabs_bar"));
+    QVERIFY(bar != nullptr);
+
+    QTest::mouseClick(
+        bar,
+        Qt::LeftButton,
+        Qt::NoModifier,
+        bar->tabRect(1).center());
+
+    QCOMPARE(tabs.currentIndex(), 1);
 }
 
 void TestQtMaterialTabs::supportsRtlKeyboardNavigation()
