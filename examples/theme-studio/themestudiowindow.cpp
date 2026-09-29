@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QScrollArea>
 #include <QStatusBar>
 #include <QToolBar>
 
@@ -167,7 +168,13 @@ void ThemeStudioWindow::createDock()
 {
     auto* dock = new QDockWidget(tr("Theme"), this);
     dock->setObjectName(QStringLiteral("themeEditorDock"));
-    dock->setWidget(m_editorPanel);
+
+    auto* scrollArea = new QScrollArea(dock);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->setWidget(m_editorPanel);
+
+    dock->setWidget(scrollArea);
     dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     addDockWidget(Qt::LeftDockWidgetArea, dock);
 }

@@ -5,6 +5,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QScrollArea>
 #include <QTabWidget>
 #include <QVBoxLayout>
 
@@ -49,9 +50,11 @@ ThemeColorRolesView* ThemePreviewPane::colorRolesView() const noexcept
 QWidget* ThemePreviewPane::createOverviewPage()
 {
     auto* page = new QWidget(this);
+    page->setObjectName(QStringLiteral("themeOverviewPage"));
+
     auto* root = new QVBoxLayout(page);
-    root->setContentsMargins(24, 24, 24, 24);
-    root->setSpacing(16);
+    root->setContentsMargins(16, 16, 16, 16);
+    root->setSpacing(12);
 
     m_titleLabel = new QLabel(tr("Material 3 Theme Studio"), page);
     m_supportingLabel = new QLabel(
@@ -60,6 +63,9 @@ QWidget* ThemePreviewPane::createOverviewPage()
     m_supportingLabel->setWordWrap(true);
 
     auto* chipGrid = new QGridLayout();
+    chipGrid->setHorizontalSpacing(12);
+    chipGrid->setVerticalSpacing(8);
+
     m_primaryChip = new QFrame(page);
     m_secondaryChip = new QFrame(page);
     m_surfaceChip = new QFrame(page);
@@ -77,8 +83,10 @@ QWidget* ThemePreviewPane::createOverviewPage()
     chipGrid->addWidget(m_surfaceChip, 2, 1);
     chipGrid->addWidget(new QLabel(tr("Error"), page), 3, 0);
     chipGrid->addWidget(m_errorChip, 3, 1);
+    chipGrid->setColumnStretch(2, 1);
 
     auto* actions = new QHBoxLayout();
+    actions->setSpacing(8);
     m_textButton = new QPushButton(tr("Text"), page);
     m_tonalButton = new QPushButton(tr("Tonal"), page);
     m_filledButton = new QPushButton(tr("Filled"), page);
@@ -90,8 +98,8 @@ QWidget* ThemePreviewPane::createOverviewPage()
     root->addWidget(m_titleLabel);
     root->addWidget(m_supportingLabel);
     root->addLayout(chipGrid);
-    root->addStretch(1);
     root->addLayout(actions);
+    root->addStretch(1);
 
     return page;
 }
@@ -102,8 +110,14 @@ QWidget* ThemePreviewPane::createColorsPage()
     auto* root = new QVBoxLayout(page);
     root->setContentsMargins(0, 0, 0, 0);
 
-    m_colorRolesView = new ThemeColorRolesView(page);
-    root->addWidget(m_colorRolesView);
+    auto* scrollArea = new QScrollArea(page);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    m_colorRolesView = new ThemeColorRolesView(scrollArea);
+    scrollArea->setWidget(m_colorRolesView);
+    root->addWidget(scrollArea);
 
     return page;
 }
@@ -151,28 +165,31 @@ void ThemePreviewPane::applyTheme(const Theme& theme)
     setColorChip(m_surfaceChip, surfaceContainer, outline);
     setColorChip(m_errorChip, error, outline);
 
-    setStyleSheet(QStringLiteral(
-        "ThemePreviewPane, QWidget {"
+    m_overviewPage->setStyleSheet(QStringLiteral(
+        "QWidget#themeOverviewPage {"
         " background-color: %1;"
         " color: %2;"
         "}"
-        "QPushButton {"
-        " border-radius: 20px;"
-        " min-height: 40px;"
-        " padding: 8px 16px;"
+        "QWidget#themeOverviewPage QLabel {"
+        " color: %2;"
         "}").arg(surface.name(), onSurface.name()));
 
+    const QString buttonMetrics = QStringLiteral(
+        " border-radius: 20px;"
+        " min-height: 40px;"
+        " padding: 8px 16px;");
+
     m_filledButton->setStyleSheet(QStringLiteral(
-        "QPushButton { background-color: %1; color: %2; border: none; }")
-        .arg(primary.name(), onPrimary.name()));
+        "QPushButton { background-color: %1; color: %2; border: none;%3 }")
+        .arg(primary.name(), onPrimary.name(), buttonMetrics));
 
     m_tonalButton->setStyleSheet(QStringLiteral(
-        "QPushButton { background-color: %1; color: %2; border: none; }")
-        .arg(secondaryContainer.name(), onSecondaryContainer.name()));
+        "QPushButton { background-color: %1; color: %2; border: none;%3 }")
+        .arg(secondaryContainer.name(), onSecondaryContainer.name(), buttonMetrics));
 
     m_textButton->setStyleSheet(QStringLiteral(
-        "QPushButton { background-color: transparent; color: %1; border: none; }")
-        .arg(primary.name()));
+        "QPushButton { background-color: transparent; color: %1; border: none;%2 }")
+        .arg(primary.name(), buttonMetrics));
 
     if (m_colorRolesView) {
         m_colorRolesView->applyTheme(theme);
