@@ -30,7 +30,7 @@ The repository includes complementary examples for both component-level inspecti
 - `qtmaterial3_gallery` — component gallery and interaction coverage.
 - `qtmaterial3_dashboard_demo` — responsive analytics dashboard using cards, navigation rail, search, segmented controls, tables, chips, dialogs, snackbars, command palette, live theme switching, and theme-aware private chart widgets.
 - `qtmaterial3_theme_studio` — interactive theme authoring and inspection.
-- `theming-workflows` — public theming API workflows.
+- `qtmaterial3_theming_workflows` — public theming API workflows.
 
 The dashboard intentionally keeps its line and donut charts private to the example. They demonstrate composing custom application visuals from Material 3 theme tokens without expanding the public widget API.
 
