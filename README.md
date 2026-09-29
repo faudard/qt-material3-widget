@@ -23,6 +23,17 @@ ctest --test-dir build --output-on-failure
 
 Material Color Utilities is optional and disabled by default. The built-in fallback backend remains available without an external MCU checkout.
 
+## Examples
+
+The repository includes complementary examples for both component-level inspection and real application composition:
+
+- `qtmaterial3_gallery` — component gallery and interaction coverage.
+- `qtmaterial3_dashboard_demo` — responsive analytics dashboard using cards, navigation rail, search, segmented controls, tables, chips, dialogs, snackbars, command palette, live theme switching, and theme-aware private chart widgets.
+- `qtmaterial3_theme_studio` — interactive theme authoring and inspection.
+- `theming-workflows` — public theming API workflows.
+
+The dashboard intentionally keeps its line and donut charts private to the example. They demonstrate composing custom application visuals from Material 3 theme tokens without expanding the public widget API.
+
 ## Consume from CMake
 
 ```cmake
