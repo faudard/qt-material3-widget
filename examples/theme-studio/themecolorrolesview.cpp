@@ -62,6 +62,7 @@ ThemeColorRolesView::ThemeColorRolesView(QWidget* parent)
     m_grid->addWidget(new QLabel(tr("Role"), this), 0, 0);
     m_grid->addWidget(new QLabel(tr("Swatch"), this), 0, 1);
     m_grid->addWidget(new QLabel(tr("Hex"), this), 0, 2);
+    m_grid->setColumnStretch(0, 1);
 
     const QVector<ColorRole> roles = displayedRoles();
     m_rows.reserve(roles.size());
@@ -111,9 +112,24 @@ void ThemeColorRolesView::applyTheme(const Theme& theme)
 {
     const auto& scheme = theme.colorScheme();
 
+    const QColor surface = scheme.contains(ColorRole::Surface)
+        ? scheme.color(ColorRole::Surface)
+        : QColor(QStringLiteral("#FFFFFF"));
+    const QColor onSurface = scheme.contains(ColorRole::OnSurface)
+        ? scheme.color(ColorRole::OnSurface)
+        : QColor(QStringLiteral("#000000"));
     const QColor border = scheme.contains(ColorRole::OutlineVariant)
         ? scheme.color(ColorRole::OutlineVariant)
         : QColor(QStringLiteral("#808080"));
+
+    setStyleSheet(QStringLiteral(
+        "ThemeColorRolesView {"
+        " background-color: %1;"
+        " color: %2;"
+        "}"
+        "ThemeColorRolesView QLabel {"
+        " color: %2;"
+        "}").arg(surface.name(), onSurface.name()));
 
     for (RowWidgets& row : m_rows) {
         const QColor color = scheme.contains(row.role)
@@ -190,6 +206,11 @@ QString ThemeColorRolesView::swatchStyle(const QColor& fill, const QColor& borde
 
     return QStringLiteral(
                "QPushButton {"
+               " min-width: 72px;"
+               " max-width: 72px;"
+               " min-height: 28px;"
+               " max-height: 28px;"
+               " padding: 0px;"
                " background-color: %1;"
                " border: 1px solid %2;"
                " border-radius: 8px;"
