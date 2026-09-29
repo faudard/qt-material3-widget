@@ -29,7 +29,12 @@ QWidget* scrollablePage(QWidget* page, QWidget* parent)
     scroll->setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
     scroll->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    page->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    page->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
+    const int minimumPageHeight = page->minimumSizeHint().height();
+    if (minimumPageHeight > 0) {
+        page->setMinimumHeight(minimumPageHeight);
+    }
+    scroll->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
     return scroll;
 }

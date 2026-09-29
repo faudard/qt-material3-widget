@@ -20,6 +20,9 @@
 namespace QtMaterial {
 
 namespace {
+constexpr qreal kFocusRingGap = 2.0;
+constexpr qreal kFocusRingWidth = 2.0;
+
 QRectF centeredRect(const QRectF& outer, qreal size)
 {
     return QRectF(outer.center().x() - size / 2.0,
@@ -199,12 +202,21 @@ void QtMaterialRadioButton::resolveLayoutIfNeeded() const
             d->spec.stateLayerSize
             );
 
-    d->cachedFocusRingRect = d->cachedStateLayerRect.adjusted(
-        -3.0,
-        -3.0,
-        3.0,
-        3.0
-        );
+    const QRectF focusPaintBounds =
+        QRectF(bounds).adjusted(
+            kFocusRingWidth / 2.0,
+            kFocusRingWidth / 2.0,
+            -kFocusRingWidth / 2.0,
+            -kFocusRingWidth / 2.0);
+
+    d->cachedFocusRingRect =
+        d->cachedStateLayerRect
+            .adjusted(
+                -kFocusRingGap,
+                -kFocusRingGap,
+                kFocusRingGap,
+                kFocusRingGap)
+            .intersected(focusPaintBounds);
 
     const int gap = text().isEmpty() ? 0 : spacing();
 
@@ -358,7 +370,7 @@ void QtMaterialRadioButton::paintEvent(QPaintEvent*)
             d->cachedFocusRingRect,
             d->spec.focusRingColor,
             d->cachedFocusRingRect.width() / 2.0,
-            2.0);
+            kFocusRingWidth);
     }
 }
 

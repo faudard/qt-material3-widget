@@ -24,9 +24,11 @@ void tst_RadioButton::keyboardToggle()
     widget.resize(140, 48);
     widget.show();
     QVERIFY(QTest::qWaitForWindowExposed(&widget));
-    widget.setFocus();
-    QVERIFY(widget.hasFocus());
+    QCOMPARE(widget.focusPolicy(), Qt::StrongFocus);
 
+    // QTest::keyClick sends the key event directly to the widget. Requiring
+    // native window activation/focus here makes this unit test flaky on
+    // headless macOS runners without testing any RadioButton behavior.
     QCOMPARE(widget.isChecked(), false);
     QTest::keyClick(&widget, Qt::Key_Space);
     QCOMPARE(widget.isChecked(), true);

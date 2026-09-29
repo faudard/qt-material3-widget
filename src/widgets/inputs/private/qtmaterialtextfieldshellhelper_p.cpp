@@ -11,6 +11,8 @@
 namespace QtMaterial {
 namespace {
 
+constexpr int kLabelContainerGap = 4;
+
 static int boundedTextSlotWidth(const QFontMetrics& metrics,
                                 const QString& text,
                                 int minimumWidth,
@@ -105,10 +107,16 @@ QtMaterialTextFieldShellHelper::Layout QtMaterialTextFieldShellHelper::layoutFor
     const int containerBottomInset = spec.supportingHeight + spec.supportingTopSpacing;
     layout.containerRect = bounds.adjusted(1, spec.topLabelHeight, -1, -containerBottomInset);
 
+    const int labelHeight =
+        qMax(
+            0,
+            spec.topLabelHeight
+                - qMin(kLabelContainerGap, spec.topLabelHeight));
+
     layout.labelRect = QRect(bounds.left() + spec.horizontalPadding,
                              0,
                              qMax(0, bounds.width() - (2 * spec.horizontalPadding)),
-                             spec.topLabelHeight);
+                             labelHeight);
 
     layout.editorRect = layout.containerRect.adjusted(spec.horizontalPadding,
                                                       spec.verticalPadding,

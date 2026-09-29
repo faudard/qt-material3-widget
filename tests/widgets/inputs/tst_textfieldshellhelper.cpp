@@ -57,6 +57,7 @@ class tst_TextFieldShellHelper : public QObject
 
 private slots:
     void emptyAccessoriesKeepEditorInsideContainer();
+    void labelKeepsVisualGapAboveContainer();
     void prefixAndSuffixReserveEditorSpace();
     void leadingAndTrailingIconsReserveEditorSpace();
     void clearActionUsesEndActionRectAndSuppressesTrailingIcon();
@@ -82,6 +83,20 @@ void tst_TextFieldShellHelper::emptyAccessoriesKeepEditorInsideContainer()
     QVERIFY(layout.containerRect.contains(layout.editorRect));
     QVERIFY(layout.labelRect.width() > 0);
     QVERIFY(layout.supportingRect.width() > 0);
+}
+
+void tst_TextFieldShellHelper::labelKeepsVisualGapAboveContainer()
+{
+    const Fixture fixture;
+    const TextFieldSpec spec = fixture.outlinedSpec();
+
+    const auto layout = layoutFor(spec,
+                                  fixture.theme,
+                                  QtMaterialTextFieldShellHelper::Variant::Outlined,
+                                  {},
+                                  fixture.font);
+
+    QVERIFY(layout.labelRect.bottom() <= layout.containerRect.top() - 4);
 }
 
 void tst_TextFieldShellHelper::prefixAndSuffixReserveEditorSpace()
