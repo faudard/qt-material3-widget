@@ -10,6 +10,11 @@ project(
     LANGUAGES CXX
 )
 
+# Keep UTF-8 source literals deterministic on MSVC (notably RTL gallery text).
+if(MSVC)
+    add_compile_options(/utf-8)
+endif()
+
 set(QTMATERIAL3_IS_TOP_LEVEL ${PROJECT_IS_TOP_LEVEL})
 
 if(WIN32 AND QTMATERIAL3_IS_TOP_LEVEL)
