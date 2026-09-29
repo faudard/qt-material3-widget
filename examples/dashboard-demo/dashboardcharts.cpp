@@ -43,9 +43,27 @@ void LineChartWidget::setValues(const QVector<qreal>& values)
     update();
 }
 
+void LineChartWidget::setAccentColor(const QColor& accentColor)
+{
+    if (m_accentColor == accentColor) {
+        return;
+    }
+    m_accentColor = accentColor;
+    update();
+}
+
+void LineChartWidget::clearAccentColor()
+{
+    if (!m_accentColor.isValid()) {
+        return;
+    }
+    m_accentColor = QColor();
+    update();
+}
+
 QSize LineChartWidget::sizeHint() const
 {
-    return QSize(560, 260);
+    return QSize(620, 270);
 }
 
 QSize LineChartWidget::minimumSizeHint() const
@@ -62,7 +80,7 @@ void LineChartWidget::paintEvent(QPaintEvent*)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const QRectF plot = rect().adjusted(18.0, 12.0, -18.0, -30.0);
+    const QRectF plot = rect().adjusted(16.0, 8.0, -16.0, -28.0);
     if (plot.width() <= 0.0 || plot.height() <= 0.0) {
         return;
     }
@@ -72,7 +90,8 @@ void LineChartWidget::paintEvent(QPaintEvent*)
     const qreal maximum = *minmax.second;
     const qreal span = std::max<qreal>(1.0, maximum - minimum);
 
-    const QColor grid = color(QtMaterial::ColorRole::OutlineVariant);
+    QColor grid = color(QtMaterial::ColorRole::OutlineVariant);
+    grid.setAlpha(115);
     painter.setPen(QPen(grid, 1.0));
     for (int i = 0; i <= 4; ++i) {
         const qreal y = plot.top() + (plot.height() * i / 4.0);
@@ -99,23 +118,26 @@ void LineChartWidget::paintEvent(QPaintEvent*)
     area.lineTo(points.first().x(), plot.bottom());
     area.closeSubpath();
 
-    QColor primary = color(QtMaterial::ColorRole::Primary);
+    const QColor accent = m_accentColor.isValid()
+        ? m_accentColor
+        : color(QtMaterial::ColorRole::Primary);
+
     QLinearGradient fill(plot.topLeft(), plot.bottomLeft());
-    QColor top = primary;
-    top.setAlpha(105);
-    QColor bottom = primary;
-    bottom.setAlpha(5);
+    QColor top = accent;
+    top.setAlpha(100);
+    QColor bottom = accent;
+    bottom.setAlpha(4);
     fill.setColorAt(0.0, top);
     fill.setColorAt(1.0, bottom);
     painter.fillPath(area, fill);
 
-    painter.setPen(QPen(primary, 3.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter.setPen(QPen(accent, 2.7, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter.drawPath(line);
 
     painter.setBrush(color(QtMaterial::ColorRole::Surface));
-    painter.setPen(QPen(primary, 2.0));
+    painter.setPen(QPen(accent, 1.7));
     for (const QPointF& point : points) {
-        painter.drawEllipse(point, 3.5, 3.5);
+        painter.drawEllipse(point, 3.2, 3.2);
     }
 
     static const char* months[] = {
@@ -136,7 +158,7 @@ void LineChartWidget::paintEvent(QPaintEvent*)
         const qreal x = plot.left() + plot.width() * i / (m_values.size() - 1.0);
         const QString label = QString::fromLatin1(months[i]);
         painter.drawText(
-            QRectF(x - 24.0, plot.bottom() + 7.0, 48.0, metrics.height() + 2.0),
+            QRectF(x - 24.0, plot.bottom() + 6.0, 48.0, metrics.height() + 2.0),
             Qt::AlignHCenter | Qt::AlignTop,
             label);
     }
@@ -185,19 +207,35 @@ void DonutChartWidget::paintEvent(QPaintEvent*)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const int side = std::max(0, std::min(width(), height()) - 34);
+    const int side = std::max(0, std::min(width(), height()) - 36);
     const QRectF ring(
         (width() - side) / 2.0,
         (height() - side) / 2.0,
         side,
         side);
 
-    const qreal stroke = std::max<qreal>(12.0, side * 0.085);
-    painter.setPen(QPen(color(QtMaterial::ColorRole::SurfaceContainerHighest), stroke, Qt::SolidLine, Qt::RoundCap));
+    const qreal stroke = std::max<qreal>(12.0, side * 0.075);
+    painter.setPen(QPen(color(QtMaterial::ColorRole::SurfaceContainerHighest), stroke, Qt::SolidLine, Qt::FlatCap));
     painter.drawArc(ring, 0, 360 * 16);
 
-    painter.setPen(QPen(color(QtMaterial::ColorRole::Primary), stroke, Qt::SolidLine, Qt::RoundCap));
-    painter.drawArc(ring, 90 * 16, -m_value * 360 * 16 / 100);
+    const int pending = qMin(20, 100 - m_value);
+    const int refund = qMax(0, 100 - m_value - pending);
+    const int gap = 2;
+    int start = 90 * 16;
+
+    const auto drawSegment = [&](int percentage, const QColor& segmentColor) mutable {
+        if (percentage <= 0) {
+            return;
+        }
+        const int span = qMax(0, percentage * 360 * 16 / 100 - gap * 16);
+        painter.setPen(QPen(segmentColor, stroke, Qt::SolidLine, Qt::FlatCap));
+        painter.drawArc(ring, start, -span);
+        start -= percentage * 360 * 16 / 100;
+    };
+
+    drawSegment(m_value, color(QtMaterial::ColorRole::Error));
+    drawSegment(pending, color(QtMaterial::ColorRole::Tertiary));
+    drawSegment(refund, color(QtMaterial::ColorRole::Primary));
 
     QFont valueFont = font();
     valueFont.setBold(true);

@@ -7,15 +7,16 @@ class QLabel;
 class QGridLayout;
 class QStandardItemModel;
 class QScrollArea;
+class QFrame;
+class QToolButton;
+class QComboBox;
 
 namespace QtMaterial {
-class QtMaterialNavigationRail;
+class QtMaterialCard;
+class QtMaterialCommandPalette;
 class QtMaterialSearchBar;
-class QtMaterialSegmentedButton;
 class QtMaterialSnackbarHost;
 class QtMaterialTable;
-class QtMaterialCommandPalette;
-class QtMaterialCard;
 }
 
 class DonutChartWidget;
@@ -38,46 +39,57 @@ private:
         QLabel* delta = nullptr;
     };
 
-    QWidget* createHeader();
-    QWidget* createOverviewPage();
+    QWidget* createSidebar();
+    QWidget* createTopBar();
+    QWidget* createDashboardPage();
+    QWidget* createQuickStatistics();
+    QWidget* createLowerHighlights();
     MetricWidgets createMetricCard(
         const QString& title,
         const QString& value,
         const QString& delta,
-        bool positive);
-    QtMaterial::QtMaterialCard* createRevenueCard();
-    QtMaterial::QtMaterialCard* createTrafficCard();
+        const QColor& iconColor,
+        const QString& iconText);
+    QWidget* createRevenueSummary();
+    QtMaterial::QtMaterialCard* createStatisticsCard();
+    QtMaterial::QtMaterialCard* createEarningsCard();
     QtMaterial::QtMaterialCard* createOrdersCard();
 
     void populateOrders();
     void populateCommandPalette();
-    void applyPeriod(int index);
+    void applyPeriod();
     void applyFilter(const QString& text);
     void applyThemeChrome();
     void updateResponsiveLayout();
+    void setCurrentSection(int index);
     void showOrderDetails(int row);
     void showMessage(const QString& text);
 
     QWidget* m_central = nullptr;
+    QWidget* m_sidebar = nullptr;
     QWidget* m_contentHost = nullptr;
+    QFrame* m_topBar = nullptr;
     QScrollArea* m_scroll = nullptr;
-    QtMaterial::QtMaterialNavigationRail* m_navigation = nullptr;
     QtMaterial::QtMaterialSearchBar* m_search = nullptr;
-    QtMaterial::QtMaterialSegmentedButton* m_period = nullptr;
     QtMaterial::QtMaterialTable* m_orders = nullptr;
     QStandardItemModel* m_ordersModel = nullptr;
     QtMaterial::QtMaterialSnackbarHost* m_snackbarHost = nullptr;
     QtMaterial::QtMaterialCommandPalette* m_commandPalette = nullptr;
-    QGridLayout* m_metricGrid = nullptr;
+    QGridLayout* m_quickGrid = nullptr;
     QGridLayout* m_chartGrid = nullptr;
     QVector<MetricWidgets> m_metrics;
     QVector<QtMaterial::QtMaterialCard*> m_metricCards;
-    QtMaterial::QtMaterialCard* m_revenueCard = nullptr;
-    QtMaterial::QtMaterialCard* m_trafficCard = nullptr;
+    QVector<QToolButton*> m_navButtons;
+    QWidget* m_revenueSummary = nullptr;
+    QtMaterial::QtMaterialCard* m_statisticsCard = nullptr;
+    QtMaterial::QtMaterialCard* m_earningsCard = nullptr;
     LineChartWidget* m_lineChart = nullptr;
     DonutChartWidget* m_donutChart = nullptr;
     QLabel* m_pageTitle = nullptr;
     QLabel* m_pageSubtitle = nullptr;
+    QComboBox* m_yearCombo = nullptr;
+    QComboBox* m_monthCombo = nullptr;
+    QToolButton* m_themeButton = nullptr;
     bool m_compactMetrics = false;
     bool m_stackedCharts = false;
 };
