@@ -223,7 +223,7 @@ void DonutChartWidget::paintEvent(QPaintEvent*)
     const int gap = 2;
     int start = 90 * 16;
 
-    const auto drawSegment = [&](int percentage, const QColor& segmentColor) mutable {
+    auto drawSegment = [&](int percentage, const QColor& segmentColor) {
         if (percentage <= 0) {
             return;
         }
