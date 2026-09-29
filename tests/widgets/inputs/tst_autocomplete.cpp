@@ -1,5 +1,6 @@
 #include <QtTest/QtTest>
 
+#include <QApplication>
 #include <QLineEdit>
 #include <QSignalSpy>
 #include <QStringListModel>
@@ -19,6 +20,7 @@ private slots:
  void canDisableCompletionOnReturn();
  void canDisableOpenOnFocus();
  void accessibilitySummaryTracksPopupState();
+ void nativePopupDismissalStaysDismissed();
  void destroyingVisiblePopupIsSafe();
 };
 
@@ -113,6 +115,33 @@ void tst_Autocomplete::canDisableOpenOnFocus() {
  field.lineEdit()->setFocus();
  QTRY_VERIFY(field.lineEdit()->hasFocus());
  QTest::keyClicks(field.lineEdit(), "A");
+ QVERIFY(!field.isPopupVisible());
+}
+
+void tst_Autocomplete::nativePopupDismissalStaysDismissed() {
+ QtMaterialAutocomplete field;
+ field.setSuggestions({QStringLiteral("Alpha"), QStringLiteral("Beta")});
+ field.resize(320, field.sizeHint().height());
+ field.show();
+ QVERIFY(QTest::qWaitForWindowExposed(&field));
+
+ field.activateWindow();
+ field.lineEdit()->setFocus();
+ QTRY_VERIFY(field.lineEdit()->hasFocus());
+ QTest::keyClicks(field.lineEdit(), "A");
+ QVERIFY(field.isPopupVisible());
+
+ QWidget* popup = QApplication::activePopupWidget();
+ QVERIFY(popup != nullptr);
+ popup->hide();
+ QCoreApplication::processEvents();
+
+ QVERIFY(!field.isPopupVisible());
+
+ // Anchor geometry changes must not resurrect a popup dismissed by the
+ // platform after an outside click.
+ field.resize(field.width() + 20, field.height());
+ QCoreApplication::processEvents();
  QVERIFY(!field.isPopupVisible());
 }
 
