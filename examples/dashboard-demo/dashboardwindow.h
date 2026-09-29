@@ -4,6 +4,7 @@
 #include <QVector>
 
 class QLabel;
+class QColor;
 class QGridLayout;
 class QStandardItemModel;
 class QScrollArea;
