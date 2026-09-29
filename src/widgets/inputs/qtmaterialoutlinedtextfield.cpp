@@ -355,6 +355,10 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
 
     if (d_ptr->m_lineEdit) {
         d_ptr->m_lineEdit->setFrame(false);
+        d_ptr->m_lineEdit->setAutoFillBackground(false);
+        d_ptr->m_lineEdit->setStyleSheet(
+            QStringLiteral(
+                "QLineEdit { background: transparent; border: 0px; padding: 0px; }"));
 
         setFocusProxy(d_ptr->m_lineEdit);
         d_ptr->m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
