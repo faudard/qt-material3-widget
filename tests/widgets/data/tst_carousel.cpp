@@ -15,6 +15,7 @@ private slots:
     void keyboardNavigationWrapsAndSkipsDisabledItems();
     void activationEmitsCurrentIndex();
     void accessibilitySummaryTracksCurrentItem();
+    void indicatorClickChangesCurrentItem();
     void visibleItemCountIsClamped();
 };
 
@@ -114,6 +115,44 @@ void tst_Carousel::accessibilitySummaryTracksCurrentItem()
     QVERIFY(carousel.accessibilitySummary().contains(QStringLiteral("2 items")));
     QVERIFY(carousel.accessibilitySummary().contains(QStringLiteral("Beta")));
     QVERIFY(summarySpy.count() >= 1);
+}
+
+void tst_Carousel::indicatorClickChangesCurrentItem()
+{
+    QtMaterialCarousel carousel;
+    for (int index = 0; index < 6; ++index) {
+        carousel.addItem(
+            QStringLiteral("Item %1").arg(index + 1));
+    }
+
+    carousel.setVisibleItemCount(3);
+    carousel.resize(720, 180);
+    carousel.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&carousel));
+
+    const CarouselSpec spec = carousel.spec();
+    QVERIFY(spec.indicatorSize > 0);
+
+    const int targetIndex = 4;
+    const int totalWidth =
+        carousel.count() * spec.indicatorSize
+        + (carousel.count() - 1) * spec.pageSpacing;
+    const QPoint indicatorCenter(
+        (carousel.width() - totalWidth) / 2
+            + targetIndex
+                * (spec.indicatorSize + spec.pageSpacing)
+            + spec.indicatorSize / 2,
+        carousel.height()
+            - spec.outerMargins.bottom()
+            - spec.indicatorSize / 2);
+
+    QTest::mouseClick(
+        &carousel,
+        Qt::LeftButton,
+        Qt::NoModifier,
+        indicatorCenter);
+
+    QCOMPARE(carousel.currentIndex(), targetIndex);
 }
 
 void tst_Carousel::visibleItemCountIsClamped()
