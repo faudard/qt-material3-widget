@@ -25,6 +25,7 @@ struct QtMaterialCarouselPrivate
     int currentIndex = -1;
     int hoveredIndex = -1;
     int pressedIndex = -1;
+    int pressedIndicatorIndex = -1;
     int visibleItemCount = 3;
 
     bool wrapAround = true;
@@ -169,6 +170,37 @@ QRect itemRect(
         spec.outerMargins.top(),
         cardWidth,
         cardHeight);
+}
+
+QRect indicatorRect(
+    const QtMaterialCarousel* widget,
+    const QtMaterialCarouselPrivate* data,
+    const CarouselSpec& spec,
+    int index)
+{
+    if (!widget
+        || !isValidIndex(data, index)
+        || spec.indicatorSize <= 0) {
+        return QRect();
+    }
+
+    const int itemCount = data->items.size();
+    const int totalWidth =
+        itemCount * spec.indicatorSize
+        + qMax(0, itemCount - 1) * spec.pageSpacing;
+    const int x =
+        (widget->width() - totalWidth) / 2
+        + index * (spec.indicatorSize + spec.pageSpacing);
+    const int y =
+        widget->height()
+        - spec.outerMargins.bottom()
+        - spec.indicatorSize;
+
+    return QRect(
+        x,
+        y,
+        spec.indicatorSize,
+        spec.indicatorSize);
 }
 
 QPixmap tintedIconPixmap(
@@ -886,6 +918,30 @@ int QtMaterialCarousel::indexAtPosition(
     return -1;
 }
 
+int QtMaterialCarousel::indicatorIndexAtPosition(
+    const QPoint& position) const
+{
+    const CarouselSpec& spec = resolvedSpec();
+
+    for (int index = 0;
+         index < d_ptr->items.size();
+         ++index) {
+        const QRect hitRect =
+            indicatorRect(
+                this,
+                d_ptr.get(),
+                spec,
+                index)
+                .adjusted(-6, -6, 6, 6);
+
+        if (hitRect.contains(position)) {
+            return index;
+        }
+    }
+
+    return -1;
+}
+
 void QtMaterialCarousel::mouseMoveEvent(
     QMouseEvent* event)
 {
@@ -896,6 +952,18 @@ void QtMaterialCarousel::mouseMoveEvent(
         hovered >= 0
         && !d_ptr->items.at(hovered).enabled) {
         hovered = -1;
+    }
+
+    const int indicator =
+        indicatorIndexAtPosition(event->pos());
+    const bool overEnabledIndicator =
+        indicator >= 0
+        && d_ptr->items.at(indicator).enabled;
+
+    if (hovered >= 0 || overEnabledIndicator) {
+        setCursor(Qt::PointingHandCursor);
+    } else {
+        unsetCursor();
     }
 
     if (d_ptr->hoveredIndex != hovered) {
@@ -910,6 +978,21 @@ void QtMaterialCarousel::mousePressEvent(
     QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton) {
+        const int indicator =
+            indicatorIndexAtPosition(event->pos());
+
+        d_ptr->pressedIndicatorIndex =
+            indicator >= 0
+                && d_ptr->items.at(indicator).enabled
+            ? indicator
+            : -1;
+
+        if (d_ptr->pressedIndicatorIndex >= 0) {
+            event->accept();
+            update();
+            return;
+        }
+
         const int pressed =
             indexAtPosition(event->pos());
 
@@ -934,12 +1017,28 @@ void QtMaterialCarousel::mouseReleaseEvent(
 {
     const int pressed =
         d_ptr->pressedIndex;
+    const int pressedIndicator =
+        d_ptr->pressedIndicatorIndex;
     d_ptr->pressedIndex = -1;
+    d_ptr->pressedIndicatorIndex = -1;
 
     if (event->button() != Qt::LeftButton) {
         update();
         QtMaterialControl::mouseReleaseEvent(event);
         return;
+    }
+
+    if (pressedIndicator >= 0) {
+        const int releasedIndicator =
+            indicatorIndexAtPosition(event->pos());
+
+        if (releasedIndicator == pressedIndicator
+            && d_ptr->items.at(pressedIndicator).enabled) {
+            setCurrentIndex(pressedIndicator);
+            event->accept();
+            update();
+            return;
+        }
     }
 
     const int released =
@@ -966,6 +1065,8 @@ void QtMaterialCarousel::leaveEvent(
 {
     d_ptr->hoveredIndex = -1;
     d_ptr->pressedIndex = -1;
+    d_ptr->pressedIndicatorIndex = -1;
+    unsetCursor();
     update();
 
     QtMaterialControl::leaveEvent(event);
@@ -1154,11 +1255,7 @@ void QtMaterialCarousel::paintEvent(
         const int totalWidth =
             itemCount * spec.indicatorSize
             + qMax(0, itemCount - 1) * spec.pageSpacing;
-        int x = (width() - totalWidth) / 2;
-        const int y =
-            height()
-            - spec.outerMargins.bottom()
-            - spec.indicatorSize;
+        Q_UNUSED(totalWidth);
 
         painter.setPen(Qt::NoPen);
         for (int index = 0; index < itemCount; ++index) {
@@ -1167,12 +1264,11 @@ void QtMaterialCarousel::paintEvent(
                 ? spec.activePageIndicatorColor
                 : spec.pageIndicatorColor);
             painter.drawEllipse(
-                QRect(
-                    x,
-                    y,
-                    spec.indicatorSize,
-                    spec.indicatorSize));
-            x += spec.indicatorSize + spec.pageSpacing;
+                indicatorRect(
+                    this,
+                    d_ptr.get(),
+                    spec,
+                    index));
         }
     }
 
