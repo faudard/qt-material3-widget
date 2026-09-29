@@ -1,9 +1,10 @@
 #include "datapage.h"
 
-#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QStandardItem>
 #include <QStandardItemModel>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 #include "qtmaterial/widgets/data/qtmaterialcarousel.h"
@@ -75,18 +76,45 @@ DataPage::DataPage(QWidget* parent)
     layout->addWidget(gridList);
 
     auto* carousel = new QtMaterial::QtMaterialCarousel(this);
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 6; ++i) {
         carousel->addItem(
             QStringLiteral("Page %1").arg(i + 1),
             QStringLiteral("Carousel page %1").arg(i + 1)
             );
     }
+    carousel->setVisibleItemCount(3);
 
     carousel->setMinimumHeight(160);
     carousel->setMaximumHeight(220);
     carousel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-    layout->addWidget(carousel);
+    auto* previousCarousel = new QToolButton(this);
+    previousCarousel->setArrowType(Qt::LeftArrow);
+    previousCarousel->setToolTip(QStringLiteral("Previous carousel item"));
+    previousCarousel->setAccessibleName(QStringLiteral("Previous carousel item"));
+
+    auto* nextCarousel = new QToolButton(this);
+    nextCarousel->setArrowType(Qt::RightArrow);
+    nextCarousel->setToolTip(QStringLiteral("Next carousel item"));
+    nextCarousel->setAccessibleName(QStringLiteral("Next carousel item"));
+
+    connect(
+        previousCarousel,
+        &QToolButton::clicked,
+        carousel,
+        &QtMaterial::QtMaterialCarousel::previous);
+    connect(
+        nextCarousel,
+        &QToolButton::clicked,
+        carousel,
+        &QtMaterial::QtMaterialCarousel::next);
+
+    auto* carouselRow = new QHBoxLayout;
+    carouselRow->addWidget(previousCarousel, 0, Qt::AlignVCenter);
+    carouselRow->addWidget(carousel, 1);
+    carouselRow->addWidget(nextCarousel, 0, Qt::AlignVCenter);
+
+    layout->addLayout(carouselRow);
 
     layout->addStretch(1);
 }
