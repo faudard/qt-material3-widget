@@ -122,12 +122,16 @@ void ThemeColorRolesView::applyTheme(const Theme& theme)
         ? scheme.color(ColorRole::OutlineVariant)
         : QColor(QStringLiteral("#808080"));
 
+    // Keep the theme local to the Colors page, but target the concrete Qt
+    // widget classes. Custom subclass selectors are not painted consistently
+    // by every Qt/widget style combination.
     setStyleSheet(QStringLiteral(
-        "ThemeColorRolesView {"
+        "QWidget {"
         " background-color: %1;"
         " color: %2;"
         "}"
-        "ThemeColorRolesView QLabel {"
+        "QLabel {"
+        " background-color: transparent;"
         " color: %2;"
         "}").arg(surface.name(), onSurface.name()));
 
