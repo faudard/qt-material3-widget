@@ -12,6 +12,7 @@
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QKeySequence>
+#include <QLinearGradient>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPainter>
