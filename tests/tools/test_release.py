@@ -54,6 +54,12 @@ class ReleaseCheckerTests(unittest.TestCase):
 
     def test_stable_release_requires_api_baseline_and_visual_goldens(self):
         rules = release.load_rules(ROOT / "tools/release_rules.json")
+        stable = rules["base"]["stable_release"]
+        stable["api_baseline"] = "tools/definitely-missing-api-baseline.json"
+        stable["visual_goldens"] = [
+            "tests/visual/goldens/definitely-missing-reviewed-golden.png"
+        ]
+
         errors = release.validate_base(ROOT, rules, "1.0.0")
         self.assertTrue(
             any("checked-in API signature baseline" in error for error in errors)

@@ -116,6 +116,35 @@ class ApiSignatureBaselineTests(unittest.TestCase):
             self.assertTrue(any("QtMaterial::ModeMask|typedef|typedef|unsigned int|" in item for item in signatures))
             self.assertFalse(any("hidden" in item for item in signatures))
 
+    def test_public_header_filter_excludes_uninstalled_surface(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            xml = Path(tmp) / "xml"
+            self.write_xml(xml)
+            signatures = api.extract_signatures(
+                xml,
+                {"qtmaterial/foo.h"},
+            )
+            self.assertEqual(len(signatures), 2)
+            self.assertTrue(all("file=include/qtmaterial/foo.h" in item for item in signatures))
+            self.assertFalse(any("QtMaterial::Mode" in item for item in signatures))
+            self.assertFalse(any("QtMaterial::ModeMask" in item for item in signatures))
+            self.assertFalse(any("isModeEnabled" in item for item in signatures))
+
+    def test_canonical_manifest_contains_only_installable_headers(self):
+        public = api.load_public_headers()
+        self.assertIn(
+            "include/qtmaterial/widgets/buttons/qtmaterialfab.h",
+            public,
+        )
+        self.assertNotIn(
+            "include/qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h",
+            public,
+        )
+        self.assertNotIn(
+            "include/qtmaterial/specs/qtmaterialbuttonspecresolver.h",
+            public,
+        )
+
     def test_enum_initializer_change_is_breaking(self):
         with tempfile.TemporaryDirectory() as before_tmp, tempfile.TemporaryDirectory() as after_tmp:
             before = Path(before_tmp) / "xml"
@@ -150,7 +179,14 @@ class ApiSignatureBaselineTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             xml = Path(tmp) / "xml"
             self.write_xml(xml)
-            baseline = api.make_baseline(xml, 1)
+            baseline = api.make_baseline(
+                xml,
+                1,
+                {
+                    "include/qtmaterial/foo.h",
+                    "include/qtmaterial/mode.h",
+                },
+            )
             path = Path(tmp) / "baseline.json"
             path.write_text(json.dumps(baseline), encoding="utf-8")
             loaded = api.load_baseline(path)

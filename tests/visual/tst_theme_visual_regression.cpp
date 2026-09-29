@@ -39,6 +39,14 @@ Theme makeTheme(ThemeMode mode, ContrastMode contrast, const QColor& seed = QCol
     return ThemeBuilder().build(options);
 }
 
+Theme makeStaticComponentTheme(ThemeMode mode, ContrastMode contrast)
+{
+    Theme theme = makeTheme(mode, contrast);
+    // Pixel goldens must capture a stable end state, never an animation frame.
+    theme.accessibility().reducedMotion = true;
+    return theme;
+}
+
 QWidget* buildComponentGrid(const Theme& theme)
 {
     ThemeManager::instance().setTheme(theme);
@@ -184,7 +192,7 @@ void tst_ThemeVisualRegression::componentGridSmoke()
     QFETCH(ThemeMode, mode);
     QFETCH(ContrastMode, contrast);
 
-    Theme theme = makeTheme(mode, contrast);
+    Theme theme = makeStaticComponentTheme(mode, contrast);
     std::unique_ptr<QWidget> grid(buildComponentGrid(theme));
     const QImage image = QtMaterialVisualTest::renderWidget(grid.get());
     QVERIFY(!image.isNull());
@@ -212,7 +220,7 @@ void tst_ThemeVisualRegression::componentGridStrictGoldens()
     QFETCH(ThemeMode, mode);
     QFETCH(ContrastMode, contrast);
 
-    Theme theme = makeTheme(mode, contrast);
+    Theme theme = makeStaticComponentTheme(mode, contrast);
     std::unique_ptr<QWidget> grid(buildComponentGrid(theme));
     const QImage image = QtMaterialVisualTest::renderWidget(grid.get());
     QtMaterialVisualTest::verifyOrUpdateGolden(caseName, image);

@@ -1,8 +1,8 @@
 # API stability policy
 
-QtMaterial3 remains pre-1.0. Public C++ APIs may still change until the 1.0
-surface is frozen, while the Theme JSON persistence contract is already
-versioned independently.
+QtMaterial3 1.x treats the documented installed C++ surface as a stable source API.
+The canonical surface is the public-header manifest used by installation and release
+validation.
 
 ## Theme JSON
 
@@ -11,26 +11,32 @@ changes require a new format version; compatible additions must preserve strict
 validation and deterministic serialization guarantees documented by the schema
 tests.
 
-## Pre-1.0 C++ surface
+## Stable 1.x C++ surface
 
-Before 1.0 the project may remove or rename public C++ APIs directly when doing
-so reduces accidental surface area. Compatibility shims are intentionally not
-kept for unpublished APIs.
+The 1.0 baseline is generated from Doxygen XML and restricted to the canonical
+`QTMATERIAL3_PUBLIC_HEADERS` install manifest. It records public/protected class
+surface plus namespace-level enums, typedefs, variables and free functions from those
+installed headers. Signatures also retain public-header ownership and enum initializers.
 
-The 0.9 release is the API-freeze candidate. Its release checker locks the intended
-public-header ownership, application-facing package components, resolver visibility,
-compatibility-shim policy, and retained C++ test registration. 1.0 establishes the
-first stable source/API baseline from that candidate.
+Private/internal source headers, resolver implementation headers and PIMPL state are
+excluded from the stable contract.
 
-The stable baseline is generated from Doxygen XML and records public/protected class
-surface plus namespace-level enums, typedefs, variables and free functions. Signatures
-also retain public-header ownership and enum initializers rather than hashing whole
-headers. Comments and private PIMPL state may therefore evolve without creating false
-source-compatibility drift.
+Within the 1.x line:
 
-Within the same stable major, removing or changing a baseline signature is a breaking
-change and fails the gate. New declarations are additive and are allowed without
-rewriting the original 1.0 compatibility baseline.
+- removing or changing a baseline signature is a breaking source-compatibility change
+  and fails the API baseline gate;
+- additive public declarations are allowed without rewriting the original 1.0 baseline;
+- replacement of stable API should use an explicit deprecation path before removal from
+  a future major version.
+
+Native Qt child accessors documented as extension points remain parent-owned. Callers
+may configure their supported Qt behavior but must not delete or reparent those child
+objects.
+
+## ABI
+
+Source compatibility is the stable 1.x contract. Binary compatibility is best-effort
+unless a stricter ABI policy is published for a future release.
 
 ## Backend behavior
 

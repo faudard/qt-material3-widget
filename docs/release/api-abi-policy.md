@@ -1,20 +1,24 @@
 # API and ABI policy
 
-## Before 1.0
+## 1.x stable line
 
-- public API may break between minor versions;
-- ABI may break between minor versions;
-- breaking changes are documented in `CHANGELOG.md`;
-- retired pre-1.0 APIs are removed directly rather than kept as deprecated shims.
-
-## From 1.0
-
-- source compatibility is expected within the 1.x line for documented public headers;
+- documented installed public headers are expected to remain source-compatible within
+  the 1.x line;
+- the checked-in 1.0 Doxygen signature baseline enforces that stable source surface;
+- additive declarations are allowed in 1.x, while removals or signature changes require
+  a future major release unless an explicitly compatible migration is available;
 - binary compatibility is best-effort unless a stricter ABI policy is published;
-- once a stable API needs replacement, a deprecation mechanism may be introduced with an explicit removal window.
+- when stable API needs replacement, deprecation must use an explicit removal window
+  before a future major version.
 
-The 1.0 public-header manifest defines which headers are supported. A checked-in
-Doxygen-derived signature baseline records the public/protected C++ declarations
-within that inventory and is compared by the documentation CI once present.
-Private PIMPL state is deliberately excluded from that source-compatibility
-baseline.
+The canonical public-header manifest defines which headers are supported. The baseline
+records the public/protected declarations originating from exactly those installed
+headers, including namespace-level declarations and enum initializers. Private headers,
+internal resolver/spec implementation surfaces and PIMPL state are deliberately
+excluded.
+
+## Historical pre-1.0 policy
+
+Before 1.0, public API and ABI could break between minor versions and obsolete
+unpublished APIs were removed directly rather than retained as compatibility shims.
+Those pre-1.0 cleanup rules no longer apply to the stable 1.x public surface.
