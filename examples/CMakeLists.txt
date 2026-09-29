@@ -4,6 +4,7 @@ option(QTMATERIAL3_BUILD_CONSUMER_EXAMPLES
 )
 
 add_subdirectory(gallery)
+add_subdirectory(dashboard-demo)
 add_subdirectory(theme-studio)
 
 if(QTMATERIAL3_BUILD_CONSUMER_EXAMPLES)
