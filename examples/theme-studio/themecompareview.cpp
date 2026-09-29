@@ -50,6 +50,8 @@ QWidget* ThemeCompareView::createPane(const QString& title,
                                       QFrame** errorChip)
 {
     auto* pane = new QFrame(this);
+    pane->setObjectName(QStringLiteral("themeComparePane"));
+
     auto* layout = new QVBoxLayout(pane);
     layout->setContentsMargins(16, 16, 16, 16);
     layout->setSpacing(12);
@@ -58,6 +60,9 @@ QWidget* ThemeCompareView::createPane(const QString& title,
     auto* description = new QLabel(tr("Primary / Surface / Error overview"), pane);
 
     auto* grid = new QGridLayout();
+    grid->setHorizontalSpacing(12);
+    grid->setVerticalSpacing(8);
+
     *primaryChip = new QFrame(pane);
     *surfaceChip = new QFrame(pane);
     *errorChip = new QFrame(pane);
@@ -68,6 +73,7 @@ QWidget* ThemeCompareView::createPane(const QString& title,
     grid->addWidget(*surfaceChip, 1, 1);
     grid->addWidget(new QLabel(tr("Error"), pane), 2, 0);
     grid->addWidget(*errorChip, 2, 1);
+    grid->setColumnStretch(2, 1);
 
     layout->addWidget(*titleLabel);
     layout->addWidget(description);
@@ -119,13 +125,19 @@ void ThemeCompareView::applyPaneStyles(const Theme& theme,
     const QColor onSurface = scheme.color(ColorRole::OnSurface);
     const QColor outline = scheme.color(ColorRole::OutlineVariant);
 
-    titleLabel->setStyleSheet(QStringLiteral("QLabel { color: %1; font-weight: 600; }")
-                                  .arg(onSurface.name()));
+    titleLabel->setStyleSheet(QStringLiteral("QLabel { font-weight: 600; }"));
 
     if (auto* pane = qobject_cast<QFrame*>(titleLabel->parentWidget())) {
         pane->setStyleSheet(QStringLiteral(
-            "QFrame { background-color: %1; border: 1px solid %2; border-radius: 16px; }")
-            .arg(surface.name(), outline.name()));
+            "QFrame#themeComparePane {"
+            " background-color: %1;"
+            " border: 1px solid %2;"
+            " border-radius: 16px;"
+            "}"
+            "QFrame#themeComparePane QLabel {"
+            " color: %3;"
+            "}")
+            .arg(surface.name(), outline.name(), onSurface.name()));
     }
 
     setChipStyle(primaryChip, scheme.color(ColorRole::Primary), outline);
