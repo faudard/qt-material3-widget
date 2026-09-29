@@ -288,13 +288,18 @@ private slots:
 
         QSignalSpy activated(&palette, &QtMaterialCommandPalette::commandActivated);
 
+        palette.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&palette));
+
         QVERIFY(QMetaObject::invokeMethod(
             resultView,
             "activated",
             Qt::DirectConnection,
             Q_ARG(QModelIndex, proxyIndex)));
         QCOMPARE(activated.count(), 1);
+        QVERIFY(!palette.isVisible());
 
+        // Double-click is intentionally not a second activation path.
         QVERIFY(QMetaObject::invokeMethod(
             resultView,
             "doubleClicked",
