@@ -966,7 +966,7 @@ QWidget* DashboardWindow::createAnalyticsPage()
         cardLayout->addWidget(titleLabel);
         cardLayout->addWidget(makeLabel(value, card, 6.0, true));
         auto* noteLabel = makeLabel(note, card, -2.0, false);
-        noteLabel->setStyleSheet(QStringLiteral("color:#3c9a63;"));
+        noteLabel->setObjectName(QStringLiteral("positiveDelta"));
         cardLayout->addWidget(noteLabel);
         metrics->addWidget(card, 0, column);
     };
@@ -995,7 +995,7 @@ QWidget* DashboardWindow::createAnalyticsPage()
         -1.0,
         false));
     auto* analyticsChart = new LineChartWidget(trendCard);
-    analyticsChart->setAccentColor(QColor(QStringLiteral("#4d91e6")));
+    analyticsChart->clearAccentColor();
     analyticsChart->setValues({56, 72, 68, 84, 91, 88, 106, 119, 112, 136, 128, 149});
     trendLayout->addWidget(analyticsChart, 1);
     analyticsGrid->addWidget(trendCard, 0, 0, 1, 2);
@@ -1189,7 +1189,7 @@ QWidget* DashboardWindow::createCustomersPage()
         cardLayout->addWidget(makeLabel(QString::fromLatin1(customerStats[i].title), card, -1.0, false));
         cardLayout->addWidget(makeLabel(QString::fromLatin1(customerStats[i].value), card, 5.0, true));
         auto* note = makeLabel(QString::fromLatin1(customerStats[i].note), card, -2.0, false);
-        note->setStyleSheet(QStringLiteral("color:#3c9a63;"));
+        note->setObjectName(QStringLiteral("positiveDelta"));
         cardLayout->addWidget(note);
         summary->addWidget(card, 0, i);
     }
@@ -1497,7 +1497,7 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
     layout->addLayout(titleRow);
 
     m_lineChart = new LineChartWidget(card);
-    m_lineChart->setAccentColor(QColor(QStringLiteral("#ee6c63")));
+    m_lineChart->clearAccentColor();
     layout->addWidget(m_lineChart, 1);
     return card;
 }
@@ -1524,17 +1524,18 @@ QtMaterial::QtMaterialCard* DashboardWindow::createEarningsCard()
     const struct {
         const char* label;
         const char* value;
-        const char* color;
+        QtMaterial::ColorRole role;
     } legend[] = {
-        {"Earning:", "€18,756", "#e65146"},
-        {"Pending:", "€5,599", "#49a36f"},
-        {"Refund:", "€4,987", "#3c8dcc"}
+        {"Earning:", "€18,756", QtMaterial::ColorRole::Primary},
+        {"Pending:", "€5,599", QtMaterial::ColorRole::Tertiary},
+        {"Refund:", "€4,987", QtMaterial::ColorRole::Error}
     };
 
     for (const auto& item : legend) {
         auto* row = new QHBoxLayout;
         auto* dot = new QLabel(QStringLiteral("●"), card);
-        dot->setStyleSheet(QStringLiteral("color:%1;").arg(QString::fromLatin1(item.color)));
+        dot->setObjectName(QStringLiteral("legendDot"));
+        dot->setProperty("dashboardColorRole", static_cast<int>(item.role));
         row->addWidget(dot);
         row->addWidget(makeLabel(QString::fromLatin1(item.label), card, -1.0, false));
         row->addStretch(1);
@@ -2056,6 +2057,26 @@ void DashboardWindow::applyThemeChrome()
         QPalette deltaPalette = metric.delta->palette();
         deltaPalette.setColor(QPalette::WindowText, positive);
         metric.delta->setPalette(deltaPalette);
+    }
+
+    if (m_pages) {
+        const auto positiveLabels =
+            m_pages->findChildren<QLabel*>(QStringLiteral("positiveDelta"));
+        for (QLabel* label : positiveLabels) {
+            QPalette palette = label->palette();
+            palette.setColor(QPalette::WindowText, positive);
+            label->setPalette(palette);
+        }
+
+        const auto legendDots =
+            m_pages->findChildren<QLabel*>(QStringLiteral("legendDot"));
+        for (QLabel* dot : legendDots) {
+            const auto role = static_cast<QtMaterial::ColorRole>(
+                dot->property("dashboardColorRole").toInt());
+            QPalette palette = dot->palette();
+            palette.setColor(QPalette::WindowText, materialColor(role));
+            dot->setPalette(palette);
+        }
     }
 
     if (m_orders) {
