@@ -28,11 +28,30 @@ Material Color Utilities is optional and disabled by default. The built-in fallb
 The repository includes complementary examples for both component-level inspection and real application composition:
 
 - `qtmaterial3_gallery` — component gallery and interaction coverage.
-- `qtmaterial3_dashboard_demo` — responsive analytics dashboard using cards, navigation rail, search, segmented controls, tables, chips, dialogs, snackbars, command palette, live theme switching, and theme-aware private chart widgets.
+- `qtmaterial3_dashboard_demo` — responsive multi-page application showcase using sidebar/rail/drawer navigation, analytics, orders, profile, pricing, application states, live theme/contrast/RTL controls, command palette, dialogs, banners, progress indicators, tables, chips and theme-aware private chart widgets.
 - `qtmaterial3_theme_studio` — interactive theme authoring and inspection.
 - `qtmaterial3_theming_workflows` — public theming API workflows.
 
 The dashboard intentionally keeps its line and donut charts private to the example. They demonstrate composing custom application visuals from Material 3 theme tokens without expanding the public widget API.
+
+### Dashboard showcase
+
+The dashboard is intended to be exercised as a small desktop product rather than a static screenshot. It includes responsive navigation, real table filtering/pagination, profile and pricing workflows, loading/empty/error/offline states, and a **Showcase Settings** page for changing seed color, light/dark mode, contrast, Tonal/Expressive variants and LTR/RTL direction.
+
+For reproducible documentation captures, the demo also supports command-line page selection and PNG output:
+
+```bash
+# Light dashboard
+./qtmaterial3_dashboard_demo --page dashboard --size 1440x920 --screenshot dashboard-light.png
+
+# Dark dashboard
+./qtmaterial3_dashboard_demo --dark --page dashboard --size 1440x920 --screenshot dashboard-dark.png
+
+# RTL profile example
+./qtmaterial3_dashboard_demo --rtl --page profile --size 1200x800 --screenshot profile-rtl.png
+```
+
+See [Dashboard showcase guide](docs/examples/dashboard-showcase.md) for the page map and capture options.
 
 ## Consume from CMake
 
