@@ -221,13 +221,13 @@ QIcon dashboardIcon(
     if (badge >= 0) {
         painter.setRenderHint(QPainter::Antialiasing, true);
         painter.setPen(Qt::NoPen);
-        painter.setBrush(QColor(QStringLiteral("#ef5350")));
+        painter.setBrush(materialColor(QtMaterial::ColorRole::Error));
         painter.drawEllipse(QRectF(17.0, 0.0, 11.0, 11.0));
         QFont badgeFont = painter.font();
         badgeFont.setBold(true);
         badgeFont.setPointSize(6);
         painter.setFont(badgeFont);
-        painter.setPen(Qt::white);
+        painter.setPen(materialColor(QtMaterial::ColorRole::OnError));
         painter.drawText(QRectF(17.0, 0.0, 11.0, 11.0), Qt::AlignCenter, QString::number(badge));
     }
 
@@ -241,7 +241,11 @@ QToolButton* makeNavButton(
 {
     auto* button = new QToolButton(parent);
     button->setText(text);
-    button->setIcon(dashboardIcon(iconName, QColor(QStringLiteral("#aeb3c2"))));
+    button->setObjectName(QStringLiteral("dashboardNavButton"));
+    button->setProperty("dashboardIconName", iconName);
+    button->setIcon(dashboardIcon(
+        iconName,
+        materialColor(QtMaterial::ColorRole::InverseOnSurface)));
     button->setIconSize(QSize(22, 22));
     button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     button->setCheckable(true);
@@ -249,12 +253,6 @@ QToolButton* makeNavButton(
     button->setCursor(Qt::PointingHandCursor);
     button->setMinimumHeight(34);
     button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    button->setStyleSheet(QStringLiteral(
-        "QToolButton { color:#c7cbd7; background:transparent; border:0;"
-        " text-align:left; padding:0 15px; border-radius:6px; font-size:12px; }"
-        "QToolButton:hover { background:#323543; color:#ffffff; }"
-        "QToolButton:checked { background:#343847; color:#ffffff; font-weight:600;"
-        " border-left:3px solid #67b7ff; padding-left:12px; }"));
     return button;
 }
 
@@ -279,17 +277,17 @@ public:
         QStyle* style = option.widget ? option.widget->style() : QApplication::style();
         style->drawControl(QStyle::CE_ItemViewItem, &base, painter, option.widget);
 
-        QColor foreground(QStringLiteral("#356859"));
-        QColor background(QStringLiteral("#dff3ea"));
+        QColor foreground = materialColor(QtMaterial::ColorRole::OnPrimaryContainer);
+        QColor background = materialColor(QtMaterial::ColorRole::PrimaryContainer);
         if (text == QStringLiteral("Pending")) {
-            foreground = QColor(QStringLiteral("#98651a"));
-            background = QColor(QStringLiteral("#fff0d0"));
+            foreground = materialColor(QtMaterial::ColorRole::OnSecondaryContainer);
+            background = materialColor(QtMaterial::ColorRole::SecondaryContainer);
         } else if (text == QStringLiteral("Refunded") || text == QStringLiteral("At risk")) {
-            foreground = QColor(QStringLiteral("#b14242"));
-            background = QColor(QStringLiteral("#fde4e4"));
+            foreground = materialColor(QtMaterial::ColorRole::OnErrorContainer);
+            background = materialColor(QtMaterial::ColorRole::ErrorContainer);
         } else if (text == QStringLiteral("Trial")) {
-            foreground = QColor(QStringLiteral("#3c68a5"));
-            background = QColor(QStringLiteral("#e3edfb"));
+            foreground = materialColor(QtMaterial::ColorRole::OnTertiaryContainer);
+            background = materialColor(QtMaterial::ColorRole::TertiaryContainer);
         }
 
         QFont font = option.font;
@@ -339,12 +337,12 @@ protected:
         struct Bar {
             const char* label;
             int value;
-            const char* color;
+            QtMaterial::ColorRole role;
         };
         static const Bar bars[] = {
-            {"Search", 82, "#5359bd"},
-            {"Social", 42, "#4aa2df"},
-            {"Referral", 68, "#ef6c63"}
+            {"Search", 82, QtMaterial::ColorRole::Primary},
+            {"Social", 42, QtMaterial::ColorRole::Secondary},
+            {"Referral", 68, QtMaterial::ColorRole::Tertiary}
         };
 
         const qreal slot = plot.width() / 3.0;
@@ -366,18 +364,18 @@ protected:
                 height);
 
             painter.setPen(Qt::NoPen);
-            painter.setBrush(QColor(QString::fromLatin1(bars[i].color)));
+            painter.setBrush(materialColor(bars[i].role));
             painter.drawRoundedRect(bar, 3.0, 3.0);
 
             painter.setFont(percentFont);
-            painter.setPen(QColor(QStringLiteral("#4a4d58")));
+            painter.setPen(materialColor(QtMaterial::ColorRole::OnSurface));
             painter.drawText(
                 QRectF(centerX - 34.0, bar.top() - 24.0, 68.0, 18.0),
                 Qt::AlignCenter,
                 QStringLiteral("+%1%").arg(bars[i].value >= 60 ? 30 : 20));
 
             painter.setFont(labelFont);
-            painter.setPen(QColor(QStringLiteral("#7b808e")));
+            painter.setPen(materialColor(QtMaterial::ColorRole::OnSurfaceVariant));
             painter.drawText(
                 QRectF(centerX - 42.0, plot.bottom() + 7.0, 84.0, 18.0),
                 Qt::AlignCenter,
@@ -412,14 +410,16 @@ protected:
         QRectF box = rect();
         box.adjust(0.5, 0.5, -0.5, -0.5);
 
+        const QColor primary = materialColor(QtMaterial::ColorRole::Primary);
+        const QColor onPrimary = materialColor(QtMaterial::ColorRole::OnPrimary);
         QLinearGradient background(box.topLeft(), box.bottomRight());
-        background.setColorAt(0.0, QColor(QStringLiteral("#3346a8")));
-        background.setColorAt(1.0, QColor(QStringLiteral("#293a91")));
+        background.setColorAt(0.0, primary.lighter(108));
+        background.setColorAt(1.0, primary.darker(118));
         painter.setPen(Qt::NoPen);
         painter.setBrush(background);
         painter.drawRoundedRect(box, 10.0, 10.0);
 
-        painter.setPen(QColor(QStringLiteral("#ffffff")));
+        painter.setPen(onPrimary);
         QFont valueFont = font();
         valueFont.setPointSizeF(valueFont.pointSizeF() + 8.0);
         valueFont.setBold(true);
@@ -429,10 +429,12 @@ protected:
         QFont labelFont = font();
         labelFont.setPointSizeF(std::max<qreal>(8.0, labelFont.pointSizeF() - 1.0));
         painter.setFont(labelFont);
-        painter.setPen(QColor(255, 255, 255, 175));
+        QColor mutedOnPrimary = onPrimary;
+        mutedOnPrimary.setAlpha(175);
+        painter.setPen(mutedOnPrimary);
         painter.drawText(QRectF(20, 52, 110, 22), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("YTD Revenue"));
 
-        painter.setPen(QColor(QStringLiteral("#ffffff")));
+        painter.setPen(onPrimary);
         QFont smallValue = font();
         smallValue.setPointSizeF(smallValue.pointSizeF() + 3.0);
         smallValue.setBold(true);
@@ -440,7 +442,8 @@ protected:
         painter.drawText(QRectF(20, 91, 44, 26), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("49"));
         painter.drawText(QRectF(74, 91, 44, 26), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("09"));
 
-        painter.setPen(QColor(255, 255, 255, 150));
+        mutedOnPrimary.setAlpha(150);
+        painter.setPen(mutedOnPrimary);
         painter.setFont(labelFont);
         painter.drawText(QRectF(20, 114, 44, 18), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("Clients"));
         painter.drawText(QRectF(74, 114, 60, 18), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("Countries"));
@@ -461,7 +464,12 @@ protected:
                 path.lineTo(x, y);
             }
         }
-        painter.setPen(QPen(QColor(QStringLiteral("#ffd95a")), 3.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        painter.setPen(QPen(
+            materialColor(QtMaterial::ColorRole::TertiaryFixed),
+            3.0,
+            Qt::SolidLine,
+            Qt::RoundCap,
+            Qt::RoundJoin));
         painter.setBrush(Qt::NoBrush);
         painter.drawPath(path);
     }
@@ -477,7 +485,7 @@ QFrame* makeSectionLabel(const QString& text, QWidget* parent)
     font.setPointSizeF(std::max<qreal>(8.0, font.pointSizeF() - 1.0));
     font.setLetterSpacing(QFont::AbsoluteSpacing, 0.6);
     label->setFont(font);
-    label->setStyleSheet(QStringLiteral("color:#7f8596;"));
+    label->setObjectName(QStringLiteral("dashboardSectionLabel"));
     layout->addWidget(label);
     return host;
 }
@@ -608,8 +616,6 @@ QWidget* DashboardWindow::createSidebar()
     auto* sidebar = new QWidget(m_central);
     sidebar->setObjectName(QStringLiteral("dashboardSidebar"));
     sidebar->setFixedWidth(226);
-    sidebar->setStyleSheet(QStringLiteral(
-        "#dashboardSidebar { background:#262936; }"));
 
     auto* shell = new QVBoxLayout(sidebar);
     shell->setContentsMargins(0, 0, 0, 0);
@@ -624,15 +630,14 @@ QWidget* DashboardWindow::createSidebar()
     auto* logo = new QLabel(QStringLiteral("M3"), brand);
     logo->setAlignment(Qt::AlignCenter);
     logo->setFixedSize(36, 36);
-    logo->setStyleSheet(QStringLiteral(
-        "background:#56a8f5; color:white; border-radius:18px; font-weight:700;"));
+    logo->setObjectName(QStringLiteral("dashboardBrandLogo"));
 
     auto* brandText = new QVBoxLayout;
     brandText->setSpacing(0);
     auto* brandTitle = makeLabel(QStringLiteral("Material 3"), brand, 1.0, true);
     auto* brandSubtitle = makeLabel(QStringLiteral("Qt Widgets"), brand, -1.0, false);
-    brandTitle->setStyleSheet(QStringLiteral("color:#ffffff;"));
-    brandSubtitle->setStyleSheet(QStringLiteral("color:#8e95a8;"));
+    brandTitle->setObjectName(QStringLiteral("dashboardBrandTitle"));
+    brandSubtitle->setObjectName(QStringLiteral("dashboardBrandSubtitle"));
     brandText->addWidget(brandTitle);
     brandText->addWidget(brandSubtitle);
 
@@ -645,15 +650,10 @@ QWidget* DashboardWindow::createSidebar()
     navigationScroll->setWidgetResizable(true);
     navigationScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     navigationScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    navigationScroll->setStyleSheet(QStringLiteral(
-        "QScrollArea { background:transparent; border:0; }"
-        "QScrollArea > QWidget > QWidget { background:transparent; }"
-        "QScrollBar:vertical { background:#262936; width:6px; margin:0; }"
-        "QScrollBar::handle:vertical { background:#4b5061; border-radius:3px; min-height:32px; }"
-        "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height:0; }"));
+    navigationScroll->setObjectName(QStringLiteral("dashboardNavScroll"));
 
     auto* navigationContent = new QWidget(navigationScroll);
-    navigationContent->setStyleSheet(QStringLiteral("background:#262936;"));
+    navigationContent->setObjectName(QStringLiteral("dashboardNavContent"));
     auto* navigationLayout = new QVBoxLayout(navigationContent);
     navigationLayout->setContentsMargins(0, 0, 0, 8);
     navigationLayout->setSpacing(1);
@@ -758,21 +758,19 @@ QWidget* DashboardWindow::createSidebar()
     shell->addWidget(navigationScroll, 1);
 
     auto* profile = new QFrame(sidebar);
-    profile->setStyleSheet(QStringLiteral(
-        "QFrame { background:#20232e; border-top:1px solid #343847; }"));
+    profile->setObjectName(QStringLiteral("dashboardProfile"));
     auto* profileLayout = new QHBoxLayout(profile);
     profileLayout->setContentsMargins(14, 11, 14, 11);
     auto* avatar = new QLabel(QStringLiteral("Q"), profile);
     avatar->setAlignment(Qt::AlignCenter);
     avatar->setFixedSize(32, 32);
-    avatar->setStyleSheet(QStringLiteral(
-        "background:#4455c7; color:white; border-radius:16px; font-weight:700;"));
+    avatar->setObjectName(QStringLiteral("dashboardProfileAvatar"));
     auto* user = new QVBoxLayout;
     user->setSpacing(0);
     auto* name = makeLabel(QStringLiteral("QtMaterial Demo"), profile, -1.0, true);
     auto* role = makeLabel(QStringLiteral("Desktop showcase"), profile, -2.0, false);
-    name->setStyleSheet(QStringLiteral("color:#ffffff;"));
-    role->setStyleSheet(QStringLiteral("color:#858b9d;"));
+    name->setObjectName(QStringLiteral("dashboardProfileName"));
+    role->setObjectName(QStringLiteral("dashboardProfileRole"));
     user->addWidget(name);
     user->addWidget(role);
     profileLayout->addWidget(avatar);
@@ -859,8 +857,7 @@ QWidget* DashboardWindow::createTopBar()
     auto* avatar = new QLabel(QStringLiteral("JD"), m_topBar);
     avatar->setAlignment(Qt::AlignCenter);
     avatar->setFixedSize(32, 32);
-    avatar->setStyleSheet(QStringLiteral(
-        "background:#323645; color:white; border-radius:16px; font-weight:700; font-size:10px;"));
+    avatar->setObjectName(QStringLiteral("dashboardTopAvatar"));
     layout->addWidget(avatar);
 
     auto* account = new QToolButton(m_topBar);
@@ -1359,25 +1356,25 @@ QWidget* DashboardWindow::createQuickStatistics()
         QStringLiteral("Total Clients"),
         QStringLiteral("43"),
         QStringLiteral("+8.2%"),
-        QColor(QStringLiteral("#ef655b")),
+        QtMaterial::ColorRole::Error,
         QStringLiteral("customers")));
     m_metrics.append(createMetricCard(
         QStringLiteral("Paid Invoices"),
         QStringLiteral("€10,600"),
         QStringLiteral("+12.4%"),
-        QColor(QStringLiteral("#4898e8")),
+        QtMaterial::ColorRole::Primary,
         QStringLiteral("invoice")));
     m_metrics.append(createMetricCard(
         QStringLiteral("Total Projects"),
         QStringLiteral("73"),
         QStringLiteral("+5.1%"),
-        QColor(QStringLiteral("#505bc4")),
+        QtMaterial::ColorRole::Secondary,
         QStringLiteral("projects")));
     m_metrics.append(createMetricCard(
         QStringLiteral("Open Projects"),
         QStringLiteral("33"),
         QStringLiteral("+3.7%"),
-        QColor(QStringLiteral("#41a094")),
+        QtMaterial::ColorRole::Tertiary,
         QStringLiteral("orders")));
 
     for (const MetricWidgets& metric : m_metrics) {
@@ -1398,7 +1395,7 @@ DashboardWindow::MetricWidgets DashboardWindow::createMetricCard(
     const QString& title,
     const QString& value,
     const QString& delta,
-    const QColor& iconColor,
+    QtMaterial::ColorRole iconRole,
     const QString& iconText)
 {
     MetricWidgets metric;
@@ -1410,13 +1407,19 @@ DashboardWindow::MetricWidgets DashboardWindow::createMetricCard(
     row->setContentsMargins(11, 9, 14, 9);
     row->setSpacing(12);
 
-    auto* icon = new QLabel(iconText, metric.card);
+    auto* icon = new QLabel(metric.card);
+    icon->setObjectName(QStringLiteral("metricIcon"));
+    icon->setProperty("dashboardColorRole", static_cast<int>(iconRole));
+    icon->setProperty("dashboardIconName", iconText);
     icon->setAlignment(Qt::AlignCenter);
     icon->setFixedSize(44, 44);
+    const QColor iconColor = materialColor(iconRole);
     icon->setStyleSheet(QStringLiteral(
         "background:%1; border-radius:6px;")
         .arg(cssColor(iconColor)));
-    icon->setPixmap(dashboardIcon(iconText, Qt::white).pixmap(24, 24));
+    icon->setPixmap(dashboardIcon(
+        iconText,
+        materialColor(QtMaterial::ColorRole::OnPrimary)).pixmap(24, 24));
     row->addWidget(icon);
 
     auto* text = new QVBoxLayout;
