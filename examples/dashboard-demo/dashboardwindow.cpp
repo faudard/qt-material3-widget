@@ -754,8 +754,8 @@ QWidget* DashboardWindow::createSidebar()
     addInformational(QStringLiteral("Errors"), QStringLiteral("message"));
     addShortcut(QStringLiteral("Invoice"), QStringLiteral("invoice"), 2);
     addInformational(QStringLiteral("Maintenance"), QStringLiteral("components"));
-    addPrimaryNavigation(QStringLiteral("Pricing"), QStringLiteral("pricing"), 6);
     addPrimaryNavigation(QStringLiteral("Profile"), QStringLiteral("profile"), 5);
+    addPrimaryNavigation(QStringLiteral("Pricing"), QStringLiteral("pricing"), 6);
 
     navigationLayout->addWidget(makeSectionLabel(QStringLiteral("System"), navigationContent));
     addPrimaryNavigation(QStringLiteral("Application States"), QStringLiteral("message"), 7);
