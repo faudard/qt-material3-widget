@@ -73,6 +73,7 @@ private:
     void updateResponsiveLayout();
     void setCurrentSection(int index);
     void showOrderDetails(int row);
+    void showOrderDetailsForModel(int row, QStandardItemModel* model);
     void showMessage(const QString& text);
 
     QWidget* m_central = nullptr;
