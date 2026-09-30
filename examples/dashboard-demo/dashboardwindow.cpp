@@ -2,6 +2,7 @@
 
 #include "dashboardcharts.h"
 #include "dashboardaccountpage.h"
+#include "dashboardaccountpanel.h"
 #include "ui_dashboardwindow.h"
 
 #include <QAbstractButton>
@@ -592,6 +593,7 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     m_pages->addWidget(createPageScroll(accountPage));
 
     m_navigationDrawer = createNavigationDrawer();
+    m_accountDrawer = createAccountDrawer();
 
     m_snackbarHost = new QtMaterial::QtMaterialSnackbarHost(m_central, this);
     m_commandPalette = new QtMaterial::QtMaterialCommandPalette(this);
@@ -921,6 +923,33 @@ QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer(
     return drawer;
 }
 
+QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createAccountDrawer()
+{
+    auto* drawer = new QtMaterial::QtMaterialNavigationDrawer(m_central);
+    drawer->setObjectName(QStringLiteral("dashboardAccountDrawer"));
+    drawer->setHostWidget(m_central);
+    drawer->setEdge(QtMaterial::QtMaterialNavigationDrawer::Edge::Right);
+    drawer->setMinimumWidth(320);
+
+    auto* panel = new DashboardAccountPanel(drawer);
+    auto* layout = new QVBoxLayout(drawer);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(panel);
+
+    connect(panel, &DashboardAccountPanel::closeRequested, drawer, &QtMaterial::QtMaterialNavigationDrawer::closeDrawer);
+    connect(panel, &DashboardAccountPanel::navigateRequested, this, [this](int pageIndex) {
+        if (m_accountDrawer) {
+            m_accountDrawer->closeDrawer();
+        }
+        setCurrentSection(pageIndex);
+    });
+    connect(panel, &DashboardAccountPanel::messageRequested, this, [this](const QString& message) {
+        showMessage(message);
+    });
+
+    return drawer;
+}
+
 QWidget* DashboardWindow::createTopBar()
 {
     m_topBar = new QFrame(m_central);
@@ -1010,8 +1039,11 @@ QWidget* DashboardWindow::createTopBar()
     m_themeButton->setFocusPolicy(Qt::TabFocus);
     layout->addWidget(m_themeButton);
 
-    auto* avatar = new QLabel(QStringLiteral("JD"), m_topBar);
-    avatar->setAlignment(Qt::AlignCenter);
+    auto* avatar = new QToolButton(m_topBar);
+    avatar->setText(QStringLiteral("JD"));
+    avatar->setCursor(Qt::PointingHandCursor);
+    avatar->setToolTip(QStringLiteral("Open account"));
+    avatar->setAccessibleName(QStringLiteral("Open account"));
     avatar->setFixedSize(32, 32);
     avatar->setObjectName(QStringLiteral("dashboardTopAvatar"));
     avatar->setProperty("dashboardCompactOptional", true);
@@ -1050,9 +1082,13 @@ QWidget* DashboardWindow::createTopBar()
     connect(notify, &QAbstractButton::clicked, this, [this]() {
         showMessage(QStringLiteral("8 notifications waiting for review."));
     });
-    connect(account, &QToolButton::clicked, this, [this]() {
-        setCurrentSection(9);
-    });
+    const auto openAccountDrawer = [this]() {
+        if (m_accountDrawer) {
+            m_accountDrawer->open();
+        }
+    };
+    connect(avatar, &QToolButton::clicked, this, openAccountDrawer);
+    connect(account, &QToolButton::clicked, this, openAccountDrawer);
 
     return m_topBar;
 }
@@ -3180,8 +3216,9 @@ void DashboardWindow::applyThemeChrome()
             "QToolButton#topBarAccount { background:transparent; color:%3; border:0;"
             " padding:0 4px; font-size:12px; }"
             "QToolButton#topBarAccount:hover { color:%5; }"
-            "#dashboardTopAvatar { background:%6; color:%7; border-radius:16px;"
-            " font-weight:700; font-size:10px; }")
+            "#dashboardTopAvatar { background:%6; color:%7; border:0; border-radius:16px;"
+            " font-weight:700; font-size:10px; }"
+            "#dashboardTopAvatar:hover { background:%5; color:%6; }")
             .arg(cssColor(surface))
             .arg(cssColor(outline))
             .arg(cssColor(onSurface))
