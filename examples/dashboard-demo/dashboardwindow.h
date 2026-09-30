@@ -56,6 +56,9 @@ private:
     QWidget* createOrdersPage();
     QWidget* createCustomersPage();
     QWidget* createComponentsPage();
+    QWidget* createProfilePage();
+    QWidget* createPricingPage();
+    QWidget* createApplicationStatesPage();
     QWidget* createQuickStatistics();
     QWidget* createLowerHighlights();
     MetricWidgets createMetricCard(
