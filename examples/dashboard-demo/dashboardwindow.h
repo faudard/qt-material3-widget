@@ -19,6 +19,8 @@ class QtMaterialCard;
 class QtMaterialComboBox;
 class QtMaterialCommandPalette;
 class QtMaterialIconButton;
+class QtMaterialNavigationDrawer;
+class QtMaterialNavigationRail;
 class QtMaterialPagination;
 class QtMaterialSearchBar;
 class QtMaterialSnackbarHost;
@@ -46,6 +48,8 @@ private:
     };
 
     QWidget* createSidebar();
+    QtMaterial::QtMaterialNavigationRail* createNavigationRail();
+    QtMaterial::QtMaterialNavigationDrawer* createNavigationDrawer();
     QWidget* createTopBar();
     QWidget* createDashboardPage();
     QWidget* createAnalyticsPage();
@@ -82,6 +86,8 @@ private:
     QFrame* m_topBar = nullptr;
     QScrollArea* m_scroll = nullptr;
     QStackedWidget* m_pages = nullptr;
+    QtMaterial::QtMaterialNavigationRail* m_navigationRail = nullptr;
+    QtMaterial::QtMaterialNavigationDrawer* m_navigationDrawer = nullptr;
     QtMaterial::QtMaterialSearchBar* m_search = nullptr;
     QtMaterial::QtMaterialTable* m_orders = nullptr;
     QtMaterial::QtMaterialTable* m_ordersPage = nullptr;
@@ -105,7 +111,10 @@ private:
     QtMaterial::QtMaterialComboBox* m_yearCombo = nullptr;
     QtMaterial::QtMaterialComboBox* m_monthCombo = nullptr;
     QtMaterial::QtMaterialIconButton* m_themeButton = nullptr;
+    QtMaterial::QtMaterialIconButton* m_menuButton = nullptr;
     QtMaterial::QtMaterialPagination* m_ordersPagination = nullptr;
+    QString m_orderStatusFilter = QStringLiteral("All");
+    int m_chartMetricIndex = 0;
     bool m_compactMetrics = false;
     bool m_stackedCharts = false;
 };
