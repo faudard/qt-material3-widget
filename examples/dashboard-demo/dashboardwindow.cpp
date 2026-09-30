@@ -754,10 +754,11 @@ QWidget* DashboardWindow::createSidebar()
     addInformational(QStringLiteral("Errors"), QStringLiteral("message"));
     addShortcut(QStringLiteral("Invoice"), QStringLiteral("invoice"), 2);
     addInformational(QStringLiteral("Maintenance"), QStringLiteral("components"));
-    addInformational(QStringLiteral("Pricing"), QStringLiteral("pricing"));
-    addShortcut(QStringLiteral("Profile"), QStringLiteral("profile"), 3);
+    addPrimaryNavigation(QStringLiteral("Pricing"), QStringLiteral("pricing"), 6);
+    addPrimaryNavigation(QStringLiteral("Profile"), QStringLiteral("profile"), 5);
 
     navigationLayout->addWidget(makeSectionLabel(QStringLiteral("System"), navigationContent));
+    addPrimaryNavigation(QStringLiteral("Application States"), QStringLiteral("message"), 7);
     auto* themeStudio = makeNavButton(
         QStringLiteral("Theme Studio"),
         QStringLiteral("components"),
@@ -818,7 +819,10 @@ QtMaterial::QtMaterialNavigationRail* DashboardWindow::createNavigationRail()
         {"Analytics", "analytics"},
         {"Orders", "orders"},
         {"Customers", "customers"},
-        {"Components", "components"}
+        {"Components", "components"},
+        {"Profile", "profile"},
+        {"Pricing", "pricing"},
+        {"States", "message"}
     };
 
     for (const auto& destination : destinations) {
@@ -878,10 +882,13 @@ QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer(
         {"Analytics", "analytics"},
         {"Orders", "orders"},
         {"Customers", "customers"},
-        {"Components", "components"}
+        {"Components", "components"},
+        {"Profile", "profile"},
+        {"Pricing", "pricing"},
+        {"States", "message"}
     };
 
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 8; ++i) {
         auto* button = makeNavButton(
             QString::fromLatin1(destinations[i].label),
             QString::fromLatin1(destinations[i].icon),
@@ -2546,6 +2553,9 @@ void DashboardWindow::populateCommandPalette()
     model->appendRow(new QStandardItem(QStringLiteral("Open orders")));
     model->appendRow(new QStandardItem(QStringLiteral("Open customers")));
     model->appendRow(new QStandardItem(QStringLiteral("Open components")));
+    model->appendRow(new QStandardItem(QStringLiteral("Open profile")));
+    model->appendRow(new QStandardItem(QStringLiteral("Open pricing")));
+    model->appendRow(new QStandardItem(QStringLiteral("Open application states")));
     m_commandPalette->setSourceModel(model);
 }
 
@@ -3088,7 +3098,14 @@ void DashboardWindow::setCurrentSection(int index)
     }
 
     static const char* titles[] = {
-        "Dashboard", "Analytics", "Orders", "Customers", "Components"
+        "Dashboard",
+        "Analytics",
+        "Orders",
+        "Customers",
+        "Components",
+        "Profile",
+        "Pricing",
+        "Application States"
     };
     const QString title = QString::fromLatin1(titles[index]);
 
@@ -3105,7 +3122,10 @@ void DashboardWindow::setCurrentSection(int index)
             "Search analytics...",
             "Search orders...",
             "Search customers...",
-            "Search components..."
+            "Search components...",
+            "Search profile...",
+            "Search pricing...",
+            "Search application states..."
         };
         m_search->setPlaceholderText(QString::fromLatin1(placeholders[index]));
     }
