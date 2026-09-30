@@ -209,11 +209,13 @@ void paintDashboardGlyph(
             painter.drawLine(a, b);
         }
     } else if (name == QStringLiteral("moon")) {
-        QPainterPath moon;
-        moon.moveTo(r.right() - 3.0, r.top() + 3.0);
-        moon.cubicTo(r.left() + 6.0, r.top() + 2.0, r.left() + 3.0, r.bottom() - 5.0, c.x(), r.bottom() - 2.0);
-        moon.cubicTo(r.right() - 1.0, r.bottom() - 2.0, r.right() + 1.0, r.top() + 8.0, r.right() - 3.0, r.top() + 3.0);
-        painter.drawPath(moon);
+        QPainterPath outer;
+        outer.addEllipse(c, 7.0, 7.0);
+        QPainterPath inner;
+        inner.addEllipse(c + QPointF(3.0, -2.0), 6.3, 6.3);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(color);
+        painter.drawPath(outer.subtracted(inner));
     } else if (name == QStringLiteral("chevron")) {
         painter.drawLine(QPointF(c.x() - 3.0, c.y() - 5.0), QPointF(c.x() + 2.0, c.y()));
         painter.drawLine(QPointF(c.x() + 2.0, c.y()), QPointF(c.x() - 3.0, c.y() + 5.0));
@@ -2604,7 +2606,7 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
 QtMaterial::QtMaterialCard* DashboardWindow::createEarningsCard()
 {
     auto* card = new QtMaterial::QtMaterialCard(m_contentHost);
-    card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    card->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
     card->setMinimumHeight(342);
 
     auto* layout = new QVBoxLayout(card);
@@ -2638,7 +2640,7 @@ QtMaterial::QtMaterialCard* DashboardWindow::createEarningsCard()
         row->addWidget(dot);
         row->addWidget(makeLabel(QString::fromLatin1(item.label), card, -1.0, false));
         row->addStretch(1);
-        row->addWidget(makeLabel(QString::fromLatin1(item.value), card, -1.0, false));
+        row->addWidget(makeLabel(QString::fromUtf8(item.value), card, -1.0, false));
         layout->addLayout(row);
     }
 
@@ -2654,7 +2656,7 @@ QWidget* DashboardWindow::createLowerHighlights()
     grid->setVerticalSpacing(18);
 
     auto* social = new QtMaterial::QtMaterialCard(host);
-    social->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    social->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
     social->setMinimumHeight(250);
     auto* socialLayout = new QVBoxLayout(social);
     socialLayout->setContentsMargins(18, 14, 18, 14);
@@ -2670,7 +2672,7 @@ QWidget* DashboardWindow::createLowerHighlights()
     socialLayout->addWidget(bars, 1);
 
     auto* tasks = new QtMaterial::QtMaterialCard(host);
-    tasks->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    tasks->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
     tasks->setMinimumHeight(250);
     auto* tasksLayout = new QVBoxLayout(tasks);
     tasksLayout->setContentsMargins(18, 14, 18, 14);
@@ -2805,7 +2807,7 @@ QWidget* DashboardWindow::createLowerHighlights()
 QtMaterial::QtMaterialCard* DashboardWindow::createOrdersCard()
 {
     auto* card = new QtMaterial::QtMaterialCard(m_contentHost);
-    card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    card->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
     card->setMinimumHeight(330);
 
     auto* layout = new QVBoxLayout(card);
