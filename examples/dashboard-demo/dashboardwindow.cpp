@@ -46,11 +46,13 @@
 #include "qtmaterial/widgets/inputs/qtmaterialsearchbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
+#include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
 #include "qtmaterial/widgets/selection/qtmaterialchip.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialdialog.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h"
 
 namespace {
@@ -95,7 +97,12 @@ void paintDashboardGlyph(
     const QRectF r = bounds.adjusted(3.0, 3.0, -3.0, -3.0);
     const QPointF c = r.center();
 
-    if (name == QStringLiteral("dashboard")) {
+    if (name == QStringLiteral("menu")) {
+        for (int i = 0; i < 3; ++i) {
+            const qreal y = r.top() + 4.0 + i * 6.0;
+            painter.drawLine(QPointF(r.left() + 1.0, y), QPointF(r.right() - 1.0, y));
+        }
+    } else if (name == QStringLiteral("dashboard")) {
         painter.setBrush(color);
         const qreal w = (r.width() - 4.0) / 2.0;
         const qreal h = (r.height() - 4.0) / 2.0;
