@@ -33,6 +33,7 @@
 #include <QVBoxLayout>
 
 #include <algorithm>
+#include <cmath>
 
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
@@ -424,7 +425,7 @@ QWidget* makePageShell(
 
     auto* titleBlock = new QVBoxLayout;
     titleBlock->setSpacing(2);
-    titleBlock->addWidget(makeLabel(title, page, 7.0, true));
+    titleBlock->addWidget(makeLabel(title, page, 5.0, true));
     auto* subtitleLabel = makeLabel(subtitle, page, -1.0, false);
     subtitleLabel->setObjectName(QStringLiteral("pageSubtitle"));
     titleBlock->addWidget(subtitleLabel);
@@ -539,9 +540,9 @@ QWidget* DashboardWindow::createSidebar()
     sidebar->setStyleSheet(QStringLiteral(
         "#dashboardSidebar { background:#262936; }"));
 
-    auto* layout = new QVBoxLayout(sidebar);
-    layout->setContentsMargins(0, 0, 0, 12);
-    layout->setSpacing(2);
+    auto* shell = new QVBoxLayout(sidebar);
+    shell->setContentsMargins(0, 0, 0, 0);
+    shell->setSpacing(0);
 
     auto* brand = new QWidget(sidebar);
     brand->setFixedHeight(70);
@@ -566,89 +567,135 @@ QWidget* DashboardWindow::createSidebar()
 
     brandLayout->addWidget(logo);
     brandLayout->addLayout(brandText, 1);
-    layout->addWidget(brand);
+    shell->addWidget(brand);
 
-    layout->addWidget(makeSectionLabel(QStringLiteral("Application"), sidebar));
+    auto* navigationScroll = new QScrollArea(sidebar);
+    navigationScroll->setFrameShape(QFrame::NoFrame);
+    navigationScroll->setWidgetResizable(true);
+    navigationScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    navigationScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    navigationScroll->setStyleSheet(QStringLiteral(
+        "QScrollArea { background:transparent; border:0; }"
+        "QScrollArea > QWidget > QWidget { background:transparent; }"
+        "QScrollBar:vertical { background:#262936; width:6px; margin:0; }"
+        "QScrollBar::handle:vertical { background:#4b5061; border-radius:3px; min-height:32px; }"
+        "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height:0; }"));
 
-    auto* group = new QButtonGroup(sidebar);
+    auto* navigationContent = new QWidget(navigationScroll);
+    navigationContent->setStyleSheet(QStringLiteral("background:#262936;"));
+    auto* navigationLayout = new QVBoxLayout(navigationContent);
+    navigationLayout->setContentsMargins(0, 0, 0, 8);
+    navigationLayout->setSpacing(1);
+
+    auto* group = new QButtonGroup(navigationContent);
     group->setExclusive(true);
 
     const auto addPrimaryNavigation =
-        [this, sidebar, layout, group](const QString& label, const QString& glyph, int index) {
-            auto* button = makeNavButton(label, glyph, sidebar);
+        [this, navigationContent, navigationLayout, group](
+            const QString& label,
+            const QString& iconName,
+            int index) {
+            auto* button = makeNavButton(label, iconName, navigationContent);
             group->addButton(button, index);
             m_navButtons.append(button);
-            layout->addWidget(button);
+            navigationLayout->addWidget(button);
             connect(button, &QToolButton::clicked, this, [this, index]() {
                 setCurrentSection(index);
             });
             return button;
         };
 
+    const auto addShortcut =
+        [this, navigationContent, navigationLayout](
+            const QString& label,
+            const QString& iconName,
+            int targetIndex) {
+            auto* button = makeNavButton(label, iconName, navigationContent);
+            button->setCheckable(false);
+            navigationLayout->addWidget(button);
+            connect(button, &QToolButton::clicked, this, [this, targetIndex]() {
+                setCurrentSection(targetIndex);
+            });
+            return button;
+        };
+
+    const auto addInformational =
+        [this, navigationContent, navigationLayout](
+            const QString& label,
+            const QString& iconName) {
+            auto* button = makeNavButton(label, iconName, navigationContent);
+            button->setCheckable(false);
+            navigationLayout->addWidget(button);
+            connect(button, &QToolButton::clicked, this, [this, label]() {
+                showMessage(QStringLiteral("%1 is represented as navigation content in this showcase.").arg(label));
+            });
+            return button;
+        };
+
+    navigationLayout->addWidget(makeSectionLabel(QStringLiteral("Application"), navigationContent));
     addPrimaryNavigation(QStringLiteral("Dashboard"), QStringLiteral("dashboard"), 0);
     addPrimaryNavigation(QStringLiteral("Analytics"), QStringLiteral("analytics"), 1);
     addPrimaryNavigation(QStringLiteral("Orders"), QStringLiteral("orders"), 2);
     addPrimaryNavigation(QStringLiteral("Customers"), QStringLiteral("customers"), 3);
+    addShortcut(QStringLiteral("Metrics"), QStringLiteral("analytics"), 1);
+    addShortcut(QStringLiteral("Widgets"), QStringLiteral("components"), 4);
+    addShortcut(QStringLiteral("Apps"), QStringLiteral("components"), 4);
+    addShortcut(QStringLiteral("Ecommerce"), QStringLiteral("orders"), 2);
     m_navButtons.first()->setChecked(true);
 
-    layout->addWidget(makeSectionLabel(QStringLiteral("MUI Components"), sidebar));
+    navigationLayout->addWidget(makeSectionLabel(QStringLiteral("MUI Components"), navigationContent));
     addPrimaryNavigation(QStringLiteral("Components"), QStringLiteral("components"), 4);
+    addShortcut(QStringLiteral("   Inputs"), QStringLiteral("input"), 4);
+    addShortcut(QStringLiteral("   Navigations"), QStringLiteral("navigation"), 4);
+    addShortcut(QStringLiteral("   Surfaces"), QStringLiteral("surfaces"), 4);
+    addShortcut(QStringLiteral("   Feedback"), QStringLiteral("message"), 4);
+    addShortcut(QStringLiteral("   Data Display"), QStringLiteral("data"), 4);
+    addShortcut(QStringLiteral("   Util"), QStringLiteral("components"), 4);
 
-    const QStringList componentLinks = {
-        QStringLiteral("Inputs"),
-        QStringLiteral("Navigations"),
-        QStringLiteral("Surfaces"),
-        QStringLiteral("Data display")
-    };
-    for (const QString& label : componentLinks) {
-        QString iconName = QStringLiteral("components");
-        if (label == QStringLiteral("Inputs")) {
-            iconName = QStringLiteral("input");
-        } else if (label == QStringLiteral("Navigations")) {
-            iconName = QStringLiteral("navigation");
-        } else if (label == QStringLiteral("Surfaces")) {
-            iconName = QStringLiteral("surfaces");
-        } else if (label == QStringLiteral("Data display")) {
-            iconName = QStringLiteral("data");
-        }
-        auto* button = makeNavButton(QStringLiteral("   ") + label, iconName, sidebar);
-        button->setCheckable(false);
-        layout->addWidget(button);
-        connect(button, &QToolButton::clicked, this, [this]() {
-            setCurrentSection(4);
-        });
-    }
+    navigationLayout->addWidget(makeSectionLabel(QStringLiteral("Pages"), navigationContent));
+    addInformational(QStringLiteral("Authentication"), QStringLiteral("profile"));
+    addInformational(QStringLiteral("Coming Soon"), QStringLiteral("analytics"));
+    addInformational(QStringLiteral("Errors"), QStringLiteral("message"));
+    addShortcut(QStringLiteral("Invoice"), QStringLiteral("invoice"), 2);
+    addInformational(QStringLiteral("Maintenance"), QStringLiteral("components"));
+    addInformational(QStringLiteral("Pricing"), QStringLiteral("pricing"));
+    addShortcut(QStringLiteral("Profile"), QStringLiteral("profile"), 3);
 
-    layout->addWidget(makeSectionLabel(QStringLiteral("Pages"), sidebar));
-    const QStringList pageLinks = {
-        QStringLiteral("Pricing"),
-        QStringLiteral("Profile")
-    };
-    for (const QString& label : pageLinks) {
-        const QString iconName =
-            label == QStringLiteral("Pricing")
-                ? QStringLiteral("pricing")
-                : QStringLiteral("profile");
-        auto* button = makeNavButton(label, iconName, sidebar);
-        button->setCheckable(false);
-        layout->addWidget(button);
-        connect(button, &QToolButton::clicked, this, [this, label]() {
-            showMessage(QStringLiteral("%1 page is represented as navigation content in this showcase.").arg(label));
-        });
-    }
+    navigationLayout->addWidget(makeSectionLabel(QStringLiteral("System"), navigationContent));
+    auto* themeStudio = makeNavButton(
+        QStringLiteral("Theme Studio"),
+        QStringLiteral("components"),
+        navigationContent);
+    themeStudio->setCheckable(false);
+    navigationLayout->addWidget(themeStudio);
+    connect(themeStudio, &QToolButton::clicked, this, [this]() {
+        showMessage(QStringLiteral("Theme Studio is available as a separate example."));
+    });
 
-    layout->addStretch(1);
+    auto* settings = makeNavButton(
+        QStringLiteral("Settings"),
+        QStringLiteral("components"),
+        navigationContent);
+    settings->setCheckable(false);
+    navigationLayout->addWidget(settings);
+    connect(settings, &QToolButton::clicked, this, [this]() {
+        showMessage(QStringLiteral("Dashboard preferences use the live Material theme controls."));
+    });
+
+    navigationLayout->addStretch(1);
+    navigationScroll->setWidget(navigationContent);
+    shell->addWidget(navigationScroll, 1);
 
     auto* profile = new QFrame(sidebar);
     profile->setStyleSheet(QStringLiteral(
         "QFrame { background:#20232e; border-top:1px solid #343847; }"));
     auto* profileLayout = new QHBoxLayout(profile);
-    profileLayout->setContentsMargins(16, 13, 16, 13);
+    profileLayout->setContentsMargins(14, 11, 14, 11);
     auto* avatar = new QLabel(QStringLiteral("Q"), profile);
     avatar->setAlignment(Qt::AlignCenter);
-    avatar->setFixedSize(34, 34);
+    avatar->setFixedSize(32, 32);
     avatar->setStyleSheet(QStringLiteral(
-        "background:#4455c7; color:white; border-radius:17px; font-weight:700;"));
+        "background:#4455c7; color:white; border-radius:16px; font-weight:700;"));
     auto* user = new QVBoxLayout;
     user->setSpacing(0);
     auto* name = makeLabel(QStringLiteral("QtMaterial Demo"), profile, -1.0, true);
@@ -659,7 +706,7 @@ QWidget* DashboardWindow::createSidebar()
     user->addWidget(role);
     profileLayout->addWidget(avatar);
     profileLayout->addLayout(user, 1);
-    layout->addWidget(profile);
+    shell->addWidget(profile);
 
     return sidebar;
 }
@@ -680,7 +727,7 @@ QWidget* DashboardWindow::createTopBar()
     layout->addStretch(1);
 
     m_search = new QtMaterial::QtMaterialSearchBar(m_topBar);
-    m_search->setPlaceholderText(QStringLiteral("Search orders..."));
+    m_search->setPlaceholderText(QStringLiteral("Search..."));
     m_search->setClearButtonVisible(true);
     m_search->setFixedWidth(240);
     m_search->setFixedHeight(40);
@@ -1811,10 +1858,14 @@ void DashboardWindow::setCurrentSection(int index)
         m_breadcrumbLabel->setText(QStringLiteral("Application  /  %1").arg(title));
     }
     if (m_search) {
-        m_search->setPlaceholderText(
-            index == 2
-                ? QStringLiteral("Search orders...")
-                : QStringLiteral("Search dashboard..."));
+        static const char* placeholders[] = {
+            "Search dashboard...",
+            "Search analytics...",
+            "Search orders...",
+            "Search customers...",
+            "Search components..."
+        };
+        m_search->setPlaceholderText(QString::fromLatin1(placeholders[index]));
     }
 }
 
