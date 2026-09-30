@@ -10,12 +10,15 @@ class QStandardItemModel;
 class QScrollArea;
 class QFrame;
 class QToolButton;
-class QComboBox;
 class QStackedWidget;
 
 namespace QtMaterial {
+class QtMaterialBreadcrumb;
 class QtMaterialCard;
+class QtMaterialComboBox;
 class QtMaterialCommandPalette;
+class QtMaterialIconButton;
+class QtMaterialPagination;
 class QtMaterialSearchBar;
 class QtMaterialSnackbarHost;
 class QtMaterialTable;
@@ -96,10 +99,11 @@ private:
     DonutChartWidget* m_donutChart = nullptr;
     QLabel* m_pageTitle = nullptr;
     QLabel* m_pageSubtitle = nullptr;
-    QLabel* m_breadcrumbLabel = nullptr;
-    QComboBox* m_yearCombo = nullptr;
-    QComboBox* m_monthCombo = nullptr;
-    QToolButton* m_themeButton = nullptr;
+    QtMaterial::QtMaterialBreadcrumb* m_breadcrumb = nullptr;
+    QtMaterial::QtMaterialComboBox* m_yearCombo = nullptr;
+    QtMaterial::QtMaterialComboBox* m_monthCombo = nullptr;
+    QtMaterial::QtMaterialIconButton* m_themeButton = nullptr;
+    QtMaterial::QtMaterialPagination* m_ordersPagination = nullptr;
     bool m_compactMetrics = false;
     bool m_stackedCharts = false;
 };
