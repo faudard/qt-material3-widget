@@ -5,6 +5,7 @@ if(COMMAND qt_add_executable)
         main.cpp
         dashboardwindow.cpp
         dashboardwindow.h
+        dashboardwindow.ui
         dashboardcharts.cpp
         dashboardcharts.h
     )
@@ -13,6 +14,7 @@ else()
         main.cpp
         dashboardwindow.cpp
         dashboardwindow.h
+        dashboardwindow.ui
         dashboardcharts.cpp
         dashboardcharts.h
     )
