@@ -9,6 +9,7 @@
 #include <QComboBox>
 #include <QFont>
 #include <QFrame>
+#include <QGridLayout>
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QKeySequence>
@@ -24,6 +25,7 @@
 #include <QShortcut>
 #include <QStandardItem>
 #include <QStandardItemModel>
+#include <QStackedWidget>
 #include <QStyle>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -96,11 +98,11 @@ QToolButton* makeNavButton(
     button->setCheckable(true);
     button->setAutoExclusive(true);
     button->setCursor(Qt::PointingHandCursor);
-    button->setMinimumHeight(42);
+    button->setMinimumHeight(34);
     button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     button->setStyleSheet(QStringLiteral(
         "QToolButton { color:#c7cbd7; background:transparent; border:0;"
-        " text-align:left; padding:0 16px; border-radius:8px; font-size:13px; }"
+        " text-align:left; padding:0 16px; border-radius:7px; font-size:12px; }"
         "QToolButton:hover { background:#323543; color:#ffffff; }"
         "QToolButton:checked { background:#343847; color:#ffffff; font-weight:600;"
         " border-left:3px solid #67b7ff; padding-left:13px; }"));
@@ -198,7 +200,7 @@ QFrame* makeSectionLabel(const QString& text, QWidget* parent)
 {
     auto* host = new QFrame(parent);
     auto* layout = new QHBoxLayout(host);
-    layout->setContentsMargins(16, 11, 16, 4);
+    layout->setContentsMargins(16, 9, 16, 3);
     auto* label = new QLabel(text.toUpper(), host);
     QFont font = label->font();
     font.setPointSizeF(std::max<qreal>(8.0, font.pointSizeF() - 1.0));
@@ -207,6 +209,32 @@ QFrame* makeSectionLabel(const QString& text, QWidget* parent)
     label->setStyleSheet(QStringLiteral("color:#7f8596;"));
     layout->addWidget(label);
     return host;
+}
+
+QWidget* makePageShell(
+    const QString& title,
+    const QString& subtitle,
+    QVBoxLayout** outLayout)
+{
+    auto* page = new QWidget;
+    page->setObjectName(QStringLiteral("dashboardContent"));
+
+    auto* layout = new QVBoxLayout(page);
+    layout->setContentsMargins(26, 22, 26, 32);
+    layout->setSpacing(18);
+
+    auto* titleBlock = new QVBoxLayout;
+    titleBlock->setSpacing(2);
+    titleBlock->addWidget(makeLabel(title, page, 7.0, true));
+    auto* subtitleLabel = makeLabel(subtitle, page, -1.0, false);
+    subtitleLabel->setObjectName(QStringLiteral("pageSubtitle"));
+    titleBlock->addWidget(subtitleLabel);
+    layout->addLayout(titleBlock);
+
+    if (outLayout) {
+        *outLayout = layout;
+    }
+    return page;
 }
 
 } // namespace
@@ -236,13 +264,25 @@ DashboardWindow::DashboardWindow(QWidget* parent)
 
     rightLayout->addWidget(createTopBar());
 
-    m_scroll = new QScrollArea(right);
-    m_scroll->setWidgetResizable(true);
-    m_scroll->setFrameShape(QFrame::NoFrame);
-    m_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_pages = new QStackedWidget(right);
+
+    auto createPageScroll = [right](QWidget* page) {
+        auto* scroll = new QScrollArea(right);
+        scroll->setWidgetResizable(true);
+        scroll->setFrameShape(QFrame::NoFrame);
+        scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        scroll->setWidget(page);
+        return scroll;
+    };
+
     m_contentHost = createDashboardPage();
-    m_scroll->setWidget(m_contentHost);
-    rightLayout->addWidget(m_scroll, 1);
+    m_scroll = createPageScroll(m_contentHost);
+    m_pages->addWidget(m_scroll);
+    m_pages->addWidget(createPageScroll(createAnalyticsPage()));
+    m_pages->addWidget(createPageScroll(createOrdersPage()));
+    m_pages->addWidget(createPageScroll(createCustomersPage()));
+    m_pages->addWidget(createPageScroll(createComponentsPage()));
+    rightLayout->addWidget(m_pages, 1);
 
     shell->addWidget(right, 1);
     setCentralWidget(m_central);
@@ -330,45 +370,58 @@ QWidget* DashboardWindow::createSidebar()
 
     layout->addWidget(makeSectionLabel(QStringLiteral("Application"), sidebar));
 
-    struct NavItem {
-        const char* label;
-        const char* glyph;
-    };
-    static const NavItem mainItems[] = {
-        {"Dashboard", "D"},
-        {"Analytics", "A"},
-        {"Orders", "O"},
-        {"Customers", "C"},
-        {"Components", "W"}
-    };
-
     auto* group = new QButtonGroup(sidebar);
     group->setExclusive(true);
-    for (int i = 0; i < 5; ++i) {
-        auto* button = makeNavButton(
-            QString::fromLatin1(mainItems[i].label),
-            QString::fromLatin1(mainItems[i].glyph),
-            sidebar);
-        group->addButton(button, i);
-        m_navButtons.append(button);
-        layout->addWidget(button);
-        connect(button, &QToolButton::clicked, this, [this, i]() { setCurrentSection(i); });
-    }
+
+    const auto addPrimaryNavigation =
+        [this, sidebar, layout, group](const QString& label, const QString& glyph, int index) {
+            auto* button = makeNavButton(label, glyph, sidebar);
+            group->addButton(button, index);
+            m_navButtons.append(button);
+            layout->addWidget(button);
+            connect(button, &QToolButton::clicked, this, [this, index]() {
+                setCurrentSection(index);
+            });
+            return button;
+        };
+
+    addPrimaryNavigation(QStringLiteral("Dashboard"), QStringLiteral("D"), 0);
+    addPrimaryNavigation(QStringLiteral("Analytics"), QStringLiteral("A"), 1);
+    addPrimaryNavigation(QStringLiteral("Orders"), QStringLiteral("O"), 2);
+    addPrimaryNavigation(QStringLiteral("Customers"), QStringLiteral("C"), 3);
     m_navButtons.first()->setChecked(true);
 
-    layout->addWidget(makeSectionLabel(QStringLiteral("System"), sidebar));
+    layout->addWidget(makeSectionLabel(QStringLiteral("MUI Components"), sidebar));
+    addPrimaryNavigation(QStringLiteral("Components"), QStringLiteral("W"), 4);
 
-    auto* themeStudio = makeNavButton(QStringLiteral("Theme studio"), QStringLiteral("T"), sidebar);
-    themeStudio->setCheckable(false);
-    layout->addWidget(themeStudio);
-    connect(themeStudio, &QToolButton::clicked, this, [this]() {
-        showMessage(QStringLiteral("Theme Studio is available as a separate example."));
-    });
+    const QStringList componentLinks = {
+        QStringLiteral("Inputs"),
+        QStringLiteral("Navigations"),
+        QStringLiteral("Surfaces"),
+        QStringLiteral("Data display")
+    };
+    for (const QString& label : componentLinks) {
+        auto* button = makeNavButton(QStringLiteral("   ") + label, QStringLiteral("›"), sidebar);
+        button->setCheckable(false);
+        layout->addWidget(button);
+        connect(button, &QToolButton::clicked, this, [this]() {
+            setCurrentSection(4);
+        });
+    }
 
-    auto* settings = makeNavButton(QStringLiteral("Settings"), QStringLiteral("S"), sidebar);
-    settings->setCheckable(false);
-    layout->addWidget(settings);
-    connect(settings, &QToolButton::clicked, this, [this]() { setCurrentSection(4); });
+    layout->addWidget(makeSectionLabel(QStringLiteral("Pages"), sidebar));
+    const QStringList pageLinks = {
+        QStringLiteral("Pricing"),
+        QStringLiteral("Profile")
+    };
+    for (const QString& label : pageLinks) {
+        auto* button = makeNavButton(label, QStringLiteral("•"), sidebar);
+        button->setCheckable(false);
+        layout->addWidget(button);
+        connect(button, &QToolButton::clicked, this, [this, label]() {
+            showMessage(QStringLiteral("%1 page is represented as navigation content in this showcase.").arg(label));
+        });
+    }
 
     layout->addStretch(1);
 
@@ -407,9 +460,9 @@ QWidget* DashboardWindow::createTopBar()
     layout->setContentsMargins(22, 10, 18, 10);
     layout->setSpacing(10);
 
-    auto* breadcrumb = makeLabel(QStringLiteral("Dashboard  /  Analytics"), m_topBar, -1.0, false);
-    breadcrumb->setObjectName(QStringLiteral("dashboardBreadcrumb"));
-    layout->addWidget(breadcrumb);
+    m_breadcrumbLabel = makeLabel(QStringLiteral("Application  /  Dashboard"), m_topBar, -1.0, false);
+    m_breadcrumbLabel->setObjectName(QStringLiteral("dashboardBreadcrumb"));
+    layout->addWidget(m_breadcrumbLabel);
     layout->addStretch(1);
 
     m_search = new QtMaterial::QtMaterialSearchBar(m_topBar);
@@ -537,6 +590,387 @@ QWidget* DashboardWindow::createDashboardPage()
     connect(m_yearCombo, &QComboBox::currentTextChanged, this, [this](const QString&) { applyPeriod(); });
     connect(m_monthCombo, &QComboBox::currentTextChanged, this, [this](const QString&) { applyPeriod(); });
 
+    return page;
+}
+
+
+QWidget* DashboardWindow::createAnalyticsPage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Analytics"),
+        QStringLiteral("Monitor acquisition, engagement and conversion across the product."),
+        &layout);
+
+    auto* metricsHost = new QWidget(page);
+    auto* metrics = new QGridLayout(metricsHost);
+    metrics->setContentsMargins(0, 0, 0, 0);
+    metrics->setHorizontalSpacing(14);
+    metrics->setVerticalSpacing(14);
+
+    const auto addStat = [page, metrics](
+        int column,
+        const QString& title,
+        const QString& value,
+        const QString& note) {
+        auto* card = new QtMaterial::QtMaterialCard(page);
+        card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+        card->setMinimumHeight(116);
+        auto* cardLayout = new QVBoxLayout(card);
+        cardLayout->setContentsMargins(16, 14, 16, 14);
+        cardLayout->setSpacing(3);
+        auto* titleLabel = makeLabel(title, card, -1.0, false);
+        titleLabel->setObjectName(QStringLiteral("metricTitle"));
+        cardLayout->addWidget(titleLabel);
+        cardLayout->addWidget(makeLabel(value, card, 6.0, true));
+        auto* noteLabel = makeLabel(note, card, -2.0, false);
+        noteLabel->setStyleSheet(QStringLiteral("color:#3c9a63;"));
+        cardLayout->addWidget(noteLabel);
+        metrics->addWidget(card, 0, column);
+    };
+
+    addStat(0, QStringLiteral("Sessions"), QStringLiteral("24.8K"), QStringLiteral("+18.2% this month"));
+    addStat(1, QStringLiteral("Page views"), QStringLiteral("87.4K"), QStringLiteral("+11.6% this month"));
+    addStat(2, QStringLiteral("Conversion"), QStringLiteral("4.82%"), QStringLiteral("+0.7 pts"));
+    addStat(3, QStringLiteral("Avg. session"), QStringLiteral("4m 12s"), QStringLiteral("+24 sec"));
+    layout->addWidget(metricsHost);
+
+    auto* analyticsGridHost = new QWidget(page);
+    auto* analyticsGrid = new QGridLayout(analyticsGridHost);
+    analyticsGrid->setContentsMargins(0, 0, 0, 0);
+    analyticsGrid->setHorizontalSpacing(18);
+    analyticsGrid->setVerticalSpacing(18);
+
+    auto* trendCard = new QtMaterial::QtMaterialCard(page);
+    trendCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    trendCard->setMinimumHeight(350);
+    auto* trendLayout = new QVBoxLayout(trendCard);
+    trendLayout->setContentsMargins(18, 16, 18, 14);
+    trendLayout->addWidget(makeLabel(QStringLiteral("Audience trend"), trendCard, 2.0, false));
+    trendLayout->addWidget(makeLabel(
+        QStringLiteral("Unique visitors by month"),
+        trendCard,
+        -1.0,
+        false));
+    auto* analyticsChart = new LineChartWidget(trendCard);
+    analyticsChart->setAccentColor(QColor(QStringLiteral("#4d91e6")));
+    analyticsChart->setValues({56, 72, 68, 84, 91, 88, 106, 119, 112, 136, 128, 149});
+    trendLayout->addWidget(analyticsChart, 1);
+    analyticsGrid->addWidget(trendCard, 0, 0, 1, 2);
+
+    auto* channelsCard = new QtMaterial::QtMaterialCard(page);
+    channelsCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    channelsCard->setMinimumHeight(350);
+    auto* channelsLayout = new QVBoxLayout(channelsCard);
+    channelsLayout->setContentsMargins(18, 16, 18, 16);
+    channelsLayout->addWidget(makeLabel(QStringLiteral("Acquisition channels"), channelsCard, 2.0, false));
+
+    const struct {
+        const char* label;
+        int value;
+        const char* percent;
+        const char* color;
+    } channels[] = {
+        {"Organic search", 84, "42%", "#5359bd"},
+        {"Direct", 62, "31%", "#4aa2df"},
+        {"Social", 36, "18%", "#ef6c63"},
+        {"Referral", 18, "9%", "#45a38c"}
+    };
+
+    for (const auto& channel : channels) {
+        auto* row = new QHBoxLayout;
+        row->addWidget(makeLabel(QString::fromLatin1(channel.label), channelsCard, -1.0, false));
+        auto* progress = new QProgressBar(channelsCard);
+        progress->setRange(0, 100);
+        progress->setValue(channel.value);
+        progress->setTextVisible(false);
+        progress->setFixedHeight(9);
+        progress->setStyleSheet(QStringLiteral(
+            "QProgressBar { background:#e8eaf0; border:0; border-radius:4px; }"
+            "QProgressBar::chunk { background:%1; border-radius:4px; }")
+            .arg(QString::fromLatin1(channel.color)));
+        row->addWidget(progress, 1);
+        row->addWidget(makeLabel(QString::fromLatin1(channel.percent), channelsCard, -1.0, true));
+        channelsLayout->addLayout(row);
+    }
+    channelsLayout->addStretch(1);
+    analyticsGrid->addWidget(channelsCard, 0, 2);
+    analyticsGrid->setColumnStretch(0, 1);
+    analyticsGrid->setColumnStretch(1, 1);
+    analyticsGrid->setColumnStretch(2, 1);
+    layout->addWidget(analyticsGridHost);
+    layout->addStretch(1);
+    return page;
+}
+
+QWidget* DashboardWindow::createOrdersPage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Orders"),
+        QStringLiteral("Manage recent purchases, payment status and fulfilment."),
+        &layout);
+
+    auto* filters = new QHBoxLayout;
+    const QStringList filterNames = {
+        QStringLiteral("All  128"),
+        QStringLiteral("Paid  84"),
+        QStringLiteral("Pending  31"),
+        QStringLiteral("Refunded  13")
+    };
+    for (int i = 0; i < filterNames.size(); ++i) {
+        auto* chip = new QtMaterial::QtMaterialChip(filterNames.at(i), page);
+        chip->setVariant(QtMaterial::ChipVariant::Assist);
+        chip->setCheckable(true);
+        chip->setChecked(i == 0);
+        filters->addWidget(chip);
+    }
+    filters->addStretch(1);
+    layout->addLayout(filters);
+
+    auto* tableCard = new QtMaterial::QtMaterialCard(page);
+    tableCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    tableCard->setMinimumHeight(480);
+    auto* cardLayout = new QVBoxLayout(tableCard);
+    cardLayout->setContentsMargins(18, 16, 18, 18);
+
+    auto* header = new QHBoxLayout;
+    header->addWidget(makeLabel(QStringLiteral("All orders"), tableCard, 2.0, false));
+    header->addStretch(1);
+    auto* exportButton = new QtMaterial::QtMaterialFilledTonalButton(
+        QStringLiteral("Export CSV"),
+        tableCard);
+    header->addWidget(exportButton);
+    cardLayout->addLayout(header);
+
+    m_ordersPage = new QtMaterial::QtMaterialTable(tableCard);
+    m_ordersPage->setDense(false);
+    m_ordersPage->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_ordersPage->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_ordersPage->verticalHeader()->setVisible(false);
+
+    m_ordersPageModel = new QStandardItemModel(8, 5, m_ordersPage);
+    m_ordersPageModel->setHorizontalHeaderLabels({
+        QStringLiteral("Order"),
+        QStringLiteral("Customer"),
+        QStringLiteral("Product"),
+        QStringLiteral("Amount"),
+        QStringLiteral("Status")
+    });
+
+    const char* rows[][5] = {
+        {"#1042", "Alice Martin", "Design system", "€842", "Paid"},
+        {"#1041", "John Smith", "Widget pack", "€392", "Pending"},
+        {"#1040", "Emma Dupont", "Enterprise license", "€1,240", "Paid"},
+        {"#1039", "Noah Bernard", "Theme pack", "€184", "Refunded"},
+        {"#1038", "Lina Robert", "Support plan", "€640", "Paid"},
+        {"#1037", "Lucas Petit", "Component pack", "€512", "Pending"},
+        {"#1036", "Mia Leroy", "Team license", "€960", "Paid"},
+        {"#1035", "Leo Garcia", "Consulting", "€1,480", "Pending"}
+    };
+
+    for (int row = 0; row < 8; ++row) {
+        for (int column = 0; column < 5; ++column) {
+            m_ordersPageModel->setItem(
+                row,
+                column,
+                new QStandardItem(QString::fromUtf8(rows[row][column])));
+        }
+    }
+
+    m_ordersPage->setModel(m_ordersPageModel);
+    m_ordersPage->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    m_ordersPage->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    m_ordersPage->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    m_ordersPage->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    m_ordersPage->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    cardLayout->addWidget(m_ordersPage, 1);
+    layout->addWidget(tableCard);
+
+    connect(exportButton, &QAbstractButton::clicked, this, [this]() {
+        showMessage(QStringLiteral("Order export prepared."));
+    });
+    connect(m_ordersPage, &QAbstractItemView::doubleClicked, this, [this](const QModelIndex& index) {
+        showOrderDetails(index.row());
+    });
+
+    layout->addStretch(1);
+    return page;
+}
+
+QWidget* DashboardWindow::createCustomersPage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Customers"),
+        QStringLiteral("CRM overview with account health, activity and lifetime value."),
+        &layout);
+
+    auto* summary = new QGridLayout;
+    const struct {
+        const char* title;
+        const char* value;
+        const char* note;
+    } customerStats[] = {
+        {"Total customers", "8,249", "+7.4%"},
+        {"New this month", "486", "+12.1%"},
+        {"Active accounts", "7,812", "94.7%"},
+        {"Avg. lifetime value", "€1,284", "+5.3%"}
+    };
+
+    for (int i = 0; i < 4; ++i) {
+        auto* card = new QtMaterial::QtMaterialCard(page);
+        card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+        auto* cardLayout = new QVBoxLayout(card);
+        cardLayout->setContentsMargins(16, 14, 16, 14);
+        cardLayout->addWidget(makeLabel(QString::fromLatin1(customerStats[i].title), card, -1.0, false));
+        cardLayout->addWidget(makeLabel(QString::fromLatin1(customerStats[i].value), card, 5.0, true));
+        auto* note = makeLabel(QString::fromLatin1(customerStats[i].note), card, -2.0, false);
+        note->setStyleSheet(QStringLiteral("color:#3c9a63;"));
+        cardLayout->addWidget(note);
+        summary->addWidget(card, 0, i);
+    }
+    layout->addLayout(summary);
+
+    auto* customersCard = new QtMaterial::QtMaterialCard(page);
+    customersCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    customersCard->setMinimumHeight(390);
+    auto* customersLayout = new QVBoxLayout(customersCard);
+    customersLayout->setContentsMargins(18, 16, 18, 18);
+    customersLayout->addWidget(makeLabel(QStringLiteral("Customer directory"), customersCard, 2.0, false));
+
+    auto* table = new QtMaterial::QtMaterialTable(customersCard);
+    table->setDense(false);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->verticalHeader()->setVisible(false);
+
+    auto* model = new QStandardItemModel(7, 5, table);
+    model->setHorizontalHeaderLabels({
+        QStringLiteral("Customer"),
+        QStringLiteral("Company"),
+        QStringLiteral("Plan"),
+        QStringLiteral("LTV"),
+        QStringLiteral("Status")
+    });
+    const char* customers[][5] = {
+        {"Alice Martin", "Northstar", "Enterprise", "€4,820", "Active"},
+        {"Emma Dupont", "Studio Nine", "Team", "€2,460", "Active"},
+        {"John Smith", "Acme Labs", "Team", "€1,980", "Active"},
+        {"Lina Robert", "Orbit", "Enterprise", "€5,120", "Active"},
+        {"Noah Bernard", "Mono", "Starter", "€620", "At risk"},
+        {"Lucas Petit", "Altitude", "Team", "€2,180", "Active"},
+        {"Mia Leroy", "Fjord", "Starter", "€940", "Trial"}
+    };
+    for (int row = 0; row < 7; ++row) {
+        for (int column = 0; column < 5; ++column) {
+            model->setItem(row, column, new QStandardItem(QString::fromUtf8(customers[row][column])));
+        }
+    }
+    table->setModel(model);
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    customersLayout->addWidget(table, 1);
+    layout->addWidget(customersCard);
+    layout->addStretch(1);
+    return page;
+}
+
+QWidget* DashboardWindow::createComponentsPage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Material Components"),
+        QStringLiteral("A compact application view of the same widgets exposed by the component gallery."),
+        &layout);
+
+    auto* gridHost = new QWidget(page);
+    auto* grid = new QGridLayout(gridHost);
+    grid->setContentsMargins(0, 0, 0, 0);
+    grid->setHorizontalSpacing(18);
+    grid->setVerticalSpacing(18);
+
+    auto* inputs = new QtMaterial::QtMaterialCard(page);
+    inputs->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* inputsLayout = new QVBoxLayout(inputs);
+    inputsLayout->setContentsMargins(18, 16, 18, 18);
+    inputsLayout->addWidget(makeLabel(QStringLiteral("Inputs"), inputs, 2.0, false));
+    auto* search = new QtMaterial::QtMaterialSearchBar(inputs);
+    search->setPlaceholderText(QStringLiteral("Search components"));
+    search->setClearButtonVisible(true);
+    inputsLayout->addWidget(search);
+    auto* checkbox = new QtMaterial::QtMaterialCheckbox(inputs);
+    checkbox->setText(QStringLiteral("Receive product updates"));
+    checkbox->setCheckState(Qt::Checked);
+    inputsLayout->addWidget(checkbox);
+    inputsLayout->addStretch(1);
+
+    auto* navigation = new QtMaterial::QtMaterialCard(page);
+    navigation->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* navigationLayout = new QVBoxLayout(navigation);
+    navigationLayout->setContentsMargins(18, 16, 18, 18);
+    navigationLayout->addWidget(makeLabel(QStringLiteral("Navigations"), navigation, 2.0, false));
+    navigationLayout->addWidget(makeLabel(QStringLiteral("Dashboard  ›  Components  ›  Overview"), navigation, -1.0, false));
+    navigationLayout->addWidget(makeLabel(QStringLiteral("Sidebar navigation"), navigation, -1.0, false));
+    navigationLayout->addWidget(makeLabel(QStringLiteral("Command palette  Ctrl+K"), navigation, -1.0, false));
+    navigationLayout->addStretch(1);
+
+    auto* surfaces = new QtMaterial::QtMaterialCard(page);
+    surfaces->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* surfacesLayout = new QVBoxLayout(surfaces);
+    surfacesLayout->setContentsMargins(18, 16, 18, 18);
+    surfacesLayout->addWidget(makeLabel(QStringLiteral("Surfaces & actions"), surfaces, 2.0, false));
+    auto* action = new QtMaterial::QtMaterialFilledTonalButton(QStringLiteral("Create report"), surfaces);
+    surfacesLayout->addWidget(action);
+    auto* chips = new QHBoxLayout;
+    const QStringList chipNames = {
+        QStringLiteral("Assist"),
+        QStringLiteral("Filter"),
+        QStringLiteral("Input")
+    };
+    for (const QString& name : chipNames) {
+        auto* chip = new QtMaterial::QtMaterialChip(name, surfaces);
+        chip->setVariant(QtMaterial::ChipVariant::Assist);
+        chips->addWidget(chip);
+    }
+    chips->addStretch(1);
+    surfacesLayout->addLayout(chips);
+    surfacesLayout->addStretch(1);
+
+    auto* feedback = new QtMaterial::QtMaterialCard(page);
+    feedback->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* feedbackLayout = new QVBoxLayout(feedback);
+    feedbackLayout->setContentsMargins(18, 16, 18, 18);
+    feedbackLayout->addWidget(makeLabel(QStringLiteral("Feedback & data display"), feedback, 2.0, false));
+    feedbackLayout->addWidget(makeLabel(
+        QStringLiteral("Dialogs, snackbars, tables and progress feedback remain interactive."),
+        feedback,
+        -1.0,
+        false));
+    auto* snackbarButton = new QtMaterial::QtMaterialFilledTonalButton(
+        QStringLiteral("Show snackbar"),
+        feedback);
+    feedbackLayout->addWidget(snackbarButton);
+    feedbackLayout->addStretch(1);
+
+    connect(action, &QAbstractButton::clicked, this, [this]() {
+        showMessage(QStringLiteral("New report created."));
+    });
+    connect(snackbarButton, &QAbstractButton::clicked, this, [this]() {
+        showMessage(QStringLiteral("Material feedback component triggered."));
+    });
+
+    grid->addWidget(inputs, 0, 0);
+    grid->addWidget(navigation, 0, 1);
+    grid->addWidget(surfaces, 1, 0);
+    grid->addWidget(feedback, 1, 1);
+    grid->setColumnStretch(0, 1);
+    grid->setColumnStretch(1, 1);
+    layout->addWidget(gridHost);
+    layout->addStretch(1);
     return page;
 }
 
@@ -919,19 +1353,25 @@ void DashboardWindow::applyPeriod()
 
 void DashboardWindow::applyFilter(const QString& text)
 {
-    if (!m_orders || !m_ordersModel) {
-        return;
-    }
-
     const QString needle = text.trimmed();
-    for (int row = 0; row < m_ordersModel->rowCount(); ++row) {
-        bool match = needle.isEmpty();
-        for (int column = 0; !match && column < m_ordersModel->columnCount(); ++column) {
-            const QStandardItem* item = m_ordersModel->item(row, column);
-            match = item && item->text().contains(needle, Qt::CaseInsensitive);
-        }
-        m_orders->setRowHidden(row, !match);
-    }
+
+    const auto filterTable =
+        [&needle](QtMaterial::QtMaterialTable* table, QStandardItemModel* model) {
+            if (!table || !model) {
+                return;
+            }
+            for (int row = 0; row < model->rowCount(); ++row) {
+                bool match = needle.isEmpty();
+                for (int column = 0; !match && column < model->columnCount(); ++column) {
+                    const QStandardItem* item = model->item(row, column);
+                    match = item && item->text().contains(needle, Qt::CaseInsensitive);
+                }
+                table->setRowHidden(row, !match);
+            }
+        };
+
+    filterTable(m_orders, m_ordersModel);
+    filterTable(m_ordersPage, m_ordersPageModel);
 }
 
 void DashboardWindow::applyThemeChrome()
@@ -1009,8 +1449,22 @@ void DashboardWindow::applyThemeChrome()
         .arg(cssColor(outline))
         .arg(cssColor(onSurfaceVariant))
         .arg(cssColor(materialColor(QtMaterial::ColorRole::Primary)));
-    if (m_contentHost) {
-        m_contentHost->setStyleSheet(comboStyle);
+    if (m_pages) {
+        const QString pageStyle = QStringLiteral(
+            "QWidget#dashboardContent { background:%1; color:%2; }"
+            "QLabel#pageSubtitle { color:%3; }")
+            .arg(cssColor(surfaceVariant))
+            .arg(cssColor(onSurface))
+            .arg(cssColor(onSurfaceVariant));
+        m_pages->setStyleSheet(pageStyle + comboStyle);
+
+        QPalette pagesPalette = m_pages->palette();
+        pagesPalette.setColor(QPalette::Window, surfaceVariant);
+        pagesPalette.setColor(QPalette::Base, surfaceVariant);
+        pagesPalette.setColor(QPalette::WindowText, onSurface);
+        pagesPalette.setColor(QPalette::Text, onSurface);
+        m_pages->setPalette(pagesPalette);
+        m_pages->setAutoFillBackground(true);
     }
 
     if (m_pageSubtitle) {
@@ -1075,20 +1529,29 @@ void DashboardWindow::updateResponsiveLayout()
 
 void DashboardWindow::setCurrentSection(int index)
 {
-    index = qBound(0, index, m_navButtons.size() - 1);
+    const int maximumIndex = m_pages ? m_pages->count() - 1 : m_navButtons.size() - 1;
+    index = qBound(0, index, maximumIndex);
+
     if (index >= 0 && index < m_navButtons.size()) {
         m_navButtons.at(index)->setChecked(true);
+    }
+    if (m_pages) {
+        m_pages->setCurrentIndex(index);
     }
 
     static const char* titles[] = {
         "Dashboard", "Analytics", "Orders", "Customers", "Components"
     };
     const QString title = QString::fromLatin1(titles[index]);
-    if (m_pageTitle) {
-        m_pageTitle->setText(title);
+
+    if (m_breadcrumbLabel) {
+        m_breadcrumbLabel->setText(QStringLiteral("Application  /  %1").arg(title));
     }
-    if (index != 0) {
-        showMessage(QStringLiteral("%1 selected - dashboard data remains visible in the showcase.").arg(title));
+    if (m_search) {
+        m_search->setPlaceholderText(
+            index == 2
+                ? QStringLiteral("Search orders...")
+                : QStringLiteral("Search dashboard..."));
     }
 }
 
