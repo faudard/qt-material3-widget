@@ -11,6 +11,7 @@ class QScrollArea;
 class QFrame;
 class QToolButton;
 class QComboBox;
+class QStackedWidget;
 
 namespace QtMaterial {
 class QtMaterialCard;
@@ -43,6 +44,10 @@ private:
     QWidget* createSidebar();
     QWidget* createTopBar();
     QWidget* createDashboardPage();
+    QWidget* createAnalyticsPage();
+    QWidget* createOrdersPage();
+    QWidget* createCustomersPage();
+    QWidget* createComponentsPage();
     QWidget* createQuickStatistics();
     QWidget* createLowerHighlights();
     MetricWidgets createMetricCard(
@@ -71,9 +76,12 @@ private:
     QWidget* m_contentHost = nullptr;
     QFrame* m_topBar = nullptr;
     QScrollArea* m_scroll = nullptr;
+    QStackedWidget* m_pages = nullptr;
     QtMaterial::QtMaterialSearchBar* m_search = nullptr;
     QtMaterial::QtMaterialTable* m_orders = nullptr;
+    QtMaterial::QtMaterialTable* m_ordersPage = nullptr;
     QStandardItemModel* m_ordersModel = nullptr;
+    QStandardItemModel* m_ordersPageModel = nullptr;
     QtMaterial::QtMaterialSnackbarHost* m_snackbarHost = nullptr;
     QtMaterial::QtMaterialCommandPalette* m_commandPalette = nullptr;
     QGridLayout* m_quickGrid = nullptr;
@@ -88,6 +96,7 @@ private:
     DonutChartWidget* m_donutChart = nullptr;
     QLabel* m_pageTitle = nullptr;
     QLabel* m_pageSubtitle = nullptr;
+    QLabel* m_breadcrumbLabel = nullptr;
     QComboBox* m_yearCombo = nullptr;
     QComboBox* m_monthCombo = nullptr;
     QToolButton* m_themeButton = nullptr;
