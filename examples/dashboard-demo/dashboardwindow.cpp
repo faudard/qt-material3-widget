@@ -2089,6 +2089,312 @@ QWidget* DashboardWindow::createApplicationStatesPage()
     return page;
 }
 
+
+QWidget* DashboardWindow::createShowcaseSettingsPage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Showcase Settings"),
+        QStringLiteral("Exercise the public theme model, contrast variants and bidirectional layout in the live dashboard."),
+        &layout);
+
+    auto* controlsHost = new QWidget(page);
+    auto* controls = new QGridLayout(controlsHost);
+    controls->setContentsMargins(0, 0, 0, 0);
+    controls->setHorizontalSpacing(18);
+    controls->setVerticalSpacing(18);
+
+    auto* themeCard = new QtMaterial::QtMaterialCard(controlsHost);
+    themeCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* themeLayout = new QVBoxLayout(themeCard);
+    themeLayout->setContentsMargins(20, 18, 20, 20);
+    themeLayout->setSpacing(12);
+    themeLayout->addWidget(makeLabel(QStringLiteral("Theme"), themeCard, 2.0, false));
+    themeLayout->addWidget(makeLabel(
+        QStringLiteral("All controls below update the same ThemeManager used by the rest of the application."),
+        themeCard,
+        -1.0,
+        false));
+
+    auto* seed = new QtMaterial::QtMaterialComboBox(themeCard);
+    seed->setLabelText(QStringLiteral("Seed color"));
+    seed->addItems({
+        QStringLiteral("Indigo"),
+        QStringLiteral("Material Purple"),
+        QStringLiteral("Azure"),
+        QStringLiteral("Amber"),
+        QStringLiteral("Teal")
+    });
+    seed->setCurrentText(QStringLiteral("Indigo"));
+    themeLayout->addWidget(seed);
+
+    themeLayout->addWidget(makeLabel(QStringLiteral("Mode"), themeCard, -1.0, true));
+    auto* mode = new QtMaterial::QtMaterialSegmentedButton(themeCard);
+    mode->addSegment(QStringLiteral("Light"));
+    mode->addSegment(QStringLiteral("Dark"));
+    mode->setCurrentIndex(
+        QtMaterial::ThemeManager::instance().theme().isDark() ? 1 : 0);
+    themeLayout->addWidget(mode);
+
+    themeLayout->addWidget(makeLabel(QStringLiteral("Contrast"), themeCard, -1.0, true));
+    auto* contrast = new QtMaterial::QtMaterialSegmentedButton(themeCard);
+    contrast->addSegment(QStringLiteral("Standard"));
+    contrast->addSegment(QStringLiteral("Medium"));
+    contrast->addSegment(QStringLiteral("High"));
+    contrast->setCurrentIndex(0);
+    themeLayout->addWidget(contrast);
+
+    themeLayout->addWidget(makeLabel(QStringLiteral("Color variant"), themeCard, -1.0, true));
+    auto* variant = new QtMaterial::QtMaterialSegmentedButton(themeCard);
+    variant->addSegment(QStringLiteral("Tonal"));
+    variant->addSegment(QStringLiteral("Expressive"));
+    variant->setCurrentIndex(0);
+    themeLayout->addWidget(variant);
+
+    auto* layoutCard = new QtMaterial::QtMaterialCard(controlsHost);
+    layoutCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* layoutSettings = new QVBoxLayout(layoutCard);
+    layoutSettings->setContentsMargins(20, 18, 20, 20);
+    layoutSettings->setSpacing(12);
+    layoutSettings->addWidget(makeLabel(QStringLiteral("Layout & accessibility"), layoutCard, 2.0, false));
+    layoutSettings->addWidget(makeLabel(
+        QStringLiteral("Use the same window to verify LTR/RTL mirroring and accessible control semantics."),
+        layoutCard,
+        -1.0,
+        false));
+
+    layoutSettings->addWidget(makeLabel(QStringLiteral("Direction"), layoutCard, -1.0, true));
+    auto* direction = new QtMaterial::QtMaterialSegmentedButton(layoutCard);
+    direction->addSegment(QStringLiteral("LTR"));
+    direction->addSegment(QStringLiteral("RTL"));
+    direction->setCurrentIndex(
+        m_central && m_central->layoutDirection() == Qt::RightToLeft
+            ? 1
+            : 0);
+    layoutSettings->addWidget(direction);
+
+    auto* labels = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Show navigation rail labels"),
+        layoutCard);
+    labels->setChecked(
+        m_navigationRail ? m_navigationRail->labelsVisible() : false);
+    layoutSettings->addWidget(labels);
+
+    auto* compactPreview = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Compact table rows"),
+        layoutCard);
+    compactPreview->setChecked(
+        m_orders ? m_orders->isDense() : true);
+    layoutSettings->addWidget(compactPreview);
+
+    auto* reset = new QtMaterial::QtMaterialOutlinedButton(
+        QStringLiteral("Reset showcase"),
+        layoutCard);
+    layoutSettings->addWidget(reset, 0, Qt::AlignLeft);
+    layoutSettings->addStretch(1);
+
+    controls->addWidget(themeCard, 0, 0);
+    controls->addWidget(layoutCard, 0, 1);
+    controls->setColumnStretch(0, 1);
+    controls->setColumnStretch(1, 1);
+    layout->addWidget(controlsHost);
+
+    auto* preview = new QtMaterial::QtMaterialCard(page);
+    preview->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    auto* previewLayout = new QVBoxLayout(preview);
+    previewLayout->setContentsMargins(20, 18, 20, 20);
+    previewLayout->setSpacing(12);
+    previewLayout->addWidget(makeLabel(QStringLiteral("Live color roles"), preview, 2.0, false));
+
+    auto* swatches = new QHBoxLayout;
+    swatches->setSpacing(10);
+
+    struct Swatch {
+        QLabel* box = nullptr;
+        QtMaterial::ColorRole role = QtMaterial::ColorRole::Primary;
+        QtMaterial::ColorRole onRole = QtMaterial::ColorRole::OnPrimary;
+        const char* name = nullptr;
+    };
+
+    QVector<Swatch> previewSwatches;
+    const struct {
+        QtMaterial::ColorRole role;
+        QtMaterial::ColorRole onRole;
+        const char* name;
+    } swatchData[] = {
+        {QtMaterial::ColorRole::Primary, QtMaterial::ColorRole::OnPrimary, "Primary"},
+        {QtMaterial::ColorRole::Secondary, QtMaterial::ColorRole::OnSecondary, "Secondary"},
+        {QtMaterial::ColorRole::Tertiary, QtMaterial::ColorRole::OnTertiary, "Tertiary"},
+        {QtMaterial::ColorRole::Error, QtMaterial::ColorRole::OnError, "Error"},
+        {QtMaterial::ColorRole::SurfaceContainerHighest, QtMaterial::ColorRole::OnSurface, "Surface"}
+    };
+
+    for (const auto& item : swatchData) {
+        auto* box = new QLabel(QString::fromLatin1(item.name), preview);
+        box->setAlignment(Qt::AlignCenter);
+        box->setMinimumHeight(64);
+        box->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        swatches->addWidget(box, 1);
+        previewSwatches.append({box, item.role, item.onRole, item.name});
+    }
+    previewLayout->addLayout(swatches);
+
+    auto refreshSwatches = [previewSwatches]() {
+        for (const Swatch& swatch : previewSwatches) {
+            swatch.box->setStyleSheet(QStringLiteral(
+                "background:%1; color:%2; border-radius:10px; font-weight:600;")
+                .arg(cssColor(materialColor(swatch.role)))
+                .arg(cssColor(materialColor(swatch.onRole))));
+        }
+    };
+    refreshSwatches();
+
+    auto applyThemeControls = [seed, mode, contrast, variant]() {
+        auto options = QtMaterial::ThemeManager::instance().options();
+
+        const QString seedName = seed->currentText();
+        if (seedName == QStringLiteral("Material Purple")) {
+            options.sourceColor = QColor(QStringLiteral("#6750A4"));
+        } else if (seedName == QStringLiteral("Azure")) {
+            options.sourceColor = QColor(QStringLiteral("#00639B"));
+        } else if (seedName == QStringLiteral("Amber")) {
+            options.sourceColor = QColor(QStringLiteral("#FFB300"));
+        } else if (seedName == QStringLiteral("Teal")) {
+            options.sourceColor = QColor(QStringLiteral("#006A60"));
+        } else {
+            options.sourceColor = QColor(QStringLiteral("#4455C7"));
+        }
+
+        options.mode =
+            mode->currentIndex() == 1
+                ? QtMaterial::ThemeMode::Dark
+                : QtMaterial::ThemeMode::Light;
+        options.preference =
+            mode->currentIndex() == 1
+                ? QtMaterial::ThemePreference::Dark
+                : QtMaterial::ThemePreference::Light;
+
+        switch (contrast->currentIndex()) {
+        case 1:
+            options.contrast = QtMaterial::ContrastMode::Medium;
+            break;
+        case 2:
+            options.contrast = QtMaterial::ContrastMode::High;
+            break;
+        default:
+            options.contrast = QtMaterial::ContrastMode::Standard;
+            break;
+        }
+
+        options.variant =
+            variant->currentIndex() == 1
+                ? QtMaterial::ThemeVariant::Expressive
+                : QtMaterial::ThemeVariant::TonalSpot;
+
+        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+    };
+
+    connect(
+        seed,
+        &QComboBox::currentTextChanged,
+        this,
+        [applyThemeControls](const QString&) {
+            applyThemeControls();
+        });
+    connect(
+        mode,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        this,
+        [applyThemeControls](int) {
+            applyThemeControls();
+        });
+    connect(
+        contrast,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        this,
+        [applyThemeControls](int) {
+            applyThemeControls();
+        });
+    connect(
+        variant,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        this,
+        [applyThemeControls](int) {
+            applyThemeControls();
+        });
+
+    connect(
+        direction,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        this,
+        [this](int index) {
+            if (m_central) {
+                m_central->setLayoutDirection(
+                    index == 1
+                        ? Qt::RightToLeft
+                        : Qt::LeftToRight);
+            }
+            showMessage(
+                index == 1
+                    ? QStringLiteral("RTL layout enabled.")
+                    : QStringLiteral("LTR layout enabled."));
+        });
+
+    connect(labels, &QAbstractButton::toggled, this, [this](bool checked) {
+        if (m_navigationRail) {
+            m_navigationRail->setLabelsVisible(checked);
+        }
+    });
+
+    connect(compactPreview, &QAbstractButton::toggled, this, [this](bool checked) {
+        if (m_orders) {
+            m_orders->setDense(checked);
+        }
+        if (m_ordersPage) {
+            m_ordersPage->setDense(checked);
+        }
+    });
+
+    connect(reset, &QAbstractButton::clicked, this, [this, seed, mode, contrast, variant, direction, labels, compactPreview]() {
+        seed->setCurrentText(QStringLiteral("Indigo"));
+        mode->setCurrentIndex(0);
+        contrast->setCurrentIndex(0);
+        variant->setCurrentIndex(0);
+        direction->setCurrentIndex(0);
+        labels->setChecked(false);
+        compactPreview->setChecked(true);
+
+        auto options = QtMaterial::ThemeManager::instance().options();
+        options.sourceColor = QColor(QStringLiteral("#4455C7"));
+        options.mode = QtMaterial::ThemeMode::Light;
+        options.preference = QtMaterial::ThemePreference::Light;
+        options.contrast = QtMaterial::ContrastMode::Standard;
+        options.variant = QtMaterial::ThemeVariant::TonalSpot;
+        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+
+        if (m_central) {
+            m_central->setLayoutDirection(Qt::LeftToRight);
+        }
+        showMessage(QStringLiteral("Showcase settings reset."));
+    });
+
+    connect(
+        &QtMaterial::ThemeManager::instance(),
+        &QtMaterial::ThemeManager::themeChanged,
+        page,
+        [refreshSwatches, mode](const QtMaterial::Theme& theme) {
+            refreshSwatches();
+            const int target = theme.isDark() ? 1 : 0;
+            if (mode->currentIndex() != target) {
+                mode->setCurrentIndex(target);
+            }
+        });
+
+    layout->addWidget(preview);
+    layout->addStretch(1);
+    return page;
+}
+
 QWidget* DashboardWindow::createQuickStatistics()
 {
     auto* host = new QWidget(m_contentHost);
