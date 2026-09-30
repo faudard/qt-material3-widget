@@ -19,6 +19,8 @@ class QtMaterialCard;
 class QtMaterialComboBox;
 class QtMaterialCommandPalette;
 class QtMaterialIconButton;
+class QtMaterialNavigationDrawer;
+class QtMaterialNavigationRail;
 class QtMaterialPagination;
 class QtMaterialSearchBar;
 class QtMaterialSnackbarHost;
@@ -35,6 +37,8 @@ public:
     explicit DashboardWindow(QWidget* parent = nullptr);
     ~DashboardWindow() override;
 
+    void showDemoPage(int index);
+
 protected:
     void resizeEvent(QResizeEvent* event) override;
 
@@ -46,12 +50,18 @@ private:
     };
 
     QWidget* createSidebar();
+    QtMaterial::QtMaterialNavigationRail* createNavigationRail();
+    QtMaterial::QtMaterialNavigationDrawer* createNavigationDrawer();
     QWidget* createTopBar();
     QWidget* createDashboardPage();
     QWidget* createAnalyticsPage();
     QWidget* createOrdersPage();
     QWidget* createCustomersPage();
     QWidget* createComponentsPage();
+    QWidget* createProfilePage();
+    QWidget* createPricingPage();
+    QWidget* createApplicationStatesPage();
+    QWidget* createShowcaseSettingsPage();
     QWidget* createQuickStatistics();
     QWidget* createLowerHighlights();
     MetricWidgets createMetricCard(
@@ -82,6 +92,8 @@ private:
     QFrame* m_topBar = nullptr;
     QScrollArea* m_scroll = nullptr;
     QStackedWidget* m_pages = nullptr;
+    QtMaterial::QtMaterialNavigationRail* m_navigationRail = nullptr;
+    QtMaterial::QtMaterialNavigationDrawer* m_navigationDrawer = nullptr;
     QtMaterial::QtMaterialSearchBar* m_search = nullptr;
     QtMaterial::QtMaterialTable* m_orders = nullptr;
     QtMaterial::QtMaterialTable* m_ordersPage = nullptr;
@@ -105,7 +117,10 @@ private:
     QtMaterial::QtMaterialComboBox* m_yearCombo = nullptr;
     QtMaterial::QtMaterialComboBox* m_monthCombo = nullptr;
     QtMaterial::QtMaterialIconButton* m_themeButton = nullptr;
+    QtMaterial::QtMaterialIconButton* m_menuButton = nullptr;
     QtMaterial::QtMaterialPagination* m_ordersPagination = nullptr;
+    QString m_orderStatusFilter = QStringLiteral("All");
+    int m_chartMetricIndex = 0;
     bool m_compactMetrics = false;
     bool m_stackedCharts = false;
 };
