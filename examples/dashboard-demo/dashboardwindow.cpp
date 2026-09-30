@@ -38,18 +38,26 @@
 
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
+#include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
 #include "qtmaterial/widgets/data/qtmaterialpagination.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
 #include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
+#include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialsearchbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
+#include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
 #include "qtmaterial/widgets/selection/qtmaterialchip.h"
+#include "qtmaterial/widgets/selection/qtmaterialradiobutton.h"
+#include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
+#include "qtmaterial/widgets/selection/qtmaterialswitch.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialbanner.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialdialog.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h"
@@ -572,6 +580,10 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     m_pages->addWidget(createPageScroll(createOrdersPage()));
     m_pages->addWidget(createPageScroll(createCustomersPage()));
     m_pages->addWidget(createPageScroll(createComponentsPage()));
+    m_pages->addWidget(createPageScroll(createProfilePage()));
+    m_pages->addWidget(createPageScroll(createPricingPage()));
+    m_pages->addWidget(createPageScroll(createApplicationStatesPage()));
+    m_pages->addWidget(createPageScroll(createShowcaseSettingsPage()));
     rightLayout->addWidget(m_pages, 1);
 
     shell->addWidget(right, 1);
@@ -618,6 +630,11 @@ DashboardWindow::DashboardWindow(QWidget* parent)
 }
 
 DashboardWindow::~DashboardWindow() = default;
+
+void DashboardWindow::showDemoPage(int index)
+{
+    setCurrentSection(index);
+}
 
 void DashboardWindow::resizeEvent(QResizeEvent* event)
 {
@@ -743,10 +760,11 @@ QWidget* DashboardWindow::createSidebar()
     addInformational(QStringLiteral("Errors"), QStringLiteral("message"));
     addShortcut(QStringLiteral("Invoice"), QStringLiteral("invoice"), 2);
     addInformational(QStringLiteral("Maintenance"), QStringLiteral("components"));
-    addInformational(QStringLiteral("Pricing"), QStringLiteral("pricing"));
-    addShortcut(QStringLiteral("Profile"), QStringLiteral("profile"), 3);
+    addPrimaryNavigation(QStringLiteral("Profile"), QStringLiteral("profile"), 5);
+    addPrimaryNavigation(QStringLiteral("Pricing"), QStringLiteral("pricing"), 6);
 
     navigationLayout->addWidget(makeSectionLabel(QStringLiteral("System"), navigationContent));
+    addPrimaryNavigation(QStringLiteral("Application States"), QStringLiteral("message"), 7);
     auto* themeStudio = makeNavButton(
         QStringLiteral("Theme Studio"),
         QStringLiteral("components"),
@@ -757,15 +775,10 @@ QWidget* DashboardWindow::createSidebar()
         showMessage(QStringLiteral("Theme Studio is available as a separate example."));
     });
 
-    auto* settings = makeNavButton(
-        QStringLiteral("Settings"),
+    addPrimaryNavigation(
+        QStringLiteral("Showcase Settings"),
         QStringLiteral("components"),
-        navigationContent);
-    settings->setCheckable(false);
-    navigationLayout->addWidget(settings);
-    connect(settings, &QToolButton::clicked, this, [this]() {
-        showMessage(QStringLiteral("Dashboard preferences use the live Material theme controls."));
-    });
+        8);
 
     navigationLayout->addStretch(1);
     navigationScroll->setWidget(navigationContent);
@@ -807,7 +820,11 @@ QtMaterial::QtMaterialNavigationRail* DashboardWindow::createNavigationRail()
         {"Analytics", "analytics"},
         {"Orders", "orders"},
         {"Customers", "customers"},
-        {"Components", "components"}
+        {"Components", "components"},
+        {"Profile", "profile"},
+        {"Pricing", "pricing"},
+        {"States", "message"},
+        {"Settings", "components"}
     };
 
     for (const auto& destination : destinations) {
@@ -867,10 +884,14 @@ QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer(
         {"Analytics", "analytics"},
         {"Orders", "orders"},
         {"Customers", "customers"},
-        {"Components", "components"}
+        {"Components", "components"},
+        {"Profile", "profile"},
+        {"Pricing", "pricing"},
+        {"States", "message"},
+        {"Settings", "components"}
     };
 
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 9; ++i) {
         auto* button = makeNavButton(
             QString::fromLatin1(destinations[i].label),
             QString::fromLatin1(destinations[i].icon),
@@ -1527,6 +1548,858 @@ QWidget* DashboardWindow::createComponentsPage()
     return page;
 }
 
+
+QWidget* DashboardWindow::createProfilePage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Profile"),
+        QStringLiteral("Account settings built from production-style Material input and selection controls."),
+        &layout);
+
+    auto* identityCard = new QtMaterial::QtMaterialCard(page);
+    identityCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* identityLayout = new QHBoxLayout(identityCard);
+    identityLayout->setContentsMargins(20, 18, 20, 18);
+    identityLayout->setSpacing(16);
+
+    auto* avatar = new QLabel(QStringLiteral("JD"), identityCard);
+    avatar->setObjectName(QStringLiteral("profileHeroAvatar"));
+    avatar->setAlignment(Qt::AlignCenter);
+    avatar->setFixedSize(64, 64);
+
+    auto* identityText = new QVBoxLayout;
+    identityText->setSpacing(2);
+    identityText->addWidget(makeLabel(QStringLiteral("John Doe"), identityCard, 4.0, true));
+    identityText->addWidget(makeLabel(QStringLiteral("Product administrator"), identityCard, -1.0, false));
+    auto* verified = new QtMaterial::QtMaterialChip(QStringLiteral("Verified account"), identityCard);
+    verified->setVariant(QtMaterial::ChipVariant::Assist);
+    identityText->addWidget(verified, 0, Qt::AlignLeft);
+
+    identityLayout->addWidget(avatar);
+    identityLayout->addLayout(identityText, 1);
+    layout->addWidget(identityCard);
+
+    auto* contentHost = new QWidget(page);
+    auto* contentGrid = new QGridLayout(contentHost);
+    contentGrid->setContentsMargins(0, 0, 0, 0);
+    contentGrid->setHorizontalSpacing(18);
+    contentGrid->setVerticalSpacing(18);
+
+    auto* detailsCard = new QtMaterial::QtMaterialCard(contentHost);
+    detailsCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* detailsLayout = new QVBoxLayout(detailsCard);
+    detailsLayout->setContentsMargins(20, 18, 20, 20);
+    detailsLayout->setSpacing(14);
+    detailsLayout->addWidget(makeLabel(QStringLiteral("Personal information"), detailsCard, 2.0, false));
+
+    auto* name = new QtMaterial::QtMaterialOutlinedTextField(detailsCard);
+    name->setLabelText(QStringLiteral("Full name"));
+    name->setText(QStringLiteral("John Doe"));
+    name->setRequired(true);
+    name->setRequiredText(QStringLiteral("Name is required."));
+    name->setEndActionMode(
+        QtMaterial::QtMaterialOutlinedTextField::EndActionMode::ClearText);
+    detailsLayout->addWidget(name);
+
+    auto* email = new QtMaterial::QtMaterialOutlinedTextField(detailsCard);
+    email->setLabelText(QStringLiteral("Email"));
+    email->setText(QStringLiteral("john.doe@example.com"));
+    email->setRequired(true);
+    email->setRequiredText(QStringLiteral("Email is required."));
+    email->setSupportingText(QStringLiteral("Used for account notifications."));
+    detailsLayout->addWidget(email);
+
+    auto* company = new QtMaterial::QtMaterialOutlinedTextField(detailsCard);
+    company->setLabelText(QStringLiteral("Company"));
+    company->setText(QStringLiteral("Material Labs"));
+    detailsLayout->addWidget(company);
+
+    auto* role = new QtMaterial::QtMaterialOutlinedTextField(detailsCard);
+    role->setLabelText(QStringLiteral("Role"));
+    role->setText(QStringLiteral("Product administrator"));
+    detailsLayout->addWidget(role);
+
+    auto* plan = new QtMaterial::QtMaterialComboBox(detailsCard);
+    plan->setLabelText(QStringLiteral("Workspace plan"));
+    plan->addItems({
+        QStringLiteral("Starter"),
+        QStringLiteral("Professional"),
+        QStringLiteral("Enterprise")
+    });
+    plan->setCurrentText(QStringLiteral("Professional"));
+    detailsLayout->addWidget(plan);
+
+    auto* preferencesCard = new QtMaterial::QtMaterialCard(contentHost);
+    preferencesCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* preferencesLayout = new QVBoxLayout(preferencesCard);
+    preferencesLayout->setContentsMargins(20, 18, 20, 20);
+    preferencesLayout->setSpacing(12);
+    preferencesLayout->addWidget(makeLabel(QStringLiteral("Preferences"), preferencesCard, 2.0, false));
+
+    auto* notifications = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Email notifications"),
+        preferencesCard);
+    notifications->setChecked(true);
+    preferencesLayout->addWidget(notifications);
+
+    auto* updates = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Product updates"),
+        preferencesCard);
+    updates->setChecked(false);
+    preferencesLayout->addWidget(updates);
+
+    preferencesLayout->addSpacing(8);
+    preferencesLayout->addWidget(makeLabel(QStringLiteral("Interface density"), preferencesCard, -1.0, true));
+
+    auto* densityGroup = new QButtonGroup(preferencesCard);
+    densityGroup->setExclusive(true);
+    auto* comfortable = new QtMaterial::QtMaterialRadioButton(
+        QStringLiteral("Comfortable"),
+        preferencesCard);
+    auto* compact = new QtMaterial::QtMaterialRadioButton(
+        QStringLiteral("Compact"),
+        preferencesCard);
+    comfortable->setChecked(true);
+    densityGroup->addButton(comfortable, 0);
+    densityGroup->addButton(compact, 1);
+    preferencesLayout->addWidget(comfortable);
+    preferencesLayout->addWidget(compact);
+
+    preferencesLayout->addSpacing(8);
+    auto* security = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Require sign-in confirmation"),
+        preferencesCard);
+    security->setChecked(true);
+    preferencesLayout->addWidget(security);
+    preferencesLayout->addStretch(1);
+
+    contentGrid->addWidget(detailsCard, 0, 0);
+    contentGrid->addWidget(preferencesCard, 0, 1);
+    contentGrid->setColumnStretch(0, 2);
+    contentGrid->setColumnStretch(1, 1);
+    layout->addWidget(contentHost);
+
+    auto* actions = new QHBoxLayout;
+    actions->addStretch(1);
+    auto* cancel = new QtMaterial::QtMaterialOutlinedButton(
+        QStringLiteral("Reset"),
+        page);
+    auto* save = new QtMaterial::QtMaterialFilledButton(
+        QStringLiteral("Save changes"),
+        page);
+    actions->addWidget(cancel);
+    actions->addWidget(save);
+    layout->addLayout(actions);
+
+    connect(cancel, &QAbstractButton::clicked, this, [name, email, company, role, plan, notifications, updates, comfortable, security]() {
+        name->setText(QStringLiteral("John Doe"));
+        email->setText(QStringLiteral("john.doe@example.com"));
+        company->setText(QStringLiteral("Material Labs"));
+        role->setText(QStringLiteral("Product administrator"));
+        plan->setCurrentText(QStringLiteral("Professional"));
+        notifications->setChecked(true);
+        updates->setChecked(false);
+        comfortable->setChecked(true);
+        security->setChecked(true);
+        name->resetValidationFeedback();
+        email->resetValidationFeedback();
+    });
+
+    connect(save, &QAbstractButton::clicked, this, [this, name, email]() {
+        const bool nameValid = name->validateInput();
+        const bool emailValid = email->validateInput();
+        if (!nameValid) {
+            name->showValidationError();
+        }
+        if (!emailValid) {
+            email->showValidationError();
+        }
+        if (nameValid && emailValid) {
+            showMessage(QStringLiteral("Profile changes saved."));
+        }
+    });
+
+    connect(notifications, &QAbstractButton::toggled, this, [this](bool checked) {
+        showMessage(
+            checked
+                ? QStringLiteral("Email notifications enabled.")
+                : QStringLiteral("Email notifications disabled."));
+    });
+
+    layout->addStretch(1);
+    return page;
+}
+
+QWidget* DashboardWindow::createPricingPage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Pricing"),
+        QStringLiteral("A realistic pricing surface combining cards, segmented selection, chips and Material actions."),
+        &layout);
+
+    auto* billingRow = new QHBoxLayout;
+    billingRow->addWidget(makeLabel(QStringLiteral("Choose a plan"), page, 2.0, false));
+    billingRow->addStretch(1);
+
+    auto* billing = new QtMaterial::QtMaterialSegmentedButton(page);
+    billing->addSegment(QStringLiteral("Monthly"));
+    billing->addSegment(QStringLiteral("Annual"));
+    billing->setCurrentIndex(0);
+    billingRow->addWidget(billing);
+    layout->addLayout(billingRow);
+
+    auto* plansHost = new QWidget(page);
+    auto* plans = new QGridLayout(plansHost);
+    plans->setContentsMargins(0, 0, 0, 0);
+    plans->setHorizontalSpacing(18);
+    plans->setVerticalSpacing(18);
+
+    QVector<QLabel*> priceLabels;
+    const struct {
+        const char* name;
+        const char* description;
+        int monthly;
+        const char* action;
+        bool featured;
+    } planData[] = {
+        {"Starter", "For personal projects and prototypes.", 12, "Start free", false},
+        {"Professional", "For teams shipping production applications.", 29, "Choose Pro", true},
+        {"Enterprise", "For organizations that need scale and governance.", 79, "Contact sales", false}
+    };
+
+    for (int i = 0; i < 3; ++i) {
+        auto* card = new QtMaterial::QtMaterialCard(plansHost);
+        card->setVariant(
+            planData[i].featured
+                ? QtMaterial::QtMaterialCard::Variant::Filled
+                : QtMaterial::QtMaterialCard::Variant::Elevated);
+        card->setMinimumHeight(360);
+
+        auto* cardLayout = new QVBoxLayout(card);
+        cardLayout->setContentsMargins(22, 20, 22, 20);
+        cardLayout->setSpacing(10);
+
+        auto* titleRow = new QHBoxLayout;
+        titleRow->addWidget(makeLabel(
+            QString::fromLatin1(planData[i].name),
+            card,
+            3.0,
+            true));
+        titleRow->addStretch(1);
+        if (planData[i].featured) {
+            auto* popular = new QtMaterial::QtMaterialChip(
+                QStringLiteral("Most popular"),
+                card);
+            popular->setVariant(QtMaterial::ChipVariant::Assist);
+            titleRow->addWidget(popular);
+        }
+        cardLayout->addLayout(titleRow);
+
+        auto* description = makeLabel(
+            QString::fromLatin1(planData[i].description),
+            card,
+            -1.0,
+            false);
+        description->setWordWrap(true);
+        cardLayout->addWidget(description);
+
+        auto* price = makeLabel(
+            QStringLiteral("€%1 / month").arg(planData[i].monthly),
+            card,
+            7.0,
+            true);
+        price->setProperty("dashboardMonthlyPrice", planData[i].monthly);
+        priceLabels.append(price);
+        cardLayout->addWidget(price);
+
+        cardLayout->addSpacing(8);
+        const QStringList features =
+            i == 0
+                ? QStringList{
+                    QStringLiteral("✓  3 projects"),
+                    QStringLiteral("✓  Core widgets"),
+                    QStringLiteral("✓  Community support")
+                }
+                : (i == 1
+                    ? QStringList{
+                        QStringLiteral("✓  Unlimited projects"),
+                        QStringLiteral("✓  All Material widgets"),
+                        QStringLiteral("✓  Team collaboration"),
+                        QStringLiteral("✓  Priority support")
+                    }
+                    : QStringList{
+                        QStringLiteral("✓  Everything in Professional"),
+                        QStringLiteral("✓  SSO and governance"),
+                        QStringLiteral("✓  Deployment assistance"),
+                        QStringLiteral("✓  Dedicated support")
+                    });
+
+        for (const QString& feature : features) {
+            cardLayout->addWidget(makeLabel(feature, card, -1.0, false));
+        }
+
+        cardLayout->addStretch(1);
+
+        QAbstractButton* action = nullptr;
+        if (planData[i].featured) {
+            action = new QtMaterial::QtMaterialFilledButton(
+                QString::fromLatin1(planData[i].action),
+                card);
+        } else {
+            action = new QtMaterial::QtMaterialOutlinedButton(
+                QString::fromLatin1(planData[i].action),
+                card);
+        }
+        cardLayout->addWidget(action);
+
+        const QString planName = QString::fromLatin1(planData[i].name);
+        connect(action, &QAbstractButton::clicked, this, [this, planName]() {
+            auto* dialog = new QtMaterial::QtMaterialDialog(this);
+            dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+            dialog->setTitleText(QStringLiteral("%1 selected").arg(planName));
+            dialog->setSupportingText(
+                QStringLiteral("This demo action shows how a pricing flow can hand off to a Material dialog."));
+            dialog->open();
+        });
+
+        plans->addWidget(card, 0, i);
+        plans->setColumnStretch(i, 1);
+    }
+
+    layout->addWidget(plansHost);
+
+    auto* optionsCard = new QtMaterial::QtMaterialCard(page);
+    optionsCard->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    auto* optionsLayout = new QHBoxLayout(optionsCard);
+    optionsLayout->setContentsMargins(20, 14, 20, 14);
+
+    auto* support = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Include priority onboarding"),
+        optionsCard);
+    support->setChecked(false);
+    optionsLayout->addWidget(support);
+    optionsLayout->addStretch(1);
+    optionsLayout->addWidget(makeLabel(
+        QStringLiteral("Cancel anytime • no hidden fees"),
+        optionsCard,
+        -1.0,
+        false));
+    layout->addWidget(optionsCard);
+
+    connect(
+        billing,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        this,
+        [priceLabels](int index) {
+            const bool annual = index == 1;
+            for (QLabel* price : priceLabels) {
+                const int monthly =
+                    price->property("dashboardMonthlyPrice").toInt();
+                const int displayed = annual
+                    ? qRound(monthly * 0.8)
+                    : monthly;
+                price->setText(
+                    annual
+                        ? QStringLiteral("€%1 / month · billed annually").arg(displayed)
+                        : QStringLiteral("€%1 / month").arg(displayed));
+            }
+        });
+
+    connect(support, &QAbstractButton::toggled, this, [this](bool checked) {
+        showMessage(
+            checked
+                ? QStringLiteral("Priority onboarding added.")
+                : QStringLiteral("Priority onboarding removed."));
+    });
+
+    layout->addStretch(1);
+    return page;
+}
+
+QWidget* DashboardWindow::createApplicationStatesPage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Application States"),
+        QStringLiteral("Preview common loading, empty, error, offline and ready states without leaving the demo."),
+        &layout);
+
+    auto* selector = new QtMaterial::QtMaterialSegmentedButton(page);
+    selector->addSegment(QStringLiteral("Loading"));
+    selector->addSegment(QStringLiteral("Empty"));
+    selector->addSegment(QStringLiteral("Error"));
+    selector->addSegment(QStringLiteral("Offline"));
+    selector->addSegment(QStringLiteral("Ready"));
+    selector->setCurrentIndex(0);
+    layout->addWidget(selector, 0, Qt::AlignLeft);
+
+    auto* states = new QStackedWidget(page);
+    states->setMinimumHeight(360);
+
+    auto makeStateCard = [states](
+        const QString& title,
+        const QString& description) {
+        auto* card = new QtMaterial::QtMaterialCard(states);
+        card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+        auto* cardLayout = new QVBoxLayout(card);
+        cardLayout->setContentsMargins(28, 28, 28, 28);
+        cardLayout->setSpacing(14);
+        cardLayout->addWidget(makeLabel(title, card, 4.0, true));
+        auto* body = makeLabel(description, card, -1.0, false);
+        body->setWordWrap(true);
+        cardLayout->addWidget(body);
+        return qMakePair(card, cardLayout);
+    };
+
+    {
+        const auto loadingState = makeStateCard(
+            QStringLiteral("Loading dashboard data"),
+            QStringLiteral("Use determinate or indeterminate progress indicators while remote data is being resolved."));
+        auto* progress = new QtMaterial::QtMaterialCircularProgressIndicator(
+            loadingState.first);
+        progress->setMode(
+            QtMaterial::QtMaterialCircularProgressIndicator::Mode::Indeterminate);
+        progress->setStatusText(QStringLiteral("Loading analytics"));
+        loadingState.second->addWidget(progress, 0, Qt::AlignHCenter);
+
+        auto* linear = new QtMaterial::QtMaterialLinearProgressIndicator(
+            loadingState.first);
+        linear->setMode(
+            QtMaterial::QtMaterialLinearProgressIndicator::Mode::Indeterminate);
+        linear->setStatusText(QStringLiteral("Refreshing dashboard"));
+        loadingState.second->addWidget(linear);
+        loadingState.second->addStretch(1);
+        states->addWidget(loadingState.first);
+    }
+
+    {
+        const auto emptyState = makeStateCard(
+            QStringLiteral("No orders yet"),
+            QStringLiteral("Empty states should explain what happened and provide a clear next action."));
+        auto* icon = new QLabel(emptyState.first);
+        icon->setAlignment(Qt::AlignCenter);
+        icon->setPixmap(dashboardIcon(
+            QStringLiteral("orders"),
+            materialColor(QtMaterial::ColorRole::Primary)).pixmap(64, 64));
+        emptyState.second->addWidget(icon);
+
+        auto* action = new QtMaterial::QtMaterialFilledButton(
+            QStringLiteral("Create first order"),
+            emptyState.first);
+        emptyState.second->addWidget(action, 0, Qt::AlignHCenter);
+        emptyState.second->addStretch(1);
+        states->addWidget(emptyState.first);
+
+        connect(action, &QAbstractButton::clicked, this, [this, selector]() {
+            showMessage(QStringLiteral("A new order was created for the demo."));
+            selector->setCurrentIndex(4);
+        });
+    }
+
+    {
+        const auto errorState = makeStateCard(
+            QStringLiteral("Something went wrong"),
+            QStringLiteral("Material banners can keep a recoverable problem visible without blocking the entire application."));
+        auto* banner = new QtMaterialBanner(
+            QStringLiteral("Unable to load analytics"),
+            QStringLiteral("The service returned an unexpected response. Your local data is safe."),
+            errorState.first);
+        banner->setPrimaryActionText(QStringLiteral("Retry"));
+        banner->setSecondaryActionText(QStringLiteral("Details"));
+        banner->setDismissible(true);
+        errorState.second->addWidget(banner);
+        errorState.second->addStretch(1);
+        states->addWidget(errorState.first);
+
+        connect(
+            banner,
+            &QtMaterialBanner::primaryActionTriggered,
+            this,
+            [this, selector]() {
+                showMessage(QStringLiteral("Retry succeeded."));
+                selector->setCurrentIndex(4);
+            });
+        connect(
+            banner,
+            &QtMaterialBanner::secondaryActionTriggered,
+            this,
+            [this]() {
+                showMessage(QStringLiteral("HTTP 503 • analytics service unavailable."));
+            });
+    }
+
+    {
+        const auto offlineState = makeStateCard(
+            QStringLiteral("Working offline"),
+            QStringLiteral("The dashboard can clearly communicate degraded connectivity while preserving local actions."));
+        auto* banner = new QtMaterialBanner(
+            QStringLiteral("No network connection"),
+            QStringLiteral("Changes will be queued locally and synchronized when the connection returns."),
+            offlineState.first);
+        banner->setPrimaryActionText(QStringLiteral("Try again"));
+        banner->setDismissible(false);
+        offlineState.second->addWidget(banner);
+
+        auto* reconnect = new QtMaterial::QtMaterialSwitch(
+            QStringLiteral("Automatically reconnect"),
+            offlineState.first);
+        reconnect->setChecked(true);
+        offlineState.second->addWidget(reconnect);
+        offlineState.second->addStretch(1);
+        states->addWidget(offlineState.first);
+
+        connect(
+            banner,
+            &QtMaterialBanner::primaryActionTriggered,
+            this,
+            [this, selector]() {
+                showMessage(QStringLiteral("Connection restored."));
+                selector->setCurrentIndex(4);
+            });
+    }
+
+    {
+        const auto readyState = makeStateCard(
+            QStringLiteral("Everything is up to date"),
+            QStringLiteral("The ready state confirms that dashboard data, orders and local changes are synchronized."));
+        auto* icon = new QLabel(readyState.first);
+        icon->setAlignment(Qt::AlignCenter);
+        icon->setPixmap(dashboardIcon(
+            QStringLiteral("dashboard"),
+            materialColor(QtMaterial::ColorRole::Tertiary)).pixmap(64, 64));
+        readyState.second->addWidget(icon);
+
+        auto* action = new QtMaterial::QtMaterialOutlinedButton(
+            QStringLiteral("Refresh again"),
+            readyState.first);
+        readyState.second->addWidget(action, 0, Qt::AlignHCenter);
+        readyState.second->addStretch(1);
+        states->addWidget(readyState.first);
+
+        connect(action, &QAbstractButton::clicked, this, [selector]() {
+            selector->setCurrentIndex(0);
+        });
+    }
+
+    connect(
+        selector,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        states,
+        &QStackedWidget::setCurrentIndex);
+
+    layout->addWidget(states);
+    layout->addStretch(1);
+    return page;
+}
+
+
+QWidget* DashboardWindow::createShowcaseSettingsPage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Showcase Settings"),
+        QStringLiteral("Exercise the public theme model, contrast variants and bidirectional layout in the live dashboard."),
+        &layout);
+
+    auto* controlsHost = new QWidget(page);
+    auto* controls = new QGridLayout(controlsHost);
+    controls->setContentsMargins(0, 0, 0, 0);
+    controls->setHorizontalSpacing(18);
+    controls->setVerticalSpacing(18);
+
+    auto* themeCard = new QtMaterial::QtMaterialCard(controlsHost);
+    themeCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* themeLayout = new QVBoxLayout(themeCard);
+    themeLayout->setContentsMargins(20, 18, 20, 20);
+    themeLayout->setSpacing(12);
+    themeLayout->addWidget(makeLabel(QStringLiteral("Theme"), themeCard, 2.0, false));
+    themeLayout->addWidget(makeLabel(
+        QStringLiteral("All controls below update the same ThemeManager used by the rest of the application."),
+        themeCard,
+        -1.0,
+        false));
+
+    auto* seed = new QtMaterial::QtMaterialComboBox(themeCard);
+    seed->setLabelText(QStringLiteral("Seed color"));
+    seed->addItems({
+        QStringLiteral("Indigo"),
+        QStringLiteral("Material Purple"),
+        QStringLiteral("Azure"),
+        QStringLiteral("Amber"),
+        QStringLiteral("Teal")
+    });
+    seed->setCurrentText(QStringLiteral("Indigo"));
+    themeLayout->addWidget(seed);
+
+    themeLayout->addWidget(makeLabel(QStringLiteral("Mode"), themeCard, -1.0, true));
+    auto* mode = new QtMaterial::QtMaterialSegmentedButton(themeCard);
+    mode->addSegment(QStringLiteral("Light"));
+    mode->addSegment(QStringLiteral("Dark"));
+    mode->setCurrentIndex(
+        QtMaterial::ThemeManager::instance().theme().isDark() ? 1 : 0);
+    themeLayout->addWidget(mode);
+
+    themeLayout->addWidget(makeLabel(QStringLiteral("Contrast"), themeCard, -1.0, true));
+    auto* contrast = new QtMaterial::QtMaterialSegmentedButton(themeCard);
+    contrast->addSegment(QStringLiteral("Standard"));
+    contrast->addSegment(QStringLiteral("Medium"));
+    contrast->addSegment(QStringLiteral("High"));
+    contrast->setCurrentIndex(0);
+    themeLayout->addWidget(contrast);
+
+    themeLayout->addWidget(makeLabel(QStringLiteral("Color variant"), themeCard, -1.0, true));
+    auto* variant = new QtMaterial::QtMaterialSegmentedButton(themeCard);
+    variant->addSegment(QStringLiteral("Tonal"));
+    variant->addSegment(QStringLiteral("Expressive"));
+    variant->setCurrentIndex(0);
+    themeLayout->addWidget(variant);
+
+    auto* layoutCard = new QtMaterial::QtMaterialCard(controlsHost);
+    layoutCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* layoutSettings = new QVBoxLayout(layoutCard);
+    layoutSettings->setContentsMargins(20, 18, 20, 20);
+    layoutSettings->setSpacing(12);
+    layoutSettings->addWidget(makeLabel(QStringLiteral("Layout & accessibility"), layoutCard, 2.0, false));
+    layoutSettings->addWidget(makeLabel(
+        QStringLiteral("Use the same window to verify LTR/RTL mirroring and accessible control semantics."),
+        layoutCard,
+        -1.0,
+        false));
+
+    layoutSettings->addWidget(makeLabel(QStringLiteral("Direction"), layoutCard, -1.0, true));
+    auto* direction = new QtMaterial::QtMaterialSegmentedButton(layoutCard);
+    direction->addSegment(QStringLiteral("LTR"));
+    direction->addSegment(QStringLiteral("RTL"));
+    direction->setCurrentIndex(
+        m_central && m_central->layoutDirection() == Qt::RightToLeft
+            ? 1
+            : 0);
+    layoutSettings->addWidget(direction);
+
+    auto* labels = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Show navigation rail labels"),
+        layoutCard);
+    labels->setChecked(
+        m_navigationRail ? m_navigationRail->labelsVisible() : false);
+    layoutSettings->addWidget(labels);
+
+    auto* compactPreview = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Compact table rows"),
+        layoutCard);
+    compactPreview->setChecked(
+        m_orders ? m_orders->dense() : true);
+    layoutSettings->addWidget(compactPreview);
+
+    auto* reset = new QtMaterial::QtMaterialOutlinedButton(
+        QStringLiteral("Reset showcase"),
+        layoutCard);
+    layoutSettings->addWidget(reset, 0, Qt::AlignLeft);
+    layoutSettings->addStretch(1);
+
+    controls->addWidget(themeCard, 0, 0);
+    controls->addWidget(layoutCard, 0, 1);
+    controls->setColumnStretch(0, 1);
+    controls->setColumnStretch(1, 1);
+    layout->addWidget(controlsHost);
+
+    auto* preview = new QtMaterial::QtMaterialCard(page);
+    preview->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    auto* previewLayout = new QVBoxLayout(preview);
+    previewLayout->setContentsMargins(20, 18, 20, 20);
+    previewLayout->setSpacing(12);
+    previewLayout->addWidget(makeLabel(QStringLiteral("Live color roles"), preview, 2.0, false));
+
+    auto* swatches = new QHBoxLayout;
+    swatches->setSpacing(10);
+
+    struct Swatch {
+        QLabel* box = nullptr;
+        QtMaterial::ColorRole role = QtMaterial::ColorRole::Primary;
+        QtMaterial::ColorRole onRole = QtMaterial::ColorRole::OnPrimary;
+        const char* name = nullptr;
+    };
+
+    QVector<Swatch> previewSwatches;
+    const struct {
+        QtMaterial::ColorRole role;
+        QtMaterial::ColorRole onRole;
+        const char* name;
+    } swatchData[] = {
+        {QtMaterial::ColorRole::Primary, QtMaterial::ColorRole::OnPrimary, "Primary"},
+        {QtMaterial::ColorRole::Secondary, QtMaterial::ColorRole::OnSecondary, "Secondary"},
+        {QtMaterial::ColorRole::Tertiary, QtMaterial::ColorRole::OnTertiary, "Tertiary"},
+        {QtMaterial::ColorRole::Error, QtMaterial::ColorRole::OnError, "Error"},
+        {QtMaterial::ColorRole::SurfaceContainerHighest, QtMaterial::ColorRole::OnSurface, "Surface"}
+    };
+
+    for (const auto& item : swatchData) {
+        auto* box = new QLabel(QString::fromLatin1(item.name), preview);
+        box->setAlignment(Qt::AlignCenter);
+        box->setMinimumHeight(64);
+        box->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        swatches->addWidget(box, 1);
+        previewSwatches.append(Swatch{box, item.role, item.onRole, item.name});
+    }
+    previewLayout->addLayout(swatches);
+
+    auto refreshSwatches = [previewSwatches]() {
+        for (const Swatch& swatch : previewSwatches) {
+            swatch.box->setStyleSheet(QStringLiteral(
+                "background:%1; color:%2; border-radius:10px; font-weight:600;")
+                .arg(cssColor(materialColor(swatch.role)))
+                .arg(cssColor(materialColor(swatch.onRole))));
+        }
+    };
+    refreshSwatches();
+
+    auto applyThemeControls = [seed, mode, contrast, variant]() {
+        auto options = QtMaterial::ThemeManager::instance().options();
+
+        const QString seedName = seed->currentText();
+        if (seedName == QStringLiteral("Material Purple")) {
+            options.sourceColor = QColor(QStringLiteral("#6750A4"));
+        } else if (seedName == QStringLiteral("Azure")) {
+            options.sourceColor = QColor(QStringLiteral("#00639B"));
+        } else if (seedName == QStringLiteral("Amber")) {
+            options.sourceColor = QColor(QStringLiteral("#FFB300"));
+        } else if (seedName == QStringLiteral("Teal")) {
+            options.sourceColor = QColor(QStringLiteral("#006A60"));
+        } else {
+            options.sourceColor = QColor(QStringLiteral("#4455C7"));
+        }
+
+        options.mode =
+            mode->currentIndex() == 1
+                ? QtMaterial::ThemeMode::Dark
+                : QtMaterial::ThemeMode::Light;
+        options.preference =
+            mode->currentIndex() == 1
+                ? QtMaterial::ThemePreference::Dark
+                : QtMaterial::ThemePreference::Light;
+
+        switch (contrast->currentIndex()) {
+        case 1:
+            options.contrast = QtMaterial::ContrastMode::Medium;
+            break;
+        case 2:
+            options.contrast = QtMaterial::ContrastMode::High;
+            break;
+        default:
+            options.contrast = QtMaterial::ContrastMode::Standard;
+            break;
+        }
+
+        options.variant =
+            variant->currentIndex() == 1
+                ? QtMaterial::ThemeVariant::Expressive
+                : QtMaterial::ThemeVariant::TonalSpot;
+
+        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+    };
+
+    connect(
+        seed,
+        &QComboBox::currentTextChanged,
+        this,
+        [applyThemeControls](const QString&) {
+            applyThemeControls();
+        });
+    connect(
+        mode,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        this,
+        [applyThemeControls](int) {
+            applyThemeControls();
+        });
+    connect(
+        contrast,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        this,
+        [applyThemeControls](int) {
+            applyThemeControls();
+        });
+    connect(
+        variant,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        this,
+        [applyThemeControls](int) {
+            applyThemeControls();
+        });
+
+    connect(
+        direction,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        this,
+        [this](int index) {
+            if (m_central) {
+                m_central->setLayoutDirection(
+                    index == 1
+                        ? Qt::RightToLeft
+                        : Qt::LeftToRight);
+            }
+            showMessage(
+                index == 1
+                    ? QStringLiteral("RTL layout enabled.")
+                    : QStringLiteral("LTR layout enabled."));
+        });
+
+    connect(labels, &QAbstractButton::toggled, this, [this](bool checked) {
+        if (m_navigationRail) {
+            m_navigationRail->setLabelsVisible(checked);
+        }
+    });
+
+    connect(compactPreview, &QAbstractButton::toggled, this, [this](bool checked) {
+        if (m_orders) {
+            m_orders->setDense(checked);
+        }
+        if (m_ordersPage) {
+            m_ordersPage->setDense(checked);
+        }
+    });
+
+    connect(reset, &QAbstractButton::clicked, this, [this, seed, mode, contrast, variant, direction, labels, compactPreview]() {
+        seed->setCurrentText(QStringLiteral("Indigo"));
+        mode->setCurrentIndex(0);
+        contrast->setCurrentIndex(0);
+        variant->setCurrentIndex(0);
+        direction->setCurrentIndex(0);
+        labels->setChecked(false);
+        compactPreview->setChecked(true);
+
+        auto options = QtMaterial::ThemeManager::instance().options();
+        options.sourceColor = QColor(QStringLiteral("#4455C7"));
+        options.mode = QtMaterial::ThemeMode::Light;
+        options.preference = QtMaterial::ThemePreference::Light;
+        options.contrast = QtMaterial::ContrastMode::Standard;
+        options.variant = QtMaterial::ThemeVariant::TonalSpot;
+        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+
+        if (m_central) {
+            m_central->setLayoutDirection(Qt::LeftToRight);
+        }
+        showMessage(QStringLiteral("Showcase settings reset."));
+    });
+
+    connect(
+        &QtMaterial::ThemeManager::instance(),
+        &QtMaterial::ThemeManager::themeChanged,
+        page,
+        [refreshSwatches, mode](const QtMaterial::Theme& theme) {
+            refreshSwatches();
+            const int target = theme.isDark() ? 1 : 0;
+            if (mode->currentIndex() != target) {
+                mode->setCurrentIndex(target);
+            }
+        });
+
+    layout->addWidget(preview);
+    layout->addStretch(1);
+    return page;
+}
+
 QWidget* DashboardWindow::createQuickStatistics()
 {
     auto* host = new QWidget(m_contentHost);
@@ -1989,6 +2862,10 @@ void DashboardWindow::populateCommandPalette()
     model->appendRow(new QStandardItem(QStringLiteral("Open orders")));
     model->appendRow(new QStandardItem(QStringLiteral("Open customers")));
     model->appendRow(new QStandardItem(QStringLiteral("Open components")));
+    model->appendRow(new QStandardItem(QStringLiteral("Open profile")));
+    model->appendRow(new QStandardItem(QStringLiteral("Open pricing")));
+    model->appendRow(new QStandardItem(QStringLiteral("Open application states")));
+    model->appendRow(new QStandardItem(QStringLiteral("Open showcase settings")));
     m_commandPalette->setSourceModel(model);
 }
 
@@ -2314,6 +3191,8 @@ void DashboardWindow::applyThemeChrome()
         "QToolButton#linkButton { background:transparent; border:0; color:%2;"
         " padding:3px 5px; }"
         "QLabel#taskDetail { color:%1; }"
+        "#profileHeroAvatar { background:%2; color:%6; border-radius:32px;"
+        " font-weight:700; font-size:16px; }"
         "QFrame#dashboardSeparator { color:%3; }"
         "QCalendarWidget#dashboardCalendar { background:%4; border:0; }"
         "QCalendarWidget#dashboardCalendar QToolButton { color:%5; background:transparent;"
@@ -2531,7 +3410,15 @@ void DashboardWindow::setCurrentSection(int index)
     }
 
     static const char* titles[] = {
-        "Dashboard", "Analytics", "Orders", "Customers", "Components"
+        "Dashboard",
+        "Analytics",
+        "Orders",
+        "Customers",
+        "Components",
+        "Profile",
+        "Pricing",
+        "Application States",
+        "Showcase Settings"
     };
     const QString title = QString::fromLatin1(titles[index]);
 
@@ -2548,7 +3435,11 @@ void DashboardWindow::setCurrentSection(int index)
             "Search analytics...",
             "Search orders...",
             "Search customers...",
-            "Search components..."
+            "Search components...",
+            "Search profile...",
+            "Search pricing...",
+            "Search application states...",
+            "Search showcase settings..."
         };
         m_search->setPlaceholderText(QString::fromLatin1(placeholders[index]));
     }

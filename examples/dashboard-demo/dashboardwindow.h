@@ -37,6 +37,8 @@ public:
     explicit DashboardWindow(QWidget* parent = nullptr);
     ~DashboardWindow() override;
 
+    void showDemoPage(int index);
+
 protected:
     void resizeEvent(QResizeEvent* event) override;
 
@@ -56,6 +58,10 @@ private:
     QWidget* createOrdersPage();
     QWidget* createCustomersPage();
     QWidget* createComponentsPage();
+    QWidget* createProfilePage();
+    QWidget* createPricingPage();
+    QWidget* createApplicationStatesPage();
+    QWidget* createShowcaseSettingsPage();
     QWidget* createQuickStatistics();
     QWidget* createLowerHighlights();
     MetricWidgets createMetricCard(
