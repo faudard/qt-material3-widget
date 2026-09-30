@@ -793,6 +793,104 @@ QWidget* DashboardWindow::createSidebar()
     return sidebar;
 }
 
+QtMaterial::QtMaterialNavigationRail* DashboardWindow::createNavigationRail()
+{
+    auto* rail = new QtMaterial::QtMaterialNavigationRail(m_central);
+    rail->setLabelsVisible(false);
+
+    const struct {
+        const char* label;
+        const char* icon;
+    } destinations[] = {
+        {"Dashboard", "dashboard"},
+        {"Analytics", "analytics"},
+        {"Orders", "orders"},
+        {"Customers", "customers"},
+        {"Components", "components"}
+    };
+
+    for (const auto& destination : destinations) {
+        rail->addDestination(
+            QString::fromLatin1(destination.label),
+            dashboardIcon(
+                QString::fromLatin1(destination.icon),
+                materialColor(QtMaterial::ColorRole::OnSurfaceVariant)));
+    }
+    rail->setCurrentIndex(0);
+
+    connect(
+        rail,
+        &QtMaterial::QtMaterialNavigationRail::currentIndexChanged,
+        this,
+        [this](int index) {
+            setCurrentSection(index);
+        });
+
+    return rail;
+}
+
+QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer()
+{
+    auto* drawer = new QtMaterial::QtMaterialNavigationDrawer(m_central);
+    drawer->setObjectName(QStringLiteral("dashboardNavigationDrawer"));
+    drawer->setHostWidget(m_central);
+    drawer->setEdge(QtMaterial::QtMaterialNavigationDrawer::Edge::Left);
+
+    auto* layout = new QVBoxLayout(drawer);
+    layout->setContentsMargins(22, 24, 22, 24);
+    layout->setSpacing(8);
+
+    auto* header = new QHBoxLayout;
+    header->addWidget(makeLabel(QStringLiteral("Navigation"), drawer, 3.0, true));
+    header->addStretch(1);
+
+    auto* close = new QtMaterial::QtMaterialIconButton(
+        dashboardIcon(
+            QStringLiteral("chevron"),
+            materialColor(QtMaterial::ColorRole::OnSurfaceVariant)),
+        drawer);
+    close->setAccessibleName(QStringLiteral("Close navigation"));
+    close->setRequiresAccessibleName(true);
+    close->setToolTip(QStringLiteral("Close navigation"));
+    header->addWidget(close);
+    layout->addLayout(header);
+
+    auto* group = new QButtonGroup(drawer);
+    group->setExclusive(true);
+
+    const struct {
+        const char* label;
+        const char* icon;
+    } destinations[] = {
+        {"Dashboard", "dashboard"},
+        {"Analytics", "analytics"},
+        {"Orders", "orders"},
+        {"Customers", "customers"},
+        {"Components", "components"}
+    };
+
+    for (int i = 0; i < 5; ++i) {
+        auto* button = makeNavButton(
+            QString::fromLatin1(destinations[i].label),
+            QString::fromLatin1(destinations[i].icon),
+            drawer);
+        button->setProperty("dashboardDrawerIndex", i);
+        group->addButton(button, i);
+        layout->addWidget(button);
+        connect(button, &QToolButton::clicked, this, [this, i]() {
+            setCurrentSection(i);
+            if (m_navigationDrawer) {
+                m_navigationDrawer->closeDrawer();
+            }
+        });
+    }
+
+    layout->addStretch(1);
+
+    connect(close, &QAbstractButton::clicked, drawer, &QtMaterial::QtMaterialNavigationDrawer::closeDrawer);
+    return drawer;
+}
+
 QWidget* DashboardWindow::createTopBar()
 {
     m_topBar = new QFrame(m_central);
