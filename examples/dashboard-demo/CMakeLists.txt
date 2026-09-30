@@ -3,16 +3,24 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 if(COMMAND qt_add_executable)
     qt_add_executable(qtmaterial3_dashboard_demo
         main.cpp
+        dashboardaccountpage.cpp
+        dashboardaccountpage.h
+        dashboardaccountpage.ui
         dashboardwindow.cpp
         dashboardwindow.h
+        dashboardwindow.ui
         dashboardcharts.cpp
         dashboardcharts.h
     )
 else()
     add_executable(qtmaterial3_dashboard_demo
         main.cpp
+        dashboardaccountpage.cpp
+        dashboardaccountpage.h
+        dashboardaccountpage.ui
         dashboardwindow.cpp
         dashboardwindow.h
+        dashboardwindow.ui
         dashboardcharts.cpp
         dashboardcharts.h
     )
