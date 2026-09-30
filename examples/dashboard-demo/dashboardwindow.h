@@ -13,6 +13,7 @@ class QToolButton;
 class QStackedWidget;
 
 namespace QtMaterial {
+enum class ColorRole;
 class QtMaterialBreadcrumb;
 class QtMaterialCard;
 class QtMaterialComboBox;
@@ -57,7 +58,7 @@ private:
         const QString& title,
         const QString& value,
         const QString& delta,
-        const QColor& iconColor,
+        QtMaterial::ColorRole iconRole,
         const QString& iconText);
     QWidget* createRevenueSummary();
     QtMaterial::QtMaterialCard* createStatisticsCard();
