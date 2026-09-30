@@ -2,6 +2,7 @@
 
 #include "dashboardcharts.h"
 #include "dashboardaccountpage.h"
+#include "dashboardaccountpanel.h"
 #include "ui_dashboardwindow.h"
 
 #include <QAbstractButton>
@@ -592,6 +593,7 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     m_pages->addWidget(createPageScroll(accountPage));
 
     m_navigationDrawer = createNavigationDrawer();
+    m_accountDrawer = createAccountDrawer();
 
     m_snackbarHost = new QtMaterial::QtMaterialSnackbarHost(m_central, this);
     m_commandPalette = new QtMaterial::QtMaterialCommandPalette(this);
@@ -921,6 +923,33 @@ QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer(
     return drawer;
 }
 
+QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createAccountDrawer()
+{
+    auto* drawer = new QtMaterial::QtMaterialNavigationDrawer(m_central);
+    drawer->setObjectName(QStringLiteral("dashboardAccountDrawer"));
+    drawer->setHostWidget(m_central);
+    drawer->setEdge(QtMaterial::QtMaterialNavigationDrawer::Edge::Right);
+    drawer->setMinimumWidth(320);
+
+    auto* panel = new DashboardAccountPanel(drawer);
+    auto* layout = new QVBoxLayout(drawer);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(panel);
+
+    connect(panel, &DashboardAccountPanel::closeRequested, drawer, &QtMaterial::QtMaterialNavigationDrawer::closeDrawer);
+    connect(panel, &DashboardAccountPanel::navigateRequested, this, [this](int pageIndex) {
+        if (m_accountDrawer) {
+            m_accountDrawer->closeDrawer();
+        }
+        setCurrentSection(pageIndex);
+    });
+    connect(panel, &DashboardAccountPanel::messageRequested, this, [this](const QString& message) {
+        showMessage(message);
+    });
+
+    return drawer;
+}
+
 QWidget* DashboardWindow::createTopBar()
 {
     m_topBar = new QFrame(m_central);
@@ -1051,7 +1080,9 @@ QWidget* DashboardWindow::createTopBar()
         showMessage(QStringLiteral("8 notifications waiting for review."));
     });
     connect(account, &QToolButton::clicked, this, [this]() {
-        setCurrentSection(9);
+        if (m_accountDrawer) {
+            m_accountDrawer->open();
+        }
     });
 
     return m_topBar;
