@@ -901,6 +901,17 @@ QWidget* DashboardWindow::createTopBar()
     layout->setContentsMargins(20, 8, 16, 8);
     layout->setSpacing(10);
 
+    m_menuButton = new QtMaterial::QtMaterialIconButton(
+        dashboardIcon(
+            QStringLiteral("menu"),
+            materialColor(QtMaterial::ColorRole::OnSurfaceVariant)),
+        m_topBar);
+    m_menuButton->setAccessibleName(QStringLiteral("Open navigation"));
+    m_menuButton->setRequiresAccessibleName(true);
+    m_menuButton->setToolTip(QStringLiteral("Open navigation"));
+    m_menuButton->setProperty("dashboardIconName", QStringLiteral("menu"));
+    layout->addWidget(m_menuButton);
+
     m_breadcrumb = new QtMaterial::QtMaterialBreadcrumb(m_topBar);
     m_breadcrumb->setItems({
         QStringLiteral("Application"),
@@ -921,6 +932,7 @@ QWidget* DashboardWindow::createTopBar()
     language->setText(QStringLiteral("EN"));
     language->setCursor(Qt::PointingHandCursor);
     language->setObjectName(QStringLiteral("topBarButton"));
+    language->setProperty("dashboardCompactOptional", true);
     language->setFixedSize(42, 36);
     layout->addWidget(language);
 
@@ -969,6 +981,7 @@ QWidget* DashboardWindow::createTopBar()
     avatar->setAlignment(Qt::AlignCenter);
     avatar->setFixedSize(32, 32);
     avatar->setObjectName(QStringLiteral("dashboardTopAvatar"));
+    avatar->setProperty("dashboardCompactOptional", true);
     layout->addWidget(avatar);
 
     auto* account = new QToolButton(m_topBar);
@@ -980,10 +993,16 @@ QWidget* DashboardWindow::createTopBar()
     account->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     account->setCursor(Qt::PointingHandCursor);
     account->setObjectName(QStringLiteral("topBarAccount"));
+    account->setProperty("dashboardCompactOptional", true);
     account->setMinimumWidth(94);
     account->setFixedHeight(36);
     layout->addWidget(account);
 
+    connect(m_menuButton, &QAbstractButton::clicked, this, [this]() {
+        if (m_navigationDrawer) {
+            m_navigationDrawer->open();
+        }
+    });
     connect(m_search, &QtMaterial::QtMaterialSearchBar::textChanged, this, &DashboardWindow::applyFilter);
     connect(m_themeButton, &QAbstractButton::clicked, this, []() {
         auto options = QtMaterial::ThemeManager::instance().options();
