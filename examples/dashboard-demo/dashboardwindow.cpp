@@ -2184,7 +2184,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
         QStringLiteral("Compact table rows"),
         layoutCard);
     compactPreview->setChecked(
-        m_orders ? m_orders->isDense() : true);
+        m_orders ? m_orders->dense() : true);
     layoutSettings->addWidget(compactPreview);
 
     auto* reset = new QtMaterial::QtMaterialOutlinedButton(
