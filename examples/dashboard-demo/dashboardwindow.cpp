@@ -602,6 +602,7 @@ DashboardWindow::DashboardWindow(QWidget* parent)
         this,
         [this](const QtMaterial::Theme&) {
             applyThemeChrome();
+            applyPeriod();
             if (m_themeButton) {
                 m_themeButton->setIcon(dashboardIcon(
                     QtMaterial::ThemeManager::instance().theme().isDark()
@@ -1188,8 +1189,8 @@ QWidget* DashboardWindow::createOrdersPage()
         const char* status;
     } filterItems[] = {
         {"All  30", "All"},
-        {"Paid  15", "Paid"},
-        {"Pending  9", "Pending"},
+        {"Paid  16", "Paid"},
+        {"Pending  8", "Pending"},
         {"Refunded  6", "Refunded"}
     };
 
@@ -1330,6 +1331,11 @@ QWidget* DashboardWindow::createOrdersPage()
         &QtMaterial::QtMaterialPagination::pageSizeChanged,
         this,
         [refreshOrdersPage](int) { refreshOrdersPage(); });
+    connect(
+        m_ordersPage->horizontalHeader(),
+        &QHeaderView::sortIndicatorChanged,
+        this,
+        [refreshOrdersPage](int, Qt::SortOrder) { refreshOrdersPage(); });
 
     connect(exportButton, &QAbstractButton::clicked, this, [this]() {
         showMessage(QStringLiteral("Order export prepared."));
@@ -1792,15 +1798,20 @@ QWidget* DashboardWindow::createLowerHighlights()
     const struct {
         const char* title;
         const char* detail;
+        int day;
         bool done;
     } taskItems[] = {
-        {"Send the Billing Agreement", "Scheduled on 24 Mar, 2019", false},
-        {"Send over all the documentation", "Scheduled on 24 Mar, 2019", false},
-        {"Review dashboard accessibility", "Due today at 16:00", true}
+        {"Send the Billing Agreement", "Scheduled on 24 Sep, 2026", 24, false},
+        {"Send over all the documentation", "Scheduled on 24 Sep, 2026", 24, false},
+        {"Review dashboard accessibility", "Scheduled on 22 Sep, 2026", 22, true}
     };
 
     for (const auto& item : taskItems) {
         auto* row = new QWidget(checklistHost);
+        row->setObjectName(QStringLiteral("dashboardTaskRow"));
+        row->setProperty(
+            "dashboardTaskDate",
+            QDate(2026, 9, item.day));
         auto* rowLayout = new QHBoxLayout(row);
         rowLayout->setContentsMargins(0, 0, 0, 0);
         rowLayout->setSpacing(8);
@@ -1821,6 +1832,14 @@ QWidget* DashboardWindow::createLowerHighlights()
 
         checklist->addWidget(row);
     }
+    auto* emptyTasks = makeLabel(
+        QStringLiteral("No tasks for the selected day."),
+        checklistHost,
+        -1.0,
+        false);
+    emptyTasks->setObjectName(QStringLiteral("taskDetail"));
+    emptyTasks->setVisible(false);
+    checklist->addWidget(emptyTasks);
     checklist->addStretch(1);
 
     auto* calendar = new QCalendarWidget(content);
@@ -1846,8 +1865,28 @@ QWidget* DashboardWindow::createLowerHighlights()
     connect(viewAll, &QToolButton::clicked, this, [this]() {
         showMessage(QStringLiteral("All tasks are already visible in this demo."));
     });
-    connect(calendar, &QCalendarWidget::clicked, this, [this](const QDate& date) {
-        showMessage(QStringLiteral("Selected %1").arg(date.toString(QStringLiteral("dd MMM yyyy"))));
+    connect(calendar, &QCalendarWidget::clicked, this, [this, checklistHost, emptyTasks](const QDate& date) {
+        const auto taskRows =
+            checklistHost->findChildren<QWidget*>(
+                QStringLiteral("dashboardTaskRow"));
+        int visibleTasks = 0;
+        for (QWidget* row : taskRows) {
+            const QDate taskDate =
+                row->property("dashboardTaskDate").toDate();
+            const bool visible = taskDate == date;
+            row->setVisible(visible);
+            if (visible) {
+                ++visibleTasks;
+            }
+        }
+        emptyTasks->setVisible(visibleTasks == 0);
+        showMessage(
+            visibleTasks == 0
+                ? QStringLiteral("No tasks on %1").arg(
+                    date.toString(QStringLiteral("dd MMM yyyy")))
+                : QStringLiteral("%1 task(s) on %2")
+                    .arg(visibleTasks)
+                    .arg(date.toString(QStringLiteral("dd MMM yyyy"))));
     });
 
     grid->addWidget(social, 0, 0);
