@@ -1025,7 +1025,7 @@ QWidget* DashboardWindow::createTopBar()
     account->setCursor(Qt::PointingHandCursor);
     account->setObjectName(QStringLiteral("topBarAccount"));
     account->setProperty("dashboardCompactOptional", true);
-    account->setMinimumWidth(94);
+    account->setMinimumWidth(104);
     account->setFixedHeight(36);
     layout->addWidget(account);
 
@@ -1261,9 +1261,10 @@ QWidget* DashboardWindow::createOrdersPage()
     auto* header = new QHBoxLayout;
     header->addWidget(makeLabel(QStringLiteral("All orders"), tableCard, 2.0, false));
     header->addStretch(1);
-    auto* exportButton = new QtMaterial::QtMaterialFilledTonalButton(
+    auto* exportButton = new QtMaterial::QtMaterialOutlinedButton(
         QStringLiteral("Export CSV"),
         tableCard);
+    exportButton->setMinimumWidth(118);
     header->addWidget(exportButton);
     cardLayout->addLayout(header);
 
@@ -2814,7 +2815,8 @@ QtMaterial::QtMaterialCard* DashboardWindow::createOrdersCard()
     auto* header = new QHBoxLayout;
     header->addWidget(makeLabel(QStringLiteral("Recent Orders"), card, 2.0, false));
     header->addStretch(1);
-    auto* exportButton = new QtMaterial::QtMaterialFilledTonalButton(QStringLiteral("Export report"), card);
+    auto* exportButton = new QtMaterial::QtMaterialOutlinedButton(QStringLiteral("Export CSV"), card);
+    exportButton->setMinimumWidth(118);
     header->addWidget(exportButton);
     layout->addLayout(header);
 
@@ -3218,15 +3220,24 @@ void DashboardWindow::applyThemeChrome()
     }
 
     const QString applicationChrome = QStringLiteral(
+        "QWidget#dashboardContent QLabel { color:%5; }"
+        "QWidget#dashboardContent QLabel#pageSubtitle,"
+        " QWidget#dashboardContent QLabel#metricTitle,"
+        " QWidget#dashboardContent QLabel#taskDetail { color:%1; }"
         "QToolButton#chartTab { background:transparent; border:0; color:%1;"
         " padding:5px 8px; }"
         "QToolButton#chartTab:checked { color:%2; border-bottom:2px solid %2; }"
         "QToolButton#linkButton { background:transparent; border:0; color:%2;"
         " padding:3px 5px; }"
-        "QLabel#taskDetail { color:%1; }"
         "#profileHeroAvatar { background:%2; color:%6; border-radius:32px;"
         " font-weight:700; font-size:16px; }"
         "QFrame#dashboardSeparator { color:%3; }"
+        "QComboBox#qtmaterial_combo_box { background:%4; color:%5; border:1px solid %3;"
+        " border-radius:8px; padding:8px 28px 8px 10px; min-height:28px; }"
+        "QComboBox#qtmaterial_combo_box:hover { border-color:%2; }"
+        "QComboBox#qtmaterial_combo_box QAbstractItemView { background:%4; color:%5;"
+        " selection-background-color:%2; selection-color:%6; border:1px solid %3;"
+        " outline:0; padding:4px; }"
         "QCalendarWidget#dashboardCalendar { background:%4; border:0; }"
         "QCalendarWidget#dashboardCalendar QToolButton { color:%5; background:transparent;"
         " border:0; padding:3px; }"
@@ -3243,6 +3254,8 @@ void DashboardWindow::applyThemeChrome()
     if (m_pages) {
         const QString pageStyle = QStringLiteral(
             "QWidget#dashboardContent { background:%1; color:%2; }"
+            "QScrollArea { background:%1; border:0; }"
+            "QScrollArea > QWidget > QWidget { background:%1; }"
             "QLabel#pageSubtitle { color:%3; }")
             .arg(cssColor(surfaceVariant))
             .arg(cssColor(onSurface))
@@ -3301,9 +3314,7 @@ void DashboardWindow::applyThemeChrome()
         const auto positiveLabels =
             m_pages->findChildren<QLabel*>(QStringLiteral("positiveDelta"));
         for (QLabel* label : positiveLabels) {
-            QPalette palette = label->palette();
-            palette.setColor(QPalette::WindowText, positive);
-            label->setPalette(palette);
+            label->setStyleSheet(QStringLiteral("color:%1;").arg(cssColor(positive)));
         }
 
         const auto legendDots =
@@ -3311,9 +3322,9 @@ void DashboardWindow::applyThemeChrome()
         for (QLabel* dot : legendDots) {
             const auto role = static_cast<QtMaterial::ColorRole>(
                 dot->property("dashboardColorRole").toInt());
-            QPalette palette = dot->palette();
-            palette.setColor(QPalette::WindowText, materialColor(role));
-            dot->setPalette(palette);
+            dot->setStyleSheet(
+                QStringLiteral("color:%1;")
+                    .arg(cssColor(materialColor(role))));
         }
     }
 
