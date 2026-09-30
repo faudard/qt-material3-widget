@@ -583,6 +583,7 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     m_pages->addWidget(createPageScroll(createProfilePage()));
     m_pages->addWidget(createPageScroll(createPricingPage()));
     m_pages->addWidget(createPageScroll(createApplicationStatesPage()));
+    m_pages->addWidget(createPageScroll(createShowcaseSettingsPage()));
     rightLayout->addWidget(m_pages, 1);
 
     shell->addWidget(right, 1);
@@ -769,15 +770,10 @@ QWidget* DashboardWindow::createSidebar()
         showMessage(QStringLiteral("Theme Studio is available as a separate example."));
     });
 
-    auto* settings = makeNavButton(
-        QStringLiteral("Settings"),
+    addPrimaryNavigation(
+        QStringLiteral("Showcase Settings"),
         QStringLiteral("components"),
-        navigationContent);
-    settings->setCheckable(false);
-    navigationLayout->addWidget(settings);
-    connect(settings, &QToolButton::clicked, this, [this]() {
-        showMessage(QStringLiteral("Dashboard preferences use the live Material theme controls."));
-    });
+        8);
 
     navigationLayout->addStretch(1);
     navigationScroll->setWidget(navigationContent);
@@ -822,7 +818,8 @@ QtMaterial::QtMaterialNavigationRail* DashboardWindow::createNavigationRail()
         {"Components", "components"},
         {"Profile", "profile"},
         {"Pricing", "pricing"},
-        {"States", "message"}
+        {"States", "message"},
+        {"Settings", "components"}
     };
 
     for (const auto& destination : destinations) {
@@ -885,10 +882,11 @@ QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer(
         {"Components", "components"},
         {"Profile", "profile"},
         {"Pricing", "pricing"},
-        {"States", "message"}
+        {"States", "message"},
+        {"Settings", "components"}
     };
 
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < 9; ++i) {
         auto* button = makeNavButton(
             QString::fromLatin1(destinations[i].label),
             QString::fromLatin1(destinations[i].icon),
@@ -2556,6 +2554,7 @@ void DashboardWindow::populateCommandPalette()
     model->appendRow(new QStandardItem(QStringLiteral("Open profile")));
     model->appendRow(new QStandardItem(QStringLiteral("Open pricing")));
     model->appendRow(new QStandardItem(QStringLiteral("Open application states")));
+    model->appendRow(new QStandardItem(QStringLiteral("Open showcase settings")));
     m_commandPalette->setSourceModel(model);
 }
 
@@ -3107,7 +3106,8 @@ void DashboardWindow::setCurrentSection(int index)
         "Components",
         "Profile",
         "Pricing",
-        "Application States"
+        "Application States",
+        "Showcase Settings"
     };
     const QString title = QString::fromLatin1(titles[index]);
 
@@ -3127,7 +3127,8 @@ void DashboardWindow::setCurrentSection(int index)
             "Search components...",
             "Search profile...",
             "Search pricing...",
-            "Search application states..."
+            "Search application states...",
+            "Search showcase settings..."
         };
         m_search->setPlaceholderText(QString::fromLatin1(placeholders[index]));
     }
