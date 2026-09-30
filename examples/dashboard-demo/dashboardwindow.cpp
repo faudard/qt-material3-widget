@@ -38,18 +38,26 @@
 
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
+#include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
 #include "qtmaterial/widgets/data/qtmaterialpagination.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
 #include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
+#include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialsearchbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
+#include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
 #include "qtmaterial/widgets/selection/qtmaterialchip.h"
+#include "qtmaterial/widgets/selection/qtmaterialradiobutton.h"
+#include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
+#include "qtmaterial/widgets/selection/qtmaterialswitch.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialbanner.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialdialog.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h"
@@ -572,6 +580,9 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     m_pages->addWidget(createPageScroll(createOrdersPage()));
     m_pages->addWidget(createPageScroll(createCustomersPage()));
     m_pages->addWidget(createPageScroll(createComponentsPage()));
+    m_pages->addWidget(createPageScroll(createProfilePage()));
+    m_pages->addWidget(createPageScroll(createPricingPage()));
+    m_pages->addWidget(createPageScroll(createApplicationStatesPage()));
     rightLayout->addWidget(m_pages, 1);
 
     shell->addWidget(right, 1);
