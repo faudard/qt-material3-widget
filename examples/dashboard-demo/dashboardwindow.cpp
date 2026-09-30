@@ -1,6 +1,7 @@
 #include "dashboardwindow.h"
 
 #include "dashboardcharts.h"
+#include "ui_dashboardwindow.h"
 
 #include <QAbstractButton>
 #include <QAbstractItemView>
@@ -536,39 +537,30 @@ QWidget* makePageShell(
 
 DashboardWindow::DashboardWindow(QWidget* parent)
     : QMainWindow(parent)
+    , m_ui(std::make_unique<Ui::DashboardWindow>())
 {
-    setWindowTitle(QStringLiteral("Qt Material 3 - Dashboard Showcase"));
-    setMinimumSize(640, 560);
+    m_ui->setupUi(this);
+    m_central = m_ui->centralWidget;
+    m_pages = m_ui->pages;
 
     auto options = QtMaterial::ThemeManager::instance().options();
     options.sourceColor = QColor(QStringLiteral("#4455c7"));
     QtMaterial::ThemeManager::instance().setThemeOptions(options);
 
-    m_central = new QWidget(this);
-    auto* shell = new QHBoxLayout(m_central);
-    shell->setContentsMargins(0, 0, 0, 0);
-    shell->setSpacing(0);
-
     m_sidebar = createSidebar();
-    shell->addWidget(m_sidebar);
+    m_ui->shellLayout->insertWidget(0, m_sidebar);
 
     m_navigationRail = createNavigationRail();
-    shell->addWidget(m_navigationRail);
+    m_ui->shellLayout->insertWidget(1, m_navigationRail);
 
-    auto* right = new QWidget(m_central);
-    auto* rightLayout = new QVBoxLayout(right);
-    rightLayout->setContentsMargins(0, 0, 0, 0);
-    rightLayout->setSpacing(0);
+    m_ui->rightLayout->insertWidget(0, createTopBar());
 
-    rightLayout->addWidget(createTopBar());
-
-    m_pages = new QStackedWidget(right);
-
-    auto createPageScroll = [right](QWidget* page) {
-        auto* scroll = new QScrollArea(right);
+    auto createPageScroll = [this](QWidget* page) {
+        auto* scroll = new QScrollArea(m_ui->rightPane);
         scroll->setWidgetResizable(true);
         scroll->setFrameShape(QFrame::NoFrame);
         scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         scroll->setWidget(page);
         return scroll;
     };
@@ -584,10 +576,6 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     m_pages->addWidget(createPageScroll(createPricingPage()));
     m_pages->addWidget(createPageScroll(createApplicationStatesPage()));
     m_pages->addWidget(createPageScroll(createShowcaseSettingsPage()));
-    rightLayout->addWidget(m_pages, 1);
-
-    shell->addWidget(right, 1);
-    setCentralWidget(m_central);
 
     m_navigationDrawer = createNavigationDrawer();
 
