@@ -416,42 +416,36 @@ protected:
         painter.drawRoundedRect(box, 10.0, 10.0);
 
         painter.setPen(QColor(QStringLiteral("#ffffff")));
-        QFont titleFont = font();
-        titleFont.setPointSizeF(titleFont.pointSizeF() + 1.0);
-        titleFont.setBold(false);
-        painter.setFont(titleFont);
-        painter.drawText(QRectF(20, 16, width() - 40, 24), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("Total Revenue"));
-
         QFont valueFont = font();
         valueFont.setPointSizeF(valueFont.pointSizeF() + 8.0);
         valueFont.setBold(true);
         painter.setFont(valueFont);
-        painter.drawText(QRectF(20, 47, width() - 40, 34), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("€216,759"));
+        painter.drawText(QRectF(20, 16, width() - 40, 34), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("€216,759"));
 
         QFont labelFont = font();
         labelFont.setPointSizeF(std::max<qreal>(8.0, labelFont.pointSizeF() - 1.0));
         painter.setFont(labelFont);
         painter.setPen(QColor(255, 255, 255, 175));
-        painter.drawText(QRectF(20, 83, 110, 22), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("YTD Revenue"));
+        painter.drawText(QRectF(20, 52, 110, 22), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("YTD Revenue"));
 
         painter.setPen(QColor(QStringLiteral("#ffffff")));
         QFont smallValue = font();
         smallValue.setPointSizeF(smallValue.pointSizeF() + 3.0);
         smallValue.setBold(true);
         painter.setFont(smallValue);
-        painter.drawText(QRectF(20, 113, 44, 26), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("49"));
-        painter.drawText(QRectF(74, 113, 44, 26), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("09"));
+        painter.drawText(QRectF(20, 91, 44, 26), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("49"));
+        painter.drawText(QRectF(74, 91, 44, 26), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("09"));
 
         painter.setPen(QColor(255, 255, 255, 150));
         painter.setFont(labelFont);
-        painter.drawText(QRectF(20, 136, 44, 18), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("Clients"));
-        painter.drawText(QRectF(74, 136, 60, 18), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("Countries"));
+        painter.drawText(QRectF(20, 114, 44, 18), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("Clients"));
+        painter.drawText(QRectF(74, 114, 60, 18), Qt::AlignLeft | Qt::AlignVCenter, QStringLiteral("Countries"));
 
         if (width() < 210) {
             return;
         }
 
-        const QRectF chart(width() * 0.43, 72, width() * 0.52, 66);
+        const QRectF chart(width() * 0.43, 58, width() * 0.52, 72);
         const QVector<qreal> values = {0.12, 0.28, 0.21, 0.48, 0.40, 0.72, 0.55, 0.84, 0.70};
         QPainterPath path;
         for (int i = 0; i < values.size(); ++i) {
@@ -1378,10 +1372,10 @@ DashboardWindow::MetricWidgets DashboardWindow::createMetricCard(
     MetricWidgets metric;
     metric.card = new QtMaterial::QtMaterialCard(m_contentHost);
     metric.card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
-    metric.card->setMinimumHeight(92);
+    metric.card->setMinimumHeight(86);
 
     auto* row = new QHBoxLayout(metric.card);
-    row->setContentsMargins(11, 10, 14, 10);
+    row->setContentsMargins(11, 9, 14, 9);
     row->setSpacing(12);
 
     auto* icon = new QLabel(iconText, metric.card);
@@ -1400,6 +1394,7 @@ DashboardWindow::MetricWidgets DashboardWindow::createMetricCard(
     metric.value = makeLabel(value, metric.card, 3.0, false);
     metric.delta = makeLabel(delta, metric.card, -2.0, false);
     metric.delta->setProperty("dashboardPositive", true);
+    metric.delta->setVisible(false);
     text->addWidget(titleLabel);
     text->addWidget(metric.value);
     text->addWidget(metric.delta);
@@ -1615,8 +1610,10 @@ QWidget* DashboardWindow::createLowerHighlights()
     calendar->setHorizontalHeaderFormat(QCalendarWidget::ShortDayNames);
     calendar->setCurrentPage(2026, 9);
     calendar->setSelectedDate(QDate(2026, 9, 24));
-    calendar->setFixedWidth(300);
+    calendar->setMinimumWidth(220);
+    calendar->setMaximumWidth(300);
     calendar->setMinimumHeight(188);
+    calendar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     contentLayout->addWidget(checklistHost, 3);
     contentLayout->addWidget(calendar, 2);
