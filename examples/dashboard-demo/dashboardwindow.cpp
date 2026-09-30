@@ -40,9 +40,14 @@
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
+#include "qtmaterial/widgets/data/qtmaterialpagination.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
+#include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
 #include "qtmaterial/widgets/inputs/qtmaterialsearchbar.h"
+#include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
+#include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
 #include "qtmaterial/widgets/selection/qtmaterialchip.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
@@ -788,9 +793,13 @@ QWidget* DashboardWindow::createTopBar()
     layout->setContentsMargins(20, 8, 16, 8);
     layout->setSpacing(10);
 
-    m_breadcrumbLabel = makeLabel(QStringLiteral("Application  /  Dashboard"), m_topBar, -1.0, false);
-    m_breadcrumbLabel->setObjectName(QStringLiteral("dashboardBreadcrumb"));
-    layout->addWidget(m_breadcrumbLabel);
+    m_breadcrumb = new QtMaterial::QtMaterialBreadcrumb(m_topBar);
+    m_breadcrumb->setItems({
+        QStringLiteral("Application"),
+        QStringLiteral("Dashboard")
+    });
+    m_breadcrumb->setCurrentIndex(1);
+    layout->addWidget(m_breadcrumb);
     layout->addStretch(1);
 
     m_search = new QtMaterial::QtMaterialSearchBar(m_topBar);
@@ -807,41 +816,45 @@ QWidget* DashboardWindow::createTopBar()
     language->setFixedSize(42, 36);
     layout->addWidget(language);
 
-    auto* messages = new QToolButton(m_topBar);
-    messages->setIcon(dashboardIcon(
-        QStringLiteral("message"),
-        materialColor(QtMaterial::ColorRole::OnSurfaceVariant),
-        4));
-    messages->setIconSize(QSize(26, 26));
+    auto* messages = new QtMaterial::QtMaterialIconButton(
+        dashboardIcon(
+            QStringLiteral("message"),
+            materialColor(QtMaterial::ColorRole::OnSurfaceVariant),
+            4),
+        m_topBar);
+    messages->setAccessibleName(QStringLiteral("Messages"));
+    messages->setRequiresAccessibleName(true);
     messages->setToolTip(QStringLiteral("Messages"));
     messages->setCursor(Qt::PointingHandCursor);
-    messages->setObjectName(QStringLiteral("topBarButton"));
-    messages->setFixedSize(40, 36);
+    messages->setProperty("dashboardIconName", QStringLiteral("message"));
+    messages->setProperty("dashboardBadge", 4);
     layout->addWidget(messages);
 
-    auto* notify = new QToolButton(m_topBar);
-    notify->setIcon(dashboardIcon(
-        QStringLiteral("bell"),
-        materialColor(QtMaterial::ColorRole::OnSurfaceVariant),
-        8));
-    notify->setIconSize(QSize(26, 26));
+    auto* notify = new QtMaterial::QtMaterialIconButton(
+        dashboardIcon(
+            QStringLiteral("bell"),
+            materialColor(QtMaterial::ColorRole::OnSurfaceVariant),
+            8),
+        m_topBar);
+    notify->setAccessibleName(QStringLiteral("Notifications"));
+    notify->setRequiresAccessibleName(true);
     notify->setToolTip(QStringLiteral("Notifications"));
     notify->setCursor(Qt::PointingHandCursor);
-    notify->setObjectName(QStringLiteral("topBarButton"));
-    notify->setFixedSize(40, 36);
+    notify->setProperty("dashboardIconName", QStringLiteral("bell"));
+    notify->setProperty("dashboardBadge", 8);
     layout->addWidget(notify);
 
-    m_themeButton = new QToolButton(m_topBar);
-    m_themeButton->setIcon(dashboardIcon(
-        QtMaterial::ThemeManager::instance().theme().isDark()
-            ? QStringLiteral("sun")
-            : QStringLiteral("moon"),
-        materialColor(QtMaterial::ColorRole::OnSurfaceVariant)));
-    m_themeButton->setIconSize(QSize(23, 23));
+    m_themeButton = new QtMaterial::QtMaterialIconButton(
+        dashboardIcon(
+            QtMaterial::ThemeManager::instance().theme().isDark()
+                ? QStringLiteral("sun")
+                : QStringLiteral("moon"),
+            materialColor(QtMaterial::ColorRole::OnSurfaceVariant)),
+        m_topBar);
+    m_themeButton->setAccessibleName(QStringLiteral("Toggle light/dark mode"));
+    m_themeButton->setRequiresAccessibleName(true);
     m_themeButton->setToolTip(QStringLiteral("Toggle light/dark mode"));
     m_themeButton->setCursor(Qt::PointingHandCursor);
-    m_themeButton->setObjectName(QStringLiteral("topBarButton"));
-    m_themeButton->setFixedSize(40, 36);
     layout->addWidget(m_themeButton);
 
     auto* avatar = new QLabel(QStringLiteral("JD"), m_topBar);
@@ -865,17 +878,17 @@ QWidget* DashboardWindow::createTopBar()
     layout->addWidget(account);
 
     connect(m_search, &QtMaterial::QtMaterialSearchBar::textChanged, this, &DashboardWindow::applyFilter);
-    connect(m_themeButton, &QToolButton::clicked, this, []() {
+    connect(m_themeButton, &QAbstractButton::clicked, this, []() {
         auto options = QtMaterial::ThemeManager::instance().options();
         options.mode = options.mode == QtMaterial::ThemeMode::Dark
             ? QtMaterial::ThemeMode::Light
             : QtMaterial::ThemeMode::Dark;
         QtMaterial::ThemeManager::instance().setThemeOptions(options);
     });
-    connect(messages, &QToolButton::clicked, this, [this]() {
+    connect(messages, &QAbstractButton::clicked, this, [this]() {
         showMessage(QStringLiteral("4 unread messages."));
     });
-    connect(notify, &QToolButton::clicked, this, [this]() {
+    connect(notify, &QAbstractButton::clicked, this, [this]() {
         showMessage(QStringLiteral("8 notifications waiting for review."));
     });
 
@@ -1439,15 +1452,15 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
     }
     titleRow->addStretch(1);
 
-    m_yearCombo = new QComboBox(card);
+    m_yearCombo = new QtMaterial::QtMaterialComboBox(card);
+    m_yearCombo->setLabelText(QStringLiteral("Year"));
     m_yearCombo->addItems({QStringLiteral("2025"), QStringLiteral("2026"), QStringLiteral("2027")});
     m_yearCombo->setCurrentText(QStringLiteral("2026"));
-    m_yearCombo->setObjectName(QStringLiteral("dashboardCombo"));
-    m_yearCombo->setFixedWidth(82);
-    m_yearCombo->setFixedHeight(32);
+    m_yearCombo->setMinimumWidth(92);
     titleRow->addWidget(m_yearCombo);
 
-    m_monthCombo = new QComboBox(card);
+    m_monthCombo = new QtMaterial::QtMaterialComboBox(card);
+    m_monthCombo->setLabelText(QStringLiteral("Month"));
     m_monthCombo->addItems({
         QStringLiteral("January"),
         QStringLiteral("March"),
@@ -1456,9 +1469,7 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
         QStringLiteral("December")
     });
     m_monthCombo->setCurrentText(QStringLiteral("September"));
-    m_monthCombo->setObjectName(QStringLiteral("dashboardCombo"));
-    m_monthCombo->setFixedWidth(104);
-    m_monthCombo->setFixedHeight(32);
+    m_monthCombo->setMinimumWidth(124);
     titleRow->addWidget(m_monthCombo);
 
     layout->addLayout(titleRow);
@@ -1961,8 +1972,12 @@ void DashboardWindow::setCurrentSection(int index)
     };
     const QString title = QString::fromLatin1(titles[index]);
 
-    if (m_breadcrumbLabel) {
-        m_breadcrumbLabel->setText(QStringLiteral("Application  /  %1").arg(title));
+    if (m_breadcrumb) {
+        m_breadcrumb->setItems({
+            QStringLiteral("Application"),
+            title
+        });
+        m_breadcrumb->setCurrentIndex(1);
     }
     if (m_search) {
         static const char* placeholders[] = {
