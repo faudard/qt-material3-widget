@@ -530,7 +530,7 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     : QMainWindow(parent)
 {
     setWindowTitle(QStringLiteral("Qt Material 3 - Dashboard Showcase"));
-    setMinimumSize(820, 640);
+    setMinimumSize(640, 560);
 
     auto options = QtMaterial::ThemeManager::instance().options();
     options.sourceColor = QColor(QStringLiteral("#4455c7"));
@@ -543,6 +543,9 @@ DashboardWindow::DashboardWindow(QWidget* parent)
 
     m_sidebar = createSidebar();
     shell->addWidget(m_sidebar);
+
+    m_navigationRail = createNavigationRail();
+    shell->addWidget(m_navigationRail);
 
     auto* right = new QWidget(m_central);
     auto* rightLayout = new QVBoxLayout(right);
@@ -573,6 +576,8 @@ DashboardWindow::DashboardWindow(QWidget* parent)
 
     shell->addWidget(right, 1);
     setCentralWidget(m_central);
+
+    m_navigationDrawer = createNavigationDrawer();
 
     m_snackbarHost = new QtMaterial::QtMaterialSnackbarHost(m_central, this);
     m_commandPalette = new QtMaterial::QtMaterialCommandPalette(this);
