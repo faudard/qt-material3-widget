@@ -1538,6 +1538,552 @@ QWidget* DashboardWindow::createComponentsPage()
     return page;
 }
 
+
+QWidget* DashboardWindow::createProfilePage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Profile"),
+        QStringLiteral("Account settings built from production-style Material input and selection controls."),
+        &layout);
+
+    auto* identityCard = new QtMaterial::QtMaterialCard(page);
+    identityCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* identityLayout = new QHBoxLayout(identityCard);
+    identityLayout->setContentsMargins(20, 18, 20, 18);
+    identityLayout->setSpacing(16);
+
+    auto* avatar = new QLabel(QStringLiteral("JD"), identityCard);
+    avatar->setObjectName(QStringLiteral("profileHeroAvatar"));
+    avatar->setAlignment(Qt::AlignCenter);
+    avatar->setFixedSize(64, 64);
+
+    auto* identityText = new QVBoxLayout;
+    identityText->setSpacing(2);
+    identityText->addWidget(makeLabel(QStringLiteral("John Doe"), identityCard, 4.0, true));
+    identityText->addWidget(makeLabel(QStringLiteral("Product administrator"), identityCard, -1.0, false));
+    auto* verified = new QtMaterial::QtMaterialChip(QStringLiteral("Verified account"), identityCard);
+    verified->setVariant(QtMaterial::ChipVariant::Assist);
+    identityText->addWidget(verified, 0, Qt::AlignLeft);
+
+    identityLayout->addWidget(avatar);
+    identityLayout->addLayout(identityText, 1);
+    layout->addWidget(identityCard);
+
+    auto* contentHost = new QWidget(page);
+    auto* contentGrid = new QGridLayout(contentHost);
+    contentGrid->setContentsMargins(0, 0, 0, 0);
+    contentGrid->setHorizontalSpacing(18);
+    contentGrid->setVerticalSpacing(18);
+
+    auto* detailsCard = new QtMaterial::QtMaterialCard(contentHost);
+    detailsCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* detailsLayout = new QVBoxLayout(detailsCard);
+    detailsLayout->setContentsMargins(20, 18, 20, 20);
+    detailsLayout->setSpacing(14);
+    detailsLayout->addWidget(makeLabel(QStringLiteral("Personal information"), detailsCard, 2.0, false));
+
+    auto* name = new QtMaterial::QtMaterialOutlinedTextField(detailsCard);
+    name->setLabelText(QStringLiteral("Full name"));
+    name->setText(QStringLiteral("John Doe"));
+    name->setRequired(true);
+    name->setRequiredText(QStringLiteral("Name is required."));
+    name->setEndActionMode(
+        QtMaterial::QtMaterialOutlinedTextField::EndActionMode::ClearText);
+    detailsLayout->addWidget(name);
+
+    auto* email = new QtMaterial::QtMaterialOutlinedTextField(detailsCard);
+    email->setLabelText(QStringLiteral("Email"));
+    email->setText(QStringLiteral("john.doe@example.com"));
+    email->setRequired(true);
+    email->setRequiredText(QStringLiteral("Email is required."));
+    email->setSupportingText(QStringLiteral("Used for account notifications."));
+    detailsLayout->addWidget(email);
+
+    auto* company = new QtMaterial::QtMaterialOutlinedTextField(detailsCard);
+    company->setLabelText(QStringLiteral("Company"));
+    company->setText(QStringLiteral("Material Labs"));
+    detailsLayout->addWidget(company);
+
+    auto* role = new QtMaterial::QtMaterialOutlinedTextField(detailsCard);
+    role->setLabelText(QStringLiteral("Role"));
+    role->setText(QStringLiteral("Product administrator"));
+    detailsLayout->addWidget(role);
+
+    auto* plan = new QtMaterial::QtMaterialComboBox(detailsCard);
+    plan->setLabelText(QStringLiteral("Workspace plan"));
+    plan->addItems({
+        QStringLiteral("Starter"),
+        QStringLiteral("Professional"),
+        QStringLiteral("Enterprise")
+    });
+    plan->setCurrentText(QStringLiteral("Professional"));
+    detailsLayout->addWidget(plan);
+
+    auto* preferencesCard = new QtMaterial::QtMaterialCard(contentHost);
+    preferencesCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    auto* preferencesLayout = new QVBoxLayout(preferencesCard);
+    preferencesLayout->setContentsMargins(20, 18, 20, 20);
+    preferencesLayout->setSpacing(12);
+    preferencesLayout->addWidget(makeLabel(QStringLiteral("Preferences"), preferencesCard, 2.0, false));
+
+    auto* notifications = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Email notifications"),
+        preferencesCard);
+    notifications->setChecked(true);
+    preferencesLayout->addWidget(notifications);
+
+    auto* updates = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Product updates"),
+        preferencesCard);
+    updates->setChecked(false);
+    preferencesLayout->addWidget(updates);
+
+    preferencesLayout->addSpacing(8);
+    preferencesLayout->addWidget(makeLabel(QStringLiteral("Interface density"), preferencesCard, -1.0, true));
+
+    auto* densityGroup = new QButtonGroup(preferencesCard);
+    densityGroup->setExclusive(true);
+    auto* comfortable = new QtMaterial::QtMaterialRadioButton(
+        QStringLiteral("Comfortable"),
+        preferencesCard);
+    auto* compact = new QtMaterial::QtMaterialRadioButton(
+        QStringLiteral("Compact"),
+        preferencesCard);
+    comfortable->setChecked(true);
+    densityGroup->addButton(comfortable, 0);
+    densityGroup->addButton(compact, 1);
+    preferencesLayout->addWidget(comfortable);
+    preferencesLayout->addWidget(compact);
+
+    preferencesLayout->addSpacing(8);
+    auto* security = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Require sign-in confirmation"),
+        preferencesCard);
+    security->setChecked(true);
+    preferencesLayout->addWidget(security);
+    preferencesLayout->addStretch(1);
+
+    contentGrid->addWidget(detailsCard, 0, 0);
+    contentGrid->addWidget(preferencesCard, 0, 1);
+    contentGrid->setColumnStretch(0, 2);
+    contentGrid->setColumnStretch(1, 1);
+    layout->addWidget(contentHost);
+
+    auto* actions = new QHBoxLayout;
+    actions->addStretch(1);
+    auto* cancel = new QtMaterial::QtMaterialOutlinedButton(
+        QStringLiteral("Reset"),
+        page);
+    auto* save = new QtMaterial::QtMaterialFilledButton(
+        QStringLiteral("Save changes"),
+        page);
+    actions->addWidget(cancel);
+    actions->addWidget(save);
+    layout->addLayout(actions);
+
+    connect(cancel, &QAbstractButton::clicked, this, [name, email, company, role, plan, notifications, updates, comfortable, security]() {
+        name->setText(QStringLiteral("John Doe"));
+        email->setText(QStringLiteral("john.doe@example.com"));
+        company->setText(QStringLiteral("Material Labs"));
+        role->setText(QStringLiteral("Product administrator"));
+        plan->setCurrentText(QStringLiteral("Professional"));
+        notifications->setChecked(true);
+        updates->setChecked(false);
+        comfortable->setChecked(true);
+        security->setChecked(true);
+        name->resetValidationFeedback();
+        email->resetValidationFeedback();
+    });
+
+    connect(save, &QAbstractButton::clicked, this, [this, name, email]() {
+        const bool nameValid = name->validateInput();
+        const bool emailValid = email->validateInput();
+        if (!nameValid) {
+            name->showValidationError();
+        }
+        if (!emailValid) {
+            email->showValidationError();
+        }
+        if (nameValid && emailValid) {
+            showMessage(QStringLiteral("Profile changes saved."));
+        }
+    });
+
+    connect(notifications, &QAbstractButton::toggled, this, [this](bool checked) {
+        showMessage(
+            checked
+                ? QStringLiteral("Email notifications enabled.")
+                : QStringLiteral("Email notifications disabled."));
+    });
+
+    layout->addStretch(1);
+    return page;
+}
+
+QWidget* DashboardWindow::createPricingPage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Pricing"),
+        QStringLiteral("A realistic pricing surface combining cards, segmented selection, chips and Material actions."),
+        &layout);
+
+    auto* billingRow = new QHBoxLayout;
+    billingRow->addWidget(makeLabel(QStringLiteral("Choose a plan"), page, 2.0, false));
+    billingRow->addStretch(1);
+
+    auto* billing = new QtMaterial::QtMaterialSegmentedButton(page);
+    billing->addSegment(QStringLiteral("Monthly"));
+    billing->addSegment(QStringLiteral("Annual"));
+    billing->setCurrentIndex(0);
+    billingRow->addWidget(billing);
+    layout->addLayout(billingRow);
+
+    auto* plansHost = new QWidget(page);
+    auto* plans = new QGridLayout(plansHost);
+    plans->setContentsMargins(0, 0, 0, 0);
+    plans->setHorizontalSpacing(18);
+    plans->setVerticalSpacing(18);
+
+    QVector<QLabel*> priceLabels;
+    const struct {
+        const char* name;
+        const char* description;
+        int monthly;
+        const char* action;
+        bool featured;
+    } planData[] = {
+        {"Starter", "For personal projects and prototypes.", 12, "Start free", false},
+        {"Professional", "For teams shipping production applications.", 29, "Choose Pro", true},
+        {"Enterprise", "For organizations that need scale and governance.", 79, "Contact sales", false}
+    };
+
+    for (int i = 0; i < 3; ++i) {
+        auto* card = new QtMaterial::QtMaterialCard(plansHost);
+        card->setVariant(
+            planData[i].featured
+                ? QtMaterial::QtMaterialCard::Variant::Filled
+                : QtMaterial::QtMaterialCard::Variant::Elevated);
+        card->setMinimumHeight(360);
+
+        auto* cardLayout = new QVBoxLayout(card);
+        cardLayout->setContentsMargins(22, 20, 22, 20);
+        cardLayout->setSpacing(10);
+
+        auto* titleRow = new QHBoxLayout;
+        titleRow->addWidget(makeLabel(
+            QString::fromLatin1(planData[i].name),
+            card,
+            3.0,
+            true));
+        titleRow->addStretch(1);
+        if (planData[i].featured) {
+            auto* popular = new QtMaterial::QtMaterialChip(
+                QStringLiteral("Most popular"),
+                card);
+            popular->setVariant(QtMaterial::ChipVariant::Assist);
+            titleRow->addWidget(popular);
+        }
+        cardLayout->addLayout(titleRow);
+
+        auto* description = makeLabel(
+            QString::fromLatin1(planData[i].description),
+            card,
+            -1.0,
+            false);
+        description->setWordWrap(true);
+        cardLayout->addWidget(description);
+
+        auto* price = makeLabel(
+            QStringLiteral("€%1 / month").arg(planData[i].monthly),
+            card,
+            7.0,
+            true);
+        price->setProperty("dashboardMonthlyPrice", planData[i].monthly);
+        priceLabels.append(price);
+        cardLayout->addWidget(price);
+
+        cardLayout->addSpacing(8);
+        const QStringList features =
+            i == 0
+                ? QStringList{
+                    QStringLiteral("✓  3 projects"),
+                    QStringLiteral("✓  Core widgets"),
+                    QStringLiteral("✓  Community support")
+                }
+                : (i == 1
+                    ? QStringList{
+                        QStringLiteral("✓  Unlimited projects"),
+                        QStringLiteral("✓  All Material widgets"),
+                        QStringLiteral("✓  Team collaboration"),
+                        QStringLiteral("✓  Priority support")
+                    }
+                    : QStringList{
+                        QStringLiteral("✓  Everything in Professional"),
+                        QStringLiteral("✓  SSO and governance"),
+                        QStringLiteral("✓  Deployment assistance"),
+                        QStringLiteral("✓  Dedicated support")
+                    });
+
+        for (const QString& feature : features) {
+            cardLayout->addWidget(makeLabel(feature, card, -1.0, false));
+        }
+
+        cardLayout->addStretch(1);
+
+        QAbstractButton* action = nullptr;
+        if (planData[i].featured) {
+            action = new QtMaterial::QtMaterialFilledButton(
+                QString::fromLatin1(planData[i].action),
+                card);
+        } else {
+            action = new QtMaterial::QtMaterialOutlinedButton(
+                QString::fromLatin1(planData[i].action),
+                card);
+        }
+        cardLayout->addWidget(action);
+
+        const QString planName = QString::fromLatin1(planData[i].name);
+        connect(action, &QAbstractButton::clicked, this, [this, planName]() {
+            auto* dialog = new QtMaterial::QtMaterialDialog(this);
+            dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+            dialog->setTitleText(QStringLiteral("%1 selected").arg(planName));
+            dialog->setSupportingText(
+                QStringLiteral("This demo action shows how a pricing flow can hand off to a Material dialog."));
+            dialog->open();
+        });
+
+        plans->addWidget(card, 0, i);
+        plans->setColumnStretch(i, 1);
+    }
+
+    layout->addWidget(plansHost);
+
+    auto* optionsCard = new QtMaterial::QtMaterialCard(page);
+    optionsCard->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    auto* optionsLayout = new QHBoxLayout(optionsCard);
+    optionsLayout->setContentsMargins(20, 14, 20, 14);
+
+    auto* support = new QtMaterial::QtMaterialSwitch(
+        QStringLiteral("Include priority onboarding"),
+        optionsCard);
+    support->setChecked(false);
+    optionsLayout->addWidget(support);
+    optionsLayout->addStretch(1);
+    optionsLayout->addWidget(makeLabel(
+        QStringLiteral("Cancel anytime • no hidden fees"),
+        optionsCard,
+        -1.0,
+        false));
+    layout->addWidget(optionsCard);
+
+    connect(
+        billing,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        this,
+        [priceLabels](int index) {
+            const bool annual = index == 1;
+            for (QLabel* price : priceLabels) {
+                const int monthly =
+                    price->property("dashboardMonthlyPrice").toInt();
+                const int displayed = annual
+                    ? qRound(monthly * 0.8)
+                    : monthly;
+                price->setText(
+                    annual
+                        ? QStringLiteral("€%1 / month · billed annually").arg(displayed)
+                        : QStringLiteral("€%1 / month").arg(displayed));
+            }
+        });
+
+    connect(support, &QAbstractButton::toggled, this, [this](bool checked) {
+        showMessage(
+            checked
+                ? QStringLiteral("Priority onboarding added.")
+                : QStringLiteral("Priority onboarding removed."));
+    });
+
+    layout->addStretch(1);
+    return page;
+}
+
+QWidget* DashboardWindow::createApplicationStatesPage()
+{
+    QVBoxLayout* layout = nullptr;
+    auto* page = makePageShell(
+        QStringLiteral("Application States"),
+        QStringLiteral("Preview common loading, empty, error, offline and ready states without leaving the demo."),
+        &layout);
+
+    auto* selector = new QtMaterial::QtMaterialSegmentedButton(page);
+    selector->addSegment(QStringLiteral("Loading"));
+    selector->addSegment(QStringLiteral("Empty"));
+    selector->addSegment(QStringLiteral("Error"));
+    selector->addSegment(QStringLiteral("Offline"));
+    selector->addSegment(QStringLiteral("Ready"));
+    selector->setCurrentIndex(0);
+    layout->addWidget(selector, 0, Qt::AlignLeft);
+
+    auto* states = new QStackedWidget(page);
+    states->setMinimumHeight(360);
+
+    auto makeStateCard = [states](
+        const QString& title,
+        const QString& description) {
+        auto* card = new QtMaterial::QtMaterialCard(states);
+        card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+        auto* cardLayout = new QVBoxLayout(card);
+        cardLayout->setContentsMargins(28, 28, 28, 28);
+        cardLayout->setSpacing(14);
+        cardLayout->addWidget(makeLabel(title, card, 4.0, true));
+        auto* body = makeLabel(description, card, -1.0, false);
+        body->setWordWrap(true);
+        cardLayout->addWidget(body);
+        return qMakePair(card, cardLayout);
+    };
+
+    {
+        const auto loadingState = makeStateCard(
+            QStringLiteral("Loading dashboard data"),
+            QStringLiteral("Use determinate or indeterminate progress indicators while remote data is being resolved."));
+        auto* progress = new QtMaterial::QtMaterialCircularProgressIndicator(
+            loadingState.first);
+        progress->setMode(
+            QtMaterial::QtMaterialCircularProgressIndicator::Mode::Indeterminate);
+        progress->setStatusText(QStringLiteral("Loading analytics"));
+        loadingState.second->addWidget(progress, 0, Qt::AlignHCenter);
+
+        auto* linear = new QtMaterial::QtMaterialLinearProgressIndicator(
+            loadingState.first);
+        linear->setMode(
+            QtMaterial::QtMaterialLinearProgressIndicator::Mode::Indeterminate);
+        linear->setStatusText(QStringLiteral("Refreshing dashboard"));
+        loadingState.second->addWidget(linear);
+        loadingState.second->addStretch(1);
+        states->addWidget(loadingState.first);
+    }
+
+    {
+        const auto emptyState = makeStateCard(
+            QStringLiteral("No orders yet"),
+            QStringLiteral("Empty states should explain what happened and provide a clear next action."));
+        auto* icon = new QLabel(emptyState.first);
+        icon->setAlignment(Qt::AlignCenter);
+        icon->setPixmap(dashboardIcon(
+            QStringLiteral("orders"),
+            materialColor(QtMaterial::ColorRole::Primary)).pixmap(64, 64));
+        emptyState.second->addWidget(icon);
+
+        auto* action = new QtMaterial::QtMaterialFilledButton(
+            QStringLiteral("Create first order"),
+            emptyState.first);
+        emptyState.second->addWidget(action, 0, Qt::AlignHCenter);
+        emptyState.second->addStretch(1);
+        states->addWidget(emptyState.first);
+
+        connect(action, &QAbstractButton::clicked, this, [this, selector]() {
+            showMessage(QStringLiteral("A new order was created for the demo."));
+            selector->setCurrentIndex(4);
+        });
+    }
+
+    {
+        const auto errorState = makeStateCard(
+            QStringLiteral("Something went wrong"),
+            QStringLiteral("Material banners can keep a recoverable problem visible without blocking the entire application."));
+        auto* banner = new QtMaterialBanner(
+            QStringLiteral("Unable to load analytics"),
+            QStringLiteral("The service returned an unexpected response. Your local data is safe."),
+            errorState.first);
+        banner->setPrimaryActionText(QStringLiteral("Retry"));
+        banner->setSecondaryActionText(QStringLiteral("Details"));
+        banner->setDismissible(true);
+        errorState.second->addWidget(banner);
+        errorState.second->addStretch(1);
+        states->addWidget(errorState.first);
+
+        connect(
+            banner,
+            &QtMaterialBanner::primaryActionTriggered,
+            this,
+            [this, selector]() {
+                showMessage(QStringLiteral("Retry succeeded."));
+                selector->setCurrentIndex(4);
+            });
+        connect(
+            banner,
+            &QtMaterialBanner::secondaryActionTriggered,
+            this,
+            [this]() {
+                showMessage(QStringLiteral("HTTP 503 • analytics service unavailable."));
+            });
+    }
+
+    {
+        const auto offlineState = makeStateCard(
+            QStringLiteral("Working offline"),
+            QStringLiteral("The dashboard can clearly communicate degraded connectivity while preserving local actions."));
+        auto* banner = new QtMaterialBanner(
+            QStringLiteral("No network connection"),
+            QStringLiteral("Changes will be queued locally and synchronized when the connection returns."),
+            offlineState.first);
+        banner->setPrimaryActionText(QStringLiteral("Try again"));
+        banner->setDismissible(false);
+        offlineState.second->addWidget(banner);
+
+        auto* reconnect = new QtMaterial::QtMaterialSwitch(
+            QStringLiteral("Automatically reconnect"),
+            offlineState.first);
+        reconnect->setChecked(true);
+        offlineState.second->addWidget(reconnect);
+        offlineState.second->addStretch(1);
+        states->addWidget(offlineState.first);
+
+        connect(
+            banner,
+            &QtMaterialBanner::primaryActionTriggered,
+            this,
+            [this, selector]() {
+                showMessage(QStringLiteral("Connection restored."));
+                selector->setCurrentIndex(4);
+            });
+    }
+
+    {
+        const auto readyState = makeStateCard(
+            QStringLiteral("Everything is up to date"),
+            QStringLiteral("The ready state confirms that dashboard data, orders and local changes are synchronized."));
+        auto* icon = new QLabel(readyState.first);
+        icon->setAlignment(Qt::AlignCenter);
+        icon->setPixmap(dashboardIcon(
+            QStringLiteral("dashboard"),
+            materialColor(QtMaterial::ColorRole::Tertiary)).pixmap(64, 64));
+        readyState.second->addWidget(icon);
+
+        auto* action = new QtMaterial::QtMaterialOutlinedButton(
+            QStringLiteral("Refresh again"),
+            readyState.first);
+        readyState.second->addWidget(action, 0, Qt::AlignHCenter);
+        readyState.second->addStretch(1);
+        states->addWidget(readyState.first);
+
+        connect(action, &QAbstractButton::clicked, this, [selector]() {
+            selector->setCurrentIndex(0);
+        });
+    }
+
+    connect(
+        selector,
+        &QtMaterial::QtMaterialSegmentedButton::currentIndexChanged,
+        states,
+        &QStackedWidget::setCurrentIndex);
+
+    layout->addWidget(states);
+    layout->addStretch(1);
+    return page;
+}
+
 QWidget* DashboardWindow::createQuickStatistics()
 {
     auto* host = new QWidget(m_contentHost);
