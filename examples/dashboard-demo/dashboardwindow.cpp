@@ -2240,7 +2240,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
         box->setMinimumHeight(64);
         box->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         swatches->addWidget(box, 1);
-        previewSwatches.append({box, item.role, item.onRole, item.name});
+        previewSwatches.append(Swatch{box, item.role, item.onRole, item.name});
     }
     previewLayout->addLayout(swatches);
 
