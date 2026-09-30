@@ -631,6 +631,11 @@ DashboardWindow::DashboardWindow(QWidget* parent)
 
 DashboardWindow::~DashboardWindow() = default;
 
+void DashboardWindow::showDemoPage(int index)
+{
+    setCurrentSection(index);
+}
+
 void DashboardWindow::resizeEvent(QResizeEvent* event)
 {
     QMainWindow::resizeEvent(event);
