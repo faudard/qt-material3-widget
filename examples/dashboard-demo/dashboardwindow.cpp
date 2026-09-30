@@ -232,7 +232,7 @@ QIcon dashboardIcon(
     pixmap.fill(Qt::transparent);
 
     QPainter painter(&pixmap);
-    paintDashboardGlyph(painter, QRectF(2.0, 2.0, 22.0, 22.0), name, color);
+    paintDashboardGlyph(painter, QRectF(3.0, 3.0, 22.0, 22.0), name, color);
 
     if (badge >= 0) {
         painter.setRenderHint(QPainter::Antialiasing, true);
@@ -567,6 +567,8 @@ DashboardWindow::DashboardWindow(QWidget* parent)
 
     m_contentHost = createDashboardPage();
     m_scroll = createPageScroll(m_contentHost);
+    m_scroll->viewport()->setAttribute(Qt::WA_StaticContents, true);
+    m_contentHost->setAttribute(Qt::WA_StaticContents, true);
     m_pages->addWidget(m_scroll);
     m_pages->addWidget(createPageScroll(createAnalyticsPage()));
     m_pages->addWidget(createPageScroll(createOrdersPage()));
@@ -956,6 +958,7 @@ QWidget* DashboardWindow::createTopBar()
     messages->setRequiresAccessibleName(true);
     messages->setToolTip(QStringLiteral("Messages"));
     messages->setCursor(Qt::PointingHandCursor);
+    messages->setFocusPolicy(Qt::TabFocus);
     messages->setProperty("dashboardIconName", QStringLiteral("message"));
     messages->setProperty("dashboardBadge", 4);
     layout->addWidget(messages);
@@ -970,6 +973,7 @@ QWidget* DashboardWindow::createTopBar()
     notify->setRequiresAccessibleName(true);
     notify->setToolTip(QStringLiteral("Notifications"));
     notify->setCursor(Qt::PointingHandCursor);
+    notify->setFocusPolicy(Qt::TabFocus);
     notify->setProperty("dashboardIconName", QStringLiteral("bell"));
     notify->setProperty("dashboardBadge", 8);
     layout->addWidget(notify);
@@ -985,6 +989,7 @@ QWidget* DashboardWindow::createTopBar()
     m_themeButton->setRequiresAccessibleName(true);
     m_themeButton->setToolTip(QStringLiteral("Toggle light/dark mode"));
     m_themeButton->setCursor(Qt::PointingHandCursor);
+    m_themeButton->setFocusPolicy(Qt::TabFocus);
     layout->addWidget(m_themeButton);
 
     auto* avatar = new QLabel(QStringLiteral("JD"), m_topBar);
@@ -1381,11 +1386,13 @@ QWidget* DashboardWindow::createCustomersPage()
 
     for (int i = 0; i < 4; ++i) {
         auto* card = new QtMaterial::QtMaterialCard(page);
-        card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+        card->setVariant(QtMaterial::QtMaterialCard::Variant::Filled);
+        card->setMinimumHeight(118);
         auto* cardLayout = new QVBoxLayout(card);
-        cardLayout->setContentsMargins(16, 14, 16, 14);
+        cardLayout->setContentsMargins(16, 16, 16, 16);
+        cardLayout->setSpacing(5);
         cardLayout->addWidget(makeLabel(QString::fromLatin1(customerStats[i].title), card, -1.0, false));
-        cardLayout->addWidget(makeLabel(QString::fromLatin1(customerStats[i].value), card, 5.0, true));
+        cardLayout->addWidget(makeLabel(QString::fromUtf8(customerStats[i].value), card, 5.0, true));
         auto* note = makeLabel(QString::fromLatin1(customerStats[i].note), card, -2.0, false);
         note->setObjectName(QStringLiteral("positiveDelta"));
         cardLayout->addWidget(note);
@@ -1456,7 +1463,8 @@ QWidget* DashboardWindow::createComponentsPage()
     grid->setVerticalSpacing(18);
 
     auto* inputs = new QtMaterial::QtMaterialCard(page);
-    inputs->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    inputs->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    inputs->setMinimumHeight(190);
     auto* inputsLayout = new QVBoxLayout(inputs);
     inputsLayout->setContentsMargins(18, 16, 18, 18);
     inputsLayout->addWidget(makeLabel(QStringLiteral("Inputs"), inputs, 2.0, false));
@@ -1471,7 +1479,8 @@ QWidget* DashboardWindow::createComponentsPage()
     inputsLayout->addStretch(1);
 
     auto* navigation = new QtMaterial::QtMaterialCard(page);
-    navigation->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    navigation->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    navigation->setMinimumHeight(190);
     auto* navigationLayout = new QVBoxLayout(navigation);
     navigationLayout->setContentsMargins(18, 16, 18, 18);
     navigationLayout->addWidget(makeLabel(QStringLiteral("Navigations"), navigation, 2.0, false));
@@ -1481,7 +1490,8 @@ QWidget* DashboardWindow::createComponentsPage()
     navigationLayout->addStretch(1);
 
     auto* surfaces = new QtMaterial::QtMaterialCard(page);
-    surfaces->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    surfaces->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    surfaces->setMinimumHeight(190);
     auto* surfacesLayout = new QVBoxLayout(surfaces);
     surfacesLayout->setContentsMargins(18, 16, 18, 18);
     surfacesLayout->addWidget(makeLabel(QStringLiteral("Surfaces & actions"), surfaces, 2.0, false));
@@ -1503,7 +1513,8 @@ QWidget* DashboardWindow::createComponentsPage()
     surfacesLayout->addStretch(1);
 
     auto* feedback = new QtMaterial::QtMaterialCard(page);
-    feedback->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    feedback->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    feedback->setMinimumHeight(190);
     auto* feedbackLayout = new QVBoxLayout(feedback);
     feedbackLayout->setContentsMargins(18, 16, 18, 18);
     feedbackLayout->addWidget(makeLabel(QStringLiteral("Feedback & data display"), feedback, 2.0, false));
@@ -1546,7 +1557,8 @@ QWidget* DashboardWindow::createProfilePage()
         &layout);
 
     auto* identityCard = new QtMaterial::QtMaterialCard(page);
-    identityCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    identityCard->setVariant(QtMaterial::QtMaterialCard::Variant::Filled);
+    identityCard->setMinimumHeight(112);
     auto* identityLayout = new QHBoxLayout(identityCard);
     identityLayout->setContentsMargins(20, 18, 20, 18);
     identityLayout->setSpacing(16);
@@ -1573,9 +1585,11 @@ QWidget* DashboardWindow::createProfilePage()
     contentGrid->setContentsMargins(0, 0, 0, 0);
     contentGrid->setHorizontalSpacing(18);
     contentGrid->setVerticalSpacing(18);
+    contentHost->setMinimumHeight(450);
 
     auto* detailsCard = new QtMaterial::QtMaterialCard(contentHost);
-    detailsCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    detailsCard->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    detailsCard->setMinimumHeight(430);
     auto* detailsLayout = new QVBoxLayout(detailsCard);
     detailsLayout->setContentsMargins(20, 18, 20, 20);
     detailsLayout->setSpacing(14);
@@ -1619,7 +1633,8 @@ QWidget* DashboardWindow::createProfilePage()
     detailsLayout->addWidget(plan);
 
     auto* preferencesCard = new QtMaterial::QtMaterialCard(contentHost);
-    preferencesCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    preferencesCard->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    preferencesCard->setMinimumHeight(430);
     auto* preferencesLayout = new QVBoxLayout(preferencesCard);
     preferencesLayout->setContentsMargins(20, 18, 20, 20);
     preferencesLayout->setSpacing(12);
@@ -1735,7 +1750,8 @@ QWidget* DashboardWindow::createPricingPage()
     billing->addSegment(QStringLiteral("Monthly"));
     billing->addSegment(QStringLiteral("Annual"));
     billing->setCurrentIndex(0);
-    billingRow->addWidget(billing);
+    billing->setMinimumWidth(billing->sizeHint().width());
+    billingRow->addWidget(billing, 0, Qt::AlignRight);
     layout->addLayout(billingRow);
 
     auto* plansHost = new QWidget(page);
@@ -1762,8 +1778,8 @@ QWidget* DashboardWindow::createPricingPage()
         card->setVariant(
             planData[i].featured
                 ? QtMaterial::QtMaterialCard::Variant::Filled
-                : QtMaterial::QtMaterialCard::Variant::Elevated);
-        card->setMinimumHeight(360);
+                : QtMaterial::QtMaterialCard::Variant::Outlined);
+        card->setMinimumHeight(390);
 
         auto* cardLayout = new QVBoxLayout(card);
         cardLayout->setContentsMargins(22, 20, 22, 20);
@@ -1921,6 +1937,7 @@ QWidget* DashboardWindow::createApplicationStatesPage()
     selector->addSegment(QStringLiteral("Offline"));
     selector->addSegment(QStringLiteral("Ready"));
     selector->setCurrentIndex(0);
+    selector->setMinimumWidth(selector->sizeHint().width());
     layout->addWidget(selector, 0, Qt::AlignLeft);
 
     auto* states = new QStackedWidget(page);
@@ -2096,9 +2113,11 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
     controls->setContentsMargins(0, 0, 0, 0);
     controls->setHorizontalSpacing(18);
     controls->setVerticalSpacing(18);
+    controlsHost->setMinimumHeight(360);
 
     auto* themeCard = new QtMaterial::QtMaterialCard(controlsHost);
-    themeCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    themeCard->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    themeCard->setMinimumHeight(340);
     auto* themeLayout = new QVBoxLayout(themeCard);
     themeLayout->setContentsMargins(20, 18, 20, 20);
     themeLayout->setSpacing(12);
@@ -2127,6 +2146,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
     mode->addSegment(QStringLiteral("Dark"));
     mode->setCurrentIndex(
         QtMaterial::ThemeManager::instance().theme().isDark() ? 1 : 0);
+    mode->setMinimumWidth(mode->sizeHint().width());
     themeLayout->addWidget(mode);
 
     themeLayout->addWidget(makeLabel(QStringLiteral("Contrast"), themeCard, -1.0, true));
@@ -2135,6 +2155,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
     contrast->addSegment(QStringLiteral("Medium"));
     contrast->addSegment(QStringLiteral("High"));
     contrast->setCurrentIndex(0);
+    contrast->setMinimumWidth(contrast->sizeHint().width());
     themeLayout->addWidget(contrast);
 
     themeLayout->addWidget(makeLabel(QStringLiteral("Color variant"), themeCard, -1.0, true));
@@ -2142,10 +2163,12 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
     variant->addSegment(QStringLiteral("Tonal"));
     variant->addSegment(QStringLiteral("Expressive"));
     variant->setCurrentIndex(0);
+    variant->setMinimumWidth(variant->sizeHint().width());
     themeLayout->addWidget(variant);
 
     auto* layoutCard = new QtMaterial::QtMaterialCard(controlsHost);
-    layoutCard->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    layoutCard->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    layoutCard->setMinimumHeight(340);
     auto* layoutSettings = new QVBoxLayout(layoutCard);
     layoutSettings->setContentsMargins(20, 18, 20, 20);
     layoutSettings->setSpacing(12);
@@ -2164,6 +2187,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
         m_central && m_central->layoutDirection() == Qt::RightToLeft
             ? 1
             : 0);
+    direction->setMinimumWidth(direction->sizeHint().width());
     layoutSettings->addWidget(direction);
 
     auto* labels = new QtMaterial::QtMaterialSwitch(
@@ -2194,6 +2218,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
 
     auto* preview = new QtMaterial::QtMaterialCard(page);
     preview->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    preview->setMinimumHeight(142);
     auto* previewLayout = new QVBoxLayout(preview);
     previewLayout->setContentsMargins(20, 18, 20, 20);
     previewLayout->setSpacing(12);
@@ -2450,7 +2475,7 @@ DashboardWindow::MetricWidgets DashboardWindow::createMetricCard(
 {
     MetricWidgets metric;
     metric.card = new QtMaterial::QtMaterialCard(m_contentHost);
-    metric.card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    metric.card->setVariant(QtMaterial::QtMaterialCard::Variant::Filled);
     metric.card->setMinimumHeight(86);
 
     auto* row = new QHBoxLayout(metric.card);
@@ -2496,7 +2521,7 @@ QWidget* DashboardWindow::createRevenueSummary()
 QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
 {
     auto* card = new QtMaterial::QtMaterialCard(m_contentHost);
-    card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
+    card->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
     card->setMinimumHeight(342);
 
     auto* layout = new QVBoxLayout(card);
@@ -2828,7 +2853,7 @@ void DashboardWindow::populateOrders()
         m_ordersModel->setItem(row, 0, new QStandardItem(QString::fromLatin1(orders[row].id)));
         m_ordersModel->setItem(row, 1, new QStandardItem(QString::fromLatin1(orders[row].customer)));
         m_ordersModel->setItem(row, 2, new QStandardItem(QString::fromLatin1(orders[row].product)));
-        m_ordersModel->setItem(row, 3, new QStandardItem(QString::fromLatin1(orders[row].amount)));
+        m_ordersModel->setItem(row, 3, new QStandardItem(QString::fromUtf8(orders[row].amount)));
         m_ordersModel->setItem(row, 4, new QStandardItem(QString::fromLatin1(orders[row].status)));
     }
 
@@ -3305,8 +3330,8 @@ void DashboardWindow::updateResponsiveLayout()
         windowWidth >= 800 && windowWidth < 1200;
     const bool compactNavigation = windowWidth < 800;
 
-    const bool compactMetrics = available < 980;
-    const bool stackedCharts = available < 900;
+    const bool compactMetrics = available < 720;
+    const bool stackedCharts = available < 820;
 
     if (m_sidebar) {
         m_sidebar->setVisible(desktopNavigation);
