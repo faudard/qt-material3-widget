@@ -319,6 +319,7 @@ public:
     explicit SocialBarsWidget(QWidget* parent = nullptr)
         : QWidget(parent)
     {
+        setObjectName(QStringLiteral("dashboardSocialBars"));
         setMinimumHeight(150);
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     }
@@ -2089,8 +2090,10 @@ void DashboardWindow::applyThemeChrome()
         m_revenueSummary->update();
     }
     if (m_contentHost) {
-        const auto bars = m_contentHost->findChildren<SocialBarsWidget*>();
-        for (SocialBarsWidget* bar : bars) {
+        const auto bars =
+            m_contentHost->findChildren<QWidget*>(
+                QStringLiteral("dashboardSocialBars"));
+        for (QWidget* bar : bars) {
             bar->update();
         }
     }
