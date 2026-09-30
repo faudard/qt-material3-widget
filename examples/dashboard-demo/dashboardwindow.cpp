@@ -2043,6 +2043,31 @@ void DashboardWindow::applyThemeChrome()
         }
     }
 
+    if (m_navigationDrawer) {
+        m_navigationDrawer->setStyleSheet(QStringLiteral(
+            "#dashboardNavigationDrawer { color:%1; }"
+            "QToolButton#dashboardNavButton { color:%2; background:transparent; border:0;"
+            " text-align:left; padding:0 15px; border-radius:8px; font-size:13px; }"
+            "QToolButton#dashboardNavButton:hover { background:%3; }"
+            "QToolButton#dashboardNavButton:checked { background:%4; color:%5; font-weight:600; }")
+            .arg(cssColor(onSurface))
+            .arg(cssColor(onSurfaceVariant))
+            .arg(cssColor(surfaceVariant))
+            .arg(cssColor(materialColor(QtMaterial::ColorRole::PrimaryContainer)))
+            .arg(cssColor(materialColor(QtMaterial::ColorRole::OnPrimaryContainer))));
+
+        const auto drawerButtons =
+            m_navigationDrawer->findChildren<QToolButton*>(
+                QStringLiteral("dashboardNavButton"));
+        for (QToolButton* button : drawerButtons) {
+            const QString iconName =
+                button->property("dashboardIconName").toString();
+            if (!iconName.isEmpty()) {
+                button->setIcon(dashboardIcon(iconName, onSurfaceVariant));
+            }
+        }
+    }
+
     if (m_contentHost) {
         QPalette palette = m_contentHost->palette();
         palette.setColor(QPalette::Window, surfaceVariant);
@@ -2234,12 +2259,46 @@ void DashboardWindow::updateResponsiveLayout()
         return;
     }
 
+    const int windowWidth = width();
     const int available = m_scroll->viewport()->width();
+
+    const bool desktopNavigation = windowWidth >= 1200;
+    const bool tabletNavigation =
+        windowWidth >= 800 && windowWidth < 1200;
+    const bool compactNavigation = windowWidth < 800;
+
     const bool compactMetrics = available < 980;
     const bool stackedCharts = available < 900;
 
     if (m_sidebar) {
-        m_sidebar->setVisible(width() >= 920);
+        m_sidebar->setVisible(desktopNavigation);
+    }
+    if (m_navigationRail) {
+        m_navigationRail->setVisible(tabletNavigation);
+        m_navigationRail->setLabelsVisible(false);
+    }
+    if (m_menuButton) {
+        m_menuButton->setVisible(compactNavigation);
+    }
+    if (m_navigationDrawer
+        && !compactNavigation
+        && m_navigationDrawer->isOpen()) {
+        m_navigationDrawer->closeDrawer();
+    }
+
+    if (m_search) {
+        m_search->setVisible(windowWidth >= 760);
+    }
+    if (m_breadcrumb) {
+        m_breadcrumb->setVisible(windowWidth >= 700);
+    }
+    if (m_topBar) {
+        const auto optionalWidgets = m_topBar->findChildren<QWidget*>();
+        for (QWidget* widget : optionalWidgets) {
+            if (widget->property("dashboardCompactOptional").toBool()) {
+                widget->setVisible(windowWidth >= 980);
+            }
+        }
     }
 
     if (compactMetrics != m_compactMetrics || m_quickGrid->count() == 0) {
@@ -2285,6 +2344,19 @@ void DashboardWindow::setCurrentSection(int index)
     }
     if (m_pages) {
         m_pages->setCurrentIndex(index);
+    }
+    if (m_navigationRail && m_navigationRail->currentIndex() != index) {
+        m_navigationRail->setCurrentIndex(index);
+    }
+    if (m_navigationDrawer) {
+        const auto drawerButtons =
+            m_navigationDrawer->findChildren<QToolButton*>(
+                QStringLiteral("dashboardNavButton"));
+        for (QToolButton* button : drawerButtons) {
+            const int buttonIndex =
+                button->property("dashboardDrawerIndex").toInt();
+            button->setChecked(buttonIndex == index);
+        }
     }
 
     static const char* titles[] = {
