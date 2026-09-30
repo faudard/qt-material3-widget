@@ -61,7 +61,7 @@ DashboardAccountPage::DashboardAccountPage(QWidget* parent)
     m_ui->subtitleLabel->setObjectName(QStringLiteral("pageSubtitle"));
 
     auto* identity = makeCard(QStringLiteral("Account overview"), this);
-    auto* identityLayout = qobject_cast<QVBoxLayout*>(identity->layout());
+    auto* identityLayout = static_cast<QVBoxLayout*>(identity->layout());
     identityLayout->addWidget(label(QStringLiteral("John Doe"), identity, 4.0, true));
     identityLayout->addWidget(label(QStringLiteral("john.doe@example.com"), identity, -1.0, false));
     auto* plan = new QtMaterial::QtMaterialChip(QStringLiteral("Professional plan"), identity);
@@ -70,7 +70,7 @@ DashboardAccountPage::DashboardAccountPage(QWidget* parent)
     identityLayout->addStretch(1);
 
     auto* security = makeCard(QStringLiteral("Security"), this);
-    auto* securityLayout = qobject_cast<QVBoxLayout*>(security->layout());
+    auto* securityLayout = static_cast<QVBoxLayout*>(security->layout());
     auto* twoFactor = new QtMaterial::QtMaterialSwitch(
         QStringLiteral("Two-factor authentication"),
         security);
@@ -88,7 +88,7 @@ DashboardAccountPage::DashboardAccountPage(QWidget* parent)
     securityLayout->addStretch(1);
 
     auto* billing = makeCard(QStringLiteral("Billing"), this);
-    auto* billingLayout = qobject_cast<QVBoxLayout*>(billing->layout());
+    auto* billingLayout = static_cast<QVBoxLayout*>(billing->layout());
     billingLayout->addWidget(label(QStringLiteral("Professional · €29 / month"), billing, 1.0, true));
     billingLayout->addWidget(label(QStringLiteral("Next invoice: 15 October 2026"), billing, -1.0, false));
     billingLayout->addWidget(label(QStringLiteral("Payment method: Visa •••• 2048"), billing, -1.0, false));
@@ -99,9 +99,9 @@ DashboardAccountPage::DashboardAccountPage(QWidget* parent)
     billingLayout->addStretch(1);
 
     auto* sessions = makeCard(QStringLiteral("Active sessions"), this);
-    auto* sessionsLayout = qobject_cast<QVBoxLayout*>(sessions->layout());
+    auto* sessionsLayout = static_cast<QVBoxLayout*>(sessions->layout());
     sessionsLayout->addWidget(label(QStringLiteral("Windows 10 · current session"), sessions, 0.0, true));
-    sessionsLayout->addWidget(label(QStringLiteral("Toulouse area · active now"), sessions, -1.0, false));
+    sessionsLayout->addWidget(label(QStringLiteral("Desktop session · active now"), sessions, -1.0, false));
     sessionsLayout->addSpacing(8);
     sessionsLayout->addWidget(label(QStringLiteral("Ubuntu desktop"), sessions, 0.0, true));
     sessionsLayout->addWidget(label(QStringLiteral("Last active 2 hours ago"), sessions, -1.0, false));
