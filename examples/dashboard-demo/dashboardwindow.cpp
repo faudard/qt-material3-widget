@@ -6,7 +6,9 @@
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QButtonGroup>
+#include <QCalendarWidget>
 #include <QComboBox>
+#include <QDate>
 #include <QFont>
 #include <QFrame>
 #include <QGridLayout>
@@ -306,6 +308,77 @@ public:
         painter->setPen(foreground);
         painter->drawText(pill, Qt::AlignCenter, text);
         painter->restore();
+    }
+};
+
+class SocialBarsWidget final : public QWidget
+{
+public:
+    explicit SocialBarsWidget(QWidget* parent = nullptr)
+        : QWidget(parent)
+    {
+        setMinimumHeight(150);
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    }
+
+protected:
+    void paintEvent(QPaintEvent*) override
+    {
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+
+        const QRectF plot = rect().adjusted(20.0, 16.0, -20.0, -28.0);
+        if (plot.width() <= 0.0 || plot.height() <= 0.0) {
+            return;
+        }
+
+        struct Bar {
+            const char* label;
+            int value;
+            const char* color;
+        };
+        static const Bar bars[] = {
+            {"Search", 82, "#5359bd"},
+            {"Social", 42, "#4aa2df"},
+            {"Referral", 68, "#ef6c63"}
+        };
+
+        const qreal slot = plot.width() / 3.0;
+        const qreal barWidth = qMin<qreal>(44.0, slot * 0.42);
+
+        QFont percentFont = font();
+        percentFont.setPointSizeF(std::max<qreal>(8.0, percentFont.pointSizeF() - 1.0));
+        percentFont.setBold(true);
+        QFont labelFont = percentFont;
+        labelFont.setBold(false);
+
+        for (int i = 0; i < 3; ++i) {
+            const qreal centerX = plot.left() + slot * (i + 0.5);
+            const qreal height = plot.height() * bars[i].value / 100.0;
+            QRectF bar(
+                centerX - barWidth / 2.0,
+                plot.bottom() - height,
+                barWidth,
+                height);
+
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(QColor(QString::fromLatin1(bars[i].color)));
+            painter.drawRoundedRect(bar, 3.0, 3.0);
+
+            painter.setFont(percentFont);
+            painter.setPen(QColor(QStringLiteral("#4a4d58")));
+            painter.drawText(
+                QRectF(centerX - 34.0, bar.top() - 24.0, 68.0, 18.0),
+                Qt::AlignCenter,
+                QStringLiteral("+%1%").arg(bars[i].value >= 60 ? 30 : 20));
+
+            painter.setFont(labelFont);
+            painter.setPen(QColor(QStringLiteral("#7b808e")));
+            painter.drawText(
+                QRectF(centerX - 42.0, plot.bottom() + 7.0, 84.0, 18.0),
+                Qt::AlignCenter,
+                QString::fromLatin1(bars[i].label));
+        }
     }
 };
 
@@ -822,59 +895,23 @@ QWidget* DashboardWindow::createDashboardPage()
     m_contentHost = page;
 
     auto* layout = new QVBoxLayout(page);
-    layout->setContentsMargins(26, 22, 26, 32);
-    layout->setSpacing(18);
+    layout->setContentsMargins(24, 18, 24, 30);
+    layout->setSpacing(16);
 
-    auto* titleRow = new QWidget(page);
-    auto* titleLayout = new QHBoxLayout(titleRow);
-    titleLayout->setContentsMargins(0, 0, 0, 0);
-    titleLayout->setSpacing(10);
-
-    auto* titleText = new QVBoxLayout;
-    titleText->setSpacing(2);
-    m_pageTitle = makeLabel(QStringLiteral("Dashboard"), titleRow, 5.0, true);
-    m_pageSubtitle = makeLabel(
-        QStringLiteral("A polished application-style showcase for Qt Material 3 widgets."),
-        titleRow,
-        -1.0,
-        false);
-    titleText->addWidget(m_pageTitle);
-    titleText->addWidget(m_pageSubtitle);
-    titleLayout->addLayout(titleText, 1);
-
-    m_yearCombo = new QComboBox(titleRow);
-    m_yearCombo->addItems({QStringLiteral("2025"), QStringLiteral("2026"), QStringLiteral("2027")});
-    m_yearCombo->setCurrentText(QStringLiteral("2026"));
-    m_yearCombo->setObjectName(QStringLiteral("dashboardCombo"));
-    m_yearCombo->setFixedWidth(90);
-    titleLayout->addWidget(m_yearCombo);
-
-    m_monthCombo = new QComboBox(titleRow);
-    m_monthCombo->addItems({
-        QStringLiteral("January"),
-        QStringLiteral("March"),
-        QStringLiteral("June"),
-        QStringLiteral("September"),
-        QStringLiteral("December")
-    });
-    m_monthCombo->setCurrentText(QStringLiteral("September"));
-    m_monthCombo->setObjectName(QStringLiteral("dashboardCombo"));
-    m_monthCombo->setFixedWidth(118);
-    titleLayout->addWidget(m_monthCombo);
-
-    layout->addWidget(titleRow);
-
-    auto* sectionHeader = new QHBoxLayout;
-    sectionHeader->addWidget(makeLabel(QStringLiteral("Quick Statistics"), page, 2.0, false));
-    sectionHeader->addStretch(1);
-    layout->addLayout(sectionHeader);
+    auto* headingHost = new QWidget(page);
+    auto* headingGrid = new QGridLayout(headingHost);
+    headingGrid->setContentsMargins(0, 0, 0, 0);
+    headingGrid->setHorizontalSpacing(18);
+    auto* quickTitle = makeLabel(QStringLiteral("Quick Statistics"), headingHost, 2.0, false);
+    auto* revenueTitle = makeLabel(QStringLiteral("Total Revenue"), headingHost, 2.0, false);
+    headingGrid->addWidget(quickTitle, 0, 0, 1, 2);
+    headingGrid->addWidget(revenueTitle, 0, 2);
+    headingGrid->setColumnStretch(0, 1);
+    headingGrid->setColumnStretch(1, 1);
+    headingGrid->setColumnStretch(2, 1);
+    layout->addWidget(headingHost);
 
     layout->addWidget(createQuickStatistics());
-
-    auto* chartHeader = new QHBoxLayout;
-    chartHeader->addWidget(makeLabel(QStringLiteral("Statistics"), page, 2.0, false));
-    chartHeader->addStretch(1);
-    layout->addLayout(chartHeader);
 
     auto* charts = new QWidget(page);
     m_chartGrid = new QGridLayout(charts);
@@ -1380,15 +1417,16 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
 {
     auto* card = new QtMaterial::QtMaterialCard(m_contentHost);
     card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
-    card->setMinimumHeight(352);
+    card->setMinimumHeight(342);
 
     auto* layout = new QVBoxLayout(card);
-    layout->setContentsMargins(18, 16, 18, 14);
-    layout->setSpacing(8);
+    layout->setContentsMargins(18, 14, 18, 12);
+    layout->setSpacing(7);
 
     auto* titleRow = new QHBoxLayout;
+    titleRow->setSpacing(6);
     titleRow->addWidget(makeLabel(QStringLiteral("Statistics"), card, 2.0, false));
-    titleRow->addStretch(1);
+    titleRow->addSpacing(14);
 
     const QStringList tabs = {
         QStringLiteral("Project"),
@@ -1404,6 +1442,30 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
         tab->setObjectName(QStringLiteral("chartTab"));
         titleRow->addWidget(tab);
     }
+    titleRow->addStretch(1);
+
+    m_yearCombo = new QComboBox(card);
+    m_yearCombo->addItems({QStringLiteral("2025"), QStringLiteral("2026"), QStringLiteral("2027")});
+    m_yearCombo->setCurrentText(QStringLiteral("2026"));
+    m_yearCombo->setObjectName(QStringLiteral("dashboardCombo"));
+    m_yearCombo->setFixedWidth(82);
+    m_yearCombo->setFixedHeight(32);
+    titleRow->addWidget(m_yearCombo);
+
+    m_monthCombo = new QComboBox(card);
+    m_monthCombo->addItems({
+        QStringLiteral("January"),
+        QStringLiteral("March"),
+        QStringLiteral("June"),
+        QStringLiteral("September"),
+        QStringLiteral("December")
+    });
+    m_monthCombo->setCurrentText(QStringLiteral("September"));
+    m_monthCombo->setObjectName(QStringLiteral("dashboardCombo"));
+    m_monthCombo->setFixedWidth(104);
+    m_monthCombo->setFixedHeight(32);
+    titleRow->addWidget(m_monthCombo);
+
     layout->addLayout(titleRow);
 
     m_lineChart = new LineChartWidget(card);
@@ -1416,10 +1478,10 @@ QtMaterial::QtMaterialCard* DashboardWindow::createEarningsCard()
 {
     auto* card = new QtMaterial::QtMaterialCard(m_contentHost);
     card->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
-    card->setMinimumHeight(352);
+    card->setMinimumHeight(342);
 
     auto* layout = new QVBoxLayout(card);
-    layout->setContentsMargins(18, 16, 18, 16);
+    layout->setContentsMargins(18, 14, 18, 14);
     layout->setSpacing(8);
     layout->addWidget(makeLabel(QStringLiteral("Earning in Month"), card, 2.0, false));
 
@@ -1465,69 +1527,109 @@ QWidget* DashboardWindow::createLowerHighlights()
 
     auto* social = new QtMaterial::QtMaterialCard(host);
     social->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
-    social->setMinimumHeight(210);
+    social->setMinimumHeight(250);
     auto* socialLayout = new QVBoxLayout(social);
-    socialLayout->setContentsMargins(18, 16, 18, 16);
+    socialLayout->setContentsMargins(18, 14, 18, 14);
+    socialLayout->setSpacing(4);
     socialLayout->addWidget(makeLabel(QStringLiteral("Social Media Advertising"), social, 2.0, false));
+    socialLayout->addWidget(makeLabel(
+        QStringLiteral("Campaign performance"),
+        social,
+        -2.0,
+        false));
 
-    const struct {
-        const char* label;
-        int value;
-        const char* color;
-    } channels[] = {
-        {"Search", 82, "#5359bd"},
-        {"Social", 42, "#4aa2df"},
-        {"Referral", 68, "#ef6c63"}
-    };
-    for (const auto& channel : channels) {
-        auto* row = new QHBoxLayout;
-        row->addWidget(makeLabel(QString::fromLatin1(channel.label), social, -1.0, false));
-        auto* progress = new QProgressBar(social);
-        progress->setRange(0, 100);
-        progress->setValue(channel.value);
-        progress->setTextVisible(false);
-        progress->setFixedHeight(10);
-        progress->setStyleSheet(QStringLiteral(
-            "QProgressBar { background:#e9ebf2; border:0; border-radius:5px; }"
-            "QProgressBar::chunk { background:%1; border-radius:5px; }")
-            .arg(QString::fromLatin1(channel.color)));
-        row->addWidget(progress, 1);
-        row->addWidget(makeLabel(QStringLiteral("%1%").arg(channel.value), social, -1.0, true));
-        socialLayout->addLayout(row);
-    }
-    socialLayout->addStretch(1);
+    auto* bars = new SocialBarsWidget(social);
+    socialLayout->addWidget(bars, 1);
 
     auto* tasks = new QtMaterial::QtMaterialCard(host);
     tasks->setVariant(QtMaterial::QtMaterialCard::Variant::Elevated);
-    tasks->setMinimumHeight(210);
+    tasks->setMinimumHeight(250);
     auto* tasksLayout = new QVBoxLayout(tasks);
-    tasksLayout->setContentsMargins(18, 16, 18, 16);
+    tasksLayout->setContentsMargins(18, 14, 18, 14);
+    tasksLayout->setSpacing(8);
+
     auto* tasksHeader = new QHBoxLayout;
     tasksHeader->addWidget(makeLabel(QStringLiteral("Today's Tasks"), tasks, 2.0, false));
     tasksHeader->addStretch(1);
+
+    auto* createTask = new QToolButton(tasks);
+    createTask->setText(QStringLiteral("Create Task"));
+    createTask->setObjectName(QStringLiteral("linkButton"));
+    tasksHeader->addWidget(createTask);
+
     auto* viewAll = new QToolButton(tasks);
-    viewAll->setText(QStringLiteral("View all"));
+    viewAll->setText(QStringLiteral("View All"));
     viewAll->setObjectName(QStringLiteral("linkButton"));
     tasksHeader->addWidget(viewAll);
     tasksLayout->addLayout(tasksHeader);
 
-    const QStringList taskNames = {
-        QStringLiteral("Send the billing agreement"),
-        QStringLiteral("Send over the documentation"),
-        QStringLiteral("Review dashboard accessibility")
-    };
-    for (int i = 0; i < taskNames.size(); ++i) {
-        auto* check = new QtMaterial::QtMaterialCheckbox(tasks);
-        check->setText(taskNames.at(i));
-        if (i == 2) {
-            check->setCheckState(Qt::Checked);
-        }
-        tasksLayout->addWidget(check);
-    }
-    tasksLayout->addStretch(1);
+    auto* content = new QWidget(tasks);
+    auto* contentLayout = new QHBoxLayout(content);
+    contentLayout->setContentsMargins(0, 0, 0, 0);
+    contentLayout->setSpacing(16);
 
+    auto* checklistHost = new QWidget(content);
+    auto* checklist = new QVBoxLayout(checklistHost);
+    checklist->setContentsMargins(0, 4, 0, 0);
+    checklist->setSpacing(10);
+
+    const struct {
+        const char* title;
+        const char* detail;
+        bool done;
+    } taskItems[] = {
+        {"Send the Billing Agreement", "Scheduled on 24 Mar, 2019", false},
+        {"Send over all the documentation", "Scheduled on 24 Mar, 2019", false},
+        {"Review dashboard accessibility", "Due today at 16:00", true}
+    };
+
+    for (const auto& item : taskItems) {
+        auto* row = new QWidget(checklistHost);
+        auto* rowLayout = new QHBoxLayout(row);
+        rowLayout->setContentsMargins(0, 0, 0, 0);
+        rowLayout->setSpacing(8);
+
+        auto* check = new QtMaterial::QtMaterialCheckbox(row);
+        check->setFixedWidth(28);
+        check->setCheckState(item.done ? Qt::Checked : Qt::Unchecked);
+        rowLayout->addWidget(check, 0, Qt::AlignTop);
+
+        auto* copy = new QVBoxLayout;
+        copy->setSpacing(1);
+        auto* title = makeLabel(QString::fromLatin1(item.title), row, -1.0, false);
+        auto* detail = makeLabel(QString::fromLatin1(item.detail), row, -2.0, false);
+        detail->setObjectName(QStringLiteral("taskDetail"));
+        copy->addWidget(title);
+        copy->addWidget(detail);
+        rowLayout->addLayout(copy, 1);
+
+        checklist->addWidget(row);
+    }
+    checklist->addStretch(1);
+
+    auto* calendar = new QCalendarWidget(content);
+    calendar->setObjectName(QStringLiteral("dashboardCalendar"));
+    calendar->setGridVisible(false);
+    calendar->setNavigationBarVisible(true);
+    calendar->setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
+    calendar->setHorizontalHeaderFormat(QCalendarWidget::ShortDayNames);
+    calendar->setCurrentPage(2026, 9);
+    calendar->setSelectedDate(QDate(2026, 9, 24));
+    calendar->setFixedWidth(300);
+    calendar->setMinimumHeight(188);
+
+    contentLayout->addWidget(checklistHost, 3);
+    contentLayout->addWidget(calendar, 2);
+    tasksLayout->addWidget(content, 1);
+
+    connect(createTask, &QToolButton::clicked, this, [this]() {
+        showMessage(QStringLiteral("Task creation action triggered."));
+    });
     connect(viewAll, &QToolButton::clicked, this, [this]() {
         showMessage(QStringLiteral("All tasks are already visible in this demo."));
+    });
+    connect(calendar, &QCalendarWidget::clicked, this, [this](const QDate& date) {
+        showMessage(QStringLiteral("Selected %1").arg(date.toString(QStringLiteral("dd MMM yyyy"))));
     });
 
     grid->addWidget(social, 0, 0);
@@ -1747,13 +1849,21 @@ void DashboardWindow::applyThemeChrome()
 
     const QString comboStyle = QStringLiteral(
         "QComboBox#dashboardCombo { background:%1; color:%2; border:1px solid %3;"
-        " border-radius:6px; padding:6px 10px; }"
+        " border-radius:6px; padding:4px 9px; }"
         "QComboBox#dashboardCombo::drop-down { border:0; width:18px; }"
         "QToolButton#chartTab { background:transparent; border:0; color:%4;"
-        " padding:6px 8px; }"
+        " padding:5px 8px; }"
         "QToolButton#chartTab:checked { color:%5; border-bottom:2px solid %5; }"
-        "QToolButton#linkButton { background:transparent; border:0; color:%5; }"
-        "QFrame#dashboardSeparator { color:%3; }")
+        "QToolButton#linkButton { background:transparent; border:0; color:%5;"
+        " padding:3px 5px; }"
+        "QLabel#taskDetail { color:%4; }"
+        "QFrame#dashboardSeparator { color:%3; }"
+        "QCalendarWidget#dashboardCalendar { background:%1; border:0; }"
+        "QCalendarWidget#dashboardCalendar QToolButton { color:%2; background:transparent;"
+        " border:0; padding:3px; }"
+        "QCalendarWidget#dashboardCalendar QSpinBox { color:%2; background:%1; border:0; }"
+        "QCalendarWidget#dashboardCalendar QAbstractItemView { background:%1; color:%2;"
+        " selection-background-color:%5; selection-color:white; border:0; outline:0; }")
         .arg(cssColor(surface))
         .arg(cssColor(onSurface))
         .arg(cssColor(outline))
