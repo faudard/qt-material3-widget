@@ -2,6 +2,7 @@
 
 #include <QMainWindow>
 #include <QVector>
+#include <memory>
 
 class QLabel;
 class QColor;
@@ -11,6 +12,10 @@ class QScrollArea;
 class QFrame;
 class QToolButton;
 class QStackedWidget;
+
+namespace Ui {
+class DashboardWindow;
+}
 
 namespace QtMaterial {
 enum class ColorRole;
@@ -86,6 +91,7 @@ private:
     void showOrderDetailsForModel(int row, QStandardItemModel* model);
     void showMessage(const QString& text);
 
+    std::unique_ptr<Ui::DashboardWindow> m_ui;
     QWidget* m_central = nullptr;
     QWidget* m_sidebar = nullptr;
     QWidget* m_contentHost = nullptr;
