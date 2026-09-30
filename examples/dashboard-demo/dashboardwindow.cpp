@@ -2881,6 +2881,8 @@ void DashboardWindow::applyThemeChrome()
         "QToolButton#linkButton { background:transparent; border:0; color:%2;"
         " padding:3px 5px; }"
         "QLabel#taskDetail { color:%1; }"
+        "#profileHeroAvatar { background:%2; color:%6; border-radius:32px;"
+        " font-weight:700; font-size:16px; }"
         "QFrame#dashboardSeparator { color:%3; }"
         "QCalendarWidget#dashboardCalendar { background:%4; border:0; }"
         "QCalendarWidget#dashboardCalendar QToolButton { color:%5; background:transparent;"
