@@ -1152,7 +1152,7 @@ QWidget* DashboardWindow::createOrdersPage()
         showMessage(QStringLiteral("Order export prepared."));
     });
     connect(m_ordersPage, &QAbstractItemView::doubleClicked, this, [this](const QModelIndex& index) {
-        showOrderDetails(index.row());
+        showOrderDetailsForModel(index.row(), m_ordersPageModel);
     });
 
     refreshOrdersPage();
@@ -2181,19 +2181,26 @@ void DashboardWindow::setCurrentSection(int index)
 
 void DashboardWindow::showOrderDetails(int row)
 {
-    if (!m_ordersModel || row < 0 || row >= m_ordersModel->rowCount()) {
+    showOrderDetailsForModel(row, m_ordersModel);
+}
+
+void DashboardWindow::showOrderDetailsForModel(
+    int row,
+    QStandardItemModel* model)
+{
+    if (!model || row < 0 || row >= model->rowCount()) {
         return;
     }
 
     auto* dialog = new QtMaterial::QtMaterialDialog(this);
     dialog->setAttribute(Qt::WA_DeleteOnClose, true);
-    dialog->setTitleText(QStringLiteral("Order %1").arg(m_ordersModel->item(row, 0)->text()));
+    dialog->setTitleText(QStringLiteral("Order %1").arg(model->item(row, 0)->text()));
     dialog->setSupportingText(
         QStringLiteral("%1 • %2 • %3 • %4")
-            .arg(m_ordersModel->item(row, 1)->text())
-            .arg(m_ordersModel->item(row, 2)->text())
-            .arg(m_ordersModel->item(row, 3)->text())
-            .arg(m_ordersModel->item(row, 4)->text()));
+            .arg(model->item(row, 1)->text())
+            .arg(model->item(row, 2)->text())
+            .arg(model->item(row, 3)->text())
+            .arg(model->item(row, 4)->text()));
     dialog->open();
 }
 
