@@ -21,7 +21,6 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPalette>
-#include <QProgressBar>
 #include <QResizeEvent>
 #include <QScrollArea>
 #include <QShortcut>
@@ -1015,26 +1014,22 @@ QWidget* DashboardWindow::createAnalyticsPage()
         const char* label;
         int value;
         const char* percent;
-        const char* color;
     } channels[] = {
-        {"Organic search", 84, "42%", "#5359bd"},
-        {"Direct", 62, "31%", "#4aa2df"},
-        {"Social", 36, "18%", "#ef6c63"},
-        {"Referral", 18, "9%", "#45a38c"}
+        {"Organic search", 84, "42%"},
+        {"Direct", 62, "31%"},
+        {"Social", 36, "18%"},
+        {"Referral", 18, "9%"}
     };
 
     for (const auto& channel : channels) {
         auto* row = new QHBoxLayout;
         row->addWidget(makeLabel(QString::fromLatin1(channel.label), channelsCard, -1.0, false));
-        auto* progress = new QProgressBar(channelsCard);
-        progress->setRange(0, 100);
-        progress->setValue(channel.value);
-        progress->setTextVisible(false);
-        progress->setFixedHeight(9);
-        progress->setStyleSheet(QStringLiteral(
-            "QProgressBar { background:#e8eaf0; border:0; border-radius:4px; }"
-            "QProgressBar::chunk { background:%1; border-radius:4px; }")
-            .arg(QString::fromLatin1(channel.color)));
+        auto* progress = new QtMaterial::QtMaterialLinearProgressIndicator(channelsCard);
+        progress->setValue(static_cast<qreal>(channel.value) / 100.0);
+        progress->setStatusText(
+            QStringLiteral("%1: %2")
+                .arg(QString::fromLatin1(channel.label))
+                .arg(QString::fromLatin1(channel.percent)));
         row->addWidget(progress, 1);
         row->addWidget(makeLabel(QString::fromLatin1(channel.percent), channelsCard, -1.0, true));
         channelsLayout->addLayout(row);
@@ -1132,7 +1127,29 @@ QWidget* DashboardWindow::createOrdersPage()
     m_ordersPage->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     m_ordersPage->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     cardLayout->addWidget(m_ordersPage, 1);
+
+    m_ordersPagination = new QtMaterial::QtMaterialPagination(tableCard);
+    m_ordersPagination->setPageSizeOptions({4, 8});
+    m_ordersPagination->setPageSize(4);
+    m_ordersPagination->setTotalCount(m_ordersPageModel->rowCount());
+    cardLayout->addWidget(m_ordersPagination);
+
     layout->addWidget(tableCard);
+
+    const auto refreshOrdersPage = [this]() {
+        applyFilter(m_search ? m_search->text() : QString());
+    };
+
+    connect(
+        m_ordersPagination,
+        &QtMaterial::QtMaterialPagination::pageChanged,
+        this,
+        [refreshOrdersPage](int) { refreshOrdersPage(); });
+    connect(
+        m_ordersPagination,
+        &QtMaterial::QtMaterialPagination::pageSizeChanged,
+        this,
+        [refreshOrdersPage](int) { refreshOrdersPage(); });
 
     connect(exportButton, &QAbstractButton::clicked, this, [this]() {
         showMessage(QStringLiteral("Order export prepared."));
@@ -1140,6 +1157,8 @@ QWidget* DashboardWindow::createOrdersPage()
     connect(m_ordersPage, &QAbstractItemView::doubleClicked, this, [this](const QModelIndex& index) {
         showOrderDetails(index.row());
     });
+
+    refreshOrdersPage();
 
     layout->addStretch(1);
     return page;
@@ -1772,22 +1791,41 @@ void DashboardWindow::applyFilter(const QString& text)
     const QString needle = text.trimmed();
 
     const auto filterTable =
-        [&needle](QtMaterial::QtMaterialTable* table, QStandardItemModel* model) {
+        [&needle, this](
+            QtMaterial::QtMaterialTable* table,
+            QStandardItemModel* model,
+            bool applyPagination) {
             if (!table || !model) {
                 return;
             }
+
+            int firstPageRow = 0;
+            int lastPageRow = model->rowCount();
+            if (applyPagination && m_ordersPagination) {
+                firstPageRow =
+                    (m_ordersPagination->page() - 1)
+                    * m_ordersPagination->pageSize();
+                lastPageRow = qMin(
+                    firstPageRow + m_ordersPagination->pageSize(),
+                    model->rowCount());
+            }
+
             for (int row = 0; row < model->rowCount(); ++row) {
                 bool match = needle.isEmpty();
                 for (int column = 0; !match && column < model->columnCount(); ++column) {
                     const QStandardItem* item = model->item(row, column);
                     match = item && item->text().contains(needle, Qt::CaseInsensitive);
                 }
-                table->setRowHidden(row, !match);
+
+                const bool inPage =
+                    !applyPagination
+                    || (row >= firstPageRow && row < lastPageRow);
+                table->setRowHidden(row, !(match && inPage));
             }
         };
 
-    filterTable(m_orders, m_ordersModel);
-    filterTable(m_ordersPage, m_ordersPageModel);
+    filterTable(m_orders, m_ordersModel, false);
+    filterTable(m_ordersPage, m_ordersPageModel, true);
 }
 
 void DashboardWindow::applyThemeChrome()
