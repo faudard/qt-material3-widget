@@ -3,6 +3,8 @@
 #include <QCommandLineParser>
 #include <QFont>
 #include <QFontDatabase>
+#include <QPixmap>
+#include <QSize>
 #include <QTimer>
 
 #include "dashboardwindow.h"
