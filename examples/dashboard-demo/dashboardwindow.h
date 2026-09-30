@@ -37,6 +37,8 @@ public:
     explicit DashboardWindow(QWidget* parent = nullptr);
     ~DashboardWindow() override;
 
+    void showDemoPage(int index);
+
 protected:
     void resizeEvent(QResizeEvent* event) override;
 
