@@ -1833,13 +1833,35 @@ void DashboardWindow::applyFilter(const QString& text)
 
 void DashboardWindow::applyThemeChrome()
 {
+    const auto& theme = QtMaterial::ThemeManager::instance().theme();
     const QColor background = materialColor(QtMaterial::ColorRole::Background);
     const QColor surface = materialColor(QtMaterial::ColorRole::Surface);
     const QColor surfaceVariant = materialColor(QtMaterial::ColorRole::SurfaceContainerLow);
     const QColor onSurface = materialColor(QtMaterial::ColorRole::OnSurface);
     const QColor onSurfaceVariant = materialColor(QtMaterial::ColorRole::OnSurfaceVariant);
     const QColor outline = materialColor(QtMaterial::ColorRole::OutlineVariant);
-    const QColor positive = QColor(QStringLiteral("#3c9a63"));
+    const QColor primary = materialColor(QtMaterial::ColorRole::Primary);
+    const QColor onPrimary = materialColor(QtMaterial::ColorRole::OnPrimary);
+    const QColor positive = materialColor(QtMaterial::ColorRole::Tertiary);
+
+    const QColor sidebar =
+        theme.isDark()
+            ? materialColor(QtMaterial::ColorRole::SurfaceContainerLow)
+            : materialColor(QtMaterial::ColorRole::InverseSurface);
+    const QColor sidebarText =
+        theme.isDark()
+            ? materialColor(QtMaterial::ColorRole::OnSurface)
+            : materialColor(QtMaterial::ColorRole::InverseOnSurface);
+    QColor sidebarMuted = sidebarText;
+    sidebarMuted.setAlpha(165);
+    QColor sidebarHover = sidebar;
+    sidebarHover = theme.isDark()
+        ? sidebarHover.lighter(120)
+        : sidebarHover.lighter(112);
+    QColor sidebarProfile = sidebar;
+    sidebarProfile = theme.isDark()
+        ? sidebarProfile.darker(112)
+        : sidebarProfile.darker(108);
 
     if (m_central) {
         QPalette palette = m_central->palette();
@@ -1849,6 +1871,45 @@ void DashboardWindow::applyThemeChrome()
         palette.setColor(QPalette::Text, onSurface);
         m_central->setPalette(palette);
         m_central->setAutoFillBackground(true);
+    }
+
+    if (m_sidebar) {
+        m_sidebar->setStyleSheet(QStringLiteral(
+            "#dashboardSidebar, #dashboardNavContent { background:%1; }"
+            "#dashboardBrandLogo { background:%2; color:%3; border-radius:18px; font-weight:700; }"
+            "#dashboardBrandTitle, #dashboardProfileName { color:%4; }"
+            "#dashboardBrandSubtitle, #dashboardProfileRole, #dashboardSectionLabel { color:%5; }"
+            "QToolButton#dashboardNavButton { color:%4; background:transparent; border:0;"
+            " text-align:left; padding:0 15px; border-radius:6px; font-size:12px; }"
+            "QToolButton#dashboardNavButton:hover { background:%6; color:%4; }"
+            "QToolButton#dashboardNavButton:checked { background:%2; color:%3; font-weight:600;"
+            " border-left:3px solid %2; padding-left:12px; }"
+            "#dashboardProfile { background:%7; border-top:1px solid %6; }"
+            "#dashboardProfileAvatar { background:%2; color:%3; border-radius:16px; font-weight:700; }"
+            "QScrollArea#dashboardNavScroll { background:transparent; border:0; }"
+            "QScrollArea#dashboardNavScroll > QWidget > QWidget { background:transparent; }"
+            "QScrollArea#dashboardNavScroll QScrollBar:vertical { background:%1; width:6px; margin:0; }"
+            "QScrollArea#dashboardNavScroll QScrollBar::handle:vertical { background:%6;"
+            " border-radius:3px; min-height:32px; }"
+            "QScrollArea#dashboardNavScroll QScrollBar::add-line:vertical,"
+            " QScrollArea#dashboardNavScroll QScrollBar::sub-line:vertical { height:0; }")
+            .arg(cssColor(sidebar))
+            .arg(cssColor(primary))
+            .arg(cssColor(onPrimary))
+            .arg(cssColor(sidebarText))
+            .arg(cssColor(sidebarMuted))
+            .arg(cssColor(sidebarHover))
+            .arg(cssColor(sidebarProfile)));
+
+        const auto navButtons =
+            m_sidebar->findChildren<QToolButton*>(QStringLiteral("dashboardNavButton"));
+        for (QToolButton* button : navButtons) {
+            const QString iconName =
+                button->property("dashboardIconName").toString();
+            if (!iconName.isEmpty()) {
+                button->setIcon(dashboardIcon(iconName, sidebarText));
+            }
+        }
     }
 
     if (m_contentHost) {
@@ -1872,19 +1933,42 @@ void DashboardWindow::applyThemeChrome()
     if (m_topBar) {
         m_topBar->setStyleSheet(QStringLiteral(
             "#dashboardTopBar { background:%1; border-bottom:1px solid %2; }"
-            "#dashboardBreadcrumb { color:%3; }"
-            "QToolButton#topBarButton { background:transparent; color:%4; border:0;"
+            "QToolButton#topBarButton { background:transparent; color:%3; border:0;"
             " border-radius:7px; font-weight:600; }"
-            "QToolButton#topBarButton:hover { background:%5; }"
-            "QToolButton#topBarAccount { background:transparent; color:%4; border:0;"
+            "QToolButton#topBarButton:hover { background:%4; }"
+            "QToolButton#topBarAccount { background:transparent; color:%3; border:0;"
             " padding:0 4px; font-size:12px; }"
-            "QToolButton#topBarAccount:hover { color:%6; }")
+            "QToolButton#topBarAccount:hover { color:%5; }"
+            "#dashboardTopAvatar { background:%6; color:%7; border-radius:16px;"
+            " font-weight:700; font-size:10px; }")
             .arg(cssColor(surface))
             .arg(cssColor(outline))
-            .arg(cssColor(onSurfaceVariant))
             .arg(cssColor(onSurface))
             .arg(cssColor(surfaceVariant))
-            .arg(cssColor(materialColor(QtMaterial::ColorRole::Primary))));
+            .arg(cssColor(primary))
+            .arg(cssColor(materialColor(QtMaterial::ColorRole::PrimaryContainer)))
+            .arg(cssColor(materialColor(QtMaterial::ColorRole::OnPrimaryContainer))));
+
+        const auto actionButtons = m_topBar->findChildren<QAbstractButton*>();
+        for (QAbstractButton* button : actionButtons) {
+            const QString iconName =
+                button->property("dashboardIconName").toString();
+            if (iconName.isEmpty()) {
+                continue;
+            }
+            const int badge = button->property("dashboardBadge").isValid()
+                ? button->property("dashboardBadge").toInt()
+                : -1;
+            button->setIcon(dashboardIcon(iconName, onSurfaceVariant, badge));
+        }
+    }
+
+    if (m_themeButton) {
+        m_themeButton->setIcon(dashboardIcon(
+            theme.isDark()
+                ? QStringLiteral("sun")
+                : QStringLiteral("moon"),
+            onSurfaceVariant));
     }
 
     if (m_search && m_search->lineEdit()) {
@@ -1896,28 +1980,27 @@ void DashboardWindow::applyThemeChrome()
             .arg(cssColor(outline)));
     }
 
-    const QString comboStyle = QStringLiteral(
-        "QComboBox#dashboardCombo { background:%1; color:%2; border:1px solid %3;"
-        " border-radius:6px; padding:4px 9px; }"
-        "QComboBox#dashboardCombo::drop-down { border:0; width:18px; }"
-        "QToolButton#chartTab { background:transparent; border:0; color:%4;"
+    const QString applicationChrome = QStringLiteral(
+        "QToolButton#chartTab { background:transparent; border:0; color:%1;"
         " padding:5px 8px; }"
-        "QToolButton#chartTab:checked { color:%5; border-bottom:2px solid %5; }"
-        "QToolButton#linkButton { background:transparent; border:0; color:%5;"
+        "QToolButton#chartTab:checked { color:%2; border-bottom:2px solid %2; }"
+        "QToolButton#linkButton { background:transparent; border:0; color:%2;"
         " padding:3px 5px; }"
-        "QLabel#taskDetail { color:%4; }"
+        "QLabel#taskDetail { color:%1; }"
         "QFrame#dashboardSeparator { color:%3; }"
-        "QCalendarWidget#dashboardCalendar { background:%1; border:0; }"
-        "QCalendarWidget#dashboardCalendar QToolButton { color:%2; background:transparent;"
+        "QCalendarWidget#dashboardCalendar { background:%4; border:0; }"
+        "QCalendarWidget#dashboardCalendar QToolButton { color:%5; background:transparent;"
         " border:0; padding:3px; }"
-        "QCalendarWidget#dashboardCalendar QSpinBox { color:%2; background:%1; border:0; }"
-        "QCalendarWidget#dashboardCalendar QAbstractItemView { background:%1; color:%2;"
-        " selection-background-color:%5; selection-color:white; border:0; outline:0; }")
+        "QCalendarWidget#dashboardCalendar QSpinBox { color:%5; background:%4; border:0; }"
+        "QCalendarWidget#dashboardCalendar QAbstractItemView { background:%4; color:%5;"
+        " selection-background-color:%2; selection-color:%6; border:0; outline:0; }")
+        .arg(cssColor(onSurfaceVariant))
+        .arg(cssColor(primary))
+        .arg(cssColor(outline))
         .arg(cssColor(surface))
         .arg(cssColor(onSurface))
-        .arg(cssColor(outline))
-        .arg(cssColor(onSurfaceVariant))
-        .arg(cssColor(materialColor(QtMaterial::ColorRole::Primary)));
+        .arg(cssColor(onPrimary));
+
     if (m_pages) {
         const QString pageStyle = QStringLiteral(
             "QWidget#dashboardContent { background:%1; color:%2; }"
@@ -1925,7 +2008,7 @@ void DashboardWindow::applyThemeChrome()
             .arg(cssColor(surfaceVariant))
             .arg(cssColor(onSurface))
             .arg(cssColor(onSurfaceVariant));
-        m_pages->setStyleSheet(pageStyle + comboStyle);
+        m_pages->setStyleSheet(pageStyle + applicationChrome);
 
         QPalette pagesPalette = m_pages->palette();
         pagesPalette.setColor(QPalette::Window, surfaceVariant);
@@ -1942,10 +2025,53 @@ void DashboardWindow::applyThemeChrome()
         m_pageSubtitle->setPalette(palette);
     }
 
+    const auto metricIcons =
+        m_contentHost
+            ? m_contentHost->findChildren<QLabel*>(QStringLiteral("metricIcon"))
+            : QList<QLabel*>();
+    for (QLabel* icon : metricIcons) {
+        const auto role = static_cast<QtMaterial::ColorRole>(
+            icon->property("dashboardColorRole").toInt());
+        const QString iconName =
+            icon->property("dashboardIconName").toString();
+
+        QtMaterial::ColorRole foregroundRole = QtMaterial::ColorRole::OnPrimary;
+        if (role == QtMaterial::ColorRole::Secondary) {
+            foregroundRole = QtMaterial::ColorRole::OnSecondary;
+        } else if (role == QtMaterial::ColorRole::Tertiary) {
+            foregroundRole = QtMaterial::ColorRole::OnTertiary;
+        } else if (role == QtMaterial::ColorRole::Error) {
+            foregroundRole = QtMaterial::ColorRole::OnError;
+        }
+
+        icon->setStyleSheet(QStringLiteral(
+            "background:%1; border-radius:6px;")
+            .arg(cssColor(materialColor(role))));
+        icon->setPixmap(dashboardIcon(
+            iconName,
+            materialColor(foregroundRole)).pixmap(24, 24));
+    }
+
     for (const MetricWidgets& metric : m_metrics) {
         QPalette deltaPalette = metric.delta->palette();
         deltaPalette.setColor(QPalette::WindowText, positive);
         metric.delta->setPalette(deltaPalette);
+    }
+
+    if (m_orders) {
+        m_orders->viewport()->update();
+    }
+    if (m_ordersPage) {
+        m_ordersPage->viewport()->update();
+    }
+    if (m_revenueSummary) {
+        m_revenueSummary->update();
+    }
+    if (m_contentHost) {
+        const auto bars = m_contentHost->findChildren<SocialBarsWidget*>();
+        for (SocialBarsWidget* bar : bars) {
+            bar->update();
+        }
     }
 }
 
