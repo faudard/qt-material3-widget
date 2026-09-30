@@ -18,6 +18,39 @@ QColor color(QtMaterial::ColorRole role)
     return QtMaterial::ThemeManager::instance().theme().colorScheme().color(role);
 }
 
+QPainterPath smoothPath(const QVector<QPointF>& points)
+{
+    QPainterPath path;
+    if (points.isEmpty()) {
+        return path;
+    }
+
+    path.moveTo(points.first());
+    if (points.size() == 1) {
+        return path;
+    }
+
+    for (int i = 0; i < points.size() - 1; ++i) {
+        const QPointF p0 = i > 0 ? points.at(i - 1) : points.at(i);
+        const QPointF p1 = points.at(i);
+        const QPointF p2 = points.at(i + 1);
+        const QPointF p3 =
+            i + 2 < points.size()
+                ? points.at(i + 2)
+                : points.at(i + 1);
+
+        const QPointF c1(
+            p1.x() + (p2.x() - p0.x()) / 6.0,
+            p1.y() + (p2.y() - p0.y()) / 6.0);
+        const QPointF c2(
+            p2.x() - (p3.x() - p1.x()) / 6.0,
+            p2.y() - (p3.y() - p1.y()) / 6.0);
+
+        path.cubicTo(c1, c2, p2);
+    }
+    return path;
+}
+
 } // namespace
 
 LineChartWidget::LineChartWidget(QWidget* parent)
@@ -98,7 +131,6 @@ void LineChartWidget::paintEvent(QPaintEvent*)
         painter.drawLine(QPointF(plot.left(), y), QPointF(plot.right(), y));
     }
 
-    QPainterPath line;
     QVector<QPointF> points;
     points.reserve(m_values.size());
     for (int i = 0; i < m_values.size(); ++i) {
@@ -108,11 +140,7 @@ void LineChartWidget::paintEvent(QPaintEvent*)
         points.append(QPointF(x, y));
     }
 
-    line.moveTo(points.first());
-    for (int i = 1; i < points.size(); ++i) {
-        line.lineTo(points.at(i));
-    }
-
+    const QPainterPath line = smoothPath(points);
     QPainterPath area(line);
     area.lineTo(points.last().x(), plot.bottom());
     area.lineTo(points.first().x(), plot.bottom());
