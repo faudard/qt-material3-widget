@@ -1039,8 +1039,11 @@ QWidget* DashboardWindow::createTopBar()
     m_themeButton->setFocusPolicy(Qt::TabFocus);
     layout->addWidget(m_themeButton);
 
-    auto* avatar = new QLabel(QStringLiteral("JD"), m_topBar);
-    avatar->setAlignment(Qt::AlignCenter);
+    auto* avatar = new QToolButton(m_topBar);
+    avatar->setText(QStringLiteral("JD"));
+    avatar->setCursor(Qt::PointingHandCursor);
+    avatar->setToolTip(QStringLiteral("Open account"));
+    avatar->setAccessibleName(QStringLiteral("Open account"));
     avatar->setFixedSize(32, 32);
     avatar->setObjectName(QStringLiteral("dashboardTopAvatar"));
     avatar->setProperty("dashboardCompactOptional", true);
@@ -1079,11 +1082,13 @@ QWidget* DashboardWindow::createTopBar()
     connect(notify, &QAbstractButton::clicked, this, [this]() {
         showMessage(QStringLiteral("8 notifications waiting for review."));
     });
-    connect(account, &QToolButton::clicked, this, [this]() {
+    const auto openAccountDrawer = [this]() {
         if (m_accountDrawer) {
             m_accountDrawer->open();
         }
-    });
+    };
+    connect(avatar, &QToolButton::clicked, this, openAccountDrawer);
+    connect(account, &QToolButton::clicked, this, openAccountDrawer);
 
     return m_topBar;
 }
@@ -3211,8 +3216,9 @@ void DashboardWindow::applyThemeChrome()
             "QToolButton#topBarAccount { background:transparent; color:%3; border:0;"
             " padding:0 4px; font-size:12px; }"
             "QToolButton#topBarAccount:hover { color:%5; }"
-            "#dashboardTopAvatar { background:%6; color:%7; border-radius:16px;"
-            " font-weight:700; font-size:10px; }")
+            "#dashboardTopAvatar { background:%6; color:%7; border:0; border-radius:16px;"
+            " font-weight:700; font-size:10px; }"
+            "#dashboardTopAvatar:hover { background:%5; color:%6; }")
             .arg(cssColor(surface))
             .arg(cssColor(outline))
             .arg(cssColor(onSurface))
