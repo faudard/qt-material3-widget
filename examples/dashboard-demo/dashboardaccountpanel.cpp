@@ -8,6 +8,7 @@
 #include <QFrame>
 #include <QLabel>
 #include <QPalette>
+#include <QSizePolicy>
 #include <QToolButton>
 
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
@@ -197,10 +198,10 @@ void DashboardAccountPanel::applyTheme()
         .arg(cssColor(tertiaryContainer))
         .arg(cssColor(onTertiaryContainer)));
 
-    QPalette palette = palette();
-    palette.setColor(QPalette::Window, surface);
-    palette.setColor(QPalette::WindowText, onSurface);
-    palette.setColor(QPalette::Text, onSurface);
-    setPalette(palette);
+    QPalette panelPalette = this->palette();
+    panelPalette.setColor(QPalette::Window, surface);
+    panelPalette.setColor(QPalette::WindowText, onSurface);
+    panelPalette.setColor(QPalette::Text, onSurface);
+    setPalette(panelPalette);
     setAutoFillBackground(true);
 }
