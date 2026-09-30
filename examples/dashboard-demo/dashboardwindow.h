@@ -57,6 +57,7 @@ private:
     QWidget* createSidebar();
     QtMaterial::QtMaterialNavigationRail* createNavigationRail();
     QtMaterial::QtMaterialNavigationDrawer* createNavigationDrawer();
+    QtMaterial::QtMaterialNavigationDrawer* createAccountDrawer();
     QWidget* createTopBar();
     QWidget* createDashboardPage();
     QWidget* createAnalyticsPage();
@@ -100,6 +101,7 @@ private:
     QStackedWidget* m_pages = nullptr;
     QtMaterial::QtMaterialNavigationRail* m_navigationRail = nullptr;
     QtMaterial::QtMaterialNavigationDrawer* m_navigationDrawer = nullptr;
+    QtMaterial::QtMaterialNavigationDrawer* m_accountDrawer = nullptr;
     QtMaterial::QtMaterialSearchBar* m_search = nullptr;
     QtMaterial::QtMaterialTable* m_orders = nullptr;
     QtMaterial::QtMaterialTable* m_ordersPage = nullptr;
