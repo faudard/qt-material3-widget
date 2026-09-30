@@ -1180,18 +1180,40 @@ QWidget* DashboardWindow::createOrdersPage()
         &layout);
 
     auto* filters = new QHBoxLayout;
-    const QStringList filterNames = {
-        QStringLiteral("All  128"),
-        QStringLiteral("Paid  84"),
-        QStringLiteral("Pending  31"),
-        QStringLiteral("Refunded  13")
+    auto* statusGroup = new QButtonGroup(page);
+    statusGroup->setExclusive(true);
+
+    const struct {
+        const char* label;
+        const char* status;
+    } filterItems[] = {
+        {"All  30", "All"},
+        {"Paid  15", "Paid"},
+        {"Pending  9", "Pending"},
+        {"Refunded  6", "Refunded"}
     };
-    for (int i = 0; i < filterNames.size(); ++i) {
-        auto* chip = new QtMaterial::QtMaterialChip(filterNames.at(i), page);
+
+    for (int i = 0; i < 4; ++i) {
+        auto* chip = new QtMaterial::QtMaterialChip(
+            QString::fromLatin1(filterItems[i].label),
+            page);
         chip->setVariant(QtMaterial::ChipVariant::Assist);
         chip->setCheckable(true);
         chip->setChecked(i == 0);
+        chip->setProperty(
+            "dashboardOrderStatus",
+            QString::fromLatin1(filterItems[i].status));
+        statusGroup->addButton(chip, i);
         filters->addWidget(chip);
+
+        connect(chip, &QAbstractButton::clicked, this, [this, chip]() {
+            m_orderStatusFilter =
+                chip->property("dashboardOrderStatus").toString();
+            if (m_ordersPagination) {
+                m_ordersPagination->setPage(1);
+            }
+            applyFilter(m_search ? m_search->text() : QString());
+        });
     }
     filters->addStretch(1);
     layout->addLayout(filters);
@@ -1216,8 +1238,9 @@ QWidget* DashboardWindow::createOrdersPage()
     m_ordersPage->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_ordersPage->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_ordersPage->verticalHeader()->setVisible(false);
+    m_ordersPage->setSortingEnabled(true);
 
-    m_ordersPageModel = new QStandardItemModel(8, 5, m_ordersPage);
+    m_ordersPageModel = new QStandardItemModel(30, 5, m_ordersPage);
     m_ordersPageModel->setHorizontalHeaderLabels({
         QStringLiteral("Order"),
         QStringLiteral("Customer"),
@@ -1226,24 +1249,54 @@ QWidget* DashboardWindow::createOrdersPage()
         QStringLiteral("Status")
     });
 
-    const char* rows[][5] = {
-        {"#1042", "Alice Martin", "Design system", "€842", "Paid"},
-        {"#1041", "John Smith", "Widget pack", "€392", "Pending"},
-        {"#1040", "Emma Dupont", "Enterprise license", "€1,240", "Paid"},
-        {"#1039", "Noah Bernard", "Theme pack", "€184", "Refunded"},
-        {"#1038", "Lina Robert", "Support plan", "€640", "Paid"},
-        {"#1037", "Lucas Petit", "Component pack", "€512", "Pending"},
-        {"#1036", "Mia Leroy", "Team license", "€960", "Paid"},
-        {"#1035", "Leo Garcia", "Consulting", "€1,480", "Pending"}
+    const QStringList customers = {
+        QStringLiteral("Alice Martin"),
+        QStringLiteral("John Smith"),
+        QStringLiteral("Emma Dupont"),
+        QStringLiteral("Noah Bernard"),
+        QStringLiteral("Lina Robert"),
+        QStringLiteral("Lucas Petit"),
+        QStringLiteral("Mia Leroy"),
+        QStringLiteral("Leo Garcia")
+    };
+    const QStringList products = {
+        QStringLiteral("Design system"),
+        QStringLiteral("Widget pack"),
+        QStringLiteral("Enterprise license"),
+        QStringLiteral("Theme pack"),
+        QStringLiteral("Support plan"),
+        QStringLiteral("Component pack")
     };
 
-    for (int row = 0; row < 8; ++row) {
-        for (int column = 0; column < 5; ++column) {
-            m_ordersPageModel->setItem(
-                row,
-                column,
-                new QStandardItem(QString::fromUtf8(rows[row][column])));
-        }
+    for (int row = 0; row < 30; ++row) {
+        const QString status =
+            row % 5 == 3
+                ? QStringLiteral("Refunded")
+                : (row % 3 == 1
+                    ? QStringLiteral("Pending")
+                    : QStringLiteral("Paid"));
+        const int amount = 180 + ((row * 137) % 1420);
+
+        m_ordersPageModel->setItem(
+            row,
+            0,
+            new QStandardItem(QStringLiteral("#%1").arg(1042 - row)));
+        m_ordersPageModel->setItem(
+            row,
+            1,
+            new QStandardItem(customers.at(row % customers.size())));
+        m_ordersPageModel->setItem(
+            row,
+            2,
+            new QStandardItem(products.at(row % products.size())));
+        m_ordersPageModel->setItem(
+            row,
+            3,
+            new QStandardItem(QStringLiteral("€%1").arg(amount)));
+        m_ordersPageModel->setItem(
+            row,
+            4,
+            new QStandardItem(status));
     }
 
     m_ordersPage->setModel(m_ordersPageModel);
@@ -1256,8 +1309,8 @@ QWidget* DashboardWindow::createOrdersPage()
     cardLayout->addWidget(m_ordersPage, 1);
 
     m_ordersPagination = new QtMaterial::QtMaterialPagination(tableCard);
-    m_ordersPagination->setPageSizeOptions({4, 8});
-    m_ordersPagination->setPageSize(4);
+    m_ordersPagination->setPageSizeOptions({10, 25, 50});
+    m_ordersPagination->setPageSize(10);
     m_ordersPagination->setTotalCount(m_ordersPageModel->rowCount());
     cardLayout->addWidget(m_ordersPagination);
 
@@ -1601,6 +1654,10 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
         tab->setChecked(i == 0);
         tab->setObjectName(QStringLiteral("chartTab"));
         titleRow->addWidget(tab);
+        connect(tab, &QToolButton::clicked, this, [this, i]() {
+            m_chartMetricIndex = i;
+            applyPeriod();
+        });
     }
     titleRow->addStretch(1);
 
@@ -1906,14 +1963,48 @@ void DashboardWindow::applyPeriod()
     const int monthOffset = m_monthCombo->currentIndex();
     const int delta = yearOffset * 5 + monthOffset * 2;
 
-    QVector<qreal> values = {
-        42.0, 70.0, 50.0, 96.0, 66.0, 118.0,
-        90.0, 138.0, 112.0, 158.0, 132.0, 174.0
-    };
+    QVector<qreal> values;
+    QtMaterial::ColorRole chartRole = QtMaterial::ColorRole::Primary;
+
+    switch (m_chartMetricIndex) {
+    case 1:
+        values = {
+            28.0, 37.0, 34.0, 49.0, 44.0, 58.0,
+            55.0, 72.0, 69.0, 83.0, 78.0, 91.0
+        };
+        chartRole = QtMaterial::ColorRole::Tertiary;
+        break;
+    case 2:
+        values = {
+            62.0, 84.0, 73.0, 105.0, 92.0, 127.0,
+            116.0, 151.0, 143.0, 168.0, 161.0, 188.0
+        };
+        chartRole = QtMaterial::ColorRole::Secondary;
+        break;
+    default:
+        values = {
+            42.0, 70.0, 50.0, 96.0, 66.0, 118.0,
+            90.0, 138.0, 112.0, 158.0, 132.0, 174.0
+        };
+        break;
+    }
+
     for (qreal& value : values) {
         value += delta;
     }
+    m_lineChart->setAccentColor(materialColor(chartRole));
     m_lineChart->setValues(values);
+
+    if (m_metrics.size() >= 4) {
+        m_metrics.at(0).value->setText(
+            QString::number(43 + delta));
+        m_metrics.at(1).value->setText(
+            QStringLiteral("€%1").arg(10600 + delta * 135));
+        m_metrics.at(2).value->setText(
+            QString::number(73 + delta / 2));
+        m_metrics.at(3).value->setText(
+            QString::number(33 + delta / 3));
+    }
 
     if (m_donutChart) {
         m_donutChart->setValue(qBound(55, 62 + delta / 2, 78));
@@ -1924,42 +2015,83 @@ void DashboardWindow::applyFilter(const QString& text)
 {
     const QString needle = text.trimmed();
 
-    const auto filterTable =
-        [&needle, this](
-            QtMaterial::QtMaterialTable* table,
-            QStandardItemModel* model,
-            bool applyPagination) {
-            if (!table || !model) {
-                return;
+    const auto matchesText =
+        [&needle](QStandardItemModel* model, int row) {
+            if (needle.isEmpty()) {
+                return true;
             }
-
-            int firstPageRow = 0;
-            int lastPageRow = model->rowCount();
-            if (applyPagination && m_ordersPagination) {
-                firstPageRow =
-                    (m_ordersPagination->page() - 1)
-                    * m_ordersPagination->pageSize();
-                lastPageRow = qMin(
-                    firstPageRow + m_ordersPagination->pageSize(),
-                    model->rowCount());
-            }
-
-            for (int row = 0; row < model->rowCount(); ++row) {
-                bool match = needle.isEmpty();
-                for (int column = 0; !match && column < model->columnCount(); ++column) {
-                    const QStandardItem* item = model->item(row, column);
-                    match = item && item->text().contains(needle, Qt::CaseInsensitive);
+            for (int column = 0; column < model->columnCount(); ++column) {
+                const QStandardItem* item = model->item(row, column);
+                if (item
+                    && item->text().contains(
+                        needle,
+                        Qt::CaseInsensitive)) {
+                    return true;
                 }
-
-                const bool inPage =
-                    !applyPagination
-                    || (row >= firstPageRow && row < lastPageRow);
-                table->setRowHidden(row, !(match && inPage));
             }
+            return false;
         };
 
-    filterTable(m_orders, m_ordersModel, false);
-    filterTable(m_ordersPage, m_ordersPageModel, true);
+    if (m_orders && m_ordersModel) {
+        for (int row = 0; row < m_ordersModel->rowCount(); ++row) {
+            m_orders->setRowHidden(
+                row,
+                !matchesText(m_ordersModel, row));
+        }
+    }
+
+    if (!m_ordersPage || !m_ordersPageModel) {
+        return;
+    }
+
+    QVector<int> matchingRows;
+    matchingRows.reserve(m_ordersPageModel->rowCount());
+
+    for (int row = 0; row < m_ordersPageModel->rowCount(); ++row) {
+        const bool textMatch =
+            matchesText(m_ordersPageModel, row);
+        const QStandardItem* statusItem =
+            m_ordersPageModel->item(row, 4);
+        const bool statusMatch =
+            m_orderStatusFilter == QStringLiteral("All")
+            || (statusItem
+                && statusItem->text() == m_orderStatusFilter);
+
+        if (textMatch && statusMatch) {
+            matchingRows.append(row);
+        }
+        m_ordersPage->setRowHidden(row, true);
+    }
+
+    if (!m_ordersPagination) {
+        for (int row : matchingRows) {
+            m_ordersPage->setRowHidden(row, false);
+        }
+        return;
+    }
+
+    m_ordersPagination->setTotalCount(matchingRows.size());
+
+    const int pageSize = m_ordersPagination->pageSize();
+    const int pageCount =
+        pageSize > 0
+            ? qMax(1, (matchingRows.size() + pageSize - 1) / pageSize)
+            : 1;
+
+    if (m_ordersPagination->page() > pageCount) {
+        m_ordersPagination->setPage(pageCount);
+    }
+
+    const int first =
+        (m_ordersPagination->page() - 1) * pageSize;
+    const int last =
+        qMin(first + pageSize, matchingRows.size());
+
+    for (int index = first; index < last; ++index) {
+        m_ordersPage->setRowHidden(
+            matchingRows.at(index),
+            false);
+    }
 }
 
 void DashboardWindow::applyThemeChrome()
