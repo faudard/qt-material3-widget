@@ -1,6 +1,7 @@
 #include "dashboardwindow.h"
 
 #include "dashboardcharts.h"
+#include "dashboardaccountpage.h"
 #include "ui_dashboardwindow.h"
 
 #include <QAbstractButton>
@@ -579,6 +580,15 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     m_pages->addWidget(createPageScroll(createApplicationStatesPage()));
     m_pages->addWidget(createPageScroll(createShowcaseSettingsPage()));
 
+    auto* accountPage = new DashboardAccountPage;
+    connect(accountPage, &DashboardAccountPage::editProfileRequested, this, [this]() {
+        setCurrentSection(5);
+    });
+    connect(accountPage, &DashboardAccountPage::messageRequested, this, [this](const QString& text) {
+        showMessage(text);
+    });
+    m_pages->addWidget(createPageScroll(accountPage));
+
     m_navigationDrawer = createNavigationDrawer();
 
     m_snackbarHost = new QtMaterial::QtMaterialSnackbarHost(m_central, this);
@@ -769,6 +779,10 @@ QWidget* DashboardWindow::createSidebar()
         QStringLiteral("Showcase Settings"),
         QStringLiteral("components"),
         8);
+    addPrimaryNavigation(
+        QStringLiteral("Account"),
+        QStringLiteral("profile"),
+        9);
 
     navigationLayout->addStretch(1);
     navigationScroll->setWidget(navigationContent);
@@ -814,7 +828,8 @@ QtMaterial::QtMaterialNavigationRail* DashboardWindow::createNavigationRail()
         {"Profile", "profile"},
         {"Pricing", "pricing"},
         {"States", "message"},
-        {"Settings", "components"}
+        {"Settings", "components"},
+        {"Account", "profile"}
     };
 
     for (const auto& destination : destinations) {
@@ -878,10 +893,11 @@ QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer(
         {"Profile", "profile"},
         {"Pricing", "pricing"},
         {"States", "message"},
-        {"Settings", "components"}
+        {"Settings", "components"},
+        {"Account", "profile"}
     };
 
-    for (int i = 0; i < 9; ++i) {
+    for (int i = 0; i < 10; ++i) {
         auto* button = makeNavButton(
             QString::fromLatin1(destinations[i].label),
             QString::fromLatin1(destinations[i].icon),
@@ -1031,6 +1047,9 @@ QWidget* DashboardWindow::createTopBar()
     });
     connect(notify, &QAbstractButton::clicked, this, [this]() {
         showMessage(QStringLiteral("8 notifications waiting for review."));
+    });
+    connect(account, &QToolButton::clicked, this, [this]() {
+        setCurrentSection(9);
     });
 
     return m_topBar;
@@ -2879,6 +2898,7 @@ void DashboardWindow::populateCommandPalette()
     model->appendRow(new QStandardItem(QStringLiteral("Open pricing")));
     model->appendRow(new QStandardItem(QStringLiteral("Open application states")));
     model->appendRow(new QStandardItem(QStringLiteral("Open showcase settings")));
+    model->appendRow(new QStandardItem(QStringLiteral("Open account")));
     m_commandPalette->setSourceModel(model);
 }
 
@@ -3431,7 +3451,8 @@ void DashboardWindow::setCurrentSection(int index)
         "Profile",
         "Pricing",
         "Application States",
-        "Showcase Settings"
+        "Showcase Settings",
+        "Account"
     };
     const QString title = QString::fromLatin1(titles[index]);
 
@@ -3452,7 +3473,8 @@ void DashboardWindow::setCurrentSection(int index)
             "Search profile...",
             "Search pricing...",
             "Search application states...",
-            "Search showcase settings..."
+            "Search showcase settings...",
+            "Search account..."
         };
         m_search->setPlaceholderText(QString::fromLatin1(placeholders[index]));
     }
