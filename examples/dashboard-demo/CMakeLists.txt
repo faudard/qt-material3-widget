@@ -23,6 +23,10 @@ if(COMMAND qt_add_executable)
         dashboardwindow.ui
         dashboardcharts.cpp
         dashboardcharts.h
+        dashboarddemostyle.cpp
+        dashboarddemostyle.h
+        dashboarddemostyle.cpp
+        dashboarddemostyle.h
     )
 else()
     add_executable(qtmaterial3_dashboard_demo
