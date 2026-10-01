@@ -218,22 +218,6 @@ void paintDashboardGlyph(
         bell.closeSubpath();
         painter.drawPath(bell);
         painter.drawLine(QPointF(c.x() - 3.0, r.bottom() - 2.0), QPointF(c.x() + 3.0, r.bottom() - 2.0));
-    } else if (name == QStringLiteral("sun")) {
-        painter.drawEllipse(c, 4.0, 4.0);
-        for (int i = 0; i < 8; ++i) {
-            const qreal angle = i * 3.14159265358979323846 / 4.0;
-            const QPointF a(c.x() + std::cos(angle) * 7.0, c.y() + std::sin(angle) * 7.0);
-            const QPointF b(c.x() + std::cos(angle) * 10.0, c.y() + std::sin(angle) * 10.0);
-            painter.drawLine(a, b);
-        }
-    } else if (name == QStringLiteral("moon")) {
-        QPainterPath outer;
-        outer.addEllipse(c, 7.0, 7.0);
-        QPainterPath inner;
-        inner.addEllipse(c + QPointF(3.0, -2.0), 6.3, 6.3);
-        painter.setPen(Qt::NoPen);
-        painter.setBrush(color);
-        painter.drawPath(outer.subtracted(inner));
     } else if (name == QStringLiteral("chevron")) {
         painter.drawLine(QPointF(c.x() - 3.0, c.y() - 5.0), QPointF(c.x() + 2.0, c.y()));
         painter.drawLine(QPointF(c.x() + 2.0, c.y()), QPointF(c.x() - 3.0, c.y() + 5.0));
