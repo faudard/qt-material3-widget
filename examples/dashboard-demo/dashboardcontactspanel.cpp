@@ -3,6 +3,7 @@
 #include "ui_dashboardcontactspanel.h"
 
 #include <QAbstractButton>
+#include <QColor>
 #include <QFont>
 #include <QFrame>
 #include <QHBoxLayout>
