@@ -92,7 +92,7 @@ DashboardAccountPanel::DashboardAccountPanel(QWidget* parent)
     const Destination destinations[] = {
         {"Home", 0},
         {"Profile", 5},
-        {"Projects", 1},
+        {"Projects", 13},
         {"Subscription", 6},
         {"Security", 9},
         {"Account settings", 9}
