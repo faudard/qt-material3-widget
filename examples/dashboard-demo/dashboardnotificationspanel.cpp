@@ -134,7 +134,7 @@ DashboardNotificationsPanel::DashboardNotificationsPanel(QWidget* parent)
     friendActions->addWidget(accept);
     friendActions->addWidget(decline);
     friendActions->addStretch(1);
-    if (auto* copy = qobject_cast<QVBoxLayout*>(friendRequest->layout()->itemAt(1)->layout())) {
+    if (auto* copy = static_cast<QVBoxLayout*>(friendRequest->layout()->itemAt(1)->layout())) {
         copy->addLayout(friendActions);
     }
     m_ui->notificationsLayout->addWidget(friendRequest);
@@ -145,7 +145,7 @@ DashboardNotificationsPanel::DashboardNotificationsPanel(QWidget* parent)
         QStringLiteral("a day · Project UI"),
         true,
         m_ui->scrollContent);
-    if (auto* copy = qobject_cast<QVBoxLayout*>(mention->layout()->itemAt(1)->layout())) {
+    if (auto* copy = static_cast<QVBoxLayout*>(mention->layout()->itemAt(1)->layout())) {
         auto* quote = new QLabel(
             QStringLiteral("@John Doe — feedback by asking questions or just leave a note of appreciation."),
             mention);
@@ -168,7 +168,7 @@ DashboardNotificationsPanel::DashboardNotificationsPanel(QWidget* parent)
         QStringLiteral("2 days · File manager"),
         true,
         m_ui->scrollContent);
-    if (auto* copy = qobject_cast<QVBoxLayout*>(fileAdded->layout()->itemAt(1)->layout())) {
+    if (auto* copy = static_cast<QVBoxLayout*>(fileAdded->layout()->itemAt(1)->layout())) {
         auto* download = new QtMaterial::QtMaterialOutlinedButton(
             QStringLiteral("Download"),
             fileAdded);
