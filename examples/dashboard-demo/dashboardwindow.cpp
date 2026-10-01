@@ -659,18 +659,16 @@ DashboardWindow::DashboardWindow(QWidget* parent)
             }
         });
 
+    cacheThemeTargets();
+    DashboardDemoStyle::polishControls(m_central);
+
     connect(
         &QtMaterial::ThemeManager::instance(),
         &QtMaterial::ThemeManager::themeChanged,
         this,
         [this](const QtMaterial::Theme&) {
             applyThemeChrome();
-            applyPeriod();
-            if (m_settingsButton) {
-                m_settingsButton->setIcon(dashboardIcon(
-                    QStringLiteral("settings"),
-                    materialColor(QtMaterial::ColorRole::OnSurfaceVariant)));
-            }
+            updateChartAccent();
         });
 
     applyThemeChrome();
@@ -3395,6 +3393,110 @@ void DashboardWindow::applyFilter(const QString& text)
     }
 }
 
+void DashboardWindow::cacheThemeTargets()
+{
+    m_sidebarThemeButtons.clear();
+    m_drawerThemeButtons.clear();
+    m_topBarThemeButtons.clear();
+    m_metricThemeIcons.clear();
+    m_positiveThemeLabels.clear();
+    m_legendThemeDots.clear();
+    m_socialThemeBars.clear();
+
+    if (m_sidebar) {
+        const auto buttons =
+            m_sidebar->findChildren<QToolButton*>(
+                QStringLiteral("dashboardNavButton"));
+        m_sidebarThemeButtons.reserve(buttons.size());
+        for (QToolButton* button : buttons) {
+            m_sidebarThemeButtons.append(button);
+        }
+    }
+
+    if (m_navigationDrawer) {
+        const auto buttons =
+            m_navigationDrawer->findChildren<QToolButton*>(
+                QStringLiteral("dashboardNavButton"));
+        m_drawerThemeButtons.reserve(buttons.size());
+        for (QToolButton* button : buttons) {
+            m_drawerThemeButtons.append(button);
+        }
+    }
+
+    if (m_topBar) {
+        const auto buttons = m_topBar->findChildren<QAbstractButton*>();
+        m_topBarThemeButtons.reserve(buttons.size());
+        for (QAbstractButton* button : buttons) {
+            if (!button->property("dashboardIconName").toString().isEmpty()) {
+                m_topBarThemeButtons.append(button);
+            }
+        }
+    }
+
+    if (m_contentHost) {
+        const auto icons =
+            m_contentHost->findChildren<QLabel*>(
+                QStringLiteral("metricIcon"));
+        m_metricThemeIcons.reserve(icons.size());
+        for (QLabel* icon : icons) {
+            m_metricThemeIcons.append(icon);
+        }
+
+        const auto bars =
+            m_contentHost->findChildren<QWidget*>(
+                QStringLiteral("dashboardSocialBars"));
+        m_socialThemeBars.reserve(bars.size());
+        for (QWidget* bar : bars) {
+            m_socialThemeBars.append(bar);
+        }
+    }
+
+    if (m_pages) {
+        const auto positiveLabels =
+            m_pages->findChildren<QLabel*>(
+                QStringLiteral("positiveDelta"));
+        m_positiveThemeLabels.reserve(positiveLabels.size());
+        for (QLabel* label : positiveLabels) {
+            m_positiveThemeLabels.append(label);
+        }
+
+        const auto legendDots =
+            m_pages->findChildren<QLabel*>(
+                QStringLiteral("legendDot"));
+        m_legendThemeDots.reserve(legendDots.size());
+        for (QLabel* dot : legendDots) {
+            m_legendThemeDots.append(dot);
+        }
+    }
+}
+
+void DashboardWindow::applyVisiblePageChrome()
+{
+    if (!m_pages || m_pageChromeStyle.isEmpty()) {
+        return;
+    }
+
+    QWidget* current = m_pages->currentWidget();
+    if (current && current->styleSheet() != m_pageChromeStyle) {
+        current->setStyleSheet(m_pageChromeStyle);
+    }
+}
+
+void DashboardWindow::updateChartAccent()
+{
+    if (!m_lineChart) {
+        return;
+    }
+
+    QtMaterial::ColorRole role = QtMaterial::ColorRole::Primary;
+    if (m_chartMetricIndex == 1) {
+        role = QtMaterial::ColorRole::Tertiary;
+    } else if (m_chartMetricIndex == 2) {
+        role = QtMaterial::ColorRole::Secondary;
+    }
+    m_lineChart->setAccentColor(materialColor(role));
+}
+
 void DashboardWindow::applyThemeChrome()
 {
     const auto& theme = QtMaterial::ThemeManager::instance().theme();
@@ -3817,6 +3919,7 @@ void DashboardWindow::setCurrentSection(int index)
     }
     if (m_pages) {
         m_pages->setCurrentIndex(index);
+        applyVisiblePageChrome();
     }
     if (m_navigationRail && m_navigationRail->currentIndex() != index) {
         m_navigationRail->setCurrentIndex(index);
