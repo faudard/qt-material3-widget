@@ -3,6 +3,7 @@
 #include "ui_dashboardinvoicepage.h"
 
 #include <QAbstractButton>
+#include <QAbstractItemView>
 #include <QColor>
 #include <QFont>
 #include <QGridLayout>
