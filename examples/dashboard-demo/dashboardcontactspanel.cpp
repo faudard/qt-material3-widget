@@ -156,7 +156,7 @@ void DashboardContactsPanel::applyTheme()
     const QColor outline = scheme.color(QtMaterial::ColorRole::OutlineVariant);
 
     setStyleSheet(QStringLiteral(
-        "#dashboardContactsPanel { background:%1; }"
+        "#dashboardContactsPanel { background:%1; border-left:1px solid %5; }"
         "#dashboardContactsPanel QLabel { color:%2; }"
         "#dashboardContactsPanel #contactActivity { color:%3; }"
         "#dashboardContactsPanel #contactRow { background:%4; border:1px solid %5; border-radius:12px; }"
