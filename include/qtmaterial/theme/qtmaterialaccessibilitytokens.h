@@ -30,7 +30,7 @@ struct QTMATERIAL3_THEME_MODEL_EXPORT AccessibilityTokens {
 /** Interaction-state policy tokens shared by widgets/specs. */
 struct QTMATERIAL3_THEME_MODEL_EXPORT InteractionStateTokens {
     bool keyboardFocusVisible = true;
-    bool strongFocusIndicators = true;
+    bool strongFocusIndicators = false;
     bool hoverFeedbackEnabled = true;
     bool pressFeedbackEnabled = true;
     bool dragFeedbackEnabled = true;
