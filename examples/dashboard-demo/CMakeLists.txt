@@ -6,6 +6,18 @@ if(COMMAND qt_add_executable)
         dashboardaccountpage.cpp
         dashboardaccountpage.h
         dashboardaccountpage.ui
+        dashboardaccountpanel.cpp
+        dashboardaccountpanel.h
+        dashboardaccountpanel.ui
+        dashboardcontactspanel.cpp
+        dashboardcontactspanel.h
+        dashboardcontactspanel.ui
+        dashboardnotificationspanel.cpp
+        dashboardnotificationspanel.h
+        dashboardnotificationspanel.ui
+        dashboardsettingspanel.cpp
+        dashboardsettingspanel.h
+        dashboardsettingspanel.ui
         dashboardwindow.cpp
         dashboardwindow.h
         dashboardwindow.ui
@@ -18,6 +30,18 @@ else()
         dashboardaccountpage.cpp
         dashboardaccountpage.h
         dashboardaccountpage.ui
+        dashboardaccountpanel.cpp
+        dashboardaccountpanel.h
+        dashboardaccountpanel.ui
+        dashboardcontactspanel.cpp
+        dashboardcontactspanel.h
+        dashboardcontactspanel.ui
+        dashboardnotificationspanel.cpp
+        dashboardnotificationspanel.h
+        dashboardnotificationspanel.ui
+        dashboardsettingspanel.cpp
+        dashboardsettingspanel.h
+        dashboardsettingspanel.ui
         dashboardwindow.cpp
         dashboardwindow.h
         dashboardwindow.ui

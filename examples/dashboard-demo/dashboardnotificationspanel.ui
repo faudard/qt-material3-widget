@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DashboardNotificationsPanel</class>
+ <widget class="QWidget" name="DashboardNotificationsPanel">
+  <property name="minimumSize"><size><width>380</width><height>620</height></size></property>
+  <layout class="QVBoxLayout" name="rootLayout">
+   <property name="spacing"><number>12</number></property>
+   <property name="leftMargin"><number>18</number></property>
+   <property name="topMargin"><number>16</number></property>
+   <property name="rightMargin"><number>18</number></property>
+   <property name="bottomMargin"><number>16</number></property>
+   <item>
+    <layout class="QHBoxLayout" name="headerLayout">
+     <item><widget class="QLabel" name="titleLabel"><property name="text"><string>Notifications</string></property></widget></item>
+     <item><spacer name="headerSpacer"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item>
+    </layout>
+   </item>
+   <item><layout class="QHBoxLayout" name="tabsLayout"/></item>
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="frameShape"><enum>QFrame::NoFrame</enum></property>
+     <property name="widgetResizable"><bool>true</bool></property>
+     <widget class="QWidget" name="scrollContent">
+      <layout class="QVBoxLayout" name="notificationsLayout">
+       <property name="spacing"><number>10</number></property>
+       <property name="leftMargin"><number>0</number></property>
+       <property name="topMargin"><number>4</number></property>
+       <property name="rightMargin"><number>0</number></property>
+       <property name="bottomMargin"><number>4</number></property>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item><layout class="QVBoxLayout" name="footerLayout"/></item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

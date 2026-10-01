@@ -57,6 +57,10 @@ private:
     QWidget* createSidebar();
     QtMaterial::QtMaterialNavigationRail* createNavigationRail();
     QtMaterial::QtMaterialNavigationDrawer* createNavigationDrawer();
+    QWidget* createAccountPanel();
+    QWidget* createContactsPanel();
+    QWidget* createNotificationsPanel();
+    QWidget* createSettingsPanel();
     QWidget* createTopBar();
     QWidget* createDashboardPage();
     QWidget* createAnalyticsPage();
@@ -86,6 +90,8 @@ private:
     void applyFilter(const QString& text);
     void applyThemeChrome();
     void updateResponsiveLayout();
+    void layoutRightPanels();
+    void showRightPanel(QWidget* panel);
     void setCurrentSection(int index);
     void showOrderDetails(int row);
     void showOrderDetailsForModel(int row, QStandardItemModel* model);
@@ -100,6 +106,10 @@ private:
     QStackedWidget* m_pages = nullptr;
     QtMaterial::QtMaterialNavigationRail* m_navigationRail = nullptr;
     QtMaterial::QtMaterialNavigationDrawer* m_navigationDrawer = nullptr;
+    QWidget* m_accountPanel = nullptr;
+    QWidget* m_contactsPanel = nullptr;
+    QWidget* m_notificationsPanel = nullptr;
+    QWidget* m_settingsPanel = nullptr;
     QtMaterial::QtMaterialSearchBar* m_search = nullptr;
     QtMaterial::QtMaterialTable* m_orders = nullptr;
     QtMaterial::QtMaterialTable* m_ordersPage = nullptr;
@@ -122,7 +132,7 @@ private:
     QtMaterial::QtMaterialBreadcrumb* m_breadcrumb = nullptr;
     QtMaterial::QtMaterialComboBox* m_yearCombo = nullptr;
     QtMaterial::QtMaterialComboBox* m_monthCombo = nullptr;
-    QtMaterial::QtMaterialIconButton* m_themeButton = nullptr;
+    QtMaterial::QtMaterialIconButton* m_settingsButton = nullptr;
     QtMaterial::QtMaterialIconButton* m_menuButton = nullptr;
     QtMaterial::QtMaterialPagination* m_ordersPagination = nullptr;
     QString m_orderStatusFilter = QStringLiteral("All");

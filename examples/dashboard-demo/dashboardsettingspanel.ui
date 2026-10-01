@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DashboardSettingsPanel</class>
+ <widget class="QWidget" name="DashboardSettingsPanel">
+  <property name="minimumSize"><size><width>390</width><height>620</height></size></property>
+  <layout class="QVBoxLayout" name="rootLayout">
+   <property name="spacing"><number>12</number></property>
+   <property name="leftMargin"><number>18</number></property>
+   <property name="topMargin"><number>16</number></property>
+   <property name="rightMargin"><number>18</number></property>
+   <property name="bottomMargin"><number>16</number></property>
+   <item>
+    <layout class="QHBoxLayout" name="headerLayout">
+     <item><widget class="QLabel" name="titleLabel"><property name="text"><string>Settings</string></property></widget></item>
+     <item><spacer name="headerSpacer"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="frameShape"><enum>QFrame::NoFrame</enum></property>
+     <property name="widgetResizable"><bool>true</bool></property>
+     <widget class="QWidget" name="scrollContent">
+      <layout class="QVBoxLayout" name="contentLayout">
+       <property name="spacing"><number>16</number></property>
+       <property name="leftMargin"><number>0</number></property>
+       <property name="topMargin"><number>4</number></property>
+       <property name="rightMargin"><number>0</number></property>
+       <property name="bottomMargin"><number>4</number></property>
+       <item><layout class="QGridLayout" name="settingsGrid"><property name="horizontalSpacing"><number>12</number></property><property name="verticalSpacing"><number>12</number></property></layout></item>
+       <item><layout class="QVBoxLayout" name="navigationLayout"/></item>
+       <item><layout class="QVBoxLayout" name="presetsLayout"/></item>
+       <item><spacer name="contentSpacer"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property></spacer></item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

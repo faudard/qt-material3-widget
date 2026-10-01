@@ -2,6 +2,10 @@
 
 #include "dashboardcharts.h"
 #include "dashboardaccountpage.h"
+#include "dashboardaccountpanel.h"
+#include "dashboardcontactspanel.h"
+#include "dashboardnotificationspanel.h"
+#include "dashboardsettingspanel.h"
 #include "ui_dashboardwindow.h"
 
 #include <QAbstractButton>
@@ -111,6 +115,14 @@ void paintDashboardGlyph(
         for (int i = 0; i < 3; ++i) {
             const qreal y = r.top() + 4.0 + i * 6.0;
             painter.drawLine(QPointF(r.left() + 1.0, y), QPointF(r.right() - 1.0, y));
+        }
+    } else if (name == QStringLiteral("settings")) {
+        painter.drawEllipse(c, 4.0, 4.0);
+        for (int i = 0; i < 8; ++i) {
+            const qreal angle = i * 3.14159265358979323846 / 4.0;
+            const QPointF a(c.x() + std::cos(angle) * 7.0, c.y() + std::sin(angle) * 7.0);
+            const QPointF b(c.x() + std::cos(angle) * 10.0, c.y() + std::sin(angle) * 10.0);
+            painter.drawLine(a, b);
         }
     } else if (name == QStringLiteral("dashboard")) {
         painter.setBrush(color);
@@ -592,6 +604,11 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     m_pages->addWidget(createPageScroll(accountPage));
 
     m_navigationDrawer = createNavigationDrawer();
+    m_accountPanel = createAccountPanel();
+    m_contactsPanel = createContactsPanel();
+    m_notificationsPanel = createNotificationsPanel();
+    m_settingsPanel = createSettingsPanel();
+    layoutRightPanels();
 
     m_snackbarHost = new QtMaterial::QtMaterialSnackbarHost(m_central, this);
     m_commandPalette = new QtMaterial::QtMaterialCommandPalette(this);
@@ -617,11 +634,9 @@ DashboardWindow::DashboardWindow(QWidget* parent)
         [this](const QtMaterial::Theme&) {
             applyThemeChrome();
             applyPeriod();
-            if (m_themeButton) {
-                m_themeButton->setIcon(dashboardIcon(
-                    QtMaterial::ThemeManager::instance().theme().isDark()
-                        ? QStringLiteral("sun")
-                        : QStringLiteral("moon"),
+            if (m_settingsButton) {
+                m_settingsButton->setIcon(dashboardIcon(
+                    QStringLiteral("settings"),
                     materialColor(QtMaterial::ColorRole::OnSurfaceVariant)));
             }
         });
@@ -642,6 +657,58 @@ void DashboardWindow::resizeEvent(QResizeEvent* event)
 {
     QMainWindow::resizeEvent(event);
     updateResponsiveLayout();
+    layoutRightPanels();
+}
+
+void DashboardWindow::layoutRightPanels()
+{
+    if (!m_central) {
+        return;
+    }
+
+    const int preferredWidth = qMin(410, qMax(320, m_central->width() - 48));
+    const QRect geometry(
+        m_central->width() - preferredWidth,
+        0,
+        preferredWidth,
+        m_central->height());
+
+    const QWidget* panels[] = {
+        m_accountPanel,
+        m_contactsPanel,
+        m_notificationsPanel,
+        m_settingsPanel
+    };
+    for (const QWidget* constPanel : panels) {
+        QWidget* panel = const_cast<QWidget*>(constPanel);
+        if (panel) {
+            panel->setGeometry(geometry);
+        }
+    }
+}
+
+void DashboardWindow::showRightPanel(QWidget* panel)
+{
+    if (!panel) {
+        return;
+    }
+
+    QWidget* panels[] = {
+        m_accountPanel,
+        m_contactsPanel,
+        m_notificationsPanel,
+        m_settingsPanel
+    };
+    for (QWidget* candidate : panels) {
+        if (candidate && candidate != panel) {
+            candidate->hide();
+        }
+    }
+
+    layoutRightPanels();
+    panel->show();
+    panel->raise();
+    panel->setFocus(Qt::OtherFocusReason);
 }
 
 QWidget* DashboardWindow::createSidebar()
@@ -921,6 +988,74 @@ QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer(
     return drawer;
 }
 
+QWidget* DashboardWindow::createAccountPanel()
+{
+    auto* panel = new DashboardAccountPanel(m_central);
+    panel->hide();
+
+    connect(panel, &DashboardAccountPanel::closeRequested, panel, &QWidget::hide);
+    connect(panel, &DashboardAccountPanel::navigateRequested, this, [this, panel](int pageIndex) {
+        panel->hide();
+        setCurrentSection(pageIndex);
+    });
+    connect(panel, &DashboardAccountPanel::messageRequested, this, [this](const QString& message) {
+        showMessage(message);
+    });
+
+    return panel;
+}
+
+QWidget* DashboardWindow::createContactsPanel()
+{
+    auto* panel = new DashboardContactsPanel(m_central);
+    panel->hide();
+
+    connect(panel, &DashboardContactsPanel::closeRequested, panel, &QWidget::hide);
+    connect(panel, &DashboardContactsPanel::messageRequested, this, [this](const QString& message) {
+        showMessage(message);
+    });
+
+    return panel;
+}
+
+QWidget* DashboardWindow::createNotificationsPanel()
+{
+    auto* panel = new DashboardNotificationsPanel(m_central);
+    panel->hide();
+
+    connect(panel, &DashboardNotificationsPanel::closeRequested, panel, &QWidget::hide);
+    connect(panel, &DashboardNotificationsPanel::settingsRequested, this, [this, panel]() {
+        panel->hide();
+        showRightPanel(m_settingsPanel);
+    });
+    connect(panel, &DashboardNotificationsPanel::messageRequested, this, [this](const QString& message) {
+        showMessage(message);
+    });
+
+    return panel;
+}
+
+QWidget* DashboardWindow::createSettingsPanel()
+{
+    auto* panel = new DashboardSettingsPanel(m_central);
+    panel->hide();
+
+    connect(panel, &DashboardSettingsPanel::closeRequested, panel, &QWidget::hide);
+    connect(panel, &DashboardSettingsPanel::compactChanged, this, [this](bool compact) {
+        if (m_orders) {
+            m_orders->setDense(compact);
+        }
+        if (m_ordersPage) {
+            m_ordersPage->setDense(compact);
+        }
+    });
+    connect(panel, &DashboardSettingsPanel::messageRequested, this, [this](const QString& message) {
+        showMessage(message);
+    });
+
+    return panel;
+}
+
 QWidget* DashboardWindow::createTopBar()
 {
     m_topBar = new QFrame(m_central);
@@ -968,17 +1103,15 @@ QWidget* DashboardWindow::createTopBar()
 
     auto* messages = new QtMaterial::QtMaterialIconButton(
         dashboardIcon(
-            QStringLiteral("message"),
-            materialColor(QtMaterial::ColorRole::OnSurfaceVariant),
-            4),
+            QStringLiteral("customers"),
+            materialColor(QtMaterial::ColorRole::OnSurfaceVariant)),
         m_topBar);
-    messages->setAccessibleName(QStringLiteral("Messages"));
+    messages->setAccessibleName(QStringLiteral("Contacts"));
     messages->setRequiresAccessibleName(true);
-    messages->setToolTip(QStringLiteral("Messages"));
+    messages->setToolTip(QStringLiteral("Contacts"));
     messages->setCursor(Qt::PointingHandCursor);
     messages->setFocusPolicy(Qt::TabFocus);
-    messages->setProperty("dashboardIconName", QStringLiteral("message"));
-    messages->setProperty("dashboardBadge", 4);
+    messages->setProperty("dashboardIconName", QStringLiteral("customers"));
     layout->addWidget(messages);
 
     auto* notify = new QtMaterial::QtMaterialIconButton(
@@ -993,25 +1126,27 @@ QWidget* DashboardWindow::createTopBar()
     notify->setCursor(Qt::PointingHandCursor);
     notify->setFocusPolicy(Qt::TabFocus);
     notify->setProperty("dashboardIconName", QStringLiteral("bell"));
-    notify->setProperty("dashboardBadge", 8);
+    notify->setProperty("dashboardBadge", 4);
     layout->addWidget(notify);
 
-    m_themeButton = new QtMaterial::QtMaterialIconButton(
+    m_settingsButton = new QtMaterial::QtMaterialIconButton(
         dashboardIcon(
-            QtMaterial::ThemeManager::instance().theme().isDark()
-                ? QStringLiteral("sun")
-                : QStringLiteral("moon"),
+            QStringLiteral("settings"),
             materialColor(QtMaterial::ColorRole::OnSurfaceVariant)),
         m_topBar);
-    m_themeButton->setAccessibleName(QStringLiteral("Toggle light/dark mode"));
-    m_themeButton->setRequiresAccessibleName(true);
-    m_themeButton->setToolTip(QStringLiteral("Toggle light/dark mode"));
-    m_themeButton->setCursor(Qt::PointingHandCursor);
-    m_themeButton->setFocusPolicy(Qt::TabFocus);
-    layout->addWidget(m_themeButton);
+    m_settingsButton->setAccessibleName(QStringLiteral("Settings"));
+    m_settingsButton->setRequiresAccessibleName(true);
+    m_settingsButton->setToolTip(QStringLiteral("Settings"));
+    m_settingsButton->setCursor(Qt::PointingHandCursor);
+    m_settingsButton->setFocusPolicy(Qt::TabFocus);
+    m_settingsButton->setProperty("dashboardIconName", QStringLiteral("settings"));
+    layout->addWidget(m_settingsButton);
 
-    auto* avatar = new QLabel(QStringLiteral("JD"), m_topBar);
-    avatar->setAlignment(Qt::AlignCenter);
+    auto* avatar = new QToolButton(m_topBar);
+    avatar->setText(QStringLiteral("JD"));
+    avatar->setCursor(Qt::PointingHandCursor);
+    avatar->setToolTip(QStringLiteral("Open account"));
+    avatar->setAccessibleName(QStringLiteral("Open account"));
     avatar->setFixedSize(32, 32);
     avatar->setObjectName(QStringLiteral("dashboardTopAvatar"));
     avatar->setProperty("dashboardCompactOptional", true);
@@ -1037,22 +1172,20 @@ QWidget* DashboardWindow::createTopBar()
         }
     });
     connect(m_search, &QtMaterial::QtMaterialSearchBar::textChanged, this, &DashboardWindow::applyFilter);
-    connect(m_themeButton, &QAbstractButton::clicked, this, []() {
-        auto options = QtMaterial::ThemeManager::instance().options();
-        options.mode = options.mode == QtMaterial::ThemeMode::Dark
-            ? QtMaterial::ThemeMode::Light
-            : QtMaterial::ThemeMode::Dark;
-        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+    connect(m_settingsButton, &QAbstractButton::clicked, this, [this]() {
+        showRightPanel(m_settingsPanel);
     });
     connect(messages, &QAbstractButton::clicked, this, [this]() {
-        showMessage(QStringLiteral("4 unread messages."));
+        showRightPanel(m_contactsPanel);
     });
     connect(notify, &QAbstractButton::clicked, this, [this]() {
-        showMessage(QStringLiteral("8 notifications waiting for review."));
+        showRightPanel(m_notificationsPanel);
     });
-    connect(account, &QToolButton::clicked, this, [this]() {
-        setCurrentSection(9);
-    });
+    const auto openAccountDrawer = [this]() {
+        showRightPanel(m_accountPanel);
+    };
+    connect(avatar, &QToolButton::clicked, this, openAccountDrawer);
+    connect(account, &QToolButton::clicked, this, openAccountDrawer);
 
     return m_topBar;
 }
@@ -3180,8 +3313,9 @@ void DashboardWindow::applyThemeChrome()
             "QToolButton#topBarAccount { background:transparent; color:%3; border:0;"
             " padding:0 4px; font-size:12px; }"
             "QToolButton#topBarAccount:hover { color:%5; }"
-            "#dashboardTopAvatar { background:%6; color:%7; border-radius:16px;"
-            " font-weight:700; font-size:10px; }")
+            "#dashboardTopAvatar { background:%6; color:%7; border:0; border-radius:16px;"
+            " font-weight:700; font-size:10px; }"
+            "#dashboardTopAvatar:hover { background:%5; color:%6; }")
             .arg(cssColor(surface))
             .arg(cssColor(outline))
             .arg(cssColor(onSurface))
@@ -3204,11 +3338,9 @@ void DashboardWindow::applyThemeChrome()
         }
     }
 
-    if (m_themeButton) {
-        m_themeButton->setIcon(dashboardIcon(
-            theme.isDark()
-                ? QStringLiteral("sun")
-                : QStringLiteral("moon"),
+    if (m_settingsButton) {
+        m_settingsButton->setIcon(dashboardIcon(
+            QStringLiteral("settings"),
             onSurfaceVariant));
     }
 
@@ -3434,6 +3566,18 @@ void DashboardWindow::setCurrentSection(int index)
 {
     const int maximumIndex = m_pages ? m_pages->count() - 1 : m_navButtons.size() - 1;
     index = qBound(0, index, maximumIndex);
+
+    QWidget* sidePanels[] = {
+        m_accountPanel,
+        m_contactsPanel,
+        m_notificationsPanel,
+        m_settingsPanel
+    };
+    for (QWidget* panel : sidePanels) {
+        if (panel) {
+            panel->hide();
+        }
+    }
 
     if (index >= 0 && index < m_navButtons.size()) {
         m_navButtons.at(index)->setChecked(true);
