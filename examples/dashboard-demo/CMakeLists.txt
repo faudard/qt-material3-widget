@@ -23,6 +23,9 @@ set(QTMATERIAL3_DASHBOARD_SOURCES
     dashboardinvoicepage.cpp
     dashboardinvoicepage.h
     dashboardinvoicepage.ui
+    dashboardappspage.cpp
+    dashboardappspage.h
+    dashboardappspage.ui
     dashboardwindow.cpp
     dashboardwindow.h
     dashboardwindow.ui
