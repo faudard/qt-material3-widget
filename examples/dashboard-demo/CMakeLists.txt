@@ -9,9 +9,6 @@ if(COMMAND qt_add_executable)
         dashboardaccountpanel.cpp
         dashboardaccountpanel.h
         dashboardaccountpanel.ui
-        dashboardaccountpanel.cpp
-        dashboardaccountpanel.h
-        dashboardaccountpanel.ui
         dashboardwindow.cpp
         dashboardwindow.h
         dashboardwindow.ui
@@ -24,6 +21,9 @@ else()
         dashboardaccountpage.cpp
         dashboardaccountpage.h
         dashboardaccountpage.ui
+        dashboardaccountpanel.cpp
+        dashboardaccountpanel.h
+        dashboardaccountpanel.ui
         dashboardwindow.cpp
         dashboardwindow.h
         dashboardwindow.ui
