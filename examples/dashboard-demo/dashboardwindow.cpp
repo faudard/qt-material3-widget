@@ -35,6 +35,7 @@
 #include <QResizeEvent>
 #include <QScrollArea>
 #include <QShortcut>
+#include <QSignalBlocker>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
@@ -84,6 +85,23 @@ QColor materialColor(QtMaterial::ColorRole role)
 QString cssColor(const QColor& color)
 {
     return color.name(QColor::HexRgb);
+}
+
+void applyThemeOptionsBatched(
+    QWidget* source,
+    const QtMaterial::ThemeOptions& options)
+{
+    QWidget* topLevel = source ? source->window() : nullptr;
+    if (topLevel) {
+        topLevel->setUpdatesEnabled(false);
+    }
+
+    QtMaterial::ThemeManager::instance().setThemeOptions(options);
+
+    if (topLevel) {
+        topLevel->setUpdatesEnabled(true);
+        topLevel->update();
+    }
 }
 
 QLabel* makeLabel(
@@ -2631,7 +2649,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
     };
     refreshSwatches();
 
-    auto applyThemeControls = [seed, mode, contrast, variant]() {
+    auto applyThemeControls = [page, seed, mode, contrast, variant]() {
         auto options = QtMaterial::ThemeManager::instance().options();
 
         const QString seedName = seed->currentText();
@@ -2673,7 +2691,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
                 ? QtMaterial::ThemeVariant::Expressive
                 : QtMaterial::ThemeVariant::TonalSpot;
 
-        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+        applyThemeOptionsBatched(page, options);
     };
 
     connect(
@@ -2752,7 +2770,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
         options.preference = QtMaterial::ThemePreference::Light;
         options.contrast = QtMaterial::ContrastMode::Standard;
         options.variant = QtMaterial::ThemeVariant::TonalSpot;
-        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+        applyThemeOptionsBatched(page, options);
 
         if (m_central) {
             m_central->setLayoutDirection(Qt::LeftToRight);
@@ -2768,6 +2786,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
             refreshSwatches();
             const int target = theme.isDark() ? 1 : 0;
             if (mode->currentIndex() != target) {
+                const QSignalBlocker blocker(mode);
                 mode->setCurrentIndex(target);
             }
         });
