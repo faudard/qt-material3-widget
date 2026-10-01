@@ -407,7 +407,7 @@ void ThemeBuilder::applyDefaultAccessibility(Theme& theme) const
 
     auto& interactions = theme.interactions();
     interactions.keyboardFocusVisible = true;
-    interactions.strongFocusIndicators = true;
+    interactions.strongFocusIndicators = false;
     interactions.hoverFeedbackEnabled = true;
     interactions.pressFeedbackEnabled = true;
     interactions.dragFeedbackEnabled = true;
