@@ -596,12 +596,6 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     m_pages->addWidget(createPageScroll(createApplicationStatesPage()));
     m_pages->addWidget(createPageScroll(createShowcaseSettingsPage()));
 
-    auto* ecommercePage = new DashboardEcommercePage;
-    connect(ecommercePage, &DashboardEcommercePage::messageRequested, this, [this](const QString& text) {
-        showMessage(text);
-    });
-    m_pages->addWidget(createPageScroll(ecommercePage));
-
     auto* accountPage = new DashboardAccountPage;
     connect(accountPage, &DashboardAccountPage::editProfileRequested, this, [this]() {
         setCurrentSection(5);
@@ -610,6 +604,12 @@ DashboardWindow::DashboardWindow(QWidget* parent)
         showMessage(text);
     });
     m_pages->addWidget(createPageScroll(accountPage));
+
+    auto* ecommercePage = new DashboardEcommercePage;
+    connect(ecommercePage, &DashboardEcommercePage::messageRequested, this, [this](const QString& text) {
+        showMessage(text);
+    });
+    m_pages->addWidget(createPageScroll(ecommercePage));
 
     m_navigationDrawer = createNavigationDrawer();
     m_accountPanel = createAccountPanel();
