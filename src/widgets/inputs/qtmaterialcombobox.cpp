@@ -2,6 +2,7 @@
 
 #include <QAbstractItemView>
 #include <QBitmap>
+#include <QBrush>
 #include <QEvent>
 #include <QFontMetrics>
 #include <QFrame>
@@ -520,6 +521,10 @@ bool QtMaterialComboBox::event(
     case QEvent::HoverLeave:
     case QEvent::HoverMove:
     case QEvent::EnabledChange:
+        syncEditableLineEdit();
+        update();
+        break;
+
     case QEvent::FontChange:
     case QEvent::StyleChange:
         update();
@@ -595,7 +600,6 @@ void QtMaterialComboBox::paintEvent(
     QPaintEvent*)
 {
     ensureSpecResolved();
-    syncEditableLineEdit();
 
     const AutocompleteSpec& resolved =
         d_ptr->spec;
