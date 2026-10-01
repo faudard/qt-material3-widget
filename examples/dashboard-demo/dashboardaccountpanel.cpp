@@ -8,6 +8,7 @@
 #include <QFrame>
 #include <QLabel>
 #include <QPalette>
+#include <QShowEvent>
 #include <QSizePolicy>
 #include <QToolButton>
 
@@ -139,9 +140,17 @@ DashboardAccountPanel::DashboardAccountPanel(QWidget* parent)
         &QtMaterial::ThemeManager::themeChanged,
         this,
         [this](const QtMaterial::Theme&) {
-            applyTheme();
+            if (isVisible()) {
+                applyTheme();
+            }
         });
 
+    applyTheme();
+}
+
+void DashboardAccountPanel::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
     applyTheme();
 }
 
