@@ -3490,6 +3490,9 @@ void DashboardWindow::applyThemeChrome()
         "#profileHeroAvatar { background:%2; color:%6; border-radius:32px;"
         " font-weight:700; font-size:16px; }"
         "QFrame#dashboardSeparator { color:%3; }"
+        "QFrame#dashboardPopularApp { background:%4; border:1px solid %3; border-radius:12px; }"
+        "QLabel#dashboardPopularAppIcon { background:%2; color:%6; border-radius:12px;"
+        " font-weight:700; font-size:12px; }"
 
         "QCalendarWidget#dashboardCalendar { background:%4; border:0; }"
         "QCalendarWidget#dashboardCalendar QToolButton { color:%5; background:transparent;"
