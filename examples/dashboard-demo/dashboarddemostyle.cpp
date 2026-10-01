@@ -6,6 +6,7 @@
 #include <QFrame>
 #include <QListView>
 #include <QSize>
+#include <QSizePolicy>
 #include <QStyledItemDelegate>
 #include <QStyleOptionViewItem>
 #include <QWidget>
@@ -15,6 +16,7 @@
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
 #include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
+#include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
 
 namespace {
 
@@ -79,6 +81,10 @@ void polishButton(QtMaterial::QtMaterialTextButton* button)
 
     button->setDensity(QtMaterial::Density::Comfortable);
     button->setMinimumHeight(40);
+    button->setMaximumHeight(44);
+    QSizePolicy policy = button->sizePolicy();
+    policy.setVerticalPolicy(QSizePolicy::Fixed);
+    button->setSizePolicy(policy);
 
     QFont font = button->font();
     font.setWeight(QFont::DemiBold);
@@ -199,6 +205,14 @@ void polishControls(QWidget* root)
         root->findChildren<QtMaterial::QtMaterialTextButton*>();
     for (QtMaterial::QtMaterialTextButton* button : buttons) {
         polishButton(button);
+    }
+
+    const auto segmented =
+        root->findChildren<QtMaterial::QtMaterialSegmentedButton*>();
+    for (QtMaterial::QtMaterialSegmentedButton* control : segmented) {
+        control->setMinimumHeight(42);
+        control->setMinimumWidth(
+            qMax(control->minimumWidth(), control->sizeHint().width()));
     }
 }
 
