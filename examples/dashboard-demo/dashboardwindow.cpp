@@ -2,6 +2,7 @@
 
 #include "dashboardcharts.h"
 #include "dashboarddemostyle.h"
+#include "dashboardherobanners.h"
 #include "dashboardecommercepage.h"
 #include "dashboardinvoicepage.h"
 #include "dashboardappspage.h"
@@ -1258,6 +1259,12 @@ QWidget* DashboardWindow::createDashboardPage()
     auto* layout = new QVBoxLayout(page);
     layout->setContentsMargins(24, 18, 24, 30);
     layout->setSpacing(16);
+
+    auto* heroBanners = new DashboardHeroBanners(page);
+    heroBanners->setGoNowHandler([this]() {
+        setCurrentSection(13);
+    });
+    layout->addWidget(heroBanners);
 
     auto* headingHost = new QWidget(page);
     auto* headingGrid = new QGridLayout(headingHost);
