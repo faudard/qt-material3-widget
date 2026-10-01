@@ -2,10 +2,13 @@
 #include "dashboarddemostyle.h"
 
 #include <QAbstractItemView>
+#include <QBitmap>
 #include <QComboBox>
+#include <QEvent>
 #include <QFontMetrics>
 #include <QFrame>
 #include <QListView>
+#include <QWidget>
 #include <QSizePolicy>
 #include <QStyledItemDelegate>
 #include <QStyleOptionViewItem>
@@ -48,6 +51,45 @@ public:
     }
 };
 
+class DashboardComboPopupFilter final : public QObject
+{
+public:
+    explicit DashboardComboPopupFilter(QObject* parent)
+        : QObject(parent)
+    {
+    }
+
+protected:
+    bool eventFilter(QObject* watched, QEvent* event) override
+    {
+        if (event->type() != QEvent::Show
+            && event->type() != QEvent::Resize) {
+            return QObject::eventFilter(watched, event);
+        }
+
+        auto* popup = qobject_cast<QWidget*>(watched);
+        if (!popup || popup->width() <= 0 || popup->height() <= 0) {
+            return QObject::eventFilter(watched, event);
+        }
+
+        QBitmap mask(popup->size());
+        mask.fill(Qt::color0);
+
+        QPainter painter(&mask);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(Qt::color1);
+        painter.drawRoundedRect(
+            popup->rect().adjusted(0, 0, -1, -1),
+            16.0,
+            16.0);
+        painter.end();
+
+        popup->setMask(mask);
+        return QObject::eventFilter(watched, event);
+    }
+};
+
 void polishDemoCombo(QtMaterial::QtMaterialComboBox* combo)
 {
     if (!combo) {
@@ -63,6 +105,26 @@ void polishDemoCombo(QtMaterial::QtMaterialComboBox* combo)
     if (QAbstractItemView* view = combo->view()) {
         view->setFrameShape(QFrame::NoFrame);
         view->setMinimumWidth(qMax(combo->minimumWidth(), 190));
+
+        QWidget* popup = view->window();
+        if (popup) {
+            popup->setObjectName(QStringLiteral("dashboardComboPopup"));
+            popup->setAttribute(Qt::WA_StyledBackground, true);
+            popup->setStyleSheet(QStringLiteral(
+                "#dashboardComboPopup {"
+                " background:%1;"
+                " border:1px solid %2;"
+                " border-radius:16px;"
+                " }")
+                .arg(color(QtMaterial::ColorRole::Surface).name(QColor::HexRgb))
+                .arg(color(QtMaterial::ColorRole::OutlineVariant).name(QColor::HexRgb)));
+
+            if (!popup->property("dashboardRoundedPopup").toBool()) {
+                popup->installEventFilter(
+                    new DashboardComboPopupFilter(popup));
+                popup->setProperty("dashboardRoundedPopup", true);
+            }
+        }
 
         if (!view->property("dashboardDemoStyled").toBool()) {
             view->setItemDelegate(new DashboardComboItemDelegate(view));
