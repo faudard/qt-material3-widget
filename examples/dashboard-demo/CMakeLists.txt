@@ -1,52 +1,44 @@
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
+set(QTMATERIAL3_DASHBOARD_SOURCES
+    main.cpp
+    dashboardaccountpage.cpp
+    dashboardaccountpage.h
+    dashboardaccountpage.ui
+    dashboardaccountpanel.cpp
+    dashboardaccountpanel.h
+    dashboardaccountpanel.ui
+    dashboardcontactspanel.cpp
+    dashboardcontactspanel.h
+    dashboardcontactspanel.ui
+    dashboardnotificationspanel.cpp
+    dashboardnotificationspanel.h
+    dashboardnotificationspanel.ui
+    dashboardsettingspanel.cpp
+    dashboardsettingspanel.h
+    dashboardsettingspanel.ui
+    dashboardecommercepage.cpp
+    dashboardecommercepage.h
+    dashboardecommercepage.ui
+    dashboardinvoicepage.cpp
+    dashboardinvoicepage.h
+    dashboardinvoicepage.ui
+    dashboardwindow.cpp
+    dashboardwindow.h
+    dashboardwindow.ui
+    dashboardcharts.cpp
+    dashboardcharts.h
+    dashboarddemostyle.cpp
+    dashboarddemostyle.h
+)
+
 if(COMMAND qt_add_executable)
     qt_add_executable(qtmaterial3_dashboard_demo
-        main.cpp
-        dashboardaccountpage.cpp
-        dashboardaccountpage.h
-        dashboardaccountpage.ui
-        dashboardaccountpanel.cpp
-        dashboardaccountpanel.h
-        dashboardaccountpanel.ui
-        dashboardcontactspanel.cpp
-        dashboardcontactspanel.h
-        dashboardcontactspanel.ui
-        dashboardnotificationspanel.cpp
-        dashboardnotificationspanel.h
-        dashboardnotificationspanel.ui
-        dashboardsettingspanel.cpp
-        dashboardsettingspanel.h
-        dashboardsettingspanel.ui
-        dashboardwindow.cpp
-        dashboardwindow.h
-        dashboardwindow.ui
-        dashboardcharts.cpp
-        dashboardcharts.h
+        ${QTMATERIAL3_DASHBOARD_SOURCES}
     )
 else()
     add_executable(qtmaterial3_dashboard_demo
-        main.cpp
-        dashboardaccountpage.cpp
-        dashboardaccountpage.h
-        dashboardaccountpage.ui
-        dashboardaccountpanel.cpp
-        dashboardaccountpanel.h
-        dashboardaccountpanel.ui
-        dashboardcontactspanel.cpp
-        dashboardcontactspanel.h
-        dashboardcontactspanel.ui
-        dashboardnotificationspanel.cpp
-        dashboardnotificationspanel.h
-        dashboardnotificationspanel.ui
-        dashboardsettingspanel.cpp
-        dashboardsettingspanel.h
-        dashboardsettingspanel.ui
-        dashboardwindow.cpp
-        dashboardwindow.h
-        dashboardwindow.ui
-        dashboardcharts.cpp
-        dashboardcharts.h
+        ${QTMATERIAL3_DASHBOARD_SOURCES}
     )
 endif()
 
