@@ -147,6 +147,7 @@ DashboardSettingsPanel::DashboardSettingsPanel(QWidget* parent)
     m_ui->settingsGrid->addWidget(compactCard, 1, 1);
     m_ui->settingsGrid->setColumnStretch(0, 1);
     m_ui->settingsGrid->setColumnStretch(1, 1);
+    m_compactSwitch->setChecked(true);
 
     auto* navigationCard = new QtMaterial::QtMaterialCard(m_ui->scrollContent);
     navigationCard->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
@@ -247,9 +248,9 @@ DashboardSettingsPanel::DashboardSettingsPanel(QWidget* parent)
         options.contrast = QtMaterial::ContrastMode::Standard;
         QtMaterial::ThemeManager::instance().setThemeOptions(options);
         qApp->setLayoutDirection(Qt::LeftToRight);
-        m_compactSwitch->setChecked(false);
+        m_compactSwitch->setChecked(true);
         integrated->setChecked(true);
-        emit compactChanged(false);
+        emit compactChanged(true);
         emit messageRequested(QStringLiteral("Settings reset."));
     });
 
@@ -329,7 +330,7 @@ void DashboardSettingsPanel::applyTheme()
     const QColor outline = scheme.color(QtMaterial::ColorRole::OutlineVariant);
 
     setStyleSheet(QStringLiteral(
-        "#dashboardSettingsPanel { background:%1; }"
+        "#dashboardSettingsPanel { background:%1; border-left:1px solid %5; }"
         "#dashboardSettingsPanel QLabel { color:%2; }"
         "#dashboardSettingsPanel #settingsMutedLabel { color:%3; }"
         "#dashboardSettingsPanel #settingsCardIcon { color:%3; }"
