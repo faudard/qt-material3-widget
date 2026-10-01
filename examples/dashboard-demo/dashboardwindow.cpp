@@ -3,6 +3,7 @@
 #include "dashboardcharts.h"
 #include "dashboarddemostyle.h"
 #include "dashboardecommercepage.h"
+#include "dashboardinvoicepage.h"
 #include "dashboardaccountpage.h"
 #include "dashboardaccountpanel.h"
 #include "dashboardcontactspanel.h"
@@ -611,6 +612,12 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     });
     m_pages->addWidget(createPageScroll(ecommercePage));
 
+    auto* invoicePage = new DashboardInvoicePage;
+    connect(invoicePage, &DashboardInvoicePage::messageRequested, this, [this](const QString& text) {
+        showMessage(text);
+    });
+    m_pages->addWidget(createPageScroll(invoicePage));
+
     m_navigationDrawer = createNavigationDrawer();
     m_accountPanel = createAccountPanel();
     m_contactsPanel = createContactsPanel();
@@ -841,7 +848,7 @@ QWidget* DashboardWindow::createSidebar()
     addInformational(QStringLiteral("Authentication"), QStringLiteral("profile"));
     addInformational(QStringLiteral("Coming Soon"), QStringLiteral("analytics"));
     addInformational(QStringLiteral("Errors"), QStringLiteral("message"));
-    addShortcut(QStringLiteral("Invoice"), QStringLiteral("invoice"), 2);
+    addPrimaryNavigation(QStringLiteral("Invoice"), QStringLiteral("invoice"), 11);
     addInformational(QStringLiteral("Maintenance"), QStringLiteral("components"));
     addPrimaryNavigation(QStringLiteral("Profile"), QStringLiteral("profile"), 5);
     addPrimaryNavigation(QStringLiteral("Pricing"), QStringLiteral("pricing"), 6);
@@ -913,7 +920,8 @@ QtMaterial::QtMaterialNavigationRail* DashboardWindow::createNavigationRail()
         {"States", "message"},
         {"Settings", "components"},
         {"Account", "profile"},
-        {"Ecommerce", "orders"}
+        {"Ecommerce", "orders"},
+        {"Invoice", "invoice"}
     };
 
     for (const auto& destination : destinations) {
@@ -979,10 +987,11 @@ QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer(
         {"States", "message"},
         {"Settings", "components"},
         {"Account", "profile"},
-        {"Ecommerce", "orders"}
+        {"Ecommerce", "orders"},
+        {"Invoice", "invoice"}
     };
 
-    for (int i = 0; i < 11; ++i) {
+    for (int i = 0; i < 12; ++i) {
         auto* button = makeNavButton(
             QString::fromLatin1(destinations[i].label),
             QString::fromLatin1(destinations[i].icon),
@@ -3060,6 +3069,7 @@ void DashboardWindow::populateCommandPalette()
     model->appendRow(new QStandardItem(QStringLiteral("Settings  ·  /settings")));
     model->appendRow(new QStandardItem(QStringLiteral("Account  ·  /account")));
     model->appendRow(new QStandardItem(QStringLiteral("Ecommerce  ·  /dashboard/ecommerce")));
+    model->appendRow(new QStandardItem(QStringLiteral("Invoice  ·  /invoice/INV-1994")));
     m_commandPalette->setSourceModel(model);
 }
 
@@ -3649,7 +3659,8 @@ void DashboardWindow::setCurrentSection(int index)
         "Application States",
         "Showcase Settings",
         "Account",
-        "Ecommerce"
+        "Ecommerce",
+        "Invoice"
     };
     const QString title = QString::fromLatin1(titles[index]);
 
@@ -3672,7 +3683,8 @@ void DashboardWindow::setCurrentSection(int index)
             "Search application states...",
             "Search showcase settings...",
             "Search account...",
-            "Search ecommerce..."
+            "Search ecommerce...",
+            "Search invoice..."
         };
         m_search->setPlaceholderText(QString::fromLatin1(placeholders[index]));
     }
