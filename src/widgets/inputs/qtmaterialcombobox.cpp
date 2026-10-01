@@ -90,8 +90,9 @@ class MaterialComboItemDelegate final
 {
 public:
     explicit MaterialComboItemDelegate(
-        QObject* parent = nullptr)
-        : QStyledItemDelegate(parent)
+        QtMaterialComboBox* combo)
+        : QStyledItemDelegate(combo)
+        , m_combo(combo)
     {
     }
 
@@ -145,8 +146,9 @@ public:
             resolved.state.testFlag(
                 QStyle::State_Enabled);
         const bool selected =
-            resolved.state.testFlag(
-                QStyle::State_Selected);
+            m_combo
+            && index.row()
+                == m_combo->currentIndex();
         const bool hovered =
             resolved.state.testFlag(
                 QStyle::State_MouseOver);
@@ -253,6 +255,7 @@ public:
     }
 
 private:
+    QPointer<QtMaterialComboBox> m_combo;
     AutocompleteSpec m_spec;
 };
 
