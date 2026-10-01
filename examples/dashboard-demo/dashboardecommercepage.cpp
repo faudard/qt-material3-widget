@@ -3,6 +3,7 @@
 #include "ui_dashboardecommercepage.h"
 
 #include <QAbstractButton>
+#include <QApplication>
 #include <QColor>
 #include <QFont>
 #include <QGridLayout>
@@ -13,6 +14,9 @@
 #include <QPainterPath>
 #include <QStandardItemModel>
 #include <QSizePolicy>
+#include <QStyle>
+#include <QStyledItemDelegate>
+#include <QStyleOptionViewItem>
 #include <QVBoxLayout>
 
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
@@ -137,6 +141,75 @@ protected:
                 Qt::AlignHCenter | Qt::AlignTop,
                 QString::fromLatin1(months[i]));
         }
+    }
+};
+
+class InvoiceStatusDelegate final : public QStyledItemDelegate
+{
+public:
+    explicit InvoiceStatusDelegate(QObject* parent = nullptr)
+        : QStyledItemDelegate(parent)
+    {
+    }
+
+    void paint(
+        QPainter* painter,
+        const QStyleOptionViewItem& option,
+        const QModelIndex& index) const override
+    {
+        QStyleOptionViewItem base(option);
+        initStyleOption(&base, index);
+        const QString text = base.text;
+        base.text.clear();
+
+        QStyle* style =
+            option.widget
+                ? option.widget->style()
+                : QApplication::style();
+        style->drawControl(
+            QStyle::CE_ItemViewItem,
+            &base,
+            painter,
+            option.widget);
+
+        const bool dark =
+            QtMaterial::ThemeManager::instance().theme().isDark();
+
+        QColor foreground;
+        QColor background;
+        if (text == QStringLiteral("Paid")) {
+            foreground = QColor(dark ? QStringLiteral("#86EFAC") : QStringLiteral("#118D57"));
+            background = QColor(dark ? QStringLiteral("#163B2B") : QStringLiteral("#D8FBDE"));
+        } else if (text == QStringLiteral("Out of date")) {
+            foreground = QColor(dark ? QStringLiteral("#FFB4AB") : QStringLiteral("#B42318"));
+            background = QColor(dark ? QStringLiteral("#4B1D1A") : QStringLiteral("#FFE9E7"));
+        } else {
+            foreground = QColor(dark ? QStringLiteral("#FFD18B") : QStringLiteral("#B76E00"));
+            background = QColor(dark ? QStringLiteral("#493416") : QStringLiteral("#FFF2D8"));
+        }
+
+        QFont font = option.font;
+        font.setBold(true);
+        font.setPointSizeF(qMax<qreal>(8.0, font.pointSizeF() - 1.0));
+        painter->setFont(font);
+
+        const QFontMetrics metrics(font);
+        const int pillWidth =
+            qMin(metrics.horizontalAdvance(text) + 16, option.rect.width() - 24);
+        const QRect pill(
+            option.rect.left() + 12,
+            option.rect.center().y() - 13,
+            qMax(24, pillWidth),
+            26);
+
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(background);
+        painter->drawRoundedRect(pill, 6.0, 6.0);
+        painter->setPen(foreground);
+        painter->drawText(pill, Qt::AlignCenter, text);
+        painter->restore();
     }
 };
 
@@ -278,29 +351,39 @@ DashboardEcommercePage::DashboardEcommercePage(QWidget* parent)
     auto* chart = new InstalledAreaChart(area);
     areaLayout->addWidget(chart, 1);
 
-    auto* invoices = makeCard(QStringLiteral("New Invoices"), this, 390);
+    auto* invoices = makeCard(QStringLiteral("New Invoices"), this, 470);
     auto* invoicesLayout = static_cast<QVBoxLayout*>(invoices->layout());
+    invoicesLayout->setContentsMargins(0, 0, 0, 12);
+    invoicesLayout->setSpacing(0);
+    if (auto* invoiceTitle =
+            qobject_cast<QLabel*>(invoicesLayout->itemAt(0)->widget())) {
+        invoiceTitle->setContentsMargins(20, 18, 20, 14);
+        invoiceTitle->setMinimumHeight(70);
+    }
 
     auto* table = new QtMaterial::QtMaterialTable(invoices);
     table->setDense(false);
     table->setAlternatingRowColors(false);
     table->verticalHeader()->setVisible(false);
     table->setSelectionMode(QAbstractItemView::NoSelection);
+    table->setSortingEnabled(false);
+    table->horizontalHeader()->setSectionsClickable(false);
 
-    auto* model = new QStandardItemModel(5, 4, table);
+    auto* model = new QStandardItemModel(5, 5, table);
     model->setHorizontalHeaderLabels({
         QStringLiteral("Invoice ID"),
         QStringLiteral("Category"),
         QStringLiteral("Price"),
-        QStringLiteral("Status")
+        QStringLiteral("Status"),
+        QString()
     });
 
     const char* rows[][4] = {
-        {"INV-1990", "Android", "$82.50", "Paid"},
-        {"INV-1991", "Mac", "$91.20", "Pending"},
-        {"INV-1992", "Windows", "$64.10", "Paid"},
-        {"INV-1993", "Android", "$88.30", "Paid"},
-        {"INV-1994", "Mac", "$59.00", "Pending"}
+        {"INV-1990", "Android", "$83.74", "Paid"},
+        {"INV-1991", "Mac", "$97.14", "Out of date"},
+        {"INV-1992", "Windows", "$68.71", "Progress"},
+        {"INV-1993", "Android", "$85.21", "Paid"},
+        {"INV-1994", "Mac", "$52.17", "Paid"}
     };
     for (int r = 0; r < 5; ++r) {
         for (int col = 0; col < 4; ++col) {
@@ -309,15 +392,37 @@ DashboardEcommercePage::DashboardEcommercePage(QWidget* parent)
                 col,
                 new QStandardItem(QString::fromLatin1(rows[r][col])));
         }
+
+        auto* action = new QStandardItem(QStringLiteral("⋮"));
+        action->setTextAlignment(Qt::AlignCenter);
+        action->setData(
+            QStringLiteral("More actions for %1")
+                .arg(QString::fromLatin1(rows[r][0])),
+            Qt::AccessibleTextRole);
+        model->setItem(r, 4, action);
     }
+
     table->setModel(model);
-    table->horizontalHeader()->setStretchLastSection(true);
+    table->setItemDelegateForColumn(3, new InvoiceStatusDelegate(table));
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Fixed);
+    table->horizontalHeader()->resizeSection(4, 48);
     invoicesLayout->addWidget(table, 1);
+
+    auto* footer = new QWidget(invoices);
+    auto* footerLayout = new QHBoxLayout(footer);
+    footerLayout->setContentsMargins(20, 8, 16, 0);
+    footerLayout->setSpacing(0);
+    footerLayout->addStretch(1);
 
     auto* viewAll = new QtMaterial::QtMaterialTextButton(
         QStringLiteral("View all  ›"),
-        invoices);
-    invoicesLayout->addWidget(viewAll, 0, Qt::AlignRight);
+        footer);
+    footerLayout->addWidget(viewAll);
+    invoicesLayout->addWidget(footer);
 
     auto* countries = makeCard(
         QStringLiteral("Top installed countries"),

@@ -313,17 +313,32 @@ public:
         QStyle* style = option.widget ? option.widget->style() : QApplication::style();
         style->drawControl(QStyle::CE_ItemViewItem, &base, painter, option.widget);
 
-        QColor foreground = materialColor(QtMaterial::ColorRole::OnPrimaryContainer);
-        QColor background = materialColor(QtMaterial::ColorRole::PrimaryContainer);
-        if (text == QStringLiteral("Pending")) {
-            foreground = materialColor(QtMaterial::ColorRole::OnSecondaryContainer);
-            background = materialColor(QtMaterial::ColorRole::SecondaryContainer);
-        } else if (text == QStringLiteral("Refunded") || text == QStringLiteral("At risk")) {
-            foreground = materialColor(QtMaterial::ColorRole::OnErrorContainer);
-            background = materialColor(QtMaterial::ColorRole::ErrorContainer);
+        const bool dark =
+            QtMaterial::ThemeManager::instance().theme().isDark();
+
+        QColor foreground(
+            dark ? QStringLiteral("#86EFAC") : QStringLiteral("#118D57"));
+        QColor background(
+            dark ? QStringLiteral("#163B2B") : QStringLiteral("#D8FBDE"));
+
+        if (text == QStringLiteral("Pending")
+            || text == QStringLiteral("Progress")) {
+            foreground = QColor(
+                dark ? QStringLiteral("#FFD18B") : QStringLiteral("#B76E00"));
+            background = QColor(
+                dark ? QStringLiteral("#493416") : QStringLiteral("#FFF2D8"));
+        } else if (text == QStringLiteral("Refunded")
+                   || text == QStringLiteral("At risk")
+                   || text == QStringLiteral("Out of date")) {
+            foreground = QColor(
+                dark ? QStringLiteral("#FFB4AB") : QStringLiteral("#B42318"));
+            background = QColor(
+                dark ? QStringLiteral("#4B1D1A") : QStringLiteral("#FFE9E7"));
         } else if (text == QStringLiteral("Trial")) {
-            foreground = materialColor(QtMaterial::ColorRole::OnTertiaryContainer);
-            background = materialColor(QtMaterial::ColorRole::TertiaryContainer);
+            foreground = QColor(
+                dark ? QStringLiteral("#C4B5FD") : QStringLiteral("#6D28D9"));
+            background = QColor(
+                dark ? QStringLiteral("#33235C") : QStringLiteral("#EDE9FE"));
         }
 
         QFont font = option.font;
@@ -331,18 +346,18 @@ public:
         font.setPointSizeF(std::max<qreal>(8.0, font.pointSizeF() - 1.0));
         painter->setFont(font);
         const QFontMetrics metrics(font);
-        const int width = metrics.horizontalAdvance(text) + 18;
+        const int width = metrics.horizontalAdvance(text) + 16;
         QRect pill(
-            option.rect.left() + 7,
-            option.rect.center().y() - 12,
-            qMin(width, option.rect.width() - 14),
-            24);
+            option.rect.left() + 12,
+            option.rect.center().y() - 13,
+            qMin(width, option.rect.width() - 24),
+            26);
 
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->setPen(Qt::NoPen);
         painter->setBrush(background);
-        painter->drawRoundedRect(pill, 12.0, 12.0);
+        painter->drawRoundedRect(pill, 6.0, 6.0);
         painter->setPen(foreground);
         painter->drawText(pill, Qt::AlignCenter, text);
         painter->restore();
