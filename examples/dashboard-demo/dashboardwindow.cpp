@@ -2755,7 +2755,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
         }
     });
 
-    connect(reset, &QAbstractButton::clicked, this, [this, seed, mode, contrast, variant, direction, labels, compactPreview]() {
+    connect(reset, &QAbstractButton::clicked, this, [this, page, seed, mode, contrast, variant, direction, labels, compactPreview]() {
         seed->setCurrentText(QStringLiteral("Indigo"));
         mode->setCurrentIndex(0);
         contrast->setCurrentIndex(0);
