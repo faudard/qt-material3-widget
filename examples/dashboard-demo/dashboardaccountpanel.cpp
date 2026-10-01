@@ -172,7 +172,7 @@ void DashboardAccountPanel::applyTheme()
         scheme.color(QtMaterial::ColorRole::OutlineVariant);
 
     setStyleSheet(QStringLiteral(
-        "#dashboardAccountPanel { background:%1; }"
+        "#dashboardAccountPanel { background:%1; border-left:1px solid %7; }"
         "#dashboardAccountPanel QLabel { color:%2; }"
         "#dashboardAccountPanel #emailLabel { color:%3; }"
         "#dashboardAccountPanel #avatarLabel { background:%4; color:%5;"
