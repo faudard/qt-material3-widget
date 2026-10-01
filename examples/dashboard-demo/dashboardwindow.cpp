@@ -3698,11 +3698,6 @@ void DashboardWindow::applyThemeChrome()
             arrow->setPalette(palette);
         }
 
-        const auto sparkBars =
-            m_contentHost->findChildren<MetricSparkBarsWidget*>();
-        for (MetricSparkBarsWidget* spark : sparkBars) {
-            spark->update();
-        }
     }
 
     if (m_pages) {
