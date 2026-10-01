@@ -15,7 +15,6 @@
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
-#include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
 #include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
 
 namespace {
