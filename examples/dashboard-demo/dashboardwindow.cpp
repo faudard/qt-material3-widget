@@ -2,6 +2,7 @@
 
 #include "dashboardcharts.h"
 #include "dashboarddemostyle.h"
+#include "dashboardecommercepage.h"
 #include "dashboardaccountpage.h"
 #include "dashboardaccountpanel.h"
 #include "dashboardcontactspanel.h"
@@ -595,6 +596,12 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     m_pages->addWidget(createPageScroll(createApplicationStatesPage()));
     m_pages->addWidget(createPageScroll(createShowcaseSettingsPage()));
 
+    auto* ecommercePage = new DashboardEcommercePage;
+    connect(ecommercePage, &DashboardEcommercePage::messageRequested, this, [this](const QString& text) {
+        showMessage(text);
+    });
+    m_pages->addWidget(createPageScroll(ecommercePage));
+
     auto* accountPage = new DashboardAccountPage;
     connect(accountPage, &DashboardAccountPage::editProfileRequested, this, [this]() {
         setCurrentSection(5);
@@ -812,7 +819,7 @@ QWidget* DashboardWindow::createSidebar()
     addShortcut(QStringLiteral("Metrics"), QStringLiteral("analytics"), 1);
     addShortcut(QStringLiteral("Widgets"), QStringLiteral("components"), 4);
     addShortcut(QStringLiteral("Apps"), QStringLiteral("components"), 4);
-    addShortcut(QStringLiteral("Ecommerce"), QStringLiteral("orders"), 2);
+    addPrimaryNavigation(QStringLiteral("Ecommerce"), QStringLiteral("orders"), 10);
     m_navButtons.first()->setChecked(true);
 
     navigationLayout->addWidget(makeSectionLabel(QStringLiteral("MUI Components"), navigationContent));
@@ -899,7 +906,8 @@ QtMaterial::QtMaterialNavigationRail* DashboardWindow::createNavigationRail()
         {"Pricing", "pricing"},
         {"States", "message"},
         {"Settings", "components"},
-        {"Account", "profile"}
+        {"Account", "profile"},
+        {"Ecommerce", "orders"}
     };
 
     for (const auto& destination : destinations) {
@@ -964,10 +972,11 @@ QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer(
         {"Pricing", "pricing"},
         {"States", "message"},
         {"Settings", "components"},
-        {"Account", "profile"}
+        {"Account", "profile"},
+        {"Ecommerce", "orders"}
     };
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 11; ++i) {
         auto* button = makeNavButton(
             QString::fromLatin1(destinations[i].label),
             QString::fromLatin1(destinations[i].icon),
@@ -1173,6 +1182,13 @@ QWidget* DashboardWindow::createTopBar()
         }
     });
     connect(m_search, &QtMaterial::QtMaterialSearchBar::textChanged, this, &DashboardWindow::applyFilter);
+    connect(m_search, &QtMaterial::QtMaterialSearchBar::searchRequested, this, [this](const QString& query) {
+        if (!m_commandPalette) {
+            return;
+        }
+        m_commandPalette->setQuery(query);
+        m_commandPalette->open();
+    });
     connect(m_settingsButton, &QAbstractButton::clicked, this, [this]() {
         showRightPanel(m_settingsPanel);
     });
@@ -3027,16 +3043,17 @@ void DashboardWindow::populateCommandPalette()
 {
     auto* model = new QStandardItemModel(m_commandPalette);
     model->setHorizontalHeaderLabels({QStringLiteral("Command")});
-    model->appendRow(new QStandardItem(QStringLiteral("Open dashboard")));
-    model->appendRow(new QStandardItem(QStringLiteral("Open analytics")));
-    model->appendRow(new QStandardItem(QStringLiteral("Open orders")));
-    model->appendRow(new QStandardItem(QStringLiteral("Open customers")));
-    model->appendRow(new QStandardItem(QStringLiteral("Open components")));
-    model->appendRow(new QStandardItem(QStringLiteral("Open profile")));
-    model->appendRow(new QStandardItem(QStringLiteral("Open pricing")));
-    model->appendRow(new QStandardItem(QStringLiteral("Open application states")));
-    model->appendRow(new QStandardItem(QStringLiteral("Open showcase settings")));
-    model->appendRow(new QStandardItem(QStringLiteral("Open account")));
+    model->appendRow(new QStandardItem(QStringLiteral("App  ·  /dashboard")));
+    model->appendRow(new QStandardItem(QStringLiteral("Analytics  ·  /dashboard/analytics")));
+    model->appendRow(new QStandardItem(QStringLiteral("Orders  ·  /dashboard/orders")));
+    model->appendRow(new QStandardItem(QStringLiteral("Customers  ·  /dashboard/customers")));
+    model->appendRow(new QStandardItem(QStringLiteral("Components  ·  /components")));
+    model->appendRow(new QStandardItem(QStringLiteral("Profile  ·  /profile")));
+    model->appendRow(new QStandardItem(QStringLiteral("Pricing  ·  /pricing")));
+    model->appendRow(new QStandardItem(QStringLiteral("States  ·  /states")));
+    model->appendRow(new QStandardItem(QStringLiteral("Settings  ·  /settings")));
+    model->appendRow(new QStandardItem(QStringLiteral("Account  ·  /account")));
+    model->appendRow(new QStandardItem(QStringLiteral("Ecommerce  ·  /dashboard/ecommerce")));
     m_commandPalette->setSourceModel(model);
 }
 
@@ -3607,7 +3624,8 @@ void DashboardWindow::setCurrentSection(int index)
         "Pricing",
         "Application States",
         "Showcase Settings",
-        "Account"
+        "Account",
+        "Ecommerce"
     };
     const QString title = QString::fromLatin1(titles[index]);
 
@@ -3629,7 +3647,8 @@ void DashboardWindow::setCurrentSection(int index)
             "Search pricing...",
             "Search application states...",
             "Search showcase settings...",
-            "Search account..."
+            "Search account...",
+            "Search ecommerce..."
         };
         m_search->setPlaceholderText(QString::fromLatin1(placeholders[index]));
     }
