@@ -698,24 +698,30 @@ void DashboardWindow::layoutRightPanels()
         return;
     }
 
-    const int preferredWidth = qMin(410, qMax(320, m_central->width() - 48));
+    const int topOffset = m_topBar ? m_topBar->height() : 0;
+    const int availableHeight = qMax(0, m_central->height() - topOffset);
+    const int preferredWidth =
+        qMin(400, qMax(320, m_central->width() - 72));
+
     const QRect geometry(
         m_central->width() - preferredWidth,
-        0,
+        topOffset,
         preferredWidth,
-        m_central->height());
+        availableHeight);
 
-    const QWidget* panels[] = {
+    QWidget* panels[] = {
         m_accountPanel,
         m_contactsPanel,
         m_notificationsPanel,
         m_settingsPanel
     };
-    for (const QWidget* constPanel : panels) {
-        QWidget* panel = const_cast<QWidget*>(constPanel);
-        if (panel) {
-            panel->setGeometry(geometry);
+    for (QWidget* panel : panels) {
+        if (!panel) {
+            continue;
         }
+        panel->setGeometry(geometry);
+        panel->setMinimumHeight(0);
+        panel->setMaximumHeight(QWIDGETSIZE_MAX);
     }
 }
 
@@ -738,6 +744,8 @@ void DashboardWindow::showRightPanel(QWidget* panel)
     }
 
     layoutRightPanels();
+    panel->setAttribute(Qt::WA_StyledBackground, true);
+    panel->setAutoFillBackground(true);
     panel->show();
     panel->raise();
     panel->setFocus(Qt::OtherFocusReason);

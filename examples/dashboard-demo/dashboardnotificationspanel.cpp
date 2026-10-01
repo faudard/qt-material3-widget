@@ -80,6 +80,8 @@ DashboardNotificationsPanel::DashboardNotificationsPanel(QWidget* parent)
 {
     m_ui->setupUi(this);
     setObjectName(QStringLiteral("dashboardNotificationsPanel"));
+    setAttribute(Qt::WA_StyledBackground, true);
+    setAutoFillBackground(true);
 
     QFont titleFont = m_ui->titleLabel->font();
     titleFont.setBold(true);
@@ -129,9 +131,11 @@ DashboardNotificationsPanel::DashboardNotificationsPanel(QWidget* parent)
     auto* accept = new QtMaterial::QtMaterialFilledButton(
         QStringLiteral("Accept"),
         friendRequest);
+    accept->setMinimumWidth(96);
     auto* decline = new QtMaterial::QtMaterialOutlinedButton(
         QStringLiteral("Decline"),
         friendRequest);
+    decline->setMinimumWidth(96);
     friendActions->addWidget(accept);
     friendActions->addWidget(decline);
     friendActions->addStretch(1);
@@ -156,6 +160,7 @@ DashboardNotificationsPanel::DashboardNotificationsPanel(QWidget* parent)
         auto* reply = new QtMaterial::QtMaterialFilledButton(
             QStringLiteral("Reply"),
             mention);
+        reply->setMinimumWidth(92);
         copy->addWidget(reply, 0, Qt::AlignLeft);
         connect(reply, &QAbstractButton::clicked, this, [this]() {
             emit messageRequested(QStringLiteral("Reply composer opened."));
@@ -173,6 +178,7 @@ DashboardNotificationsPanel::DashboardNotificationsPanel(QWidget* parent)
         auto* download = new QtMaterial::QtMaterialOutlinedButton(
             QStringLiteral("Download"),
             fileAdded);
+        download->setMinimumWidth(118);
         copy->addWidget(download, 0, Qt::AlignLeft);
         connect(download, &QAbstractButton::clicked, this, [this]() {
             emit messageRequested(QStringLiteral("Download started."));
