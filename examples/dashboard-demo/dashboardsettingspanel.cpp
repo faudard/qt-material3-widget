@@ -269,14 +269,14 @@ DashboardSettingsPanel::DashboardSettingsPanel(QWidget* parent)
     });
     connect(m_compactSwitch, &QAbstractButton::toggled, this, &DashboardSettingsPanel::compactChanged);
 
-    connect(layoutGroup, QOverload<int>::of(&QButtonGroup::buttonClicked), this, [this](int id) {
-        const QString mode =
-            id == 1
-                ? QStringLiteral("Top navigation preview selected.")
-                : (id == 2
-                    ? QStringLiteral("Navigation rail preview selected.")
-                    : QStringLiteral("Integrated navigation preview selected."));
-        emit messageRequested(mode);
+    connect(integrated, &QToolButton::clicked, this, [this]() {
+        emit messageRequested(QStringLiteral("Integrated navigation preview selected."));
+    });
+    connect(topbar, &QToolButton::clicked, this, [this]() {
+        emit messageRequested(QStringLiteral("Top navigation preview selected."));
+    });
+    connect(rail, &QToolButton::clicked, this, [this]() {
+        emit messageRequested(QStringLiteral("Navigation rail preview selected."));
     });
     connect(integrateColor, &QAbstractButton::clicked, this, [this]() {
         emit messageRequested(QStringLiteral("Integrated navigation color selected."));
