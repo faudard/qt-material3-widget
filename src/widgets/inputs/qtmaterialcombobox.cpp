@@ -486,13 +486,14 @@ void QtMaterialComboBox::showPopup()
     ensureSpecResolved();
     preparePopup();
 
-    d_ptr->popupOpen = true;
-    update();
-
     QComboBox::showPopup();
 
     preparePopup();
+    d_ptr->popupOpen =
+        d_ptr->popupWindow
+        && d_ptr->popupWindow->isVisible();
     updatePopupMask();
+    update();
 }
 
 void QtMaterialComboBox::hidePopup()
