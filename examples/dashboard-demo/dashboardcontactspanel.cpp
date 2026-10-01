@@ -78,6 +78,8 @@ DashboardContactsPanel::DashboardContactsPanel(QWidget* parent)
 {
     m_ui->setupUi(this);
     setObjectName(QStringLiteral("dashboardContactsPanel"));
+    setAttribute(Qt::WA_StyledBackground, true);
+    setAutoFillBackground(true);
 
     QFont titleFont = m_ui->titleLabel->font();
     titleFont.setBold(true);
