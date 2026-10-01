@@ -1266,6 +1266,86 @@ QWidget* DashboardWindow::createDashboardPage()
     layout->addWidget(charts);
 
     layout->addWidget(createLowerHighlights());
+
+    auto* appsCard = new QtMaterial::QtMaterialCard(page);
+    appsCard->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    appsCard->setMinimumHeight(190);
+    auto* appsLayout = new QVBoxLayout(appsCard);
+    appsLayout->setContentsMargins(18, 16, 18, 16);
+    appsLayout->setSpacing(12);
+
+    auto* appsHeader = new QHBoxLayout;
+    appsHeader->addWidget(makeLabel(QStringLiteral("Popular apps"), appsCard, 2.0, false));
+    appsHeader->addStretch(1);
+    auto* browseApps = new QtMaterial::QtMaterialTextButton(
+        QStringLiteral("Browse marketplace  ›"),
+        appsCard);
+    appsHeader->addWidget(browseApps);
+    appsLayout->addLayout(appsHeader);
+
+    auto* appsGrid = new QGridLayout;
+    appsGrid->setHorizontalSpacing(12);
+    appsGrid->setVerticalSpacing(10);
+
+    const struct {
+        const char* initials;
+        const char* name;
+        const char* detail;
+        const char* badge;
+    } appItems[] = {
+        {"GH", "GitHub Connect", "18.9k installs · 4.8 ★", "Free"},
+        {"FG", "Figma Bridge", "14.1k installs · 4.9 ★", "€19"},
+        {"SL", "Slack Workspace", "22.7k installs · 4.6 ★", "Free"}
+    };
+
+    for (int i = 0; i < 3; ++i) {
+        auto* item = new QFrame(appsCard);
+        item->setObjectName(QStringLiteral("dashboardPopularApp"));
+        item->setMinimumHeight(92);
+
+        auto* itemLayout = new QHBoxLayout(item);
+        itemLayout->setContentsMargins(12, 10, 12, 10);
+        itemLayout->setSpacing(10);
+
+        auto* icon = new QLabel(QString::fromLatin1(appItems[i].initials), item);
+        icon->setObjectName(QStringLiteral("dashboardPopularAppIcon"));
+        icon->setAlignment(Qt::AlignCenter);
+        icon->setFixedSize(42, 42);
+        itemLayout->addWidget(icon);
+
+        auto* copy = new QVBoxLayout;
+        copy->setSpacing(2);
+        copy->addWidget(makeLabel(
+            QString::fromLatin1(appItems[i].name),
+            item,
+            0.0,
+            true));
+        auto* detail = makeLabel(
+            QString::fromUtf8(appItems[i].detail),
+            item,
+            -2.0,
+            false);
+        detail->setObjectName(QStringLiteral("metricTitle"));
+        copy->addWidget(detail);
+        itemLayout->addLayout(copy, 1);
+
+        auto* badge = new QtMaterial::QtMaterialChip(
+            QString::fromUtf8(appItems[i].badge),
+            item);
+        badge->setVariant(QtMaterial::ChipVariant::Assist);
+        itemLayout->addWidget(badge);
+
+        appsGrid->addWidget(item, 0, i);
+        appsGrid->setColumnStretch(i, 1);
+    }
+
+    appsLayout->addLayout(appsGrid);
+    layout->addWidget(appsCard);
+
+    connect(browseApps, &QAbstractButton::clicked, this, [this]() {
+        setCurrentSection(12);
+    });
+
     layout->addWidget(createOrdersCard());
     layout->addStretch(1);
 
