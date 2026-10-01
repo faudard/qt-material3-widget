@@ -74,6 +74,7 @@ QSize parseSize(const QString& value)
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
+    QApplication::setEffectEnabled(Qt::UI_AnimateCombo, false);
     app.setApplicationName(QStringLiteral("Qt Material 3 Dashboard Demo"));
 
     QCommandLineParser parser;
