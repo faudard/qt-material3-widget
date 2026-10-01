@@ -4,6 +4,8 @@
 #include "dashboarddemostyle.h"
 #include "dashboardecommercepage.h"
 #include "dashboardinvoicepage.h"
+#include "dashboardappspage.h"
+#include "dashboardprojectspage.h"
 #include "dashboardaccountpage.h"
 #include "dashboardaccountpanel.h"
 #include "dashboardcontactspanel.h"
@@ -618,6 +620,18 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     });
     m_pages->addWidget(createPageScroll(invoicePage));
 
+    auto* appsPage = new DashboardAppsPage;
+    connect(appsPage, &DashboardAppsPage::messageRequested, this, [this](const QString& text) {
+        showMessage(text);
+    });
+    m_pages->addWidget(createPageScroll(appsPage));
+
+    auto* projectsPage = new DashboardProjectsPage;
+    connect(projectsPage, &DashboardProjectsPage::messageRequested, this, [this](const QString& text) {
+        showMessage(text);
+    });
+    m_pages->addWidget(createPageScroll(projectsPage));
+
     m_navigationDrawer = createNavigationDrawer();
     m_accountPanel = createAccountPanel();
     m_contactsPanel = createContactsPanel();
@@ -831,7 +845,8 @@ QWidget* DashboardWindow::createSidebar()
     addPrimaryNavigation(QStringLiteral("Customers"), QStringLiteral("customers"), 3);
     addShortcut(QStringLiteral("Metrics"), QStringLiteral("analytics"), 1);
     addShortcut(QStringLiteral("Widgets"), QStringLiteral("components"), 4);
-    addShortcut(QStringLiteral("Apps"), QStringLiteral("components"), 4);
+    addPrimaryNavigation(QStringLiteral("Apps"), QStringLiteral("components"), 12);
+    addPrimaryNavigation(QStringLiteral("Projects"), QStringLiteral("analytics"), 13);
     addPrimaryNavigation(QStringLiteral("Ecommerce"), QStringLiteral("orders"), 10);
     m_navButtons.first()->setChecked(true);
 
@@ -921,7 +936,9 @@ QtMaterial::QtMaterialNavigationRail* DashboardWindow::createNavigationRail()
         {"Settings", "components"},
         {"Account", "profile"},
         {"Ecommerce", "orders"},
-        {"Invoice", "invoice"}
+        {"Invoice", "invoice"},
+        {"Apps", "components"},
+        {"Projects", "analytics"}
     };
 
     for (const auto& destination : destinations) {
@@ -988,10 +1005,12 @@ QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer(
         {"Settings", "components"},
         {"Account", "profile"},
         {"Ecommerce", "orders"},
-        {"Invoice", "invoice"}
+        {"Invoice", "invoice"},
+        {"Apps", "components"},
+        {"Projects", "analytics"}
     };
 
-    for (int i = 0; i < 12; ++i) {
+    for (int i = 0; i < 14; ++i) {
         auto* button = makeNavButton(
             QString::fromLatin1(destinations[i].label),
             QString::fromLatin1(destinations[i].icon),
@@ -1257,6 +1276,158 @@ QWidget* DashboardWindow::createDashboardPage()
     layout->addWidget(charts);
 
     layout->addWidget(createLowerHighlights());
+
+    auto* appsCard = new QtMaterial::QtMaterialCard(page);
+    appsCard->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    appsCard->setMinimumHeight(190);
+    auto* appsLayout = new QVBoxLayout(appsCard);
+    appsLayout->setContentsMargins(18, 16, 18, 16);
+    appsLayout->setSpacing(12);
+
+    auto* appsHeader = new QHBoxLayout;
+    appsHeader->addWidget(makeLabel(QStringLiteral("Popular apps"), appsCard, 2.0, false));
+    appsHeader->addStretch(1);
+    auto* browseApps = new QtMaterial::QtMaterialTextButton(
+        QStringLiteral("Browse marketplace  ›"),
+        appsCard);
+    appsHeader->addWidget(browseApps);
+    appsLayout->addLayout(appsHeader);
+
+    auto* appsGrid = new QGridLayout;
+    appsGrid->setHorizontalSpacing(12);
+    appsGrid->setVerticalSpacing(10);
+
+    const struct {
+        const char* initials;
+        const char* name;
+        const char* detail;
+        const char* badge;
+    } appItems[] = {
+        {"GH", "GitHub Connect", "18.9k installs · 4.8 ★", "Free"},
+        {"FG", "Figma Bridge", "14.1k installs · 4.9 ★", "€19"},
+        {"SL", "Slack Workspace", "22.7k installs · 4.6 ★", "Free"}
+    };
+
+    for (int i = 0; i < 3; ++i) {
+        auto* item = new QFrame(appsCard);
+        item->setObjectName(QStringLiteral("dashboardPopularApp"));
+        item->setMinimumHeight(92);
+
+        auto* itemLayout = new QHBoxLayout(item);
+        itemLayout->setContentsMargins(12, 10, 12, 10);
+        itemLayout->setSpacing(10);
+
+        auto* icon = new QLabel(QString::fromLatin1(appItems[i].initials), item);
+        icon->setObjectName(QStringLiteral("dashboardPopularAppIcon"));
+        icon->setAlignment(Qt::AlignCenter);
+        icon->setFixedSize(42, 42);
+        itemLayout->addWidget(icon);
+
+        auto* copy = new QVBoxLayout;
+        copy->setSpacing(2);
+        copy->addWidget(makeLabel(
+            QString::fromLatin1(appItems[i].name),
+            item,
+            0.0,
+            true));
+        auto* detail = makeLabel(
+            QString::fromUtf8(appItems[i].detail),
+            item,
+            -2.0,
+            false);
+        detail->setObjectName(QStringLiteral("metricTitle"));
+        copy->addWidget(detail);
+        itemLayout->addLayout(copy, 1);
+
+        auto* badge = new QtMaterial::QtMaterialChip(
+            QString::fromUtf8(appItems[i].badge),
+            item);
+        badge->setVariant(QtMaterial::ChipVariant::Assist);
+        itemLayout->addWidget(badge);
+
+        appsGrid->addWidget(item, 0, i);
+        appsGrid->setColumnStretch(i, 1);
+    }
+
+    appsLayout->addLayout(appsGrid);
+    layout->addWidget(appsCard);
+
+    connect(browseApps, &QAbstractButton::clicked, this, [this]() {
+        setCurrentSection(12);
+    });
+
+    auto* projectsCard = new QtMaterial::QtMaterialCard(page);
+    projectsCard->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    projectsCard->setMinimumHeight(220);
+    auto* projectsLayout = new QVBoxLayout(projectsCard);
+    projectsLayout->setContentsMargins(18, 16, 18, 16);
+    projectsLayout->setSpacing(12);
+
+    auto* projectsHeader = new QHBoxLayout;
+    projectsHeader->addWidget(makeLabel(QStringLiteral("Active projects"), projectsCard, 2.0, false));
+    projectsHeader->addStretch(1);
+    auto* browseProjects = new QtMaterial::QtMaterialTextButton(
+        QStringLiteral("View projects  ›"),
+        projectsCard);
+    projectsHeader->addWidget(browseProjects);
+    projectsLayout->addLayout(projectsHeader);
+
+    const struct {
+        const char* name;
+        const char* status;
+        int progress;
+        const char* due;
+    } projectItems[] = {
+        {"Material 3 Desktop", "Active", 72, "08 Oct"},
+        {"Dashboard showcase", "Active", 86, "12 Oct"},
+        {"Accessibility audit", "At risk", 41, "04 Oct"}
+    };
+
+    for (const auto& project : projectItems) {
+        auto* row = new QWidget(projectsCard);
+        row->setMinimumHeight(46);
+        auto* rowLayout = new QHBoxLayout(row);
+        rowLayout->setContentsMargins(0, 0, 0, 0);
+        rowLayout->setSpacing(12);
+
+        auto* name = makeLabel(
+            QString::fromLatin1(project.name),
+            row,
+            0.0,
+            true);
+        name->setMinimumWidth(180);
+        rowLayout->addWidget(name);
+
+        auto* progress = new QtMaterial::QtMaterialLinearProgressIndicator(row);
+        progress->setValue(static_cast<qreal>(project.progress) / 100.0);
+        progress->setStatusText(
+            QStringLiteral("%1 percent complete").arg(project.progress));
+        rowLayout->addWidget(progress, 1);
+
+        auto* status = new QtMaterial::QtMaterialChip(
+            QString::fromLatin1(project.status),
+            row);
+        status->setVariant(QtMaterial::ChipVariant::Assist);
+        rowLayout->addWidget(status);
+
+        auto* due = makeLabel(
+            QString::fromLatin1(project.due),
+            row,
+            -1.0,
+            false);
+        due->setObjectName(QStringLiteral("metricTitle"));
+        due->setMinimumWidth(58);
+        rowLayout->addWidget(due, 0, Qt::AlignRight);
+
+        projectsLayout->addWidget(row);
+    }
+
+    layout->addWidget(projectsCard);
+
+    connect(browseProjects, &QAbstractButton::clicked, this, [this]() {
+        setCurrentSection(13);
+    });
+
     layout->addWidget(createOrdersCard());
     layout->addStretch(1);
 
@@ -3070,6 +3241,8 @@ void DashboardWindow::populateCommandPalette()
     model->appendRow(new QStandardItem(QStringLiteral("Account  ·  /account")));
     model->appendRow(new QStandardItem(QStringLiteral("Ecommerce  ·  /dashboard/ecommerce")));
     model->appendRow(new QStandardItem(QStringLiteral("Invoice  ·  /invoice/INV-1994")));
+    model->appendRow(new QStandardItem(QStringLiteral("Apps  ·  /apps")));
+    model->appendRow(new QStandardItem(QStringLiteral("Projects  ·  /projects")));
     m_commandPalette->setSourceModel(model);
 }
 
@@ -3400,6 +3573,9 @@ void DashboardWindow::applyThemeChrome()
         "#profileHeroAvatar { background:%2; color:%6; border-radius:32px;"
         " font-weight:700; font-size:16px; }"
         "QFrame#dashboardSeparator { color:%3; }"
+        "QFrame#dashboardPopularApp { background:%4; border:1px solid %3; border-radius:12px; }"
+        "QLabel#dashboardPopularAppIcon { background:%2; color:%6; border-radius:12px;"
+        " font-weight:700; font-size:12px; }"
 
         "QCalendarWidget#dashboardCalendar { background:%4; border:0; }"
         "QCalendarWidget#dashboardCalendar QToolButton { color:%5; background:transparent;"
@@ -3660,7 +3836,9 @@ void DashboardWindow::setCurrentSection(int index)
         "Showcase Settings",
         "Account",
         "Ecommerce",
-        "Invoice"
+        "Invoice",
+        "Apps Marketplace",
+        "Projects"
     };
     const QString title = QString::fromLatin1(titles[index]);
 
@@ -3684,7 +3862,9 @@ void DashboardWindow::setCurrentSection(int index)
             "Search showcase settings...",
             "Search account...",
             "Search ecommerce...",
-            "Search invoice..."
+            "Search invoice...",
+            "Search apps...",
+            "Search projects..."
         };
         m_search->setPlaceholderText(QString::fromLatin1(placeholders[index]));
     }
