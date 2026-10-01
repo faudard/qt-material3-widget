@@ -5,7 +5,7 @@
   <property name="minimumSize">
    <size>
     <width>300</width>
-    <height>620</height>
+    <height>0</height>
    </size>
   </property>
   <layout class="QVBoxLayout" name="rootLayout">
@@ -88,7 +88,7 @@
    </item>
    <item>
     <widget class="QFrame" name="promoFrame">
-     <property name="minimumSize"><size><width>0</width><height>148</height></size></property>
+     <property name="minimumSize"><size><width>0</width><height>132</height></size></property>
      <layout class="QVBoxLayout" name="promoLayout">
       <property name="leftMargin"><number>18</number></property>
       <property name="topMargin"><number>16</number></property>
