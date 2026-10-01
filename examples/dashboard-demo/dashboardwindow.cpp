@@ -1,6 +1,7 @@
 #include "dashboardwindow.h"
 
 #include "dashboardcharts.h"
+#include "dashboarddemostyle.h"
 #include "dashboardaccountpage.h"
 #include "dashboardaccountpanel.h"
 #include "dashboardcontactspanel.h"
@@ -3366,12 +3367,7 @@ void DashboardWindow::applyThemeChrome()
         "#profileHeroAvatar { background:%2; color:%6; border-radius:32px;"
         " font-weight:700; font-size:16px; }"
         "QFrame#dashboardSeparator { color:%3; }"
-        "QComboBox#qtmaterial_combo_box { background:%4; color:%5; border:1px solid %3;"
-        " border-radius:8px; padding:8px 28px 8px 10px; min-height:28px; }"
-        "QComboBox#qtmaterial_combo_box:hover { border-color:%2; }"
-        "QComboBox#qtmaterial_combo_box QAbstractItemView { background:%4; color:%5;"
-        " selection-background-color:%2; selection-color:%6; border:1px solid %3;"
-        " outline:0; padding:4px; }"
+
         "QCalendarWidget#dashboardCalendar { background:%4; border:0; }"
         "QCalendarWidget#dashboardCalendar QToolButton { color:%5; background:transparent;"
         " border:0; padding:3px; }"
@@ -3479,6 +3475,8 @@ void DashboardWindow::applyThemeChrome()
             bar->update();
         }
     }
+
+    DashboardDemoStyle::apply(m_central);
 }
 
 void DashboardWindow::updateResponsiveLayout()
