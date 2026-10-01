@@ -3567,9 +3567,7 @@ void DashboardWindow::applyThemeChrome()
             .arg(cssColor(sidebarHover))
             .arg(cssColor(sidebarProfile)));
 
-        const auto navButtons =
-            m_sidebar->findChildren<QToolButton*>(QStringLiteral("dashboardNavButton"));
-        for (QToolButton* button : navButtons) {
+        for (QToolButton* button : m_sidebarThemeButtons) {
             const QString iconName =
                 button->property("dashboardIconName").toString();
             if (!iconName.isEmpty()) {
@@ -3591,10 +3589,7 @@ void DashboardWindow::applyThemeChrome()
             .arg(cssColor(materialColor(QtMaterial::ColorRole::PrimaryContainer)))
             .arg(cssColor(materialColor(QtMaterial::ColorRole::OnPrimaryContainer))));
 
-        const auto drawerButtons =
-            m_navigationDrawer->findChildren<QToolButton*>(
-                QStringLiteral("dashboardNavButton"));
-        for (QToolButton* button : drawerButtons) {
+        for (QToolButton* button : m_drawerThemeButtons) {
             const QString iconName =
                 button->property("dashboardIconName").toString();
             if (!iconName.isEmpty()) {
@@ -3641,8 +3636,7 @@ void DashboardWindow::applyThemeChrome()
             .arg(cssColor(materialColor(QtMaterial::ColorRole::PrimaryContainer)))
             .arg(cssColor(materialColor(QtMaterial::ColorRole::OnPrimaryContainer))));
 
-        const auto actionButtons = m_topBar->findChildren<QAbstractButton*>();
-        for (QAbstractButton* button : actionButtons) {
+        for (QAbstractButton* button : m_topBarThemeButtons) {
             const QString iconName =
                 button->property("dashboardIconName").toString();
             if (iconName.isEmpty()) {
@@ -3709,7 +3703,8 @@ void DashboardWindow::applyThemeChrome()
             .arg(cssColor(surfaceVariant))
             .arg(cssColor(onSurface))
             .arg(cssColor(onSurfaceVariant));
-        m_pages->setStyleSheet(pageStyle + applicationChrome);
+        m_pageChromeStyle = pageStyle + applicationChrome;
+        applyVisiblePageChrome();
 
         QPalette pagesPalette = m_pages->palette();
         pagesPalette.setColor(QPalette::Window, surfaceVariant);
@@ -3726,11 +3721,7 @@ void DashboardWindow::applyThemeChrome()
         m_pageSubtitle->setPalette(palette);
     }
 
-    const auto metricIcons =
-        m_contentHost
-            ? m_contentHost->findChildren<QLabel*>(QStringLiteral("metricIcon"))
-            : QList<QLabel*>();
-    for (QLabel* icon : metricIcons) {
+    for (QLabel* icon : m_metricThemeIcons) {
         const auto role = static_cast<QtMaterial::ColorRole>(
             icon->property("dashboardColorRole").toInt());
         const QString iconName =
@@ -3760,15 +3751,11 @@ void DashboardWindow::applyThemeChrome()
     }
 
     if (m_pages) {
-        const auto positiveLabels =
-            m_pages->findChildren<QLabel*>(QStringLiteral("positiveDelta"));
-        for (QLabel* label : positiveLabels) {
+        for (QLabel* label : m_positiveThemeLabels) {
             label->setStyleSheet(QStringLiteral("color:%1;").arg(cssColor(positive)));
         }
 
-        const auto legendDots =
-            m_pages->findChildren<QLabel*>(QStringLiteral("legendDot"));
-        for (QLabel* dot : legendDots) {
+        for (QLabel* dot : m_legendThemeDots) {
             const auto role = static_cast<QtMaterial::ColorRole>(
                 dot->property("dashboardColorRole").toInt());
             dot->setStyleSheet(
@@ -3786,13 +3773,8 @@ void DashboardWindow::applyThemeChrome()
     if (m_revenueSummary) {
         m_revenueSummary->update();
     }
-    if (m_contentHost) {
-        const auto bars =
-            m_contentHost->findChildren<QWidget*>(
-                QStringLiteral("dashboardSocialBars"));
-        for (QWidget* bar : bars) {
-            bar->update();
-        }
+    for (QWidget* bar : m_socialThemeBars) {
+        bar->update();
     }
 
     if (m_commandPalette) {
