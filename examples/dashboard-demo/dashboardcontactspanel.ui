@@ -2,7 +2,12 @@
 <ui version="4.0">
  <class>DashboardContactsPanel</class>
  <widget class="QWidget" name="DashboardContactsPanel">
-  <property name="minimumSize"><size><width>340</width><height>560</height></size></property>
+  <property name="minimumSize">
+   <size>
+    <width>340</width>
+    <height>0</height>
+   </size>
+  </property>
   <layout class="QVBoxLayout" name="rootLayout">
    <property name="spacing"><number>12</number></property>
    <property name="leftMargin"><number>18</number></property>
