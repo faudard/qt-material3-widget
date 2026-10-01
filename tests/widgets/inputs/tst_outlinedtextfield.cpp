@@ -7,6 +7,7 @@
 #include <QRegularExpressionValidator>
 #include <QSignalSpy>
 #include <QToolButton>
+#include <QVBoxLayout>
 
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 
@@ -38,6 +39,7 @@ private slots:
     void accessibilityState();
     void forwardsFocusToLineEdit();
     void sizeHintRespectsShellHeight();
+    void formLayoutDoesNotCompressShellBelowMinimumHint();
     void contentChangeInvalidatesShellText();
     void placeholderRoundTrip();
     void prefixAndSuffixRoundTripAndCreateVisibleLabels();
@@ -96,6 +98,38 @@ void tst_OutlinedTextField::sizeHintRespectsShellHeight()
     const QSize hint = widget.sizeHint();
     QVERIFY(hint.height() >= 80);
     QVERIFY(hint.width() >= 120);
+}
+
+void tst_OutlinedTextField::formLayoutDoesNotCompressShellBelowMinimumHint()
+{
+    QWidget host;
+    auto* layout = new QVBoxLayout(&host);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(8);
+
+    QVector<QtMaterial::QtMaterialOutlinedTextField*> fields;
+    for (int i = 0; i < 4; ++i) {
+        auto* field = new QtMaterial::QtMaterialOutlinedTextField(&host);
+        field->setLabelText(QStringLiteral("Field %1").arg(i + 1));
+        if (i == 1) {
+            field->setSupportingText(QStringLiteral("Supporting text"));
+        }
+        layout->addWidget(field);
+        fields.append(field);
+    }
+
+    // This is intentionally smaller than the sum of the fields' preferred
+    // heights. The top-level widget must grow to the layout minimum instead
+    // of compressing Material shells down to a stale explicit minimum.
+    host.resize(420, 280);
+    host.show();
+    QCoreApplication::processEvents();
+
+    for (const auto* field : fields) {
+        QVERIFY2(
+            field->height() >= field->minimumSizeHint().height(),
+            "OutlinedTextField was compressed below its shell minimumSizeHint");
+    }
 }
 
 void tst_OutlinedTextField::contentChangeInvalidatesShellText()
