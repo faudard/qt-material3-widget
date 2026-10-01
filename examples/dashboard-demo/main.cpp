@@ -49,6 +49,9 @@ int pageIndex(const QString& page)
     if (normalized == QStringLiteral("invoice")) {
         return 11;
     }
+    if (normalized == QStringLiteral("apps")) {
+        return 12;
+    }
     return 0;
 }
 
@@ -91,7 +94,7 @@ int main(int argc, char** argv)
         QStringList{QStringLiteral("page")},
         QStringLiteral(
             "Open a page: dashboard, analytics, orders, customers, components, "
-            "profile, pricing, states, settings, account, ecommerce or invoice."),
+            "profile, pricing, states, settings, account, ecommerce, invoice or apps."),
         QStringLiteral("name"),
         QStringLiteral("dashboard"));
     const QCommandLineOption screenshotOption(
