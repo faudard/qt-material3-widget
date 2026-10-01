@@ -2,6 +2,7 @@
 
 #include <QAbstractItemView>
 #include <QComboBox>
+#include <QColor>
 #include <QFont>
 #include <QFrame>
 #include <QListView>
@@ -60,15 +61,21 @@ void polishCombo(QtMaterial::QtMaterialComboBox* combo)
     combo->setMinimumHeight(42);
     combo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     combo->setMaxVisibleItems(8);
+    combo->setMinimumWidth(
+        qMax(combo->minimumWidth(), combo->sizeHint().width() + 12));
 
     if (QAbstractItemView* view = combo->view()) {
         view->setFrameShape(QFrame::NoFrame);
-        view->setItemDelegate(new DashboardComboItemDelegate(view));
-        view->setMinimumWidth(qMax(combo->width(), 190));
+        view->setMinimumWidth(qMax(combo->minimumWidth(), 190));
 
-        if (auto* list = qobject_cast<QListView*>(view)) {
-            list->setUniformItemSizes(true);
-            list->setSpacing(2);
+        if (!view->property("dashboardDemoStyled").toBool()) {
+            view->setItemDelegate(new DashboardComboItemDelegate(view));
+            view->setProperty("dashboardDemoStyled", true);
+
+            if (auto* list = qobject_cast<QListView*>(view)) {
+                list->setUniformItemSizes(true);
+                list->setSpacing(2);
+            }
         }
     }
 }
