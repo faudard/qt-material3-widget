@@ -1356,6 +1356,78 @@ QWidget* DashboardWindow::createDashboardPage()
         setCurrentSection(12);
     });
 
+    auto* projectsCard = new QtMaterial::QtMaterialCard(page);
+    projectsCard->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    projectsCard->setMinimumHeight(220);
+    auto* projectsLayout = new QVBoxLayout(projectsCard);
+    projectsLayout->setContentsMargins(18, 16, 18, 16);
+    projectsLayout->setSpacing(12);
+
+    auto* projectsHeader = new QHBoxLayout;
+    projectsHeader->addWidget(makeLabel(QStringLiteral("Active projects"), projectsCard, 2.0, false));
+    projectsHeader->addStretch(1);
+    auto* browseProjects = new QtMaterial::QtMaterialTextButton(
+        QStringLiteral("View projects  ›"),
+        projectsCard);
+    projectsHeader->addWidget(browseProjects);
+    projectsLayout->addLayout(projectsHeader);
+
+    const struct {
+        const char* name;
+        const char* status;
+        int progress;
+        const char* due;
+    } projectItems[] = {
+        {"Material 3 Desktop", "Active", 72, "08 Oct"},
+        {"Dashboard showcase", "Active", 86, "12 Oct"},
+        {"Accessibility audit", "At risk", 41, "04 Oct"}
+    };
+
+    for (const auto& project : projectItems) {
+        auto* row = new QWidget(projectsCard);
+        row->setMinimumHeight(46);
+        auto* rowLayout = new QHBoxLayout(row);
+        rowLayout->setContentsMargins(0, 0, 0, 0);
+        rowLayout->setSpacing(12);
+
+        auto* name = makeLabel(
+            QString::fromLatin1(project.name),
+            row,
+            0.0,
+            true);
+        name->setMinimumWidth(180);
+        rowLayout->addWidget(name);
+
+        auto* progress = new QtMaterial::QtMaterialLinearProgressIndicator(row);
+        progress->setValue(static_cast<qreal>(project.progress) / 100.0);
+        progress->setStatusText(
+            QStringLiteral("%1 percent complete").arg(project.progress));
+        rowLayout->addWidget(progress, 1);
+
+        auto* status = new QtMaterial::QtMaterialChip(
+            QString::fromLatin1(project.status),
+            row);
+        status->setVariant(QtMaterial::ChipVariant::Assist);
+        rowLayout->addWidget(status);
+
+        auto* due = makeLabel(
+            QString::fromLatin1(project.due),
+            row,
+            -1.0,
+            false);
+        due->setObjectName(QStringLiteral("metricTitle"));
+        due->setMinimumWidth(58);
+        rowLayout->addWidget(due, 0, Qt::AlignRight);
+
+        projectsLayout->addWidget(row);
+    }
+
+    layout->addWidget(projectsCard);
+
+    connect(browseProjects, &QAbstractButton::clicked, this, [this]() {
+        setCurrentSection(13);
+    });
+
     layout->addWidget(createOrdersCard());
     layout->addStretch(1);
 
