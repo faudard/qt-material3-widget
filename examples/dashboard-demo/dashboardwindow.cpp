@@ -5,6 +5,7 @@
 #include "dashboardecommercepage.h"
 #include "dashboardinvoicepage.h"
 #include "dashboardappspage.h"
+#include "dashboardprojectspage.h"
 #include "dashboardaccountpage.h"
 #include "dashboardaccountpanel.h"
 #include "dashboardcontactspanel.h"
@@ -625,6 +626,12 @@ DashboardWindow::DashboardWindow(QWidget* parent)
     });
     m_pages->addWidget(createPageScroll(appsPage));
 
+    auto* projectsPage = new DashboardProjectsPage;
+    connect(projectsPage, &DashboardProjectsPage::messageRequested, this, [this](const QString& text) {
+        showMessage(text);
+    });
+    m_pages->addWidget(createPageScroll(projectsPage));
+
     m_navigationDrawer = createNavigationDrawer();
     m_accountPanel = createAccountPanel();
     m_contactsPanel = createContactsPanel();
@@ -839,6 +846,7 @@ QWidget* DashboardWindow::createSidebar()
     addShortcut(QStringLiteral("Metrics"), QStringLiteral("analytics"), 1);
     addShortcut(QStringLiteral("Widgets"), QStringLiteral("components"), 4);
     addPrimaryNavigation(QStringLiteral("Apps"), QStringLiteral("components"), 12);
+    addPrimaryNavigation(QStringLiteral("Projects"), QStringLiteral("analytics"), 13);
     addPrimaryNavigation(QStringLiteral("Ecommerce"), QStringLiteral("orders"), 10);
     m_navButtons.first()->setChecked(true);
 
@@ -929,7 +937,8 @@ QtMaterial::QtMaterialNavigationRail* DashboardWindow::createNavigationRail()
         {"Account", "profile"},
         {"Ecommerce", "orders"},
         {"Invoice", "invoice"},
-        {"Apps", "components"}
+        {"Apps", "components"},
+        {"Projects", "analytics"}
     };
 
     for (const auto& destination : destinations) {
@@ -997,10 +1006,11 @@ QtMaterial::QtMaterialNavigationDrawer* DashboardWindow::createNavigationDrawer(
         {"Account", "profile"},
         {"Ecommerce", "orders"},
         {"Invoice", "invoice"},
-        {"Apps", "components"}
+        {"Apps", "components"},
+        {"Projects", "analytics"}
     };
 
-    for (int i = 0; i < 13; ++i) {
+    for (int i = 0; i < 14; ++i) {
         auto* button = makeNavButton(
             QString::fromLatin1(destinations[i].label),
             QString::fromLatin1(destinations[i].icon),
@@ -3160,6 +3170,7 @@ void DashboardWindow::populateCommandPalette()
     model->appendRow(new QStandardItem(QStringLiteral("Ecommerce  ·  /dashboard/ecommerce")));
     model->appendRow(new QStandardItem(QStringLiteral("Invoice  ·  /invoice/INV-1994")));
     model->appendRow(new QStandardItem(QStringLiteral("Apps  ·  /apps")));
+    model->appendRow(new QStandardItem(QStringLiteral("Projects  ·  /projects")));
     m_commandPalette->setSourceModel(model);
 }
 
@@ -3754,7 +3765,8 @@ void DashboardWindow::setCurrentSection(int index)
         "Account",
         "Ecommerce",
         "Invoice",
-        "Apps Marketplace"
+        "Apps Marketplace",
+        "Projects"
     };
     const QString title = QString::fromLatin1(titles[index]);
 
@@ -3779,7 +3791,8 @@ void DashboardWindow::setCurrentSection(int index)
             "Search account...",
             "Search ecommerce...",
             "Search invoice...",
-            "Search apps..."
+            "Search apps...",
+            "Search projects..."
         };
         m_search->setPlaceholderText(QString::fromLatin1(placeholders[index]));
     }
