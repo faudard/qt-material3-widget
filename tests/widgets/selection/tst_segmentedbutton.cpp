@@ -1,6 +1,10 @@
 #include <QtTest/QtTest>
 
+#include <QFontMetrics>
+
 #include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
+#include "qtmaterial/specs/qtmaterialsegmentedbuttonspecresolver.h"
+#include "qtmaterial/theme/qtmaterialthememanager.h"
 
 using namespace QtMaterial;
 
@@ -14,6 +18,7 @@ private slots:
     void homeAndEndSelectFirstAndLastEnabledSegments();
     void multiSelectionTogglesCurrentSegment();
     void accessibilitySummaryReflectsState();
+    void contentAwareWidthsMatchIntrinsicSizeHint();
 };
 
 void tst_SegmentedButton::constructionAndSelection()
@@ -107,6 +112,54 @@ void tst_SegmentedButton::accessibilitySummaryReflectsState()
     QVERIFY(summary.contains(QStringLiteral("List")));
     QVERIFY(button.segmentAccessibleText(0).contains(QStringLiteral("disabled")));
     QVERIFY(button.currentSegmentAccessibleText().contains(QStringLiteral("selected")));
+}
+
+void tst_SegmentedButton::contentAwareWidthsMatchIntrinsicSizeHint()
+{
+    QtMaterialSegmentedButton button;
+    button.addSegment(QStringLiteral("A"));
+    button.addSegment(
+        QStringLiteral("A deliberately much longer middle segment"));
+    button.addSegment(QStringLiteral("B"));
+
+    const auto spec =
+        SegmentedButtonSpecResolver().segmentedButtonSpec(
+            ThemeManager::instance().theme(),
+            button.density());
+    const QFont resolvedFont =
+        spec.hasResolvedLabelFont
+            ? spec.labelFont
+            : button.font();
+    const QFontMetrics metrics(resolvedFont);
+
+    const int firstWidth =
+        qMax(
+            spec.minSegmentWidth,
+            spec.horizontalPadding * 2
+                + metrics.horizontalAdvance(
+                    button.segmentText(0)));
+    const int secondWidth =
+        qMax(
+            spec.minSegmentWidth,
+            spec.horizontalPadding * 2
+                + metrics.horizontalAdvance(
+                    button.segmentText(1)));
+
+    QVERIFY(secondWidth > firstWidth);
+
+    button.resize(button.sizeHint());
+    button.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&button));
+
+    // With content-aware geometry this point is already inside segment 1.
+    // The old equal-width geometry incorrectly kept it in segment 0.
+    QTest::mouseClick(
+        &button,
+        Qt::LeftButton,
+        Qt::NoModifier,
+        QPoint(firstWidth + 2, button.height() / 2));
+
+    QCOMPARE(button.currentIndex(), 1);
 }
 
 QTEST_MAIN(tst_SegmentedButton)
