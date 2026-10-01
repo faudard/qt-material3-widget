@@ -102,7 +102,7 @@ void polishButton(QtMaterial::QtMaterialTextButton* button)
 
 namespace DashboardDemoStyle {
 
-void apply(QWidget* root)
+inline void apply(QWidget* root)
 {
     if (!root) {
         return;
@@ -196,7 +196,7 @@ void apply(QWidget* root)
     polishControls(root);
 }
 
-void polishControls(QWidget* root)
+inline void polishControls(QWidget* root)
 {
     if (!root) {
         return;
