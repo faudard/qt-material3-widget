@@ -23,6 +23,12 @@ if(COMMAND qt_add_executable)
         dashboardwindow.ui
         dashboardcharts.cpp
         dashboardcharts.h
+        dashboardecommercepage.cpp
+        dashboardecommercepage.h
+        dashboardecommercepage.ui
+        dashboardecommercepage.cpp
+        dashboardecommercepage.h
+        dashboardecommercepage.ui
         dashboarddemostyle.cpp
         dashboarddemostyle.h
         dashboarddemostyle.cpp
