@@ -620,6 +620,9 @@ DashboardWindow::DashboardWindow(QWidget* parent)
 
     m_snackbarHost = new QtMaterial::QtMaterialSnackbarHost(m_central, this);
     m_commandPalette = new QtMaterial::QtMaterialCommandPalette(this);
+    m_commandPalette->setWindowFlag(Qt::FramelessWindowHint, true);
+    m_commandPalette->setModal(true);
+    m_commandPalette->resize(620, 520);
     populateCommandPalette();
 
     auto* commandShortcut = new QShortcut(QKeySequence(QStringLiteral("Ctrl+K")), this);
@@ -3494,6 +3497,24 @@ void DashboardWindow::applyThemeChrome()
         for (QWidget* bar : bars) {
             bar->update();
         }
+    }
+
+    if (m_commandPalette) {
+        m_commandPalette->setStyleSheet(QStringLiteral(
+            "#QtMaterialCommandPalette { background:%1; border:1px solid %2; border-radius:20px; }"
+            "#QtMaterialCommandPalette QLineEdit { background:%3; color:%4; border:1px solid %2;"
+            " border-radius:14px; padding:12px 14px; font-size:15px; }"
+            "#QtMaterialCommandPalette QListView { background:%1; color:%4; border:0; outline:0; padding:6px; }"
+            "#QtMaterialCommandPalette QListView::item { min-height:48px; padding:5px 12px;"
+            " border-bottom:1px solid %2; border-radius:10px; }"
+            "#QtMaterialCommandPalette QListView::item:hover { background:%3; }"
+            "#QtMaterialCommandPalette QListView::item:selected { background:%5; color:%6; }")
+            .arg(cssColor(surface))
+            .arg(cssColor(outline))
+            .arg(cssColor(surfaceVariant))
+            .arg(cssColor(onSurface))
+            .arg(cssColor(materialColor(QtMaterial::ColorRole::PrimaryContainer)))
+            .arg(cssColor(materialColor(QtMaterial::ColorRole::OnPrimaryContainer))));
     }
 
     DashboardDemoStyle::apply(m_central);
