@@ -3567,6 +3567,18 @@ void DashboardWindow::setCurrentSection(int index)
     const int maximumIndex = m_pages ? m_pages->count() - 1 : m_navButtons.size() - 1;
     index = qBound(0, index, maximumIndex);
 
+    QWidget* sidePanels[] = {
+        m_accountPanel,
+        m_contactsPanel,
+        m_notificationsPanel,
+        m_settingsPanel
+    };
+    for (QWidget* panel : sidePanels) {
+        if (panel) {
+            panel->hide();
+        }
+    }
+
     if (index >= 0 && index < m_navButtons.size()) {
         m_navButtons.at(index)->setChecked(true);
     }
