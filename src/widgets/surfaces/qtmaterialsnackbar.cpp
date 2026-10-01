@@ -144,6 +144,16 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
 
     connect(d_ptr->transition, &QtMaterialTransitionController::finished,
             this, [this]() {
+                // TransitionController snaps its logical progress to the exact
+                // endpoint even when the last animation frame was already
+                // within epsilon and therefore did not emit progressChanged.
+                // Keep the graphics effect synchronized with that endpoint so
+                // the complete snackbar is exactly opaque/transparent.
+                if (d_ptr->opacityEffect) {
+                    d_ptr->opacityEffect->setOpacity(
+                        qBound<qreal>(0.0, progress(), 1.0));
+                }
+
                 if (d_ptr->state == State::Entering) {
                     d_ptr->state = State::Visible;
                     updateAutoHide();
