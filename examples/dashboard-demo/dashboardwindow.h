@@ -12,6 +12,7 @@ class QScrollArea;
 class QFrame;
 class QToolButton;
 class QStackedWidget;
+class QAbstractButton;
 
 namespace Ui {
 class DashboardWindow;
@@ -88,7 +89,10 @@ private:
     void populateCommandPalette();
     void applyPeriod();
     void applyFilter(const QString& text);
+    void cacheThemeTargets();
     void applyThemeChrome();
+    void applyVisiblePageChrome();
+    void updateChartAccent();
     void updateResponsiveLayout();
     void layoutRightPanels();
     void showRightPanel(QWidget* panel);
@@ -122,6 +126,13 @@ private:
     QVector<MetricWidgets> m_metrics;
     QVector<QtMaterial::QtMaterialCard*> m_metricCards;
     QVector<QToolButton*> m_navButtons;
+    QVector<QToolButton*> m_sidebarThemeButtons;
+    QVector<QToolButton*> m_drawerThemeButtons;
+    QVector<QAbstractButton*> m_topBarThemeButtons;
+    QVector<QLabel*> m_metricThemeIcons;
+    QVector<QLabel*> m_positiveThemeLabels;
+    QVector<QLabel*> m_legendThemeDots;
+    QVector<QWidget*> m_socialThemeBars;
     QWidget* m_revenueSummary = nullptr;
     QtMaterial::QtMaterialCard* m_statisticsCard = nullptr;
     QtMaterial::QtMaterialCard* m_earningsCard = nullptr;
@@ -136,6 +147,7 @@ private:
     QtMaterial::QtMaterialIconButton* m_menuButton = nullptr;
     QtMaterial::QtMaterialPagination* m_ordersPagination = nullptr;
     QString m_orderStatusFilter = QStringLiteral("All");
+    QString m_pageChromeStyle;
     int m_chartMetricIndex = 0;
     bool m_compactMetrics = false;
     bool m_stackedCharts = false;
