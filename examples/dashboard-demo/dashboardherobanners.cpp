@@ -15,6 +15,7 @@
 #include <QStringList>
 #include <QToolButton>
 #include <QVBoxLayout>
+#include <QVector>
 
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
@@ -52,7 +53,7 @@ public:
     {
         setAttribute(Qt::WA_StyledBackground, true);
         setMinimumHeight(278);
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     }
 
 protected:
@@ -338,7 +339,7 @@ public:
         : QWidget(parent)
     {
         setMinimumHeight(278);
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         setFocusPolicy(Qt::StrongFocus);
         setAccessibleName(QStringLiteral("Featured dashboard carousel"));
 
