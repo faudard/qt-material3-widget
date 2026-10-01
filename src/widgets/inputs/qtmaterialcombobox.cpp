@@ -535,7 +535,9 @@ bool QtMaterialComboBox::event(
         break;
 
     case QEvent::ChildAdded:
-        syncEditableLineEdit();
+        if (d_ptr->themeBinding) {
+            syncEditableLineEdit();
+        }
         break;
 
     default:
