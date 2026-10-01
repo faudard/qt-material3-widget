@@ -42,6 +42,8 @@ DashboardAccountPanel::DashboardAccountPanel(QWidget* parent)
 {
     m_ui->setupUi(this);
     setObjectName(QStringLiteral("dashboardAccountPanel"));
+    setAttribute(Qt::WA_StyledBackground, true);
+    setAutoFillBackground(true);
 
     QFont nameFont = m_ui->nameLabel->font();
     nameFont.setBold(true);
@@ -99,11 +101,12 @@ DashboardAccountPanel::DashboardAccountPanel(QWidget* parent)
     };
 
     for (const auto& destination : destinations) {
-        auto* button = new QtMaterial::QtMaterialTextButton(
-            QString::fromLatin1(destination.label),
-            this);
-        button->setMinimumHeight(44);
+        auto* button = new QToolButton(this);
+        button->setText(QString::fromLatin1(destination.label));
+        button->setMinimumHeight(42);
         button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        button->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        button->setCursor(Qt::PointingHandCursor);
         button->setObjectName(QStringLiteral("accountMenuButton"));
         m_ui->menuLayout->addWidget(button);
         const int page = destination.page;
@@ -176,13 +179,16 @@ void DashboardAccountPanel::applyTheme()
         "#dashboardAccountPanel QLabel { color:%2; }"
         "#dashboardAccountPanel #emailLabel { color:%3; }"
         "#dashboardAccountPanel #avatarLabel { background:%4; color:%5;"
-        " border:3px solid %6; border-radius:39px; font-size:20px; font-weight:700; }"
+        " border:2px solid %6; border-radius:39px; font-size:20px; font-weight:700; }"
         "#dashboardAccountPanel #accountCloseButton { background:transparent; color:%3;"
         " border:0; border-radius:18px; font-size:25px; }"
         "#dashboardAccountPanel #accountCloseButton:hover { background:%4; color:%5; }"
         "#dashboardAccountPanel #accountSwitcher { background:%4; color:%5;"
         " border:1px solid %7; border-radius:21px; font-weight:600; }"
         "#dashboardAccountPanel #accountSwitcher:hover { border-color:%6; }"
+        "#dashboardAccountPanel #accountMenuButton { background:transparent; color:%2;"
+        " border:0; border-radius:10px; padding:9px 12px; text-align:left; font-weight:500; }"
+        "#dashboardAccountPanel #accountMenuButton:hover { background:%4; color:%5; }"
         "#dashboardAccountPanel #promoFrame {"
         " background:qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 %8,stop:1 %4);"
         " border:0; border-radius:14px; }"
