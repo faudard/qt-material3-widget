@@ -12,6 +12,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPalette>
+#include <QShowEvent>
 #include <QSignalBlocker>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -294,9 +295,18 @@ DashboardSettingsPanel::DashboardSettingsPanel(QWidget* parent)
         this,
         [this](const QtMaterial::Theme&) {
             syncFromTheme();
-            applyTheme();
+            if (isVisible()) {
+                applyTheme();
+            }
         });
 
+    syncFromTheme();
+    applyTheme();
+}
+
+void DashboardSettingsPanel::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
     syncFromTheme();
     applyTheme();
 }
