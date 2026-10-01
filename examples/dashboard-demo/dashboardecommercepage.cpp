@@ -6,11 +6,13 @@
 #include <QColor>
 #include <QFont>
 #include <QGridLayout>
+#include <QHeaderView>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPainter>
 #include <QPainterPath>
 #include <QStandardItemModel>
+#include <QSizePolicy>
 #include <QVBoxLayout>
 
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
