@@ -7,6 +7,10 @@ namespace Ui {
 class DashboardSettingsPanel;
 }
 
+namespace QtMaterial {
+class QtMaterialSwitch;
+}
+
 class DashboardSettingsPanel final : public QWidget
 {
     Q_OBJECT
@@ -23,8 +27,8 @@ private:
     void applyTheme();
     void syncFromTheme();
     Ui::DashboardSettingsPanel* m_ui = nullptr;
-    class QtMaterialSwitch* m_modeSwitch = nullptr;
-    class QtMaterialSwitch* m_contrastSwitch = nullptr;
-    class QtMaterialSwitch* m_rtlSwitch = nullptr;
-    class QtMaterialSwitch* m_compactSwitch = nullptr;
+    QtMaterial::QtMaterialSwitch* m_modeSwitch = nullptr;
+    QtMaterial::QtMaterialSwitch* m_contrastSwitch = nullptr;
+    QtMaterial::QtMaterialSwitch* m_rtlSwitch = nullptr;
+    QtMaterial::QtMaterialSwitch* m_compactSwitch = nullptr;
 };
