@@ -776,7 +776,10 @@ QWidget* DashboardWindow::createSidebar()
             int index) {
             auto* button = makeNavButton(label, iconName, navigationContent);
             group->addButton(button, index);
-            m_navButtons.append(button);
+            if (m_navButtons.size() <= index) {
+                m_navButtons.resize(index + 1);
+            }
+            m_navButtons[index] = button;
             navigationLayout->addWidget(button);
             connect(button, &QToolButton::clicked, this, [this, index]() {
                 setCurrentSection(index);
