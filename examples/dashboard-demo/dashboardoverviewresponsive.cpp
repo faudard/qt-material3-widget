@@ -2,6 +2,7 @@
 
 #include <QBoxLayout>
 #include <QGridLayout>
+#include <QHeaderView>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QToolButton>
