@@ -98,10 +98,10 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `selection.checkbox` | Checkbox | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Checkbox Material reference model or deterministic visual conformance evidence is available. |
-| `selection.radio` | Radio Button | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Radio Button Material reference model or deterministic visual conformance evidence is available. |
-| `selection.segmented-button` | Segmented Button | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Segmented Button Material reference model or deterministic visual conformance evidence is available. |
-| `selection.switch` | Switch | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Switch Material reference model or deterministic visual conformance evidence is available. |
+| `selection.checkbox` | Checkbox | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Checkbox has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity. |
+| `selection.radio` | Radio Button | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Radio Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity. |
+| `selection.segmented-button` | Segmented Button | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Segmented Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity. |
+| `selection.switch` | Switch | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Switch has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity. |
 
 ### Surfaces
 
@@ -187,10 +187,10 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Tabs | Add deterministic visual-reference coverage and broaden the full state matrix for complete maturity. |
 | Circular Progress Indicator | Add progress token, animation, accessibility and visual evidence before raising maturity axes. |
 | Linear Progress Indicator | Add reviewed visual references and broader animation-end-state coverage for complete maturity. |
-| Checkbox | Add Checkbox state, keyboard, accessibility, RTL and visual evidence before raising maturity axes. |
-| Radio Button | Add Radio Button state, keyboard, accessibility, RTL and visual evidence before raising maturity axes. |
-| Segmented Button | Add Segmented Button state, keyboard, accessibility, RTL and visual evidence before raising maturity axes. |
-| Switch | Add Switch state, keyboard, accessibility, RTL and visual evidence before raising maturity axes. |
+| Checkbox | Add deterministic Material visual-reference/state-matrix coverage for Checkbox before promoting maturity further. |
+| Radio Button | Add deterministic Material visual-reference/state-matrix coverage for Radio Button before promoting maturity further. |
+| Segmented Button | Add deterministic Material visual-reference/state-matrix coverage for Segmented Button before promoting maturity further. |
+| Switch | Add deterministic Material visual-reference/state-matrix coverage for Switch before promoting maturity further. |
 | Banner | Add Banner state, focus, RTL and visual evidence before raising maturity axes. |
 | Bottom App Bar | Add App Bar state, action, RTL and visual evidence before raising maturity axes. |
 | Bottom Sheet | Add drag, focus, RTL and visual conformance evidence before raising maturity axes. |

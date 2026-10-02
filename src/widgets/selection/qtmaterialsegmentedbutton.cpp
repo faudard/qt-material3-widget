@@ -62,6 +62,7 @@ void QtMaterialSegmentedButton::insertSegment(int index, const QString& text, co
     if (d->currentIndex >= index) {
         ++d->currentIndex;
     }
+    syncAccessibility();
     updateGeometry();
     update();
 }
@@ -78,6 +79,7 @@ void QtMaterialSegmentedButton::removeSegment(int index)
     } else if (d->currentIndex > index) {
         --d->currentIndex;
     }
+    syncAccessibility();
     updateGeometry();
     update();
 }
@@ -89,6 +91,7 @@ void QtMaterialSegmentedButton::clearSegments()
     }
     d->segments.clear();
     d->currentIndex = -1;
+    syncAccessibility();
     updateGeometry();
     update();
     emit currentIndexChanged(-1);
@@ -105,6 +108,7 @@ void QtMaterialSegmentedButton::setSegmentText(int index, const QString& text)
         return;
     }
     d->segments[index].text = text;
+    syncAccessibility();
     updateGeometry();
     update();
 }
@@ -138,6 +142,7 @@ void QtMaterialSegmentedButton::setCurrentIndex(int index)
         }
     }
     d->currentIndex = index;
+    syncAccessibility();
     update();
     emit currentIndexChanged(index);
 }
@@ -161,6 +166,7 @@ void QtMaterialSegmentedButton::setSegmentChecked(int index, bool checked)
         emit currentIndexChanged(index);
     }
     d->segments[index].checked = checked;
+    syncAccessibility();
     update();
     emit segmentToggled(index, checked);
 }
@@ -173,6 +179,7 @@ void QtMaterialSegmentedButton::setMultiSelection(bool enabled)
         return;
     }
     d->multiSelection = enabled;
+    syncAccessibility();
     emit multiSelectionChanged(enabled);
 }
 
@@ -474,7 +481,6 @@ void QtMaterialSegmentedButton::toggleIndex(int index)
         setCurrentIndex(index);
         emit segmentToggled(index, true);
     }
-    syncAccessibility();
 }
 
 const SegmentedButtonSpec& QtMaterialSegmentedButton::resolvedSpec() const
@@ -522,14 +528,12 @@ void QtMaterialSegmentedButton::keyPressEvent(QKeyEvent* event)
 
     if (event->key() == Qt::Key_Home) {
         setCurrentIndex(firstEnabledIndex());
-        syncAccessibility();
         event->accept();
         return;
     }
 
     if (event->key() == Qt::Key_End) {
         setCurrentIndex(lastEnabledIndex());
-        syncAccessibility();
         event->accept();
         return;
     }
@@ -542,7 +546,6 @@ void QtMaterialSegmentedButton::keyPressEvent(QKeyEvent* event)
         const int next = nextEnabledIndex(base, delta);
         if (next >= 0) {
             setCurrentIndex(next);
-            syncAccessibility();
         }
         event->accept();
         return;
