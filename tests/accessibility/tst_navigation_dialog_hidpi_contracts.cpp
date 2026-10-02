@@ -44,8 +44,8 @@ void tst_NavigationDialogHighDpiContracts::tabsSupportArrowHomeEndNavigation()
 
     auto* tabBar = tabs.findChild<QTabBar*>();
     QVERIFY(tabBar != nullptr);
-    tabBar->setFocus();
-    QVERIFY(tabBar->hasFocus());
+    tabBar->setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(tabBar->hasFocus());
 
     QTest::keyClick(tabBar, Qt::Key_Right);
     QTRY_COMPARE(tabs.currentIndex(), 1);

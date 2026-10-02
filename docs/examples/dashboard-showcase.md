@@ -6,7 +6,7 @@
 
 | Page | Purpose | Main Material surfaces |
 | --- | --- | --- |
-| Dashboard | KPIs, revenue, charts, tasks and recent orders | Card, ComboBox, Table, Checkbox, FilledTonalButton |
+| Dashboard | Welcome hero, featured carousel, KPIs, revenue, charts, tasks and recent orders | Card, FilledButton, ComboBox, Table, Checkbox, FilledTonalButton |
 | Analytics | acquisition and audience metrics | Card, LinearProgressIndicator, custom theme-aware charts |
 | Orders | searchable/filterable paginated order data | Chip, Table, Pagination, Dialog |
 | Customers | CRM metrics and directory | Card, Table |

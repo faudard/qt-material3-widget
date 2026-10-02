@@ -32,6 +32,8 @@ set(QTMATERIAL3_DASHBOARD_SOURCES
     dashboardwindow.cpp
     dashboardwindow.h
     dashboardwindow.ui
+    dashboardherobanners.cpp
+    dashboardherobanners.h
     dashboardcharts.cpp
     dashboardcharts.h
     dashboarddemostyle.cpp
