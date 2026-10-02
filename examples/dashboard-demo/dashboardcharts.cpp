@@ -1,18 +1,11 @@
 #include "dashboardcharts.h"
 #include "dashboarddemostyle.h"
 
-#include <QAbstractItemView>
-#include <QBitmap>
-#include <QComboBox>
-#include <QEvent>
 #include <QFontMetrics>
 #include <QFrame>
 #include <QHeaderView>
-#include <QListView>
 #include <QWidget>
 #include <QSizePolicy>
-#include <QStyledItemDelegate>
-#include <QStyleOptionViewItem>
 #include <QLinearGradient>
 #include <QPainter>
 #include <QPainterPath>
@@ -25,7 +18,6 @@
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
-#include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
 #include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
 
 namespace {
@@ -33,111 +25,6 @@ namespace {
 QColor color(QtMaterial::ColorRole role)
 {
     return QtMaterial::ThemeManager::instance().theme().colorScheme().color(role);
-}
-
-class DashboardComboItemDelegate final : public QStyledItemDelegate
-{
-public:
-    explicit DashboardComboItemDelegate(QObject* parent)
-        : QStyledItemDelegate(parent)
-    {
-    }
-
-    QSize sizeHint(
-        const QStyleOptionViewItem& option,
-        const QModelIndex& index) const override
-    {
-        QSize result = QStyledItemDelegate::sizeHint(option, index);
-        result.setHeight(qMax(result.height(), 44));
-        return result;
-    }
-};
-
-class DashboardComboPopupFilter final : public QObject
-{
-public:
-    explicit DashboardComboPopupFilter(QObject* parent)
-        : QObject(parent)
-    {
-    }
-
-protected:
-    bool eventFilter(QObject* watched, QEvent* event) override
-    {
-        if (event->type() != QEvent::Show
-            && event->type() != QEvent::Resize) {
-            return QObject::eventFilter(watched, event);
-        }
-
-        auto* popup = qobject_cast<QWidget*>(watched);
-        if (!popup || popup->width() <= 0 || popup->height() <= 0) {
-            return QObject::eventFilter(watched, event);
-        }
-
-        QBitmap mask(popup->size());
-        mask.fill(Qt::color0);
-
-        QPainter painter(&mask);
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.setPen(Qt::NoPen);
-        painter.setBrush(Qt::color1);
-        painter.drawRoundedRect(
-            popup->rect().adjusted(0, 0, -1, -1),
-            16.0,
-            16.0);
-        painter.end();
-
-        popup->setMask(mask);
-        return QObject::eventFilter(watched, event);
-    }
-};
-
-void polishDemoCombo(QtMaterial::QtMaterialComboBox* combo)
-{
-    if (!combo) {
-        return;
-    }
-
-    combo->setMinimumHeight(42);
-    combo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    combo->setMaxVisibleItems(8);
-    combo->setMinimumWidth(
-        qMax(combo->minimumWidth(), combo->sizeHint().width() + 12));
-
-    if (QAbstractItemView* view = combo->view()) {
-        view->setFrameShape(QFrame::NoFrame);
-        view->setMinimumWidth(qMax(combo->minimumWidth(), 190));
-
-        QWidget* popup = view->window();
-        if (popup) {
-            popup->setObjectName(QStringLiteral("dashboardComboPopup"));
-            popup->setAttribute(Qt::WA_StyledBackground, true);
-            popup->setStyleSheet(QStringLiteral(
-                "#dashboardComboPopup {"
-                " background:%1;"
-                " border:1px solid %2;"
-                " border-radius:16px;"
-                " }")
-                .arg(color(QtMaterial::ColorRole::Surface).name(QColor::HexRgb))
-                .arg(color(QtMaterial::ColorRole::OutlineVariant).name(QColor::HexRgb)));
-
-            if (!popup->property("dashboardRoundedPopup").toBool()) {
-                popup->installEventFilter(
-                    new DashboardComboPopupFilter(popup));
-                popup->setProperty("dashboardRoundedPopup", true);
-            }
-        }
-
-        if (!view->property("dashboardDemoStyled").toBool()) {
-            view->setItemDelegate(new DashboardComboItemDelegate(view));
-            view->setProperty("dashboardDemoStyled", true);
-
-            if (auto* list = qobject_cast<QListView*>(view)) {
-                list->setUniformItemSizes(true);
-                list->setSpacing(2);
-            }
-        }
-    }
 }
 
 void polishDemoButton(QtMaterial::QtMaterialTextButton* button)
@@ -492,12 +379,6 @@ void polishControls(QWidget* root)
 
     root->setProperty("dashboardDemoControlsPolished", true);
 
-    const auto combos =
-        root->findChildren<QtMaterial::QtMaterialComboBox*>();
-    for (QtMaterial::QtMaterialComboBox* combo : combos) {
-        polishDemoCombo(combo);
-    }
-
     const auto buttons =
         root->findChildren<QtMaterial::QtMaterialTextButton*>();
     for (QtMaterial::QtMaterialTextButton* button : buttons) {
@@ -520,92 +401,6 @@ void apply(QWidget* root)
     }
 
     polishControls(root);
-
-    const QColor surface = color(QtMaterial::ColorRole::Surface);
-    const QColor surfaceLow = color(QtMaterial::ColorRole::SurfaceContainerLow);
-    const QColor surfaceHigh = color(QtMaterial::ColorRole::SurfaceContainerHigh);
-    const QColor onSurface = color(QtMaterial::ColorRole::OnSurface);
-    const QColor outline = color(QtMaterial::ColorRole::OutlineVariant);
-    const QColor primary = color(QtMaterial::ColorRole::Primary);
-    const QColor primaryContainer = color(QtMaterial::ColorRole::PrimaryContainer);
-    const QColor onPrimaryContainer = color(QtMaterial::ColorRole::OnPrimaryContainer);
-
-    const QString comboStyle = QStringLiteral(
-        "QComboBox {"
-        " background:%1;"
-        " color:%2;"
-        " border:1px solid %3;"
-        " border-radius:14px;"
-        " padding:7px 34px 7px 14px;"
-        " min-height:28px;"
-        " selection-background-color:%4;"
-        " selection-color:%5;"
-        " }"
-        "QComboBox:hover {"
-        " border-color:%6;"
-        " background:%7;"
-        " }"
-        "QComboBox:focus {"
-        " border:2px solid %6;"
-        " padding:6px 33px 6px 13px;"
-        " }"
-        "QComboBox::drop-down {"
-        " subcontrol-origin:padding;"
-        " subcontrol-position:top right;"
-        " width:32px;"
-        " border:0;"
-        " background:transparent;"
-        " }")
-        .arg(surface.name(QColor::HexRgb))
-        .arg(onSurface.name(QColor::HexRgb))
-        .arg(outline.name(QColor::HexRgb))
-        .arg(primaryContainer.name(QColor::HexRgb))
-        .arg(onPrimaryContainer.name(QColor::HexRgb))
-        .arg(primary.name(QColor::HexRgb))
-        .arg(surfaceLow.name(QColor::HexRgb));
-
-    const QString popupStyle = QStringLiteral(
-        "QAbstractItemView {"
-        " background:%1;"
-        " color:%2;"
-        " border:1px solid %3;"
-        " border-radius:16px;"
-        " padding:8px;"
-        " outline:0;"
-        " selection-background-color:%4;"
-        " selection-color:%5;"
-        " }"
-        "QAbstractItemView::item {"
-        " min-height:36px;"
-        " padding:5px 12px;"
-        " border-radius:10px;"
-        " }"
-        "QAbstractItemView::item:hover {"
-        " background:%6;"
-        " }"
-        "QAbstractItemView::item:selected {"
-        " background:%4;"
-        " color:%5;"
-        " }")
-        .arg(surface.name(QColor::HexRgb))
-        .arg(onSurface.name(QColor::HexRgb))
-        .arg(outline.name(QColor::HexRgb))
-        .arg(primaryContainer.name(QColor::HexRgb))
-        .arg(onPrimaryContainer.name(QColor::HexRgb))
-        .arg(surfaceHigh.name(QColor::HexRgb));
-
-    const auto combos =
-        root->findChildren<QtMaterial::QtMaterialComboBox*>();
-    for (QtMaterial::QtMaterialComboBox* combo : combos) {
-        if (combo->styleSheet() != comboStyle) {
-            combo->setStyleSheet(comboStyle);
-        }
-        if (QAbstractItemView* view = combo->view()) {
-            if (view->styleSheet() != popupStyle) {
-                view->setStyleSheet(popupStyle);
-            }
-        }
-    }
 
     const auto tables =
         root->findChildren<QtMaterial::QtMaterialTable*>();

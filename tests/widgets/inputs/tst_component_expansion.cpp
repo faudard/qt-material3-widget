@@ -1,10 +1,15 @@
 #include <QtTest/QtTest>
 
+#include <QAbstractItemView>
 #include <QLineEdit>
+#include <QPalette>
 #include <QListView>
 #include <QStringListModel>
 #include <QStandardItemModel>
 
+#include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include "qtmaterial/theme/qtmaterialthemebuilder.h"
+#include "qtmaterial/theme/qtmaterialthemecontext.h"
 #include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
 #include "qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h"
 #include "qtmaterial/widgets/inputs/qtmaterialrangeslider.h"
@@ -53,6 +58,76 @@ private slots:
         combo.setLabelText(QStringLiteral("Country"));
         QCOMPARE(combo.labelText(), QStringLiteral("Country"));
         QCOMPARE(combo.accessibleName(), QStringLiteral("Country"));
+    }
+
+    void comboBoxUsesMaterialThemeAndKeepsNativeContracts()
+    {
+        Theme theme = ThemeBuilder().buildLightFromSeed(
+            QColor(QStringLiteral("#6750A4")));
+        theme.shapes().setRadius(ShapeRole::ExtraSmall, 9);
+        ThemeContext context(theme);
+
+        QtMaterialComboBox combo;
+        combo.setThemeContext(&context);
+        combo.addItems({
+            QStringLiteral("2022"),
+            QStringLiteral("2023"),
+            QStringLiteral("2024")
+        });
+        combo.setCurrentIndex(2);
+
+        QCOMPARE(combo.effectiveThemeContext(), &context);
+        QCOMPARE(combo.currentText(), QStringLiteral("2024"));
+        QCOMPARE(
+            combo.palette().color(QPalette::Base),
+            theme.colorScheme().color(
+                ColorRole::SurfaceContainerHighest));
+        QCOMPARE(
+            combo.palette().color(QPalette::Highlight),
+            theme.colorScheme().color(
+                ColorRole::SecondaryContainer));
+        QVERIFY(combo.minimumSizeHint().height() >= 40);
+        QVERIFY(combo.view());
+        QVERIFY(combo.view()->itemDelegate());
+
+        combo.setEditable(true);
+        QVERIFY(combo.lineEdit());
+        combo.setEditText(QStringLiteral("Custom"));
+        QCOMPARE(combo.currentText(), QStringLiteral("Custom"));
+    }
+
+    void comboBoxThemeChangesRefreshResolvedStyle()
+    {
+        const Theme first =
+            ThemeBuilder().buildLightFromSeed(
+                QColor(QStringLiteral("#6750A4")));
+        const Theme second =
+            ThemeBuilder().buildDarkFromSeed(
+                QColor(QStringLiteral("#006874")));
+        ThemeContext context(first);
+
+        QtMaterialComboBox combo;
+        combo.setThemeContext(&context);
+
+        QCOMPARE(
+            combo.palette().color(QPalette::Base),
+            first.colorScheme().color(
+                ColorRole::SurfaceContainerHighest));
+        QCOMPARE(
+            combo.palette().color(QPalette::Highlight),
+            first.colorScheme().color(
+                ColorRole::SecondaryContainer));
+
+        QVERIFY(context.setTheme(second));
+
+        QCOMPARE(
+            combo.palette().color(QPalette::Base),
+            second.colorScheme().color(
+                ColorRole::SurfaceContainerHighest));
+        QCOMPARE(
+            combo.palette().color(QPalette::Highlight),
+            second.colorScheme().color(
+                ColorRole::SecondaryContainer));
     }
 
     void sliderFamilyKeepsRangeInvariant()

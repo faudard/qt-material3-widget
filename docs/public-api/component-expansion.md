@@ -17,7 +17,16 @@ focus and reduced-motion behavior.
 `QtMaterialSearchView` composes a search bar, `QSortFilterProxyModel` and
 `QListView`; applications retain ownership of their source model.
 `QtMaterialComboBox` remains a `QComboBox`, preserving the normal Qt model,
-delegate and editable-combo contracts.
+delegate and editable-combo contracts. Its default rendering is Material-aware: the
+closed control paints the themed container, outline, focus state and trailing chevron,
+while the popup uses a themed item delegate with distinct selected and hover state
+layers. Selection remains visually stronger than hover, and the chevron reflects the
+open/closed popup state.
+
+The combo participates in `ThemeContext` inheritance and resolves its visual state
+through the internal autocomplete-spec resolution boundary. Replacing the native item
+delegate remains supported and intentionally replaces the built-in Material popup-item
+rendering.
 
 ### Native Qt extension points
 
