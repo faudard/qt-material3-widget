@@ -3093,6 +3093,19 @@ QWidget* DashboardWindow::createLowerHighlights()
         auto* title = makeLabel(QString::fromLatin1(item.title), row, -1.0, false);
         auto* detail = makeLabel(QString::fromLatin1(item.detail), row, -2.0, false);
         detail->setObjectName(QStringLiteral("taskDetail"));
+
+        const auto syncCompletedVisual = [title](Qt::CheckState state) {
+            QFont font = title->font();
+            font.setStrikeOut(state == Qt::Checked);
+            title->setFont(font);
+        };
+        syncCompletedVisual(check->checkState());
+        connect(
+            check,
+            &QtMaterial::QtMaterialCheckbox::checkStateChanged,
+            row,
+            syncCompletedVisual);
+
         copy->addWidget(title);
         copy->addWidget(detail);
         rowLayout->addLayout(copy, 1);

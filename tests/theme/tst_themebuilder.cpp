@@ -11,6 +11,7 @@ private slots:
     void buildsDarkTheme();
     void buildsLightScheme();
     void buildsDarkScheme();
+    void usesKeyboardOnlyFocusIndicatorsByDefault();
 };
 
 void tst_ThemeBuilder::buildsLightTheme()
@@ -60,6 +61,16 @@ void tst_ThemeBuilder::buildsDarkScheme()
     QCOMPARE(scheme.color(QtMaterial::ColorRole::InversePrimary), seed);
     QCOMPARE(scheme.color(QtMaterial::ColorRole::Primary), theme.colorScheme().color(QtMaterial::ColorRole::Primary));
     QCOMPARE(scheme.color(QtMaterial::ColorRole::Surface), theme.colorScheme().color(QtMaterial::ColorRole::Surface));
+}
+
+void tst_ThemeBuilder::usesKeyboardOnlyFocusIndicatorsByDefault()
+{
+    QtMaterial::ThemeBuilder builder;
+    const QtMaterial::Theme theme =
+        builder.buildLightFromSeed(QColor("#6750A4"));
+
+    QVERIFY(theme.interactions().keyboardFocusVisible);
+    QVERIFY(!theme.interactions().strongFocusIndicators);
 }
 
 QTEST_MAIN(tst_ThemeBuilder)
