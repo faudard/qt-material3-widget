@@ -3,6 +3,7 @@
 #include "dashboardcharts.h"
 #include "dashboarddemostyle.h"
 #include "dashboardherobanners.h"
+#include "dashboardoverviewresponsive.h"
 #include "dashboardecommercepage.h"
 #include "dashboardinvoicepage.h"
 #include "dashboardappspage.h"
@@ -18,7 +19,6 @@
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QButtonGroup>
-#include <QBoxLayout>
 #include <QCalendarWidget>
 #include <QComboBox>
 #include <QDate>
@@ -3826,14 +3826,6 @@ void DashboardWindow::updateResponsiveLayout()
 
     const bool compactMetrics = available < 720;
     const bool stackedCharts = available < 820;
-    const bool stackedQuickSummary = available < 900;
-    const bool stackedHighlights = available < 980;
-    const int popularAppsColumns =
-        available < 620 ? 1 : (available < 980 ? 2 : 3);
-    const bool compactProjectRows = available < 760;
-    const bool veryCompactProjectRows = available < 560;
-    const bool compactStatisticsHeader = available < 620;
-    const bool stackedTasksContent = available < 620;
 
     if (m_sidebar) {
         m_sidebar->setVisible(desktopNavigation);
@@ -3898,187 +3890,14 @@ void DashboardWindow::updateResponsiveLayout()
         m_stackedCharts = stackedCharts;
     }
 
-    if (m_contentHost) {
-        auto* quickOuter =
-            m_contentHost->findChild<QGridLayout*>(
-                QStringLiteral("dashboardQuickOuterGrid"));
-        auto* metricHost =
-            m_contentHost->findChild<QWidget*>(
-                QStringLiteral("dashboardMetricHost"));
-        if (quickOuter && metricHost && m_revenueSummary) {
-            clearGridPosition(quickOuter, metricHost);
-            clearGridPosition(quickOuter, m_revenueSummary);
-
-            if (stackedQuickSummary) {
-                quickOuter->addWidget(metricHost, 0, 0);
-                quickOuter->addWidget(m_revenueSummary, 1, 0);
-                quickOuter->setColumnStretch(0, 1);
-                m_revenueSummary->setMinimumHeight(150);
-            } else {
-                quickOuter->addWidget(metricHost, 0, 0, 1, 2);
-                quickOuter->addWidget(m_revenueSummary, 0, 2);
-                quickOuter->setColumnStretch(0, 1);
-                quickOuter->setColumnStretch(1, 1);
-                quickOuter->setColumnStretch(2, 1);
-                m_revenueSummary->setMinimumHeight(140);
-            }
-        }
-
-        auto* lowerGrid =
-            m_contentHost->findChild<QGridLayout*>(
-                QStringLiteral("dashboardLowerHighlightsGrid"));
-        auto* social =
-            m_contentHost->findChild<QWidget*>(
-                QStringLiteral("dashboardSocialCard"));
-        auto* tasks =
-            m_contentHost->findChild<QWidget*>(
-                QStringLiteral("dashboardTasksCard"));
-        if (lowerGrid && social && tasks) {
-            clearGridPosition(lowerGrid, social);
-            clearGridPosition(lowerGrid, tasks);
-
-            if (stackedHighlights) {
-                lowerGrid->addWidget(social, 0, 0);
-                lowerGrid->addWidget(tasks, 1, 0);
-                lowerGrid->setColumnStretch(0, 1);
-            } else {
-                lowerGrid->addWidget(social, 0, 0);
-                lowerGrid->addWidget(tasks, 0, 1);
-                lowerGrid->setColumnStretch(0, 1);
-                lowerGrid->setColumnStretch(1, 2);
-            }
-        }
-
-        auto* appsGrid =
-            m_contentHost->findChild<QGridLayout*>(
-                QStringLiteral("dashboardPopularAppsGrid"));
-        const auto appItems =
-            m_contentHost->findChildren<QWidget*>(
-                QStringLiteral("dashboardPopularApp"));
-        if (appsGrid && !appItems.isEmpty()) {
-            for (QWidget* item : appItems) {
-                clearGridPosition(appsGrid, item);
-            }
-            for (int i = 0; i < appItems.size(); ++i) {
-                appsGrid->addWidget(
-                    appItems.at(i),
-                    i / popularAppsColumns,
-                    i % popularAppsColumns);
-            }
-            for (int column = 0; column < 3; ++column) {
-                appsGrid->setColumnStretch(
-                    column,
-                    column < popularAppsColumns ? 1 : 0);
-            }
-        }
-
-        const auto projectNames =
-            m_contentHost->findChildren<QLabel*>(
-                QStringLiteral("dashboardProjectOverviewName"));
-        for (QLabel* name : projectNames) {
-            name->setMinimumWidth(
-                veryCompactProjectRows
-                    ? 100
-                    : (compactProjectRows ? 130 : 180));
-        }
-
-        const auto projectDue =
-            m_contentHost->findChildren<QLabel*>(
-                QStringLiteral("dashboardProjectOverviewDue"));
-        for (QLabel* due : projectDue) {
-            due->setVisible(!compactProjectRows);
-        }
-
-        const auto projectStatus =
-            m_contentHost->findChildren<QtMaterial::QtMaterialChip*>(
-                QStringLiteral("dashboardProjectOverviewStatus"));
-        for (QtMaterial::QtMaterialChip* status : projectStatus) {
-            status->setVisible(!veryCompactProjectRows);
-        }
-    }
-
-    if (m_statisticsCard) {
-        auto* statisticsHeader =
-            m_statisticsCard->findChild<QGridLayout*>(
-                QStringLiteral("dashboardStatisticsHeaderGrid"));
-        auto* statisticsTitle =
-            m_statisticsCard->findChild<QLabel*>(
-                QStringLiteral("dashboardStatisticsTitle"));
-        const auto tabs =
-            m_statisticsCard->findChildren<QToolButton*>(
-                QStringLiteral("chartTab"));
-        if (statisticsHeader
-            && statisticsTitle
-            && m_yearCombo
-            && m_monthCombo) {
-            clearGridPosition(statisticsHeader, statisticsTitle);
-            for (QToolButton* tab : tabs) {
-                clearGridPosition(statisticsHeader, tab);
-            }
-            clearGridPosition(statisticsHeader, m_yearCombo);
-            clearGridPosition(statisticsHeader, m_monthCombo);
-
-            for (int column = 0; column < 8; ++column) {
-                statisticsHeader->setColumnStretch(column, 0);
-            }
-
-            if (compactStatisticsHeader) {
-                statisticsHeader->addWidget(
-                    statisticsTitle,
-                    0,
-                    0,
-                    1,
-                    3);
-                for (int i = 0; i < tabs.size(); ++i) {
-                    statisticsHeader->addWidget(
-                        tabs.at(i),
-                        1,
-                        i);
-                }
-                statisticsHeader->addWidget(m_yearCombo, 2, 0);
-                statisticsHeader->addWidget(m_monthCombo, 2, 1, 1, 2);
-                statisticsHeader->setColumnStretch(0, 1);
-                statisticsHeader->setColumnStretch(1, 1);
-                statisticsHeader->setColumnStretch(2, 1);
-            } else {
-                statisticsHeader->addWidget(statisticsTitle, 0, 0);
-                for (int i = 0; i < tabs.size(); ++i) {
-                    statisticsHeader->addWidget(
-                        tabs.at(i),
-                        0,
-                        i + 2);
-                }
-                statisticsHeader->setColumnStretch(5, 1);
-                statisticsHeader->addWidget(m_yearCombo, 0, 6);
-                statisticsHeader->addWidget(m_monthCombo, 0, 7);
-            }
-        }
-    }
-
-    if (m_contentHost) {
-        auto* tasksLayout =
-            m_contentHost->findChild<QHBoxLayout*>(
-                QStringLiteral("dashboardTasksContentLayout"));
-        if (tasksLayout) {
-            tasksLayout->setDirection(
-                stackedTasksContent
-                    ? QBoxLayout::TopToBottom
-                    : QBoxLayout::LeftToRight);
-        }
-
-        auto* exportButton =
-            m_contentHost->findChild<QWidget*>(
-                QStringLiteral("dashboardOrdersExport"));
-        if (exportButton) {
-            exportButton->setVisible(available >= 520);
-        }
-    }
-
-    if (m_orders) {
-        m_orders->setColumnHidden(2, available < 760);
-        m_orders->setColumnHidden(1, available < 520);
-        m_orders->horizontalHeader()->setStretchLastSection(true);
-    }
+    DashboardOverviewResponsive::apply(
+        m_contentHost,
+        m_revenueSummary,
+        m_statisticsCard,
+        m_yearCombo,
+        m_monthCombo,
+        m_orders,
+        available);
 }
 
 void DashboardWindow::setCurrentSection(int index)
