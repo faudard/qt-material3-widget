@@ -18,6 +18,7 @@
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QButtonGroup>
+#include <QBoxLayout>
 #include <QCalendarWidget>
 #include <QComboBox>
 #include <QDate>
@@ -3681,7 +3682,8 @@ void DashboardWindow::applyThemeChrome()
         "QWidget#dashboardContent QLabel#pageSubtitle,"
         " QWidget#dashboardContent QLabel#metricTitle,"
         " QWidget#dashboardContent QLabel#metricTrendHint,"
-        " QWidget#dashboardContent QLabel#taskDetail { color:%1; }"
+        " QWidget#dashboardContent QLabel#taskDetail,"
+        " QWidget#dashboardContent QLabel#dashboardProjectOverviewDue { color:%1; }"
         "QToolButton#chartTab { background:transparent; border:0; color:%1;"
         " padding:5px 8px; }"
         "QToolButton#chartTab:checked { color:%2; border-bottom:2px solid %2; }"
@@ -4015,6 +4017,10 @@ void DashboardWindow::updateResponsiveLayout()
             }
             clearGridPosition(statisticsHeader, m_yearCombo);
             clearGridPosition(statisticsHeader, m_monthCombo);
+
+            for (int column = 0; column < 8; ++column) {
+                statisticsHeader->setColumnStretch(column, 0);
+            }
 
             if (compactStatisticsHeader) {
                 statisticsHeader->addWidget(
