@@ -268,10 +268,7 @@ public:
     QString labelText;
 
     mutable AutocompleteSpec spec;
-    AutocompleteSpec explicitSpec;
-
     mutable bool specDirty = true;
-    bool explicitSpecSet = false;
     bool popupOpen = false;
 
     QtMaterialThemeContextBinding* themeBinding = nullptr;
@@ -305,9 +302,6 @@ QtMaterialComboBox::QtMaterialComboBox(
             themeChanged,
         this,
         [this](const Theme&) {
-            if (d_ptr->explicitSpecSet) {
-                return;
-            }
             d_ptr->specDirty = true;
             ensureSpecResolved();
             applyResolvedSpec();
@@ -412,43 +406,6 @@ effectiveThemeContext()
 {
     return d_ptr->themeBinding
         ->effectiveThemeContext();
-}
-
-AutocompleteSpec
-QtMaterialComboBox::spec() const
-{
-    return resolvedSpec();
-}
-
-void QtMaterialComboBox::setSpec(
-    const AutocompleteSpec& spec)
-{
-    d_ptr->explicitSpec =
-        normalizedComboSpec(spec);
-    d_ptr->explicitSpecSet = true;
-    d_ptr->specDirty = true;
-
-    ensureSpecResolved();
-    applyResolvedSpec();
-}
-
-void QtMaterialComboBox::resetSpec()
-{
-    if (!d_ptr->explicitSpecSet) {
-        return;
-    }
-
-    d_ptr->explicitSpecSet = false;
-    d_ptr->specDirty = true;
-
-    ensureSpecResolved();
-    applyResolvedSpec();
-}
-
-bool QtMaterialComboBox::
-hasExplicitSpec() const noexcept
-{
-    return d_ptr->explicitSpecSet;
 }
 
 QSize QtMaterialComboBox::sizeHint() const
@@ -879,11 +836,9 @@ ensureSpecResolved() const
     }
 
     d_ptr->spec =
-        d_ptr->explicitSpecSet
-            ? d_ptr->explicitSpec
-            : normalizedComboSpec(
-                InputSpecResolution::autocompleteSpec(
-                    d_ptr->themeBinding));
+        normalizedComboSpec(
+            InputSpecResolution::autocompleteSpec(
+                d_ptr->themeBinding));
 
     d_ptr->specDirty = false;
 }

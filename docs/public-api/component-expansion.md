@@ -23,10 +23,10 @@ while the popup uses a themed item delegate with distinct selected and hover sta
 layers. Selection remains visually stronger than hover, and the chevron reflects the
 open/closed popup state.
 
-The combo participates in `ThemeContext` inheritance and resolves its default visual
-state from `AutocompleteSpec`. Applications that need a fully resolved custom surface
-may use `setSpec()` / `resetSpec()`; replacing the native item delegate remains
-supported and intentionally replaces the built-in Material popup-item rendering.
+The combo participates in `ThemeContext` inheritance and resolves its visual state
+through the internal autocomplete-spec resolution boundary. Replacing the native item
+delegate remains supported and intentionally replaces the built-in Material popup-item
+rendering.
 
 ### Native Qt extension points
 

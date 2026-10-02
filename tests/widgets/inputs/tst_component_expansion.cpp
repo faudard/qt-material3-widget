@@ -2,6 +2,7 @@
 
 #include <QAbstractItemView>
 #include <QLineEdit>
+#include <QPalette>
 #include <QListView>
 #include <QStringListModel>
 #include <QStandardItemModel>
@@ -78,14 +79,13 @@ private slots:
         QCOMPARE(combo.effectiveThemeContext(), &context);
         QCOMPARE(combo.currentText(), QStringLiteral("2024"));
         QCOMPARE(
-            combo.spec().inputContainerColor,
+            combo.palette().color(QPalette::Base),
             theme.colorScheme().color(
                 ColorRole::SurfaceContainerHighest));
         QCOMPARE(
-            combo.spec().selectedSuggestionContainerColor,
+            combo.palette().color(QPalette::Highlight),
             theme.colorScheme().color(
                 ColorRole::SecondaryContainer));
-        QCOMPARE(combo.spec().inputCornerRadius, 9.0);
         QVERIFY(combo.minimumSizeHint().height() >= 40);
         QVERIFY(combo.view());
         QVERIFY(combo.view()->itemDelegate());
@@ -96,7 +96,7 @@ private slots:
         QCOMPARE(combo.currentText(), QStringLiteral("Custom"));
     }
 
-    void comboBoxExplicitSpecPinsAndResets()
+    void comboBoxThemeChangesRefreshResolvedStyle()
     {
         const Theme first =
             ThemeBuilder().buildLightFromSeed(
@@ -109,33 +109,23 @@ private slots:
         QtMaterialComboBox combo;
         combo.setThemeContext(&context);
 
-        AutocompleteSpec explicitSpec = combo.spec();
-        explicitSpec.inputContainerColor =
-            QColor(QStringLiteral("#123456"));
-        explicitSpec.selectedSuggestionContainerColor =
-            QColor(QStringLiteral("#654321"));
-        explicitSpec.inputCornerRadius = 13.0;
-        combo.setSpec(explicitSpec);
+        QCOMPARE(
+            combo.palette().color(QPalette::Base),
+            first.colorScheme().color(
+                ColorRole::SurfaceContainerHighest));
+        QCOMPARE(
+            combo.palette().color(QPalette::Highlight),
+            first.colorScheme().color(
+                ColorRole::SecondaryContainer));
 
-        QVERIFY(combo.hasExplicitSpec());
         QVERIFY(context.setTheme(second));
-        QCOMPARE(
-            combo.spec().inputContainerColor,
-            QColor(QStringLiteral("#123456")));
-        QCOMPARE(
-            combo.spec().selectedSuggestionContainerColor,
-            QColor(QStringLiteral("#654321")));
-        QCOMPARE(combo.spec().inputCornerRadius, 13.0);
 
-        combo.resetSpec();
-
-        QVERIFY(!combo.hasExplicitSpec());
         QCOMPARE(
-            combo.spec().inputContainerColor,
+            combo.palette().color(QPalette::Base),
             second.colorScheme().color(
                 ColorRole::SurfaceContainerHighest));
         QCOMPARE(
-            combo.spec().selectedSuggestionContainerColor,
+            combo.palette().color(QPalette::Highlight),
             second.colorScheme().color(
                 ColorRole::SecondaryContainer));
     }

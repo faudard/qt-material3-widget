@@ -5,13 +5,13 @@
 #include <QComboBox>
 
 #include "qtmaterial/qtmaterialglobal.h"
-#include "qtmaterial/specs/qtmaterialautocompletespec.h"
 
 class QEvent;
 class QPaintEvent;
 
 namespace QtMaterial {
 
+struct AutocompleteSpec;
 class ThemeContext;
 class QtMaterialComboBoxPrivate;
 
@@ -41,11 +41,6 @@ public:
     void setThemeContext(ThemeContext* context);
     ThemeContext* themeContext() const noexcept;
     ThemeContext* effectiveThemeContext() const noexcept;
-
-    AutocompleteSpec spec() const;
-    void setSpec(const AutocompleteSpec& spec);
-    void resetSpec();
-    bool hasExplicitSpec() const noexcept;
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
