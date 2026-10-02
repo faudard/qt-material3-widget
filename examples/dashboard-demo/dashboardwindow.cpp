@@ -3,6 +3,7 @@
 #include "dashboardcharts.h"
 #include "dashboarddemostyle.h"
 #include "dashboardherobanners.h"
+#include "dashboardoverviewresponsive.h"
 #include "dashboardecommercepage.h"
 #include "dashboardinvoicepage.h"
 #include "dashboardappspage.h"
@@ -1338,16 +1339,21 @@ QWidget* DashboardWindow::createDashboardPage()
     layout->addWidget(heroBanners);
 
     auto* headingHost = new QWidget(page);
-    auto* headingGrid = new QGridLayout(headingHost);
-    headingGrid->setContentsMargins(0, 0, 0, 0);
-    headingGrid->setHorizontalSpacing(18);
-    auto* quickTitle = makeLabel(QStringLiteral("Quick Statistics"), headingHost, 2.0, false);
-    auto* revenueTitle = makeLabel(QStringLiteral("Total Revenue"), headingHost, 2.0, false);
-    headingGrid->addWidget(quickTitle, 0, 0, 1, 2);
-    headingGrid->addWidget(revenueTitle, 0, 2);
-    headingGrid->setColumnStretch(0, 1);
-    headingGrid->setColumnStretch(1, 1);
-    headingGrid->setColumnStretch(2, 1);
+    auto* headingLayout = new QVBoxLayout(headingHost);
+    headingLayout->setContentsMargins(0, 0, 0, 0);
+    headingLayout->setSpacing(2);
+    headingLayout->addWidget(makeLabel(
+        QStringLiteral("Overview"),
+        headingHost,
+        3.0,
+        true));
+    auto* overviewSubtitle = makeLabel(
+        QStringLiteral("Key performance, revenue and activity at a glance."),
+        headingHost,
+        -1.0,
+        false);
+    overviewSubtitle->setObjectName(QStringLiteral("pageSubtitle"));
+    headingLayout->addWidget(overviewSubtitle);
     layout->addWidget(headingHost);
 
     layout->addWidget(createQuickStatistics());
@@ -1380,6 +1386,7 @@ QWidget* DashboardWindow::createDashboardPage()
     appsLayout->addLayout(appsHeader);
 
     auto* appsGrid = new QGridLayout;
+    appsGrid->setObjectName(QStringLiteral("dashboardPopularAppsGrid"));
     appsGrid->setHorizontalSpacing(12);
     appsGrid->setVerticalSpacing(10);
 
@@ -1481,6 +1488,7 @@ QWidget* DashboardWindow::createDashboardPage()
             row,
             0.0,
             true);
+        name->setObjectName(QStringLiteral("dashboardProjectOverviewName"));
         name->setMinimumWidth(180);
         rowLayout->addWidget(name);
 
@@ -1493,6 +1501,7 @@ QWidget* DashboardWindow::createDashboardPage()
         auto* status = new QtMaterial::QtMaterialChip(
             QString::fromLatin1(project.status),
             row);
+        status->setObjectName(QStringLiteral("dashboardProjectOverviewStatus"));
         status->setVariant(QtMaterial::ChipVariant::Assist);
         rowLayout->addWidget(status);
 
@@ -1501,7 +1510,7 @@ QWidget* DashboardWindow::createDashboardPage()
             row,
             -1.0,
             false);
-        due->setObjectName(QStringLiteral("metricTitle"));
+        due->setObjectName(QStringLiteral("dashboardProjectOverviewDue"));
         due->setMinimumWidth(58);
         rowLayout->addWidget(due, 0, Qt::AlignRight);
 
@@ -2862,11 +2871,13 @@ QWidget* DashboardWindow::createQuickStatistics()
 {
     auto* host = new QWidget(m_contentHost);
     auto* outer = new QGridLayout(host);
+    outer->setObjectName(QStringLiteral("dashboardQuickOuterGrid"));
     outer->setContentsMargins(0, 0, 0, 0);
     outer->setHorizontalSpacing(18);
     outer->setVerticalSpacing(18);
 
     auto* metricHost = new QWidget(host);
+    metricHost->setObjectName(QStringLiteral("dashboardMetricHost"));
     m_quickGrid = new QGridLayout(metricHost);
     m_quickGrid->setContentsMargins(0, 0, 0, 0);
     m_quickGrid->setHorizontalSpacing(14);
@@ -2983,10 +2994,18 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
     layout->setContentsMargins(18, 14, 18, 12);
     layout->setSpacing(7);
 
-    auto* titleRow = new QHBoxLayout;
-    titleRow->setSpacing(6);
-    titleRow->addWidget(makeLabel(QStringLiteral("Statistics"), card, 2.0, false));
-    titleRow->addSpacing(14);
+    auto* titleHost = new QWidget(card);
+    auto* titleRow = new QGridLayout(titleHost);
+    titleRow->setObjectName(QStringLiteral("dashboardStatisticsHeaderGrid"));
+    titleRow->setContentsMargins(0, 0, 0, 0);
+    titleRow->setHorizontalSpacing(6);
+    titleRow->setVerticalSpacing(8);
+
+    auto* statisticsTitle =
+        makeLabel(QStringLiteral("Statistics"), card, 2.0, false);
+    statisticsTitle->setObjectName(QStringLiteral("dashboardStatisticsTitle"));
+    titleRow->addWidget(statisticsTitle, 0, 0);
+    titleRow->setColumnMinimumWidth(1, 8);
 
     const QStringList tabs = {
         QStringLiteral("Project"),
@@ -3000,20 +3019,20 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
         tab->setAutoExclusive(true);
         tab->setChecked(i == 0);
         tab->setObjectName(QStringLiteral("chartTab"));
-        titleRow->addWidget(tab);
+        titleRow->addWidget(tab, 0, i + 2);
         connect(tab, &QToolButton::clicked, this, [this, i]() {
             m_chartMetricIndex = i;
             applyPeriod();
         });
     }
-    titleRow->addStretch(1);
+    titleRow->setColumnStretch(5, 1);
 
     m_yearCombo = new QtMaterial::QtMaterialComboBox(card);
     m_yearCombo->setLabelText(QStringLiteral("Year"));
     m_yearCombo->addItems({QStringLiteral("2025"), QStringLiteral("2026"), QStringLiteral("2027")});
     m_yearCombo->setCurrentText(QStringLiteral("2026"));
     m_yearCombo->setMinimumWidth(92);
-    titleRow->addWidget(m_yearCombo);
+    titleRow->addWidget(m_yearCombo, 0, 6);
 
     m_monthCombo = new QtMaterial::QtMaterialComboBox(card);
     m_monthCombo->setLabelText(QStringLiteral("Month"));
@@ -3026,9 +3045,9 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
     });
     m_monthCombo->setCurrentText(QStringLiteral("September"));
     m_monthCombo->setMinimumWidth(124);
-    titleRow->addWidget(m_monthCombo);
+    titleRow->addWidget(m_monthCombo, 0, 7);
 
-    layout->addLayout(titleRow);
+    layout->addWidget(titleHost);
 
     m_lineChart = new LineChartWidget(card);
     m_lineChart->clearAccentColor();
@@ -3084,11 +3103,13 @@ QWidget* DashboardWindow::createLowerHighlights()
 {
     auto* host = new QWidget(m_contentHost);
     auto* grid = new QGridLayout(host);
+    grid->setObjectName(QStringLiteral("dashboardLowerHighlightsGrid"));
     grid->setContentsMargins(0, 0, 0, 0);
     grid->setHorizontalSpacing(18);
     grid->setVerticalSpacing(18);
 
     auto* social = new QtMaterial::QtMaterialCard(host);
+    social->setObjectName(QStringLiteral("dashboardSocialCard"));
     social->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
     social->setMinimumHeight(250);
     auto* socialLayout = new QVBoxLayout(social);
@@ -3105,6 +3126,7 @@ QWidget* DashboardWindow::createLowerHighlights()
     socialLayout->addWidget(bars, 1);
 
     auto* tasks = new QtMaterial::QtMaterialCard(host);
+    tasks->setObjectName(QStringLiteral("dashboardTasksCard"));
     tasks->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
     tasks->setMinimumHeight(250);
     auto* tasksLayout = new QVBoxLayout(tasks);
@@ -3128,6 +3150,7 @@ QWidget* DashboardWindow::createLowerHighlights()
 
     auto* content = new QWidget(tasks);
     auto* contentLayout = new QHBoxLayout(content);
+    contentLayout->setObjectName(QStringLiteral("dashboardTasksContentLayout"));
     contentLayout->setContentsMargins(0, 0, 0, 0);
     contentLayout->setSpacing(16);
 
@@ -3264,6 +3287,7 @@ QtMaterial::QtMaterialCard* DashboardWindow::createOrdersCard()
     header->addWidget(makeLabel(QStringLiteral("Recent Orders"), card, 2.0, false));
     header->addStretch(1);
     auto* exportButton = new QtMaterial::QtMaterialOutlinedButton(QStringLiteral("Export CSV"), card);
+    exportButton->setObjectName(QStringLiteral("dashboardOrdersExport"));
     exportButton->setMinimumWidth(118);
     header->addWidget(exportButton);
     layout->addLayout(header);
@@ -3773,7 +3797,8 @@ void DashboardWindow::applyThemeChrome()
         "QWidget#dashboardContent QLabel#pageSubtitle,"
         " QWidget#dashboardContent QLabel#metricTitle,"
         " QWidget#dashboardContent QLabel#metricTrendHint,"
-        " QWidget#dashboardContent QLabel#taskDetail { color:%1; }"
+        " QWidget#dashboardContent QLabel#taskDetail,"
+        " QWidget#dashboardContent QLabel#dashboardProjectOverviewDue { color:%1; }"
         "QToolButton#chartTab { background:transparent; border:0; color:%1;"
         " padding:5px 8px; }"
         "QToolButton#chartTab:checked { color:%2; border-bottom:2px solid %2; }"
@@ -3954,6 +3979,9 @@ void DashboardWindow::updateResponsiveLayout()
         if (stackedCharts) {
             m_chartGrid->addWidget(m_statisticsCard, 0, 0);
             m_chartGrid->addWidget(m_earningsCard, 1, 0);
+            m_chartGrid->setColumnStretch(0, 1);
+            m_chartGrid->setColumnStretch(1, 0);
+            m_chartGrid->setColumnStretch(2, 0);
         } else {
             m_chartGrid->addWidget(m_statisticsCard, 0, 0, 1, 2);
             m_chartGrid->addWidget(m_earningsCard, 0, 2);
@@ -3963,6 +3991,15 @@ void DashboardWindow::updateResponsiveLayout()
         }
         m_stackedCharts = stackedCharts;
     }
+
+    DashboardOverviewResponsive::apply(
+        m_contentHost,
+        m_revenueSummary,
+        m_statisticsCard,
+        m_yearCombo,
+        m_monthCombo,
+        m_orders,
+        available);
 }
 
 void DashboardWindow::setCurrentSection(int index)
