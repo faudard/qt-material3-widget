@@ -57,6 +57,9 @@ void apply(
     if (quickOuter && metricHost && revenueSummary) {
         clearGridPosition(quickOuter, metricHost);
         clearGridPosition(quickOuter, revenueSummary);
+        for (int column = 0; column < 3; ++column) {
+            quickOuter->setColumnStretch(column, 0);
+        }
 
         if (stackedQuickSummary) {
             quickOuter->addWidget(metricHost, 0, 0);
