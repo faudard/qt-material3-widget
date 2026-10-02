@@ -123,6 +123,20 @@ class ApiFreezeReleaseCheckerTests(unittest.TestCase):
             errors,
         )
 
+    def test_api_freeze_rejects_duplicate_widget_header_ownership(self):
+        root, rules = self.make_root()
+        rules["api_freeze"]["public_support_headers"] = [
+            "qtmaterial/widgets/qtmaterialfoo.h"
+        ]
+        errors = check_release.validate_api_freeze(root, rules)
+        self.assertTrue(
+            any(
+                "component-registry-owned and support-allowlisted" in error
+                for error in errors
+            ),
+            errors,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -6,6 +6,12 @@ The project follows semantic versioning. Starting with 1.0, documented installed
 headers are source-compatible within the 1.x line; binary compatibility is best-effort
 unless a stricter ABI policy is published.
 
+## [Unreleased]
+
+### Changed
+- Standalone public List, Autocomplete, Date Picker and Menu widgets are now component-registry owned instead of being classified as support headers.
+- API-freeze validation rejects duplicate widget-header ownership between the component registry and support-header allowlist.
+
 ## [1.0.0] - 2026-09-27
 
 ### Added

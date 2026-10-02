@@ -82,6 +82,16 @@ axis values.
 
 ## Registry scope
 
-The registry is the source of truth for **component maturity**, not yet for every installed support/helper header. Public/private header classification is handled by the dedicated header-boundary workstream.
+The registry is the source of truth for **standalone public component maturity**. A public
+widget header that represents an independently consumable component must be registry-owned.
+Public companion/framework headers that do not represent a separate component are explicitly
+listed in the release checker's `public_support_headers` allowlist.
 
-This avoids misclassifying support types such as variant/helper headers as independent Material components.
+Ownership is exclusive: a public widget header may be owned by the component registry **or**
+the support-header allowlist, never both. The API-freeze checker rejects unowned widget
+headers, stale support entries, and duplicate ownership.
+
+Examples of support API include ListItem as the row companion to List, form-field base classes,
+navigation model/controller/route types, and SnackbarHost. This keeps helper/variant types from
+being misclassified as independent Material components while ensuring standalone widgets such
+as List, Autocomplete, Date Picker and Menu receive normal maturity governance.

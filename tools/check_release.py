@@ -368,6 +368,15 @@ def validate_api_freeze(
         str(value)
         for value in config.get("public_support_headers", [])
     }
+
+    duplicate_ownership = sorted(registry_headers & support_headers)
+    if duplicate_ownership:
+        errors.append(
+            "API freeze: public widget headers cannot be both "
+            "component-registry-owned and support-allowlisted: "
+            + ", ".join(duplicate_ownership)
+        )
+
     widget_headers = {
         header
         for header in public_headers

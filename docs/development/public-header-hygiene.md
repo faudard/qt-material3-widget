@@ -12,6 +12,7 @@ Each public header:
 - does not include a `_p.h` or a header below a `private/` directory;
 - does not reach into the source implementation tree;
 - exposes only types intended for downstream consumers.
+- gives every public widget header exactly one owner: a component-registry entry for standalone components or the reviewed support-header allowlist for companion/framework API.
 
 The manifest is reviewed API metadata. Adding a header below `include/qtmaterial/`
 does not publish it automatically, and private-looking paths cannot be promoted to

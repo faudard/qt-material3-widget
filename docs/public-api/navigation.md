@@ -4,6 +4,7 @@ The navigation surface exposes:
 
 - `QtMaterial::QtMaterialTabs`
 - `QtMaterial::QtMaterialNavigationRail`
+- `QtMaterialMenu`
 
 Component maturity is tracked in `docs/components/component-registry.json`.
 
