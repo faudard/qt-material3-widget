@@ -5,6 +5,7 @@ Input family:
 - `QtMaterialFilledTextField`
 - `QtMaterialAutocomplete`
 - `QtMaterialDateField`
+- `QtMaterialDatePicker`
 
 ### TextField RTL contract
 
@@ -105,4 +106,12 @@ interaction, validation and accessibility contract:
 clear/calendar affordances, minimum/maximum date validation, parse-error reporting and
 an accessibility summary for the selected date and allowed range. Empty input remains
 valid unless inherited required validation is enabled.
+
+
+## Date Picker
+
+`QtMaterialDatePicker` is the canonical single-date calendar input. It exposes selected,
+minimum and maximum dates, previous/next/today navigation, ThemeContext inheritance and
+authored `DatePickerSpec` overrides. `QtMaterialDateRangePicker` composes two Date Picker
+instances for ordered start/end selection rather than introducing a second calendar model.
 

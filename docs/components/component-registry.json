@@ -3128,5 +3128,281 @@
         ]
       }
     }
+  },
+  {
+    "id": "data.list",
+    "name": "List",
+    "family": "Data",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/data/qtmateriallist.h",
+    "specType": "ListSpec",
+    "widgetType": "QtMaterialList",
+    "testTarget": "tst_list",
+    "galleryRoute": "/data/list",
+    "docsPath": "docs/public-api/data-widgets.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
+      "lastReviewed": "2026-10-02",
+      "gaps": [
+        "List has focused interaction and accessibility coverage but lacks deterministic visual, RTL and HiDPI conformance evidence."
+      ],
+      "nextActions": [
+        "Add dedicated visual-regression, RTL and HiDPI coverage for the List/ListItem family."
+      ],
+      "evidence": {
+        "api": [
+          "Public QtMaterialList API exposes item ownership, selection modes, current index and activation without replacing Qt widget ownership."
+        ],
+        "rendering": [
+          "Production rendering exists in src/widgets/data/qtmateriallist.cpp and uses the resolved ListSpec path."
+        ],
+        "states": [
+          "tst_list covers empty/populated state, disabled items, single selection and multi-selection."
+        ],
+        "accessibility": [
+          "tst_list verifies the accessible List name plus per-item and container accessibility summaries."
+        ],
+        "keyboard": [
+          "tst_list covers disabled-item skipping, Home/End navigation and Return/Space activation."
+        ],
+        "hidpi": [
+          "The implementation uses Qt logical geometry, but there is no dedicated DPR conformance case for List."
+        ],
+        "rtl": [
+          "The List preserves QWidget layout direction, but dedicated RTL conformance evidence is still missing."
+        ],
+        "tests": [
+          "Registered tst_list is the focused public-contract suite; tst_listitem and resolved-data tests provide companion coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/datapage.cpp includes the List/ListItem family."
+        ],
+        "docs": [
+          "docs/public-api/data-widgets.md documents List selection, keyboard and accessibility behavior."
+        ],
+        "notes": [
+          "QtMaterialListItem remains a public companion/support header owned by the List component rather than a separate registry component."
+        ]
+      }
+    }
+  },
+  {
+    "id": "input.autocomplete",
+    "name": "Autocomplete",
+    "family": "Inputs",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/inputs/qtmaterialautocomplete.h",
+    "specType": "AutocompleteSpec",
+    "widgetType": "QtMaterialAutocomplete",
+    "testTarget": "tst_autocomplete",
+    "galleryRoute": "/inputs/autocomplete",
+    "docsPath": "docs/public-api/inputs.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
+      "lastReviewed": "2026-10-02",
+      "gaps": [
+        "Autocomplete has focused popup, keyboard and accessibility tests but lacks deterministic visual, RTL and HiDPI conformance evidence."
+      ],
+      "nextActions": [
+        "Add Autocomplete visual-reference coverage plus dedicated RTL and DPR test cases."
+      ],
+      "evidence": {
+        "api": [
+          "Public QtMaterialAutocomplete API keeps external QAbstractItemModel ownership and exposes the embedded QLineEdit as a parent-owned extension point."
+        ],
+        "rendering": [
+          "Production Autocomplete and popup implementations resolve Material specs through the private input-resolution boundary."
+        ],
+        "states": [
+          "tst_autocomplete covers popup visibility, dismissal, completion and configurable focus/Return policies."
+        ],
+        "accessibility": [
+          "tst_autocomplete verifies accessible summary updates for text and popup state."
+        ],
+        "keyboard": [
+          "tst_autocomplete covers Escape dismissal and Return completion behavior."
+        ],
+        "hidpi": [
+          "Custom popup/control rendering exists without a dedicated DPR conformance case."
+        ],
+        "rtl": [
+          "Qt layout direction is preserved, but no focused RTL Autocomplete suite is registered."
+        ],
+        "tests": [
+          "Registered tst_autocomplete plus resolved-widget/spec tests cover the public and theme-resolution contracts."
+        ],
+        "example": [
+          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialAutocomplete."
+        ],
+        "docs": [
+          "docs/public-api/inputs.md lists Autocomplete as part of the supported Input family."
+        ],
+        "notes": [
+          "QtMaterialAutocompletePopup remains private implementation detail; the public component is QtMaterialAutocomplete."
+        ]
+      }
+    }
+  },
+  {
+    "id": "input.date-picker",
+    "name": "Date Picker",
+    "family": "Inputs",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/qtmaterialdatepicker.h",
+    "specType": "DatePickerSpec",
+    "widgetType": "QtMaterialDatePicker",
+    "testTarget": "tst_data_components",
+    "galleryRoute": "/inputs/date-picker",
+    "docsPath": "docs/public-api/inputs.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 1,
+      "keyboard": 1,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 2,
+      "docs": 2,
+      "lastReviewed": "2026-10-02",
+      "gaps": [
+        "Date Picker has stable selection/theme tests but needs dedicated keyboard, accessibility, RTL, HiDPI and visual-conformance evidence."
+      ],
+      "nextActions": [
+        "Add a focused Date Picker interaction/accessibility suite and deterministic visual references."
+      ],
+      "evidence": {
+        "api": [
+          "Public QtMaterialDatePicker API exposes selected/minimum/maximum dates, navigation slots and authored DatePickerSpec overrides."
+        ],
+        "rendering": [
+          "Production implementation applies DatePickerSpec colors, typography and metrics to the composed calendar surface."
+        ],
+        "states": [
+          "tst_data_components and tst_datepickerstability cover selection changes and resolved metric propagation."
+        ],
+        "accessibility": [
+          "The composed native calendar provides baseline Qt accessibility, but no dedicated Date Picker accessibility contract test exists."
+        ],
+        "keyboard": [
+          "Keyboard behavior relies substantially on native QCalendarWidget behavior and lacks a focused QtMaterial Date Picker suite."
+        ],
+        "hidpi": [
+          "Resolved metrics use Qt logical sizes, but no dedicated DPR conformance evidence is registered."
+        ],
+        "rtl": [
+          "The native calendar participates in Qt layout direction, but dedicated RTL Date Picker evidence is missing."
+        ],
+        "tests": [
+          "Registered tst_data_components covers the public selection signal; themed, stability and resolved-spec suites provide additional coverage."
+        ],
+        "example": [
+          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialDatePicker."
+        ],
+        "docs": [
+          "docs/public-api/inputs.md documents Date Picker as the canonical single-date calendar input."
+        ],
+        "notes": [
+          "Date Range Picker composes the canonical QtMaterialDatePicker rather than replacing its single-date contract."
+        ]
+      }
+    }
+  },
+  {
+    "id": "navigation.menu",
+    "name": "Menu",
+    "family": "Navigation",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/navigation/qtmaterialmenu.h",
+    "specType": "MenuSpec",
+    "widgetType": "QtMaterialMenu",
+    "testTarget": "tst_menu",
+    "galleryRoute": "/navigation/menu",
+    "docsPath": "docs/public-api/navigation.md",
+    "releaseScope": true,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 2,
+      "rendering": 2,
+      "states": 2,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 1,
+      "rtl": 1,
+      "tests": 2,
+      "example": 1,
+      "docs": 2,
+      "lastReviewed": "2026-10-02",
+      "gaps": [
+        "Menu has focused state, keyboard and accessibility tests but still lacks a dedicated Gallery showcase plus deterministic visual, RTL and HiDPI evidence."
+      ],
+      "nextActions": [
+        "Add a dedicated Menu Gallery showcase and visual/RTL/HiDPI conformance cases."
+      ],
+      "evidence": {
+        "api": [
+          "Public QtMaterialMenu API exposes actions, separators, shortcuts, checkable/exclusive items, current index and dismissal."
+        ],
+        "rendering": [
+          "Production rendering exists in src/widgets/navigation/qtmaterialmenu.cpp and resolves MenuSpec through the navigation spec boundary."
+        ],
+        "states": [
+          "tst_menu covers disabled items, separators, checkable state and activation."
+        ],
+        "accessibility": [
+          "tst_menu verifies the accessible Menu name plus item and container summaries."
+        ],
+        "keyboard": [
+          "tst_menu covers directional navigation, Home/End, Return/Space activation and Escape dismissal."
+        ],
+        "hidpi": [
+          "Custom Menu painting exists without a dedicated DPR conformance case."
+        ],
+        "rtl": [
+          "The implementation is RTL-aware, but no focused RTL Menu conformance test is registered."
+        ],
+        "tests": [
+          "Registered tst_menu plus tst_themedmenu and resolved MenuSpec tests cover interaction and theming."
+        ],
+        "example": [
+          "Menu is exercised by application examples, but a dedicated Gallery showcase is still missing."
+        ],
+        "docs": [
+          "docs/public-api/navigation.md documents Menu actions, keyboard behavior, RTL awareness and accessibility."
+        ],
+        "notes": [
+          "Menu is a standalone public widget and is therefore registry-owned rather than support-allowlisted."
+        ]
+      }
+    }
   }
 ]

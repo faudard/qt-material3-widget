@@ -30,6 +30,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 |---|---|---:|---|---|---|---|---|
 | `data.carousel` | Carousel | `usable` | `qtmaterial/widgets/data/qtmaterialcarousel.h` | `CarouselSpec` | `tst_carousel` | `docs/public-api/data-widgets.md` | `/data/carousel` |
 | `data.grid-list` | Grid List | `usable` | `qtmaterial/widgets/data/qtmaterialgridlist.h` | `GridListSpec` | `tst_gridlist` | `docs/public-api/data-widgets.md` | `/data/grid-list` |
+| `data.list` | List | `usable` | `qtmaterial/widgets/data/qtmateriallist.h` | `ListSpec` | `tst_list` | `docs/public-api/data-widgets.md` | `/data/list` |
 | `data.pagination` | Pagination | `usable` | `qtmaterial/widgets/data/qtmaterialpagination.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/pagination` |
 | `data.table` | Table | `usable` | `qtmaterial/widgets/data/qtmaterialtable.h` | `TableSpec` | `tst_table` | `docs/public-api/data-widgets.md` | `/data/table` |
 | `data.tree-view` | Tree View | `usable` | `qtmaterial/widgets/data/qtmaterialtreeview.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/tree-view` |
@@ -44,7 +45,9 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
+| `input.autocomplete` | Autocomplete | `usable` | `qtmaterial/widgets/inputs/qtmaterialautocomplete.h` | `AutocompleteSpec` | `tst_autocomplete` | `docs/public-api/inputs.md` | `/inputs/autocomplete` |
 | `input.combo-box` | Combo Box | `usable` | `qtmaterial/widgets/inputs/qtmaterialcombobox.h` | `AutocompleteSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/combo-box` |
+| `input.date-picker` | Date Picker | `usable` | `qtmaterial/widgets/qtmaterialdatepicker.h` | `DatePickerSpec` | `tst_data_components` | `docs/public-api/inputs.md` | `/inputs/date-picker` |
 | `input.date-range-picker` | Date Range Picker | `usable` | `qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h` | `DatePickerSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/date-range-picker` |
 | `input.date.field` | Date Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialdatefield.h` | `TextFieldSpec` | `tst_datefield` | `docs/public-api/inputs.md` | `/inputs/date-field` |
 | `input.range-slider` | Range Slider | `usable` | `qtmaterial/widgets/inputs/qtmaterialrangeslider.h` | `SelectionRuntimeSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/range-slider` |
@@ -68,6 +71,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 |---|---|---:|---|---|---|---|---|
 | `navigation.breadcrumb` | Breadcrumb | `usable` | `qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/navigation/breadcrumb` |
 | `navigation.command-palette` | Command Palette | `usable` | `qtmaterial/widgets/navigation/qtmaterialcommandpalette.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/navigation/command-palette` |
+| `navigation.menu` | Menu | `usable` | `qtmaterial/widgets/navigation/qtmaterialmenu.h` | `MenuSpec` | `tst_menu` | `docs/public-api/navigation.md` | `/navigation/menu` |
 | `navigation.rail` | Navigation Rail | `usable` | `qtmaterial/widgets/navigation/qtmaterialnavigationrail.h` | `NavigationRailSpec` | `tst_navigationrail` | `docs/public-api/navigation.md` | `/navigation/rail` |
 | `navigation.tabs` | Tabs | `usable` | `qtmaterial/widgets/navigation/qtmaterialtabs.h` | `TabsSpec` | `tst_tabs` | `docs/public-api/navigation.md` | `/navigation/tabs` |
 

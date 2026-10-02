@@ -42,6 +42,7 @@
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `data.carousel` | Carousel | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Carousel Material reference model or deterministic visual conformance evidence is available. |
 | `data.grid-list` | Grid List | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Grid List Material reference model or deterministic visual conformance evidence is available. |
+| `data.list` | List | `usable` | 2 | 2 | 2 | 2 | 2 | 1 | 1 | 2 | 2 | 2 | List has focused interaction and accessibility coverage but lacks deterministic visual, RTL and HiDPI conformance evidence. |
 | `data.pagination` | Pagination | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs theme-token specialization and visual-regression evidence before complete maturity. |
 | `data.table` | Table | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Table Material reference model or deterministic visual conformance evidence is available. |
 | `data.tree-view` | Tree View | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs dedicated visual-regression and screen-reader evidence before complete maturity. |
@@ -56,7 +57,9 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| `input.autocomplete` | Autocomplete | `usable` | 2 | 2 | 2 | 2 | 2 | 1 | 1 | 2 | 2 | 2 | Autocomplete has focused popup, keyboard and accessibility tests but lacks deterministic visual, RTL and HiDPI conformance evidence. |
 | `input.combo-box` | Combo Box | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Combo Box has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `input.date-picker` | Date Picker | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 2 | 2 | Date Picker has stable selection/theme tests but needs dedicated keyboard, accessibility, RTL, HiDPI and visual-conformance evidence. |
 | `input.date-range-picker` | Date Range Picker | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Date Range Picker has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
 | `input.date.field` | Date Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Date Field Material reference model or deterministic visual conformance evidence is available. |
 | `input.range-slider` | Range Slider | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Range Slider has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
@@ -80,6 +83,7 @@
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `navigation.breadcrumb` | Breadcrumb | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs dedicated overflow/elision behavior and visual-regression evidence before complete maturity. |
 | `navigation.command-palette` | Command Palette | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs shortcut-discovery, empty-state and visual-regression evidence before complete maturity. |
+| `navigation.menu` | Menu | `usable` | 2 | 2 | 2 | 2 | 2 | 1 | 1 | 2 | 1 | 2 | Menu has focused state, keyboard and accessibility tests but still lacks a dedicated Gallery showcase plus deterministic visual, RTL and HiDPI evidence. |
 | `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Rail Material reference model or deterministic visual conformance evidence is available. |
 | `navigation.tabs` | Tabs | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Complete visual-reference and full state-matrix certification remain before Tabs can be marked complete. |
 
@@ -157,11 +161,14 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Chip | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Chip family. |
 | Carousel | Add Carousel reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
 | Grid List | Add Grid List reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
+| List | Add dedicated visual-regression, RTL and HiDPI coverage for the List/ListItem family. |
 | Pagination | Close the declared 0.9 maturity gap before promoting this component to complete. |
 | Table | Add Table reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
 | Tree View | Close the declared 0.9 maturity gap before promoting this component to complete. |
 | Divider | Add Divider token, RTL and HiDPI reference evidence before raising maturity axes. |
+| Autocomplete | Add Autocomplete visual-reference coverage plus dedicated RTL and DPR test cases. |
 | Combo Box | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Combo Box. |
+| Date Picker | Add a focused Date Picker interaction/accessibility suite and deterministic visual references. |
 | Date Range Picker | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Date Range Picker. |
 | Date Field | Add Date Field state, accessibility and visual evidence before raising maturity axes. |
 | Range Slider | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Range Slider. |
@@ -175,6 +182,7 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Split View | Close the declared 0.9 maturity gap before promoting this component to complete. |
 | Breadcrumb | Close the declared 0.9 maturity gap before promoting this component to complete. |
 | Command Palette | Close the declared 0.9 maturity gap before promoting this component to complete. |
+| Menu | Add a dedicated Menu Gallery showcase and visual/RTL/HiDPI conformance cases. |
 | Navigation Rail | Add Navigation Rail reference-model, RTL and visual evidence before raising maturity axes. |
 | Tabs | Add deterministic visual-reference coverage and broaden the full state matrix for complete maturity. |
 | Circular Progress Indicator | Add progress token, animation, accessibility and visual evidence before raising maturity axes. |
