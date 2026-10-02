@@ -3,6 +3,7 @@
 #include <QVector>
 
 #include <QAccessible>
+#include <QFontMetrics>
 #include <QStringList>
 
 #include <QKeyEvent>
@@ -327,22 +328,123 @@ void ensureSegmentedButtonSpecResolved(const Theme& theme,
     d.specDirty = false;
 }
 
+int preferredSegmentWidth(
+    const Segment& segment,
+    const SegmentedButtonSpec& spec,
+    const QFontMetrics& metrics)
+{
+    int width =
+        spec.horizontalPadding * 2
+        + metrics.horizontalAdvance(segment.text);
+
+    if (!segment.icon.isNull()) {
+        width += spec.iconSize + spec.iconSpacing;
+    }
+
+    return qMax(spec.minSegmentWidth, width);
+}
+
+QVector<int> segmentedButtonSegmentWidths(
+    const QtMaterialSegmentedButton& self,
+    const Theme& theme,
+    QtMaterialSegmentedButtonPrivate& d)
+{
+    ensureSegmentedButtonSpecResolved(theme, self, d);
+
+    QVector<int> widths;
+    widths.reserve(d.segments.size());
+
+    if (d.segments.isEmpty()) {
+        return widths;
+    }
+
+    const QFont resolvedFont =
+        d.spec.hasResolvedLabelFont
+            ? d.spec.labelFont
+            : self.font();
+    const QFontMetrics metrics(resolvedFont);
+
+    int preferredTotal = 0;
+    for (const Segment& segment : d.segments) {
+        const int width =
+            preferredSegmentWidth(segment, d.spec, metrics);
+        widths.append(width);
+        preferredTotal += width;
+    }
+
+    const int available = qMax(0, self.width());
+    const int count = widths.size();
+
+    if (available >= preferredTotal) {
+        const int extra = available - preferredTotal;
+        const int extraPerSegment = extra / count;
+        int remainder = extra % count;
+
+        for (int i = 0; i < count; ++i) {
+            widths[i] += extraPerSegment;
+            if (remainder > 0) {
+                ++widths[i];
+                --remainder;
+            }
+        }
+        return widths;
+    }
+
+    const int minimumTotal = d.spec.minSegmentWidth * count;
+    if (available <= minimumTotal) {
+        const int base = count > 0 ? available / count : 0;
+        int remainder = count > 0 ? available % count : 0;
+
+        for (int i = 0; i < count; ++i) {
+            widths[i] = base;
+            if (remainder > 0) {
+                ++widths[i];
+                --remainder;
+            }
+        }
+        return widths;
+    }
+
+    // Shrink only the content-dependent portion. Longer labels retain more
+    // width than short labels instead of all segments being forced equal.
+    int deficit = preferredTotal - available;
+    while (deficit > 0) {
+        bool changed = false;
+        for (int i = 0; i < count && deficit > 0; ++i) {
+            if (widths[i] > d.spec.minSegmentWidth) {
+                --widths[i];
+                --deficit;
+                changed = true;
+            }
+        }
+
+        if (!changed) {
+            break;
+        }
+    }
+
+    return widths;
+}
+
 QRect segmentedButtonSegmentRect(const QtMaterialSegmentedButton& self,
                                  const Theme& theme,
                                  QtMaterialSegmentedButtonPrivate& d,
                                  int index)
 {
-    ensureSegmentedButtonSpecResolved(theme, self, d);
+    const QVector<int> widths =
+        segmentedButtonSegmentWidths(self, theme, d);
 
-    if (d.segments.isEmpty()) {
+    if (index < 0 || index >= widths.size()) {
         return QRect();
     }
 
-    const int segmentWidth = qMax(d.spec.minSegmentWidth, self.width() / qMax(1, d.segments.size()));
-    const int totalWidth = segmentWidth * d.segments.size();
-    const int startX = (self.width() - totalWidth) / 2;
+    int x = 0;
+    for (int i = 0; i < index; ++i) {
+        x += widths.at(i);
+    }
+
     const int y = (self.height() - d.spec.segmentHeight) / 2;
-    return QRect(startX + index * segmentWidth, y, segmentWidth, d.spec.segmentHeight);
+    return QRect(x, y, widths.at(index), d.spec.segmentHeight);
 }
 
 int segmentedButtonIndexAt(const QtMaterialSegmentedButton& self,
@@ -389,14 +491,14 @@ QSize QtMaterialSegmentedButton::sizeHint() const
         ? d->spec.labelFont
         : font();
     const QFontMetrics fm(resolvedFont);
+
     for (const Segment& segment : d->segments) {
-        int itemWidth = d->spec.horizontalPadding * 2 + fm.horizontalAdvance(segment.text);
-        if (!segment.icon.isNull()) {
-            itemWidth += d->spec.iconSize + d->spec.iconSpacing;
-        }
-        width += qMax(d->spec.minSegmentWidth, itemWidth);
+        width += preferredSegmentWidth(segment, d->spec, fm);
     }
-    return QSize(qMax(width, d->spec.minSegmentWidth), d->spec.touchTarget.height());
+
+    return QSize(
+        qMax(width, d->spec.minSegmentWidth),
+        d->spec.touchTarget.height());
 }
 
 QSize QtMaterialSegmentedButton::minimumSizeHint() const
@@ -485,8 +587,21 @@ void QtMaterialSegmentedButton::paintEvent(QPaintEvent*)
             ? d->spec.disabledLabelColor
             : (checked ? d->spec.selectedLabelColor : d->spec.labelColor);
         painter.setPen(textColor);
-        painter.drawText(r.adjusted(d->spec.horizontalPadding, 0, -d->spec.horizontalPadding, 0),
-                         Qt::AlignCenter, d->segments.at(i).text);
+        const QRect textRect =
+            r.adjusted(
+                d->spec.horizontalPadding,
+                0,
+                -d->spec.horizontalPadding,
+                0);
+        const QString text =
+            QFontMetrics(resolvedFont).elidedText(
+                d->segments.at(i).text,
+                Qt::ElideRight,
+                qMax(0, textRect.width()));
+        painter.drawText(
+            textRect,
+            Qt::AlignCenter,
+            text);
     }
 
     if (QtMaterialFocusIndicator::shouldShow(
