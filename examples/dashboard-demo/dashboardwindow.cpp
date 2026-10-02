@@ -3880,6 +3880,9 @@ void DashboardWindow::updateResponsiveLayout()
         if (stackedCharts) {
             m_chartGrid->addWidget(m_statisticsCard, 0, 0);
             m_chartGrid->addWidget(m_earningsCard, 1, 0);
+            m_chartGrid->setColumnStretch(0, 1);
+            m_chartGrid->setColumnStretch(1, 0);
+            m_chartGrid->setColumnStretch(2, 0);
         } else {
             m_chartGrid->addWidget(m_statisticsCard, 0, 0, 1, 2);
             m_chartGrid->addWidget(m_earningsCard, 0, 2);
