@@ -1,3 +1,4 @@
+#include <QGraphicsOpacityEffect>
 #include <QSignalSpy>
 #include <QTest>
 #include <QWidget>
@@ -11,6 +12,7 @@ class tst_QtMaterialSnackbarHost : public QObject
 private slots:
     void construction();
     void showSingleMessage();
+    void transitionOpacityCoversWholeSnackbar();
     void queueMessages();
     void replaceCurrent();
     void dismissCurrent();
@@ -46,6 +48,42 @@ void tst_QtMaterialSnackbarHost::showSingleMessage()
     QCOMPARE(snackbarHost.pendingCount(), 0);
     QCOMPARE(snackbarHost.snackbar()->text(), QStringLiteral("Saved"));
     QVERIFY(snackbarHost.snackbar()->isVisible());
+}
+
+void tst_QtMaterialSnackbarHost::transitionOpacityCoversWholeSnackbar()
+{
+    QWidget host;
+    host.resize(800, 600);
+    host.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&host));
+
+    QtMaterial::QtMaterialSnackbarHost snackbarHost(&host);
+    auto* snackbar = snackbarHost.snackbar();
+    QVERIFY(snackbar != nullptr);
+
+    auto* opacityEffect =
+        qobject_cast<QGraphicsOpacityEffect*>(snackbar->graphicsEffect());
+    QVERIFY(opacityEffect != nullptr);
+    QVERIFY(qFuzzyIsNull(opacityEffect->opacity()));
+
+    QSignalSpy shownSpy(snackbar, &QtMaterial::QtMaterialSnackbar::shown);
+    QSignalSpy dismissedSpy(snackbar, &QtMaterial::QtMaterialSnackbar::dismissed);
+
+    QtMaterial::SnackbarRequest req;
+    req.text = QStringLiteral("Transition opacity");
+    req.actionText = QStringLiteral("Action");
+    req.showDismissButton = true;
+    req.duration = QtMaterial::SnackbarDuration::Indefinite;
+
+    snackbarHost.showMessage(req);
+
+    QTRY_COMPARE(shownSpy.count(), 1);
+    QVERIFY(qFuzzyCompare(opacityEffect->opacity(), qreal(1.0)));
+
+    snackbarHost.dismissCurrent();
+
+    QTRY_COMPARE(dismissedSpy.count(), 1);
+    QVERIFY(qFuzzyIsNull(opacityEffect->opacity()));
 }
 
 void tst_QtMaterialSnackbarHost::queueMessages()
