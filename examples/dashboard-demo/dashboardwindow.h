@@ -129,7 +129,7 @@ private:
     QVector<QToolButton*> m_sidebarThemeButtons;
     QVector<QToolButton*> m_drawerThemeButtons;
     QVector<QAbstractButton*> m_topBarThemeButtons;
-    QVector<QLabel*> m_metricThemeIcons;
+    QVector<QLabel*> m_metricTrendArrows;
     QVector<QLabel*> m_positiveThemeLabels;
     QVector<QLabel*> m_legendThemeDots;
     QVector<QWidget*> m_socialThemeBars;
