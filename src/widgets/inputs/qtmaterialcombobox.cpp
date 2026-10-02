@@ -18,7 +18,7 @@
 
 #include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
-#include "qtmaterial/widgets/resolution/qtmaterialinputspecresolution_p.h"
+#include "../resolution/qtmaterialinputspecresolution_p.h"
 
 namespace QtMaterial {
 namespace {
