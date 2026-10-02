@@ -17,6 +17,7 @@
 #include "../../../include/qtmaterial/core/private/qtmaterialaccessibilityhelper_p.h"
 #include <memory>
 #include <QShowEvent>
+#include <QSizePolicy>
 #include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
 #include <QScopedValueRollback>
 
@@ -276,7 +277,11 @@ QtMaterialOutlinedTextField::QtMaterialOutlinedTextField(QWidget* parent)
     : QtMaterialInputControl(parent)
     , d_ptr(std::make_unique<QtMaterialOutlinedTextFieldPrivate>(this))
 {
-    setMinimumHeight(64);
+    // The shell owns a dynamic minimumSizeHint derived from the resolved
+    // Material text-field spec. Do not install a smaller explicit minimum:
+    // QWidget/QLayout treats an explicit minimum as authoritative and may
+    // otherwise compress the label/container/supporting-text shell.
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 
     if (d_ptr->m_prefixLabel) {
         d_ptr->m_prefixLabel->setObjectName(QStringLiteral("prefixLabel"));

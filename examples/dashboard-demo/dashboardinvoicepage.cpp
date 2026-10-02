@@ -10,6 +10,7 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
+#include <QShowEvent>
 #include <QStandardItemModel>
 #include <QVBoxLayout>
 
@@ -236,8 +237,18 @@ DashboardInvoicePage::DashboardInvoicePage(QWidget* parent)
         &QtMaterial::ThemeManager::instance(),
         &QtMaterial::ThemeManager::themeChanged,
         this,
-        [this](const QtMaterial::Theme&) { applyTheme(); });
+        [this](const QtMaterial::Theme&) {
+            if (isVisible()) {
+                applyTheme();
+            }
+        });
 
+    applyTheme();
+}
+
+void DashboardInvoicePage::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
     applyTheme();
 }
 

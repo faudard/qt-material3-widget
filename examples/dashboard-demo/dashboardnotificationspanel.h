@@ -3,6 +3,8 @@
 #include <QWidget>
 #include <QString>
 
+class QShowEvent;
+
 namespace Ui {
 class DashboardNotificationsPanel;
 }
@@ -13,6 +15,9 @@ class DashboardNotificationsPanel final : public QWidget
 public:
     explicit DashboardNotificationsPanel(QWidget* parent = nullptr);
     ~DashboardNotificationsPanel() override;
+
+protected:
+    void showEvent(QShowEvent* event) override;
 
 signals:
     void closeRequested();

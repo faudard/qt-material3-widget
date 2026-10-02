@@ -8,6 +8,7 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QShowEvent>
 #include <QVector>
 #include <QVBoxLayout>
 
@@ -304,8 +305,18 @@ DashboardProjectsPage::DashboardProjectsPage(QWidget* parent)
         &QtMaterial::ThemeManager::instance(),
         &QtMaterial::ThemeManager::themeChanged,
         this,
-        [this](const QtMaterial::Theme&) { applyTheme(); });
+        [this](const QtMaterial::Theme&) {
+            if (isVisible()) {
+                applyTheme();
+            }
+        });
 
+    applyTheme();
+}
+
+void DashboardProjectsPage::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
     applyTheme();
 }
 

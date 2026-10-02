@@ -1,5 +1,6 @@
 #include "qtmaterial/widgets/surfaces/qtmaterialsnackbar.h"
 
+#include <QGraphicsOpacityEffect>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLabel>
@@ -30,6 +31,7 @@ public:
  QPushButton* dismissButton = nullptr;
  QHBoxLayout* layout = nullptr;
  QTimer* timer = nullptr;
+ QGraphicsOpacityEffect* opacityEffect = nullptr;
  bool pauseAutoHideOnInteraction = true;
  bool autoHidePaused = false;
  int remainingAutoHideMs = 0;
@@ -68,6 +70,14 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
     setAttribute(Qt::WA_Hover, true);
     setAttribute(Qt::WA_StyledBackground, false);
     setAttribute(Qt::WA_TranslucentBackground, true);
+
+    // Fade the complete snackbar surface, including child controls. Previously
+    // only the painted container alpha followed transition progress, leaving
+    // the label/action/dismiss button fully opaque during exit animations.
+    d_ptr->opacityEffect = new QGraphicsOpacityEffect(this);
+    d_ptr->opacityEffect->setOpacity(0.0);
+    setGraphicsEffect(d_ptr->opacityEffect);
+
     hide();
 
     d_ptr->label = new QLabel(this);
@@ -123,6 +133,10 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
 
     connect(d_ptr->transition, &QtMaterialTransitionController::progressChanged,
             this, [this](qreal value) {
+                if (d_ptr->opacityEffect) {
+                    d_ptr->opacityEffect->setOpacity(
+                        qBound<qreal>(0.0, value, 1.0));
+                }
                 syncGeometryToHost();
                 emit progressChanged(value);
                 update();
@@ -130,6 +144,16 @@ QtMaterialSnackbar::QtMaterialSnackbar(QWidget* parent)
 
     connect(d_ptr->transition, &QtMaterialTransitionController::finished,
             this, [this]() {
+                // TransitionController snaps its logical progress to the exact
+                // endpoint even when the last animation frame was already
+                // within epsilon and therefore did not emit progressChanged.
+                // Keep the graphics effect synchronized with that endpoint so
+                // the complete snackbar is exactly opaque/transparent.
+                if (d_ptr->opacityEffect) {
+                    d_ptr->opacityEffect->setOpacity(
+                        qBound<qreal>(0.0, progress(), 1.0));
+                }
+
                 if (d_ptr->state == State::Entering) {
                     d_ptr->state = State::Visible;
                     updateAutoHide();
@@ -364,7 +388,6 @@ void QtMaterialSnackbar::paintEvent(QPaintEvent*)
         return;
     }
 
-    const qreal p = progress();
     const qreal radius = resolvedCornerRadius();
     const QRectF bounds = snackbarContainerRect(*this);
 
@@ -375,19 +398,15 @@ void QtMaterialSnackbar::paintEvent(QPaintEvent*)
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     if (d_ptr->specPtr->hasResolvedElevationStyle) {
-        QColor shadow = d_ptr->specPtr->shadowColor;
-        shadow.setAlphaF(shadow.alphaF() * p);
         QtMaterialElevationRenderer::paintPathElevation(
             &painter,
             containerPath,
-            shadow,
+            d_ptr->specPtr->shadowColor,
             d_ptr->specPtr->elevationStyle);
     }
 
-    QColor fill = d_ptr->specPtr->containerColor;
-    fill.setAlphaF(fill.alphaF() * p);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(fill);
+    painter.setBrush(d_ptr->specPtr->containerColor);
     painter.drawPath(containerPath);
 }
 
