@@ -7,6 +7,7 @@
 #include <QEvent>
 #include <QFontMetrics>
 #include <QFrame>
+#include <QHeaderView>
 #include <QListView>
 #include <QWidget>
 #include <QSizePolicy>
@@ -23,6 +24,7 @@
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
+#include "qtmaterial/widgets/data/qtmaterialtable.h"
 #include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
 #include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
 
@@ -155,6 +157,73 @@ void polishDemoButton(QtMaterial::QtMaterialTextButton* button)
     QFont font = button->font();
     font.setWeight(QFont::DemiBold);
     button->setFont(font);
+}
+
+void polishDemoTable(QtMaterial::QtMaterialTable* table)
+{
+    if (!table) {
+        return;
+    }
+
+    const QColor surface = color(QtMaterial::ColorRole::Surface);
+    const QColor header = color(QtMaterial::ColorRole::SurfaceContainerLow);
+    const QColor hover = color(QtMaterial::ColorRole::SurfaceContainer);
+    const QColor divider = color(QtMaterial::ColorRole::OutlineVariant);
+    const QColor foreground = color(QtMaterial::ColorRole::OnSurface);
+    const QColor muted = color(QtMaterial::ColorRole::OnSurfaceVariant);
+    const QColor selected = color(QtMaterial::ColorRole::PrimaryContainer);
+    const QColor selectedText = color(QtMaterial::ColorRole::OnPrimaryContainer);
+
+    table->setAlternatingRowColors(false);
+    table->setShowGrid(false);
+    table->setFrameShape(QFrame::NoFrame);
+    table->setCornerButtonEnabled(false);
+    table->setWordWrap(false);
+    table->verticalHeader()->setVisible(false);
+    table->verticalHeader()->setDefaultSectionSize(table->dense() ? 52 : 64);
+    table->horizontalHeader()->setMinimumHeight(52);
+    table->horizontalHeader()->setMaximumHeight(52);
+
+    QFont headerFont = table->horizontalHeader()->font();
+    headerFont.setWeight(QFont::DemiBold);
+    table->horizontalHeader()->setFont(headerFont);
+
+    table->setStyleSheet(QStringLiteral(
+        "QTableView {"
+        " background:%1;"
+        " color:%2;"
+        " border:0;"
+        " border-radius:0;"
+        " outline:0;"
+        " gridline-color:transparent;"
+        " selection-background-color:%7;"
+        " selection-color:%8;"
+        " }"
+        "QTableView::item {"
+        " padding:0 16px;"
+        " border:0;"
+        " border-bottom:1px dotted %3;"
+        " }"
+        "QTableView::item:hover { background:%4; }"
+        "QTableView::item:selected { background:%7; color:%8; }"
+        "QHeaderView { background:%5; border:0; }"
+        "QHeaderView::section {"
+        " background:%5;"
+        " color:%6;"
+        " padding:0 16px;"
+        " border:0;"
+        " font-weight:600;"
+        " }"
+        "QTableCornerButton::section { background:%5; border:0; }"
+        "QScrollBar { background:transparent; }")
+        .arg(surface.name(QColor::HexRgb))
+        .arg(foreground.name(QColor::HexRgb))
+        .arg(divider.name(QColor::HexRgb))
+        .arg(hover.name(QColor::HexRgb))
+        .arg(header.name(QColor::HexRgb))
+        .arg(muted.name(QColor::HexRgb))
+        .arg(selected.name(QColor::HexRgb))
+        .arg(selectedText.name(QColor::HexRgb)));
 }
 
 QPainterPath smoothPath(const QVector<QPointF>& points)
@@ -536,6 +605,12 @@ void apply(QWidget* root)
                 view->setStyleSheet(popupStyle);
             }
         }
+    }
+
+    const auto tables =
+        root->findChildren<QtMaterial::QtMaterialTable*>();
+    for (QtMaterial::QtMaterialTable* table : tables) {
+        polishDemoTable(table);
     }
 }
 
