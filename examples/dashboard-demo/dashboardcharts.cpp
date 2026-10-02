@@ -1,11 +1,18 @@
 #include "dashboardcharts.h"
 #include "dashboarddemostyle.h"
 
+#include <QAbstractItemView>
+#include <QBitmap>
+#include <QComboBox>
+#include <QEvent>
 #include <QFontMetrics>
 #include <QFrame>
 #include <QHeaderView>
+#include <QListView>
 #include <QWidget>
 #include <QSizePolicy>
+#include <QStyledItemDelegate>
+#include <QStyleOptionViewItem>
 #include <QLinearGradient>
 #include <QPainter>
 #include <QPainterPath>
@@ -18,6 +25,7 @@
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
+#include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
 #include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
 
 namespace {
