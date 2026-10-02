@@ -36,6 +36,7 @@
 #include <QResizeEvent>
 #include <QScrollArea>
 #include <QShortcut>
+#include <QSignalBlocker>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
@@ -85,6 +86,23 @@ QColor materialColor(QtMaterial::ColorRole role)
 QString cssColor(const QColor& color)
 {
     return color.name(QColor::HexRgb);
+}
+
+void applyThemeOptionsBatched(
+    QWidget* source,
+    const QtMaterial::ThemeOptions& options)
+{
+    QWidget* topLevel = source ? source->window() : nullptr;
+    if (topLevel) {
+        topLevel->setUpdatesEnabled(false);
+    }
+
+    QtMaterial::ThemeManager::instance().setThemeOptions(options);
+
+    if (topLevel) {
+        topLevel->setUpdatesEnabled(true);
+        topLevel->update();
+    }
 }
 
 QLabel* makeLabel(
@@ -715,18 +733,16 @@ DashboardWindow::DashboardWindow(QWidget* parent)
             }
         });
 
+    cacheThemeTargets();
+    DashboardDemoStyle::polishControls(m_central);
+
     connect(
         &QtMaterial::ThemeManager::instance(),
         &QtMaterial::ThemeManager::themeChanged,
         this,
         [this](const QtMaterial::Theme&) {
             applyThemeChrome();
-            applyPeriod();
-            if (m_settingsButton) {
-                m_settingsButton->setIcon(dashboardIcon(
-                    QStringLiteral("settings"),
-                    materialColor(QtMaterial::ColorRole::OnSurfaceVariant)));
-            }
+            updateChartAccent();
         });
 
     applyThemeChrome();
@@ -2695,7 +2711,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
     };
     refreshSwatches();
 
-    auto applyThemeControls = [seed, mode, contrast, variant]() {
+    auto applyThemeControls = [page, seed, mode, contrast, variant]() {
         auto options = QtMaterial::ThemeManager::instance().options();
 
         const QString seedName = seed->currentText();
@@ -2737,7 +2753,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
                 ? QtMaterial::ThemeVariant::Expressive
                 : QtMaterial::ThemeVariant::TonalSpot;
 
-        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+        applyThemeOptionsBatched(page, options);
     };
 
     connect(
@@ -2801,7 +2817,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
         }
     });
 
-    connect(reset, &QAbstractButton::clicked, this, [this, seed, mode, contrast, variant, direction, labels, compactPreview]() {
+    connect(reset, &QAbstractButton::clicked, this, [this, page, seed, mode, contrast, variant, direction, labels, compactPreview]() {
         seed->setCurrentText(QStringLiteral("Indigo"));
         mode->setCurrentIndex(0);
         contrast->setCurrentIndex(0);
@@ -2816,7 +2832,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
         options.preference = QtMaterial::ThemePreference::Light;
         options.contrast = QtMaterial::ContrastMode::Standard;
         options.variant = QtMaterial::ThemeVariant::TonalSpot;
-        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+        applyThemeOptionsBatched(page, options);
 
         if (m_central) {
             m_central->setLayoutDirection(Qt::LeftToRight);
@@ -2832,6 +2848,7 @@ QWidget* DashboardWindow::createShowcaseSettingsPage()
             refreshSwatches();
             const int target = theme.isDark() ? 1 : 0;
             if (mode->currentIndex() != target) {
+                const QSignalBlocker blocker(mode);
                 mode->setCurrentIndex(target);
             }
         });
@@ -3480,6 +3497,110 @@ void DashboardWindow::applyFilter(const QString& text)
     }
 }
 
+void DashboardWindow::cacheThemeTargets()
+{
+    m_sidebarThemeButtons.clear();
+    m_drawerThemeButtons.clear();
+    m_topBarThemeButtons.clear();
+    m_metricTrendArrows.clear();
+    m_positiveThemeLabels.clear();
+    m_legendThemeDots.clear();
+    m_socialThemeBars.clear();
+
+    if (m_sidebar) {
+        const auto buttons =
+            m_sidebar->findChildren<QToolButton*>(
+                QStringLiteral("dashboardNavButton"));
+        m_sidebarThemeButtons.reserve(buttons.size());
+        for (QToolButton* button : buttons) {
+            m_sidebarThemeButtons.append(button);
+        }
+    }
+
+    if (m_navigationDrawer) {
+        const auto buttons =
+            m_navigationDrawer->findChildren<QToolButton*>(
+                QStringLiteral("dashboardNavButton"));
+        m_drawerThemeButtons.reserve(buttons.size());
+        for (QToolButton* button : buttons) {
+            m_drawerThemeButtons.append(button);
+        }
+    }
+
+    if (m_topBar) {
+        const auto buttons = m_topBar->findChildren<QAbstractButton*>();
+        m_topBarThemeButtons.reserve(buttons.size());
+        for (QAbstractButton* button : buttons) {
+            if (!button->property("dashboardIconName").toString().isEmpty()) {
+                m_topBarThemeButtons.append(button);
+            }
+        }
+    }
+
+    if (m_contentHost) {
+        const auto trendArrows =
+            m_contentHost->findChildren<QLabel*>(
+                QStringLiteral("metricTrendArrow"));
+        m_metricTrendArrows.reserve(trendArrows.size());
+        for (QLabel* arrow : trendArrows) {
+            m_metricTrendArrows.append(arrow);
+        }
+
+        const auto bars =
+            m_contentHost->findChildren<QWidget*>(
+                QStringLiteral("dashboardSocialBars"));
+        m_socialThemeBars.reserve(bars.size());
+        for (QWidget* bar : bars) {
+            m_socialThemeBars.append(bar);
+        }
+    }
+
+    if (m_pages) {
+        const auto positiveLabels =
+            m_pages->findChildren<QLabel*>(
+                QStringLiteral("positiveDelta"));
+        m_positiveThemeLabels.reserve(positiveLabels.size());
+        for (QLabel* label : positiveLabels) {
+            m_positiveThemeLabels.append(label);
+        }
+
+        const auto legendDots =
+            m_pages->findChildren<QLabel*>(
+                QStringLiteral("legendDot"));
+        m_legendThemeDots.reserve(legendDots.size());
+        for (QLabel* dot : legendDots) {
+            m_legendThemeDots.append(dot);
+        }
+    }
+}
+
+void DashboardWindow::applyVisiblePageChrome()
+{
+    if (!m_pages || m_pageChromeStyle.isEmpty()) {
+        return;
+    }
+
+    QWidget* current = m_pages->currentWidget();
+    if (current && current->styleSheet() != m_pageChromeStyle) {
+        current->setStyleSheet(m_pageChromeStyle);
+    }
+}
+
+void DashboardWindow::updateChartAccent()
+{
+    if (!m_lineChart) {
+        return;
+    }
+
+    QtMaterial::ColorRole role = QtMaterial::ColorRole::Primary;
+    if (m_chartMetricIndex == 1) {
+        role = QtMaterial::ColorRole::Tertiary;
+    } else if (m_chartMetricIndex == 2) {
+        role = QtMaterial::ColorRole::Secondary;
+    }
+    m_lineChart->setAccentColor(materialColor(role));
+}
+
 void DashboardWindow::applyThemeChrome()
 {
     const auto& theme = QtMaterial::ThemeManager::instance().theme();
@@ -3550,9 +3671,7 @@ void DashboardWindow::applyThemeChrome()
             .arg(cssColor(sidebarHover))
             .arg(cssColor(sidebarProfile)));
 
-        const auto navButtons =
-            m_sidebar->findChildren<QToolButton*>(QStringLiteral("dashboardNavButton"));
-        for (QToolButton* button : navButtons) {
+        for (QToolButton* button : m_sidebarThemeButtons) {
             const QString iconName =
                 button->property("dashboardIconName").toString();
             if (!iconName.isEmpty()) {
@@ -3574,10 +3693,7 @@ void DashboardWindow::applyThemeChrome()
             .arg(cssColor(materialColor(QtMaterial::ColorRole::PrimaryContainer)))
             .arg(cssColor(materialColor(QtMaterial::ColorRole::OnPrimaryContainer))));
 
-        const auto drawerButtons =
-            m_navigationDrawer->findChildren<QToolButton*>(
-                QStringLiteral("dashboardNavButton"));
-        for (QToolButton* button : drawerButtons) {
+        for (QToolButton* button : m_drawerThemeButtons) {
             const QString iconName =
                 button->property("dashboardIconName").toString();
             if (!iconName.isEmpty()) {
@@ -3624,8 +3740,7 @@ void DashboardWindow::applyThemeChrome()
             .arg(cssColor(materialColor(QtMaterial::ColorRole::PrimaryContainer)))
             .arg(cssColor(materialColor(QtMaterial::ColorRole::OnPrimaryContainer))));
 
-        const auto actionButtons = m_topBar->findChildren<QAbstractButton*>();
-        for (QAbstractButton* button : actionButtons) {
+        for (QAbstractButton* button : m_topBarThemeButtons) {
             const QString iconName =
                 button->property("dashboardIconName").toString();
             if (iconName.isEmpty()) {
@@ -3693,7 +3808,8 @@ void DashboardWindow::applyThemeChrome()
             .arg(cssColor(surfaceVariant))
             .arg(cssColor(onSurface))
             .arg(cssColor(onSurfaceVariant));
-        m_pages->setStyleSheet(pageStyle + applicationChrome);
+        m_pageChromeStyle = pageStyle + applicationChrome;
+        applyVisiblePageChrome();
 
         QPalette pagesPalette = m_pages->palette();
         pagesPalette.setColor(QPalette::Window, surfaceVariant);
@@ -3716,34 +3832,22 @@ void DashboardWindow::applyThemeChrome()
         metric.delta->setPalette(deltaPalette);
     }
 
-    if (m_contentHost) {
-        const auto trendArrows =
-            m_contentHost->findChildren<QLabel*>(
-                QStringLiteral("metricTrendArrow"));
-        for (QLabel* arrow : trendArrows) {
-            QPalette palette = arrow->palette();
-            palette.setColor(QPalette::WindowText, positive);
-            arrow->setPalette(palette);
-        }
-
+    for (QLabel* arrow : m_metricTrendArrows) {
+        QPalette palette = arrow->palette();
+        palette.setColor(QPalette::WindowText, positive);
+        arrow->setPalette(palette);
     }
 
-    if (m_pages) {
-        const auto positiveLabels =
-            m_pages->findChildren<QLabel*>(QStringLiteral("positiveDelta"));
-        for (QLabel* label : positiveLabels) {
-            label->setStyleSheet(QStringLiteral("color:%1;").arg(cssColor(positive)));
-        }
+    for (QLabel* label : m_positiveThemeLabels) {
+        label->setStyleSheet(QStringLiteral("color:%1;").arg(cssColor(positive)));
+    }
 
-        const auto legendDots =
-            m_pages->findChildren<QLabel*>(QStringLiteral("legendDot"));
-        for (QLabel* dot : legendDots) {
-            const auto role = static_cast<QtMaterial::ColorRole>(
-                dot->property("dashboardColorRole").toInt());
-            dot->setStyleSheet(
-                QStringLiteral("color:%1;")
-                    .arg(cssColor(materialColor(role))));
-        }
+    for (QLabel* dot : m_legendThemeDots) {
+        const auto role = static_cast<QtMaterial::ColorRole>(
+            dot->property("dashboardColorRole").toInt());
+        dot->setStyleSheet(
+            QStringLiteral("color:%1;")
+                .arg(cssColor(materialColor(role))));
     }
 
     if (m_orders) {
@@ -3755,13 +3859,8 @@ void DashboardWindow::applyThemeChrome()
     if (m_revenueSummary) {
         m_revenueSummary->update();
     }
-    if (m_contentHost) {
-        const auto bars =
-            m_contentHost->findChildren<QWidget*>(
-                QStringLiteral("dashboardSocialBars"));
-        for (QWidget* bar : bars) {
-            bar->update();
-        }
+    for (QWidget* bar : m_socialThemeBars) {
+        bar->update();
     }
 
     if (m_commandPalette) {
@@ -3888,6 +3987,7 @@ void DashboardWindow::setCurrentSection(int index)
     }
     if (m_pages) {
         m_pages->setCurrentIndex(index);
+        applyVisiblePageChrome();
     }
     if (m_navigationRail && m_navigationRail->currentIndex() != index) {
         m_navigationRail->setCurrentIndex(index);

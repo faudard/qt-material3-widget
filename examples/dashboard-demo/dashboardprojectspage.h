@@ -3,6 +3,8 @@
 #include <QWidget>
 #include <QString>
 
+class QShowEvent;
+
 namespace Ui {
 class DashboardProjectsPage;
 }
@@ -13,6 +15,9 @@ class DashboardProjectsPage final : public QWidget
 public:
     explicit DashboardProjectsPage(QWidget* parent = nullptr);
     ~DashboardProjectsPage() override;
+
+protected:
+    void showEvent(QShowEvent* event) override;
 
 signals:
     void messageRequested(const QString& text);

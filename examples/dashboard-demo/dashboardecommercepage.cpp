@@ -10,6 +10,7 @@
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QShowEvent>
 #include <QPainter>
 #include <QPainterPath>
 #include <QStandardItemModel>
@@ -466,8 +467,18 @@ DashboardEcommercePage::DashboardEcommercePage(QWidget* parent)
         &QtMaterial::ThemeManager::instance(),
         &QtMaterial::ThemeManager::themeChanged,
         this,
-        [this](const QtMaterial::Theme&) { applyTheme(); });
+        [this](const QtMaterial::Theme&) {
+            if (isVisible()) {
+                applyTheme();
+            }
+        });
 
+    applyTheme();
+}
+
+void DashboardEcommercePage::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
     applyTheme();
 }
 

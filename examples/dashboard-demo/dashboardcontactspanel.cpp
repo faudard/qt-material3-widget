@@ -9,6 +9,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPalette>
+#include <QShowEvent>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -134,8 +135,18 @@ DashboardContactsPanel::DashboardContactsPanel(QWidget* parent)
         &QtMaterial::ThemeManager::instance(),
         &QtMaterial::ThemeManager::themeChanged,
         this,
-        [this](const QtMaterial::Theme&) { applyTheme(); });
+        [this](const QtMaterial::Theme&) {
+            if (isVisible()) {
+                applyTheme();
+            }
+        });
 
+    applyTheme();
+}
+
+void DashboardContactsPanel::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
     applyTheme();
 }
 

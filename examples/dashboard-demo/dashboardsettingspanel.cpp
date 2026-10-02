@@ -12,6 +12,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPalette>
+#include <QShowEvent>
 #include <QSignalBlocker>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -24,6 +25,23 @@
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
 
 namespace {
+
+void applyThemeOptionsBatched(
+    QWidget* source,
+    const QtMaterial::ThemeOptions& options)
+{
+    QWidget* topLevel = source ? source->window() : nullptr;
+    if (topLevel) {
+        topLevel->setUpdatesEnabled(false);
+    }
+
+    QtMaterial::ThemeManager::instance().setThemeOptions(options);
+
+    if (topLevel) {
+        topLevel->setUpdatesEnabled(true);
+        topLevel->update();
+    }
+}
 
 QString cssColor(const QColor& color)
 {
@@ -234,7 +252,7 @@ DashboardSettingsPanel::DashboardSettingsPanel(QWidget* parent)
             } else {
                 options.sourceColor = QColor(QStringLiteral("#4455C7"));
             }
-            QtMaterial::ThemeManager::instance().setThemeOptions(options);
+            applyThemeOptionsBatched(this, options);
             emit messageRequested(QStringLiteral("%1 preset applied.").arg(preset));
         });
     }
@@ -248,7 +266,7 @@ DashboardSettingsPanel::DashboardSettingsPanel(QWidget* parent)
         options.mode = QtMaterial::ThemeMode::Light;
         options.preference = QtMaterial::ThemePreference::Light;
         options.contrast = QtMaterial::ContrastMode::Standard;
-        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+        applyThemeOptionsBatched(this, options);
         qApp->setLayoutDirection(Qt::LeftToRight);
         m_compactSwitch->setChecked(true);
         integrated->setChecked(true);
@@ -256,16 +274,16 @@ DashboardSettingsPanel::DashboardSettingsPanel(QWidget* parent)
         emit messageRequested(QStringLiteral("Settings reset."));
     });
 
-    connect(m_modeSwitch, &QAbstractButton::toggled, this, [](bool dark) {
+    connect(m_modeSwitch, &QAbstractButton::toggled, this, [this](bool dark) {
         auto options = QtMaterial::ThemeManager::instance().options();
         options.mode = dark ? QtMaterial::ThemeMode::Dark : QtMaterial::ThemeMode::Light;
         options.preference = dark ? QtMaterial::ThemePreference::Dark : QtMaterial::ThemePreference::Light;
-        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+        applyThemeOptionsBatched(this, options);
     });
-    connect(m_contrastSwitch, &QAbstractButton::toggled, this, [](bool high) {
+    connect(m_contrastSwitch, &QAbstractButton::toggled, this, [this](bool high) {
         auto options = QtMaterial::ThemeManager::instance().options();
         options.contrast = high ? QtMaterial::ContrastMode::High : QtMaterial::ContrastMode::Standard;
-        QtMaterial::ThemeManager::instance().setThemeOptions(options);
+        applyThemeOptionsBatched(this, options);
     });
     connect(m_rtlSwitch, &QAbstractButton::toggled, this, [](bool rtl) {
         qApp->setLayoutDirection(rtl ? Qt::RightToLeft : Qt::LeftToRight);
@@ -294,9 +312,18 @@ DashboardSettingsPanel::DashboardSettingsPanel(QWidget* parent)
         this,
         [this](const QtMaterial::Theme&) {
             syncFromTheme();
-            applyTheme();
+            if (isVisible()) {
+                applyTheme();
+            }
         });
 
+    syncFromTheme();
+    applyTheme();
+}
+
+void DashboardSettingsPanel::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
     syncFromTheme();
     applyTheme();
 }

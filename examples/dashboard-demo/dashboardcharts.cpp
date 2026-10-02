@@ -486,9 +486,11 @@ namespace DashboardDemoStyle {
 
 void polishControls(QWidget* root)
 {
-    if (!root) {
+    if (!root || root->property("dashboardDemoControlsPolished").toBool()) {
         return;
     }
+
+    root->setProperty("dashboardDemoControlsPolished", true);
 
     const auto combos =
         root->findChildren<QtMaterial::QtMaterialComboBox*>();
@@ -500,12 +502,6 @@ void polishControls(QWidget* root)
         root->findChildren<QtMaterial::QtMaterialTextButton*>();
     for (QtMaterial::QtMaterialTextButton* button : buttons) {
         polishDemoButton(button);
-    }
-
-    const auto tables =
-        root->findChildren<QtMaterial::QtMaterialTable*>();
-    for (QtMaterial::QtMaterialTable* table : tables) {
-        polishDemoTable(table);
     }
 
     const auto segmented =
@@ -523,6 +519,8 @@ void apply(QWidget* root)
         return;
     }
 
+    polishControls(root);
+
     const QColor surface = color(QtMaterial::ColorRole::Surface);
     const QColor surfaceLow = color(QtMaterial::ColorRole::SurfaceContainerLow);
     const QColor surfaceHigh = color(QtMaterial::ColorRole::SurfaceContainerHigh);
@@ -532,8 +530,8 @@ void apply(QWidget* root)
     const QColor primaryContainer = color(QtMaterial::ColorRole::PrimaryContainer);
     const QColor onPrimaryContainer = color(QtMaterial::ColorRole::OnPrimaryContainer);
 
-    root->setStyleSheet(QStringLiteral(
-        "QComboBox#qtmaterial_combo_box {"
+    const QString comboStyle = QStringLiteral(
+        "QComboBox {"
         " background:%1;"
         " color:%2;"
         " border:1px solid %3;"
@@ -543,22 +541,31 @@ void apply(QWidget* root)
         " selection-background-color:%4;"
         " selection-color:%5;"
         " }"
-        "QComboBox#qtmaterial_combo_box:hover {"
+        "QComboBox:hover {"
         " border-color:%6;"
         " background:%7;"
         " }"
-        "QComboBox#qtmaterial_combo_box:focus {"
+        "QComboBox:focus {"
         " border:2px solid %6;"
         " padding:6px 33px 6px 13px;"
         " }"
-        "QComboBox#qtmaterial_combo_box::drop-down {"
+        "QComboBox::drop-down {"
         " subcontrol-origin:padding;"
         " subcontrol-position:top right;"
         " width:32px;"
         " border:0;"
         " background:transparent;"
-        " }"
-        "QComboBox#qtmaterial_combo_box QAbstractItemView {"
+        " }")
+        .arg(surface.name(QColor::HexRgb))
+        .arg(onSurface.name(QColor::HexRgb))
+        .arg(outline.name(QColor::HexRgb))
+        .arg(primaryContainer.name(QColor::HexRgb))
+        .arg(onPrimaryContainer.name(QColor::HexRgb))
+        .arg(primary.name(QColor::HexRgb))
+        .arg(surfaceLow.name(QColor::HexRgb));
+
+    const QString popupStyle = QStringLiteral(
+        "QAbstractItemView {"
         " background:%1;"
         " color:%2;"
         " border:1px solid %3;"
@@ -568,15 +575,15 @@ void apply(QWidget* root)
         " selection-background-color:%4;"
         " selection-color:%5;"
         " }"
-        "QComboBox#qtmaterial_combo_box QAbstractItemView::item {"
+        "QAbstractItemView::item {"
         " min-height:36px;"
         " padding:5px 12px;"
         " border-radius:10px;"
         " }"
-        "QComboBox#qtmaterial_combo_box QAbstractItemView::item:hover {"
-        " background:%8;"
+        "QAbstractItemView::item:hover {"
+        " background:%6;"
         " }"
-        "QComboBox#qtmaterial_combo_box QAbstractItemView::item:selected {"
+        "QAbstractItemView::item:selected {"
         " background:%4;"
         " color:%5;"
         " }")
@@ -585,11 +592,26 @@ void apply(QWidget* root)
         .arg(outline.name(QColor::HexRgb))
         .arg(primaryContainer.name(QColor::HexRgb))
         .arg(onPrimaryContainer.name(QColor::HexRgb))
-        .arg(primary.name(QColor::HexRgb))
-        .arg(surfaceLow.name(QColor::HexRgb))
-        .arg(surfaceHigh.name(QColor::HexRgb)));
+        .arg(surfaceHigh.name(QColor::HexRgb));
 
-    polishControls(root);
+    const auto combos =
+        root->findChildren<QtMaterial::QtMaterialComboBox*>();
+    for (QtMaterial::QtMaterialComboBox* combo : combos) {
+        if (combo->styleSheet() != comboStyle) {
+            combo->setStyleSheet(comboStyle);
+        }
+        if (QAbstractItemView* view = combo->view()) {
+            if (view->styleSheet() != popupStyle) {
+                view->setStyleSheet(popupStyle);
+            }
+        }
+    }
+
+    const auto tables =
+        root->findChildren<QtMaterial::QtMaterialTable*>();
+    for (QtMaterial::QtMaterialTable* table : tables) {
+        polishDemoTable(table);
+    }
 }
 
 } // namespace DashboardDemoStyle
