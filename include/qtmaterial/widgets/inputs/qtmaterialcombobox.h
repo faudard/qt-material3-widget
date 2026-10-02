@@ -6,7 +6,6 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/specs/qtmaterialautocompletespec.h"
-#include "qtmaterial/theme/qtmaterialthemecontexthost.h"
 
 class QEvent;
 class QPaintEvent;
@@ -18,10 +17,8 @@ class QtMaterialComboBoxPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialComboBox
     : public QComboBox
-    , public ThemeContextHost
 {
     Q_OBJECT
-    Q_INTERFACES(QtMaterial::ThemeContextHost)
 
     Q_PROPERTY(
         QString labelText
@@ -42,8 +39,8 @@ public:
     void setLabelText(const QString& text);
 
     void setThemeContext(ThemeContext* context);
-    ThemeContext* themeContext() const noexcept override;
-    ThemeContext* effectiveThemeContext() const noexcept override;
+    ThemeContext* themeContext() const noexcept;
+    ThemeContext* effectiveThemeContext() const noexcept;
 
     AutocompleteSpec spec() const;
     void setSpec(const AutocompleteSpec& spec);

@@ -6,6 +6,7 @@
 #include <QEvent>
 #include <QFontMetrics>
 #include <QFrame>
+#include <QIcon>
 #include <QLineEdit>
 #include <QPainter>
 #include <QPainterPath>
@@ -17,7 +18,7 @@
 
 #include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
-#include "qtmaterial/specs/qtmaterialautocompletespecresolver.h"
+#include "qtmaterial/widgets/resolution/qtmaterialinputspecresolution_p.h"
 
 namespace QtMaterial {
 namespace {
@@ -749,7 +750,12 @@ void QtMaterialComboBox::paintEvent(
                 resolved.inputFont);
         }
 
-        if (!currentIcon().isNull()) {
+        const QIcon currentItemIcon =
+            currentIndex() >= 0
+                ? itemIcon(currentIndex())
+                : QIcon();
+
+        if (!currentItemIcon.isNull()) {
             const QSize iconExtent =
                 iconSize()
                     .boundedTo(
@@ -773,7 +779,7 @@ void QtMaterialComboBox::paintEvent(
                                 / 2,
                     contentRect.center().y()));
 
-            currentIcon().paint(
+            currentItemIcon.paint(
                 &painter,
                 iconRect,
                 Qt::AlignCenter,
@@ -876,10 +882,8 @@ ensureSpecResolved() const
         d_ptr->explicitSpecSet
             ? d_ptr->explicitSpec
             : normalizedComboSpec(
-                AutocompleteSpecResolver()
-                    .autocompleteSpec(
-                        d_ptr->themeBinding
-                            ->theme()));
+                InputSpecResolution::autocompleteSpec(
+                    d_ptr->themeBinding));
 
     d_ptr->specDirty = false;
 }
