@@ -1322,16 +1322,21 @@ QWidget* DashboardWindow::createDashboardPage()
     layout->addWidget(heroBanners);
 
     auto* headingHost = new QWidget(page);
-    auto* headingGrid = new QGridLayout(headingHost);
-    headingGrid->setContentsMargins(0, 0, 0, 0);
-    headingGrid->setHorizontalSpacing(18);
-    auto* quickTitle = makeLabel(QStringLiteral("Quick Statistics"), headingHost, 2.0, false);
-    auto* revenueTitle = makeLabel(QStringLiteral("Total Revenue"), headingHost, 2.0, false);
-    headingGrid->addWidget(quickTitle, 0, 0, 1, 2);
-    headingGrid->addWidget(revenueTitle, 0, 2);
-    headingGrid->setColumnStretch(0, 1);
-    headingGrid->setColumnStretch(1, 1);
-    headingGrid->setColumnStretch(2, 1);
+    auto* headingLayout = new QVBoxLayout(headingHost);
+    headingLayout->setContentsMargins(0, 0, 0, 0);
+    headingLayout->setSpacing(2);
+    headingLayout->addWidget(makeLabel(
+        QStringLiteral("Overview"),
+        headingHost,
+        3.0,
+        true));
+    auto* overviewSubtitle = makeLabel(
+        QStringLiteral("Key performance, revenue and activity at a glance."),
+        headingHost,
+        -1.0,
+        false);
+    overviewSubtitle->setObjectName(QStringLiteral("pageSubtitle"));
+    headingLayout->addWidget(overviewSubtitle);
     layout->addWidget(headingHost);
 
     layout->addWidget(createQuickStatistics());
@@ -1364,6 +1369,7 @@ QWidget* DashboardWindow::createDashboardPage()
     appsLayout->addLayout(appsHeader);
 
     auto* appsGrid = new QGridLayout;
+    appsGrid->setObjectName(QStringLiteral("dashboardPopularAppsGrid"));
     appsGrid->setHorizontalSpacing(12);
     appsGrid->setVerticalSpacing(10);
 
@@ -1465,6 +1471,7 @@ QWidget* DashboardWindow::createDashboardPage()
             row,
             0.0,
             true);
+        name->setObjectName(QStringLiteral("dashboardProjectOverviewName"));
         name->setMinimumWidth(180);
         rowLayout->addWidget(name);
 
@@ -1477,6 +1484,7 @@ QWidget* DashboardWindow::createDashboardPage()
         auto* status = new QtMaterial::QtMaterialChip(
             QString::fromLatin1(project.status),
             row);
+        status->setObjectName(QStringLiteral("dashboardProjectOverviewStatus"));
         status->setVariant(QtMaterial::ChipVariant::Assist);
         rowLayout->addWidget(status);
 
@@ -1485,7 +1493,7 @@ QWidget* DashboardWindow::createDashboardPage()
             row,
             -1.0,
             false);
-        due->setObjectName(QStringLiteral("metricTitle"));
+        due->setObjectName(QStringLiteral("dashboardProjectOverviewDue"));
         due->setMinimumWidth(58);
         rowLayout->addWidget(due, 0, Qt::AlignRight);
 
@@ -2845,11 +2853,13 @@ QWidget* DashboardWindow::createQuickStatistics()
 {
     auto* host = new QWidget(m_contentHost);
     auto* outer = new QGridLayout(host);
+    outer->setObjectName(QStringLiteral("dashboardQuickOuterGrid"));
     outer->setContentsMargins(0, 0, 0, 0);
     outer->setHorizontalSpacing(18);
     outer->setVerticalSpacing(18);
 
     auto* metricHost = new QWidget(host);
+    metricHost->setObjectName(QStringLiteral("dashboardMetricHost"));
     m_quickGrid = new QGridLayout(metricHost);
     m_quickGrid->setContentsMargins(0, 0, 0, 0);
     m_quickGrid->setHorizontalSpacing(14);
@@ -3067,11 +3077,13 @@ QWidget* DashboardWindow::createLowerHighlights()
 {
     auto* host = new QWidget(m_contentHost);
     auto* grid = new QGridLayout(host);
+    grid->setObjectName(QStringLiteral("dashboardLowerHighlightsGrid"));
     grid->setContentsMargins(0, 0, 0, 0);
     grid->setHorizontalSpacing(18);
     grid->setVerticalSpacing(18);
 
     auto* social = new QtMaterial::QtMaterialCard(host);
+    social->setObjectName(QStringLiteral("dashboardSocialCard"));
     social->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
     social->setMinimumHeight(250);
     auto* socialLayout = new QVBoxLayout(social);
@@ -3088,6 +3100,7 @@ QWidget* DashboardWindow::createLowerHighlights()
     socialLayout->addWidget(bars, 1);
 
     auto* tasks = new QtMaterial::QtMaterialCard(host);
+    tasks->setObjectName(QStringLiteral("dashboardTasksCard"));
     tasks->setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
     tasks->setMinimumHeight(250);
     auto* tasksLayout = new QVBoxLayout(tasks);
@@ -3801,6 +3814,12 @@ void DashboardWindow::updateResponsiveLayout()
 
     const bool compactMetrics = available < 720;
     const bool stackedCharts = available < 820;
+    const bool stackedQuickSummary = available < 900;
+    const bool stackedHighlights = available < 980;
+    const int popularAppsColumns =
+        available < 620 ? 1 : (available < 980 ? 2 : 3);
+    const bool compactProjectRows = available < 760;
+    const bool veryCompactProjectRows = available < 560;
 
     if (m_sidebar) {
         m_sidebar->setVisible(desktopNavigation);
@@ -3863,6 +3882,111 @@ void DashboardWindow::updateResponsiveLayout()
             m_chartGrid->setColumnStretch(2, 1);
         }
         m_stackedCharts = stackedCharts;
+    }
+
+    if (m_contentHost) {
+        auto* quickOuter =
+            m_contentHost->findChild<QGridLayout*>(
+                QStringLiteral("dashboardQuickOuterGrid"));
+        auto* metricHost =
+            m_contentHost->findChild<QWidget*>(
+                QStringLiteral("dashboardMetricHost"));
+        if (quickOuter && metricHost && m_revenueSummary) {
+            clearGridPosition(quickOuter, metricHost);
+            clearGridPosition(quickOuter, m_revenueSummary);
+
+            if (stackedQuickSummary) {
+                quickOuter->addWidget(metricHost, 0, 0);
+                quickOuter->addWidget(m_revenueSummary, 1, 0);
+                quickOuter->setColumnStretch(0, 1);
+                m_revenueSummary->setMinimumHeight(150);
+            } else {
+                quickOuter->addWidget(metricHost, 0, 0, 1, 2);
+                quickOuter->addWidget(m_revenueSummary, 0, 2);
+                quickOuter->setColumnStretch(0, 1);
+                quickOuter->setColumnStretch(1, 1);
+                quickOuter->setColumnStretch(2, 1);
+                m_revenueSummary->setMinimumHeight(140);
+            }
+        }
+
+        auto* lowerGrid =
+            m_contentHost->findChild<QGridLayout*>(
+                QStringLiteral("dashboardLowerHighlightsGrid"));
+        auto* social =
+            m_contentHost->findChild<QWidget*>(
+                QStringLiteral("dashboardSocialCard"));
+        auto* tasks =
+            m_contentHost->findChild<QWidget*>(
+                QStringLiteral("dashboardTasksCard"));
+        if (lowerGrid && social && tasks) {
+            clearGridPosition(lowerGrid, social);
+            clearGridPosition(lowerGrid, tasks);
+
+            if (stackedHighlights) {
+                lowerGrid->addWidget(social, 0, 0);
+                lowerGrid->addWidget(tasks, 1, 0);
+                lowerGrid->setColumnStretch(0, 1);
+            } else {
+                lowerGrid->addWidget(social, 0, 0);
+                lowerGrid->addWidget(tasks, 0, 1);
+                lowerGrid->setColumnStretch(0, 1);
+                lowerGrid->setColumnStretch(1, 2);
+            }
+        }
+
+        auto* appsGrid =
+            m_contentHost->findChild<QGridLayout*>(
+                QStringLiteral("dashboardPopularAppsGrid"));
+        const auto appItems =
+            m_contentHost->findChildren<QWidget*>(
+                QStringLiteral("dashboardPopularApp"));
+        if (appsGrid && !appItems.isEmpty()) {
+            for (QWidget* item : appItems) {
+                clearGridPosition(appsGrid, item);
+            }
+            for (int i = 0; i < appItems.size(); ++i) {
+                appsGrid->addWidget(
+                    appItems.at(i),
+                    i / popularAppsColumns,
+                    i % popularAppsColumns);
+            }
+            for (int column = 0; column < 3; ++column) {
+                appsGrid->setColumnStretch(
+                    column,
+                    column < popularAppsColumns ? 1 : 0);
+            }
+        }
+
+        const auto projectNames =
+            m_contentHost->findChildren<QLabel*>(
+                QStringLiteral("dashboardProjectOverviewName"));
+        for (QLabel* name : projectNames) {
+            name->setMinimumWidth(
+                veryCompactProjectRows
+                    ? 100
+                    : (compactProjectRows ? 130 : 180));
+        }
+
+        const auto projectDue =
+            m_contentHost->findChildren<QLabel*>(
+                QStringLiteral("dashboardProjectOverviewDue"));
+        for (QLabel* due : projectDue) {
+            due->setVisible(!compactProjectRows);
+        }
+
+        const auto projectStatus =
+            m_contentHost->findChildren<QtMaterial::QtMaterialChip*>(
+                QStringLiteral("dashboardProjectOverviewStatus"));
+        for (QtMaterial::QtMaterialChip* status : projectStatus) {
+            status->setVisible(!veryCompactProjectRows);
+        }
+    }
+
+    if (m_orders) {
+        m_orders->setColumnHidden(2, available < 760);
+        m_orders->setColumnHidden(1, available < 520);
+        m_orders->horizontalHeader()->setStretchLastSection(true);
     }
 }
 
