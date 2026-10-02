@@ -2976,10 +2976,18 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
     layout->setContentsMargins(18, 14, 18, 12);
     layout->setSpacing(7);
 
-    auto* titleRow = new QHBoxLayout;
-    titleRow->setSpacing(6);
-    titleRow->addWidget(makeLabel(QStringLiteral("Statistics"), card, 2.0, false));
-    titleRow->addSpacing(14);
+    auto* titleHost = new QWidget(card);
+    auto* titleRow = new QGridLayout(titleHost);
+    titleRow->setObjectName(QStringLiteral("dashboardStatisticsHeaderGrid"));
+    titleRow->setContentsMargins(0, 0, 0, 0);
+    titleRow->setHorizontalSpacing(6);
+    titleRow->setVerticalSpacing(8);
+
+    auto* statisticsTitle =
+        makeLabel(QStringLiteral("Statistics"), card, 2.0, false);
+    statisticsTitle->setObjectName(QStringLiteral("dashboardStatisticsTitle"));
+    titleRow->addWidget(statisticsTitle, 0, 0);
+    titleRow->setColumnMinimumWidth(1, 8);
 
     const QStringList tabs = {
         QStringLiteral("Project"),
@@ -2993,20 +3001,20 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
         tab->setAutoExclusive(true);
         tab->setChecked(i == 0);
         tab->setObjectName(QStringLiteral("chartTab"));
-        titleRow->addWidget(tab);
+        titleRow->addWidget(tab, 0, i + 2);
         connect(tab, &QToolButton::clicked, this, [this, i]() {
             m_chartMetricIndex = i;
             applyPeriod();
         });
     }
-    titleRow->addStretch(1);
+    titleRow->setColumnStretch(5, 1);
 
     m_yearCombo = new QtMaterial::QtMaterialComboBox(card);
     m_yearCombo->setLabelText(QStringLiteral("Year"));
     m_yearCombo->addItems({QStringLiteral("2025"), QStringLiteral("2026"), QStringLiteral("2027")});
     m_yearCombo->setCurrentText(QStringLiteral("2026"));
     m_yearCombo->setMinimumWidth(92);
-    titleRow->addWidget(m_yearCombo);
+    titleRow->addWidget(m_yearCombo, 0, 6);
 
     m_monthCombo = new QtMaterial::QtMaterialComboBox(card);
     m_monthCombo->setLabelText(QStringLiteral("Month"));
@@ -3019,9 +3027,9 @@ QtMaterial::QtMaterialCard* DashboardWindow::createStatisticsCard()
     });
     m_monthCombo->setCurrentText(QStringLiteral("September"));
     m_monthCombo->setMinimumWidth(124);
-    titleRow->addWidget(m_monthCombo);
+    titleRow->addWidget(m_monthCombo, 0, 7);
 
-    layout->addLayout(titleRow);
+    layout->addWidget(titleHost);
 
     m_lineChart = new LineChartWidget(card);
     m_lineChart->clearAccentColor();
@@ -3124,6 +3132,7 @@ QWidget* DashboardWindow::createLowerHighlights()
 
     auto* content = new QWidget(tasks);
     auto* contentLayout = new QHBoxLayout(content);
+    contentLayout->setObjectName(QStringLiteral("dashboardTasksContentLayout"));
     contentLayout->setContentsMargins(0, 0, 0, 0);
     contentLayout->setSpacing(16);
 
@@ -3260,6 +3269,7 @@ QtMaterial::QtMaterialCard* DashboardWindow::createOrdersCard()
     header->addWidget(makeLabel(QStringLiteral("Recent Orders"), card, 2.0, false));
     header->addStretch(1);
     auto* exportButton = new QtMaterial::QtMaterialOutlinedButton(QStringLiteral("Export CSV"), card);
+    exportButton->setObjectName(QStringLiteral("dashboardOrdersExport"));
     exportButton->setMinimumWidth(118);
     header->addWidget(exportButton);
     layout->addLayout(header);
@@ -3820,6 +3830,8 @@ void DashboardWindow::updateResponsiveLayout()
         available < 620 ? 1 : (available < 980 ? 2 : 3);
     const bool compactProjectRows = available < 760;
     const bool veryCompactProjectRows = available < 560;
+    const bool compactStatisticsHeader = available < 620;
+    const bool stackedTasksContent = available < 620;
 
     if (m_sidebar) {
         m_sidebar->setVisible(desktopNavigation);
@@ -3980,6 +3992,79 @@ void DashboardWindow::updateResponsiveLayout()
                 QStringLiteral("dashboardProjectOverviewStatus"));
         for (QtMaterial::QtMaterialChip* status : projectStatus) {
             status->setVisible(!veryCompactProjectRows);
+        }
+    }
+
+    if (m_statisticsCard) {
+        auto* statisticsHeader =
+            m_statisticsCard->findChild<QGridLayout*>(
+                QStringLiteral("dashboardStatisticsHeaderGrid"));
+        auto* statisticsTitle =
+            m_statisticsCard->findChild<QLabel*>(
+                QStringLiteral("dashboardStatisticsTitle"));
+        const auto tabs =
+            m_statisticsCard->findChildren<QToolButton*>(
+                QStringLiteral("chartTab"));
+        if (statisticsHeader
+            && statisticsTitle
+            && m_yearCombo
+            && m_monthCombo) {
+            clearGridPosition(statisticsHeader, statisticsTitle);
+            for (QToolButton* tab : tabs) {
+                clearGridPosition(statisticsHeader, tab);
+            }
+            clearGridPosition(statisticsHeader, m_yearCombo);
+            clearGridPosition(statisticsHeader, m_monthCombo);
+
+            if (compactStatisticsHeader) {
+                statisticsHeader->addWidget(
+                    statisticsTitle,
+                    0,
+                    0,
+                    1,
+                    3);
+                for (int i = 0; i < tabs.size(); ++i) {
+                    statisticsHeader->addWidget(
+                        tabs.at(i),
+                        1,
+                        i);
+                }
+                statisticsHeader->addWidget(m_yearCombo, 2, 0);
+                statisticsHeader->addWidget(m_monthCombo, 2, 1, 1, 2);
+                statisticsHeader->setColumnStretch(0, 1);
+                statisticsHeader->setColumnStretch(1, 1);
+                statisticsHeader->setColumnStretch(2, 1);
+            } else {
+                statisticsHeader->addWidget(statisticsTitle, 0, 0);
+                for (int i = 0; i < tabs.size(); ++i) {
+                    statisticsHeader->addWidget(
+                        tabs.at(i),
+                        0,
+                        i + 2);
+                }
+                statisticsHeader->setColumnStretch(5, 1);
+                statisticsHeader->addWidget(m_yearCombo, 0, 6);
+                statisticsHeader->addWidget(m_monthCombo, 0, 7);
+            }
+        }
+    }
+
+    if (m_contentHost) {
+        auto* tasksLayout =
+            m_contentHost->findChild<QHBoxLayout*>(
+                QStringLiteral("dashboardTasksContentLayout"));
+        if (tasksLayout) {
+            tasksLayout->setDirection(
+                stackedTasksContent
+                    ? QBoxLayout::TopToBottom
+                    : QBoxLayout::LeftToRight);
+        }
+
+        auto* exportButton =
+            m_contentHost->findChild<QWidget*>(
+                QStringLiteral("dashboardOrdersExport"));
+        if (exportButton) {
+            exportButton->setVisible(available >= 520);
         }
     }
 
