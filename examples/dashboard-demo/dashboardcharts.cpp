@@ -1,18 +1,11 @@
 #include "dashboardcharts.h"
 #include "dashboarddemostyle.h"
 
-#include <QAbstractItemView>
-#include <QBitmap>
-#include <QComboBox>
-#include <QEvent>
 #include <QFontMetrics>
 #include <QFrame>
 #include <QHeaderView>
-#include <QListView>
 #include <QWidget>
 #include <QSizePolicy>
-#include <QStyledItemDelegate>
-#include <QStyleOptionViewItem>
 #include <QLinearGradient>
 #include <QPainter>
 #include <QPainterPath>
@@ -25,7 +18,6 @@
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
-#include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
 #include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
 
 namespace {
@@ -381,20 +373,16 @@ namespace DashboardDemoStyle {
 
 void polishControls(QWidget* root)
 {
-    if (!root) {
+    if (!root || root->property("dashboardDemoControlsPolished").toBool()) {
         return;
     }
+
+    root->setProperty("dashboardDemoControlsPolished", true);
 
     const auto buttons =
         root->findChildren<QtMaterial::QtMaterialTextButton*>();
     for (QtMaterial::QtMaterialTextButton* button : buttons) {
         polishDemoButton(button);
-    }
-
-    const auto tables =
-        root->findChildren<QtMaterial::QtMaterialTable*>();
-    for (QtMaterial::QtMaterialTable* table : tables) {
-        polishDemoTable(table);
     }
 
     const auto segmented =
@@ -413,6 +401,12 @@ void apply(QWidget* root)
     }
 
     polishControls(root);
+
+    const auto tables =
+        root->findChildren<QtMaterial::QtMaterialTable*>();
+    for (QtMaterial::QtMaterialTable* table : tables) {
+        polishDemoTable(table);
+    }
 }
 
 } // namespace DashboardDemoStyle
