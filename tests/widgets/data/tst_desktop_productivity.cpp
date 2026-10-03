@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListView>
+#include <QMenu>
 #include <QPixmap>
 #include <QStringListModel>
 #include <QSplitterHandle>
@@ -382,6 +383,230 @@ private slots:
         QVERIFY(after.at(1) < before.at(1));
     }
 
+    void splitViewPaneConstraintsAndReset()
+    {
+        QtMaterialSplitView split(Qt::Horizontal);
+        split.resize(720, 240);
+        split.addWidget(new QWidget);
+        split.addWidget(new QWidget);
+
+        split.setPaneMinimumExtent(0, 180);
+        split.setPaneMaximumExtent(1, 300);
+        QCOMPARE(split.paneMinimumExtent(0), 180);
+        QCOMPARE(split.paneMaximumExtent(1), 300);
+
+        split.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&split));
+
+        split.setSizes({80, 620});
+        QCoreApplication::processEvents();
+        QVERIFY(split.sizes().at(0) >= 180);
+        QVERIFY(split.sizes().at(1) <= 300);
+
+        split.setPaneMaximumExtent(1, 0);
+        QCOMPARE(
+            split.paneMaximumExtent(1),
+            QWIDGETSIZE_MAX);
+
+        split.setSizes({500, 180});
+        QCoreApplication::processEvents();
+        const int beforeDifference =
+            qAbs(
+                split.sizes().at(0)
+                - split.sizes().at(1));
+
+        split.resetPaneSizes();
+        QCoreApplication::processEvents();
+        const int afterDifference =
+            qAbs(
+                split.sizes().at(0)
+                - split.sizes().at(1));
+        QVERIFY(afterDifference < beforeDifference);
+
+        split.setSizes({500, 180});
+        QCoreApplication::processEvents();
+        QSplitterHandle* handle = split.handle(1);
+        QVERIFY(handle);
+        const int beforeDoubleClickDifference =
+            qAbs(
+                split.sizes().at(0)
+                - split.sizes().at(1));
+        QTest::mouseDClick(
+            handle,
+            Qt::LeftButton);
+        QCoreApplication::processEvents();
+        const int afterDoubleClickDifference =
+            qAbs(
+                split.sizes().at(0)
+                - split.sizes().at(1));
+        QVERIFY(
+            afterDoubleClickDifference
+            < beforeDoubleClickDifference);
+    }
+
+    void splitViewRendersAtHighDpi()
+    {
+        QtMaterialSplitView split(Qt::Horizontal);
+        split.resize(640, 240);
+        split.addWidget(new QWidget);
+        split.addWidget(new QWidget);
+        split.setLayoutDirection(Qt::RightToLeft);
+        split.setSizes({240, 400});
+
+        QSplitterHandle* handle = split.handle(1);
+        QVERIFY(handle);
+        QCOMPARE(handle->accessibleName(), QStringLiteral("Split handle"));
+
+        QPixmap pixmap(
+            split.width() * 2,
+            split.height() * 2);
+        pixmap.setDevicePixelRatio(2.0);
+        pixmap.fill(Qt::transparent);
+        split.render(&pixmap);
+
+        QVERIFY(!pixmap.isNull());
+        QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+    }
+
+    void breadcrumbOverflowActivatesHiddenSegment()
+    {
+        QtMaterialBreadcrumb breadcrumb;
+        breadcrumb.setItems({
+            QStringLiteral("Workspace"),
+            QStringLiteral("Requirements"),
+            QStringLiteral("Subsystem"),
+            QStringLiteral("Module"),
+            QStringLiteral("Feature"),
+            QStringLiteral("REQ-42")
+        });
+        breadcrumb.setMaximumVisibleItems(3);
+        QCOMPARE(breadcrumb.maximumVisibleItems(), 3);
+
+        QCoreApplication::sendPostedEvents(
+            nullptr,
+            QEvent::DeferredDelete);
+
+        QToolButton* overflow = nullptr;
+        const auto buttons =
+            breadcrumb.findChildren<QToolButton*>();
+        for (QToolButton* button : buttons) {
+            if (button->text() == QStringLiteral("…")) {
+                overflow = button;
+                break;
+            }
+        }
+        QVERIFY(overflow);
+        QCOMPARE(
+            overflow->accessibleName(),
+            QStringLiteral("More breadcrumb items"));
+        QVERIFY(overflow->menu());
+        QCOMPARE(overflow->menu()->actions().size(), 3);
+
+        QAction* requirementsAction = nullptr;
+        for (QAction* action :
+             overflow->menu()->actions()) {
+            if (action->text()
+                == QStringLiteral("Requirements")) {
+                requirementsAction = action;
+                break;
+            }
+        }
+        QVERIFY(requirementsAction);
+
+        QSignalSpy activated(
+            &breadcrumb,
+            &QtMaterialBreadcrumb::activated);
+        requirementsAction->trigger();
+
+        QCOMPARE(breadcrumb.currentIndex(), 1);
+        QCOMPARE(activated.count(), 1);
+        QCOMPARE(
+            activated.at(0).at(1).toString(),
+            QStringLiteral("Requirements"));
+        QVERIFY(
+            breadcrumb.accessibleDescription().contains(
+                QStringLiteral(
+                    "Workspace / Requirements / Subsystem / Module / Feature / REQ-42")));
+    }
+
+    void breadcrumbResponsiveElisionTracksWidth()
+    {
+        QtMaterialBreadcrumb breadcrumb;
+        breadcrumb.setItems({
+            QStringLiteral("Workspace"),
+            QStringLiteral("Requirements"),
+            QStringLiteral("Subsystem"),
+            QStringLiteral("Module"),
+            QStringLiteral("Feature"),
+            QStringLiteral("REQ-42")
+        });
+        breadcrumb.setResponsiveElisionEnabled(true);
+        QVERIFY(breadcrumb.responsiveElisionEnabled());
+
+        const auto flushDeletes = []() {
+            QCoreApplication::processEvents();
+            QCoreApplication::sendPostedEvents(
+                nullptr,
+                QEvent::DeferredDelete);
+            QCoreApplication::processEvents();
+        };
+
+        const auto state =
+            [&breadcrumb]() {
+                int segmentCount = 0;
+                int overflowCount = 0;
+                const auto buttons =
+                    breadcrumb.findChildren<QToolButton*>(
+                        QString(),
+                        Qt::FindDirectChildrenOnly);
+                for (QToolButton* button : buttons) {
+                    if (button->text()
+                        == QStringLiteral("…")) {
+                        ++overflowCount;
+                    } else {
+                        ++segmentCount;
+                    }
+                }
+                return qMakePair(
+                    segmentCount,
+                    overflowCount);
+            };
+
+        breadcrumb.resize(4000, 48);
+        breadcrumb.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&breadcrumb));
+        flushDeletes();
+
+        QTRY_COMPARE(state().first, 6);
+        QTRY_COMPARE(state().second, 0);
+
+        breadcrumb.resize(120, 48);
+        flushDeletes();
+
+        QTRY_VERIFY(state().first < 6);
+        QTRY_VERIFY(state().second >= 1);
+
+        bool currentVisible = false;
+        const auto narrowButtons =
+            breadcrumb.findChildren<QToolButton*>(
+                QString(),
+                Qt::FindDirectChildrenOnly);
+        for (QToolButton* button : narrowButtons) {
+            if (button->text()
+                == QStringLiteral("REQ-42")) {
+                currentVisible = true;
+                break;
+            }
+        }
+        QVERIFY(currentVisible);
+
+        breadcrumb.resize(4000, 48);
+        flushDeletes();
+
+        QTRY_COMPARE(state().first, 6);
+        QTRY_COMPARE(state().second, 0);
+    }
+
     void breadcrumbTracksCurrentSegment()
     {
         QtMaterialBreadcrumb breadcrumb;
@@ -503,6 +728,67 @@ private slots:
 
         QVERIFY(!pixmap.isNull());
         QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+    }
+
+    void commandPaletteEmptyStateAndShortcutRole()
+    {
+        QStandardItemModel model(2, 1);
+        model.setData(
+            model.index(0, 0),
+            QStringLiteral("Open file"));
+        model.setData(
+            model.index(0, 0),
+            QStringLiteral("Ctrl+O"),
+            QtMaterialCommandPalette::ShortcutRole);
+        model.setData(
+            model.index(1, 0),
+            QStringLiteral("Build project"));
+        model.setData(
+            model.index(1, 0),
+            QStringLiteral("Ctrl+B"),
+            QtMaterialCommandPalette::ShortcutRole);
+
+        QtMaterialCommandPalette palette;
+        palette.setSourceModel(&model);
+        palette.setEmptyStateText(
+            QStringLiteral("Nothing here"));
+
+        auto* resultView =
+            palette.findChild<QListView*>();
+        auto* emptyLabel =
+            palette.findChild<QLabel*>(
+                QStringLiteral(
+                    "QtMaterialCommandPaletteEmptyState"));
+        QVERIFY(resultView);
+        QVERIFY(emptyLabel);
+        QCOMPARE(
+            emptyLabel->text(),
+            QStringLiteral("Nothing here"));
+        QVERIFY(emptyLabel->isHidden());
+        QVERIFY(!resultView->isHidden());
+
+        QCOMPARE(
+            resultView->model()
+                ->index(0, 0)
+                .data(
+                    QtMaterialCommandPalette::ShortcutRole)
+                .toString(),
+            QStringLiteral("Ctrl+O"));
+
+        palette.setQuery(
+            QStringLiteral("No match"));
+        QVERIFY(resultView->isHidden());
+        QVERIFY(!emptyLabel->isHidden());
+        QCOMPARE(
+            emptyLabel->accessibleName(),
+            QStringLiteral("Nothing here"));
+
+        palette.setQuery(QStringLiteral("Build"));
+        QVERIFY(!resultView->isHidden());
+        QVERIFY(emptyLabel->isHidden());
+        QCOMPARE(
+            resultView->model()->rowCount(),
+            1);
     }
 
     void commandPaletteFiltersExternalModel()

@@ -25,6 +25,13 @@ public:
     void setPaneCollapsed(int index, bool collapsed);
     bool paneCollapsed(int index) const;
 
+    void setPaneMinimumExtent(int index, int extent);
+    int paneMinimumExtent(int index) const;
+    void setPaneMaximumExtent(int index, int extent);
+    int paneMaximumExtent(int index) const;
+
+    void resetPaneSizes();
+
 Q_SIGNALS:
     void paneCollapsedChanged(int index, bool collapsed);
 

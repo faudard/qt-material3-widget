@@ -9,12 +9,18 @@ unless a stricter ABI policy is published.
 ## [Unreleased]
 
 ### Fixed
+- Date Picker weekday header now inherits the Material surface through the native `QPalette::AlternateBase` role, preventing a light strip in dark themes.
 - Editable ComboBox labels now synchronize to the native editor without overwriting an application-provided accessible name.
 - Autocomplete initializes and refreshes its accessible fallback when the placeholder changes.
 - Search View and Date Range Picker now label their composed result/calendar surfaces more explicitly.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Opt-in responsive Breadcrumb elision that moves hidden path ranges into the native overflow menu as the widget narrows.
+- Breadcrumb overflow menus via `maximumVisibleItems`, Command Palette empty-state/shortcut rendering, and Split View pane constraints/reset behavior.
+- Consolidated maturity evidence for Slider, Range Slider, Navigation, Table, Tree View, Pagination and Split View.
+- Candidate visual matrices for Slider/Range Slider and Desktop Productivity controls.
+
 - Shared non-slider Input-family maturity coverage for accessibility, keyboard behavior, RTL propagation and DPR 2.0 rendering.
 - Selection and Input visual state matrices produce reviewable golden candidates for light, dark and high-contrast themes.
 - Ubuntu/Fusion CI publishes family visual candidate goldens without weakening the existing stable release baselines.

@@ -43,9 +43,9 @@
 | `data.carousel` | Carousel | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Carousel Material reference model or deterministic visual conformance evidence is available. |
 | `data.grid-list` | Grid List | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Grid List Material reference model or deterministic visual conformance evidence is available. |
 | `data.list` | List | `usable` | 2 | 2 | 2 | 2 | 2 | 1 | 1 | 2 | 2 | 2 | List has focused interaction and accessibility coverage but lacks deterministic visual, RTL and HiDPI conformance evidence. |
-| `data.pagination` | Pagination | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs theme-token specialization and visual-regression evidence before complete maturity. |
-| `data.table` | Table | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Table Material reference model or deterministic visual conformance evidence is available. |
-| `data.tree-view` | Tree View | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs dedicated visual-regression and screen-reader evidence before complete maturity. |
+| `data.pagination` | Pagination | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Pagination now has synchronized accessible page/range state, keyboard activation, RTL mirroring and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; dedicated Material token specialization remains. |
+| `data.table` | Table | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Table now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; reviewed Material visual-reference evidence remains. |
+| `data.tree-view` | Tree View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Tree View now has focused native keyboard, RTL and DPR 2.0 certification plus a Desktop Productivity candidate visual matrix; deeper screen-reader and reviewed visual evidence remain. |
 
 ### Data display
 
@@ -62,10 +62,10 @@
 | `input.date-picker` | Date Picker | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Date Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.date-range-picker` | Date Range Picker | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Date Range Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.date.field` | Date Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Date Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.range-slider` | Range Slider | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Range Slider has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `input.range-slider` | Range Slider | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Range Slider now has focused two-handle keyboard, accessibility, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion. |
 | `input.search-bar` | Search Bar | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Search Bar now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.search-view` | Search View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Search View now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.slider` | Slider | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Slider has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `input.slider` | Slider | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Slider now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion. |
 | `input.text.filled` | Filled Text Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Filled Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.text.outlined` | Outlined Text Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Outlined Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.time-field` | Time Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Time Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
@@ -75,17 +75,17 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `layout.split-view` | Split View | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs dedicated keyboard-resize affordance and visual-regression evidence before complete maturity. |
+| `layout.split-view` | Split View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Split View now has accessible keyboard resize, RTL behavior, DPR 2.0 evidence, pane min/max extents, reset behavior and candidate visual matrices; animated collapse and persisted app-level layout policy remain. |
 
 ### Navigation
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `navigation.breadcrumb` | Breadcrumb | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs dedicated overflow/elision behavior and visual-regression evidence before complete maturity. |
-| `navigation.command-palette` | Command Palette | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Needs shortcut-discovery, empty-state and visual-regression evidence before complete maturity. |
-| `navigation.menu` | Menu | `usable` | 2 | 2 | 2 | 2 | 2 | 1 | 1 | 2 | 1 | 2 | Menu has focused state, keyboard and accessibility tests but still lacks a dedicated Gallery showcase plus deterministic visual, RTL and HiDPI evidence. |
-| `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Rail Material reference model or deterministic visual conformance evidence is available. |
-| `navigation.tabs` | Tabs | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Complete visual-reference and full state-matrix certification remain before Tabs can be marked complete. |
+| `navigation.breadcrumb` | Breadcrumb | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Breadcrumb now has explicit and responsive overflow, accessibility/keyboard/RTL/HiDPI evidence and candidate visual matrices; reviewed stable visual-reference evidence remains. |
+| `navigation.command-palette` | Command Palette | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Command Palette now has keyboard/result accessibility, configurable empty state, shortcut-role rendering, RTL/HiDPI evidence and candidate visual matrices; provider/section/recent-command APIs remain. |
+| `navigation.menu` | Menu | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Menu now has focused accessibility, keyboard, RTL, DPR 2.0 and dedicated Gallery evidence plus a candidate visual matrix; reviewed stable visual-reference evidence remains. |
+| `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Navigation Rail now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus candidate visual matrices; reviewed stable visual-reference evidence remains before further promotion. |
+| `navigation.tabs` | Tabs | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Tabs has focused accessibility, keyboard, RTL, DPR 2.0 and Gallery evidence plus candidate Navigation visual matrices; reviewed stable visual-reference coverage remains before further promotion. |
 
 ### Progress
 
@@ -162,29 +162,29 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Carousel | Add Carousel reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
 | Grid List | Add Grid List reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
 | List | Add dedicated visual-regression, RTL and HiDPI coverage for the List/ListItem family. |
-| Pagination | Close the declared 0.9 maturity gap before promoting this component to complete. |
-| Table | Add Table reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
-| Tree View | Close the declared 0.9 maturity gap before promoting this component to complete. |
+| Pagination | Add dedicated Pagination theme-token specialization and promote reviewed visual baselines. |
+| Table | Review and promote the Table candidate goldens and continue desktop table capability work before raising maturity further. |
+| Tree View | Add deeper screen-reader evidence and promote reviewed Tree View visual baselines. |
 | Divider | Add Divider token, RTL and HiDPI reference evidence before raising maturity axes. |
 | Autocomplete | Add deterministic Material visual-reference/state-matrix coverage for Autocomplete before promoting maturity further. |
 | Combo Box | Add deterministic Material visual-reference/state-matrix coverage for Combo Box before promoting maturity further. |
 | Date Picker | Add deterministic Material visual-reference/state-matrix coverage for Date Picker before promoting maturity further. |
 | Date Range Picker | Add deterministic Material visual-reference/state-matrix coverage for Date Range Picker before promoting maturity further. |
 | Date Field | Add deterministic Material visual-reference/state-matrix coverage for Date Field before promoting maturity further. |
-| Range Slider | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Range Slider. |
+| Range Slider | Review and promote the Range Slider candidate golden set before raising visual maturity further. |
 | Search Bar | Add deterministic Material visual-reference/state-matrix coverage for Search Bar before promoting maturity further. |
 | Search View | Add deterministic Material visual-reference/state-matrix coverage for Search View before promoting maturity further. |
-| Slider | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Slider. |
+| Slider | Review and promote the Slider candidate golden set before raising visual maturity further. |
 | Filled Text Field | Add deterministic Material visual-reference/state-matrix coverage for Filled Text Field before promoting maturity further. |
 | Outlined Text Field | Add deterministic Material visual-reference/state-matrix coverage for Outlined Text Field before promoting maturity further. |
 | Time Field | Add deterministic Material visual-reference/state-matrix coverage for Time Field before promoting maturity further. |
 | Time Picker | Add deterministic Material visual-reference/state-matrix coverage for Time Picker before promoting maturity further. |
-| Split View | Close the declared 0.9 maturity gap before promoting this component to complete. |
-| Breadcrumb | Close the declared 0.9 maturity gap before promoting this component to complete. |
-| Command Palette | Close the declared 0.9 maturity gap before promoting this component to complete. |
-| Menu | Add a dedicated Menu Gallery showcase and visual/RTL/HiDPI conformance cases. |
-| Navigation Rail | Add Navigation Rail reference-model, RTL and visual evidence before raising maturity axes. |
-| Tabs | Add deterministic visual-reference coverage and broaden the full state matrix for complete maturity. |
+| Split View | Add optional animated collapse/reset affordances and document app-level persisted layout policy before further promotion. |
+| Breadcrumb | Review and promote the Breadcrumb candidate goldens before raising visual maturity further. |
+| Command Palette | Add provider/section/recent-command APIs and promote reviewed visual baselines. |
+| Menu | Review and promote the Menu candidate goldens before raising visual maturity further. |
+| Navigation Rail | Review and promote the Navigation Rail candidate goldens before raising visual maturity further. |
+| Tabs | Review and promote the Tabs candidate goldens before raising visual maturity further. |
 | Circular Progress Indicator | Add progress token, animation, accessibility and visual evidence before raising maturity axes. |
 | Linear Progress Indicator | Add reviewed visual references and broader animation-end-state coverage for complete maturity. |
 | Checkbox | Add deterministic Material visual-reference/state-matrix coverage for Checkbox before promoting maturity further. |

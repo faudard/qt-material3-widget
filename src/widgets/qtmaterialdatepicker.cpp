@@ -417,6 +417,9 @@ void QtMaterialDatePicker::applyResolvedSpec()
         QPalette::Base,
         d_ptr->m_spec.backgroundColor);
     resolvedPalette.setColor(
+        QPalette::AlternateBase,
+        d_ptr->m_spec.backgroundColor);
+    resolvedPalette.setColor(
         QPalette::Window,
         d_ptr->m_spec.backgroundColor);
     resolvedPalette.setColor(

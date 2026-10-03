@@ -920,44 +920,46 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-26",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Table Material reference model or deterministic visual conformance evidence is available."
+        "Table now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; reviewed Material visual-reference evidence remains."
       ],
       "nextActions": [
-        "Add Table reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes."
+        "Review and promote the Table candidate goldens and continue desktop table capability work before raising maturity further."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/data/qtmaterialtable.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/data/qtmaterialtable.cpp."
+          "Production implementation exists: src/widgets/data/qtmaterialtable.cpp.",
+          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
         ],
         "states": [
-          "tst_table and tst_desktop_productivity exercise selection plus desktop column, cell-selection and drag/drop policies."
+          "tst_table and tst_desktop_productivity exercise selection plus desktop column, cell-selection and drag/drop policies.",
+          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
         ],
         "accessibility": [
-          "Accessibility remains basic and has no dedicated conformance suite."
+          "tst_table verifies accessible naming/state contracts for Table and its relevant native/composed controls."
         ],
         "keyboard": [
-          "Keyboard behavior remains basic and has no dedicated conformance suite."
+          "tst_table exercises the focused keyboard contract for Table while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_table and/or the focused maturity suite renders Table at DPR 2.0."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "tst_table verifies RTL propagation or visual-direction behavior for Table."
         ],
         "tests": [
-          "Registered tst_table, resolved-spec tests and tst_desktop_productivity cover the public table contract."
+          "Registered tst_table plus related focused suites provide maturity evidence for Table."
         ],
         "example": [
           "examples/gallery/pages/datapage.cpp and advanceddatapage.cpp instantiate QtMaterialTable."
@@ -1181,7 +1183,7 @@
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialrangeslider.h",
     "specType": "SelectionRuntimeSpec",
     "widgetType": "QtMaterialRangeSlider",
-    "testTarget": "tst_component_expansion",
+    "testTarget": "tst_slider_maturity",
     "galleryRoute": "/inputs/range-slider",
     "docsPath": "docs/public-api/component-expansion.md",
     "releaseScope": true,
@@ -1190,47 +1192,49 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Range Slider has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Range Slider now has focused two-handle keyboard, accessibility, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Range Slider."
+        "Review and promote the Range Slider candidate golden set before raising visual maturity further."
       ],
       "evidence": {
         "api": [
           "Range Slider has a public 0.8 header and stable Qt-style API."
         ],
         "rendering": [
-          "Range Slider has a production implementation in the Widgets module."
+          "Range Slider has a production implementation in the Widgets module.",
+          "input_slider_matrix candidate goldens cover horizontal, vertical, disabled and RTL rendering."
         ],
         "states": [
-          "Range Slider exposes its primary runtime states and invariants."
+          "Range Slider exposes its primary runtime states and invariants.",
+          "input_slider_matrix candidate goldens cover horizontal, vertical, disabled and RTL rendering."
         ],
         "accessibility": [
-          "Range Slider sets accessible names/descriptions or relies on the native Qt accessible control."
+          "tst_slider_maturity verifies accessible naming/state contracts for Range Slider and its relevant native/composed controls."
         ],
         "keyboard": [
-          "Range Slider preserves native Qt keyboard behavior and 0.8 smoke coverage."
+          "tst_slider_maturity exercises the focused keyboard contract for Range Slider while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "Range Slider uses Qt logical geometry and device-independent painting."
+          "tst_slider_maturity and/or the focused maturity suite renders Range Slider at DPR 2.0."
         ],
         "rtl": [
-          "Range Slider preserves Qt layout direction; range geometry handles RTL where directional."
+          "tst_slider_maturity verifies RTL propagation or visual-direction behavior for Range Slider."
         ],
         "tests": [
-          "tst_component_expansion exercises the 0.8 public contract."
+          "Registered tst_slider_maturity plus related focused suites provide maturity evidence for Range Slider."
         ],
         "example": [
-          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+          "examples/gallery/pages/advancedinputspage.cpp instantiates QtMaterialRangeSlider in the Advanced Inputs Gallery."
         ],
         "docs": [
           "docs/public-api/component-expansion.md documents the 0.8 contract."
@@ -1388,7 +1392,7 @@
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialslider.h",
     "specType": "SelectionRuntimeSpec",
     "widgetType": "QtMaterialSlider",
-    "testTarget": "tst_component_expansion",
+    "testTarget": "tst_slider_maturity",
     "galleryRoute": "/inputs/slider",
     "docsPath": "docs/public-api/component-expansion.md",
     "releaseScope": true,
@@ -1397,47 +1401,49 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Slider has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Slider now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Slider."
+        "Review and promote the Slider candidate golden set before raising visual maturity further."
       ],
       "evidence": {
         "api": [
           "Slider has a public 0.8 header and stable Qt-style API."
         ],
         "rendering": [
-          "Slider has a production implementation in the Widgets module."
+          "Slider has a production implementation in the Widgets module.",
+          "input_slider_matrix candidate goldens cover horizontal, vertical, disabled and RTL rendering."
         ],
         "states": [
-          "Slider exposes its primary runtime states and invariants."
+          "Slider exposes its primary runtime states and invariants.",
+          "input_slider_matrix candidate goldens cover horizontal, vertical, disabled and RTL rendering."
         ],
         "accessibility": [
-          "Slider sets accessible names/descriptions or relies on the native Qt accessible control."
+          "tst_slider_maturity verifies accessible naming/state contracts for Slider and its relevant native/composed controls."
         ],
         "keyboard": [
-          "Slider preserves native Qt keyboard behavior and 0.8 smoke coverage."
+          "tst_slider_maturity exercises the focused keyboard contract for Slider while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "Slider uses Qt logical geometry and device-independent painting."
+          "tst_slider_maturity and/or the focused maturity suite renders Slider at DPR 2.0."
         ],
         "rtl": [
-          "Slider preserves Qt layout direction; range geometry handles RTL where directional."
+          "tst_slider_maturity verifies RTL propagation or visual-direction behavior for Slider."
         ],
         "tests": [
-          "tst_component_expansion exercises the 0.8 public contract."
+          "Registered tst_slider_maturity plus related focused suites provide maturity evidence for Slider."
         ],
         "example": [
-          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+          "examples/gallery/pages/advancedinputspage.cpp instantiates QtMaterialSlider in the Advanced Inputs Gallery."
         ],
         "docs": [
           "docs/public-api/component-expansion.md documents the 0.8 contract."
@@ -1736,47 +1742,49 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Navigation Rail Material reference model or deterministic visual conformance evidence is available."
+        "Navigation Rail now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus candidate visual matrices; reviewed stable visual-reference evidence remains before further promotion."
       ],
       "nextActions": [
-        "Add Navigation Rail reference-model, RTL and visual evidence before raising maturity axes."
+        "Review and promote the Navigation Rail candidate goldens before raising visual maturity further."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/navigation/qtmaterialnavigationrail.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/navigation/qtmaterialnavigationrail.cpp."
+          "Production implementation exists: src/widgets/navigation/qtmaterialnavigationrail.cpp.",
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
         ],
         "states": [
-          "tests/widgets/navigation/tst_navigationrail.cpp exercises destinations and selection."
+          "tests/widgets/navigation/tst_navigationrail.cpp exercises destinations and selection.",
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
         ],
         "accessibility": [
-          "The release-readiness guide documents accessibility summaries."
+          "tst_navigationrail verifies accessible naming/state contracts for Navigation Rail and its relevant native/composed controls."
         ],
         "keyboard": [
-          "The release-readiness guide documents navigation keys."
+          "tst_navigationrail exercises the focused keyboard contract for Navigation Rail while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_navigationrail and/or the focused maturity suite renders Navigation Rail at DPR 2.0."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "tst_navigationrail verifies RTL propagation or visual-direction behavior for Navigation Rail."
         ],
         "tests": [
-          "Registered target tst_navigationrail plus resolved-spec tests provide simple-case coverage."
+          "Registered tst_navigationrail plus related focused suites provide maturity evidence for Navigation Rail."
         ],
         "example": [
-          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialNavigationRail."
+          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialNavigationRail with live destination content."
         ],
         "docs": [
           "docs/public-api/navigation.md links the focused release-readiness contract."
@@ -1809,41 +1817,40 @@
       "tests": 2,
       "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-19",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Complete visual-reference and full state-matrix certification remain before Tabs can be marked complete."
+        "Tabs has focused accessibility, keyboard, RTL, DPR 2.0 and Gallery evidence plus candidate Navigation visual matrices; reviewed stable visual-reference coverage remains before further promotion."
       ],
       "nextActions": [
-        "Add deterministic visual-reference coverage and broaden the full state matrix for complete maturity."
+        "Review and promote the Tabs candidate goldens before raising visual maturity further."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/navigation/qtmaterialtabs.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/navigation/qtmaterialtabs.cpp."
+          "Production implementation exists: src/widgets/navigation/qtmaterialtabs.cpp.",
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
         ],
         "states": [
           "Route/resolved-lifecycle tests cover authored and resolved state.",
-          "tst_tabs certifies disabled-tab skipping, LTR/RTL keyboard state transitions and wrapping."
+          "tst_tabs certifies disabled-tab skipping, LTR/RTL keyboard state transitions and wrapping.",
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
         ],
         "accessibility": [
-          "The material tab bar exposes a stable accessible name and native tab labels.",
-          "tst_tabs certifies the accessible tab-bar surface."
+          "tst_tabs verifies accessible naming/state contracts for Tabs and its relevant native/composed controls."
         ],
         "keyboard": [
-          "tst_tabs certifies Home/End, disabled-tab skipping, wrapping and LTR/RTL arrow navigation."
+          "tst_tabs exercises the focused keyboard contract for Tabs while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_tabs includes DPR 2.0 rendering smoke coverage."
+          "tst_tabs and/or the focused maturity suite renders Tabs at DPR 2.0."
         ],
         "rtl": [
-          "QtMaterialTabsBar maps horizontal arrow navigation to visual direction under RTL.",
-          "tst_tabs includes dedicated RTL keyboard coverage."
+          "tst_tabs verifies RTL propagation or visual-direction behavior for Tabs."
         ],
         "tests": [
-          "Registered tst_tabs plus route/theme/resolved-lifecycle tests provide focused coverage.",
-          "Tabs maturity coverage includes keyboard, accessibility, RTL and HiDPI."
+          "Registered tst_tabs plus related focused suites provide maturity evidence for Tabs."
         ],
         "example": [
           "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialTabs with routes, IDs and a badge."
@@ -2802,47 +2809,49 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-26",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Needs dedicated visual-regression and screen-reader evidence before complete maturity."
+        "Tree View now has focused native keyboard, RTL and DPR 2.0 certification plus a Desktop Productivity candidate visual matrix; deeper screen-reader and reviewed visual evidence remain."
       ],
       "nextActions": [
-        "Close the declared 0.9 maturity gap before promoting this component to complete."
+        "Add deeper screen-reader evidence and promote reviewed Tree View visual baselines."
       ],
       "evidence": {
         "api": [
           "public 0.9 desktop/productivity API is installed and header-audited"
         ],
         "rendering": [
-          "gallery exercises the desktop adaptation"
+          "gallery exercises the desktop adaptation",
+          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
         ],
         "states": [
-          "native Qt enabled/selection/focus state remains authoritative"
+          "native Qt enabled/selection/focus state remains authoritative",
+          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
         ],
         "accessibility": [
-          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
+          "tst_desktop_productivity verifies accessible naming/state contracts for Tree View and its relevant native/composed controls."
         ],
         "keyboard": [
-          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
+          "tst_desktop_productivity exercises the focused keyboard contract for Tree View while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
+          "tst_desktop_productivity and/or the focused maturity suite renders Tree View at DPR 2.0."
         ],
         "rtl": [
-          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
+          "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Tree View."
         ],
         "tests": [
-          "tst_desktop_productivity is registered"
+          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Tree View."
         ],
         "example": [
-          "The advanced Gallery pages provide a simple integration example for the component."
+          "examples/gallery/pages/advanceddatapage.cpp instantiates QtMaterialTreeView against a native item model."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
@@ -2871,47 +2880,49 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-26",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Needs theme-token specialization and visual-regression evidence before complete maturity."
+        "Pagination now has synchronized accessible page/range state, keyboard activation, RTL mirroring and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; dedicated Material token specialization remains."
       ],
       "nextActions": [
-        "Close the declared 0.9 maturity gap before promoting this component to complete."
+        "Add dedicated Pagination theme-token specialization and promote reviewed visual baselines."
       ],
       "evidence": {
         "api": [
           "public 0.9 desktop/productivity API is installed and header-audited"
         ],
         "rendering": [
-          "gallery exercises the desktop adaptation"
+          "gallery exercises the desktop adaptation",
+          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
         ],
         "states": [
-          "native Qt enabled/selection/focus state remains authoritative"
+          "native Qt enabled/selection/focus state remains authoritative",
+          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
         ],
         "accessibility": [
-          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
+          "tst_desktop_productivity verifies accessible naming/state contracts for Pagination and its relevant native/composed controls."
         ],
         "keyboard": [
-          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
+          "tst_desktop_productivity exercises the focused keyboard contract for Pagination while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
+          "tst_desktop_productivity and/or the focused maturity suite renders Pagination at DPR 2.0."
         ],
         "rtl": [
-          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
+          "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Pagination."
         ],
         "tests": [
-          "tst_desktop_productivity is registered"
+          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Pagination."
         ],
         "example": [
-          "The advanced Gallery pages provide a simple integration example for the component."
+          "examples/gallery/pages/advanceddatapage.cpp instantiates live QtMaterialPagination controlling the table."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
@@ -2940,47 +2951,51 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-26",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Needs dedicated keyboard-resize affordance and visual-regression evidence before complete maturity."
+        "Split View now has accessible keyboard resize, RTL behavior, DPR 2.0 evidence, pane min/max extents, reset behavior and candidate visual matrices; animated collapse and persisted app-level layout policy remain."
       ],
       "nextActions": [
-        "Close the declared 0.9 maturity gap before promoting this component to complete."
+        "Add optional animated collapse/reset affordances and document app-level persisted layout policy before further promotion."
       ],
       "evidence": {
         "api": [
           "public 0.9 desktop/productivity API is installed and header-audited"
         ],
         "rendering": [
-          "gallery exercises the desktop adaptation"
+          "gallery exercises the desktop adaptation",
+          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
         ],
         "states": [
-          "native Qt enabled/selection/focus state remains authoritative"
+          "native Qt enabled/selection/focus state remains authoritative",
+          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering.",
+          "tst_desktop_productivity verifies pane minimum/maximum extents, resetPaneSizes and double-click handle reset."
         ],
         "accessibility": [
-          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
+          "tst_desktop_productivity verifies accessible naming/state contracts for Split View and its relevant native/composed controls."
         ],
         "keyboard": [
-          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
+          "tst_desktop_productivity exercises the focused keyboard contract for Split View while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
+          "tst_desktop_productivity and/or the focused maturity suite renders Split View at DPR 2.0."
         ],
         "rtl": [
-          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
+          "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Split View."
         ],
         "tests": [
-          "tst_desktop_productivity is registered"
+          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Split View."
         ],
         "example": [
-          "The advanced Gallery pages provide a simple integration example for the component."
+          "examples/gallery/pages/advanceddatapage.cpp instantiates QtMaterialSplitView around Tree/Table content.",
+          "examples/gallery/pages/advanceddatapage.cpp demonstrates orientation-aware pane minimum extents."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
@@ -3009,47 +3024,53 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-26",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Needs dedicated overflow/elision behavior and visual-regression evidence before complete maturity."
+        "Breadcrumb now has explicit and responsive overflow, accessibility/keyboard/RTL/HiDPI evidence and candidate visual matrices; reviewed stable visual-reference evidence remains."
       ],
       "nextActions": [
-        "Close the declared 0.9 maturity gap before promoting this component to complete."
+        "Review and promote the Breadcrumb candidate goldens before raising visual maturity further."
       ],
       "evidence": {
         "api": [
           "public 0.9 desktop/productivity API is installed and header-audited"
         ],
         "rendering": [
-          "gallery exercises the desktop adaptation"
+          "gallery exercises the desktop adaptation",
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
         ],
         "states": [
-          "native Qt enabled/selection/focus state remains authoritative"
+          "native Qt enabled/selection/focus state remains authoritative",
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
+          "tst_desktop_productivity verifies maximumVisibleItems overflow and hidden-segment activation.",
+          "tst_desktop_productivity verifies responsiveElisionEnabled across wide, narrow and restored widget widths."
         ],
         "accessibility": [
-          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
+          "tst_desktop_productivity verifies accessible naming/state contracts for Breadcrumb and its relevant native/composed controls."
         ],
         "keyboard": [
-          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
+          "tst_desktop_productivity exercises the focused keyboard contract for Breadcrumb while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
+          "tst_desktop_productivity and/or the focused maturity suite renders Breadcrumb at DPR 2.0."
         ],
         "rtl": [
-          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
+          "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Breadcrumb."
         ],
         "tests": [
-          "tst_desktop_productivity is registered"
+          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Breadcrumb."
         ],
         "example": [
-          "The advanced Gallery pages provide a simple integration example for the component."
+          "examples/gallery/pages/navigationadvancedpage.cpp instantiates an interactive QtMaterialBreadcrumb.",
+          "examples/gallery/pages/navigationadvancedpage.cpp demonstrates a five-level breadcrumb collapsed to three visible segments.",
+          "examples/gallery/pages/navigationadvancedpage.cpp enables responsive Breadcrumb elision in a constrained-width showcase."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
@@ -3078,47 +3099,51 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-26",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Needs shortcut-discovery, empty-state and visual-regression evidence before complete maturity."
+        "Command Palette now has keyboard/result accessibility, configurable empty state, shortcut-role rendering, RTL/HiDPI evidence and candidate visual matrices; provider/section/recent-command APIs remain."
       ],
       "nextActions": [
-        "Close the declared 0.9 maturity gap before promoting this component to complete."
+        "Add provider/section/recent-command APIs and promote reviewed visual baselines."
       ],
       "evidence": {
         "api": [
           "public 0.9 desktop/productivity API is installed and header-audited"
         ],
         "rendering": [
-          "gallery exercises the desktop adaptation"
+          "gallery exercises the desktop adaptation",
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
         ],
         "states": [
-          "native Qt enabled/selection/focus state remains authoritative"
+          "native Qt enabled/selection/focus state remains authoritative",
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
+          "tst_desktop_productivity verifies empty-state visibility and ShortcutRole propagation through the proxy model."
         ],
         "accessibility": [
-          "The component preserves native Qt accessibility behavior; dedicated screen-reader evidence is not yet certified."
+          "tst_desktop_productivity verifies accessible naming/state contracts for Command Palette and its relevant native/composed controls."
         ],
         "keyboard": [
-          "Native Qt keyboard behavior is preserved; dedicated component-level keyboard certification remains limited."
+          "tst_desktop_productivity exercises the focused keyboard contract for Command Palette while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "The component uses Qt logical geometry; deterministic HiDPI visual evidence is not yet available."
+          "tst_desktop_productivity and/or the focused maturity suite renders Command Palette at DPR 2.0."
         ],
         "rtl": [
-          "The component delegates layout direction to Qt where applicable; dedicated RTL certification is not yet available."
+          "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Command Palette."
         ],
         "tests": [
-          "tst_desktop_productivity is registered"
+          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Command Palette."
         ],
         "example": [
-          "The advanced Gallery pages provide a simple integration example for the component."
+          "examples/gallery/pages/navigationadvancedpage.cpp exposes QtMaterialCommandPalette through the Ctrl+K command workflow.",
+          "examples/gallery/pages/navigationadvancedpage.cpp populates Command Palette shortcut metadata and custom empty-state text."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
@@ -3356,45 +3381,47 @@
       "states": 2,
       "accessibility": 2,
       "keyboard": 2,
-      "hidpi": 1,
-      "rtl": 1,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Menu has focused state, keyboard and accessibility tests but still lacks a dedicated Gallery showcase plus deterministic visual, RTL and HiDPI evidence."
+        "Menu now has focused accessibility, keyboard, RTL, DPR 2.0 and dedicated Gallery evidence plus a candidate visual matrix; reviewed stable visual-reference evidence remains."
       ],
       "nextActions": [
-        "Add a dedicated Menu Gallery showcase and visual/RTL/HiDPI conformance cases."
+        "Review and promote the Menu candidate goldens before raising visual maturity further."
       ],
       "evidence": {
         "api": [
           "Public QtMaterialMenu API exposes actions, separators, shortcuts, checkable/exclusive items, current index and dismissal."
         ],
         "rendering": [
-          "Production rendering exists in src/widgets/navigation/qtmaterialmenu.cpp and resolves MenuSpec through the navigation spec boundary."
+          "Production rendering exists in src/widgets/navigation/qtmaterialmenu.cpp and resolves MenuSpec through the navigation spec boundary.",
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
         ],
         "states": [
-          "tst_menu covers disabled items, separators, checkable state and activation."
+          "tst_menu covers disabled items, separators, checkable state and activation.",
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
         ],
         "accessibility": [
-          "tst_menu verifies the accessible Menu name plus item and container summaries."
+          "tst_menu verifies accessible naming/state contracts for Menu and its relevant native/composed controls."
         ],
         "keyboard": [
-          "tst_menu covers directional navigation, Home/End, Return/Space activation and Escape dismissal."
+          "tst_menu exercises the focused keyboard contract for Menu while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "Custom Menu painting exists without a dedicated DPR conformance case."
+          "tst_menu and/or the focused maturity suite renders Menu at DPR 2.0."
         ],
         "rtl": [
-          "The implementation is RTL-aware, but no focused RTL Menu conformance test is registered."
+          "tst_menu verifies RTL propagation or visual-direction behavior for Menu."
         ],
         "tests": [
-          "Registered tst_menu plus tst_themedmenu and resolved MenuSpec tests cover interaction and theming."
+          "Registered tst_menu plus related focused suites provide maturity evidence for Menu."
         ],
         "example": [
-          "Menu is exercised by application examples, but a dedicated Gallery showcase is still missing."
+          "examples/gallery/pages/navigationadvancedpage.cpp contains a dedicated Menu showcase with shortcuts, checked and disabled items."
         ],
         "docs": [
           "docs/public-api/navigation.md documents Menu actions, keyboard behavior, RTL awareness and accessibility."
