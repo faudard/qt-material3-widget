@@ -6,6 +6,7 @@
 #include <QTest>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QPixmap>
 
 #include "qtmaterial/widgets/surfaces/qtmaterialdialog.h"
 
