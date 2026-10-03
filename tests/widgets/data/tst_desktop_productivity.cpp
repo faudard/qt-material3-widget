@@ -9,6 +9,7 @@
 #include <QListView>
 #include <QPixmap>
 #include <QStringListModel>
+#include <QSplitterHandle>
 #include <QStandardItemModel>
 #include <QToolButton>
 #include <QWidget>
@@ -302,6 +303,83 @@ private slots:
         split.setPaneCollapsed(1, false);
         QVERIFY(!split.paneCollapsed(1));
         QVERIFY(!split.paneCollapsible(1));
+    }
+
+    void splitViewKeyboardResizeIsFocusableAndRtlAware()
+    {
+        QtMaterialSplitView split(Qt::Horizontal);
+        split.resize(640, 240);
+        split.addWidget(new QWidget);
+        split.addWidget(new QWidget);
+        split.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&split));
+
+        split.setSizes({320, 320});
+        QCoreApplication::processEvents();
+
+        QSplitterHandle* handle = split.handle(1);
+        QVERIFY(handle);
+        QCOMPARE(handle->focusPolicy(), Qt::StrongFocus);
+        QCOMPARE(handle->accessibleName(), QStringLiteral("Split handle"));
+        QVERIFY(handle->accessibleDescription().contains(QStringLiteral("arrow")));
+
+        handle->setFocus(Qt::OtherFocusReason);
+        QTRY_VERIFY(handle->hasFocus());
+
+        const QList<int> ltrBefore = split.sizes();
+        QTest::keyClick(handle, Qt::Key_Right);
+        const QList<int> ltrAfter = split.sizes();
+        QVERIFY(ltrAfter.at(0) > ltrBefore.at(0));
+        QVERIFY(ltrAfter.at(1) < ltrBefore.at(1));
+
+        split.setLayoutDirection(Qt::RightToLeft);
+        split.setSizes({320, 320});
+        QCoreApplication::processEvents();
+
+        const QList<int> rtlBefore = split.sizes();
+        QTest::keyClick(handle, Qt::Key_Right);
+        const QList<int> rtlAfter = split.sizes();
+        QVERIFY(rtlAfter.at(0) < rtlBefore.at(0));
+        QVERIFY(rtlAfter.at(1) > rtlBefore.at(1));
+
+        const int smallStepDelta =
+            qAbs(rtlAfter.at(0) - rtlBefore.at(0));
+
+        split.setSizes({320, 320});
+        QCoreApplication::processEvents();
+        const QList<int> shiftBefore = split.sizes();
+        QTest::keyClick(
+            handle,
+            Qt::Key_Left,
+            Qt::ShiftModifier);
+        const QList<int> shiftAfter = split.sizes();
+
+        QVERIFY(
+            qAbs(shiftAfter.at(0) - shiftBefore.at(0))
+            > smallStepDelta);
+    }
+
+    void splitViewVerticalKeyboardResize()
+    {
+        QtMaterialSplitView split(Qt::Vertical);
+        split.resize(320, 640);
+        split.addWidget(new QWidget);
+        split.addWidget(new QWidget);
+        split.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&split));
+
+        split.setSizes({320, 320});
+        QCoreApplication::processEvents();
+
+        QSplitterHandle* handle = split.handle(1);
+        QVERIFY(handle);
+
+        const QList<int> before = split.sizes();
+        QTest::keyClick(handle, Qt::Key_Down);
+        const QList<int> after = split.sizes();
+
+        QVERIFY(after.at(0) > before.at(0));
+        QVERIFY(after.at(1) < before.at(1));
     }
 
     void breadcrumbTracksCurrentSegment()

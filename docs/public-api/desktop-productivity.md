@@ -37,7 +37,10 @@ current page/range through the container accessible description.
 
 `QtMaterialSplitView` derives from `QSplitter`, so native splitter state persistence
 remains available through `saveState()` and `restoreState()`. The additional API makes
-pane collapsibility and collapsed state explicit.
+pane collapsibility and collapsed state explicit. Material split handles are focusable and
+keyboard-resizable: Left/Right resize horizontal splits, Up/Down resize vertical splits, and
+Shift applies a larger step. Horizontal physical arrow direction is mirrored against pane order
+under RTL so the handle still moves in the direction of the pressed arrow.
 
 ## Desktop navigation and commands
 

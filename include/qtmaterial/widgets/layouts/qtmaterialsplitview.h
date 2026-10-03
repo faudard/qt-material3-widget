@@ -28,6 +28,9 @@ public:
 Q_SIGNALS:
     void paneCollapsedChanged(int index, bool collapsed);
 
+protected:
+    QSplitterHandle* createHandle() override;
+
 private:
     std::unique_ptr<QtMaterialSplitViewPrivate> d_ptr;
 };
