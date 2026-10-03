@@ -281,7 +281,7 @@ jobs:
         run: >
           cmake -S . -B build-designer -G Ninja
           -DCMAKE_BUILD_TYPE=Release
-          -DQTMATERIAL3_BUILD_TESTS=OFF
+          -DQTMATERIAL3_BUILD_TESTS=ON
           -DQTMATERIAL3_BUILD_EXAMPLES=OFF
           -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
           -DQTMATERIAL3_BUILD_DESIGNER_PLUGIN=ON
@@ -290,6 +290,11 @@ jobs:
 
       - name: Build Designer plugin
         run: cmake --build build-designer --target qtmaterial3_designer_plugin --parallel
+
+      - name: Test Designer collection
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: ctest --test-dir build-designer --output-on-failure -R designer_collection_contract
 
       - name: Stage Designer plugin
         run: |
