@@ -1,4 +1,5 @@
 #include <QtTest/QtTest>
+#include <QPixmap>
 
 #include "qtmaterial/widgets/data/qtmateriallist.h"
 #include "qtmaterial/widgets/data/qtmateriallistitem.h"
@@ -19,6 +20,7 @@ private slots:
     void activationEmitsIndex();
     void multiSelectionTogglesActivatedRows();
     void takeItemReparentsWithoutDeleting();
+    void rtlAndDpr2RenderingContract();
 };
 
 void TestQtMaterialList::constructsWithAccessibleSummary()
@@ -137,6 +139,25 @@ void TestQtMaterialList::takeItemReparentsWithoutDeleting()
     QCOMPARE(list.count(), 0);
 
     delete taken;
+}
+
+void TestQtMaterialList::rtlAndDpr2RenderingContract()
+{
+    QtMaterialList list;
+    list.addItem(QStringLiteral("Inbox"));
+    list.addItem(QStringLiteral("Archive"));
+    list.setLayoutDirection(Qt::RightToLeft);
+    list.resize(320, 120);
+
+    QCOMPARE(list.layoutDirection(), Qt::RightToLeft);
+
+    QPixmap pixmap(list.width() * 2, list.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    list.render(&pixmap);
+
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
 }
 
 QTEST_MAIN(TestQtMaterialList)
