@@ -40,3 +40,19 @@ The first supported palette is intentionally restricted to widgets that can be s
 The generated `.ui` stores the real Qt Material 3 class and public include path, so applications keep using the normal `QtMaterial3::Widgets` runtime target. The Designer plugin is tooling only and is never a runtime dependency of consumer applications.
 
 More widgets can be added once their Designer-specific editing semantics are defined. Complex containers should use proper Designer extensions rather than pretending to be ordinary widgets.
+
+
+## Production validation
+
+The Designer integration is release-gated by two complementary tests:
+
+- a collection contract that instantiates every advertised widget and validates its Designer metadata;
+- a real `.ui` fixture processed by AUTOUIC, compiled and instantiated against the runtime Widgets library.
+
+CI builds the plugin on Linux/Qt 6 and on Windows with the project's primary Qt 5.14.2/MSVC compatibility profile. This catches both metadata/runtime regressions and the ABI/toolchain combination used by the supported Qt 5 workflow.
+
+### Container semantics
+
+Only widgets with genuine container semantics are advertised as Designer containers. `QtMaterialTabs` derives from `QTabWidget` and therefore uses Designer's native tab-container editing behavior. `QtMaterialCard` is intentionally exposed as a regular widget: its runtime API does not define child-container ownership semantics, so advertising a synthetic container extension would make generated forms misleading.
+
+Widgets that need task-menu or custom container behavior should be added only together with the corresponding Designer extension and automated contract coverage.
