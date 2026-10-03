@@ -87,7 +87,7 @@ Switch and Segmented Button.
 
 ## Consumer component cards
 
-### Checkbox
+### Checkbox consumer card
 
 **Screenshot.** Gallery route `/selection/checkbox`.
 
@@ -110,7 +110,7 @@ choice->setText(QStringLiteral("Enable notifications"));
 choice->setChecked(true);
 ```
 
-### Radio Button
+### Radio Button consumer card
 
 **Screenshot.** Gallery route `/selection/radio-button`.
 
@@ -132,7 +132,7 @@ auto *metric = new QtMaterial::QtMaterialRadioButton(parent);
 metric->setText(QStringLiteral("Metric"));
 ```
 
-### Switch
+### Switch consumer card
 
 **Screenshot.** Gallery route `/selection/switch`.
 
@@ -155,7 +155,7 @@ darkMode->setText(QStringLiteral("Dark mode"));
 darkMode->setChecked(false);
 ```
 
-### Segmented Button
+### Segmented Button consumer card
 
 **Screenshot.** Gallery route `/selection/segmented-button`.
 
