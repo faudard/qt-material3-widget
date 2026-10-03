@@ -10,13 +10,22 @@
 
 #include "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
+#include "qtmaterial/widgets/data/qtmaterialpagination.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
+#include "qtmaterial/widgets/data/qtmaterialtreeview.h"
+#include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
 #include "qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h"
+#include "qtmaterial/widgets/inputs/qtmaterialslider.h"
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
+#include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
+#include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
+#include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
+#include "qtmaterial/widgets/selection/qtmaterialchip.h"
 #include "qtmaterial/widgets/selection/qtmaterialradiobutton.h"
 #include "qtmaterial/widgets/selection/qtmaterialswitch.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
@@ -127,6 +136,10 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
         widgets_, this, "QtMaterial::QtMaterialFilledButton",
         "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h",
         "Qt Material 3 - Buttons", "materialFilledButton", "Material 3 filled button");
+    addWidget<QtMaterialFilledTonalButton>(
+        widgets_, this, "QtMaterial::QtMaterialFilledTonalButton",
+        "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h",
+        "Qt Material 3 - Buttons", "materialFilledTonalButton", "Material 3 filled tonal button");
     addWidget<QtMaterialOutlinedButton>(
         widgets_, this, "QtMaterial::QtMaterialOutlinedButton",
         "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h",
@@ -140,6 +153,14 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
         "qtmaterial/widgets/buttons/qtmaterialtextbutton.h",
         "Qt Material 3 - Buttons", "materialTextButton", "Material 3 text button");
 
+    addWidget<QtMaterialComboBox>(
+        widgets_, this, "QtMaterial::QtMaterialComboBox",
+        "qtmaterial/widgets/inputs/qtmaterialcombobox.h",
+        "Qt Material 3 - Inputs", "materialComboBox", "Material 3 combo box");
+    addWidget<QtMaterialSlider>(
+        widgets_, this, "QtMaterial::QtMaterialSlider",
+        "qtmaterial/widgets/inputs/qtmaterialslider.h",
+        "Qt Material 3 - Inputs", "materialSlider", "Material 3 slider");
     addWidget<QtMaterialOutlinedTextField>(
         widgets_, this, "QtMaterial::QtMaterialOutlinedTextField",
         "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h",
@@ -162,6 +183,15 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
         "qtmaterial/widgets/selection/qtmaterialswitch.h",
         "Qt Material 3 - Selection", "materialSwitch", "Material 3 switch");
 
+    addWidget<QtMaterialChip>(
+        widgets_, this, "QtMaterial::QtMaterialChip",
+        "qtmaterial/widgets/selection/qtmaterialchip.h",
+        "Qt Material 3 - Selection", "materialChip", "Material 3 chip");
+
+    addWidget<QtMaterialBreadcrumb>(
+        widgets_, this, "QtMaterial::QtMaterialBreadcrumb",
+        "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h",
+        "Qt Material 3 - Navigation", "materialBreadcrumb", "Material 3 breadcrumb");
     addWidget<QtMaterialTabs>(
         widgets_, this, "QtMaterial::QtMaterialTabs",
         "qtmaterial/widgets/navigation/qtmaterialtabs.h",
@@ -172,10 +202,27 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
         "qtmaterial/widgets/surfaces/qtmaterialcard.h",
         "Qt Material 3 - Surfaces", "materialCard", "Material 3 card", true);
 
+    addWidget<QtMaterialLinearProgressIndicator>(
+        widgets_, this, "QtMaterial::QtMaterialLinearProgressIndicator",
+        "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h",
+        "Qt Material 3 - Progress", "materialLinearProgress", "Material 3 linear progress indicator");
+    addWidget<QtMaterialCircularProgressIndicator>(
+        widgets_, this, "QtMaterial::QtMaterialCircularProgressIndicator",
+        "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h",
+        "Qt Material 3 - Progress", "materialCircularProgress", "Material 3 circular progress indicator");
+
+    addWidget<QtMaterialPagination>(
+        widgets_, this, "QtMaterial::QtMaterialPagination",
+        "qtmaterial/widgets/data/qtmaterialpagination.h",
+        "Qt Material 3 - Data", "materialPagination", "Material 3 pagination");
     addWidget<QtMaterialTable>(
         widgets_, this, "QtMaterial::QtMaterialTable",
         "qtmaterial/widgets/data/qtmaterialtable.h",
         "Qt Material 3 - Data", "materialTable", "Material 3 table");
+    addWidget<QtMaterialTreeView>(
+        widgets_, this, "QtMaterial::QtMaterialTreeView",
+        "qtmaterial/widgets/data/qtmaterialtreeview.h",
+        "Qt Material 3 - Data", "materialTreeView", "Material 3 tree view");
 }
 
 QList<QDesignerCustomWidgetInterface*> QtMaterial3DesignerCollection::customWidgets() const
