@@ -74,3 +74,10 @@ progress->setValue(0.65);
 
 The gallery Progress Indicators page demonstrates determinate and indeterminate linear/circular
 variants.
+
+
+## Keyboard and focus
+
+Progress indicators are status displays rather than command controls and therefore do not introduce an activation key or a custom keyboard-navigation model. Keep keyboard focus on the operation or surrounding workflow that initiated the work. Applications should not make an indicator focusable solely to announce progress; expose meaningful status through the documented accessibility value/description instead.
+
+RTL affects directional linear rendering as documented above. Circular progress geometry is direction-independent unless an application explicitly adds directional surrounding content.
