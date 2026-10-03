@@ -22,8 +22,9 @@ A checkbox may also represent an indeterminate state when the value is mixed or 
 ```cpp
 checkbox->setTristate(true);
 checkbox->setCheckState(Qt::PartiallyChecked);
-## Radio button
 ```
+
+## Radio button
 Use QtMaterialRadioButton when the user must choose one option from a mutually exclusive group.
 ```cpp
 auto* optionA = new QtMaterial::QtMaterialRadioButton(parent);
@@ -83,3 +84,16 @@ Segmented Button supports Left/Right/Home/End navigation, skips disabled segment
 horizontal navigation to visual direction under RTL. The selection-family maturity suite also
 checks LTR/RTL size-hint stability and DPR 2.0 rendering smoke for Checkbox, Radio Button,
 Switch and Segmented Button.
+
+
+## Production maturity contract
+
+The Selection family is promoted as a unit. Checkbox, Radio Button, Switch and Segmented
+Button must retain executable coverage for public API behavior, selection states,
+accessibility synchronization, keyboard behavior, RTL layout/navigation and DPR 2.0
+rendering. The Gallery route is the maintained interactive example for all four controls.
+
+Visual completion is stricter than smoke coverage: the deterministic Selection state matrix
+must be reviewed on the pinned visual-regression toolchain and committed as stable goldens.
+Until those reviewed files exist, Selection remains below `complete` even when its functional
+contracts are green.
