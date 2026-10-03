@@ -32,9 +32,13 @@ Q_SIGNALS:
     void activated(int index, const QString& text);
     void currentIndexChanged(int index);
 
+protected:
+    void changeEvent(QEvent* event) override;
+
 private:
     void rebuild();
     void refreshCurrentSegment();
+    void refreshDirection();
 
     std::unique_ptr<QtMaterialBreadcrumbPrivate> d_ptr;
 };

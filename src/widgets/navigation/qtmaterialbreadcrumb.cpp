@@ -1,5 +1,6 @@
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 
+#include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLayoutItem>
@@ -15,6 +16,7 @@ public:
     int currentIndex = -1;
     QHBoxLayout* layout = nullptr;
     QList<QToolButton*> buttons;
+    QList<QLabel*> separators;
 };
 
 QtMaterialBreadcrumb::QtMaterialBreadcrumb(QWidget* parent)
@@ -89,6 +91,7 @@ void QtMaterialBreadcrumb::setCurrentIndex(int index)
 void QtMaterialBreadcrumb::rebuild()
 {
     d_ptr->buttons.clear();
+    d_ptr->separators.clear();
 
     while (QLayoutItem* item = d_ptr->layout->takeAt(0)) {
         if (QWidget* widget = item->widget()) {
@@ -99,8 +102,10 @@ void QtMaterialBreadcrumb::rebuild()
 
     for (int index = 0; index < d_ptr->items.size(); ++index) {
         if (index > 0) {
-            auto* separator = new QLabel(QStringLiteral("›"), this);
-            separator->setAccessibleName(tr("Separator"));
+            auto* separator = new QLabel(this);
+            separator->setAccessibleName(tr("Breadcrumb separator"));
+            separator->setFocusPolicy(Qt::NoFocus);
+            d_ptr->separators.push_back(separator);
             d_ptr->layout->addWidget(separator);
         }
 
@@ -117,14 +122,53 @@ void QtMaterialBreadcrumb::rebuild()
         d_ptr->layout->addWidget(button);
     }
 
+    refreshDirection();
     refreshCurrentSegment();
     d_ptr->layout->addStretch(1);
 }
 
 void QtMaterialBreadcrumb::refreshCurrentSegment()
 {
+    QStringList pathParts;
     for (int index = 0; index < d_ptr->buttons.size(); ++index) {
-        d_ptr->buttons.at(index)->setEnabled(index != d_ptr->currentIndex);
+        QToolButton* button = d_ptr->buttons.at(index);
+        const bool current = index == d_ptr->currentIndex;
+        button->setEnabled(!current);
+        button->setAccessibleDescription(
+            current
+                ? tr("%1 of %2, current location")
+                      .arg(index + 1)
+                      .arg(d_ptr->buttons.size())
+                : tr("%1 of %2")
+                      .arg(index + 1)
+                      .arg(d_ptr->buttons.size()));
+        pathParts.push_back(d_ptr->items.at(index));
+    }
+
+    setAccessibleDescription(
+        pathParts.isEmpty()
+            ? tr("Empty breadcrumb")
+            : tr("Path: %1").arg(
+                  pathParts.join(QStringLiteral(" / "))));
+}
+
+void QtMaterialBreadcrumb::refreshDirection()
+{
+    const QString separatorText =
+        layoutDirection() == Qt::RightToLeft
+            ? QStringLiteral("‹")
+            : QStringLiteral("›");
+    for (QLabel* separator : d_ptr->separators) {
+        separator->setText(separatorText);
+    }
+}
+
+void QtMaterialBreadcrumb::changeEvent(QEvent* event)
+{
+    QWidget::changeEvent(event);
+    if (event
+        && event->type() == QEvent::LayoutDirectionChange) {
+        refreshDirection();
     }
 }
 
