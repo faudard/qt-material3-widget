@@ -15,7 +15,7 @@ private slots:
         QtMaterial3DesignerCollection collection;
         const auto widgets = collection.customWidgets();
 
-        QVERIFY(widgets.size() >= 20);
+        QCOMPARE(widgets.size(), 20);
 
         QSet<QString> names;
         for (QDesignerCustomWidgetInterface* item : widgets) {
