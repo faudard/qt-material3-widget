@@ -15,7 +15,7 @@ Every public component documentation entry must answer the same questions:
 7. **RTL** — mirroring/direction behavior.
 8. **Example** — Gallery route or focused example code.
 
-The component registry is the source of truth for public header, widget type, test target, Gallery route, documentation path and maturity evidence.
+The component registry is the source of truth for public header, widget type, test target, Gallery route, documentation path and maturity evidence. See the [component documentation standard](component-documentation-standard.md) for the release checklist and screenshot policy.
 
 ## Families
 
