@@ -29,12 +29,13 @@ For a Qt SDK installation, the effective destination is typically the `designer`
 
 The first supported palette is intentionally restricted to widgets that can be safely instantiated and edited without a custom task-menu or container extension:
 
-- **Qt Material 3 - Buttons**: Filled, Outlined, Elevated and Text buttons
-- **Qt Material 3 - Inputs**: Outlined and Filled text fields
-- **Qt Material 3 - Selection**: Checkbox, Radio Button and Switch
-- **Qt Material 3 - Navigation**: Tabs
+- **Qt Material 3 - Buttons**: Filled, Filled Tonal, Outlined, Elevated and Text buttons
+- **Qt Material 3 - Inputs**: Combo Box, Slider, Outlined and Filled text fields
+- **Qt Material 3 - Selection**: Checkbox, Radio Button, Switch and Chip
+- **Qt Material 3 - Navigation**: Tabs and Breadcrumb
 - **Qt Material 3 - Surfaces**: Card
-- **Qt Material 3 - Data**: Table
+- **Qt Material 3 - Progress**: Linear and Circular progress indicators
+- **Qt Material 3 - Data**: Pagination, Table and Tree View
 
 The generated `.ui` stores the real Qt Material 3 class and public include path, so applications keep using the normal `QtMaterial3::Widgets` runtime target. The Designer plugin is tooling only and is never a runtime dependency of consumer applications.
 
