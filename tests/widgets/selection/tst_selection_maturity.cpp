@@ -1,4 +1,3 @@
-#include <QCheckBox>
 #include <QtTest/QtTest>
 
 #include <QImage>
@@ -224,7 +223,7 @@ void tst_SelectionMaturity::checkboxTriStateContract()
     checkbox.setCheckState(Qt::PartiallyChecked);
     QCOMPARE(checkbox.checkState(), Qt::PartiallyChecked);
 
-    QSignalSpy stateSpy(&checkbox, &QCheckBox::stateChanged);
+    QSignalSpy stateSpy(&checkbox, &QtMaterialCheckbox::checkStateChanged);
     QTest::keyClick(&checkbox, Qt::Key_Space);
     QVERIFY(stateSpy.count() >= 1);
     QVERIFY(checkbox.checkState() != Qt::PartiallyChecked);
