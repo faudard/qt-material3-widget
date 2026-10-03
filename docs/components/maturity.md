@@ -34,7 +34,7 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `compact.chip` | Chip | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Chip family has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `compact.chip` | Chip | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Reviewed deterministic Material visual-reference evidence remains before complete maturity. |
 
 ### Data
 
@@ -91,7 +91,7 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `progress.circular` | Circular Progress Indicator | `usable` | 2 | 2 | 2 | 1 | N/A | 1 | N/A | 2 | 1 | 2 | No Circular Progress Material reference model or deterministic visual conformance evidence is available. |
+| `progress.circular` | Circular Progress Indicator | `usable` | 2 | 2 | 2 | 2 | N/A | 2 | N/A | 2 | 1 | 2 | Reviewed deterministic visual-reference coverage remains before Circular Progress can be marked complete. |
 | `progress.linear` | Linear Progress Indicator | `usable` | 2 | 2 | 2 | 2 | N/A | 2 | 2 | 2 | 1 | 2 | Deterministic visual-reference coverage remains before Linear Progress can be marked complete. |
 
 ### Selection
