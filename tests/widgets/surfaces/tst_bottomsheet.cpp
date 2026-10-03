@@ -1,4 +1,5 @@
 #include <QPushButton>
+#include <QPixmap>
 #include <QSignalSpy>
 #include <QTest>
 #include <QVBoxLayout>
@@ -20,6 +21,7 @@ private slots:
     void modalTabFocusStaysInsideSheet();
     void nonModalTabCanLeaveSheet();
     void dragDownCollapsesOrDismisses();
+    void rtlAndDpr2RenderingContract();
 };
 
 void tst_QtMaterialBottomSheet::construction()
@@ -227,6 +229,20 @@ void tst_QtMaterialBottomSheet::dragDownCollapsesOrDismisses()
     QTest::mouseRelease(&sheet, Qt::LeftButton, Qt::NoModifier, end);
 
     QVERIFY(!sheet.isExpanded() || !sheet.isOpen());
+}
+
+void tst_QtMaterialBottomSheet::rtlAndDpr2RenderingContract()
+{
+    QtMaterial::QtMaterialBottomSheet widget;
+    widget.setLayoutDirection(Qt::RightToLeft);
+    widget.resize(qMax(320, widget.sizeHint().width()), qMax(96, widget.sizeHint().height()));
+    QCOMPARE(widget.layoutDirection(), Qt::RightToLeft);
+    QPixmap pixmap(widget.width() * 2, widget.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    widget.render(&pixmap);
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
 }
 
 QTEST_MAIN(tst_QtMaterialBottomSheet)
