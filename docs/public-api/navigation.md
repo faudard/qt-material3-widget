@@ -84,9 +84,14 @@ full state matrix remain before `complete` maturity.
 ## Navigation Rail
 
 `QtMaterialNavigationRail` is tracked as **usable**. Destinations are ordered and addressable by
-index; disabled destinations are skipped. Up/Left and Down/Right navigate enabled destinations,
-Home/End jump to the boundary, and Space/Return/Enter activate the current destination. The rail
-keeps a default accessible name and exposes per-destination accessible summaries.
+index; disabled destinations are skipped. Up/Down follow the vertical destination order while
+Left/Right follow visual direction and therefore mirror in RTL layouts. Home/End jump to the
+first/last enabled destination, and Space/Return/Enter activate the current destination.
+
+The rail keeps the default accessible name `Navigation rail`, exposes a synchronized container
+summary, and provides per-destination accessible text including position, selected state and
+disabled state. Focused tests cover disabled-item skipping, activation, RTL directional keyboard
+behavior and DPR 2.0 rendering.
 
 ## Menu
 

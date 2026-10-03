@@ -32,6 +32,9 @@ Q_SIGNALS:
     void queryChanged(const QString& query);
     void commandActivated(const QModelIndex& sourceIndex);
 
+protected:
+    bool eventFilter(QObject* watched, QEvent* event) override;
+
 private:
     void activateProxyIndex(const QModelIndex& proxyIndex);
 

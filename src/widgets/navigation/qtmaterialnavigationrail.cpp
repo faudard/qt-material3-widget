@@ -582,11 +582,19 @@ void QtMaterialNavigationRail::keyPressEvent(
         || key == Qt::Key_Left
         || key == Qt::Key_Down
         || key == Qt::Key_Right) {
-        const int step =
-            key == Qt::Key_Down
-                || key == Qt::Key_Right
-            ? 1
-            : -1;
+        int step = 0;
+        if (key == Qt::Key_Up) {
+            step = -1;
+        } else if (key == Qt::Key_Down) {
+            step = 1;
+        } else {
+            const bool visuallyForward =
+                key == Qt::Key_Right;
+            const bool rtl =
+                layoutDirection() == Qt::RightToLeft;
+            step = visuallyForward != rtl ? 1 : -1;
+        }
+
         setCurrentIndex(
             d_ptr->nextEnabledIndex(
                 d_ptr->currentIndex,

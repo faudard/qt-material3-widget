@@ -4,7 +4,10 @@
 
 #include <QAbstractTableModel>
 #include <QHeaderView>
+#include <QLabel>
+#include <QLineEdit>
 #include <QListView>
+#include <QPixmap>
 #include <QStringListModel>
 #include <QStandardItemModel>
 #include <QToolButton>
@@ -252,6 +255,83 @@ private slots:
             buttons.size());
     }
 
+    void breadcrumbAccessibilityRtlAndKeyboard()
+    {
+        QtMaterialBreadcrumb breadcrumb;
+        breadcrumb.setItems({
+            QStringLiteral("Workspace"),
+            QStringLiteral("Requirements"),
+            QStringLiteral("REQ-42")
+        });
+
+        QCOMPARE(breadcrumb.accessibleName(), QStringLiteral("Breadcrumb"));
+        QVERIFY(
+            breadcrumb.accessibleDescription().contains(
+                QStringLiteral("Workspace / Requirements / REQ-42")));
+
+        auto buttons = breadcrumb.findChildren<QToolButton*>();
+        QCOMPARE(buttons.size(), 3);
+
+        QToolButton* workspaceButton = nullptr;
+        QToolButton* requirementsButton = nullptr;
+        QToolButton* currentButton = nullptr;
+        for (QToolButton* button : buttons) {
+            if (button->text() == QStringLiteral("Workspace")) {
+                workspaceButton = button;
+            } else if (button->text() == QStringLiteral("Requirements")) {
+                requirementsButton = button;
+            } else if (button->text() == QStringLiteral("REQ-42")) {
+                currentButton = button;
+            }
+        }
+        QVERIFY(workspaceButton);
+        QVERIFY(requirementsButton);
+        QVERIFY(currentButton);
+        QVERIFY(workspaceButton->accessibleDescription().contains(QStringLiteral("1 of 3")));
+        QVERIFY(requirementsButton->accessibleDescription().contains(QStringLiteral("2 of 3")));
+        QVERIFY(currentButton->accessibleDescription().contains(QStringLiteral("current location")));
+        QVERIFY(!currentButton->isEnabled());
+
+        breadcrumb.setLayoutDirection(Qt::RightToLeft);
+        const auto labels = breadcrumb.findChildren<QLabel*>();
+        QCOMPARE(labels.size(), 2);
+        for (QLabel* label : labels) {
+            QCOMPARE(label->text(), QStringLiteral("‹"));
+        }
+
+        breadcrumb.resize(520, breadcrumb.sizeHint().height());
+        breadcrumb.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&breadcrumb));
+
+        QSignalSpy activated(&breadcrumb, &QtMaterialBreadcrumb::activated);
+        workspaceButton->setFocus(Qt::OtherFocusReason);
+        QTRY_VERIFY(workspaceButton->hasFocus());
+        QTest::keyClick(workspaceButton, Qt::Key_Space);
+        QCOMPARE(activated.count(), 1);
+        QCOMPARE(activated.at(0).at(0).toInt(), 0);
+    }
+
+    void breadcrumbRendersAtHighDpi()
+    {
+        QtMaterialBreadcrumb breadcrumb;
+        breadcrumb.setItems({
+            QStringLiteral("Workspace"),
+            QStringLiteral("Requirements"),
+            QStringLiteral("REQ-42")
+        });
+        breadcrumb.resize(520, qMax(48, breadcrumb.sizeHint().height()));
+
+        QPixmap pixmap(
+            breadcrumb.width() * 2,
+            breadcrumb.height() * 2);
+        pixmap.setDevicePixelRatio(2.0);
+        pixmap.fill(Qt::transparent);
+        breadcrumb.render(&pixmap);
+
+        QVERIFY(!pixmap.isNull());
+        QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+    }
+
     void commandPaletteFiltersExternalModel()
     {
         QStringListModel model({
@@ -269,6 +349,99 @@ private slots:
         auto* resultView = palette.findChild<QListView*>();
         QVERIFY(resultView);
         QCOMPARE(resultView->model()->rowCount(), 1);
+    }
+
+    void commandPaletteKeyboardAccessibilityAndRtl()
+    {
+        QStringListModel model({
+            QStringLiteral("Open file"),
+            QStringLiteral("Build project"),
+            QStringLiteral("Run tests")
+        });
+
+        QtMaterialCommandPalette palette;
+        palette.setSourceModel(&model);
+        QCOMPARE(palette.accessibleName(), QStringLiteral("Command palette"));
+        QVERIFY(palette.accessibleDescription().contains(QStringLiteral("3")));
+
+        auto* searchEdit = palette.findChild<QLineEdit*>();
+        auto* resultView = palette.findChild<QListView*>();
+        QVERIFY(searchEdit);
+        QVERIFY(resultView);
+        QCOMPARE(searchEdit->accessibleName(), QStringLiteral("Search commands"));
+        QCOMPARE(resultView->accessibleName(), QStringLiteral("Command results"));
+        QCOMPARE(resultView->currentIndex().row(), 0);
+
+        palette.setLayoutDirection(Qt::RightToLeft);
+        QCOMPARE(searchEdit->layoutDirection(), Qt::RightToLeft);
+        QCOMPARE(resultView->layoutDirection(), Qt::RightToLeft);
+
+        palette.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&palette));
+        searchEdit->setFocus(Qt::OtherFocusReason);
+        QTRY_VERIFY(searchEdit->hasFocus());
+
+        QTest::keyClick(searchEdit, Qt::Key_Down);
+        QCOMPARE(resultView->currentIndex().row(), 1);
+        QTest::keyClick(searchEdit, Qt::Key_End);
+        QCOMPARE(resultView->currentIndex().row(), 2);
+        QTest::keyClick(searchEdit, Qt::Key_Home);
+        QCOMPARE(resultView->currentIndex().row(), 0);
+        QTest::keyClick(searchEdit, Qt::Key_Up);
+        QCOMPARE(resultView->currentIndex().row(), 2);
+
+        palette.setQuery(QStringLiteral("Build"));
+        QCOMPARE(resultView->model()->rowCount(), 1);
+        QCOMPARE(resultView->currentIndex().row(), 0);
+        QVERIFY(palette.accessibleDescription().contains(QStringLiteral("1")));
+
+        palette.setQuery(QStringLiteral("No match"));
+        QCOMPARE(resultView->model()->rowCount(), 0);
+        QVERIFY(!resultView->currentIndex().isValid());
+        QVERIFY(palette.accessibleDescription().contains(QStringLiteral("0")));
+
+        palette.setQuery(QString());
+        QTest::keyClick(searchEdit, Qt::Key_Escape);
+        QVERIFY(!palette.isVisible());
+    }
+
+    void commandPaletteKeyboardActivationAndHighDpi()
+    {
+        QStringListModel model({
+            QStringLiteral("Open file"),
+            QStringLiteral("Build project")
+        });
+
+        QtMaterialCommandPalette palette;
+        palette.setSourceModel(&model);
+        auto* searchEdit = palette.findChild<QLineEdit*>();
+        auto* resultView = palette.findChild<QListView*>();
+        QVERIFY(searchEdit);
+        QVERIFY(resultView);
+
+        palette.resize(560, 400);
+        QPixmap pixmap(
+            palette.width() * 2,
+            palette.height() * 2);
+        pixmap.setDevicePixelRatio(2.0);
+        pixmap.fill(Qt::transparent);
+        palette.render(&pixmap);
+        QVERIFY(!pixmap.isNull());
+        QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+
+        QSignalSpy activated(&palette, &QtMaterialCommandPalette::commandActivated);
+        palette.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&palette));
+        searchEdit->setFocus(Qt::OtherFocusReason);
+        QTRY_VERIFY(searchEdit->hasFocus());
+
+        QTest::keyClick(searchEdit, Qt::Key_Down);
+        QCOMPARE(resultView->currentIndex().row(), 1);
+        QTest::keyClick(searchEdit, Qt::Key_Return);
+
+        QCOMPARE(activated.count(), 1);
+        QCOMPARE(activated.at(0).at(0).value<QModelIndex>().row(), 1);
+        QVERIFY(!palette.isVisible());
     }
 
     void commandPaletteUsesSingleNativeActivationPath()

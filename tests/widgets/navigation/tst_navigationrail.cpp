@@ -1,5 +1,7 @@
 #include <QtTest/QtTest>
 
+#include <QPixmap>
+
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
 
 using namespace QtMaterial;
@@ -13,8 +15,10 @@ private slots:
     void keyboardNavigationSkipsDisabledDestinations();
     void activationUsesCurrentDestination();
     void homeAndEndSelectFirstAndLastEnabledDestination();
+    void rtlHorizontalKeysFollowVisualDirection();
     void labelsVisibleEmitsOnlyOnChange();
     void accessibilitySummaryTracksSelectionAndEnabledState();
+    void rendersAtHighDpi();
 };
 
 void NavigationRailTest::constructionAndDestinationModel()
@@ -126,6 +130,31 @@ void NavigationRailTest::homeAndEndSelectFirstAndLastEnabledDestination()
     QCOMPARE(rail.currentIndex(), 1);
 }
 
+void NavigationRailTest::rtlHorizontalKeysFollowVisualDirection()
+{
+    QtMaterialNavigationRail rail;
+    rail.addDestination(QStringLiteral("Home"));
+    rail.addDestination(QStringLiteral("Search"));
+    rail.addDestination(QStringLiteral("Settings"));
+    rail.setCurrentIndex(1);
+    rail.setLayoutDirection(Qt::RightToLeft);
+    rail.resize(rail.sizeHint());
+    rail.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&rail));
+
+    QTest::keyClick(&rail, Qt::Key_Right);
+    QCOMPARE(rail.currentIndex(), 0);
+
+    QTest::keyClick(&rail, Qt::Key_Left);
+    QCOMPARE(rail.currentIndex(), 1);
+
+    QTest::keyClick(&rail, Qt::Key_Down);
+    QCOMPARE(rail.currentIndex(), 2);
+
+    QTest::keyClick(&rail, Qt::Key_Up);
+    QCOMPARE(rail.currentIndex(), 1);
+}
+
 void NavigationRailTest::labelsVisibleEmitsOnlyOnChange()
 {
     QtMaterialNavigationRail rail;
@@ -162,6 +191,26 @@ void NavigationRailTest::accessibilitySummaryTracksSelectionAndEnabledState()
     QCOMPARE(rail.currentIndex(), 0);
     QVERIFY(rail.destinationAccessibleText(1).contains(QStringLiteral("disabled")));
     QVERIFY(summarySpy.count() >= 1);
+}
+
+void NavigationRailTest::rendersAtHighDpi()
+{
+    QtMaterialNavigationRail rail;
+    rail.addDestination(QStringLiteral("Home"));
+    rail.addDestination(QStringLiteral("Search"));
+    rail.addDestination(QStringLiteral("Settings"));
+    rail.setCurrentIndex(1);
+    rail.resize(rail.sizeHint());
+
+    QPixmap pixmap(
+        rail.width() * 2,
+        rail.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    rail.render(&pixmap);
+
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
 }
 
 QTEST_MAIN(NavigationRailTest)

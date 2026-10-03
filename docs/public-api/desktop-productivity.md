@@ -36,13 +36,21 @@ pane collapsibility and collapsed state explicit.
 
 ## Desktop navigation and commands
 
-`QtMaterialBreadcrumb` represents a hierarchical path and emits the activated segment.
+`QtMaterialBreadcrumb` represents a hierarchical path and emits the activated segment. Each
+segment keeps native `QToolButton` keyboard behavior, exposes its position/current-location
+state to accessibility, and the breadcrumb exposes the complete path as its accessible
+description. Separator glyphs mirror automatically when layout direction changes between LTR
+and RTL.
 
 `QtMaterialCommandPalette` composes a search field, `QSortFilterProxyModel` and
 `QListView`. The source model remains externally owned and command activation returns a
-source-model index. The composed search/list widgets are implementation details rather
-than public API; applications interact through the query, source-model and activation
-contracts.
+source-model index. While focus remains in the search editor, Up/Down cycle through results,
+Home/End jump to the first/last result, Enter activates the current result and Escape dismisses
+the palette. Filtering keeps the first valid result selected and synchronizes an accessible
+matching-command count; the result view is exposed as `Command results`.
+
+The composed search/list widgets remain implementation details rather than public API;
+applications interact through the query, source-model and activation contracts.
 
 ## Drag and drop
 
@@ -53,6 +61,9 @@ and keeps `mimeData()` / `dropMimeData()` in the model where Qt expects them.
 ## Certification
 
 The desktop-productivity test target exercises Model/View ownership, a 100000-row virtual
-model, selection policies, pagination invariants, splitter behavior, navigation and
-command filtering. The release gate requires the same Windows Qt 5.14.2, Windows Qt 6,
-Linux Qt 6, macOS Qt 6, sanitizer, packaging and consumer matrix used by earlier releases.
+model, selection policies, pagination invariants, splitter behavior, Breadcrumb accessibility
+and RTL behavior, Command Palette keyboard/result accessibility, command filtering and DPR 2.0
+rendering. The focused Navigation Rail target additionally certifies disabled-item skipping,
+visual-direction RTL keyboard behavior and HiDPI rendering. The release gate requires the same
+Windows Qt 5.14.2, Windows Qt 6, Linux Qt 6, macOS Qt 6, sanitizer, packaging and consumer matrix
+used by earlier releases.
