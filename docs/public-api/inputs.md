@@ -138,5 +138,5 @@ section navigation. Component-specific Autocomplete and Date Field interaction r
 covered by their focused tests.
 
 RTL is inherited by composed native children, including editors, result views, calendars and
-time fields. `tst_input_maturity` verifies this propagation and provides DPR 2.0 rendering
+time fields. `tst_input_maturity` verifies this propagation and provides desktop rendering at 100%, 125%, 150%, 175% and 200% scale equivalents
 smoke coverage for all eleven non-slider Input components.
