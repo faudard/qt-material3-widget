@@ -1,4 +1,5 @@
 #include <QtTest/QtTest>
+#include <QPixmap>
 
 #include <QVBoxLayout>
 #include <QWidget>
