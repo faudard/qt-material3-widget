@@ -1,6 +1,7 @@
 #include "qtmaterial/widgets/data/qtmaterialcarousel.h"
 
 #include <QtTest/QtTest>
+#include <QPixmap>
 
 using namespace QtMaterial;
 
@@ -17,6 +18,7 @@ private slots:
     void accessibilitySummaryTracksCurrentItem();
     void indicatorClickChangesCurrentItem();
     void visibleItemCountIsClamped();
+    void rtlAndDpr2RenderingContract();
 };
 
 void tst_Carousel::constructsEmpty()
@@ -164,6 +166,22 @@ void tst_Carousel::visibleItemCountIsClamped()
 
     carousel.setVisibleItemCount(42);
     QCOMPARE(carousel.visibleItemCount(), 9);
+}
+
+void tst_Carousel::rtlAndDpr2RenderingContract()
+{
+    QtMaterialCarousel widget;
+    widget.addItem(QStringLiteral("One"));
+    widget.addItem(QStringLiteral("Two"));
+    widget.setLayoutDirection(Qt::RightToLeft);
+    widget.resize(480, 180);
+    QCOMPARE(widget.layoutDirection(), Qt::RightToLeft);
+    QPixmap pixmap(widget.width() * 2, widget.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    widget.render(&pixmap);
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
 }
 
 QTEST_MAIN(tst_Carousel)
