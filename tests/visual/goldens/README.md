@@ -37,6 +37,9 @@ CI generates the following candidate families in the pinned Ubuntu/Fusion render
 - `navigation_desktop_matrix_*.png`
 - `input_slider_matrix_*.png`
 - `desktop_data_matrix_*.png`
+- `surface_bar_matrix_*.png`
+- `progress_compact_matrix_*.png`
+- `data_extended_matrix_*.png`
 
 Download the `family-visual-candidate-goldens` workflow artifact, review the images, then
 commit the approved PNGs into this directory. Candidate cases tolerate a missing baseline,
