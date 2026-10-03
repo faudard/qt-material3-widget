@@ -1,4 +1,5 @@
 #include <QtTest/QtTest>
+#include <QPixmap>
 
 #include <QSignalSpy>
 #include <QToolButton>
@@ -15,6 +16,7 @@ private slots:
     void escapeDismissesOnlyWhenAllowed();
     void accessibilitySummaryIncludesContentActionsAndDismiss();
     void sizeHintsAreNonEmpty();
+    void rtlAndDpr2RenderingContract();
 };
 
 void tst_Banner::textAndActionAccessors()
@@ -101,6 +103,20 @@ void tst_Banner::sizeHintsAreNonEmpty()
     QVERIFY(banner.sizeHint().height() >= banner.minimumSizeHint().height());
     QVERIFY(banner.minimumSizeHint().width() > 0);
     QVERIFY(banner.minimumSizeHint().height() > 0);
+}
+
+void tst_Banner::rtlAndDpr2RenderingContract()
+{
+    QtMaterialBanner widget;
+    widget.setLayoutDirection(Qt::RightToLeft);
+    widget.resize(qMax(320, widget.sizeHint().width()), qMax(96, widget.sizeHint().height()));
+    QCOMPARE(widget.layoutDirection(), Qt::RightToLeft);
+    QPixmap pixmap(widget.width() * 2, widget.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    widget.render(&pixmap);
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
 }
 
 QTEST_MAIN(tst_Banner)

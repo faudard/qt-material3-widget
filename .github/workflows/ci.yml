@@ -216,6 +216,9 @@ jobs:
             tests/visual/goldens/navigation_desktop_matrix_*.png
             tests/visual/goldens/input_slider_matrix_*.png
             tests/visual/goldens/desktop_data_matrix_*.png
+            tests/visual/goldens/data_extended_matrix_*.png
+            tests/visual/goldens/progress_compact_matrix_*.png
+            tests/visual/goldens/surface_bar_matrix_*.png
           if-no-files-found: warn
 
       - name: Test Windows
