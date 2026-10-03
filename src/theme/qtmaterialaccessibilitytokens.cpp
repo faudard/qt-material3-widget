@@ -14,7 +14,7 @@ qreal linearizedChannel(qreal channel) {
     return std::pow((channel + 0.055) / 1.055, 2.4);
 }
 
-constexpr std::array<MotionToken, 12> kAllMotionTokens = {
+constexpr std::array<MotionToken, 18> kAllMotionTokens = {
     MotionToken::Short1,
     MotionToken::Short2,
     MotionToken::Short3,
@@ -26,7 +26,8 @@ constexpr std::array<MotionToken, 12> kAllMotionTokens = {
     MotionToken::Long1,
     MotionToken::Long2,
     MotionToken::Long3,
-    MotionToken::Long4
+    MotionToken::Long4,
+    MotionToken::SpatialFast, MotionToken::SpatialDefault, MotionToken::SpatialSlow, MotionToken::EffectsFast, MotionToken::EffectsDefault, MotionToken::EffectsSlow
 };
 
 } // namespace

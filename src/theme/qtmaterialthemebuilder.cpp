@@ -346,6 +346,7 @@ void ThemeBuilder::applyDefaultElevations(Theme& theme) const
 void ThemeBuilder::applyDefaultMotion(Theme& theme) const
 {
     auto& m = theme.motion();
+    m.applyScheme(theme.motionScheme());
     m.setStyle(MotionToken::Short1, { 50, QEasingCurve(QEasingCurve::OutCubic) });
     m.setStyle(MotionToken::Short2, { 100, QEasingCurve(QEasingCurve::OutCubic) });
     m.setStyle(MotionToken::Short3, { 150, QEasingCurve(QEasingCurve::OutCubic) });

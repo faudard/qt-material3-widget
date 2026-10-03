@@ -244,6 +244,8 @@ QJsonObject optionsToJson(const ThemeOptions& options)
     object.insert(QStringLiteral("preference"), enumToString(options.preference, kThemePreferences));
     object.insert(QStringLiteral("contrast"), enumToString(options.contrast, kContrastModes));
     object.insert(QStringLiteral("variant"), enumToString(options.variant, kThemeVariants));
+    object.insert(QStringLiteral("motionScheme"), options.motionScheme == MotionScheme::Expressive
+        ? QStringLiteral("Expressive") : QStringLiteral("Standard"));
     object.insert(QStringLiteral("colorBackendPolicy"), enumToString(options.backendPolicy, kColorBackendPolicies));
     return object;
 }
@@ -314,6 +316,15 @@ bool optionsFromJson(const QJsonObject& object, ThemeOptions* outOptions, QStrin
             return false;
         }
         options.variant = variant;
+    }
+
+    if (object.contains(QStringLiteral("motionScheme"))) {
+        const QString scheme = object.value(QStringLiteral("motionScheme")).toString();
+        if (scheme != QLatin1String("Standard") && scheme != QLatin1String("Expressive")) {
+            if (errorString) { *errorString = QStringLiteral("Invalid source.motionScheme value."); }
+            return false;
+        }
+        options.motionScheme = scheme == QLatin1String("Expressive") ? MotionScheme::Expressive : MotionScheme::Standard;
     }
 
     if (object.contains(QStringLiteral("colorBackendPolicy"))) {
@@ -531,7 +542,7 @@ bool motionFromJson(const QJsonObject& object, MotionTokens* outMotion, QString*
         return false;
     }
 
-    MotionTokens motion;
+    MotionTokens motion = *outMotion;
     for (MotionToken token : allMotionTokens()) {
         const QString key = ThemeTextCodec::tokenIdToString(tokenId(token));
         if (!object.contains(key)) {
@@ -1048,7 +1059,7 @@ bool applyResolvedToTheme(const QJsonObject& resolved, Theme* theme, QString* er
     }
     if (resolved.contains(QStringLiteral("motionTokens"))) {
         const QString key = QStringLiteral("motionTokens");
-        MotionTokens motion;
+        MotionTokens motion = theme->motion();
         if (!motionFromJson(resolved.value(key).toObject(), &motion, errorString)) {
             return false;
         }
@@ -1137,12 +1148,14 @@ bool validateStrictCurrent(const QJsonObject& object, QString* errorString)
         QStringLiteral("preference"),
         QStringLiteral("contrast"),
         QStringLiteral("variant"),
+        QStringLiteral("motionScheme"),
         QStringLiteral("colorBackendPolicy")
     };
     if (!rejectUnknownKeys(source, sourceKeys, QStringLiteral("source"), errorString)) {
         return false;
     }
     for (const QString& requiredKey : sourceKeys) {
+        if (requiredKey == QLatin1String("motionScheme") && !source.contains(requiredKey)) { continue; }
         if (!source.contains(requiredKey) || !source.value(requiredKey).isString()) {
             if (errorString) {
                 *errorString =

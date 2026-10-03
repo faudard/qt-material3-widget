@@ -16,6 +16,11 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Command Palette 2.0 adds fuzzy search, sections, favorites/history, icons and secondary text, configurable Ctrl+K/Ctrl+P shortcuts, and application-owned synchronous/asynchronous providers with cancellation and stale-response rejection.
+- Breadcrumb 2.0 adds editable locations, segment/overflow icons, bounded responsive labels and opt-in URL drag/drop, including a strict visible-item limit when the current segment is internal to the path.
+- Split View 2.0 adds native constrained keyboard movement with Home/End and Enter, configurable reset sizes, extended collapsed-pane state persistence, remember-on-show behavior and opt-in animated collapse with constraint restoration.
+- Material 3 Expressive foundation adds Standard/Expressive motion schemes, six semantic spatial/effects profiles, ThemeIO/reduced-motion integration and an internal cached shape-morphing primitive.
+- Focused desktop-navigation and Expressive foundation test targets cover the new contracts; the gallery demonstrates providers, editable navigation and persistent animated split panes.
 - Opt-in responsive Breadcrumb elision that moves hidden path ranges into the native overflow menu as the widget narrows.
 - Breadcrumb overflow menus via `maximumVisibleItems`, Command Palette empty-state/shortcut rendering, and Split View pane constraints/reset behavior.
 - Consolidated maturity evidence for Slider, Range Slider, Navigation, Table, Tree View, Pagination and Split View.

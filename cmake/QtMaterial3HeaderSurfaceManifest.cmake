@@ -122,6 +122,7 @@ set(QTMATERIAL3_PRIVATE_HEADERS
     "qtmaterial/core/qtmaterialeventcompat.h"
     "qtmaterial/effects/private/qtmaterialpaintcache_p.h"
     "qtmaterial/effects/private/qtmaterialshadowcache_p.h"
+    "qtmaterial/effects/private/qtmaterialshapemorph_p.h"
     "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h"
     "qtmaterial/specs/qtmaterialappbarspec.h"
     "qtmaterial/specs/qtmaterialappbarspecresolver.h"

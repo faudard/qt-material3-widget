@@ -3,14 +3,28 @@
 #include <algorithm>
 
 #include <QEvent>
+#include <QApplication>
+#include <QDrag>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
 #include <QFontMetrics>
 #include <QHBoxLayout>
+#include <QHash>
 #include <QLabel>
+#include <QLineEdit>
+#include <QKeyEvent>
 #include <QLayoutItem>
 #include <QList>
 #include <QMenu>
+#include <QMouseEvent>
+#include <QMimeData>
+#include <QPointer>
 #include <QResizeEvent>
 #include <QSet>
+#include <QShortcut>
+#include <QStylePainter>
+#include <QStyleOptionToolButton>
 #include <QToolButton>
 
 namespace QtMaterial {
@@ -19,6 +33,13 @@ class QtMaterialBreadcrumbPrivate final
 {
 public:
     QStringList items;
+    QHash<int, QIcon> icons;
+    QHash<int, QUrl> urls;
+    bool dragDropEnabled = false;
+    QString location;
+    bool customLocation = false;
+    bool locationEditable = false;
+    bool editingLocation = false;
     int currentIndex = -1;
     int maximumVisibleItems = 0;
     bool responsiveElisionEnabled = false;
@@ -27,9 +48,63 @@ public:
     QList<QToolButton*> buttons;
     QList<int> buttonIndexes;
     QList<QLabel*> separators;
+    QLineEdit* locationEdit = nullptr;
+    QPointer<QWidget> previousFocus;
 };
 
 namespace {
+
+class ElidingBreadcrumbButton final : public QToolButton
+{
+public:
+    explicit ElidingBreadcrumbButton(QWidget* parent) : QToolButton(parent)
+    {
+        setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    }
+
+    QSize minimumSizeHint() const override
+    {
+        return QSize(24 + (icon().isNull() ? 0 : iconSize().width()), sizeHint().height());
+    }
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override
+    {
+        m_pressPosition = event->pos();
+        QToolButton::mousePressEvent(event);
+    }
+
+    void mouseMoveEvent(QMouseEvent* event) override
+    {
+        const QUrl url = property("breadcrumbUrl").toUrl();
+        if (property("breadcrumbDragEnabled").toBool() && !url.isEmpty()
+            && event->buttons().testFlag(Qt::LeftButton)
+            && (event->pos() - m_pressPosition).manhattanLength() >= QApplication::startDragDistance()) {
+            auto* drag = new QDrag(this);
+            auto* mime = new QMimeData;
+            mime->setUrls({url});
+            drag->setMimeData(mime);
+            setDown(false);
+            drag->exec(Qt::CopyAction);
+            drag->deleteLater();
+            return;
+        }
+        QToolButton::mouseMoveEvent(event);
+    }
+
+    void paintEvent(QPaintEvent*) override
+    {
+        QStyleOptionToolButton option;
+        initStyleOption(&option);
+        const int iconWidth = icon().isNull() ? 0 : iconSize().width() + 4;
+        option.text = fontMetrics().elidedText(text(), Qt::ElideMiddle, qMax(0, width() - 16 - iconWidth));
+        QStylePainter painter(this);
+        painter.drawComplexControl(QStyle::CC_ToolButton, option);
+    }
+
+private:
+    QPoint m_pressPosition;
+};
 
 QList<int> breadcrumbVisibleIndexes(
     int itemCount,
@@ -61,13 +136,12 @@ QList<int> breadcrumbVisibleIndexes(
     }
 
     QSet<int> selected;
-    selected.insert(0);
-    selected.insert(itemCount - 1);
-
     if (currentIndex >= 0
         && currentIndex < itemCount) {
         selected.insert(currentIndex);
     }
+    if (selected.size() < normalizedLimit) { selected.insert(0); }
+    if (selected.size() < normalizedLimit) { selected.insert(itemCount - 1); }
 
     for (int index = itemCount - 2;
          selected.size() < normalizedLimit
@@ -92,6 +166,7 @@ QList<int> breadcrumbVisibleIndexes(
 
 int estimatedBreadcrumbWidth(
     const QStringList& items,
+    const QHash<int, QIcon>& icons,
     const QList<int>& visibleIndexes,
     const QFontMetrics& metrics)
 {
@@ -115,6 +190,9 @@ int estimatedBreadcrumbWidth(
     int width = 0;
     int previousIndex = -1;
 
+    if (visibleIndexes.first() > 0) { width += overflowWidth + separatorWidth; }
+    if (visibleIndexes.last() < items.size() - 1) { width += overflowWidth + separatorWidth; }
+
     for (int position = 0;
          position < visibleIndexes.size();
          ++position) {
@@ -134,6 +212,7 @@ int estimatedBreadcrumbWidth(
             metrics.horizontalAdvance(
                 items.value(index))
             + kButtonChrome;
+        if (!icons.value(index).isNull()) { width += 24; }
         previousIndex = index;
     }
 
@@ -151,6 +230,16 @@ QtMaterialBreadcrumb::QtMaterialBreadcrumb(QWidget* parent)
     d_ptr->layout = new QHBoxLayout(this);
     d_ptr->layout->setContentsMargins(0, 0, 0, 0);
     d_ptr->layout->setSpacing(4);
+    d_ptr->locationEdit = new QLineEdit(this);
+    d_ptr->locationEdit->setObjectName(QStringLiteral("QtMaterialBreadcrumbLocationEdit"));
+    d_ptr->locationEdit->setAccessibleName(tr("Location"));
+    d_ptr->locationEdit->setAccessibleDescription(tr("Enter submits the location; Escape cancels editing."));
+    d_ptr->locationEdit->installEventFilter(this);
+    d_ptr->locationEdit->hide();
+    connect(d_ptr->locationEdit, &QLineEdit::returnPressed, this, [this]() { finishLocationEditing(true); });
+    auto* editShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_L), this);
+    editShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    connect(editShortcut, &QShortcut::activated, this, [this]() { setEditingLocation(true); });
 }
 
 QtMaterialBreadcrumb::~QtMaterialBreadcrumb() = default;
@@ -167,6 +256,10 @@ void QtMaterialBreadcrumb::setItems(const QStringList& items)
     }
 
     d_ptr->items = items;
+    d_ptr->icons.clear();
+    d_ptr->urls.clear();
+    d_ptr->customLocation = false;
+    if (d_ptr->editingLocation) { finishLocationEditing(false); }
     const int nextIndex = d_ptr->items.isEmpty() ? -1 : d_ptr->items.size() - 1;
     const bool indexChanged = d_ptr->currentIndex != nextIndex;
     d_ptr->currentIndex = nextIndex;
@@ -179,6 +272,7 @@ void QtMaterialBreadcrumb::setItems(const QStringList& items)
 void QtMaterialBreadcrumb::addItem(const QString& text)
 {
     d_ptr->items.push_back(text);
+    d_ptr->customLocation = false;
     d_ptr->currentIndex = d_ptr->items.size() - 1;
     rebuild();
     Q_EMIT currentIndexChanged(d_ptr->currentIndex);
@@ -187,6 +281,76 @@ void QtMaterialBreadcrumb::addItem(const QString& text)
 void QtMaterialBreadcrumb::clear()
 {
     setItems({});
+}
+
+QIcon QtMaterialBreadcrumb::itemIcon(int index) const { return d_ptr->icons.value(index); }
+void QtMaterialBreadcrumb::setItemIcon(int index, const QIcon& icon)
+{
+    if (index < 0 || index >= d_ptr->items.size()) { return; }
+    if (icon.isNull()) { d_ptr->icons.remove(index); }
+    else { d_ptr->icons.insert(index, icon); }
+    rebuild();
+}
+
+QUrl QtMaterialBreadcrumb::itemUrl(int index) const { return d_ptr->urls.value(index); }
+void QtMaterialBreadcrumb::setItemUrl(int index, const QUrl& url)
+{
+    if (index < 0 || index >= d_ptr->items.size()) { return; }
+    if (url.isEmpty()) { d_ptr->urls.remove(index); }
+    else { d_ptr->urls.insert(index, url); }
+    rebuild();
+}
+bool QtMaterialBreadcrumb::dragDropEnabled() const noexcept { return d_ptr->dragDropEnabled; }
+void QtMaterialBreadcrumb::setDragDropEnabled(bool enabled)
+{
+    d_ptr->dragDropEnabled = enabled;
+    setAcceptDrops(enabled);
+    rebuild();
+}
+
+bool QtMaterialBreadcrumb::isLocationEditable() const noexcept { return d_ptr->locationEditable; }
+void QtMaterialBreadcrumb::setLocationEditable(bool editable)
+{
+    d_ptr->locationEditable = editable;
+    if (!editable && isEditingLocation()) { finishLocationEditing(false); }
+    setFocusPolicy(editable ? Qt::StrongFocus : Qt::NoFocus);
+}
+bool QtMaterialBreadcrumb::isEditingLocation() const noexcept { return d_ptr->editingLocation; }
+void QtMaterialBreadcrumb::setEditingLocation(bool editing)
+{
+    if (editing == d_ptr->editingLocation || (editing && !isLocationEditable())) { return; }
+    if (!editing) { finishLocationEditing(false); return; }
+    d_ptr->previousFocus = window()->focusWidget();
+    d_ptr->editingLocation = true;
+    d_ptr->locationEdit->setText(location());
+    rebuild();
+    d_ptr->locationEdit->setFocus(Qt::ShortcutFocusReason);
+    d_ptr->locationEdit->selectAll();
+    Q_EMIT editingLocationChanged(true);
+}
+QString QtMaterialBreadcrumb::location() const
+{
+    return d_ptr->customLocation ? d_ptr->location : d_ptr->items.mid(0, d_ptr->currentIndex + 1).join(QStringLiteral(" / "));
+}
+void QtMaterialBreadcrumb::setLocation(const QString& location)
+{
+    d_ptr->location = location;
+    d_ptr->customLocation = true;
+    if (isEditingLocation()) { d_ptr->locationEdit->setText(location); }
+}
+void QtMaterialBreadcrumb::finishLocationEditing(bool submit)
+{
+    if (!isEditingLocation()) { return; }
+    const QString text = d_ptr->locationEdit->text();
+    const QPointer<QWidget> previousFocus = d_ptr->previousFocus;
+    d_ptr->editingLocation = false;
+    rebuild();
+    if (previousFocus && previousFocus->isVisible() && previousFocus->isEnabled()) {
+        previousFocus->setFocus(Qt::OtherFocusReason);
+    } else { setFocus(Qt::OtherFocusReason); }
+    Q_EMIT editingLocationChanged(false);
+    // Applications validate and resolve the address before updating the path.
+    if (submit) { Q_EMIT locationSubmitted(text); }
 }
 
 int QtMaterialBreadcrumb::currentIndex() const noexcept
@@ -291,6 +455,7 @@ int QtMaterialBreadcrumb::effectiveVisibleLimit() const
                 limit);
         if (estimatedBreadcrumbWidth(
                 d_ptr->items,
+                d_ptr->icons,
                 visibleIndexes,
                 metrics)
             <= availableWidth) {
@@ -304,16 +469,28 @@ int QtMaterialBreadcrumb::effectiveVisibleLimit() const
 
 void QtMaterialBreadcrumb::rebuild()
 {
+    int focusedIndex = -1;
+    for (int i = 0; i < d_ptr->buttons.size(); ++i) {
+        if (d_ptr->buttons.at(i)->hasFocus()) { focusedIndex = d_ptr->buttonIndexes.at(i); }
+    }
     d_ptr->buttons.clear();
     d_ptr->buttonIndexes.clear();
     d_ptr->separators.clear();
 
     while (QLayoutItem* item = d_ptr->layout->takeAt(0)) {
         if (QWidget* widget = item->widget()) {
-            widget->deleteLater();
+            widget->hide();
+            if (widget != d_ptr->locationEdit) { widget->deleteLater(); }
         }
         delete item;
     }
+
+    if (d_ptr->editingLocation) {
+        d_ptr->layout->addWidget(d_ptr->locationEdit);
+        d_ptr->locationEdit->show();
+        return;
+    }
+    d_ptr->locationEdit->hide();
 
     const int itemCount = d_ptr->items.size();
     const int limit = effectiveVisibleLimit();
@@ -350,7 +527,7 @@ void QtMaterialBreadcrumb::rebuild()
              index <= lastHidden;
              ++index) {
             QAction* action =
-                menu->addAction(d_ptr->items.at(index));
+                menu->addAction(d_ptr->icons.value(index), d_ptr->items.at(index));
             action->setData(index);
             connect(
                 action,
@@ -394,8 +571,14 @@ void QtMaterialBreadcrumb::rebuild()
         }
 
         const QString text = d_ptr->items.at(index);
-        auto* button = new QToolButton(this);
+        auto* button = new ElidingBreadcrumbButton(this);
         button->setText(text);
+        button->setIcon(d_ptr->icons.value(index));
+        button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        button->setToolTip(text);
+        button->setProperty("breadcrumbIndex", index);
+        button->setProperty("breadcrumbUrl", d_ptr->urls.value(index));
+        button->setProperty("breadcrumbDragEnabled", d_ptr->dragDropEnabled);
         button->setAutoRaise(true);
         button->setAccessibleName(text);
         connect(
@@ -423,6 +606,22 @@ void QtMaterialBreadcrumb::rebuild()
     refreshDirection();
     refreshCurrentSegment();
     d_ptr->layout->addStretch(1);
+    if (focusedIndex >= 0) {
+        bool restored = false;
+        for (int i = 0; i < d_ptr->buttons.size(); ++i) {
+            if (d_ptr->buttonIndexes.at(i) == focusedIndex && d_ptr->buttons.at(i)->isEnabled()) {
+                d_ptr->buttons.at(i)->setFocus(Qt::OtherFocusReason);
+                restored = true;
+                break;
+            }
+        }
+        if (!restored) {
+            const auto overflowButtons = findChildren<QToolButton*>();
+            for (auto* button : overflowButtons) {
+                if (!button->isHidden() && button->menu()) { button->setFocus(Qt::OtherFocusReason); break; }
+            }
+        }
+    }
 }
 
 void QtMaterialBreadcrumb::refreshCurrentSegment()
@@ -474,6 +673,65 @@ void QtMaterialBreadcrumb::changeEvent(QEvent* event)
         && event->type() == QEvent::LayoutDirectionChange) {
         refreshDirection();
     }
+    if (event && (event->type() == QEvent::FontChange || event->type() == QEvent::StyleChange)) { rebuild(); }
+}
+
+bool QtMaterialBreadcrumb::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched == d_ptr->locationEdit && event->type() == QEvent::KeyPress
+        && static_cast<QKeyEvent*>(event)->key() == Qt::Key_Escape) {
+        finishLocationEditing(false);
+        return true;
+    }
+    return QWidget::eventFilter(watched, event);
+}
+
+void QtMaterialBreadcrumb::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton && isLocationEditable()) {
+        setEditingLocation(true);
+        event->accept();
+        return;
+    }
+    QWidget::mouseDoubleClickEvent(event);
+}
+
+void QtMaterialBreadcrumb::dragEnterEvent(QDragEnterEvent* event)
+{
+    if (dragDropEnabled() && !isEditingLocation() && event->mimeData()->hasUrls()
+        && event->possibleActions().testFlag(Qt::CopyAction)) {
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
+    } else { event->ignore(); }
+}
+void QtMaterialBreadcrumb::dragMoveEvent(QDragMoveEvent* event)
+{
+    if (dragDropEnabled() && !isEditingLocation() && event->mimeData()->hasUrls()
+        && event->possibleActions().testFlag(Qt::CopyAction)) {
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
+    } else { event->ignore(); }
+}
+void QtMaterialBreadcrumb::dropEvent(QDropEvent* event)
+{
+    if (!dragDropEnabled() || isEditingLocation() || !event->mimeData()->hasUrls()
+        || !event->possibleActions().testFlag(Qt::CopyAction)) { event->ignore(); return; }
+    int index = currentIndex();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QWidget* target = childAt(event->position().toPoint());
+#else
+    QWidget* target = childAt(event->pos());
+#endif
+    while (target && target != this) {
+        if (target->property("breadcrumbIndex").isValid()) {
+            index = target->property("breadcrumbIndex").toInt();
+            break;
+        }
+        target = target->parentWidget();
+    }
+    event->setDropAction(Qt::CopyAction);
+    event->accept();
+    Q_EMIT urlsDropped(index, event->mimeData()->urls());
 }
 
 void QtMaterialBreadcrumb::resizeEvent(

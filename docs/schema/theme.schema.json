@@ -77,6 +77,13 @@
             "ForceMaterialColorUtilities",
             "ForceFallback"
           ]
+        },
+        "motionScheme": {
+          "enum": [
+            "Standard",
+            "Expressive"
+          ],
+          "default": "Standard"
         }
       }
     },

@@ -280,7 +280,29 @@ def load_baseline(path: Path) -> dict[str, object]:
 def compare(actual: Iterable[str], expected: Iterable[str]) -> tuple[list[str], list[str]]:
     actual_set = set(actual)
     expected_set = set(expected)
-    return sorted(expected_set - actual_set), sorted(actual_set - expected_set)
+    removed = expected_set - actual_set
+    added = actual_set - expected_set
+    # Appending enumerators preserves every baseline value (including implicit
+    # numbering). Inserting, reordering or changing an initializer still fails.
+    def enum_parts(signature: str) -> tuple[str, str, str] | None:
+        prefix, marker, tail = signature.partition("|enum=")
+        if not marker or len(prefix.split("|")) < 3 or prefix.split("|")[2] != "enum":
+            return None
+        values, file_marker, location = tail.partition("|file=")
+        return (prefix, values, location) if file_marker else None
+
+    enums = [parts for signature in added if (parts := enum_parts(signature)) is not None]
+    compatible: set[str] = set()
+    for signature in removed:
+        before = enum_parts(signature)
+        if before is None:
+            continue
+        prefix, values, location = before
+        if any(new_prefix == prefix and new_location == location
+               and (not values or new_values.startswith(values + ","))
+               for new_prefix, new_values, new_location in enums):
+            compatible.add(signature)
+    return sorted(removed - compatible), sorted(added)
 
 
 def is_source_compatible(actual: Iterable[str], expected: Iterable[str]) -> bool:

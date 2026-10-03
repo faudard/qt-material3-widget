@@ -8,10 +8,12 @@ struct MotionStyle { int durationMs = 0; QEasingCurve easing = QEasingCurve::Lin
 class QTMATERIAL3_THEME_MODEL_EXPORT MotionTokens {
 public:
     MotionTokens();
+    explicit MotionTokens(MotionScheme scheme);
     ~MotionTokens();
     bool contains(MotionToken token) const;
     MotionStyle style(MotionToken token) const;
     void setStyle(MotionToken token, const MotionStyle& style);
+    void applyScheme(MotionScheme scheme);
 private:
     QHash<MotionToken, MotionStyle> m_styles;
 };

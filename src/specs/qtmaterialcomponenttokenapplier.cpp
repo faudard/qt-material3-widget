@@ -154,6 +154,12 @@ MotionToken parseMotionToken(const QString& text, MotionToken fallback)
     if (value == QLatin1String("long2")) return MotionToken::Long2;
     if (value == QLatin1String("long3")) return MotionToken::Long3;
     if (value == QLatin1String("long4")) return MotionToken::Long4;
+    if (value == QLatin1String("spatialfast")) return MotionToken::SpatialFast;
+    if (value == QLatin1String("spatialdefault")) return MotionToken::SpatialDefault;
+    if (value == QLatin1String("spatialslow")) return MotionToken::SpatialSlow;
+    if (value == QLatin1String("effectsfast")) return MotionToken::EffectsFast;
+    if (value == QLatin1String("effectsdefault")) return MotionToken::EffectsDefault;
+    if (value == QLatin1String("effectsslow")) return MotionToken::EffectsSlow;
     return fallback;
 }
 

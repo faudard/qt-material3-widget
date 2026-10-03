@@ -60,6 +60,8 @@ public:
 
     const MotionTokens& motion() const noexcept;
     MotionTokens& motion() noexcept;
+    MotionScheme motionScheme() const noexcept;
+    void setMotionScheme(MotionScheme scheme);
 
     const StateLayer& stateLayer() const noexcept;
     StateLayer& stateLayer() noexcept;

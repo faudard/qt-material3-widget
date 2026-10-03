@@ -80,10 +80,11 @@ constexpr std::array<ElevationRole, 6> kElevationRoles = {
     ElevationRole::Level3, ElevationRole::Level4, ElevationRole::Level5
 };
 
-constexpr std::array<MotionToken, 12> kMotionTokens = {
+constexpr std::array<MotionToken, 18> kMotionTokens = {
     MotionToken::Short1, MotionToken::Short2, MotionToken::Short3, MotionToken::Short4,
     MotionToken::Medium1, MotionToken::Medium2, MotionToken::Medium3, MotionToken::Medium4,
-    MotionToken::Long1, MotionToken::Long2, MotionToken::Long3, MotionToken::Long4
+    MotionToken::Long1, MotionToken::Long2, MotionToken::Long3, MotionToken::Long4,
+    MotionToken::SpatialFast, MotionToken::SpatialDefault, MotionToken::SpatialSlow, MotionToken::EffectsFast, MotionToken::EffectsDefault, MotionToken::EffectsSlow
 };
 
 constexpr std::array<DensityRole, 3> kDensityRoles = {
