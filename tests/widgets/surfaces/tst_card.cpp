@@ -1,4 +1,5 @@
 #include <QtTest/QtTest>
+#include <QPixmap>
 
 #include <QVBoxLayout>
 #include <QWidget>
@@ -17,6 +18,7 @@ private slots:
     void keyboardActivationEmitsClicked();
     void mouseActivationEmitsClicked();
     void accessibilitySummaryTracksContent();
+    void rtlAndDpr2RenderingContract();
 };
 
 void tst_QtMaterialCard::construction()
@@ -160,6 +162,20 @@ void tst_QtMaterialCard::accessibilitySummaryTracksContent()
     QCOMPARE(card.accessibleName(), QStringLiteral("Project status"));
     QCOMPARE(card.accessibleDescription(), summary);
     QVERIFY(spy.count() >= 2);
+}
+
+void tst_QtMaterialCard::rtlAndDpr2RenderingContract()
+{
+    QtMaterial::QtMaterialCard widget;
+    widget.setLayoutDirection(Qt::RightToLeft);
+    widget.resize(qMax(320, widget.sizeHint().width()), qMax(96, widget.sizeHint().height()));
+    QCOMPARE(widget.layoutDirection(), Qt::RightToLeft);
+    QPixmap pixmap(widget.width() * 2, widget.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    widget.render(&pixmap);
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
 }
 
 QTEST_MAIN(tst_QtMaterialCard)
