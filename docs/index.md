@@ -13,9 +13,14 @@ Use the narrative pages to understand concepts, layering, and supported workflow
 
 ### For application developers
 
+- [Getting started in 5 minutes](getting-started.md)
+- [Installation](installation.md)
+- [Themes](themes.md)
+- [Widgets](widgets/index.md)
+- [Examples](examples/index.md)
+- [Migration](migration/index.md)
 - [Public API guide](public-api/index.md)
 - [C++ API reference](api/index.md)
-- [Material 3 upstream references](material3/references.md)
 
 ### For contributors
 
@@ -52,6 +57,12 @@ target_link_libraries(my-app
 :maxdepth: 2
 :caption: User guide
 
+getting-started
+installation
+themes
+widgets/index
+examples/index
+migration/index
 public-api/index
 api/index
 material3/references
