@@ -13,17 +13,17 @@ using namespace QtMaterial;
 
 namespace {
 
-QImage renderAtDpr2(QWidget& widget)
+QImage renderAtDpr(QWidget& widget, qreal dpr)
 {
     const QSize logicalSize =
         widget.sizeHint().expandedTo(QSize(160, 48));
     widget.resize(logicalSize);
 
     QImage image(
-        logicalSize.width() * 2,
-        logicalSize.height() * 2,
+        qMax(1, qRound(logicalSize.width() * dpr)),
+        qMax(1, qRound(logicalSize.height() * dpr)),
         QImage::Format_ARGB32_Premultiplied);
-    image.setDevicePixelRatio(2.0);
+    image.setDevicePixelRatio(dpr);
     image.fill(Qt::transparent);
 
     {
@@ -45,7 +45,9 @@ private Q_SLOTS:
     void disabledControlsIgnoreKeyboardActivation();
     void rtlDirectionalNavigationFollowsVisualDirection();
     void rtlSizeHintsRemainStable();
-    void dpr2RenderingSmoke();
+    void keyboardFocusAndBoundaryNavigation();
+    void desktopDprRenderingSmoke_data();
+    void desktopDprRenderingSmoke();
 };
 
 void tst_SelectionMaturity::accessibleLabelsAndStateStaySynchronized()
@@ -170,33 +172,81 @@ void tst_SelectionMaturity::rtlSizeHintsRemainStable()
     QCOMPARE(segmented.sizeHint(), segmentedLtr);
 }
 
-void tst_SelectionMaturity::dpr2RenderingSmoke()
+void tst_SelectionMaturity::keyboardFocusAndBoundaryNavigation()
 {
+    QtMaterialCheckbox checkbox;
+    QCOMPARE(checkbox.focusPolicy(), Qt::StrongFocus);
+    QTest::keyClick(&checkbox, Qt::Key_Space);
+    QVERIFY(checkbox.isChecked());
+
+    QtMaterialRadioButton radio;
+    QCOMPARE(radio.focusPolicy(), Qt::StrongFocus);
+    QTest::keyClick(&radio, Qt::Key_Space);
+    QVERIFY(radio.isChecked());
+
+    QtMaterialSwitch sw(QStringLiteral("Switch"));
+    QCOMPARE(sw.focusPolicy(), Qt::StrongFocus);
+    QTest::keyClick(&sw, Qt::Key_Space);
+    QVERIFY(sw.isChecked());
+
+    QtMaterialSegmentedButton segmented;
+    segmented.addSegment(QStringLiteral("One"));
+    segmented.addSegment(QStringLiteral("Two"));
+    segmented.addSegment(QStringLiteral("Three"));
+    segmented.setSegmentEnabled(1, false);
+    segmented.setCurrentIndex(0);
+
+    QTest::keyClick(&segmented, Qt::Key_End);
+    QCOMPARE(segmented.currentIndex(), 2);
+    QTest::keyClick(&segmented, Qt::Key_Home);
+    QCOMPARE(segmented.currentIndex(), 0);
+    QTest::keyClick(&segmented, Qt::Key_Right);
+    QCOMPARE(segmented.currentIndex(), 2);
+
+    QTest::keyClick(&segmented, Qt::Key_Space);
+    QCOMPARE(segmented.currentIndex(), 2);
+    QTest::keyClick(&segmented, Qt::Key_Return);
+    QCOMPARE(segmented.currentIndex(), 2);
+}
+
+void tst_SelectionMaturity::desktopDprRenderingSmoke_data()
+{
+    QTest::addColumn<qreal>("dpr");
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent") << qreal(2.00);
+}
+
+void tst_SelectionMaturity::desktopDprRenderingSmoke()
+{
+    QFETCH(qreal, dpr);
     QtMaterialCheckbox checkbox;
     checkbox.setText(QStringLiteral("Checkbox"));
     checkbox.setChecked(true);
-    const QImage checkboxImage = renderAtDpr2(checkbox);
-    QCOMPARE(checkboxImage.devicePixelRatio(), qreal(2.0));
+    const QImage checkboxImage = renderAtDpr(checkbox, dpr);
+    QCOMPARE(checkboxImage.devicePixelRatio(), dpr);
     QVERIFY(!checkboxImage.isNull());
 
     QtMaterialRadioButton radio(QStringLiteral("Radio"));
     radio.setChecked(true);
-    const QImage radioImage = renderAtDpr2(radio);
-    QCOMPARE(radioImage.devicePixelRatio(), qreal(2.0));
+    const QImage radioImage = renderAtDpr(radio, dpr);
+    QCOMPARE(radioImage.devicePixelRatio(), dpr);
     QVERIFY(!radioImage.isNull());
 
     QtMaterialSwitch sw(QStringLiteral("Switch"));
     sw.setChecked(true);
-    const QImage switchImage = renderAtDpr2(sw);
-    QCOMPARE(switchImage.devicePixelRatio(), qreal(2.0));
+    const QImage switchImage = renderAtDpr(sw, dpr);
+    QCOMPARE(switchImage.devicePixelRatio(), dpr);
     QVERIFY(!switchImage.isNull());
 
     QtMaterialSegmentedButton segmented;
     segmented.addSegment(QStringLiteral("Day"));
     segmented.addSegment(QStringLiteral("Week"));
     segmented.setCurrentIndex(0);
-    const QImage segmentedImage = renderAtDpr2(segmented);
-    QCOMPARE(segmentedImage.devicePixelRatio(), qreal(2.0));
+    const QImage segmentedImage = renderAtDpr(segmented, dpr);
+    QCOMPARE(segmentedImage.devicePixelRatio(), dpr);
     QVERIFY(!segmentedImage.isNull());
 }
 

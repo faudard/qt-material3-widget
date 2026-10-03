@@ -13,7 +13,7 @@ explicit dense, multi-selection and drag/drop policies while keeping
 
 Uniform row heights are enabled by default because large models are a primary use case.
 Focused certification keeps QTreeView keyboard navigation authoritative and covers RTL layout
-plus DPR 2.0 rendering without materializing large models.
+plus desktop rendering at 100%, 125%, 150%, 175% and 200% scale equivalents without materializing large models.
 
 ## Advanced Table
 
@@ -23,7 +23,7 @@ replacing the application's model or delegate.
 
 Sorting, resizing, hiding columns, editing and custom delegates continue to use the
 standard Qt APIs. The focused Table suite also certifies the Material accessibility summary,
-native keyboard activation, RTL header/layout propagation and DPR 2.0 rendering.
+native keyboard activation, RTL header/layout propagation and desktop rendering at 100%, 125%, 150%, 175% and 200% scale equivalents.
 
 ## Pagination
 
@@ -78,7 +78,7 @@ model, Table accessibility/keyboard/RTL/HiDPI behavior, Tree native keyboard/RTL
 behavior, Pagination range/accessibility/RTL/HiDPI behavior, Split View collapse plus
 keyboard-resize/RTL/HiDPI behavior, Breadcrumb accessibility/RTL, and Command Palette
 keyboard/result accessibility. The focused Navigation Rail target additionally certifies
-disabled-item skipping, visual-direction RTL keyboard behavior and HiDPI rendering.
+disabled-item skipping, visual-direction RTL keyboard behavior and HiDPI rendering; the Navigation family tests additionally exercise Tabs, Menu and Rail at the same fractional desktop scale matrix.
 
 The visual-regression harness emits `desktop_data_matrix_*` candidates for Table, Tree View,
 Pagination and Split View across default, disabled and RTL states in light, dark and

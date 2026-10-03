@@ -27,7 +27,7 @@ using namespace QtMaterial;
 
 namespace {
 
-QImage renderAtDpr2(QWidget& widget, const QSize& minimumLogicalSize)
+QImage renderAtDpr(QWidget& widget, const QSize& minimumLogicalSize, qreal dpr)
 {
     widget.ensurePolished();
 
@@ -44,10 +44,10 @@ QImage renderAtDpr2(QWidget& widget, const QSize& minimumLogicalSize)
     }
 
     QImage image(
-        logicalSize.width() * 2,
-        logicalSize.height() * 2,
+        qMax(1, qRound(logicalSize.width() * dpr)),
+        qMax(1, qRound(logicalSize.height() * dpr)),
         QImage::Format_ARGB32_Premultiplied);
-    image.setDevicePixelRatio(2.0);
+    image.setDevicePixelRatio(dpr);
     image.fill(Qt::transparent);
 
     QPainter painter(&image);
@@ -57,11 +57,11 @@ QImage renderAtDpr2(QWidget& widget, const QSize& minimumLogicalSize)
     return image;
 }
 
-void verifyDpr2(QWidget& widget, const QSize& minimumLogicalSize)
+void verifyDpr(QWidget& widget, const QSize& minimumLogicalSize, qreal dpr)
 {
-    const QImage image = renderAtDpr2(widget, minimumLogicalSize);
+    const QImage image = renderAtDpr(widget, minimumLogicalSize, dpr);
     QVERIFY(!image.isNull());
-    QCOMPARE(image.devicePixelRatio(), qreal(2.0));
+    QCOMPARE(image.devicePixelRatio(), dpr);
 }
 
 } // namespace
@@ -74,7 +74,8 @@ private Q_SLOTS:
     void accessibilityContracts();
     void keyboardContracts();
     void rtlPropagatesToNativeChildren();
-    void dpr2RenderingSmoke();
+    void desktopDprRenderingSmoke_data();
+    void desktopDprRenderingSmoke();
 };
 
 void tst_InputMaturity::accessibilityContracts()
@@ -375,17 +376,28 @@ void tst_InputMaturity::rtlPropagatesToNativeChildren()
         Qt::RightToLeft);
 }
 
-void tst_InputMaturity::dpr2RenderingSmoke()
+void tst_InputMaturity::desktopDprRenderingSmoke_data()
 {
+    QTest::addColumn<qreal>("dpr");
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent") << qreal(2.00);
+}
+
+void tst_InputMaturity::desktopDprRenderingSmoke()
+{
+    QFETCH(qreal, dpr);
     QtMaterialOutlinedTextField outlined;
     outlined.setLabelText(QStringLiteral("Email"));
     outlined.setText(QStringLiteral("dev@example.com"));
-    verifyDpr2(outlined, QSize(320, 88));
+    verifyDpr(outlined, QSize(320, 88), dpr);
 
     QtMaterialFilledTextField filled;
     filled.setLabelText(QStringLiteral("Name"));
     filled.setText(QStringLiteral("Ada"));
-    verifyDpr2(filled, QSize(320, 88));
+    verifyDpr(filled, QSize(320, 88), dpr);
 
     QtMaterialComboBox combo;
     combo.setLabelText(QStringLiteral("Country"));
@@ -393,16 +405,16 @@ void tst_InputMaturity::dpr2RenderingSmoke()
         QStringLiteral("France"),
         QStringLiteral("Germany")
     });
-    verifyDpr2(combo, QSize(240, 48));
+    verifyDpr(combo, QSize(240, 48), dpr);
 
     QtMaterialAutocomplete autocomplete;
     autocomplete.setPlaceholderText(QStringLiteral("Project"));
     autocomplete.setText(QStringLiteral("Material"));
-    verifyDpr2(autocomplete, QSize(280, 56));
+    verifyDpr(autocomplete, QSize(280, 56), dpr);
 
     QtMaterialSearchBar searchBar;
     searchBar.setText(QStringLiteral("Material"));
-    verifyDpr2(searchBar, QSize(280, 48));
+    verifyDpr(searchBar, QSize(280, 48), dpr);
 
     QtMaterialSearchView searchView;
     QStandardItemModel sourceModel(3, 1);
@@ -410,30 +422,30 @@ void tst_InputMaturity::dpr2RenderingSmoke()
         sourceModel.index(0, 0),
         QStringLiteral("Alpha"));
     searchView.setSourceModel(&sourceModel);
-    verifyDpr2(searchView, QSize(360, 240));
+    verifyDpr(searchView, QSize(360, 240), dpr);
 
     QtMaterialDateField dateField;
     dateField.setLabelText(QStringLiteral("Due date"));
     dateField.setDate(QDate(2026, 10, 2));
-    verifyDpr2(dateField, QSize(320, 88));
+    verifyDpr(dateField, QSize(320, 88), dpr);
 
     QtMaterialDatePicker datePicker;
     datePicker.setSelectedDate(QDate(2026, 10, 2));
-    verifyDpr2(datePicker, QSize(360, 360));
+    verifyDpr(datePicker, QSize(360, 360), dpr);
 
     QtMaterialDateRangePicker dateRange;
     dateRange.setDateRange(
         QDate(2026, 10, 2),
         QDate(2026, 10, 9));
-    verifyDpr2(dateRange, QSize(720, 420));
+    verifyDpr(dateRange, QSize(720, 420), dpr);
 
     QtMaterialTimeField timeField;
     timeField.setTime(QTime(10, 30));
-    verifyDpr2(timeField, QSize(180, 48));
+    verifyDpr(timeField, QSize(180, 48), dpr);
 
     QtMaterialTimePicker timePicker;
     timePicker.setSelectedTime(QTime(10, 30));
-    verifyDpr2(timePicker, QSize(280, 160));
+    verifyDpr(timePicker, QSize(280, 160), dpr);
 }
 
 QTEST_MAIN(tst_InputMaturity)

@@ -18,16 +18,16 @@ public:
     using QtMaterialRangeSlider::focusNextPrevChild;
 };
 
-QImage renderAtDpr2(QWidget& widget, const QSize& logicalSize)
+QImage renderAtDpr(QWidget& widget, const QSize& logicalSize, qreal dpr)
 {
     widget.resize(logicalSize);
     widget.ensurePolished();
 
     QImage image(
-        logicalSize.width() * 2,
-        logicalSize.height() * 2,
+        qMax(1, qRound(logicalSize.width() * dpr)),
+        qMax(1, qRound(logicalSize.height() * dpr)),
         QImage::Format_ARGB32_Premultiplied);
-    image.setDevicePixelRatio(2.0);
+    image.setDevicePixelRatio(dpr);
     image.fill(Qt::transparent);
 
     QPainter painter(&image);
@@ -47,7 +47,8 @@ private Q_SLOTS:
     void rangeSliderKeyboardFollowsVisualDirection();
     void rangeSliderKeyboardCanReachBothHandles();
     void homeEndRespectActiveHandleBounds();
-    void dpr2RenderingSmoke();
+    void desktopDprRenderingSmoke_data();
+    void desktopDprRenderingSmoke();
 };
 
 void tst_SliderMaturity::accessibleValuesStaySynchronized()
@@ -152,26 +153,37 @@ void tst_SliderMaturity::homeEndRespectActiveHandleBounds()
     QCOMPARE(range.upperValue(), 25);
 }
 
-void tst_SliderMaturity::dpr2RenderingSmoke()
+void tst_SliderMaturity::desktopDprRenderingSmoke_data()
 {
+    QTest::addColumn<qreal>("dpr");
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent") << qreal(2.00);
+}
+
+void tst_SliderMaturity::desktopDprRenderingSmoke()
+{
+    QFETCH(qreal, dpr);
     QtMaterialSlider slider(Qt::Horizontal);
     slider.setRange(0, 100);
     slider.setValue(64);
-    const QImage sliderImage = renderAtDpr2(slider, QSize(240, 48));
+    const QImage sliderImage = renderAtDpr(slider, QSize(240, 48), dpr);
     QVERIFY(!sliderImage.isNull());
-    QCOMPARE(sliderImage.devicePixelRatio(), qreal(2.0));
+    QCOMPARE(sliderImage.devicePixelRatio(), dpr);
 
     ExposedRangeSlider range;
     range.setRange(0, 100);
     range.setValues(20, 80);
-    const QImage rangeImage = renderAtDpr2(range, QSize(240, 48));
+    const QImage rangeImage = renderAtDpr(range, QSize(240, 48), dpr);
     QVERIFY(!rangeImage.isNull());
-    QCOMPARE(rangeImage.devicePixelRatio(), qreal(2.0));
+    QCOMPARE(rangeImage.devicePixelRatio(), dpr);
 
     range.setOrientation(Qt::Vertical);
-    const QImage verticalImage = renderAtDpr2(range, QSize(48, 240));
+    const QImage verticalImage = renderAtDpr(range, QSize(48, 240), dpr);
     QVERIFY(!verticalImage.isNull());
-    QCOMPARE(verticalImage.devicePixelRatio(), qreal(2.0));
+    QCOMPARE(verticalImage.devicePixelRatio(), dpr);
 }
 
 QTEST_MAIN(tst_SliderMaturity)

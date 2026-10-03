@@ -25,7 +25,8 @@ private slots:
     void tabsSupportArrowHomeEndNavigation();
     void dialogClosesWithEscape();
     void dialogFocusesFirstFocusableBodyChild();
-    void widgetsRenderAtHighDevicePixelRatio();
+    void widgetsRenderAtDesktopScaleFactors_data();
+    void widgetsRenderAtDesktopScaleFactors();
     void rtlSmokeForCommonInteractiveWidgets();
 };
 
@@ -102,8 +103,20 @@ void tst_NavigationDialogHighDpiContracts::dialogFocusesFirstFocusableBodyChild(
     dialog.close();
 }
 
-void tst_NavigationDialogHighDpiContracts::widgetsRenderAtHighDevicePixelRatio()
+void tst_NavigationDialogHighDpiContracts::widgetsRenderAtDesktopScaleFactors_data()
 {
+    QTest::addColumn<qreal>("dpr");
+
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent-retina") << qreal(2.00);
+}
+
+void tst_NavigationDialogHighDpiContracts::widgetsRenderAtDesktopScaleFactors()
+{
+    QFETCH(qreal, dpr);
     QWidget container;
     container.resize(520, 220);
     auto* layout = new QVBoxLayout(&container);
@@ -128,7 +141,6 @@ void tst_NavigationDialogHighDpiContracts::widgetsRenderAtHighDevicePixelRatio()
     container.show();
     QVERIFY(QTest::qWaitForWindowExposed(&container));
 
-    constexpr qreal dpr = 2.0;
     const QSize logicalSize = container.size();
     const QSize physicalSize(
         qMax(1, qRound(logicalSize.width() * dpr)),
@@ -144,6 +156,22 @@ void tst_NavigationDialogHighDpiContracts::widgetsRenderAtHighDevicePixelRatio()
 
     QVERIFY(!image.isNull());
     QCOMPARE(image.devicePixelRatio(), dpr);
+    QCOMPARE(image.width(), physicalSize.width());
+    QCOMPARE(image.height(), physicalSize.height());
+
+    // Guard the desktop failure modes this contract is intended to catch:
+    // fractional DPR must still produce a non-empty, fully rendered paint device.
+    bool hasNonTransparentPixel = false;
+    for (int y = 0; y < image.height() && !hasNonTransparentPixel; ++y) {
+        const QRgb* scanLine = reinterpret_cast<const QRgb*>(image.constScanLine(y));
+        for (int x = 0; x < image.width(); ++x) {
+            if (qAlpha(scanLine[x]) != 0) {
+                hasNonTransparentPixel = true;
+                break;
+            }
+        }
+    }
+    QVERIFY(hasNonTransparentPixel);
 }
 
 void tst_NavigationDialogHighDpiContracts::rtlSmokeForCommonInteractiveWidgets()

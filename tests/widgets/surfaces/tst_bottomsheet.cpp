@@ -3,6 +3,7 @@
 #include <QTest>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QPixmap>
 
 #include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
 
@@ -20,6 +21,8 @@ private slots:
     void modalTabFocusStaysInsideSheet();
     void nonModalTabCanLeaveSheet();
     void dragDownCollapsesOrDismisses();
+    void rtlAndDesktopScaleRendering_data();
+    void rtlAndDesktopScaleRendering();
 };
 
 void tst_QtMaterialBottomSheet::construction()
@@ -227,6 +230,37 @@ void tst_QtMaterialBottomSheet::dragDownCollapsesOrDismisses()
     QTest::mouseRelease(&sheet, Qt::LeftButton, Qt::NoModifier, end);
 
     QVERIFY(!sheet.isExpanded() || !sheet.isOpen());
+}
+
+void tst_QtMaterialBottomSheet::rtlAndDesktopScaleRendering_data()
+{
+    QTest::addColumn<qreal>("dpr");
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent") << qreal(2.00);
+}
+
+void tst_QtMaterialBottomSheet::rtlAndDesktopScaleRendering()
+{
+    QFETCH(qreal, dpr);
+    QWidget host;
+    host.resize(800, 600);
+    QtMaterial::QtMaterialBottomSheet sheet(&host);
+    sheet.setTitleText(QStringLiteral("Filters"));
+    sheet.setSupportingText(QStringLiteral("3 options available"));
+    sheet.setLayoutDirection(Qt::RightToLeft);
+    sheet.resize(800, 360);
+    QCOMPARE(sheet.layoutDirection(), Qt::RightToLeft);
+
+    QPixmap pixmap(qMax(1, qRound(sheet.width() * dpr)),
+                   qMax(1, qRound(sheet.height() * dpr)));
+    pixmap.setDevicePixelRatio(dpr);
+    pixmap.fill(Qt::transparent);
+    sheet.render(&pixmap);
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), dpr);
 }
 
 QTEST_MAIN(tst_QtMaterialBottomSheet)
