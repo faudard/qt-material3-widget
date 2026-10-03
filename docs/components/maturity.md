@@ -109,9 +109,9 @@
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `surface.banner` | Banner | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Banner Material reference model or deterministic visual conformance evidence is available. |
 | `surface.bottom-app-bar` | Bottom App Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Bottom App Bar Material reference model or deterministic visual conformance evidence is available. |
-| `surface.bottom-sheet` | Bottom Sheet | `usable` | 2 | 2 | 2 | 1 | 1 | 2 | 2 | 2 | 1 | 2 | Modal/non-modal focus, Escape, drag, RTL and fractional desktop DPI are covered; deeper accessibility and reviewed deterministic visual evidence remain. |
-| `surface.card` | Card | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Variants, interaction, accessibility, RTL and fractional desktop DPI are covered; reviewed deterministic visual-reference evidence remains. |
-| `surface.dialog` | Dialog | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Initial/restored focus, modal focus trap, Escape/default activation, accessibility, RTL and fractional desktop DPI are covered; reviewed visual-reference evidence remains. |
+| `surface.bottom-sheet` | Bottom Sheet | `usable` | 2 | 2 | 2 | 1 | 1 | 2 | 2 | 2 | 1 | 2 | Deeper accessibility/keyboard evidence and reviewed deterministic visual-reference coverage remain before complete maturity. |
+| `surface.card` | Card | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Reviewed deterministic Material visual-reference evidence remains before Card can be marked complete. |
+| `surface.dialog` | Dialog | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Reviewed deterministic Material visual-reference evidence remains before Dialog can be marked complete. |
 | `surface.navigation-drawer` | Navigation Drawer | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Drawer Material reference model or deterministic visual conformance evidence is available. |
 | `surface.snackbar` | Snackbar | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Reviewed visual-reference coverage and a broader transient-surface matrix remain before complete maturity. |
 | `surface.top-app-bar` | Top App Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Top App Bar Material reference model or deterministic visual conformance evidence is available. |
@@ -158,7 +158,7 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Icon Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Outlined Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Text Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
-| Chip | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Chip family. |
+| Chip | Promote reviewed Chip family visual baselines before complete maturity. |
 | Carousel | Add Carousel reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
 | Grid List | Add Grid List reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
 | List | Add dedicated visual-regression, RTL and HiDPI coverage for the List/ListItem family. |
@@ -185,7 +185,7 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Menu | Review and promote the Menu candidate goldens before raising visual maturity further. |
 | Navigation Rail | Review and promote the Navigation Rail candidate goldens before raising visual maturity further. |
 | Tabs | Review and promote the Tabs candidate goldens before raising visual maturity further. |
-| Circular Progress Indicator | Add progress token, animation, accessibility and visual evidence before raising maturity axes. |
+| Circular Progress Indicator | Add reviewed visual references and broader animation-end-state coverage for complete maturity. |
 | Linear Progress Indicator | Add reviewed visual references and broader animation-end-state coverage for complete maturity. |
 | Checkbox | Add deterministic Material visual-reference/state-matrix coverage for Checkbox before promoting maturity further. |
 | Radio Button | Add deterministic Material visual-reference/state-matrix coverage for Radio Button before promoting maturity further. |
@@ -193,9 +193,9 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Switch | Add deterministic Material visual-reference/state-matrix coverage for Switch before promoting maturity further. |
 | Banner | Add Banner state, focus, RTL and visual evidence before raising maturity axes. |
 | Bottom App Bar | Add App Bar state, action, RTL and visual evidence before raising maturity axes. |
-| Bottom Sheet | Add drag, focus, RTL and visual conformance evidence before raising maturity axes. |
-| Card | Add Card variant, interaction, accessibility and visual evidence before raising maturity axes. |
-| Dialog | Add Dialog focus, accessibility, RTL and visual evidence before raising maturity axes. |
+| Bottom Sheet | Broaden Bottom Sheet semantic/keyboard certification and promote reviewed visual baselines. |
+| Card | Promote reviewed Card visual baselines before complete maturity. |
+| Dialog | Promote reviewed Dialog visual baselines before complete maturity. |
 | Navigation Drawer | Add Drawer state, focus, RTL and visual evidence before raising maturity axes. |
 | Snackbar | Add deterministic visual references and extended transient-surface state coverage for complete maturity. |
 | Top App Bar | Add App Bar state, action, RTL and visual evidence before raising maturity axes. |
