@@ -466,8 +466,19 @@ private slots:
             < beforeDoubleClickDifference);
     }
 
-    void splitViewRendersAtHighDpi()
+    void splitViewRendersAtDesktopScaleFactors_data()
     {
+        QTest::addColumn<qreal>("dpr");
+        QTest::newRow("100-percent") << qreal(1.00);
+        QTest::newRow("125-percent") << qreal(1.25);
+        QTest::newRow("150-percent") << qreal(1.50);
+        QTest::newRow("175-percent") << qreal(1.75);
+        QTest::newRow("200-percent") << qreal(2.00);
+    }
+
+    void splitViewRendersAtDesktopScaleFactors()
+    {
+        QFETCH(qreal, dpr);
         QtMaterialSplitView split(Qt::Horizontal);
         split.resize(640, 240);
         split.addWidget(new QWidget);
@@ -480,9 +491,9 @@ private slots:
         QCOMPARE(handle->accessibleName(), QStringLiteral("Split handle"));
 
         QPixmap pixmap(
-            split.width() * 2,
-            split.height() * 2);
-        pixmap.setDevicePixelRatio(2.0);
+            qMax(1, qRound(split.width() * dpr)),
+            qMax(1, qRound(split.height() * dpr)));
+        pixmap.setDevicePixelRatio(dpr);
         pixmap.fill(Qt::transparent);
         split.render(&pixmap);
 
