@@ -52,4 +52,19 @@ if(QTMATERIAL3_BUILD_TESTS)
     )
     set_target_properties(tst_qtmaterial3_designer_collection PROPERTIES AUTOMOC ON)
     add_test(NAME designer_collection_contract COMMAND tst_qtmaterial3_designer_collection)
+
+    add_executable(tst_qtmaterial3_designer_ui_smoke
+        designer_smoke.cpp
+        designer_smoke.ui
+    )
+    target_link_libraries(tst_qtmaterial3_designer_ui_smoke
+        PRIVATE
+            Qt${QT_VERSION_MAJOR}::Widgets
+            qtmaterial3_widgets
+    )
+    target_include_directories(tst_qtmaterial3_designer_ui_smoke
+        PRIVATE "${PROJECT_SOURCE_DIR}/include"
+    )
+    set_target_properties(tst_qtmaterial3_designer_ui_smoke PROPERTIES AUTOUIC ON)
+    add_test(NAME designer_ui_smoke COMMAND tst_qtmaterial3_designer_ui_smoke)
 endif()
