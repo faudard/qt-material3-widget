@@ -17,6 +17,10 @@ Every public component documentation entry must answer the same questions:
 
 The component registry is the source of truth for public header, widget type, test target, Gallery route, documentation path and maturity evidence. See the [component documentation standard](component-documentation-standard.md) for the release checklist and screenshot policy.
 
+## Complete component reference
+
+See the [release component reference](component-reference.md) for all 49 release-scoped public widgets, installed headers, Gallery routes, maturity and family guides.
+
 ## Families
 
 - [Buttons](../public-api/buttons.md)
