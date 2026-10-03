@@ -9,9 +9,13 @@ unless a stricter ABI policy is published.
 ## [Unreleased]
 
 ### Fixed
+- Editable ComboBox labels now synchronize to the native editor without overwriting an application-provided accessible name.
+- Autocomplete initializes and refreshes its accessible fallback when the placeholder changes.
+- Search View and Date Range Picker now label their composed result/calendar surfaces more explicitly.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Shared non-slider Input-family maturity coverage for accessibility, keyboard behavior, RTL propagation and DPR 2.0 rendering.
 - Selection and Input visual state matrices produce reviewable golden candidates for light, dark and high-contrast themes.
 - Ubuntu/Fusion CI publishes family visual candidate goldens without weakening the existing stable release baselines.
 - Shared Selection-family maturity coverage for accessibility, disabled keyboard behavior, RTL direction and DPR 2.0 rendering.

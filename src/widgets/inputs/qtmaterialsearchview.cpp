@@ -34,6 +34,7 @@ QtMaterialSearchView::QtMaterialSearchView(QWidget* parent)
     d_ptr->view->setModel(d_ptr->proxy);
     d_ptr->view->setSelectionMode(QAbstractItemView::SingleSelection);
     d_ptr->view->setUniformItemSizes(true);
+    d_ptr->view->setAccessibleName(tr("Search results list"));
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);

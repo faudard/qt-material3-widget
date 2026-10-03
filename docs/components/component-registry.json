@@ -986,19 +986,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "Combo Box has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Combo Box now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Combo Box."
+        "Add deterministic Material visual-reference/state-matrix coverage for Combo Box before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -1011,19 +1011,19 @@
           "Combo Box exposes its primary runtime states and invariants."
         ],
         "accessibility": [
-          "Combo Box sets accessible names/descriptions or relies on the native Qt accessible control."
+          "tst_input_maturity verifies accessible naming/state contracts for Combo Box and its relevant native child controls."
         ],
         "keyboard": [
-          "Combo Box preserves native Qt keyboard behavior and 0.8 smoke coverage."
+          "tst_input_maturity exercises representative keyboard behavior for Combo Box; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "Combo Box uses Qt logical geometry and device-independent painting."
+          "tst_input_maturity renders Combo Box at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Combo Box preserves Qt layout direction; range geometry handles RTL where directional."
+          "tst_input_maturity verifies RTL propagation through Combo Box and its relevant native child controls."
         ],
         "tests": [
-          "tst_component_expansion exercises the 0.8 public contract."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
         ],
         "example": [
           "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
@@ -1055,19 +1055,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "Date Range Picker has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Date Range Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Date Range Picker."
+        "Add deterministic Material visual-reference/state-matrix coverage for Date Range Picker before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -1080,19 +1080,19 @@
           "Date Range Picker exposes its primary runtime states and invariants."
         ],
         "accessibility": [
-          "Date Range Picker sets accessible names/descriptions or relies on the native Qt accessible control."
+          "tst_input_maturity verifies accessible naming/state contracts for Date Range Picker and its relevant native child controls."
         ],
         "keyboard": [
-          "Date Range Picker preserves native Qt keyboard behavior and 0.8 smoke coverage."
+          "tst_input_maturity exercises representative keyboard behavior for Date Range Picker; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "Date Range Picker uses Qt logical geometry and device-independent painting."
+          "tst_input_maturity renders Date Range Picker at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Date Range Picker preserves Qt layout direction; range geometry handles RTL where directional."
+          "tst_input_maturity verifies RTL propagation through Date Range Picker and its relevant native child controls."
         ],
         "tests": [
-          "tst_component_expansion exercises the 0.8 public contract."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
         ],
         "example": [
           "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
@@ -1124,19 +1124,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "No Date Field Material reference model or deterministic visual conformance evidence is available."
+        "Date Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add Date Field state, accessibility and visual evidence before raising maturity axes."
+        "Add deterministic Material visual-reference/state-matrix coverage for Date Field before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -1149,22 +1149,22 @@
           "tests/widgets/inputs/tst_datefield.cpp exercises the current field behavior."
         ],
         "accessibility": [
-          "docs/public-api/inputs.md documents the date accessibility summary."
+          "tst_input_maturity verifies accessible naming/state contracts for Date Field and its relevant native child controls."
         ],
         "keyboard": [
-          "Keyboard behavior remains basic and has no dedicated conformance suite."
+          "tst_input_maturity exercises representative keyboard behavior for Date Field; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_input_maturity renders Date Field at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Input RTL behavior is documented without dedicated Date Field conformance evidence."
+          "tst_input_maturity verifies RTL propagation through Date Field and its relevant native child controls."
         ],
         "tests": [
-          "Registered targets tst_datefield and tst_datefield_affordances provide focused coverage."
+          "Registered tst_datefield plus shared tst_input_maturity provide component and family-level coverage."
         ],
         "example": [
-          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialDateField."
+          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialDateField in the Inputs Gallery."
         ],
         "docs": [
           "docs/public-api/inputs.md documents the Date Field contract."
@@ -1259,19 +1259,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "Search Bar has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Search Bar now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Search Bar."
+        "Add deterministic Material visual-reference/state-matrix coverage for Search Bar before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -1284,19 +1284,19 @@
           "Search Bar exposes its primary runtime states and invariants."
         ],
         "accessibility": [
-          "Search Bar sets accessible names/descriptions or relies on the native Qt accessible control."
+          "tst_input_maturity verifies accessible naming/state contracts for Search Bar and its relevant native child controls."
         ],
         "keyboard": [
-          "Search Bar preserves native Qt keyboard behavior and 0.8 smoke coverage."
+          "tst_input_maturity exercises representative keyboard behavior for Search Bar; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "Search Bar uses Qt logical geometry and device-independent painting."
+          "tst_input_maturity renders Search Bar at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Search Bar preserves Qt layout direction; range geometry handles RTL where directional."
+          "tst_input_maturity verifies RTL propagation through Search Bar and its relevant native child controls."
         ],
         "tests": [
-          "tst_component_expansion exercises the 0.8 public contract."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
         ],
         "example": [
           "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
@@ -1328,19 +1328,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "Search View has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Search View now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Search View."
+        "Add deterministic Material visual-reference/state-matrix coverage for Search View before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -1353,19 +1353,19 @@
           "Search View exposes its primary runtime states and invariants."
         ],
         "accessibility": [
-          "Search View sets accessible names/descriptions or relies on the native Qt accessible control."
+          "tst_input_maturity verifies accessible naming/state contracts for Search View and its relevant native child controls."
         ],
         "keyboard": [
-          "Search View preserves native Qt keyboard behavior and 0.8 smoke coverage."
+          "tst_input_maturity exercises representative keyboard behavior for Search View; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "Search View uses Qt logical geometry and device-independent painting."
+          "tst_input_maturity renders Search View at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Search View preserves Qt layout direction; range geometry handles RTL where directional."
+          "tst_input_maturity verifies RTL propagation through Search View and its relevant native child controls."
         ],
         "tests": [
-          "tst_component_expansion exercises the 0.8 public contract."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
         ],
         "example": [
           "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
@@ -1466,19 +1466,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "No Filled Text Field Material reference model or deterministic visual conformance evidence is available."
+        "Filled Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add Text Field state, accessibility and visual evidence before raising maturity axes."
+        "Add deterministic Material visual-reference/state-matrix coverage for Filled Text Field before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -1491,22 +1491,22 @@
           "tests/widgets/inputs/tst_filledtextfield.cpp exercises the current field behavior."
         ],
         "accessibility": [
-          "Focused Text Field accessibility tests and documentation exist."
+          "tst_input_maturity verifies accessible naming/state contracts for Filled Text Field and its relevant native child controls."
         ],
         "keyboard": [
-          "Read-only and validation tests provide basic keyboard-interaction evidence."
+          "tst_input_maturity exercises representative keyboard behavior for Filled Text Field; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "Focused render tests exist without deterministic target HiDPI conformance."
+          "tst_input_maturity renders Filled Text Field at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "tests/widgets/inputs/tst_textfieldshellhelper_rtl.cpp covers shared shell direction."
+          "tst_input_maturity verifies RTL propagation through Filled Text Field and its relevant native child controls."
         ],
         "tests": [
-          "Registered target tst_filledtextfield plus validation/render tests provide simple-case coverage."
+          "Registered tst_filledtextfield plus shared tst_input_maturity provide component and family-level coverage."
         ],
         "example": [
-          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialFilledTextField."
+          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialFilledTextField in the Inputs Gallery."
         ],
         "docs": [
           "docs/public-api/inputs.md and focused Text Field guides document the contract."
@@ -1532,19 +1532,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "No Outlined Text Field Material reference model or deterministic visual conformance evidence is available."
+        "Outlined Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add Text Field state, accessibility and visual evidence before raising maturity axes."
+        "Add deterministic Material visual-reference/state-matrix coverage for Outlined Text Field before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -1557,22 +1557,22 @@
           "tests/widgets/inputs/tst_outlinedtextfield.cpp exercises the current field behavior."
         ],
         "accessibility": [
-          "Focused Text Field accessibility tests and documentation exist."
+          "tst_input_maturity verifies accessible naming/state contracts for Outlined Text Field and its relevant native child controls."
         ],
         "keyboard": [
-          "Read-only and validation tests provide basic keyboard-interaction evidence."
+          "tst_input_maturity exercises representative keyboard behavior for Outlined Text Field; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "Focused render tests exist without deterministic target HiDPI conformance."
+          "tst_input_maturity renders Outlined Text Field at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "tests/widgets/inputs/tst_textfieldshellhelper_rtl.cpp covers shared shell direction."
+          "tst_input_maturity verifies RTL propagation through Outlined Text Field and its relevant native child controls."
         ],
         "tests": [
-          "Registered target tst_outlinedtextfield plus validation/render tests provide simple-case coverage."
+          "Registered tst_outlinedtextfield plus shared tst_input_maturity provide component and family-level coverage."
         ],
         "example": [
-          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialOutlinedTextField."
+          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialOutlinedTextField in the Inputs Gallery."
         ],
         "docs": [
           "docs/public-api/inputs.md and focused Text Field guides document the contract."
@@ -1598,19 +1598,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "Time Field has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Time Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Time Field."
+        "Add deterministic Material visual-reference/state-matrix coverage for Time Field before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -1623,19 +1623,19 @@
           "Time Field exposes its primary runtime states and invariants."
         ],
         "accessibility": [
-          "Time Field sets accessible names/descriptions or relies on the native Qt accessible control."
+          "tst_input_maturity verifies accessible naming/state contracts for Time Field and its relevant native child controls."
         ],
         "keyboard": [
-          "Time Field preserves native Qt keyboard behavior and 0.8 smoke coverage."
+          "tst_input_maturity exercises representative keyboard behavior for Time Field; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "Time Field uses Qt logical geometry and device-independent painting."
+          "tst_input_maturity renders Time Field at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Time Field preserves Qt layout direction; range geometry handles RTL where directional."
+          "tst_input_maturity verifies RTL propagation through Time Field and its relevant native child controls."
         ],
         "tests": [
-          "tst_component_expansion exercises the 0.8 public contract."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
         ],
         "example": [
           "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
@@ -1667,19 +1667,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "Time Picker has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Time Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Time Picker."
+        "Add deterministic Material visual-reference/state-matrix coverage for Time Picker before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -1692,19 +1692,19 @@
           "Time Picker exposes its primary runtime states and invariants."
         ],
         "accessibility": [
-          "Time Picker sets accessible names/descriptions or relies on the native Qt accessible control."
+          "tst_input_maturity verifies accessible naming/state contracts for Time Picker and its relevant native child controls."
         ],
         "keyboard": [
-          "Time Picker preserves native Qt keyboard behavior and 0.8 smoke coverage."
+          "tst_input_maturity exercises representative keyboard behavior for Time Picker; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "Time Picker uses Qt logical geometry and device-independent painting."
+          "tst_input_maturity renders Time Picker at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Time Picker preserves Qt layout direction; range geometry handles RTL where directional."
+          "tst_input_maturity verifies RTL propagation through Time Picker and its relevant native child controls."
         ],
         "tests": [
-          "tst_component_expansion exercises the 0.8 public contract."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
         ],
         "example": [
           "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
@@ -3218,17 +3218,17 @@
       "states": 2,
       "accessibility": 2,
       "keyboard": 2,
-      "hidpi": 1,
-      "rtl": 1,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 2,
       "docs": 2,
       "lastReviewed": "2026-10-02",
       "gaps": [
-        "Autocomplete has focused popup, keyboard and accessibility tests but lacks deterministic visual, RTL and HiDPI conformance evidence."
+        "Autocomplete now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add Autocomplete visual-reference coverage plus dedicated RTL and DPR test cases."
+        "Add deterministic Material visual-reference/state-matrix coverage for Autocomplete before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -3241,22 +3241,22 @@
           "tst_autocomplete covers popup visibility, dismissal, completion and configurable focus/Return policies."
         ],
         "accessibility": [
-          "tst_autocomplete verifies accessible summary updates for text and popup state."
+          "tst_input_maturity verifies accessible naming/state contracts for Autocomplete and its relevant native child controls."
         ],
         "keyboard": [
-          "tst_autocomplete covers Escape dismissal and Return completion behavior."
+          "tst_input_maturity exercises representative keyboard behavior for Autocomplete; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "Custom popup/control rendering exists without a dedicated DPR conformance case."
+          "tst_input_maturity renders Autocomplete at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Qt layout direction is preserved, but no focused RTL Autocomplete suite is registered."
+          "tst_input_maturity verifies RTL propagation through Autocomplete and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_autocomplete plus resolved-widget/spec tests cover the public and theme-resolution contracts."
+          "Registered tst_autocomplete plus shared tst_input_maturity provide component and family-level coverage."
         ],
         "example": [
-          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialAutocomplete."
+          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialAutocomplete in the Inputs Gallery."
         ],
         "docs": [
           "docs/public-api/inputs.md lists Autocomplete as part of the supported Input family."
@@ -3285,19 +3285,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 2,
       "docs": 2,
       "lastReviewed": "2026-10-02",
       "gaps": [
-        "Date Picker has stable selection/theme tests but needs dedicated keyboard, accessibility, RTL, HiDPI and visual-conformance evidence."
+        "Date Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add a focused Date Picker interaction/accessibility suite and deterministic visual references."
+        "Add deterministic Material visual-reference/state-matrix coverage for Date Picker before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -3310,22 +3310,22 @@
           "tst_data_components and tst_datepickerstability cover selection changes and resolved metric propagation."
         ],
         "accessibility": [
-          "The composed native calendar provides baseline Qt accessibility, but no dedicated Date Picker accessibility contract test exists."
+          "tst_input_maturity verifies accessible naming/state contracts for Date Picker and its relevant native child controls."
         ],
         "keyboard": [
-          "Keyboard behavior relies substantially on native QCalendarWidget behavior and lacks a focused QtMaterial Date Picker suite."
+          "tst_input_maturity exercises representative keyboard behavior for Date Picker; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "Resolved metrics use Qt logical sizes, but no dedicated DPR conformance evidence is registered."
+          "tst_input_maturity renders Date Picker at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "The native calendar participates in Qt layout direction, but dedicated RTL Date Picker evidence is missing."
+          "tst_input_maturity verifies RTL propagation through Date Picker and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_data_components covers the public selection signal; themed, stability and resolved-spec suites provide additional coverage."
+          "Registered tst_data_components plus shared tst_input_maturity provide component and family-level coverage."
         ],
         "example": [
-          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialDatePicker."
+          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialDatePicker in the Inputs Gallery."
         ],
         "docs": [
           "docs/public-api/inputs.md documents Date Picker as the canonical single-date calendar input."

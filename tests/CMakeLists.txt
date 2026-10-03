@@ -159,6 +159,7 @@ qtm3_add_test(tst_datefield widgets/inputs/tst_datefield.cpp qtmaterial3_widgets
 qtm3_add_test(tst_datefield_affordances widgets/inputs/tst_datefield_affordances.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_slider_maturity widgets/inputs/tst_slider_maturity.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_component_expansion widgets/inputs/tst_component_expansion.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_input_maturity widgets/inputs/tst_input_maturity.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_listitem widgets/data/tst_listitem.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_list widgets/data/tst_list.cpp qtmaterial3_widgets)

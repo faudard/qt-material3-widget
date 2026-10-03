@@ -266,6 +266,8 @@ class QtMaterialComboBoxPrivate final
 {
 public:
     QString labelText;
+    QString autoAccessibleName;
+    QString editableAutoAccessibleName;
 
     mutable AutocompleteSpec spec;
     mutable bool specDirty = true;
@@ -369,10 +371,20 @@ void QtMaterialComboBox::setLabelText(
 
     d_ptr->labelText = text;
 
-    if (!text.isEmpty()) {
+    const QString currentName = accessibleName();
+    if (text.isEmpty()) {
+        if (!d_ptr->autoAccessibleName.isEmpty()
+            && currentName == d_ptr->autoAccessibleName) {
+            setAccessibleName(QString());
+        }
+        d_ptr->autoAccessibleName.clear();
+    } else if (currentName.isEmpty()
+               || currentName == d_ptr->autoAccessibleName) {
         setAccessibleName(text);
+        d_ptr->autoAccessibleName = text;
     }
 
+    syncEditableLineEdit();
     emit labelTextChanged(text);
 }
 
@@ -484,6 +496,13 @@ bool QtMaterialComboBox::event(
     case QEvent::HoverMove:
     case QEvent::EnabledChange:
         syncEditableLineEdit();
+        update();
+        break;
+
+    case QEvent::LayoutDirectionChange:
+        if (lineEdit()) {
+            lineEdit()->setLayoutDirection(layoutDirection());
+        }
         update();
         break;
 
@@ -1065,6 +1084,7 @@ syncEditableLineEdit()
         d_ptr->editableLineEdit
             ->removeEventFilter(this);
         d_ptr->editableLineEdit = nullptr;
+        d_ptr->editableAutoAccessibleName.clear();
     }
 
     if (!edit) {
@@ -1075,7 +1095,23 @@ syncEditableLineEdit()
         d_ptr->editableLineEdit
         != edit) {
         d_ptr->editableLineEdit = edit;
+        d_ptr->editableAutoAccessibleName.clear();
         edit->installEventFilter(this);
+        edit->setLayoutDirection(layoutDirection());
+    }
+
+    const QString currentEditName = edit->accessibleName();
+    const QString candidateName = d_ptr->labelText.trimmed();
+    if (candidateName.isEmpty()) {
+        if (!d_ptr->editableAutoAccessibleName.isEmpty()
+            && currentEditName == d_ptr->editableAutoAccessibleName) {
+            edit->setAccessibleName(QString());
+        }
+        d_ptr->editableAutoAccessibleName.clear();
+    } else if (currentEditName.isEmpty()
+               || currentEditName == d_ptr->editableAutoAccessibleName) {
+        edit->setAccessibleName(candidateName);
+        d_ptr->editableAutoAccessibleName = candidateName;
     }
 
     const AutocompleteSpec& resolved =

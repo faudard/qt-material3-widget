@@ -22,6 +22,8 @@ QtMaterialDateRangePicker::QtMaterialDateRangePicker(QWidget* parent)
     d_ptr->endPicker = new QtMaterialDatePicker(this);
     setObjectName(QStringLiteral("qtmaterial_date_range_picker"));
     setAccessibleName(tr("Date range"));
+    d_ptr->startPicker->setAccessibleDescription(tr("Start date"));
+    d_ptr->endPicker->setAccessibleDescription(tr("End date"));
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);

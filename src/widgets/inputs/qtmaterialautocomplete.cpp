@@ -32,6 +32,7 @@ struct QtMaterialAutocompletePrivate {
     bool m_hidePopupOnEscape = true;
     bool m_acceptingCompletion = false;
     QString m_lastAccessibilitySummary;
+    QString m_autoAccessibleName;
     mutable bool m_specDirty = true;
     mutable AutocompleteSpec m_spec;
 };
@@ -98,11 +99,14 @@ void updateFilterText(QtMaterialAutocomplete* q, QtMaterialAutocompletePrivate* 
 
 void updateAccessibilityState(QtMaterialAutocomplete* q, QtMaterialAutocompletePrivate* d)
 {
-    if (q->accessibleName().isEmpty()) {
-        const QString fallback = q->placeholderText().isEmpty()
-            ? QtMaterialAutocomplete::tr("Autocomplete")
-            : q->placeholderText();
+    const QString fallback = q->placeholderText().isEmpty()
+        ? QtMaterialAutocomplete::tr("Autocomplete")
+        : q->placeholderText();
+    const QString currentName = q->accessibleName();
+    if (currentName.isEmpty()
+        || currentName == d->m_autoAccessibleName) {
         q->setAccessibleName(fallback);
+        d->m_autoAccessibleName = fallback;
     }
 
     const QString summary = q->accessibilitySummary();
@@ -156,6 +160,8 @@ QtMaterialAutocomplete::QtMaterialAutocomplete(QWidget* parent)
             updateAccessibilityState(this, d_ptr.get());
             emit popupVisibilityChanged(visible);
         });
+
+    updateAccessibilityState(this, d_ptr.get());
 }
 
 QtMaterialAutocomplete::~QtMaterialAutocomplete()
@@ -189,7 +195,11 @@ void QtMaterialAutocomplete::setText(const QString& text) { d_ptr->m_lineEdit->s
 
 QString QtMaterialAutocomplete::placeholderText() const { return d_ptr->m_lineEdit->placeholderText(); }
 
-void QtMaterialAutocomplete::setPlaceholderText(const QString& text) { d_ptr->m_lineEdit->setPlaceholderText(text); }
+void QtMaterialAutocomplete::setPlaceholderText(const QString& text)
+{
+    d_ptr->m_lineEdit->setPlaceholderText(text);
+    updateAccessibilityState(this, d_ptr.get());
+}
 
 void QtMaterialAutocomplete::setSuggestions(const QStringList& suggestions)
 {
