@@ -28,6 +28,11 @@
 #include "qtmaterial/widgets/inputs/qtmaterialsearchview.h"
 #include "qtmaterial/widgets/inputs/qtmaterialtimefield.h"
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
+#include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
+#include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
+#include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
+#include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
+#include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
 #include "qtmaterial/widgets/selection/qtmaterialradiobutton.h"
 #include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
@@ -153,10 +158,10 @@ void configureMatrixRoot(QWidget* root, const Theme& theme, const QString& objec
     root->setObjectName(objectName);
     root->setAutoFillBackground(true);
 
-    QPalette palette = root->palette();
-    palette.setColor(QPalette::Window, theme.colorScheme().color(ColorRole::Surface));
-    palette.setColor(QPalette::WindowText, theme.colorScheme().color(ColorRole::OnSurface));
-    root->setPalette(palette);
+    root->setPalette(
+        QtMaterialPaletteAdapter::toPalette(
+            theme,
+            root->palette()));
 }
 
 QLabel* matrixLabel(const QString& text, QWidget* parent, bool strong = false)
@@ -370,6 +375,128 @@ QWidget* buildInputCompositeStateMatrix(const Theme& theme)
     return root;
 }
 
+QWidget* buildNavigationPrimaryStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("navigationPrimaryStateMatrix"));
+
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(18);
+    layout->setVerticalSpacing(12);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Tabs"),
+        QStringLiteral("Navigation Rail"),
+        QStringLiteral("Menu")});
+
+    const QStringList states = {
+        QStringLiteral("Selected"),
+        QStringLiteral("Disabled"),
+        QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i) {
+        addStateLabel(layout, root, i + 1, states.at(i));
+    }
+
+    for (int row = 1; row <= 3; ++row) {
+        const bool enabled = row != 2;
+        const Qt::LayoutDirection direction =
+            row == 3 ? Qt::RightToLeft : Qt::LeftToRight;
+
+        auto* tabs = new QtMaterialTabs(root);
+        tabs->addTab(new QWidget(tabs), QStringLiteral("Overview"));
+        tabs->addTab(new QWidget(tabs), QStringLiteral("Activity"));
+        tabs->addTab(new QWidget(tabs), QStringLiteral("Settings"));
+        tabs->setCurrentIndex(1);
+        tabs->setBadge(1, QStringLiteral("3"));
+        tabs->setBadgeVisible(1, true);
+        tabs->setEnabled(enabled);
+        tabs->setLayoutDirection(direction);
+        tabs->setMinimumSize(QSize(340, 150));
+        layout->addWidget(tabs, row, 1);
+
+        auto* rail = new QtMaterialNavigationRail(root);
+        rail->addDestination(QStringLiteral("Home"));
+        rail->addDestination(QStringLiteral("Search"));
+        rail->addDestination(QStringLiteral("Settings"));
+        rail->setCurrentIndex(1);
+        rail->setEnabled(enabled);
+        rail->setLayoutDirection(direction);
+        layout->addWidget(rail, row, 2);
+
+        auto* menu = new QtMaterialMenu(root);
+        const int open = menu->addItem(QStringLiteral("Open"));
+        menu->setItemShortcutText(open, QStringLiteral("Ctrl+O"));
+        const int details = menu->addItem(QStringLiteral("Show details"));
+        menu->setItemCheckable(details, true);
+        menu->setItemChecked(details, true);
+        menu->addSeparator();
+        const int remove = menu->addItem(QStringLiteral("Delete"));
+        menu->setItemEnabled(remove, false);
+        menu->setCurrentIndex(details);
+        menu->setEnabled(enabled);
+        menu->setLayoutDirection(direction);
+        layout->addWidget(menu, row, 3);
+    }
+
+    return root;
+}
+
+QWidget* buildNavigationDesktopStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("navigationDesktopStateMatrix"));
+
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(18);
+    layout->setVerticalSpacing(12);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Breadcrumb"),
+        QStringLiteral("Command Palette")});
+
+    const QStringList states = {
+        QStringLiteral("Default"),
+        QStringLiteral("Disabled"),
+        QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i) {
+        addStateLabel(layout, root, i + 1, states.at(i));
+    }
+
+    for (int row = 1; row <= 3; ++row) {
+        const bool enabled = row != 2;
+        const Qt::LayoutDirection direction =
+            row == 3 ? Qt::RightToLeft : Qt::LeftToRight;
+
+        auto* breadcrumb = new QtMaterialBreadcrumb(root);
+        breadcrumb->setItems({
+            QStringLiteral("Workspace"),
+            QStringLiteral("Requirements"),
+            QStringLiteral("REQ-42")});
+        breadcrumb->setEnabled(enabled);
+        breadcrumb->setLayoutDirection(direction);
+        breadcrumb->setMinimumWidth(420);
+        layout->addWidget(breadcrumb, row, 1, Qt::AlignTop);
+
+        auto* model = new QStringListModel({
+            QStringLiteral("Open file"),
+            QStringLiteral("Build project"),
+            QStringLiteral("Run tests"),
+            QStringLiteral("Show settings")}, root);
+
+        auto* palette = new QtMaterialCommandPalette(root);
+        palette->setWindowFlags(Qt::Widget);
+        palette->setModal(false);
+        palette->setSourceModel(model);
+        palette->setQuery(QStringLiteral("Build"));
+        palette->setEnabled(enabled);
+        palette->setLayoutDirection(direction);
+        palette->setMinimumSize(QSize(420, 220));
+        layout->addWidget(palette, row, 2);
+    }
+
+    return root;
+}
+
 void addFamilyThemeRows(const QString& prefix)
 {
     QTest::addColumn<QString>("caseName");
@@ -417,6 +544,14 @@ private slots:
     void inputCompositeStateMatrixSmoke();
     void inputCompositeStateMatrixCandidateGoldens_data();
     void inputCompositeStateMatrixCandidateGoldens();
+    void navigationPrimaryStateMatrixSmoke_data();
+    void navigationPrimaryStateMatrixSmoke();
+    void navigationPrimaryStateMatrixCandidateGoldens_data();
+    void navigationPrimaryStateMatrixCandidateGoldens();
+    void navigationDesktopStateMatrixSmoke_data();
+    void navigationDesktopStateMatrixSmoke();
+    void navigationDesktopStateMatrixCandidateGoldens_data();
+    void navigationDesktopStateMatrixCandidateGoldens();
 };
 
 void tst_ThemeVisualRegression::tokenBoardGoldens_data()
@@ -602,6 +737,88 @@ void tst_ThemeVisualRegression::inputCompositeStateMatrixCandidateGoldens()
     const Theme theme = makeStaticComponentTheme(mode, contrast);
     std::unique_ptr<QWidget> matrix(buildInputCompositeStateMatrix(theme));
     QtMaterialVisualTest::verifyOrUpdateCandidateGolden(caseName, QtMaterialVisualTest::renderWidget(matrix.get()));
+}
+
+void tst_ThemeVisualRegression::navigationPrimaryStateMatrixSmoke_data()
+{
+    addFamilyThemeRows(QStringLiteral("navigation_primary_matrix"));
+}
+
+void tst_ThemeVisualRegression::navigationPrimaryStateMatrixSmoke()
+{
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildNavigationPrimaryStateMatrix(theme));
+    writeSmokeArtifact(
+        caseName,
+        QtMaterialVisualTest::renderWidget(matrix.get()),
+        QStringLiteral("navigation-primary-state-matrix"));
+}
+
+void tst_ThemeVisualRegression::navigationPrimaryStateMatrixCandidateGoldens_data()
+{
+    navigationPrimaryStateMatrixSmoke_data();
+}
+
+void tst_ThemeVisualRegression::navigationPrimaryStateMatrixCandidateGoldens()
+{
+    if (!QtMaterialVisualTest::strictGoldens() && !QtMaterialVisualTest::updateGoldens()) {
+        QSKIP("Family matrix goldens are opt-in.");
+    }
+
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildNavigationPrimaryStateMatrix(theme));
+    QtMaterialVisualTest::verifyOrUpdateCandidateGolden(
+        caseName,
+        QtMaterialVisualTest::renderWidget(matrix.get()));
+}
+
+void tst_ThemeVisualRegression::navigationDesktopStateMatrixSmoke_data()
+{
+    addFamilyThemeRows(QStringLiteral("navigation_desktop_matrix"));
+}
+
+void tst_ThemeVisualRegression::navigationDesktopStateMatrixSmoke()
+{
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildNavigationDesktopStateMatrix(theme));
+    writeSmokeArtifact(
+        caseName,
+        QtMaterialVisualTest::renderWidget(matrix.get()),
+        QStringLiteral("navigation-desktop-state-matrix"));
+}
+
+void tst_ThemeVisualRegression::navigationDesktopStateMatrixCandidateGoldens_data()
+{
+    navigationDesktopStateMatrixSmoke_data();
+}
+
+void tst_ThemeVisualRegression::navigationDesktopStateMatrixCandidateGoldens()
+{
+    if (!QtMaterialVisualTest::strictGoldens() && !QtMaterialVisualTest::updateGoldens()) {
+        QSKIP("Family matrix goldens are opt-in.");
+    }
+
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildNavigationDesktopStateMatrix(theme));
+    QtMaterialVisualTest::verifyOrUpdateCandidateGolden(
+        caseName,
+        QtMaterialVisualTest::renderWidget(matrix.get()));
 }
 
 QTEST_MAIN(tst_ThemeVisualRegression)
