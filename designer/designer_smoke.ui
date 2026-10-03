@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DesignerSmokeForm</class>
+ <widget class="QWidget" name="DesignerSmokeForm">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>640</width><height>480</height></rect></property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item><widget class="QtMaterial::QtMaterialFilledButton" name="filledButton"><property name="text"><string>Continue</string></property></widget></item>
+   <item><widget class="QtMaterial::QtMaterialOutlinedTextField" name="outlinedTextField"/></item>
+   <item><widget class="QtMaterial::QtMaterialCard" name="card"><property name="titleText"><string>Material card</string></property></widget></item>
+   <item><widget class="QtMaterial::QtMaterialTable" name="table"/></item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget><class>QtMaterial::QtMaterialFilledButton</class><extends>QWidget</extends><header>qtmaterial/widgets/buttons/qtmaterialfilledbutton.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialOutlinedTextField</class><extends>QWidget</extends><header>qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialCard</class><extends>QWidget</extends><header>qtmaterial/widgets/surfaces/qtmaterialcard.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialTable</class><extends>QWidget</extends><header>qtmaterial/widgets/data/qtmaterialtable.h</header></customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

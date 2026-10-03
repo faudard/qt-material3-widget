@@ -1,0 +1,75 @@
+name: docs-pages
+
+on:
+  push:
+    branches: [main]
+    tags: ["v1.*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: docs-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install documentation tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz libxml2-utils
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install documentation dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r docs/requirements.txt
+      - name: Generate Doxygen XML
+        run: |
+          rm -rf build/doxygen
+          mkdir -p build/doxygen
+          doxygen Doxyfile
+      - name: Validate Doxygen XML
+        run: find build/doxygen/xml -name '*.xml' -print0 | xargs -0 -n1 xmllint --noout
+      - name: Validate stable API signature baseline
+        run: python tools/api_signature_baseline.py --xml-dir build/doxygen/xml --baseline tools/api-baseline-1.0.json
+      - name: Prepare documentation inputs
+        run: |
+          python tools/prepare_docs_visuals.py
+          python tools/generate_component_docs.py
+          python tools/check_consumer_docs.py
+      - name: Resolve documentation version
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "DOCS_VERSION=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+            echo "DOCS_GITHUB_REF=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+          else
+            echo "DOCS_VERSION=latest" >> "$GITHUB_ENV"
+            echo "DOCS_GITHUB_REF=main" >> "$GITHUB_ENV"
+          fi
+      - name: Build documentation
+        run: sphinx-build --builder html --fail-on-warning --keep-going docs docs/_build/html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs/_build/html
+  deploy:
+    if: github.repository == 'faudard/qt-material3-widget'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

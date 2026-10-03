@@ -1,0 +1,70 @@
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS UiPlugin)
+
+add_library(qtmaterial3_designer_plugin MODULE
+    qtmaterial3designercollection.cpp
+    qtmaterial3designercollection.h
+)
+
+target_compile_features(qtmaterial3_designer_plugin PRIVATE cxx_std_17)
+
+target_link_libraries(qtmaterial3_designer_plugin
+    PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::UiPlugin
+        qtmaterial3_widgets
+)
+
+target_include_directories(qtmaterial3_designer_plugin
+    PRIVATE "${PROJECT_SOURCE_DIR}/include"
+)
+
+set_target_properties(qtmaterial3_designer_plugin PROPERTIES
+    AUTOMOC ON
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN YES
+)
+
+if(QTMATERIAL3_INSTALL)
+    install(
+        TARGETS qtmaterial3_designer_plugin
+        RUNTIME DESTINATION "${QTMATERIAL3_DESIGNER_PLUGIN_INSTALL_DIR}"
+        LIBRARY DESTINATION "${QTMATERIAL3_DESIGNER_PLUGIN_INSTALL_DIR}"
+    )
+endif()
+
+if(QTMATERIAL3_BUILD_TESTS)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test)
+    add_executable(tst_qtmaterial3_designer_collection
+        tst_designercollection.cpp
+        qtmaterial3designercollection.cpp
+        qtmaterial3designercollection.h
+    )
+    target_link_libraries(tst_qtmaterial3_designer_collection
+        PRIVATE
+            Qt${QT_VERSION_MAJOR}::Test
+            Qt${QT_VERSION_MAJOR}::UiPlugin
+            qtmaterial3_widgets
+    )
+    target_include_directories(tst_qtmaterial3_designer_collection
+        PRIVATE "${PROJECT_SOURCE_DIR}/include"
+    )
+    set_target_properties(tst_qtmaterial3_designer_collection PROPERTIES AUTOMOC ON)
+    add_test(NAME designer_collection_contract COMMAND tst_qtmaterial3_designer_collection)
+
+    add_executable(tst_qtmaterial3_designer_ui_smoke
+        designer_smoke.cpp
+        designer_smoke.ui
+    )
+    target_link_libraries(tst_qtmaterial3_designer_ui_smoke
+        PRIVATE
+            Qt${QT_VERSION_MAJOR}::Widgets
+            qtmaterial3_widgets
+    )
+    target_include_directories(tst_qtmaterial3_designer_ui_smoke
+        PRIVATE "${PROJECT_SOURCE_DIR}/include"
+    )
+    set_target_properties(tst_qtmaterial3_designer_ui_smoke PROPERTIES AUTOUIC ON)
+    add_test(NAME designer_ui_smoke COMMAND tst_qtmaterial3_designer_ui_smoke)
+endif()

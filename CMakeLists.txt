@@ -35,6 +35,7 @@ endif()
 option(QTMATERIAL3_BUILD_TESTS "Build tests" ${_qtm3_default_build_tests})
 option(QTMATERIAL3_BUILD_EXAMPLES "Build examples" ${QTMATERIAL3_IS_TOP_LEVEL})
 option(QTMATERIAL3_BUILD_BENCHMARKS "Build benchmark executables" OFF)
+option(QTMATERIAL3_BUILD_DESIGNER_PLUGIN "Build the optional Qt Designer custom-widget plugin" OFF)
 option(QTMATERIAL3_INSTALL "Install QtMaterial3 targets and package config" ${QTMATERIAL3_IS_TOP_LEVEL})
 option(QTMATERIAL3_USE_MCU "Use Material Color Utilities backend" OFF)
 
@@ -44,6 +45,13 @@ endif()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
+
+set(
+    QTMATERIAL3_DESIGNER_PLUGIN_INSTALL_DIR
+    "${CMAKE_INSTALL_LIBDIR}/qt${QT_VERSION_MAJOR}/plugins/designer"
+    CACHE PATH
+    "Install directory for the Qt Designer custom-widget plugin"
+)
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/QtMaterial3QtCompatibility.cmake")
 qtmaterial3_validate_qt_compatibility()
@@ -146,6 +154,10 @@ endif()
 
 if(QTMATERIAL3_BUILD_BENCHMARKS)
     add_subdirectory(benchmarks)
+endif()
+
+if(QTMATERIAL3_BUILD_DESIGNER_PLUGIN)
+    add_subdirectory(designer)
 endif()
 
 if(QTMATERIAL3_IS_TOP_LEVEL AND QTMATERIAL3_INSTALL)
