@@ -240,6 +240,23 @@ class CurrentRegistryTests(unittest.TestCase):
                 f"{component['id']} has 4/4 evidence everywhere but was not promoted",
             )
 
+    def test_complete_families_are_uniformly_certified(self):
+        families = {}
+        for component in self.components:
+            if component["releaseScope"]:
+                families.setdefault(component["family"], []).append(component)
+        for family, components in families.items():
+            complete = [c for c in components if c["maturity"] == "complete"]
+            if not complete:
+                continue
+            for component in complete:
+                axes = component["maturityAxes"]
+                self.assertEqual([], axes["gaps"], component["id"])
+                for axis in self.generator.AXES:
+                    value = axes[axis]
+                    if isinstance(value, int):
+                        self.assertEqual(4, value, component["id"])
+
     def test_enterprise_complete_requires_all_release_components_complete(self):
         incomplete = [
             component["id"]
