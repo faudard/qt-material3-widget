@@ -21,7 +21,17 @@ When a dialog opens and contains focusable body content, initial focus should mo
 
 ## High-DPI smoke rendering
 
-Core interactive widgets must render successfully into a device-pixel-ratio aware paint device. The smoke test does not compare pixels; it verifies that common widgets render without crashes, invalid paint states, or assumptions about DPR = 1.
+Core interactive widgets must render successfully into a device-pixel-ratio aware paint device.
+
+The desktop release matrix explicitly exercises:
+
+- 100% (`DPR 1.00`);
+- 125% (`DPR 1.25`);
+- 150% (`DPR 1.50`);
+- 175% (`DPR 1.75`);
+- 200% / Retina-class (`DPR 2.00`).
+
+The smoke test does not compare pixels. It verifies that common widgets render into a correctly sized, non-empty paint device without crashes, invalid paint states, integer-DPR assumptions, or a hard-coded DPR of 1. Visual family baselines remain responsible for detecting clipping, one-pixel borders, focus-ring geometry, icon/text offsets, popup geometry, radii, and shadow-cache regressions.
 
 ## RTL smoke behavior
 
