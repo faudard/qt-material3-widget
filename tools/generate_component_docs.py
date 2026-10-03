@@ -22,7 +22,7 @@ for i,e in enumerate(entries):
       "## When to use","",
       "Use this component for the "+e["name"]+" interaction in the "+e["family"]+" family. See the [canonical family guide]("+guide+") for behavioral detail and related components.","",
       "## API","","Installed header: "+e["publicHeader"],"",
-      "~~~{eval-rst}",".. doxygenclass:: QtMaterial::"+e["widgetType"],"   :project: qtmaterial3","   :members:","~~~","",
+      "For the authoritative declarations and member documentation, see the [C++ API reference](../../api/index.md).","",
       "## States","",bullets(ev.get("states"),"State behavior follows the family contract and native Qt semantics."),"",
       "## Keyboard","",bullets(ev.get("keyboard"),"Native Qt focus/navigation remains authoritative."),"",
       "## Accessibility","",bullets(ev.get("accessibility"),"Provide a visible label or accessible name and preserve meaningful state semantics."),"",
