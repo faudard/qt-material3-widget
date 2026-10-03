@@ -9,6 +9,7 @@ ThemeOptions::ThemeOptions()
     , contrast(ContrastMode::Standard)
     , variant(ThemeVariant::TonalSpot)
     , backendPolicy(ColorBackendPolicy::Auto)
+    , motionScheme(MotionScheme::Standard)
 {
 }
 

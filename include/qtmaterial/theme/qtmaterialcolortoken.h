@@ -107,6 +107,11 @@ enum class ElevationRole {
     Level5
 };
 
+enum class MotionScheme {
+    Standard,
+    Expressive
+};
+
 enum class MotionToken {
     Short1,
     Short2,
@@ -119,7 +124,13 @@ enum class MotionToken {
     Long1,
     Long2,
     Long3,
-    Long4
+    Long4,
+    SpatialFast,
+    SpatialDefault,
+    SpatialSlow,
+    EffectsFast,
+    EffectsDefault,
+    EffectsSlow
 };
 
 enum class StateLayerRole {

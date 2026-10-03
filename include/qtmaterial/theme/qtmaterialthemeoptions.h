@@ -73,12 +73,14 @@ public:
     ContrastMode contrast;
     ThemeVariant variant;
     ColorBackendPolicy backendPolicy;
+    MotionScheme motionScheme;
 
     bool operator==(const ThemeOptions& other) const noexcept
     {
         return sourceColor == other.sourceColor && mode == other.mode
             && preference == other.preference && contrast == other.contrast
-            && variant == other.variant && backendPolicy == other.backendPolicy;
+            && variant == other.variant && backendPolicy == other.backendPolicy
+            && motionScheme == other.motionScheme;
     }
 
     bool operator!=(const ThemeOptions& other) const noexcept
@@ -92,3 +94,4 @@ public:
 Q_DECLARE_METATYPE(QtMaterial::ThemePreference)
 Q_DECLARE_METATYPE(QtMaterial::ThemeVariant)
 Q_DECLARE_METATYPE(QtMaterial::ColorBackendPolicy)
+Q_DECLARE_METATYPE(QtMaterial::MotionScheme)

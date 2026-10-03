@@ -54,6 +54,7 @@ component-overrides
 system-theme
 theme-studio
 interaction-effects
+expressive-foundation
 component-expansion
 desktop-productivity
 buttons

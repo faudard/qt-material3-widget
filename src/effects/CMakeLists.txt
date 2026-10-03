@@ -7,6 +7,7 @@ set(QTMATERIAL3_EFFECTS_SOURCES
     qtmaterialshadowcache.cpp
     qtmaterialpaintcache.cpp
     qtmaterialtransitioncontroller.cpp
+    qtmaterialshapemorph.cpp
     qtmaterialscrimwidget.cpp
 )
 
@@ -19,6 +20,7 @@ set(QTMATERIAL3_EFFECTS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/private/qtmaterialshadowcache_p.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/private/qtmaterialpaintcache_p.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialtransitioncontroller.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/private/qtmaterialshapemorph_p.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/effects/qtmaterialscrimwidget.h
 )
 

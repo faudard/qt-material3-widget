@@ -75,14 +75,14 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `layout.split-view` | Split View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Split View now has accessible keyboard resize, RTL behavior, DPR 2.0 evidence, pane min/max extents, reset behavior and candidate visual matrices; animated collapse and persisted app-level layout policy remain. |
+| `layout.split-view` | Split View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Reviewed stable Split View visual-reference evidence remains; new animation/state contracts are covered by the registered v2 suite. |
 
 ### Navigation
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `navigation.breadcrumb` | Breadcrumb | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Breadcrumb now has explicit and responsive overflow, accessibility/keyboard/RTL/HiDPI evidence and candidate visual matrices; reviewed stable visual-reference evidence remains. |
-| `navigation.command-palette` | Command Palette | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Command Palette now has keyboard/result accessibility, configurable empty state, shortcut-role rendering, RTL/HiDPI evidence and candidate visual matrices; provider/section/recent-command APIs remain. |
+| `navigation.breadcrumb` | Breadcrumb | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Reviewed stable Breadcrumb visual-reference evidence remains; editable locations/icons and opt-in URL drag/drop are implemented. |
+| `navigation.command-palette` | Command Palette | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Reviewed stable Command Palette visual-reference evidence remains; fuzzy matching, providers, sections, favorites and recent-command APIs are implemented. |
 | `navigation.menu` | Menu | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Menu now has focused accessibility, keyboard, RTL, DPR 2.0 and dedicated Gallery evidence plus a candidate visual matrix; reviewed stable visual-reference evidence remains. |
 | `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Navigation Rail now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus candidate visual matrices; reviewed stable visual-reference evidence remains before further promotion. |
 | `navigation.tabs` | Tabs | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Tabs has focused accessibility, keyboard, RTL, DPR 2.0 and Gallery evidence plus candidate Navigation visual matrices; reviewed stable visual-reference coverage remains before further promotion. |
@@ -179,9 +179,9 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Outlined Text Field | Add deterministic Material visual-reference/state-matrix coverage for Outlined Text Field before promoting maturity further. |
 | Time Field | Add deterministic Material visual-reference/state-matrix coverage for Time Field before promoting maturity further. |
 | Time Picker | Add deterministic Material visual-reference/state-matrix coverage for Time Picker before promoting maturity further. |
-| Split View | Add optional animated collapse/reset affordances and document app-level persisted layout policy before further promotion. |
-| Breadcrumb | Review and promote the Breadcrumb candidate goldens before raising visual maturity further. |
-| Command Palette | Add provider/section/recent-command APIs and promote reviewed visual baselines. |
+| Split View | Run the v2 CTest suite in the supported Qt matrix and review/promote candidate visual baselines. |
+| Breadcrumb | Run the v2 CTest suite in the supported Qt matrix and review/promote candidate visual baselines. |
+| Command Palette | Run the v2 CTest suite in the supported Qt matrix and review/promote candidate visual baselines. |
 | Menu | Review and promote the Menu candidate goldens before raising visual maturity further. |
 | Navigation Rail | Review and promote the Navigation Rail candidate goldens before raising visual maturity further. |
 | Tabs | Review and promote the Tabs candidate goldens before raising visual maturity further. |

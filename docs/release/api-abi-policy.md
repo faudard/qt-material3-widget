@@ -17,6 +17,10 @@ headers, including namespace-level declarations and enum initializers. Private h
 internal resolver/spec implementation surfaces and PIMPL state are deliberately
 excluded.
 
+Appending enumerators is additive when all baseline enumerators and initializers remain
+an unchanged prefix. The checker still rejects insertion, reordering, renumbering and
+changes to an enum's scope, declaration or originating public header.
+
 ## Historical pre-1.0 policy
 
 Before 1.0, public API and ABI could break between minor versions and obsolete

@@ -151,6 +151,12 @@ constexpr TokenId tokenId(MotionToken value) noexcept
     case MotionToken::Long2: return TokenId::fromParts(TokenCategory::Motion, 10u);
     case MotionToken::Long3: return TokenId::fromParts(TokenCategory::Motion, 11u);
     case MotionToken::Long4: return TokenId::fromParts(TokenCategory::Motion, 12u);
+    case MotionToken::SpatialFast: return TokenId::fromParts(TokenCategory::Motion, 13u);
+    case MotionToken::SpatialDefault: return TokenId::fromParts(TokenCategory::Motion, 14u);
+    case MotionToken::SpatialSlow: return TokenId::fromParts(TokenCategory::Motion, 15u);
+    case MotionToken::EffectsFast: return TokenId::fromParts(TokenCategory::Motion, 16u);
+    case MotionToken::EffectsDefault: return TokenId::fromParts(TokenCategory::Motion, 17u);
+    case MotionToken::EffectsSlow: return TokenId::fromParts(TokenCategory::Motion, 18u);
     }
     return TokenId();
 }
@@ -222,9 +228,9 @@ inline constexpr std::array<ElevationRole, 6> allElevationRoles() noexcept
     return { ElevationRole::Level0, ElevationRole::Level1, ElevationRole::Level2, ElevationRole::Level3, ElevationRole::Level4, ElevationRole::Level5 };
 }
 
-inline constexpr std::array<MotionToken, 12> allMotionTokens() noexcept
+inline constexpr std::array<MotionToken, 18> allMotionTokens() noexcept
 {
-    return { MotionToken::Short1, MotionToken::Short2, MotionToken::Short3, MotionToken::Short4, MotionToken::Medium1, MotionToken::Medium2, MotionToken::Medium3, MotionToken::Medium4, MotionToken::Long1, MotionToken::Long2, MotionToken::Long3, MotionToken::Long4 };
+    return { MotionToken::Short1, MotionToken::Short2, MotionToken::Short3, MotionToken::Short4, MotionToken::Medium1, MotionToken::Medium2, MotionToken::Medium3, MotionToken::Medium4, MotionToken::Long1, MotionToken::Long2, MotionToken::Long3, MotionToken::Long4, MotionToken::SpatialFast, MotionToken::SpatialDefault, MotionToken::SpatialSlow, MotionToken::EffectsFast, MotionToken::EffectsDefault, MotionToken::EffectsSlow };
 }
 
 inline constexpr std::array<StateLayerRole, 4> allStateLayerRoles() noexcept

@@ -170,6 +170,24 @@ class ApiSignatureBaselineTests(unittest.TestCase):
         self.assertEqual(removed, [])
         self.assertEqual(added, ["b"])
 
+    def test_appended_enumerators_are_compatible(self):
+        before = "Mode|enum|enum|||prot=public|template=|enum=A,B=5|file=include/mode.h"
+        after = before.replace("enum=A,B=5|", "enum=A,B=5,C,D=20|")
+        self.assertTrue(api.is_source_compatible([after], [before]))
+        self.assertEqual(api.compare([after], [before]), ([], [after]))
+
+    def test_inserted_or_reordered_enumerators_are_breaking(self):
+        before = "Mode|enum|enum|||prot=public|template=|enum=A,B|file=include/mode.h"
+        for values in ["A,C,B", "B,A,C", "A,B=2,C"]:
+            after = before.replace("enum=A,B|", "enum=" + values + "|")
+            self.assertFalse(api.is_source_compatible([after], [before]))
+
+    def test_enum_append_does_not_hide_scope_or_location_changes(self):
+        before = "Mode|enum|enum|||prot=public|template=|enum=A,B|file=include/mode.h"
+        after = before.replace("enum=A,B|", "enum=A,B,C|")
+        for changed in [after.replace("Mode|", "Other|"), after.replace("mode.h", "other.h"), after.replace("prot=public", "prot=protected")]:
+            self.assertFalse(api.is_source_compatible([changed], [before]))
+
     def test_compare_detects_signature_drift(self):
         removed, added = api.compare(["a", "b"], ["a", "c"])
         self.assertEqual(removed, ["c"])

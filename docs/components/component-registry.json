@@ -2960,14 +2960,15 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Split View now has accessible keyboard resize, RTL behavior, DPR 2.0 evidence, pane min/max extents, reset behavior and candidate visual matrices; animated collapse and persisted app-level layout policy remain."
+        "Reviewed stable Split View visual-reference evidence remains; new animation/state contracts are covered by the registered v2 suite."
       ],
       "nextActions": [
-        "Add optional animated collapse/reset affordances and document app-level persisted layout policy before further promotion."
+        "Run the v2 CTest suite in the supported Qt matrix and review/promote candidate visual baselines."
       ],
       "evidence": {
         "api": [
-          "public 0.9 desktop/productivity API is installed and header-audited"
+          "public 0.9 desktop/productivity API is installed and header-audited",
+          "Split View 2.0 adds keyboard step/default sizing, rememberPaneSizes, extended pane-state persistence and opt-in animated collapse."
         ],
         "rendering": [
           "gallery exercises the desktop adaptation",
@@ -2976,13 +2977,15 @@
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
           "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering.",
-          "tst_desktop_productivity verifies pane minimum/maximum extents, resetPaneSizes and double-click handle reset."
+          "tst_desktop_productivity verifies pane minimum/maximum extents, resetPaneSizes and double-click handle reset.",
+          "tst_desktop_navigation_v2 covers collapsed-pane persistence, animation reversal and minimum/collapsibility restoration."
         ],
         "accessibility": [
           "tst_desktop_productivity verifies accessible naming/state contracts for Split View and its relevant native/composed controls."
         ],
         "keyboard": [
-          "tst_desktop_productivity exercises the focused keyboard contract for Split View while preserving native Qt behavior where applicable."
+          "tst_desktop_productivity exercises the focused keyboard contract for Split View while preserving native Qt behavior where applicable.",
+          "tst_desktop_navigation_v2 covers native constrained divider movement, Home/End and default reset without resizing an unrelated pane."
         ],
         "hidpi": [
           "tst_desktop_productivity and/or the focused maturity suite renders Split View at DPR 2.0."
@@ -2991,11 +2994,13 @@
           "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Split View."
         ],
         "tests": [
-          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Split View."
+          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Split View.",
+          "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change."
         ],
         "example": [
           "examples/gallery/pages/advanceddatapage.cpp instantiates QtMaterialSplitView around Tree/Table content.",
-          "examples/gallery/pages/advanceddatapage.cpp demonstrates orientation-aware pane minimum extents."
+          "examples/gallery/pages/advanceddatapage.cpp demonstrates orientation-aware pane minimum extents.",
+          "Advanced Data gallery provides animated tree collapse/reset and application-owned QSettings persistence."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
@@ -3033,14 +3038,15 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Breadcrumb now has explicit and responsive overflow, accessibility/keyboard/RTL/HiDPI evidence and candidate visual matrices; reviewed stable visual-reference evidence remains."
+        "Reviewed stable Breadcrumb visual-reference evidence remains; editable locations/icons and opt-in URL drag/drop are implemented."
       ],
       "nextActions": [
-        "Review and promote the Breadcrumb candidate goldens before raising visual maturity further."
+        "Run the v2 CTest suite in the supported Qt matrix and review/promote candidate visual baselines."
       ],
       "evidence": {
         "api": [
-          "public 0.9 desktop/productivity API is installed and header-audited"
+          "public 0.9 desktop/productivity API is installed and header-audited",
+          "Breadcrumb 2.0 adds segment icons/URLs, location editing/submission and copy-only URL drag/drop."
         ],
         "rendering": [
           "gallery exercises the desktop adaptation",
@@ -3050,7 +3056,8 @@
           "native Qt enabled/selection/focus state remains authoritative",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
           "tst_desktop_productivity verifies maximumVisibleItems overflow and hidden-segment activation.",
-          "tst_desktop_productivity verifies responsiveElisionEnabled across wide, narrow and restored widget widths."
+          "tst_desktop_productivity verifies responsiveElisionEnabled across wide, narrow and restored widget widths.",
+          "tst_desktop_navigation_v2 covers Enter/Escape editing, overflow icons, strict visible limits and URL drop routing."
         ],
         "accessibility": [
           "tst_desktop_productivity verifies accessible naming/state contracts for Breadcrumb and its relevant native/composed controls."
@@ -3065,12 +3072,14 @@
           "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Breadcrumb."
         ],
         "tests": [
-          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Breadcrumb."
+          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Breadcrumb.",
+          "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change."
         ],
         "example": [
           "examples/gallery/pages/navigationadvancedpage.cpp instantiates an interactive QtMaterialBreadcrumb.",
           "examples/gallery/pages/navigationadvancedpage.cpp demonstrates a five-level breadcrumb collapsed to three visible segments.",
-          "examples/gallery/pages/navigationadvancedpage.cpp enables responsive Breadcrumb elision in a constrained-width showcase."
+          "examples/gallery/pages/navigationadvancedpage.cpp enables responsive Breadcrumb elision in a constrained-width showcase.",
+          "Advanced Navigation gallery demonstrates segment icons and editable addresses with a Ctrl+L affordance."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"
@@ -3108,14 +3117,15 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Command Palette now has keyboard/result accessibility, configurable empty state, shortcut-role rendering, RTL/HiDPI evidence and candidate visual matrices; provider/section/recent-command APIs remain."
+        "Reviewed stable Command Palette visual-reference evidence remains; fuzzy matching, providers, sections, favorites and recent-command APIs are implemented."
       ],
       "nextActions": [
-        "Add provider/section/recent-command APIs and promote reviewed visual baselines."
+        "Run the v2 CTest suite in the supported Qt matrix and review/promote candidate visual baselines."
       ],
       "evidence": {
         "api": [
-          "public 0.9 desktop/productivity API is installed and header-audited"
+          "public 0.9 desktop/productivity API is installed and header-audited",
+          "Command Palette 2.0 adds stable command IDs, app-owned/async providers, fuzzy matching, sections, favorites/history and configurable activation shortcuts."
         ],
         "rendering": [
           "gallery exercises the desktop adaptation",
@@ -3124,13 +3134,15 @@
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
-          "tst_desktop_productivity verifies empty-state visibility and ShortcutRole propagation through the proxy model."
+          "tst_desktop_productivity verifies empty-state visibility and ShortcutRole propagation through the proxy model.",
+          "tst_desktop_navigation_v2 covers stale replies, cancellation/removal/destruction, loading/errors and worker-thread dispatch."
         ],
         "accessibility": [
           "tst_desktop_productivity verifies accessible naming/state contracts for Command Palette and its relevant native/composed controls."
         ],
         "keyboard": [
-          "tst_desktop_productivity exercises the focused keyboard contract for Command Palette while preserving native Qt behavior where applicable."
+          "tst_desktop_productivity exercises the focused keyboard contract for Command Palette while preserving native Qt behavior where applicable.",
+          "tst_desktop_navigation_v2 covers disabled-command skipping, favorite toggling and original-model index activation."
         ],
         "hidpi": [
           "tst_desktop_productivity and/or the focused maturity suite renders Command Palette at DPR 2.0."
@@ -3139,11 +3151,13 @@
           "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Command Palette."
         ],
         "tests": [
-          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Command Palette."
+          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Command Palette.",
+          "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change."
         ],
         "example": [
           "examples/gallery/pages/navigationadvancedpage.cpp exposes QtMaterialCommandPalette through the Ctrl+K command workflow.",
-          "examples/gallery/pages/navigationadvancedpage.cpp populates Command Palette shortcut metadata and custom empty-state text."
+          "examples/gallery/pages/navigationadvancedpage.cpp populates Command Palette shortcut metadata and custom empty-state text.",
+          "Advanced Navigation gallery registers command, recent-file and settings providers, including asynchronous recent-file loading."
         ],
         "docs": [
           "desktop-productivity.md documents the contract"

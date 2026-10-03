@@ -28,7 +28,7 @@ Theme::Theme(const ThemeOptions& options)
     , m_typography()
     , m_shapes()
     , m_elevations()
-    , m_motion()
+    , m_motion(options.motionScheme)
     , m_stateLayer()
     , m_accessibility()
     , m_interactions()
@@ -62,6 +62,10 @@ const ThemeOptions& Theme::options() const noexcept { return m_options; }
 
 void Theme::setOptions(const ThemeOptions& options)
 {
+    if (m_options.motionScheme != options.motionScheme) {
+        m_motion.applyScheme(options.motionScheme);
+        applyReducedMotion(&m_motion, m_accessibility.reducedMotion);
+    }
     m_options = options;
     m_mode = options.mode;
     m_contrast = options.contrast;
@@ -81,6 +85,15 @@ ElevationScale& Theme::elevations() noexcept { return m_elevations; }
 
 const MotionTokens& Theme::motion() const noexcept { return m_motion; }
 MotionTokens& Theme::motion() noexcept { return m_motion; }
+
+MotionScheme Theme::motionScheme() const noexcept { return m_options.motionScheme; }
+void Theme::setMotionScheme(MotionScheme scheme)
+{
+    if (motionScheme() == scheme) { return; }
+    m_options.motionScheme = scheme;
+    m_motion.applyScheme(scheme);
+    applyReducedMotion(&m_motion, m_accessibility.reducedMotion);
+}
 
 const StateLayer& Theme::stateLayer() const noexcept { return m_stateLayer; }
 StateLayer& Theme::stateLayer() noexcept { return m_stateLayer; }

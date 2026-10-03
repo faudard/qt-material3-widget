@@ -2,7 +2,9 @@
 
 #include <QLabel>
 #include <QPushButton>
-#include <QShortcut>
+#include <QStyle>
+#include <QTimer>
+#include <functional>
 #include <QStandardItemModel>
 #include <QStringListModel>
 #include <QVBoxLayout>
@@ -11,6 +13,36 @@
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
 #include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 
+namespace {
+
+class GalleryCommandProvider final : public QtMaterial::QtMaterialCommandProvider
+{
+public:
+    GalleryCommandProvider(QList<QtMaterial::QtMaterialCommand> commands,
+        std::function<void(const QString&)> action, int delay, QObject* parent)
+        : QtMaterialCommandProvider(parent), m_commands(std::move(commands)),
+          m_action(std::move(action)), m_delay(delay) {}
+
+    void requestCommands(const QString&, quint64 id) override
+    {
+        m_request = id;
+        if (m_delay == 0) { Q_EMIT commandsReady(id, m_commands); return; }
+        QTimer::singleShot(m_delay, this, [this, id]() {
+            if (m_request == id) { Q_EMIT commandsReady(id, m_commands); }
+        });
+    }
+    void cancelRequest(quint64 id) override { if (m_request == id) { m_request = 0; } }
+    void activateCommand(const QString& id) override { m_action(id); }
+
+private:
+    QList<QtMaterial::QtMaterialCommand> m_commands;
+    std::function<void(const QString&)> m_action;
+    int m_delay;
+    quint64 m_request = 0;
+};
+
+} // namespace
+
 NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
     : QWidget(parent)
 {
@@ -18,7 +50,7 @@ NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
     layout->setContentsMargins(24, 24, 24, 24);
     layout->setSpacing(12);
 
-    auto* title = new QLabel(tr("0.9 — Desktop navigation"), this);
+    auto* title = new QLabel(tr("Desktop navigation 2.0"), this);
     layout->addWidget(title);
 
     auto* explanation = new QLabel(
@@ -36,6 +68,9 @@ NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
         tr("REQ-42")
     });
     breadcrumb->setResponsiveElisionEnabled(true);
+    breadcrumb->setLocationEditable(true);
+    breadcrumb->setItemIcon(0, style()->standardIcon(QStyle::SP_DirHomeIcon));
+    breadcrumb->setItemIcon(1, style()->standardIcon(QStyle::SP_DirIcon));
     breadcrumb->setMaximumWidth(420);
     layout->addWidget(breadcrumb);
 
@@ -50,6 +85,19 @@ NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
             currentContext->setText(
                 QObject::tr("Current context: %1").arg(text));
         });
+
+    connect(breadcrumb, &QtMaterial::QtMaterialBreadcrumb::locationSubmitted, this,
+        [breadcrumb, currentContext](const QString& location) {
+            const QStringList path = location.split(QLatin1Char('/'), Qt::SkipEmptyParts);
+            if (!path.isEmpty()) {
+                breadcrumb->setItems(path);
+                breadcrumb->setLocation(location);
+                currentContext->setText(QObject::tr("Current context: %1").arg(location));
+            }
+        });
+    auto* editLocation = new QPushButton(tr("Edit location (Ctrl+L while focused)"), this);
+    connect(editLocation, &QPushButton::clicked, breadcrumb, [breadcrumb]() { breadcrumb->setEditingLocation(true); });
+    layout->addWidget(editLocation);
 
     auto* model = new QStandardItemModel(4, 1, this);
     const QStringList commands = {
@@ -72,6 +120,11 @@ NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
             model->index(row, 0),
             shortcuts.at(row),
             QtMaterial::QtMaterialCommandPalette::ShortcutRole);
+        model->setData(model->index(row, 0), QStringLiteral("navigation.%1").arg(row),
+            QtMaterial::QtMaterialCommandPalette::IdRole);
+        model->setData(model->index(row, 0), tr("Navigation"), QtMaterial::QtMaterialCommandPalette::SectionRole);
+        model->setData(model->index(row, 0), tr("Navigate to a workspace destination"), QtMaterial::QtMaterialCommandPalette::SecondaryTextRole);
+        model->setData(model->index(row, 0), style()->standardIcon(QStyle::SP_DirIcon), Qt::DecorationRole);
     }
 
     auto* palette = new QtMaterial::QtMaterialCommandPalette(this);
@@ -93,7 +146,7 @@ NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
                 currentContext->setText(QObject::tr("Current context: Requirements"));
                 break;
             case 2:
-                breadcrumb->setCurrentIndex(2);
+                breadcrumb->setCurrentIndex(breadcrumb->items().size() - 1);
                 currentContext->setText(QObject::tr("Current context: REQ-42"));
                 break;
             case 3:
@@ -104,29 +157,43 @@ NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
             }
         });
 
-    const auto openCommandPalette = [palette]() {
-        palette->setQuery(QString());
-        palette->show();
-        palette->raise();
-        palette->activateWindow();
+    const auto command = [](const QString& id, const QString& title, const QString& section,
+                            const QString& description, const QIcon& icon, const QKeySequence& shortcut) {
+        QtMaterial::QtMaterialCommand result;
+        result.id = id; result.text = title; result.section = section;
+        result.secondaryText = description; result.icon = icon; result.shortcut = shortcut;
+        return result;
     };
+    const auto action = [currentContext](const QString& id) {
+        currentContext->setText(QObject::tr("Executed command: %1").arg(id));
+    };
+    auto* commandProvider = new GalleryCommandProvider({
+        command(QStringLiteral("project.build"), tr("Build project"), tr("Project"),
+            tr("Compile the current workspace"), style()->standardIcon(QStyle::SP_ComputerIcon), QKeySequence(QStringLiteral("Ctrl+B"))),
+        command(QStringLiteral("project.tests"), tr("Run tests"), tr("Project"),
+            tr("Run the workspace test suite"), style()->standardIcon(QStyle::SP_MediaPlay), QKeySequence(QStringLiteral("Ctrl+T")))
+    }, action, 0, this);
+    auto* recentFilesProvider = new GalleryCommandProvider({
+        command(QStringLiteral("file.req42"), tr("Open REQ-42.xml"), tr("Recent files"),
+            tr("Workspace / Requirements / Module"), style()->standardIcon(QStyle::SP_FileIcon), QKeySequence()),
+        command(QStringLiteral("file.model"), tr("Open model.xml"), tr("Recent files"),
+            tr("Workspace / Models"), style()->standardIcon(QStyle::SP_FileIcon), QKeySequence())
+    }, action, 180, this);
+    auto* settingsProvider = new GalleryCommandProvider({
+        command(QStringLiteral("settings.preferences"), tr("Open preferences"), tr("Settings"),
+            tr("Editor, shortcuts and workspace preferences"), style()->standardIcon(QStyle::SP_FileDialogDetailedView), QKeySequence(QStringLiteral("Ctrl+,")))
+    }, action, 0, this);
+    palette->addProvider(commandProvider);
+    palette->addProvider(recentFilesProvider);
+    palette->addProvider(settingsProvider);
+    palette->setCommandFavorite(QStringLiteral("project.build"), true);
 
-    auto* openPalette =
-        new QPushButton(tr("Commands (Ctrl+K)"), this);
-    connect(
-        openPalette,
-        &QPushButton::clicked,
-        this,
-        openCommandPalette);
+    auto* openPalette = new QPushButton(tr("Commands (Ctrl+K / Ctrl+P)"), this);
+    connect(openPalette, &QPushButton::clicked, palette, &QtMaterial::QtMaterialCommandPalette::openPalette);
     layout->addWidget(openPalette);
-
-    auto* shortcut =
-        new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_K), this);
-    connect(
-        shortcut,
-        &QShortcut::activated,
-        this,
-        openCommandPalette);
+    auto* paletteHelp = new QLabel(tr("Try fuzzy search such as 'bld'. Ctrl+D toggles a favorite; activated commands appear in history. Recent files load asynchronously."), this);
+    paletteHelp->setWordWrap(true);
+    layout->addWidget(paletteHelp);
 
     auto* menuTitle = new QLabel(tr("Menu"), this);
     layout->addWidget(menuTitle);

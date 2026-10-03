@@ -1,7 +1,10 @@
 #include "advanceddatapage.h"
 
 #include <QHeaderView>
+#include <QHBoxLayout>
 #include <QLabel>
+#include <QPushButton>
+#include <QSettings>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QVBoxLayout>
@@ -18,7 +21,7 @@ AdvancedDataPage::AdvancedDataPage(QWidget* parent)
     layout->setContentsMargins(24, 24, 24, 24);
     layout->setSpacing(12);
 
-    layout->addWidget(new QLabel(tr("0.9 — Desktop & productivity"), this));
+    layout->addWidget(new QLabel(tr("Desktop & productivity 2.0"), this));
 
     auto* tableModel = new QStandardItemModel(0, 3, this);
     tableModel->setHorizontalHeaderLabels({tr("Name"), tr("State"), tr("Value")});
@@ -48,7 +51,30 @@ AdvancedDataPage::AdvancedDataPage(QWidget* parent)
     split->setPaneMinimumExtent(0, 180);
     split->setPaneMinimumExtent(1, 320);
     split->setStretchFactor(1, 1);
+    split->setDefaultPaneSizes({240, 640});
+    split->setRememberPaneSizes(true);
+    split->setAnimatedCollapseEnabled(true);
+    QSettings settings;
+    const QByteArray savedState = settings.value(QStringLiteral("gallery/productivity/split")).toByteArray();
+    if (!savedState.isEmpty()) { split->restorePaneState(savedState); }
+    connect(split, &QtMaterial::QtMaterialSplitView::paneStateChanged, this, [](const QByteArray& state) {
+        QSettings settings;
+        settings.setValue(QStringLiteral("gallery/productivity/split"), state);
+    });
     layout->addWidget(split, 1);
+
+    auto* splitActions = new QHBoxLayout;
+    auto* collapseTree = new QPushButton(tr("Collapse / restore tree"), this);
+    connect(collapseTree, &QPushButton::clicked, split, [split]() { split->setPaneCollapsed(0, !split->paneCollapsed(0)); });
+    auto* resetSplit = new QPushButton(tr("Reset pane sizes"), this);
+    connect(resetSplit, &QPushButton::clicked, split, &QtMaterial::QtMaterialSplitView::resetPaneSizes);
+    splitActions->addWidget(collapseTree);
+    splitActions->addWidget(resetSplit);
+    splitActions->addStretch();
+    layout->addLayout(splitActions);
+    auto* splitHelp = new QLabel(tr("Focus the divider: arrows resize, Shift accelerates, Home/End reach limits, Enter collapses/restores. Double-click resets; sizes are remembered."), this);
+    splitHelp->setWordWrap(true);
+    layout->addWidget(splitHelp);
 
     auto* pagination = new QtMaterial::QtMaterialPagination(this);
     pagination->setPageSize(10);
