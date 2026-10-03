@@ -1203,7 +1203,7 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Range Slider now has focused two-handle keyboard, accessibility, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
+        "Range Slider now has focused two-handle keyboard, accessibility, RTL and fractional desktop DPI evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
       ],
       "nextActions": [
         "Review and promote the Range Slider candidate golden set before raising visual maturity further."
@@ -1227,7 +1227,7 @@
           "tst_slider_maturity exercises the focused keyboard contract for Range Slider while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_slider_maturity and/or the focused maturity suite renders Range Slider at DPR 2.0."
+          "tst_slider_maturity renders Range Slider at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_slider_maturity verifies RTL propagation or visual-direction behavior for Range Slider."
@@ -1412,7 +1412,7 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Slider now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
+        "Slider now has focused accessibility, keyboard, RTL and fractional desktop DPI evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
       ],
       "nextActions": [
         "Review and promote the Slider candidate golden set before raising visual maturity further."
@@ -1436,7 +1436,7 @@
           "tst_slider_maturity exercises the focused keyboard contract for Slider while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_slider_maturity and/or the focused maturity suite renders Slider at DPR 2.0."
+          "tst_slider_maturity renders Slider at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_slider_maturity verifies RTL propagation or visual-direction behavior for Slider."
