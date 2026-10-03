@@ -1,3 +1,4 @@
+#include <QCheckBox>
 #include <QtTest/QtTest>
 
 #include <QImage>
