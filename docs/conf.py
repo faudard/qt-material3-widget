@@ -68,7 +68,7 @@ default_role = "any"
 html_theme = "furo"
 html_title = project
 html_baseurl = os.environ.get("DOCS_BASE_URL", "")
-html_static_path = []
+html_static_path = ["_static"]
 
 nitpicky = False
 
