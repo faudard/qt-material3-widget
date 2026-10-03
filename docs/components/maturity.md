@@ -57,19 +57,19 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `input.autocomplete` | Autocomplete | `usable` | 2 | 2 | 2 | 2 | 2 | 1 | 1 | 2 | 2 | 2 | Autocomplete has focused popup, keyboard and accessibility tests but lacks deterministic visual, RTL and HiDPI conformance evidence. |
-| `input.combo-box` | Combo Box | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Combo Box has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
-| `input.date-picker` | Date Picker | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 2 | 2 | Date Picker has stable selection/theme tests but needs dedicated keyboard, accessibility, RTL, HiDPI and visual-conformance evidence. |
-| `input.date-range-picker` | Date Range Picker | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Date Range Picker has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
-| `input.date.field` | Date Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Date Field Material reference model or deterministic visual conformance evidence is available. |
+| `input.autocomplete` | Autocomplete | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Autocomplete now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
+| `input.combo-box` | Combo Box | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Combo Box now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
+| `input.date-picker` | Date Picker | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Date Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
+| `input.date-range-picker` | Date Range Picker | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Date Range Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
+| `input.date.field` | Date Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Date Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.range-slider` | Range Slider | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Range Slider has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
-| `input.search-bar` | Search Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Search Bar has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
-| `input.search-view` | Search View | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Search View has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `input.search-bar` | Search Bar | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Search Bar now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
+| `input.search-view` | Search View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Search View now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.slider` | Slider | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Slider has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
-| `input.text.filled` | Filled Text Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Filled Text Field Material reference model or deterministic visual conformance evidence is available. |
-| `input.text.outlined` | Outlined Text Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Outlined Text Field Material reference model or deterministic visual conformance evidence is available. |
-| `input.time-field` | Time Field | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Time Field has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
-| `input.time-picker` | Time Picker | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Time Picker has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `input.text.filled` | Filled Text Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Filled Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
+| `input.text.outlined` | Outlined Text Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Outlined Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
+| `input.time-field` | Time Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Time Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
+| `input.time-picker` | Time Picker | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Time Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 
 ### Layouts
 
@@ -166,19 +166,19 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Table | Add Table reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
 | Tree View | Close the declared 0.9 maturity gap before promoting this component to complete. |
 | Divider | Add Divider token, RTL and HiDPI reference evidence before raising maturity axes. |
-| Autocomplete | Add Autocomplete visual-reference coverage plus dedicated RTL and DPR test cases. |
-| Combo Box | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Combo Box. |
-| Date Picker | Add a focused Date Picker interaction/accessibility suite and deterministic visual references. |
-| Date Range Picker | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Date Range Picker. |
-| Date Field | Add Date Field state, accessibility and visual evidence before raising maturity axes. |
+| Autocomplete | Add deterministic Material visual-reference/state-matrix coverage for Autocomplete before promoting maturity further. |
+| Combo Box | Add deterministic Material visual-reference/state-matrix coverage for Combo Box before promoting maturity further. |
+| Date Picker | Add deterministic Material visual-reference/state-matrix coverage for Date Picker before promoting maturity further. |
+| Date Range Picker | Add deterministic Material visual-reference/state-matrix coverage for Date Range Picker before promoting maturity further. |
+| Date Field | Add deterministic Material visual-reference/state-matrix coverage for Date Field before promoting maturity further. |
 | Range Slider | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Range Slider. |
-| Search Bar | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Search Bar. |
-| Search View | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Search View. |
+| Search Bar | Add deterministic Material visual-reference/state-matrix coverage for Search Bar before promoting maturity further. |
+| Search View | Add deterministic Material visual-reference/state-matrix coverage for Search View before promoting maturity further. |
 | Slider | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Slider. |
-| Filled Text Field | Add Text Field state, accessibility and visual evidence before raising maturity axes. |
-| Outlined Text Field | Add Text Field state, accessibility and visual evidence before raising maturity axes. |
-| Time Field | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Time Field. |
-| Time Picker | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Time Picker. |
+| Filled Text Field | Add deterministic Material visual-reference/state-matrix coverage for Filled Text Field before promoting maturity further. |
+| Outlined Text Field | Add deterministic Material visual-reference/state-matrix coverage for Outlined Text Field before promoting maturity further. |
+| Time Field | Add deterministic Material visual-reference/state-matrix coverage for Time Field before promoting maturity further. |
+| Time Picker | Add deterministic Material visual-reference/state-matrix coverage for Time Picker before promoting maturity further. |
 | Split View | Close the declared 0.9 maturity gap before promoting this component to complete. |
 | Breadcrumb | Close the declared 0.9 maturity gap before promoting this component to complete. |
 | Command Palette | Close the declared 0.9 maturity gap before promoting this component to complete. |

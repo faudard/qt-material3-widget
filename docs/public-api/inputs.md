@@ -4,8 +4,14 @@ Input family:
 - `QtMaterialOutlinedTextField`
 - `QtMaterialFilledTextField`
 - `QtMaterialAutocomplete`
+- `QtMaterialComboBox`
+- `QtMaterialSearchBar`
+- `QtMaterialSearchView`
 - `QtMaterialDateField`
 - `QtMaterialDatePicker`
+- `QtMaterialDateRangePicker`
+- `QtMaterialTimeField`
+- `QtMaterialTimePicker`
 
 ### TextField RTL contract
 
@@ -115,3 +121,22 @@ minimum and maximum dates, previous/next/today navigation, ThemeContext inherita
 authored `DatePickerSpec` overrides. `QtMaterialDateRangePicker` composes two Date Picker
 instances for ordered start/end selection rather than introducing a second calendar model.
 
+
+## Accessibility, keyboard, RTL and HiDPI contract
+
+The input family keeps Qt-native editors and model/view controls as the interaction
+boundary. Labels and state summaries are propagated to the relevant native child controls
+without overwriting application-provided accessible names. Editable ComboBox labels are
+mirrored to their internal `QLineEdit`; Autocomplete initializes and refreshes its
+accessible fallback from the placeholder; Search View names its result list explicitly;
+Date Range Picker distinguishes its start and end calendar surfaces.
+
+Keyboard behavior remains native where Qt already defines it: line edits accept normal text
+editing, ComboBox keeps native selection navigation, Search Bar submits with Return,
+Date Picker exposes Return activation, and Time Field/Time Picker retain `QTimeEdit`
+section navigation. Component-specific Autocomplete and Date Field interaction remains
+covered by their focused tests.
+
+RTL is inherited by composed native children, including editors, result views, calendars and
+time fields. `tst_input_maturity` verifies this propagation and provides DPR 2.0 rendering
+smoke coverage for all eleven non-slider Input components.

@@ -65,6 +65,15 @@ checkable state and keyboard navigation. Table, GridList and Carousel remain bas
 Qt Model/View and are part of the 0.8 desktop-heavy maturity pass. Table sorting,
 selection, dense rows and resizable columns remain native Qt behaviors.
 
+## Input maturity evidence
+
+The non-slider Input family shares a dedicated maturity contract in
+`tst_input_maturity`. It covers accessible naming of composed native controls,
+representative keyboard behavior, RTL propagation and DPR 2.0 rendering smoke for
+TextField, ComboBox, Autocomplete, Search Bar/View, Date Field/Picker/Range Picker and
+Time Field/Picker. Focused component tests remain responsible for deeper validation,
+popup and parsing behavior.
+
 ## Release requirements
 
 Every component introduced into the 0.8 release scope has a public header, production

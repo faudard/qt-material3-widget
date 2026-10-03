@@ -296,6 +296,7 @@ void QtMaterialDatePicker::buildUi()
 
     d_ptr->m_calendar = new QCalendarWidget(this);
     d_ptr->m_calendar->setObjectName(QStringLiteral("QtMaterialDatePickerCalendar"));
+    d_ptr->m_calendar->setAccessibleName(tr("Calendar"));
     d_ptr->m_calendar->setGridVisible(false);
     d_ptr->m_calendar->setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
     d_ptr->m_calendar->setNavigationBarVisible(false);
@@ -388,6 +389,8 @@ void QtMaterialDatePicker::updateTranslations()
     d_ptr->m_todayButton->setText(tr("Today"));
     d_ptr->m_todayButton->setAccessibleName(
         tr("Show today"));
+    d_ptr->m_calendar->setAccessibleName(
+        tr("Calendar"));
 }
 
 void QtMaterialDatePicker::applyResolvedSpec()
