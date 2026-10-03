@@ -74,7 +74,7 @@ Page widgets expose dynamic automation metadata:
 - routes and URL navigation;
 - LTR and RTL keyboard behavior;
 - accessibility surface;
-- DPR 2.0 render smoke.
+- desktop render smoke at 100%, 125%, 150%, 175% and 200% scale equivalents.
 
 The gallery navigation page includes a Tabs example with routes, IDs, and a badge.
 
@@ -91,7 +91,7 @@ first/last enabled destination, and Space/Return/Enter activate the current dest
 The rail keeps the default accessible name `Navigation rail`, exposes a synchronized container
 summary, and provides per-destination accessible text including position, selected state and
 disabled state. Focused tests cover disabled-item skipping, activation, RTL directional keyboard
-behavior and DPR 2.0 rendering.
+behavior and desktop rendering at 100%, 125%, 150%, 175% and 200% scale equivalents.
 
 ## Menu
 
@@ -103,7 +103,7 @@ text.
 The row painter mirrors check columns, icons, labels and shortcut text in RTL while preserving
 logical item order and geometry. `tst_menu` certifies disabled/separator skipping, activation,
 checkable state, Escape dismissal, accessibility summaries, type-ahead navigation, RTL layout
-stability and DPR 2.0 rendering.
+stability and desktop rendering at 100%, 125%, 150%, 175% and 200% scale equivalents.
 
 The advanced Navigation Gallery contains a dedicated Menu showcase with shortcut labels,
 checkable state and a disabled action so the same interaction and RTL behavior can be inspected

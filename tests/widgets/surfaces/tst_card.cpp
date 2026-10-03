@@ -1,4 +1,5 @@
 #include <QtTest/QtTest>
+#include <QPixmap>
 
 #include <QVBoxLayout>
 #include <QWidget>
@@ -17,6 +18,8 @@ private slots:
     void keyboardActivationEmitsClicked();
     void mouseActivationEmitsClicked();
     void accessibilitySummaryTracksContent();
+    void rtlAndDesktopScaleRendering_data();
+    void rtlAndDesktopScaleRendering();
 };
 
 void tst_QtMaterialCard::construction()
@@ -160,6 +163,37 @@ void tst_QtMaterialCard::accessibilitySummaryTracksContent()
     QCOMPARE(card.accessibleName(), QStringLiteral("Project status"));
     QCOMPARE(card.accessibleDescription(), summary);
     QVERIFY(spy.count() >= 2);
+}
+
+
+void tst_QtMaterialCard::rtlAndDesktopScaleRendering_data()
+{
+    QTest::addColumn<qreal>("dpr");
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent") << qreal(2.00);
+}
+
+void tst_QtMaterialCard::rtlAndDesktopScaleRendering()
+{
+    QFETCH(qreal, dpr);
+    QtMaterial::QtMaterialCard card;
+    card.setTitleText(QStringLiteral("Project status"));
+    card.setBodyText(QStringLiteral("Build is green"));
+    card.setVariant(QtMaterial::QtMaterialCard::Variant::Outlined);
+    card.setLayoutDirection(Qt::RightToLeft);
+    card.resize(320, 140);
+    QCOMPARE(card.layoutDirection(), Qt::RightToLeft);
+
+    QPixmap pixmap(qMax(1, qRound(card.width() * dpr)),
+                   qMax(1, qRound(card.height() * dpr)));
+    pixmap.setDevicePixelRatio(dpr);
+    pixmap.fill(Qt::transparent);
+    card.render(&pixmap);
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), dpr);
 }
 
 QTEST_MAIN(tst_QtMaterialCard)

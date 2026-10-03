@@ -21,7 +21,8 @@ private slots:
     void reportsRowAccessibleTextWithHeaders();
     void keyboardActivationEmitsRowActivated();
     void modelChangesUpdateAccessibilitySummary();
-    void rtlAndHighDpiRendering();
+    void rtlAndDesktopScaleRendering_data();
+    void rtlAndDesktopScaleRendering();
 };
 
 static QStandardItemModel* makeModel(QObject* parent = nullptr)
@@ -139,8 +140,19 @@ void tst_Table::modelChangesUpdateAccessibilitySummary()
     QVERIFY(spy.count() >= 1);
 }
 
-void tst_Table::rtlAndHighDpiRendering()
+void tst_Table::rtlAndDesktopScaleRendering_data()
 {
+    QTest::addColumn<qreal>("dpr");
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent") << qreal(2.00);
+}
+
+void tst_Table::rtlAndDesktopScaleRendering()
+{
+    QFETCH(qreal, dpr);
     QtMaterialTable table;
     auto model = std::unique_ptr<QStandardItemModel>(makeModel());
     table.setModel(model.get());
@@ -154,14 +166,14 @@ void tst_Table::rtlAndHighDpiRendering()
     QVERIFY(table.accessibleDescription().contains(QStringLiteral("2 rows")));
 
     QPixmap pixmap(
-        table.width() * 2,
-        table.height() * 2);
-    pixmap.setDevicePixelRatio(2.0);
+        qMax(1, qRound(table.width() * dpr)),
+        qMax(1, qRound(table.height() * dpr)));
+    pixmap.setDevicePixelRatio(dpr);
     pixmap.fill(Qt::transparent);
     table.render(&pixmap);
 
     QVERIFY(!pixmap.isNull());
-    QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+    QCOMPARE(pixmap.devicePixelRatio(), dpr);
 }
 
 QTEST_MAIN(tst_Table)

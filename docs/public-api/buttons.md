@@ -177,7 +177,7 @@ For each button class, the generated API page should eventually answer five ques
 
 The Gallery is the maintained visual reference for these controls. Inspect the Buttons page for light/dark, interaction and direction variants; reviewed visual-regression references provide the deterministic release evidence.
 
-### Filled Button
+### Filled Button consumer guide
 
 **Screenshot.** Buttons Gallery, Filled Button examples.
 
@@ -200,7 +200,7 @@ save->setText(QStringLiteral("Save"));
 connect(save, &QAbstractButton::clicked, this, &Editor::save);
 ```
 
-### Outlined Button
+### Outlined Button consumer guide
 
 **Screenshot.** Buttons Gallery, Outlined Button examples.
 
@@ -222,7 +222,7 @@ auto *cancel = new QtMaterial::QtMaterialOutlinedButton(parent);
 cancel->setText(QStringLiteral("Cancel"));
 ```
 
-### Icon Button
+### Icon Button consumer guide
 
 **Screenshot.** Buttons Gallery, Icon Button examples.
 

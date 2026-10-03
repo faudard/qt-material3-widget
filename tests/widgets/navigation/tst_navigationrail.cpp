@@ -18,7 +18,8 @@ private slots:
     void rtlHorizontalKeysFollowVisualDirection();
     void labelsVisibleEmitsOnlyOnChange();
     void accessibilitySummaryTracksSelectionAndEnabledState();
-    void rendersAtHighDpi();
+    void rendersAtDesktopScaleFactors_data();
+    void rendersAtDesktopScaleFactors();
 };
 
 void NavigationRailTest::constructionAndDestinationModel()
@@ -193,8 +194,19 @@ void NavigationRailTest::accessibilitySummaryTracksSelectionAndEnabledState()
     QVERIFY(summarySpy.count() >= 1);
 }
 
-void NavigationRailTest::rendersAtHighDpi()
+void NavigationRailTest::rendersAtDesktopScaleFactors_data()
 {
+    QTest::addColumn<qreal>("dpr");
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent") << qreal(2.00);
+}
+
+void NavigationRailTest::rendersAtDesktopScaleFactors()
+{
+    QFETCH(qreal, dpr);
     QtMaterialNavigationRail rail;
     rail.addDestination(QStringLiteral("Home"));
     rail.addDestination(QStringLiteral("Search"));
@@ -203,14 +215,14 @@ void NavigationRailTest::rendersAtHighDpi()
     rail.resize(rail.sizeHint());
 
     QPixmap pixmap(
-        rail.width() * 2,
-        rail.height() * 2);
-    pixmap.setDevicePixelRatio(2.0);
+        qMax(1, qRound(rail.width() * dpr)),
+        qMax(1, qRound(rail.height() * dpr)));
+    pixmap.setDevicePixelRatio(dpr);
     pixmap.fill(Qt::transparent);
     rail.render(&pixmap);
 
     QVERIFY(!pixmap.isNull());
-    QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+    QCOMPARE(pixmap.devicePixelRatio(), dpr);
 }
 
 QTEST_MAIN(NavigationRailTest)

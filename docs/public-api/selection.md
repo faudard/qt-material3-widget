@@ -22,8 +22,9 @@ A checkbox may also represent an indeterminate state when the value is mixed or 
 ```cpp
 checkbox->setTristate(true);
 checkbox->setCheckState(Qt::PartiallyChecked);
-## Radio button
 ```
+
+## Radio button
 Use QtMaterialRadioButton when the user must choose one option from a mutually exclusive group.
 ```cpp
 auto* optionA = new QtMaterial::QtMaterialRadioButton(parent);
@@ -80,14 +81,12 @@ to the visual direction: Right means on in LTR and off in RTL; Left means off in
 in RTL.
 
 Segmented Button supports Left/Right/Home/End navigation, skips disabled segments and maps
-horizontal navigation to visual direction under RTL. The selection-family maturity suite also
-checks LTR/RTL size-hint stability and DPR 2.0 rendering smoke for Checkbox, Radio Button,
-Switch and Segmented Button.
+horizontal navigation to visual direction under RTL. The selection-family maturity suite also checks explicit focus policy, Home/End boundary navigation, disabled-segment skipping, LTR/RTL size-hint stability, and desktop rendering at 100%, 125%, 150%, 175%, and 200% scale equivalents for Checkbox, Radio Button, Switch and Segmented Button.
 
 
 ## Consumer component cards
 
-### Checkbox
+### Checkbox consumer guide
 
 **Screenshot.** Gallery route `/selection/checkbox`.
 
@@ -110,7 +109,7 @@ choice->setText(QStringLiteral("Enable notifications"));
 choice->setChecked(true);
 ```
 
-### Radio Button
+### Radio Button consumer guide
 
 **Screenshot.** Gallery route `/selection/radio-button`.
 
@@ -132,7 +131,7 @@ auto *metric = new QtMaterial::QtMaterialRadioButton(parent);
 metric->setText(QStringLiteral("Metric"));
 ```
 
-### Switch
+### Switch consumer guide
 
 **Screenshot.** Gallery route `/selection/switch`.
 
@@ -155,7 +154,7 @@ darkMode->setText(QStringLiteral("Dark mode"));
 darkMode->setChecked(false);
 ```
 
-### Segmented Button
+### Segmented Button consumer guide
 
 **Screenshot.** Gallery route `/selection/segmented-button`.
 

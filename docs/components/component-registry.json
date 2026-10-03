@@ -653,19 +653,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Chip family has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Reviewed deterministic Material visual-reference evidence remains before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Chip family."
+        "Promote reviewed Chip family visual baselines before complete maturity."
       ],
       "evidence": {
         "api": [
@@ -678,16 +678,18 @@
           "Chip family exposes its primary runtime states and invariants."
         ],
         "accessibility": [
-          "Chip family sets accessible names/descriptions or relies on the native Qt accessible control."
+          "Chip text supplies the accessible name through the native abstract-button contract.",
+          "tst_component_expansion certifies the accessible name for the Chip family."
         ],
         "keyboard": [
-          "Chip family preserves native Qt keyboard behavior and 0.8 smoke coverage."
+          "Chip preserves the native strong-focus abstract-button keyboard contract.",
+          "tst_component_expansion certifies the focus contract across the public Chip family."
         ],
         "hidpi": [
-          "Chip family uses Qt logical geometry and device-independent painting."
+          "tst_component_expansion renders Assist, Filter, Input and Suggestion chips at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "Chip family preserves Qt layout direction; range geometry handles RTL where directional."
+          "tst_component_expansion renders every public Chip variant under RTL layout direction."
         ],
         "tests": [
           "tst_component_expansion exercises the 0.8 public contract."
@@ -929,7 +931,7 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Table now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; reviewed Material visual-reference evidence remains."
+        "Table now has focused accessibility, keyboard, RTL and fractional desktop DPI evidence plus a Desktop Productivity candidate visual matrix; reviewed Material visual-reference evidence remains."
       ],
       "nextActions": [
         "Review and promote the Table candidate goldens and continue desktop table capability work before raising maturity further."
@@ -953,7 +955,7 @@
           "tst_table exercises the focused keyboard contract for Table while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_table and/or the focused maturity suite renders Table at DPR 2.0."
+          "tst_table and/or the focused maturity suite renders Table at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_table verifies RTL propagation or visual-direction behavior for Table."
@@ -995,9 +997,9 @@
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Combo Box now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Combo Box now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Combo Box before promoting maturity further."
@@ -1019,7 +1021,7 @@
           "tst_input_maturity exercises representative keyboard behavior for Combo Box; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "tst_input_maturity renders Combo Box at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_input_maturity renders Combo Box at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_input_maturity verifies RTL propagation through Combo Box and its relevant native child controls."
@@ -1064,9 +1066,9 @@
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Date Range Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Date Range Picker now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Date Range Picker before promoting maturity further."
@@ -1088,7 +1090,7 @@
           "tst_input_maturity exercises representative keyboard behavior for Date Range Picker; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "tst_input_maturity renders Date Range Picker at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_input_maturity renders Date Range Picker at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_input_maturity verifies RTL propagation through Date Range Picker and its relevant native child controls."
@@ -1133,9 +1135,9 @@
       "tests": 2,
       "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Date Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Date Field now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Date Field before promoting maturity further."
@@ -1157,7 +1159,7 @@
           "tst_input_maturity exercises representative keyboard behavior for Date Field; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "tst_input_maturity renders Date Field at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_input_maturity renders Date Field at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_input_maturity verifies RTL propagation through Date Field and its relevant native child controls."
@@ -1201,7 +1203,7 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Range Slider now has focused two-handle keyboard, accessibility, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
+        "Range Slider now has focused two-handle keyboard, accessibility, RTL and fractional desktop DPI evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
       ],
       "nextActions": [
         "Review and promote the Range Slider candidate golden set before raising visual maturity further."
@@ -1225,7 +1227,7 @@
           "tst_slider_maturity exercises the focused keyboard contract for Range Slider while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_slider_maturity and/or the focused maturity suite renders Range Slider at DPR 2.0."
+          "tst_slider_maturity renders Range Slider at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_slider_maturity verifies RTL propagation or visual-direction behavior for Range Slider."
@@ -1270,9 +1272,9 @@
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Search Bar now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Search Bar now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Search Bar before promoting maturity further."
@@ -1294,7 +1296,7 @@
           "tst_input_maturity exercises representative keyboard behavior for Search Bar; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "tst_input_maturity renders Search Bar at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_input_maturity renders Search Bar at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_input_maturity verifies RTL propagation through Search Bar and its relevant native child controls."
@@ -1339,9 +1341,9 @@
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Search View now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Search View now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Search View before promoting maturity further."
@@ -1363,7 +1365,7 @@
           "tst_input_maturity exercises representative keyboard behavior for Search View; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "tst_input_maturity renders Search View at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_input_maturity renders Search View at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_input_maturity verifies RTL propagation through Search View and its relevant native child controls."
@@ -1410,7 +1412,7 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Slider now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
+        "Slider now has focused accessibility, keyboard, RTL and fractional desktop DPI evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
       ],
       "nextActions": [
         "Review and promote the Slider candidate golden set before raising visual maturity further."
@@ -1434,7 +1436,7 @@
           "tst_slider_maturity exercises the focused keyboard contract for Slider while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_slider_maturity and/or the focused maturity suite renders Slider at DPR 2.0."
+          "tst_slider_maturity renders Slider at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_slider_maturity verifies RTL propagation or visual-direction behavior for Slider."
@@ -1479,9 +1481,9 @@
       "tests": 2,
       "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Filled Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Filled Text Field now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Filled Text Field before promoting maturity further."
@@ -1503,7 +1505,7 @@
           "tst_input_maturity exercises representative keyboard behavior for Filled Text Field; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "tst_input_maturity renders Filled Text Field at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_input_maturity renders Filled Text Field at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_input_maturity verifies RTL propagation through Filled Text Field and its relevant native child controls."
@@ -1545,9 +1547,9 @@
       "tests": 2,
       "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Outlined Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Outlined Text Field now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Outlined Text Field before promoting maturity further."
@@ -1569,7 +1571,7 @@
           "tst_input_maturity exercises representative keyboard behavior for Outlined Text Field; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "tst_input_maturity renders Outlined Text Field at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_input_maturity renders Outlined Text Field at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_input_maturity verifies RTL propagation through Outlined Text Field and its relevant native child controls."
@@ -1611,9 +1613,9 @@
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Time Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Time Field now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Time Field before promoting maturity further."
@@ -1635,7 +1637,7 @@
           "tst_input_maturity exercises representative keyboard behavior for Time Field; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "tst_input_maturity renders Time Field at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_input_maturity renders Time Field at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_input_maturity verifies RTL propagation through Time Field and its relevant native child controls."
@@ -1680,9 +1682,9 @@
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Time Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Time Picker now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Time Picker before promoting maturity further."
@@ -1704,7 +1706,7 @@
           "tst_input_maturity exercises representative keyboard behavior for Time Picker; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "tst_input_maturity renders Time Picker at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_input_maturity renders Time Picker at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_input_maturity verifies RTL propagation through Time Picker and its relevant native child controls."
@@ -1751,7 +1753,7 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Navigation Rail now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus candidate visual matrices; reviewed stable visual-reference evidence remains before further promotion."
+        "Navigation Rail now has focused accessibility, keyboard, RTL and fractional desktop DPI evidence plus candidate visual matrices; reviewed stable visual-reference evidence remains before further promotion."
       ],
       "nextActions": [
         "Review and promote the Navigation Rail candidate goldens before raising visual maturity further."
@@ -1775,7 +1777,7 @@
           "tst_navigationrail exercises the focused keyboard contract for Navigation Rail while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_navigationrail and/or the focused maturity suite renders Navigation Rail at DPR 2.0."
+          "tst_navigationrail and/or the focused maturity suite renders Navigation Rail at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_navigationrail verifies RTL propagation or visual-direction behavior for Navigation Rail."
@@ -1819,7 +1821,7 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Tabs has focused accessibility, keyboard, RTL, DPR 2.0 and Gallery evidence plus candidate Navigation visual matrices; reviewed stable visual-reference coverage remains before further promotion."
+        "Tabs has focused accessibility, keyboard, RTL, fractional desktop DPI and Gallery evidence plus candidate Navigation visual matrices; reviewed stable visual-reference coverage remains before further promotion."
       ],
       "nextActions": [
         "Review and promote the Tabs candidate goldens before raising visual maturity further."
@@ -1844,7 +1846,7 @@
           "tst_tabs exercises the focused keyboard contract for Tabs while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_tabs and/or the focused maturity suite renders Tabs at DPR 2.0."
+          "tst_tabs and/or the focused maturity suite renders Tabs at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_tabs verifies RTL propagation or visual-direction behavior for Tabs."
@@ -1879,19 +1881,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
+      "accessibility": 2,
       "keyboard": "N/A",
-      "hidpi": 1,
+      "hidpi": 2,
       "rtl": "N/A",
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Circular Progress Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual-reference coverage remains before Circular Progress can be marked complete."
       ],
       "nextActions": [
-        "Add progress token, animation, accessibility and visual evidence before raising maturity axes."
+        "Add reviewed visual references and broader animation-end-state coverage for complete maturity."
       ],
       "evidence": {
         "api": [
@@ -1904,13 +1906,14 @@
           "The shared progress test exercises determinate and indeterminate modes."
         ],
         "accessibility": [
-          "docs/public-api/progress-indicators.md documents value text and summaries."
+          "Circular progress exposes a stable accessible name and determinate/indeterminate value text.",
+          "tst_progressindicators certifies status text, percentage descriptions and async-state accessibility."
         ],
         "keyboard": [
           "Progress indicators are display-only; keyboard activation does not apply."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_progressindicators renders Circular Progress at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "The circular geometry has no leading/trailing layout axis."
@@ -1952,7 +1955,7 @@
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-19",
+      "lastReviewed": "2026-10-03",
       "gaps": [
         "Deterministic visual-reference coverage remains before Linear Progress can be marked complete."
       ],
@@ -1977,7 +1980,7 @@
           "Progress indicators are display-only; keyboard activation does not apply."
         ],
         "hidpi": [
-          "tst_progressindicators includes DPR 2.0 render smoke coverage."
+          "tst_progressindicators renders Linear Progress at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "Production rendering mirrors the active segment for RTL layouts.",
@@ -2020,9 +2023,9 @@
       "tests": 2,
       "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Checkbox has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Checkbox has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Checkbox before promoting maturity further."
@@ -2044,7 +2047,7 @@
           "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Checkbox at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Checkbox at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
@@ -2086,9 +2089,9 @@
       "tests": 2,
       "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Radio Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Radio Button has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Radio Button before promoting maturity further."
@@ -2110,7 +2113,7 @@
           "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Radio Button at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Radio Button at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
@@ -2152,9 +2155,9 @@
       "tests": 2,
       "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Segmented Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Segmented Button has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Segmented Button before promoting maturity further."
@@ -2176,7 +2179,7 @@
           "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Segmented Button at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Segmented Button at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
@@ -2218,9 +2221,9 @@
       "tests": 2,
       "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Switch has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Switch has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Switch before promoting maturity further."
@@ -2242,7 +2245,7 @@
           "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Switch at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Switch at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
@@ -2411,17 +2414,17 @@
       "states": 2,
       "accessibility": 1,
       "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Bottom Sheet Material reference model or deterministic visual conformance evidence is available."
+        "Deeper accessibility/keyboard evidence and reviewed deterministic visual-reference coverage remain before complete maturity."
       ],
       "nextActions": [
-        "Add drag, focus, RTL and visual conformance evidence before raising maturity axes."
+        "Broaden Bottom Sheet semantic/keyboard certification and promote reviewed visual baselines."
       ],
       "evidence": {
         "api": [
@@ -2440,10 +2443,10 @@
           "The release-readiness guide documents Escape and Ctrl+Down behavior."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_bottomsheet renders Bottom Sheet at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "tst_bottomsheet includes dedicated RTL rendering certification."
         ],
         "tests": [
           "Registered target tst_bottomsheet plus drag-robustness coverage exercise simple cases."
@@ -2475,19 +2478,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Card Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic Material visual-reference evidence remains before Card can be marked complete."
       ],
       "nextActions": [
-        "Add Card variant, interaction, accessibility and visual evidence before raising maturity axes."
+        "Promote reviewed Card visual baselines before complete maturity."
       ],
       "evidence": {
         "api": [
@@ -2500,16 +2503,16 @@
           "tests/widgets/surfaces/tst_card.cpp exercises current card behavior."
         ],
         "accessibility": [
-          "The surfaces guide links the focused Card release-readiness contract."
+          "tst_card certifies accessible name/description summaries from title and body content."
         ],
         "keyboard": [
-          "Registered widget tests provide basic interaction coverage."
+          "tst_card certifies StrongFocus for interactive cards and Return activation with pressed/released/clicked signals."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_card renders Card at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "Directional content behavior exists without dedicated RTL conformance evidence."
+          "tst_card includes dedicated RTL rendering certification."
         ],
         "tests": [
           "Registered target tst_card provides simple-case widget coverage."
@@ -2541,19 +2544,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Dialog Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic Material visual-reference evidence remains before Dialog can be marked complete."
       ],
       "nextActions": [
-        "Add Dialog focus, accessibility, RTL and visual evidence before raising maturity axes."
+        "Promote reviewed Dialog visual baselines before complete maturity."
       ],
       "evidence": {
         "api": [
@@ -2566,16 +2569,16 @@
           "tests/widgets/surfaces/tst_dialog.cpp exercises current modal behavior."
         ],
         "accessibility": [
-          "docs/public-api/surfaces.md documents accessible name and description mapping."
+          "tst_dialog certifies title/supporting-text accessible name and description mapping."
         ],
         "keyboard": [
-          "The public guide documents modal focus and keyboard behavior."
+          "tst_dialog certifies initial focus, focus restoration, modal Tab/Backtab containment, Escape policy and default-button Return activation."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_dialog renders Dialog at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "Directional content behavior exists without dedicated RTL conformance evidence."
+          "tst_dialog includes dedicated RTL rendering certification."
         ],
         "tests": [
           "Registered target tst_dialog plus resolver tests provide simple-case coverage."
@@ -2818,7 +2821,7 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Tree View now has focused native keyboard, RTL and DPR 2.0 certification plus a Desktop Productivity candidate visual matrix; deeper screen-reader and reviewed visual evidence remain."
+        "Tree View now has focused native keyboard, RTL and fractional desktop DPI certification plus a Desktop Productivity candidate visual matrix; deeper screen-reader and reviewed visual evidence remain."
       ],
       "nextActions": [
         "Add deeper screen-reader evidence and promote reviewed Tree View visual baselines."
@@ -2842,7 +2845,7 @@
           "tst_desktop_productivity exercises the focused keyboard contract for Tree View while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_desktop_productivity and/or the focused maturity suite renders Tree View at DPR 2.0."
+          "tst_desktop_productivity and/or the focused maturity suite renders Tree View at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Tree View."
@@ -2889,7 +2892,7 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Pagination now has synchronized accessible page/range state, keyboard activation, RTL mirroring and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; dedicated Material token specialization remains."
+        "Pagination now has synchronized accessible page/range state, keyboard activation, RTL mirroring and fractional desktop DPI evidence plus a Desktop Productivity candidate visual matrix; dedicated Material token specialization remains."
       ],
       "nextActions": [
         "Add dedicated Pagination theme-token specialization and promote reviewed visual baselines."
@@ -2913,7 +2916,7 @@
           "tst_desktop_productivity exercises the focused keyboard contract for Pagination while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_desktop_productivity and/or the focused maturity suite renders Pagination at DPR 2.0."
+          "tst_desktop_productivity and/or the focused maturity suite renders Pagination at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Pagination."
@@ -2988,7 +2991,7 @@
           "tst_desktop_navigation_v2 covers native constrained divider movement, Home/End and default reset without resizing an unrelated pane."
         ],
         "hidpi": [
-          "tst_desktop_productivity and/or the focused maturity suite renders Split View at DPR 2.0."
+          "tst_desktop_productivity and/or the focused maturity suite renders Split View at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Split View."
@@ -3066,7 +3069,7 @@
           "tst_desktop_productivity exercises the focused keyboard contract for Breadcrumb while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_desktop_productivity and/or the focused maturity suite renders Breadcrumb at DPR 2.0."
+          "tst_desktop_productivity and/or the focused maturity suite renders Breadcrumb at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Breadcrumb."
@@ -3145,7 +3148,7 @@
           "tst_desktop_navigation_v2 covers disabled-command skipping, favorite toggling and original-model index activation."
         ],
         "hidpi": [
-          "tst_desktop_productivity and/or the focused maturity suite renders Command Palette at DPR 2.0."
+          "tst_desktop_productivity and/or the focused maturity suite renders Command Palette at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Command Palette."
@@ -3262,9 +3265,9 @@
       "tests": 2,
       "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Autocomplete now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Autocomplete now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Autocomplete before promoting maturity further."
@@ -3286,7 +3289,7 @@
           "tst_input_maturity exercises representative keyboard behavior for Autocomplete; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "tst_input_maturity renders Autocomplete at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_input_maturity renders Autocomplete at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_input_maturity verifies RTL propagation through Autocomplete and its relevant native child controls."
@@ -3331,9 +3334,9 @@
       "tests": 2,
       "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Date Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Date Picker now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Date Picker before promoting maturity further."
@@ -3355,7 +3358,7 @@
           "tst_input_maturity exercises representative keyboard behavior for Date Picker; focused tests retain component-specific interaction coverage where applicable."
         ],
         "hidpi": [
-          "tst_input_maturity renders Date Picker at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_input_maturity renders Date Picker at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_input_maturity verifies RTL propagation through Date Picker and its relevant native child controls."
@@ -3402,7 +3405,7 @@
       "docs": 2,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Menu now has focused accessibility, keyboard, RTL, DPR 2.0 and dedicated Gallery evidence plus a candidate visual matrix; reviewed stable visual-reference evidence remains."
+        "Menu now has focused accessibility, keyboard, RTL, fractional desktop DPI and dedicated Gallery evidence plus a candidate visual matrix; reviewed stable visual-reference evidence remains."
       ],
       "nextActions": [
         "Review and promote the Menu candidate goldens before raising visual maturity further."
@@ -3426,7 +3429,7 @@
           "tst_menu exercises the focused keyboard contract for Menu while preserving native Qt behavior where applicable."
         ],
         "hidpi": [
-          "tst_menu and/or the focused maturity suite renders Menu at DPR 2.0."
+          "tst_menu and/or the focused maturity suite renders Menu at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "tst_menu verifies RTL propagation or visual-direction behavior for Menu."

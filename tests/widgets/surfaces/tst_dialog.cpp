@@ -6,6 +6,7 @@
 #include <QTest>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QPixmap>
 
 #include "qtmaterial/widgets/surfaces/qtmaterialdialog.h"
 
@@ -21,6 +22,8 @@ private slots:
     void escapeCanBeDisabled();
     void tabFocusStaysInsideDialog();
     void enterActivatesDefaultButton();
+    void rtlAndDesktopScaleRendering_data();
+    void rtlAndDesktopScaleRendering();
 };
 
 void tst_Dialog::basicConstruction()
@@ -205,6 +208,37 @@ void tst_Dialog::enterActivatesDefaultButton()
     QTest::keyClick(&dialog, Qt::Key_Return);
 
     QCOMPARE(clickedSpy.count(), 1);
+}
+
+void tst_Dialog::rtlAndDesktopScaleRendering_data()
+{
+    QTest::addColumn<qreal>("dpr");
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent") << qreal(2.00);
+}
+
+void tst_Dialog::rtlAndDesktopScaleRendering()
+{
+    QFETCH(qreal, dpr);
+    QWidget host;
+    host.resize(640, 480);
+    QtMaterial::QtMaterialDialog dialog(&host);
+    dialog.setTitleText(QStringLiteral("Settings"));
+    dialog.setSupportingText(QStringLiteral("Review changes"));
+    dialog.setLayoutDirection(Qt::RightToLeft);
+    dialog.resize(420, 260);
+    QCOMPARE(dialog.layoutDirection(), Qt::RightToLeft);
+
+    QPixmap pixmap(qMax(1, qRound(dialog.width() * dpr)),
+                   qMax(1, qRound(dialog.height() * dpr)));
+    pixmap.setDevicePixelRatio(dpr);
+    pixmap.fill(Qt::transparent);
+    dialog.render(&pixmap);
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), dpr);
 }
 
 QTEST_MAIN(tst_Dialog)

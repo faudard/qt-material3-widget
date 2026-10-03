@@ -49,7 +49,8 @@ private slots:
     void supportsPointerNavigation();
     void supportsRtlKeyboardNavigation();
     void exposesAccessibleTabBar();
-    void rendersAtHighDpi();
+    void rendersAtDesktopScaleFactors_data();
+    void rendersAtDesktopScaleFactors();
 };
 
 void TestQtMaterialTabs::constructs()
@@ -289,20 +290,33 @@ void TestQtMaterialTabs::exposesAccessibleTabBar()
     QCOMPARE(bar->tabText(0), QStringLiteral("Overview"));
 }
 
-void TestQtMaterialTabs::rendersAtHighDpi()
+void TestQtMaterialTabs::rendersAtDesktopScaleFactors_data()
 {
+    QTest::addColumn<qreal>("dpr");
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent") << qreal(2.00);
+}
+
+void TestQtMaterialTabs::rendersAtDesktopScaleFactors()
+{
+    QFETCH(qreal, dpr);
     QtMaterial::QtMaterialTabs tabs;
     tabs.resize(480, 160);
     tabs.addTab(new QWidget(&tabs), QStringLiteral("Overview"));
     tabs.addTab(new QWidget(&tabs), QStringLiteral("Settings"));
 
-    QPixmap pixmap(tabs.width() * 2, tabs.height() * 2);
-    pixmap.setDevicePixelRatio(2.0);
+    QPixmap pixmap(
+        qMax(1, qRound(tabs.width() * dpr)),
+        qMax(1, qRound(tabs.height() * dpr)));
+    pixmap.setDevicePixelRatio(dpr);
     pixmap.fill(Qt::transparent);
     tabs.render(&pixmap);
 
     QVERIFY(!pixmap.isNull());
-    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
+    QCOMPARE(pixmap.devicePixelRatio(), dpr);
 }
 
 QTEST_MAIN(TestQtMaterialTabs)
