@@ -30,6 +30,7 @@ private Q_SLOTS:
     void linearIndeterminateAccessibilityUsesStatusText();
     void linearRtlPaintsFromTrailingEdge();
     void linearRendersAtHighDpi();
+    void circularRendersAtHighDpi();
 };
 
 void tst_ProgressIndicators::linearValueIsClamped()
@@ -294,6 +295,21 @@ void tst_ProgressIndicators::linearRendersAtHighDpi()
     QtMaterialLinearProgressIndicator indicator;
     indicator.resize(320, qMax(8, indicator.sizeHint().height()));
     indicator.setValue(0.5);
+
+    QPixmap pixmap(indicator.width() * 2, indicator.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    indicator.render(&pixmap);
+
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
+}
+
+void tst_ProgressIndicators::circularRendersAtHighDpi()
+{
+    QtMaterialCircularProgressIndicator indicator;
+    indicator.resize(56, 56);
+    indicator.setValue(0.625);
 
     QPixmap pixmap(indicator.width() * 2, indicator.height() * 2);
     pixmap.setDevicePixelRatio(2.0);
