@@ -650,22 +650,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Chip family has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Chip family."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2314,22 +2314,22 @@
     "docsPath": "docs/public-api/surfaces.md",
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Banner Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Banner state, focus, RTL and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2380,22 +2380,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Bottom App Bar Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add App Bar state, action, RTL and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2446,22 +2446,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Bottom Sheet Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add drag, focus, RTL and visual conformance evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2512,22 +2512,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Card Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Card variant, interaction, accessibility and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2578,22 +2578,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Dialog Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Dialog focus, accessibility, RTL and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2644,22 +2644,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Navigation Drawer Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Drawer state, focus, RTL and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2710,22 +2710,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-19",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Reviewed visual-reference coverage and a broader transient-surface matrix remain before complete maturity."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add deterministic visual references and extended transient-surface state coverage for complete maturity."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2780,22 +2780,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Top App Bar Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add App Bar state, action, RTL and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
