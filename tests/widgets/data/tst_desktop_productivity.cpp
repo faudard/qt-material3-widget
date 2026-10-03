@@ -169,8 +169,19 @@ private slots:
         QCOMPARE(pagination.page(), 1);
     }
 
-    void treeViewKeyboardRtlAndHighDpi()
+    void treeViewKeyboardRtlAndDesktopScaleFactors_data()
     {
+        QTest::addColumn<qreal>("dpr");
+        QTest::newRow("100-percent") << qreal(1.00);
+        QTest::newRow("125-percent") << qreal(1.25);
+        QTest::newRow("150-percent") << qreal(1.50);
+        QTest::newRow("175-percent") << qreal(1.75);
+        QTest::newRow("200-percent") << qreal(2.00);
+    }
+
+    void treeViewKeyboardRtlAndDesktopScaleFactors()
+    {
+        QFETCH(qreal, dpr);
         QStandardItemModel model;
         auto* root = new QStandardItem(QStringLiteral("Root"));
         root->appendRow(new QStandardItem(QStringLiteral("Child")));
@@ -195,9 +206,9 @@ private slots:
         QCOMPARE(tree.currentIndex(), model.index(0, 0, model.index(0, 0)));
 
         QPixmap pixmap(
-            tree.width() * 2,
-            tree.height() * 2);
-        pixmap.setDevicePixelRatio(2.0);
+            qMax(1, qRound(tree.width() * dpr)),
+            qMax(1, qRound(tree.height() * dpr)));
+        pixmap.setDevicePixelRatio(dpr);
         pixmap.fill(Qt::transparent);
         tree.render(&pixmap);
 
@@ -205,8 +216,19 @@ private slots:
         QCOMPARE(pixmap.devicePixelRatio(), dpr);
     }
 
-    void paginationAccessibilityKeyboardRtlAndHighDpi()
+    void paginationAccessibilityKeyboardRtlAndDesktopScaleFactors_data()
     {
+        QTest::addColumn<qreal>("dpr");
+        QTest::newRow("100-percent") << qreal(1.00);
+        QTest::newRow("125-percent") << qreal(1.25);
+        QTest::newRow("150-percent") << qreal(1.50);
+        QTest::newRow("175-percent") << qreal(1.75);
+        QTest::newRow("200-percent") << qreal(2.00);
+    }
+
+    void paginationAccessibilityKeyboardRtlAndDesktopScaleFactors()
+    {
+        QFETCH(qreal, dpr);
         QtMaterialPagination pagination;
         pagination.setTotalCount(123);
         pagination.setPageSize(25);
@@ -254,9 +276,9 @@ private slots:
         QVERIFY(pagination.accessibleDescription().contains(QStringLiteral("Page 3 of 5")));
 
         QPixmap pixmap(
-            pagination.width() * 2,
-            pagination.height() * 2);
-        pixmap.setDevicePixelRatio(2.0);
+            qMax(1, qRound(pagination.width() * dpr)),
+            qMax(1, qRound(pagination.height() * dpr)));
+        pixmap.setDevicePixelRatio(dpr);
         pixmap.fill(Qt::transparent);
         pagination.render(&pixmap);
 
