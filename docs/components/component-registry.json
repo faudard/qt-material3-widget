@@ -2010,53 +2010,63 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Checkbox has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Checkbox before promoting maturity further."
+        "Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete."
       ],
       "evidence": {
         "api": [
-          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialcheckbox.h."
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialcheckbox.h.",
+          "1.5 enterprise review confirms the retained public header and Qt-style control contract."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialcheckbox.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialcheckbox.cpp.",
+          "selection_matrix candidate coverage exercises default, selected, disabled and RTL states in the deterministic visual harness."
         ],
         "states": [
-          "tests/widgets/selection/tst_checkbox.cpp exercises the current selection behavior."
+          "tests/widgets/selection/tst_checkbox.cpp exercises the current selection behavior.",
+          "tst_selection_maturity covers tri-state Checkbox and Segmented Button selection/navigation invariants."
         ],
         "accessibility": [
-          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family.",
+          "Selection accessibility contracts are synchronized and covered by the shared maturity suite."
         ],
         "keyboard": [
-          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior.",
+          "tst_selection_maturity covers focus policy, disabled activation, directional navigation, Home/End and disabled-segment skipping."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Checkbox at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Checkbox at DPR 2.0 as a focused HiDPI smoke contract.",
+          "All four Selection controls are rendered through the DPR 2.0 maturity smoke path."
         ],
         "rtl": [
-          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional.",
+          "Shared maturity coverage verifies RTL size stability and visual-direction navigation."
         ],
         "tests": [
-          "Registered focused tst_checkbox plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_checkbox plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 maturity suite adds family-level production invariants on top of focused component tests."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase.",
+          "The Selection Gallery instantiates Checkbox, Radio Button, Switch and Segmented Button together."
         ],
         "docs": [
-          "docs/public-api/selection.md documents the public selection contract."
+          "docs/public-api/selection.md documents the public selection contract.",
+          "docs/public-api/selection.md now defines the production maturity and visual-promotion contract."
         ]
       }
     }
@@ -2076,53 +2086,63 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Radio Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Radio Button before promoting maturity further."
+        "Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete."
       ],
       "evidence": {
         "api": [
-          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialradiobutton.h."
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialradiobutton.h.",
+          "1.5 enterprise review confirms the retained public header and Qt-style control contract."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialradiobutton.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialradiobutton.cpp.",
+          "selection_matrix candidate coverage exercises default, selected, disabled and RTL states in the deterministic visual harness."
         ],
         "states": [
-          "tests/widgets/selection/tst_radiobutton.cpp exercises the current selection behavior."
+          "tests/widgets/selection/tst_radiobutton.cpp exercises the current selection behavior.",
+          "tst_selection_maturity covers tri-state Checkbox and Segmented Button selection/navigation invariants."
         ],
         "accessibility": [
-          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family.",
+          "Selection accessibility contracts are synchronized and covered by the shared maturity suite."
         ],
         "keyboard": [
-          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior.",
+          "tst_selection_maturity covers focus policy, disabled activation, directional navigation, Home/End and disabled-segment skipping."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Radio Button at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Radio Button at DPR 2.0 as a focused HiDPI smoke contract.",
+          "All four Selection controls are rendered through the DPR 2.0 maturity smoke path."
         ],
         "rtl": [
-          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional.",
+          "Shared maturity coverage verifies RTL size stability and visual-direction navigation."
         ],
         "tests": [
-          "Registered focused tst_radiobutton plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_radiobutton plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 maturity suite adds family-level production invariants on top of focused component tests."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase.",
+          "The Selection Gallery instantiates Checkbox, Radio Button, Switch and Segmented Button together."
         ],
         "docs": [
-          "docs/public-api/selection.md documents the public selection contract."
+          "docs/public-api/selection.md documents the public selection contract.",
+          "docs/public-api/selection.md now defines the production maturity and visual-promotion contract."
         ]
       }
     }
@@ -2142,53 +2162,63 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Segmented Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Segmented Button before promoting maturity further."
+        "Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete."
       ],
       "evidence": {
         "api": [
-          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h."
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h.",
+          "1.5 enterprise review confirms the retained public header and Qt-style control contract."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialsegmentedbutton.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialsegmentedbutton.cpp.",
+          "selection_matrix candidate coverage exercises default, selected, disabled and RTL states in the deterministic visual harness."
         ],
         "states": [
-          "tests/widgets/selection/tst_segmentedbutton.cpp exercises selection behavior."
+          "tests/widgets/selection/tst_segmentedbutton.cpp exercises selection behavior.",
+          "tst_selection_maturity covers tri-state Checkbox and Segmented Button selection/navigation invariants."
         ],
         "accessibility": [
-          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family.",
+          "Selection accessibility contracts are synchronized and covered by the shared maturity suite."
         ],
         "keyboard": [
-          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior.",
+          "tst_selection_maturity covers focus policy, disabled activation, directional navigation, Home/End and disabled-segment skipping."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Segmented Button at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Segmented Button at DPR 2.0 as a focused HiDPI smoke contract.",
+          "All four Selection controls are rendered through the DPR 2.0 maturity smoke path."
         ],
         "rtl": [
-          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional.",
+          "Shared maturity coverage verifies RTL size stability and visual-direction navigation."
         ],
         "tests": [
-          "Registered focused tst_segmentedbutton plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_segmentedbutton plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 maturity suite adds family-level production invariants on top of focused component tests."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase.",
+          "The Selection Gallery instantiates Checkbox, Radio Button, Switch and Segmented Button together."
         ],
         "docs": [
-          "docs/public-api/selection.md links the Segmented Button release contract."
+          "docs/public-api/selection.md links the Segmented Button release contract.",
+          "docs/public-api/selection.md now defines the production maturity and visual-promotion contract."
         ]
       }
     }
@@ -2208,53 +2238,63 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Switch has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Switch before promoting maturity further."
+        "Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete."
       ],
       "evidence": {
         "api": [
-          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialswitch.h."
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialswitch.h.",
+          "1.5 enterprise review confirms the retained public header and Qt-style control contract."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialswitch.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialswitch.cpp.",
+          "selection_matrix candidate coverage exercises default, selected, disabled and RTL states in the deterministic visual harness."
         ],
         "states": [
-          "tests/widgets/selection/tst_switch.cpp exercises the current selection behavior."
+          "tests/widgets/selection/tst_switch.cpp exercises the current selection behavior.",
+          "tst_selection_maturity covers tri-state Checkbox and Segmented Button selection/navigation invariants."
         ],
         "accessibility": [
-          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family.",
+          "Selection accessibility contracts are synchronized and covered by the shared maturity suite."
         ],
         "keyboard": [
-          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior.",
+          "tst_selection_maturity covers focus policy, disabled activation, directional navigation, Home/End and disabled-segment skipping."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Switch at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Switch at DPR 2.0 as a focused HiDPI smoke contract.",
+          "All four Selection controls are rendered through the DPR 2.0 maturity smoke path."
         ],
         "rtl": [
-          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional.",
+          "Shared maturity coverage verifies RTL size stability and visual-direction navigation."
         ],
         "tests": [
-          "Registered focused tst_switch plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_switch plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 maturity suite adds family-level production invariants on top of focused component tests."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase.",
+          "The Selection Gallery instantiates Checkbox, Radio Button, Switch and Segmented Button together."
         ],
         "docs": [
-          "docs/public-api/selection.md documents the public selection contract."
+          "docs/public-api/selection.md documents the public selection contract.",
+          "docs/public-api/selection.md now defines the production maturity and visual-promotion contract."
         ]
       }
     }
