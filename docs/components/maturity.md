@@ -19,45 +19,47 @@
 
 ### Buttons
 
-| ID | Component | Status | API | Rendering | States | Accessibility | Keyboard | HiDPI | RTL | Tests | Example / Gallery | Docs | Notes |
+| ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `button.elevated` | Elevated Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 |  |
-| `button.extended-fab` | Extended Floating Action Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 |  |
-| `button.fab` | Floating Action Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 |  |
-| `button.filled` | Filled Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 |  |
-| `button.filled-tonal` | Filled Tonal Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 |  |
-| `button.icon` | Icon Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 |  |
-| `button.outlined` | Outlined Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 |  |
-| `button.text` | Text Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 |  |
+| `button.elevated` | Elevated Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.extended-fab` | Extended Floating Action Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.fab` | Floating Action Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.filled` | Filled Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.filled-tonal` | Filled Tonal Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.icon` | Icon Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.outlined` | Outlined Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.text` | Text Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 
 ### Compact controls
 
-| ID | Component | Status | API | Rendering | States | Accessibility | Keyboard | HiDPI | RTL | Tests | Example / Gallery | Docs | Notes |
+| ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `compact.chip` | Chip | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 
 ### Data
 
-| ID | Component | Status | API | Rendering | States | Accessibility | Keyboard | HiDPI | RTL | Tests | Example / Gallery | Docs | Notes |
+| ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `data.carousel` | Carousel | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 | `data.grid-list` | Grid List | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `data.list` | List | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `data.pagination` | Pagination | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed Desktop Productivity visual baselines are the remaining 1.5 maturity gate. |
 | `data.table` | Table | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed Desktop Productivity visual baselines are the remaining 1.5 maturity gate. |
 | `data.tree-view` | Tree View | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed Desktop Productivity visual baselines are the remaining 1.5 maturity gate. |
-| `data.pagination` | Pagination | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed Desktop Productivity visual baselines are the remaining 1.5 maturity gate. |
-| `data.list` | List | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 
 ### Data display
 
-| ID | Component | Status | API | Rendering | States | Accessibility | Keyboard | HiDPI | RTL | Tests | Example / Gallery | Docs | Notes |
+| ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `data.divider` | Divider | `usable` | 4 | 3 | 4 | 4 | N/A | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 
 ### Inputs
 
-| ID | Component | Status | API | Rendering | States | Accessibility | Keyboard | HiDPI | RTL | Tests | Example / Gallery | Docs | Notes |
+| ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| `input.autocomplete` | Autocomplete | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 | `input.combo-box` | Combo Box | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.date-picker` | Date Picker | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 | `input.date-range-picker` | Date Range Picker | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 | `input.date.field` | Date Field | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 | `input.range-slider` | Range Slider | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
@@ -68,35 +70,33 @@
 | `input.text.outlined` | Outlined Text Field | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 | `input.time-field` | Time Field | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 | `input.time-picker` | Time Picker | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
-| `input.autocomplete` | Autocomplete | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
-| `input.date-picker` | Date Picker | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 
 ### Layouts
 
-| ID | Component | Status | API | Rendering | States | Accessibility | Keyboard | HiDPI | RTL | Tests | Example / Gallery | Docs | Notes |
+| ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `layout.split-view` | Split View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Split View now has accessible keyboard resize, RTL behavior, DPR 2.0 evidence, pane min/max extents, reset behavior and candidate visual matrices; animated collapse and persisted app-level layout policy remain. |
 
 ### Navigation
 
-| ID | Component | Status | API | Rendering | States | Accessibility | Keyboard | HiDPI | RTL | Tests | Example / Gallery | Docs | Notes |
+| ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `navigation.rail` | Navigation Rail | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
-| `navigation.tabs` | Tabs | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 | `navigation.breadcrumb` | Breadcrumb | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 | `navigation.command-palette` | Command Palette | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 | `navigation.menu` | Menu | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `navigation.rail` | Navigation Rail | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `navigation.tabs` | Tabs | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 
 ### Progress
 
-| ID | Component | Status | API | Rendering | States | Accessibility | Keyboard | HiDPI | RTL | Tests | Example / Gallery | Docs | Notes |
+| ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `progress.circular` | Circular Progress Indicator | `usable` | 4 | 3 | 4 | 4 | N/A | 4 | N/A | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 | `progress.linear` | Linear Progress Indicator | `usable` | 4 | 3 | 4 | 4 | N/A | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 
 ### Selection
 
-| ID | Component | Status | API | Rendering | States | Accessibility | Keyboard | HiDPI | RTL | Tests | Example / Gallery | Docs | Notes |
+| ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `selection.checkbox` | Checkbox | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity. |
 | `selection.radio` | Radio Button | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity. |
@@ -105,7 +105,7 @@
 
 ### Surfaces
 
-| ID | Component | Status | API | Rendering | States | Accessibility | Keyboard | HiDPI | RTL | Tests | Example / Gallery | Docs | Notes |
+| ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `surface.banner` | Banner | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 | `surface.bottom-app-bar` | Bottom App Bar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
@@ -115,6 +115,21 @@
 | `surface.navigation-drawer` | Navigation Drawer | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 | `surface.snackbar` | Snackbar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 | `surface.top-app-bar` | Top App Bar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+
+## Buttons completion gate
+
+The Buttons family can be considered `complete` only when all eight public variants are tracked and every required axis is evaluated.
+
+| Button | Tracked | Status | Missing axes |
+|---|---:|---:|---|
+| `button.elevated` | yes | `complete` | — |
+| `button.extended-fab` | yes | `complete` | — |
+| `button.fab` | yes | `complete` | — |
+| `button.filled` | yes | `complete` | — |
+| `button.filled-tonal` | yes | `complete` | — |
+| `button.icon` | yes | `complete` | — |
+| `button.outlined` | yes | `complete` | — |
+| `button.text` | yes | `complete` | — |
 
 ## Not evaluated axes
 
@@ -137,31 +152,31 @@
 |---|---|
 | Elevated Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Extended Floating Action Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Floating Action Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Filled Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Filled Tonal Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
-| Floating Action Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Icon Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Outlined Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Text Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Chip | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
-| Divider | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
 | Carousel | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
 | Grid List | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
 | List | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
 | Pagination | Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4. |
 | Table | Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4. |
 | Tree View | Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4. |
+| Divider | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
 | Autocomplete | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
 | Combo Box | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
-| Date Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
 | Date Picker | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
 | Date Range Picker | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
-| Filled Text Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
-| Outlined Text Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Date Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
 | Range Slider | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
 | Search Bar | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
 | Search View | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
 | Slider | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Filled Text Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Outlined Text Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
 | Time Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
 | Time Picker | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
 | Split View | Add optional animated collapse/reset affordances and document app-level persisted layout policy before further promotion. |
