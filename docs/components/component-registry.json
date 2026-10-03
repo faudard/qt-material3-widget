@@ -719,22 +719,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Carousel Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Carousel reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -785,22 +785,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
       "keyboard": "N/A",
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Divider Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Divider token, RTL and HiDPI reference evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -851,22 +851,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Grid List Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Grid List reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -1876,22 +1876,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
       "keyboard": "N/A",
-      "hidpi": 1,
+      "hidpi": 4,
       "rtl": "N/A",
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Circular Progress Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add progress token, animation, accessibility and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -1942,22 +1942,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
       "keyboard": "N/A",
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-19",
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Deterministic visual-reference coverage remains before Linear Progress can be marked complete."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add reviewed visual references and broader animation-end-state coverage for complete maturity."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -3209,22 +3209,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "List has focused interaction and accessibility coverage but lacks deterministic visual, RTL and HiDPI conformance evidence."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add dedicated visual-regression, RTL and HiDPI coverage for the List/ListItem family."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
