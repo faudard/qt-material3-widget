@@ -3,3 +3,4 @@ myst-parser>=3,<5
 breathe>=4,<5
 furo>=2024.8.6
 sphinxcontrib-mermaid
+sphinx-copybutton>=0.5,<1
