@@ -1,4 +1,5 @@
 #include <QtTest/QtTest>
+#include <QPixmap>
 
 #include "qtmaterial/widgets/data/qtmaterialgridlist.h"
 
@@ -15,6 +16,7 @@ private Q_SLOTS:
     void keyboardNavigation();
     void keyboardActivation();
     void columnsAndCellExtent();
+    void rtlAndDpr2RenderingContract();
 };
 
 void tst_GridList::constructionDefaults()
@@ -129,6 +131,23 @@ void tst_GridList::columnsAndCellExtent()
     grid.setCellExtent(QSize(180, 128));
     QCOMPARE(grid.cellExtent(), QSize(180, 128));
     QCOMPARE(cellSpy.size(), 1);
+}
+
+void tst_GridList::rtlAndDpr2RenderingContract()
+{
+    QtMaterialGridList widget;
+    widget.setColumns(2);
+    widget.addGridItem(QStringLiteral("One"));
+    widget.addGridItem(QStringLiteral("Two"));
+    widget.setLayoutDirection(Qt::RightToLeft);
+    widget.resize(420, 240);
+    QCOMPARE(widget.layoutDirection(), Qt::RightToLeft);
+    QPixmap pixmap(widget.width() * 2, widget.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    widget.render(&pixmap);
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
 }
 
 QTEST_MAIN(tst_GridList)

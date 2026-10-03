@@ -1,4 +1,5 @@
 #include <QtTest/QtTest>
+#include <QPixmap>
 
 #include "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h"
 
@@ -10,6 +11,7 @@ private slots:
     void construction();
     void edgeApi();
     void escapeCloses();
+    void rtlAndDpr2RenderingContract();
 };
 
 void tst_QtMaterialNavigationDrawer::construction()
@@ -40,6 +42,20 @@ void tst_QtMaterialNavigationDrawer::escapeCloses()
 
     QTest::keyClick(&drawer, Qt::Key_Escape);
     QVERIFY(!drawer.isOpen());
+}
+
+void tst_QtMaterialNavigationDrawer::rtlAndDpr2RenderingContract()
+{
+    QtMaterial::QtMaterialNavigationDrawer widget;
+    widget.setLayoutDirection(Qt::RightToLeft);
+    widget.resize(qMax(320, widget.sizeHint().width()), qMax(96, widget.sizeHint().height()));
+    QCOMPARE(widget.layoutDirection(), Qt::RightToLeft);
+    QPixmap pixmap(widget.width() * 2, widget.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    widget.render(&pixmap);
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
 }
 
 QTEST_MAIN(tst_QtMaterialNavigationDrawer)

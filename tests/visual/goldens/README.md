@@ -33,6 +33,13 @@ CI generates the following candidate families in the pinned Ubuntu/Fusion render
 - `selection_matrix_*.png`
 - `input_field_matrix_*.png`
 - `input_composite_matrix_*.png`
+- `navigation_primary_matrix_*.png`
+- `navigation_desktop_matrix_*.png`
+- `input_slider_matrix_*.png`
+- `desktop_data_matrix_*.png`
+- `surface_bar_matrix_*.png`
+- `progress_compact_matrix_*.png`
+- `data_extended_matrix_*.png`
 
 Download the `family-visual-candidate-goldens` workflow artifact, review the images, then
 commit the approved PNGs into this directory. Candidate cases tolerate a missing baseline,
@@ -49,3 +56,11 @@ The same candidate workflow also covers:
 These candidates exercise Slider/Range Slider plus Table/Tree/Pagination/Split View across the
 controlled light, dark and high-contrast theme set. Promote only reviewed PNGs to stable
 release goldens.
+
+## 1.5 enterprise rule
+
+A family matrix is not completion evidence merely because CI can render it. `complete` requires
+reviewed PNGs committed here and listed in `tools/release_rules.json`. Candidate-only matrices
+therefore cap the rendering axis at 3/4. Families without a deterministic matrix remain below
+that gate until one is added. This rule applies equally to Selection, Inputs, Navigation,
+Surfaces, Data, Progress and Compact controls.

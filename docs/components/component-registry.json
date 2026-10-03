@@ -650,22 +650,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Chip family has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Chip family."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -719,22 +719,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Carousel Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Carousel reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -785,22 +785,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
       "keyboard": "N/A",
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Divider Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Divider token, RTL and HiDPI reference evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -851,22 +851,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Grid List Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Grid List reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -917,22 +917,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Table now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; reviewed Material visual-reference evidence remains."
+        "Reviewed Desktop Productivity visual baselines are the remaining 1.5 maturity gate."
       ],
       "nextActions": [
-        "Review and promote the Table candidate goldens and continue desktop table capability work before raising maturity further."
+        "Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -985,22 +985,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Combo Box now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Combo Box before promoting maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1054,22 +1054,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Date Range Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Date Range Picker before promoting maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1123,22 +1123,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Date Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Date Field before promoting maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1189,22 +1189,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Range Slider now has focused two-handle keyboard, accessibility, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Range Slider candidate golden set before raising visual maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1260,22 +1260,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Search Bar now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Search Bar before promoting maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1329,22 +1329,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Search View now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Search View before promoting maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1398,22 +1398,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Slider now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Slider candidate golden set before raising visual maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1469,22 +1469,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Filled Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Filled Text Field before promoting maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1535,22 +1535,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Outlined Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Outlined Text Field before promoting maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1601,22 +1601,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Time Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Time Field before promoting maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1670,22 +1670,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Time Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Time Picker before promoting maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1739,22 +1739,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Navigation Rail now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus candidate visual matrices; reviewed stable visual-reference evidence remains before further promotion."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Navigation Rail candidate goldens before raising visual maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1807,22 +1807,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Tabs has focused accessibility, keyboard, RTL, DPR 2.0 and Gallery evidence plus candidate Navigation visual matrices; reviewed stable visual-reference coverage remains before further promotion."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Tabs candidate goldens before raising visual maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -1876,22 +1876,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
       "keyboard": "N/A",
-      "hidpi": 1,
+      "hidpi": 4,
       "rtl": "N/A",
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Circular Progress Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add progress token, animation, accessibility and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -1942,22 +1942,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
       "keyboard": "N/A",
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-19",
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Deterministic visual-reference coverage remains before Linear Progress can be marked complete."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add reviewed visual references and broader animation-end-state coverage for complete maturity."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2010,53 +2010,63 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Checkbox has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Checkbox before promoting maturity further."
+        "Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete."
       ],
       "evidence": {
         "api": [
-          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialcheckbox.h."
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialcheckbox.h.",
+          "1.5 enterprise review confirms the retained public header and Qt-style control contract."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialcheckbox.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialcheckbox.cpp.",
+          "selection_matrix candidate coverage exercises default, selected, disabled and RTL states in the deterministic visual harness."
         ],
         "states": [
-          "tests/widgets/selection/tst_checkbox.cpp exercises the current selection behavior."
+          "tests/widgets/selection/tst_checkbox.cpp exercises the current selection behavior.",
+          "tst_selection_maturity covers tri-state Checkbox and Segmented Button selection/navigation invariants."
         ],
         "accessibility": [
-          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family.",
+          "Selection accessibility contracts are synchronized and covered by the shared maturity suite."
         ],
         "keyboard": [
-          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior.",
+          "tst_selection_maturity covers focus policy, disabled activation, directional navigation, Home/End and disabled-segment skipping."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Checkbox at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Checkbox at DPR 2.0 as a focused HiDPI smoke contract.",
+          "All four Selection controls are rendered through the DPR 2.0 maturity smoke path."
         ],
         "rtl": [
-          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional.",
+          "Shared maturity coverage verifies RTL size stability and visual-direction navigation."
         ],
         "tests": [
-          "Registered focused tst_checkbox plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_checkbox plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 maturity suite adds family-level production invariants on top of focused component tests."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase.",
+          "The Selection Gallery instantiates Checkbox, Radio Button, Switch and Segmented Button together."
         ],
         "docs": [
-          "docs/public-api/selection.md documents the public selection contract."
+          "docs/public-api/selection.md documents the public selection contract.",
+          "docs/public-api/selection.md now defines the production maturity and visual-promotion contract."
         ]
       }
     }
@@ -2076,53 +2086,63 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Radio Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Radio Button before promoting maturity further."
+        "Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete."
       ],
       "evidence": {
         "api": [
-          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialradiobutton.h."
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialradiobutton.h.",
+          "1.5 enterprise review confirms the retained public header and Qt-style control contract."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialradiobutton.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialradiobutton.cpp.",
+          "selection_matrix candidate coverage exercises default, selected, disabled and RTL states in the deterministic visual harness."
         ],
         "states": [
-          "tests/widgets/selection/tst_radiobutton.cpp exercises the current selection behavior."
+          "tests/widgets/selection/tst_radiobutton.cpp exercises the current selection behavior.",
+          "tst_selection_maturity covers tri-state Checkbox and Segmented Button selection/navigation invariants."
         ],
         "accessibility": [
-          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family.",
+          "Selection accessibility contracts are synchronized and covered by the shared maturity suite."
         ],
         "keyboard": [
-          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior.",
+          "tst_selection_maturity covers focus policy, disabled activation, directional navigation, Home/End and disabled-segment skipping."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Radio Button at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Radio Button at DPR 2.0 as a focused HiDPI smoke contract.",
+          "All four Selection controls are rendered through the DPR 2.0 maturity smoke path."
         ],
         "rtl": [
-          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional.",
+          "Shared maturity coverage verifies RTL size stability and visual-direction navigation."
         ],
         "tests": [
-          "Registered focused tst_radiobutton plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_radiobutton plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 maturity suite adds family-level production invariants on top of focused component tests."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase.",
+          "The Selection Gallery instantiates Checkbox, Radio Button, Switch and Segmented Button together."
         ],
         "docs": [
-          "docs/public-api/selection.md documents the public selection contract."
+          "docs/public-api/selection.md documents the public selection contract.",
+          "docs/public-api/selection.md now defines the production maturity and visual-promotion contract."
         ]
       }
     }
@@ -2142,53 +2162,63 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Segmented Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Segmented Button before promoting maturity further."
+        "Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete."
       ],
       "evidence": {
         "api": [
-          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h."
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h.",
+          "1.5 enterprise review confirms the retained public header and Qt-style control contract."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialsegmentedbutton.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialsegmentedbutton.cpp.",
+          "selection_matrix candidate coverage exercises default, selected, disabled and RTL states in the deterministic visual harness."
         ],
         "states": [
-          "tests/widgets/selection/tst_segmentedbutton.cpp exercises selection behavior."
+          "tests/widgets/selection/tst_segmentedbutton.cpp exercises selection behavior.",
+          "tst_selection_maturity covers tri-state Checkbox and Segmented Button selection/navigation invariants."
         ],
         "accessibility": [
-          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family.",
+          "Selection accessibility contracts are synchronized and covered by the shared maturity suite."
         ],
         "keyboard": [
-          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior.",
+          "tst_selection_maturity covers focus policy, disabled activation, directional navigation, Home/End and disabled-segment skipping."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Segmented Button at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Segmented Button at DPR 2.0 as a focused HiDPI smoke contract.",
+          "All four Selection controls are rendered through the DPR 2.0 maturity smoke path."
         ],
         "rtl": [
-          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional.",
+          "Shared maturity coverage verifies RTL size stability and visual-direction navigation."
         ],
         "tests": [
-          "Registered focused tst_segmentedbutton plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_segmentedbutton plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 maturity suite adds family-level production invariants on top of focused component tests."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase.",
+          "The Selection Gallery instantiates Checkbox, Radio Button, Switch and Segmented Button together."
         ],
         "docs": [
-          "docs/public-api/selection.md links the Segmented Button release contract."
+          "docs/public-api/selection.md links the Segmented Button release contract.",
+          "docs/public-api/selection.md now defines the production maturity and visual-promotion contract."
         ]
       }
     }
@@ -2208,53 +2238,63 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Switch has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Switch before promoting maturity further."
+        "Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete."
       ],
       "evidence": {
         "api": [
-          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialswitch.h."
+          "Public header exists: include/qtmaterial/widgets/selection/qtmaterialswitch.h.",
+          "1.5 enterprise review confirms the retained public header and Qt-style control contract."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialswitch.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialswitch.cpp.",
+          "selection_matrix candidate coverage exercises default, selected, disabled and RTL states in the deterministic visual harness."
         ],
         "states": [
-          "tests/widgets/selection/tst_switch.cpp exercises the current selection behavior."
+          "tests/widgets/selection/tst_switch.cpp exercises the current selection behavior.",
+          "tst_selection_maturity covers tri-state Checkbox and Segmented Button selection/navigation invariants."
         ],
         "accessibility": [
-          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family.",
+          "Selection accessibility contracts are synchronized and covered by the shared maturity suite."
         ],
         "keyboard": [
-          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior.",
+          "tst_selection_maturity covers focus policy, disabled activation, directional navigation, Home/End and disabled-segment skipping."
         ],
         "hidpi": [
-          "tst_selection_maturity renders Switch at DPR 2.0 as a focused HiDPI smoke contract."
+          "tst_selection_maturity renders Switch at DPR 2.0 as a focused HiDPI smoke contract.",
+          "All four Selection controls are rendered through the DPR 2.0 maturity smoke path."
         ],
         "rtl": [
-          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional.",
+          "Shared maturity coverage verifies RTL size stability and visual-direction navigation."
         ],
         "tests": [
-          "Registered focused tst_switch plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_switch plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 maturity suite adds family-level production invariants on top of focused component tests."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase.",
+          "The Selection Gallery instantiates Checkbox, Radio Button, Switch and Segmented Button together."
         ],
         "docs": [
-          "docs/public-api/selection.md documents the public selection contract."
+          "docs/public-api/selection.md documents the public selection contract.",
+          "docs/public-api/selection.md now defines the production maturity and visual-promotion contract."
         ]
       }
     }
@@ -2274,22 +2314,22 @@
     "docsPath": "docs/public-api/surfaces.md",
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Banner Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Banner state, focus, RTL and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2340,22 +2380,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Bottom App Bar Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add App Bar state, action, RTL and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2406,22 +2446,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Bottom Sheet Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add drag, focus, RTL and visual conformance evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2472,22 +2512,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Card Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Card variant, interaction, accessibility and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2538,22 +2578,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Dialog Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Dialog focus, accessibility, RTL and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2604,22 +2644,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Navigation Drawer Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add Drawer state, focus, RTL and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2670,22 +2710,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-19",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Reviewed visual-reference coverage and a broader transient-surface matrix remain before complete maturity."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add deterministic visual references and extended transient-surface state coverage for complete maturity."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2740,22 +2780,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Top App Bar Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add App Bar state, action, RTL and visual evidence before raising maturity axes."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2806,22 +2846,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Tree View now has focused native keyboard, RTL and DPR 2.0 certification plus a Desktop Productivity candidate visual matrix; deeper screen-reader and reviewed visual evidence remain."
+        "Reviewed Desktop Productivity visual baselines are the remaining 1.5 maturity gate."
       ],
       "nextActions": [
-        "Add deeper screen-reader evidence and promote reviewed Tree View visual baselines."
+        "Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -2877,22 +2917,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Pagination now has synchronized accessible page/range state, keyboard activation, RTL mirroring and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; dedicated Material token specialization remains."
+        "Reviewed Desktop Productivity visual baselines are the remaining 1.5 maturity gate."
       ],
       "nextActions": [
-        "Add dedicated Pagination theme-token specialization and promote reviewed visual baselines."
+        "Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -3021,22 +3061,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Breadcrumb now has explicit and responsive overflow, accessibility/keyboard/RTL/HiDPI evidence and candidate visual matrices; reviewed stable visual-reference evidence remains."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Breadcrumb candidate goldens before raising visual maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -3096,22 +3136,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Command Palette now has keyboard/result accessibility, configurable empty state, shortcut-role rendering, RTL/HiDPI evidence and candidate visual matrices; provider/section/recent-command APIs remain."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add provider/section/recent-command APIs and promote reviewed visual baselines."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -3169,22 +3209,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "List has focused interaction and accessibility coverage but lacks deterministic visual, RTL and HiDPI conformance evidence."
+        "Reviewed deterministic visual baselines are the remaining 1.5 completion gate."
       ],
       "nextActions": [
-        "Add dedicated visual-regression, RTL and HiDPI coverage for the List/ListItem family."
+        "Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4."
       ],
       "evidence": {
         "api": [
@@ -3238,22 +3278,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Autocomplete now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Autocomplete before promoting maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -3307,22 +3347,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Date Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Date Picker before promoting maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [
@@ -3376,22 +3416,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Menu now has focused accessibility, keyboard, RTL, DPR 2.0 and dedicated Gallery evidence plus a candidate visual matrix; reviewed stable visual-reference evidence remains."
+        "Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Menu candidate goldens before raising visual maturity further."
+        "Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete."
       ],
       "evidence": {
         "api": [

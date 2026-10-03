@@ -34,42 +34,42 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `compact.chip` | Chip | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | Chip family has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity. |
+| `compact.chip` | Chip | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 
 ### Data
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `data.carousel` | Carousel | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Carousel Material reference model or deterministic visual conformance evidence is available. |
-| `data.grid-list` | Grid List | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Grid List Material reference model or deterministic visual conformance evidence is available. |
-| `data.list` | List | `usable` | 2 | 2 | 2 | 2 | 2 | 1 | 1 | 2 | 2 | 2 | List has focused interaction and accessibility coverage but lacks deterministic visual, RTL and HiDPI conformance evidence. |
-| `data.pagination` | Pagination | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Pagination now has synchronized accessible page/range state, keyboard activation, RTL mirroring and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; dedicated Material token specialization remains. |
-| `data.table` | Table | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Table now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; reviewed Material visual-reference evidence remains. |
-| `data.tree-view` | Tree View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Tree View now has focused native keyboard, RTL and DPR 2.0 certification plus a Desktop Productivity candidate visual matrix; deeper screen-reader and reviewed visual evidence remain. |
+| `data.carousel` | Carousel | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `data.grid-list` | Grid List | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `data.list` | List | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `data.pagination` | Pagination | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed Desktop Productivity visual baselines are the remaining 1.5 maturity gate. |
+| `data.table` | Table | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed Desktop Productivity visual baselines are the remaining 1.5 maturity gate. |
+| `data.tree-view` | Tree View | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed Desktop Productivity visual baselines are the remaining 1.5 maturity gate. |
 
 ### Data display
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `data.divider` | Divider | `usable` | 2 | 2 | 2 | 1 | N/A | 1 | 1 | 2 | 1 | 2 | No Divider Material reference model or deterministic visual conformance evidence is available. |
+| `data.divider` | Divider | `usable` | 4 | 3 | 4 | 4 | N/A | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 
 ### Inputs
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `input.autocomplete` | Autocomplete | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Autocomplete now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.combo-box` | Combo Box | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Combo Box now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.date-picker` | Date Picker | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Date Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.date-range-picker` | Date Range Picker | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Date Range Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.date.field` | Date Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Date Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.range-slider` | Range Slider | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Range Slider now has focused two-handle keyboard, accessibility, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion. |
-| `input.search-bar` | Search Bar | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Search Bar now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.search-view` | Search View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Search View now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.slider` | Slider | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Slider now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion. |
-| `input.text.filled` | Filled Text Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Filled Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.text.outlined` | Outlined Text Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Outlined Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.time-field` | Time Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Time Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.time-picker` | Time Picker | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Time Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
+| `input.autocomplete` | Autocomplete | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.combo-box` | Combo Box | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.date-picker` | Date Picker | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.date-range-picker` | Date Range Picker | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.date.field` | Date Field | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.range-slider` | Range Slider | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.search-bar` | Search Bar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.search-view` | Search View | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.slider` | Slider | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.text.filled` | Filled Text Field | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.text.outlined` | Outlined Text Field | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.time-field` | Time Field | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `input.time-picker` | Time Picker | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 
 ### Layouts
 
@@ -81,40 +81,40 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `navigation.breadcrumb` | Breadcrumb | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Breadcrumb now has explicit and responsive overflow, accessibility/keyboard/RTL/HiDPI evidence and candidate visual matrices; reviewed stable visual-reference evidence remains. |
-| `navigation.command-palette` | Command Palette | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Command Palette now has keyboard/result accessibility, configurable empty state, shortcut-role rendering, RTL/HiDPI evidence and candidate visual matrices; provider/section/recent-command APIs remain. |
-| `navigation.menu` | Menu | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Menu now has focused accessibility, keyboard, RTL, DPR 2.0 and dedicated Gallery evidence plus a candidate visual matrix; reviewed stable visual-reference evidence remains. |
-| `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Navigation Rail now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus candidate visual matrices; reviewed stable visual-reference evidence remains before further promotion. |
-| `navigation.tabs` | Tabs | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Tabs has focused accessibility, keyboard, RTL, DPR 2.0 and Gallery evidence plus candidate Navigation visual matrices; reviewed stable visual-reference coverage remains before further promotion. |
+| `navigation.breadcrumb` | Breadcrumb | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `navigation.command-palette` | Command Palette | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `navigation.menu` | Menu | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `navigation.rail` | Navigation Rail | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
+| `navigation.tabs` | Tabs | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic family state-matrix goldens are the remaining gate before complete maturity. |
 
 ### Progress
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `progress.circular` | Circular Progress Indicator | `usable` | 2 | 2 | 2 | 1 | N/A | 1 | N/A | 2 | 1 | 2 | No Circular Progress Material reference model or deterministic visual conformance evidence is available. |
-| `progress.linear` | Linear Progress Indicator | `usable` | 2 | 2 | 2 | 2 | N/A | 2 | 2 | 2 | 1 | 2 | Deterministic visual-reference coverage remains before Linear Progress can be marked complete. |
+| `progress.circular` | Circular Progress Indicator | `usable` | 4 | 3 | 4 | 4 | N/A | 4 | N/A | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `progress.linear` | Linear Progress Indicator | `usable` | 4 | 3 | 4 | 4 | N/A | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 
 ### Selection
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `selection.checkbox` | Checkbox | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Checkbox has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity. |
-| `selection.radio` | Radio Button | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Radio Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity. |
-| `selection.segmented-button` | Segmented Button | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Segmented Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity. |
-| `selection.switch` | Switch | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Switch has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity. |
+| `selection.checkbox` | Checkbox | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity. |
+| `selection.radio` | Radio Button | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity. |
+| `selection.segmented-button` | Segmented Button | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity. |
+| `selection.switch` | Switch | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Selection state-matrix goldens are the only remaining gate before complete maturity. |
 
 ### Surfaces
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `surface.banner` | Banner | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Banner Material reference model or deterministic visual conformance evidence is available. |
-| `surface.bottom-app-bar` | Bottom App Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Bottom App Bar Material reference model or deterministic visual conformance evidence is available. |
-| `surface.bottom-sheet` | Bottom Sheet | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Bottom Sheet Material reference model or deterministic visual conformance evidence is available. |
-| `surface.card` | Card | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Card Material reference model or deterministic visual conformance evidence is available. |
-| `surface.dialog` | Dialog | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Dialog Material reference model or deterministic visual conformance evidence is available. |
-| `surface.navigation-drawer` | Navigation Drawer | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Drawer Material reference model or deterministic visual conformance evidence is available. |
-| `surface.snackbar` | Snackbar | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Reviewed visual-reference coverage and a broader transient-surface matrix remain before complete maturity. |
-| `surface.top-app-bar` | Top App Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Top App Bar Material reference model or deterministic visual conformance evidence is available. |
+| `surface.banner` | Banner | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `surface.bottom-app-bar` | Bottom App Bar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `surface.bottom-sheet` | Bottom Sheet | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `surface.card` | Card | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `surface.dialog` | Dialog | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `surface.navigation-drawer` | Navigation Drawer | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `surface.snackbar` | Snackbar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
+| `surface.top-app-bar` | Top App Bar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 
 ## Buttons completion gate
 
@@ -158,44 +158,44 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Icon Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Outlined Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Text Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
-| Chip | Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Chip family. |
-| Carousel | Add Carousel reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
-| Grid List | Add Grid List reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes. |
-| List | Add dedicated visual-regression, RTL and HiDPI coverage for the List/ListItem family. |
-| Pagination | Add dedicated Pagination theme-token specialization and promote reviewed visual baselines. |
-| Table | Review and promote the Table candidate goldens and continue desktop table capability work before raising maturity further. |
-| Tree View | Add deeper screen-reader evidence and promote reviewed Tree View visual baselines. |
-| Divider | Add Divider token, RTL and HiDPI reference evidence before raising maturity axes. |
-| Autocomplete | Add deterministic Material visual-reference/state-matrix coverage for Autocomplete before promoting maturity further. |
-| Combo Box | Add deterministic Material visual-reference/state-matrix coverage for Combo Box before promoting maturity further. |
-| Date Picker | Add deterministic Material visual-reference/state-matrix coverage for Date Picker before promoting maturity further. |
-| Date Range Picker | Add deterministic Material visual-reference/state-matrix coverage for Date Range Picker before promoting maturity further. |
-| Date Field | Add deterministic Material visual-reference/state-matrix coverage for Date Field before promoting maturity further. |
-| Range Slider | Review and promote the Range Slider candidate golden set before raising visual maturity further. |
-| Search Bar | Add deterministic Material visual-reference/state-matrix coverage for Search Bar before promoting maturity further. |
-| Search View | Add deterministic Material visual-reference/state-matrix coverage for Search View before promoting maturity further. |
-| Slider | Review and promote the Slider candidate golden set before raising visual maturity further. |
-| Filled Text Field | Add deterministic Material visual-reference/state-matrix coverage for Filled Text Field before promoting maturity further. |
-| Outlined Text Field | Add deterministic Material visual-reference/state-matrix coverage for Outlined Text Field before promoting maturity further. |
-| Time Field | Add deterministic Material visual-reference/state-matrix coverage for Time Field before promoting maturity further. |
-| Time Picker | Add deterministic Material visual-reference/state-matrix coverage for Time Picker before promoting maturity further. |
+| Chip | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Carousel | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Grid List | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| List | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Pagination | Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4. |
+| Table | Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4. |
+| Tree View | Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4. |
+| Divider | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Autocomplete | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Combo Box | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Date Picker | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Date Range Picker | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Date Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Range Slider | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Search Bar | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Search View | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Slider | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Filled Text Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Outlined Text Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Time Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Time Picker | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
 | Split View | Add optional animated collapse/reset affordances and document app-level persisted layout policy before further promotion. |
-| Breadcrumb | Review and promote the Breadcrumb candidate goldens before raising visual maturity further. |
-| Command Palette | Add provider/section/recent-command APIs and promote reviewed visual baselines. |
-| Menu | Review and promote the Menu candidate goldens before raising visual maturity further. |
-| Navigation Rail | Review and promote the Navigation Rail candidate goldens before raising visual maturity further. |
-| Tabs | Review and promote the Tabs candidate goldens before raising visual maturity further. |
-| Circular Progress Indicator | Add progress token, animation, accessibility and visual evidence before raising maturity axes. |
-| Linear Progress Indicator | Add reviewed visual references and broader animation-end-state coverage for complete maturity. |
-| Checkbox | Add deterministic Material visual-reference/state-matrix coverage for Checkbox before promoting maturity further. |
-| Radio Button | Add deterministic Material visual-reference/state-matrix coverage for Radio Button before promoting maturity further. |
-| Segmented Button | Add deterministic Material visual-reference/state-matrix coverage for Segmented Button before promoting maturity further. |
-| Switch | Add deterministic Material visual-reference/state-matrix coverage for Switch before promoting maturity further. |
-| Banner | Add Banner state, focus, RTL and visual evidence before raising maturity axes. |
-| Bottom App Bar | Add App Bar state, action, RTL and visual evidence before raising maturity axes. |
-| Bottom Sheet | Add drag, focus, RTL and visual conformance evidence before raising maturity axes. |
-| Card | Add Card variant, interaction, accessibility and visual evidence before raising maturity axes. |
-| Dialog | Add Dialog focus, accessibility, RTL and visual evidence before raising maturity axes. |
-| Navigation Drawer | Add Drawer state, focus, RTL and visual evidence before raising maturity axes. |
-| Snackbar | Add deterministic visual references and extended transient-surface state coverage for complete maturity. |
-| Top App Bar | Add App Bar state, action, RTL and visual evidence before raising maturity axes. |
+| Breadcrumb | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Command Palette | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Menu | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Navigation Rail | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Tabs | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Circular Progress Indicator | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Linear Progress Indicator | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Checkbox | Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete. |
+| Radio Button | Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete. |
+| Segmented Button | Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete. |
+| Switch | Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete. |
+| Banner | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Bottom App Bar | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Bottom Sheet | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Card | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Dialog | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Navigation Drawer | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Snackbar | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Top App Bar | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |

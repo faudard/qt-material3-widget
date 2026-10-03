@@ -46,6 +46,9 @@ private Q_SLOTS:
     void rtlDirectionalNavigationFollowsVisualDirection();
     void rtlSizeHintsRemainStable();
     void dpr2RenderingSmoke();
+    void focusPoliciesAreProductionSafe();
+    void checkboxTriStateContract();
+    void segmentedSelectionContract();
 };
 
 void tst_SelectionMaturity::accessibleLabelsAndStateStaySynchronized()
@@ -198,6 +201,51 @@ void tst_SelectionMaturity::dpr2RenderingSmoke()
     const QImage segmentedImage = renderAtDpr2(segmented);
     QCOMPARE(segmentedImage.devicePixelRatio(), qreal(2.0));
     QVERIFY(!segmentedImage.isNull());
+}
+
+void tst_SelectionMaturity::focusPoliciesAreProductionSafe()
+{
+    QtMaterialCheckbox checkbox;
+    QtMaterialRadioButton radio;
+    QtMaterialSwitch sw;
+    QtMaterialSegmentedButton segmented;
+
+    QCOMPARE(checkbox.focusPolicy(), Qt::StrongFocus);
+    QCOMPARE(radio.focusPolicy(), Qt::StrongFocus);
+    QCOMPARE(sw.focusPolicy(), Qt::StrongFocus);
+    QVERIFY(segmented.focusPolicy() != Qt::NoFocus);
+}
+
+void tst_SelectionMaturity::checkboxTriStateContract()
+{
+    QtMaterialCheckbox checkbox;
+    checkbox.setTristate(true);
+    checkbox.setCheckState(Qt::PartiallyChecked);
+    QCOMPARE(checkbox.checkState(), Qt::PartiallyChecked);
+
+    QSignalSpy stateSpy(&checkbox, &QtMaterialCheckbox::checkStateChanged);
+    QTest::keyClick(&checkbox, Qt::Key_Space);
+    QVERIFY(stateSpy.count() >= 1);
+    QVERIFY(checkbox.checkState() != Qt::PartiallyChecked);
+}
+
+void tst_SelectionMaturity::segmentedSelectionContract()
+{
+    QtMaterialSegmentedButton segmented;
+    segmented.addSegment(QStringLiteral("Day"));
+    segmented.addSegment(QStringLiteral("Week"));
+    segmented.addSegment(QStringLiteral("Month"));
+    segmented.setCurrentIndex(1);
+
+    QTest::keyClick(&segmented, Qt::Key_Home);
+    QCOMPARE(segmented.currentIndex(), 0);
+    QTest::keyClick(&segmented, Qt::Key_End);
+    QCOMPARE(segmented.currentIndex(), 2);
+
+    segmented.setSegmentEnabled(1, false);
+    segmented.setCurrentIndex(0);
+    QTest::keyClick(&segmented, Qt::Key_Right);
+    QCOMPARE(segmented.currentIndex(), 2);
 }
 
 QTEST_MAIN(tst_SelectionMaturity)

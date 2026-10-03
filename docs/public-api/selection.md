@@ -172,3 +172,15 @@ darkMode->setChecked(false);
 **RTL.** Segment ordering/directional behavior follows the widget layout direction.
 
 **Example.** Use the Selection Gallery segmented-button example to inspect single/multiple selection and disabled states.
+
+## Production maturity contract
+
+The Selection family is promoted as a unit. Checkbox, Radio Button, Switch and Segmented
+Button must retain executable coverage for public API behavior, selection states,
+accessibility synchronization, keyboard behavior, RTL layout/navigation and DPR 2.0
+rendering. The Gallery route is the maintained interactive example for all four controls.
+
+Visual completion is stricter than smoke coverage: the deterministic Selection state matrix
+must be reviewed on the pinned visual-regression toolchain and committed as stable goldens.
+Until those reviewed files exist, Selection remains below `complete` even when its functional
+contracts are green.
