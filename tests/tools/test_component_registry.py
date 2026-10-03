@@ -218,15 +218,27 @@ class CurrentRegistryTests(unittest.TestCase):
             else:
                 self.assertTrue(axes["gaps"])
 
-    def test_non_button_assessments_are_conservative(self):
+    def test_non_complete_assessments_are_fail_closed(self):
         for component in self.components:
-            if component["family"] == "Buttons":
+            axes = component["maturityAxes"]
+            if component["maturity"] == "complete":
+                for axis in self.generator.AXES:
+                    value = axes[axis]
+                    if isinstance(value, int):
+                        self.assertEqual(4, value, component["id"])
                 continue
-            for axis in self.generator.AXES:
-                value = component["maturityAxes"][axis]
-                if isinstance(value, int):
-                    self.assertLessEqual(value, 2, component["id"])
-            self.assertFalse(component["referenceCandidate"])
+
+            self.assertTrue(axes["gaps"], component["id"])
+            self.assertFalse(component["referenceCandidate"], component["id"])
+            numeric = [
+                axes[axis]
+                for axis in self.generator.AXES
+                if isinstance(axes[axis], int)
+            ]
+            self.assertTrue(
+                any(value < 4 for value in numeric),
+                f"{component['id']} has 4/4 evidence everywhere but was not promoted",
+            )
 
     def test_missing_axis_and_unknown_evidence_are_rejected(self):
         changed = copy.deepcopy(self.components[8])

@@ -324,6 +324,17 @@ def validate_registry(
                     "button.outlined: cannot be complete without "
                     "HiDPI stroke validation"
                 )
+        if effective_maturity(item) == "complete" and policy == "derived":
+            incomplete_axes = [
+                axis for axis in AXES
+                if score(axes, axis) is None or score(axes, axis) < 4
+            ]
+            if incomplete_axes:
+                errors.append(
+                    f"{cid}: derived complete maturity requires 4/4 on every axis; "
+                    f"below gate: {', '.join(incomplete_axes)}"
+                )
+
         if cid == "button.elevated":
             rendering = score(axes, "rendering")
             hidpi = score(axes, "hidpi")

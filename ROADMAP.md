@@ -126,3 +126,35 @@ Release gates:
 - Publish the source-compatibility, ABI and deprecation policies for the 1.x line.
 - Require release packaging, consumers, sanitizers, documentation, architecture and
   repository-health gates to remain green before tagging.
+
+
+## 1.5.0 — Production / Enterprise Quality
+
+Goal: progressively promote the remaining production-facing component families from `usable`
+to `complete` without a monolithic maturity PR.
+
+Promotion order:
+
+1. Selection
+2. Inputs
+3. Navigation
+4. Surfaces
+5. Data
+6. Progress
+7. Compact controls
+
+Family promotion gate:
+
+- Promote one family at a time; do not batch unrelated component families into the same maturity PR.
+- Every promoted component must score `4/4` on API, rendering, states, accessibility, keyboard,
+  HiDPI, RTL, tests, example/gallery coverage, and documentation.
+- Registry evidence must name the executable tests, production implementation, gallery route,
+  documentation, and deterministic visual evidence supporting each score.
+- Interactive controls must cover enabled/disabled, focus, hover/press where applicable,
+  keyboard activation/navigation, accessibility state synchronization, and reduced-motion behavior.
+- Directional/custom-painted controls must include deterministic RTL and DPR 2.0 evidence.
+- Visual promotion requires reviewed deterministic goldens on the pinned visual-regression toolchain;
+  candidate-only artifacts do not qualify as `complete`.
+- Generated component status and maturity documentation must remain synchronized with the canonical registry.
+- Windows Qt 5.14.2/MSVC v142, Windows Qt 6, Ubuntu Qt 6, macOS Qt 6, sanitizers,
+  examples/benchmarks, documentation, package and installed-consumer gates remain green.

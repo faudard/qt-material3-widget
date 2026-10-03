@@ -23,6 +23,7 @@ private slots:
     void accessibilityOptInSummary();
     void renderHorizontalInsets();
     void renderVerticalInsets();
+    void rendersAtHighDpi();
 };
 
 static QImage renderWidget(QWidget &widget, const QSize &size)
@@ -208,6 +209,21 @@ void tst_Divider::renderVerticalInsets()
         QVERIFY(image.pixelColor(x0, y).alpha() == 0);
         QVERIFY(image.pixelColor(x1, y).alpha() == 0);
     }
+}
+
+void tst_Divider::rendersAtHighDpi()
+{
+    QtMaterialDivider divider(Qt::Horizontal);
+    divider.resize(320, 8);
+    divider.setThickness(2);
+    QImage image(640, 16, QImage::Format_ARGB32_Premultiplied);
+    image.setDevicePixelRatio(2.0);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    divider.render(&painter);
+    painter.end();
+    QCOMPARE(image.devicePixelRatio(), qreal(2.0));
+    QVERIFY(!image.isNull());
 }
 
 QTEST_MAIN(tst_Divider)

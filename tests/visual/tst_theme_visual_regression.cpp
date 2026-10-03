@@ -19,6 +19,16 @@
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
+#include "qtmaterial/widgets/data/qtmaterialcarousel.h"
+#include "qtmaterial/widgets/data/qtmaterialdivider.h"
+#include "qtmaterial/widgets/data/qtmaterialgridlist.h"
+#include "qtmaterial/widgets/data/qtmateriallist.h"
+#include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
+#include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
+#include "qtmaterial/widgets/selection/qtmaterialchip.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialbanner.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialtopappbar.h"
 #include "qtmaterial/widgets/data/qtmaterialpagination.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
 #include "qtmaterial/widgets/data/qtmaterialtreeview.h"
@@ -670,6 +680,60 @@ QWidget* buildDesktopDataStateMatrix(const Theme& theme)
     return root;
 }
 
+
+QWidget* buildDataExtendedStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("dataExtendedStateMatrix"));
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    addMatrixHeaders(layout, root, {QStringLiteral("List"), QStringLiteral("Grid"), QStringLiteral("Carousel"), QStringLiteral("Divider")});
+    const QStringList states = {QStringLiteral("Default"), QStringLiteral("Disabled"), QStringLiteral("RTL")};
+    for (int i=0;i<states.size();++i) addStateLabel(layout, root, i+1, states.at(i));
+    for (int row=1;row<=3;++row) {
+        const bool enabled=row!=2; const auto dir=row==3?Qt::RightToLeft:Qt::LeftToRight;
+        auto* list=new QtMaterialList(root); list->addItem(QStringLiteral("Inbox")); list->addItem(QStringLiteral("Archive")); list->setEnabled(enabled); list->setLayoutDirection(dir); list->setMinimumSize(180,120); layout->addWidget(list,row,1);
+        auto* grid=new QtMaterialGridList(root); grid->setColumns(2); grid->addGridItem(QStringLiteral("One")); grid->addGridItem(QStringLiteral("Two")); grid->setEnabled(enabled); grid->setLayoutDirection(dir); grid->setMinimumSize(220,140); layout->addWidget(grid,row,2);
+        auto* carousel=new QtMaterialCarousel(root); carousel->addItem(QStringLiteral("One")); carousel->addItem(QStringLiteral("Two")); carousel->setEnabled(enabled); carousel->setLayoutDirection(dir); carousel->setMinimumSize(260,140); layout->addWidget(carousel,row,3);
+        auto* divider=new QtMaterialDivider(Qt::Horizontal,root); divider->setEnabled(enabled); divider->setLayoutDirection(dir); divider->setLeadingInset(20); divider->setTrailingInset(36); divider->setMinimumWidth(180); layout->addWidget(divider,row,4);
+    }
+    return root;
+}
+
+QWidget* buildProgressCompactStateMatrix(const Theme& theme)
+{
+    auto* root=new QWidget; configureMatrixRoot(root,theme,QStringLiteral("progressCompactStateMatrix"));
+    auto* layout=new QGridLayout(root); layout->setContentsMargins(24,24,24,24);
+    addMatrixHeaders(layout,root,{QStringLiteral("Linear"),QStringLiteral("Circular"),QStringLiteral("Assist chip"),QStringLiteral("Filter chip")});
+    const QStringList states={QStringLiteral("Default"),QStringLiteral("Selected"),QStringLiteral("Disabled"),QStringLiteral("RTL")};
+    for(int i=0;i<states.size();++i)addStateLabel(layout,root,i+1,states.at(i));
+    for(int row=1;row<=4;++row){
+        const bool enabled=row!=3; const auto dir=row==4?Qt::RightToLeft:Qt::LeftToRight;
+        auto* linear=new QtMaterialLinearProgressIndicator(root); linear->setValue(row==2?0.75:0.42); linear->setEnabled(enabled); linear->setLayoutDirection(dir); linear->setMinimumWidth(220); layout->addWidget(linear,row,1);
+        auto* circular=new QtMaterialCircularProgressIndicator(root); circular->setValue(row==2?0.75:0.42); circular->setEnabled(enabled); circular->setLayoutDirection(dir); layout->addWidget(circular,row,2,Qt::AlignCenter);
+        auto* assist=new QtMaterialChip(QStringLiteral("Assist"),root); assist->setVariant(ChipVariant::Assist); assist->setEnabled(enabled); assist->setLayoutDirection(dir); layout->addWidget(assist,row,3);
+        auto* filter=new QtMaterialChip(QStringLiteral("Filter"),root); filter->setVariant(ChipVariant::Filter); filter->setChecked(row==2||row==4); filter->setEnabled(enabled); filter->setLayoutDirection(dir); layout->addWidget(filter,row,4);
+    }
+    return root;
+}
+
+QWidget* buildSurfaceBarStateMatrix(const Theme& theme)
+{
+    auto* root=new QWidget; configureMatrixRoot(root,theme,QStringLiteral("surfaceBarStateMatrix"));
+    auto* layout=new QGridLayout(root); layout->setContentsMargins(24,24,24,24);
+    addMatrixHeaders(layout,root,{QStringLiteral("Card"),QStringLiteral("Banner"),QStringLiteral("Top bar"),QStringLiteral("Bottom bar")});
+    const QStringList states={QStringLiteral("Default"),QStringLiteral("Disabled"),QStringLiteral("RTL")};
+    for(int i=0;i<states.size();++i)addStateLabel(layout,root,i+1,states.at(i));
+    for(int row=1;row<=3;++row){
+        const bool enabled=row!=2; const auto dir=row==3?Qt::RightToLeft:Qt::LeftToRight;
+        auto* card=new QtMaterialCard(root); card->setTitleText(QStringLiteral("Project")); card->setBodyText(QStringLiteral("Enterprise surface")); card->setEnabled(enabled); card->setLayoutDirection(dir); card->setMinimumSize(220,100); layout->addWidget(card,row,1);
+        auto* banner=new QtMaterialBanner(QStringLiteral("Offline"),QStringLiteral("Changes are saved"),root); banner->setPrimaryActionText(QStringLiteral("Retry")); banner->setEnabled(enabled); banner->setLayoutDirection(dir); banner->setMinimumWidth(300); layout->addWidget(banner,row,2);
+        auto* top=new QtMaterialTopAppBar(QStringLiteral("Inbox"),root); top->setEnabled(enabled); top->setLayoutDirection(dir); top->setMinimumWidth(280); layout->addWidget(top,row,3);
+        auto* bottom=new QtMaterialBottomAppBar(QStringLiteral("Home"),root); bottom->setEnabled(enabled); bottom->setLayoutDirection(dir); bottom->setMinimumWidth(280); layout->addWidget(bottom,row,4);
+    }
+    return root;
+}
+
 void addFamilyThemeRows(const QString& prefix)
 {
     QTest::addColumn<QString>("caseName");
@@ -733,6 +797,10 @@ private slots:
     void desktopDataStateMatrixSmoke();
     void desktopDataStateMatrixCandidateGoldens_data();
     void desktopDataStateMatrixCandidateGoldens();
+    void dataExtendedStateMatrixSmoke_data(); void dataExtendedStateMatrixSmoke(); void dataExtendedStateMatrixCandidateGoldens_data(); void dataExtendedStateMatrixCandidateGoldens();
+    void progressCompactStateMatrixSmoke_data(); void progressCompactStateMatrixSmoke(); void progressCompactStateMatrixCandidateGoldens_data(); void progressCompactStateMatrixCandidateGoldens();
+    void surfaceBarStateMatrixSmoke_data(); void surfaceBarStateMatrixSmoke(); void surfaceBarStateMatrixCandidateGoldens_data(); void surfaceBarStateMatrixCandidateGoldens();
+
 };
 
 void tst_ThemeVisualRegression::tokenBoardGoldens_data()
@@ -1083,6 +1151,18 @@ void tst_ThemeVisualRegression::desktopDataStateMatrixCandidateGoldens()
         caseName,
         QtMaterialVisualTest::renderWidget(matrix.get()));
 }
+
+
+#define QTM3_MATRIX_CASES(Name, Prefix, Builder, Kind) \
+void tst_ThemeVisualRegression::Name##Smoke_data(){ addFamilyThemeRows(QStringLiteral(Prefix)); } \
+void tst_ThemeVisualRegression::Name##Smoke(){ QFETCH(QString,caseName); QFETCH(ThemeMode,mode); QFETCH(ContrastMode,contrast); const Theme theme=makeStaticComponentTheme(mode,contrast); std::unique_ptr<QWidget> matrix(Builder(theme)); writeSmokeArtifact(caseName,QtMaterialVisualTest::renderWidget(matrix.get()),QStringLiteral(Kind)); } \
+void tst_ThemeVisualRegression::Name##CandidateGoldens_data(){ Name##Smoke_data(); } \
+void tst_ThemeVisualRegression::Name##CandidateGoldens(){ if(!QtMaterialVisualTest::strictGoldens()&&!QtMaterialVisualTest::updateGoldens()) QSKIP("Family matrix goldens are opt-in."); QFETCH(QString,caseName); QFETCH(ThemeMode,mode); QFETCH(ContrastMode,contrast); const Theme theme=makeStaticComponentTheme(mode,contrast); std::unique_ptr<QWidget> matrix(Builder(theme)); QtMaterialVisualTest::verifyOrUpdateCandidateGolden(caseName,QtMaterialVisualTest::renderWidget(matrix.get())); }
+
+QTM3_MATRIX_CASES(dataExtendedStateMatrix, "data_extended_matrix", buildDataExtendedStateMatrix, "data-extended-state-matrix")
+QTM3_MATRIX_CASES(progressCompactStateMatrix, "progress_compact_matrix", buildProgressCompactStateMatrix, "progress-compact-state-matrix")
+QTM3_MATRIX_CASES(surfaceBarStateMatrix, "surface_bar_matrix", buildSurfaceBarStateMatrix, "surface-bar-state-matrix")
+#undef QTM3_MATRIX_CASES
 
 QTEST_MAIN(tst_ThemeVisualRegression)
 #include "tst_theme_visual_regression.moc"

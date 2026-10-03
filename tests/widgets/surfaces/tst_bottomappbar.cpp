@@ -27,6 +27,7 @@ private slots:
     void keyboardNavigationTrigger();
     void fabAccessibility();
     void actionAccessibility();
+    void rtlAndDpr2RenderingContract();
 };
 
 void tst_QtMaterialBottomAppBar::construct()
@@ -124,6 +125,20 @@ void tst_QtMaterialBottomAppBar::actionAccessibility()
     auto* button = bar.findChild<QToolButton*>(QStringLiteral("qtmaterial_bottomAppBar_action_0"));
     QVERIFY(button);
     QCOMPARE(button->accessibleName(), QStringLiteral("Search"));
+}
+
+void tst_QtMaterialBottomAppBar::rtlAndDpr2RenderingContract()
+{
+    QtMaterialBottomAppBar widget;
+    widget.setLayoutDirection(Qt::RightToLeft);
+    widget.resize(qMax(320, widget.sizeHint().width()), qMax(96, widget.sizeHint().height()));
+    QCOMPARE(widget.layoutDirection(), Qt::RightToLeft);
+    QPixmap pixmap(widget.width() * 2, widget.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    widget.render(&pixmap);
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
 }
 
 QTEST_MAIN(tst_QtMaterialBottomAppBar)
