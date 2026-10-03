@@ -96,8 +96,15 @@ entry points for applications.
 
 ## Documentation
 
+- [Getting started in 5 minutes](docs/getting-started.md)
+- [Installation](docs/installation.md)
+- [Themes](docs/themes.md)
+- [Widgets](docs/widgets/index.md)
+- [Complete component reference](docs/widgets/component-reference.md)
+- [Examples](docs/examples/index.md)
+- [Migration](docs/migration/index.md)
 - [Public API](docs/public-api/index.md)
-- [Theming](docs/public-api/theming.md)
+- [Theming API](docs/public-api/theming.md)
 - [Architecture](docs/architecture/)
 - [Roadmap](ROADMAP.md)
 - [Release process](docs/release-process.md)

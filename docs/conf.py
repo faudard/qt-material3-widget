@@ -27,6 +27,7 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.githubpages",
     "sphinxcontrib.mermaid",
+    "sphinx_copybutton",
 ]
 
 source_suffix = {
@@ -68,7 +69,7 @@ default_role = "any"
 html_theme = "furo"
 html_title = project
 html_baseurl = os.environ.get("DOCS_BASE_URL", "")
-html_static_path = []
+html_static_path = ["_static"]
 
 nitpicky = False
 
@@ -86,3 +87,13 @@ if not DOXYGEN_XML_DIR.exists():
         "warning: Doxygen XML directory not found at "
         f"{DOXYGEN_XML_DIR}. Run 'doxygen Doxyfile' before 'sphinx-build'."
     )
+
+
+html_context = {
+    "display_github": True,
+    "github_user": "faudard",
+    "github_repo": "qt-material3-widget",
+    "github_version": os.environ.get("DOCS_GITHUB_REF", "main"),
+    "conf_py_path": "/docs/",
+    "doc_version": os.environ.get("DOCS_VERSION", "latest"),
+}

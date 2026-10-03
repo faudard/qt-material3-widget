@@ -171,6 +171,106 @@ For each button class, the generated API page should eventually answer five ques
 #include <qtmaterial/widgets/buttons/qtmaterialextendedfab.h>
 ```
 
+
+
+## Consumer component cards
+
+The Gallery is the maintained visual reference for these controls. Inspect the Buttons page for light/dark, interaction and direction variants; reviewed visual-regression references provide the deterministic release evidence.
+
+### Filled Button
+
+**Screenshot.** Buttons Gallery, Filled Button examples.
+
+**When to use.** Use `QtMaterialFilledButton` for the primary action in a local task or surface where strong emphasis is appropriate.
+
+**API.** Include `<qtmaterial/widgets/buttons/qtmaterialfilledbutton.h>`. The widget uses the normal Qt button text/icon/clicked model plus Material theme/spec behavior.
+
+**States.** Enabled, disabled, hover, keyboard focus and pressed are part of the shared button contract.
+
+**Keyboard.** Tab focuses the button; Space, Enter and Return activate it. Disabled buttons do not activate.
+
+**Accessibility.** Visible text normally supplies the action name. Use an explicit accessible name when the visible label is abbreviated or ambiguous.
+
+**RTL.** Start/end padding and icon/text composition follow layout direction while preserving stable size hints.
+
+**Example.**
+```cpp
+auto *save = new QtMaterial::QtMaterialFilledButton(parent);
+save->setText(QStringLiteral("Save"));
+connect(save, &QAbstractButton::clicked, this, &Editor::save);
+```
+
+### Outlined Button
+
+**Screenshot.** Buttons Gallery, Outlined Button examples.
+
+**When to use.** Use `QtMaterialOutlinedButton` for a medium-emphasis action that needs a visible boundary without a filled primary container.
+
+**API.** Include `<qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h>`; normal Qt button content and activation APIs remain available.
+
+**States.** Enabled/disabled, hover, focus and press also affect the outline/state layer.
+
+**Keyboard.** Uses the shared button activation contract.
+
+**Accessibility.** Prefer a concise visible action label; explicitly name ambiguous controls.
+
+**RTL.** Text/icon order and directional padding mirror where applicable.
+
+**Example.**
+```cpp
+auto *cancel = new QtMaterial::QtMaterialOutlinedButton(parent);
+cancel->setText(QStringLiteral("Cancel"));
+```
+
+### Icon Button
+
+**Screenshot.** Buttons Gallery, Icon Button examples.
+
+**When to use.** Use `QtMaterialIconButton` for a compact, recognizable action where a text label would add unnecessary visual weight.
+
+**API.** Include `<qtmaterial/widgets/buttons/qtmaterialiconbutton.h>`; set the icon with `setIcon()`.
+
+**States.** Enabled/disabled, hover, focus and press retain the resolved touch target, ripple and focus-ring behavior.
+
+**Keyboard.** Tab focuses; Space, Enter and Return activate.
+
+**Accessibility.** Icon-only controls require an action-oriented accessible name. A tooltip improves discoverability but should not be the only mature accessibility contract.
+
+**RTL.** Directional icon semantics are the application's responsibility; widget geometry and focus behavior remain layout-direction aware.
+
+**Example.**
+```cpp
+auto *search = new QtMaterial::QtMaterialIconButton(parent);
+search->setIcon(searchIcon);
+search->setAccessibleName(QStringLiteral("Search"));
+search->setToolTip(QStringLiteral("Search"));
+```
+
+### FAB and Extended FAB
+
+**Screenshot.** Buttons Gallery, FAB examples.
+
+**When to use.** Use a compact `QtMaterialFab` for one highly promoted icon action. Use `QtMaterialExtendedFab` when that promoted action benefits from a persistent text label.
+
+**API.** Include `qtmaterialfab.h` or `qtmaterialextendedfab.h`. Both expose `QtMaterialFabVariant` for Primary, Secondary, Tertiary and Surface color families.
+
+**States.** Hover/focus/press drive state-layer and interaction elevation; disabled FABs suppress interaction elevation.
+
+**Keyboard.** Both follow the shared button activation contract.
+
+**Accessibility.** Compact FABs require an explicit accessible name. Extended FAB visible text normally provides the name.
+
+**RTL.** Extended FAB icon/text order mirrors where applicable; compact FAB centering is direction-independent.
+
+**Example.**
+```cpp
+auto *compose = new QtMaterial::QtMaterialExtendedFab(
+    composeIcon, QStringLiteral("Compose"), parent);
+compose->setFabVariant(QtMaterial::QtMaterialFabVariant::Primary);
+```
+
+The Text, Filled Tonal and Elevated variants use the same shared keyboard, accessibility and RTL contract; choose them according to the emphasis and container/elevation semantics documented above and in the generated API reference.
+
 ## Material 3 references
 
 Use these upstream references for behavior and semantics:

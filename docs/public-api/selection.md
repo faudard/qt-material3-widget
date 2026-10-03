@@ -83,3 +83,92 @@ Segmented Button supports Left/Right/Home/End navigation, skips disabled segment
 horizontal navigation to visual direction under RTL. The selection-family maturity suite also
 checks LTR/RTL size-hint stability and DPR 2.0 rendering smoke for Checkbox, Radio Button,
 Switch and Segmented Button.
+
+
+## Consumer component cards
+
+### Checkbox
+
+**Screenshot.** Gallery route `/selection/checkbox`.
+
+**When to use.** Use a checkbox for independent boolean choices, multi-selection, or a mixed/partially selected value.
+
+**API.** `<qtmaterial/widgets/selection/qtmaterialcheckbox.h>`, type `QtMaterialCheckbox`. Standard Qt checked/tristate APIs remain authoritative.
+
+**States.** Unchecked, checked, partially checked, focused and disabled.
+
+**Keyboard.** Tab focuses and Space toggles through the supported check-state model.
+
+**Accessibility.** Provide visible text or an explicit accessible name. Checked/partially-checked and disabled state must remain exposed.
+
+**RTL.** Indicator/label composition follows layout direction.
+
+**Example.**
+```cpp
+auto *choice = new QtMaterial::QtMaterialCheckbox(parent);
+choice->setText(QStringLiteral("Enable notifications"));
+choice->setChecked(true);
+```
+
+### Radio Button
+
+**Screenshot.** Gallery route `/selection/radio-button`.
+
+**When to use.** Use radio buttons when exactly one choice from a visible set should be selected.
+
+**API.** `<qtmaterial/widgets/selection/qtmaterialradiobutton.h>`, type `QtMaterialRadioButton`. Use Qt button grouping when explicit grouping is required.
+
+**States.** Unchecked, checked, focused and disabled.
+
+**Keyboard.** Native Qt radio/group navigation remains authoritative; keyboard focus and selection are preserved by the Material styling layer.
+
+**Accessibility.** The visible option text should clearly identify the choice; selection and enabled state are exposed.
+
+**RTL.** Indicator/label ordering follows layout direction.
+
+**Example.**
+```cpp
+auto *metric = new QtMaterial::QtMaterialRadioButton(parent);
+metric->setText(QStringLiteral("Metric"));
+```
+
+### Switch
+
+**Screenshot.** Gallery route `/selection/switch`.
+
+**When to use.** Use a switch for an on/off setting that takes effect immediately; use a checkbox for values collected as part of a larger form.
+
+**API.** `<qtmaterial/widgets/selection/qtmaterialswitch.h>`, type `QtMaterialSwitch`; use the standard checked state.
+
+**States.** Off/on, focus and disabled.
+
+**Keyboard.** Tab focuses and Space toggles the switch.
+
+**Accessibility.** Give the setting a clear label. The accessibility description synchronizes the current On/Off state.
+
+**RTL.** Track/thumb and label composition respect layout direction.
+
+**Example.**
+```cpp
+auto *darkMode = new QtMaterial::QtMaterialSwitch(parent);
+darkMode->setText(QStringLiteral("Dark mode"));
+darkMode->setChecked(false);
+```
+
+### Segmented Button
+
+**Screenshot.** Gallery route `/selection/segmented-button`.
+
+**When to use.** Use `QtMaterialSegmentedButton` for a compact set of closely related options, including single- or supported multi-selection workflows.
+
+**API.** `<qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h>`, type `QtMaterialSegmentedButton`.
+
+**States.** Segment selection, disabled segments/group state and focus are synchronized with the component model.
+
+**Keyboard.** Keyboard navigation follows the focused segmented-button contract while retaining native Qt focus behavior where applicable.
+
+**Accessibility.** The group summary remains synchronized with segment, selection, enabled-state and multi-selection changes.
+
+**RTL.** Segment ordering/directional behavior follows the widget layout direction.
+
+**Example.** Use the Selection Gallery segmented-button example to inspect single/multiple selection and disabled states.
