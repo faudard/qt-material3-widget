@@ -12,6 +12,8 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Selection and Input visual state matrices produce reviewable golden candidates for light, dark and high-contrast themes.
+- Ubuntu/Fusion CI publishes family visual candidate goldens without weakening the existing stable release baselines.
 - Shared Selection-family maturity coverage for accessibility, disabled keyboard behavior, RTL direction and DPR 2.0 rendering.
 
 ### Changed

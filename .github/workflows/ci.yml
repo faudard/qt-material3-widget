@@ -193,6 +193,27 @@ jobs:
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
             bash -c 'openbox >/tmp/openbox.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure'
 
+      - name: Generate family visual candidate goldens
+        if: matrix.name == 'ubuntu-qt6'
+        shell: bash
+        env:
+          QTMATERIAL3_UPDATE_VISUAL_GOLDENS: 1
+          QT_STYLE_OVERRIDE: Fusion
+        run: |
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            bash -c 'openbox >/tmp/openbox-visual-candidates.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure -R tst_theme_visual_regression'
+
+      - name: Upload family visual candidate goldens
+        if: always() && matrix.name == 'ubuntu-qt6'
+        uses: actions/upload-artifact@v6
+        with:
+          name: family-visual-candidate-goldens
+          path: |
+            tests/visual/goldens/selection_matrix_*.png
+            tests/visual/goldens/input_field_matrix_*.png
+            tests/visual/goldens/input_composite_matrix_*.png
+          if-no-files-found: warn
+
       - name: Test Windows
         if: runner.os == 'Windows'
         shell: pwsh

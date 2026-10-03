@@ -8,17 +8,29 @@
 #include <QLabel>
 #include <QPalette>
 #include <QSlider>
+#include <QStringListModel>
 #include <QWidget>
 
+#include "qtmaterial/integration/qtmaterialpaletteadapter.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
+#include "qtmaterial/widgets/inputs/qtmaterialautocomplete.h"
+#include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
+#include "qtmaterial/widgets/inputs/qtmaterialdatefield.h"
+#include "qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h"
+#include "qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
+#include "qtmaterial/widgets/inputs/qtmaterialsearchbar.h"
+#include "qtmaterial/widgets/inputs/qtmaterialsearchview.h"
+#include "qtmaterial/widgets/inputs/qtmaterialtimefield.h"
+#include "qtmaterial/widgets/qtmaterialdatepicker.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
 #include "qtmaterial/widgets/selection/qtmaterialradiobutton.h"
+#include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
 #include "qtmaterial/widgets/selection/qtmaterialswitch.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
 
@@ -55,10 +67,10 @@ QWidget* buildComponentGrid(const Theme& theme)
     root->setObjectName(QStringLiteral("visualComponentGrid"));
     root->setAutoFillBackground(true);
 
-    QPalette palette = root->palette();
-    palette.setColor(QPalette::Window, theme.colorScheme().color(ColorRole::Surface));
-    palette.setColor(QPalette::WindowText, theme.colorScheme().color(ColorRole::OnSurface));
-    root->setPalette(palette);
+    root->setPalette(
+        QtMaterialPaletteAdapter::toPalette(
+            theme,
+            root->palette()));
 
     auto* layout = new QGridLayout(root);
     layout->setContentsMargins(24, 24, 24, 24);
@@ -135,6 +147,252 @@ QWidget* buildComponentGrid(const Theme& theme)
     return root;
 }
 
+void configureMatrixRoot(QWidget* root, const Theme& theme, const QString& objectName)
+{
+    ThemeManager::instance().setTheme(theme);
+    root->setObjectName(objectName);
+    root->setAutoFillBackground(true);
+
+    QPalette palette = root->palette();
+    palette.setColor(QPalette::Window, theme.colorScheme().color(ColorRole::Surface));
+    palette.setColor(QPalette::WindowText, theme.colorScheme().color(ColorRole::OnSurface));
+    root->setPalette(palette);
+}
+
+QLabel* matrixLabel(const QString& text, QWidget* parent, bool strong = false)
+{
+    auto* label = new QLabel(text, parent);
+    if (strong) {
+        QFont font = label->font();
+        font.setBold(true);
+        label->setFont(font);
+    }
+    return label;
+}
+
+void addMatrixHeaders(QGridLayout* layout, QWidget* root, const QStringList& headers)
+{
+    for (int column = 0; column < headers.size(); ++column) {
+        layout->addWidget(matrixLabel(headers.at(column), root, true), 0, column + 1);
+    }
+}
+
+void addStateLabel(QGridLayout* layout, QWidget* root, int row, const QString& label)
+{
+    layout->addWidget(matrixLabel(label, root, true), row, 0);
+}
+
+QWidget* buildSelectionStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("selectionStateMatrix"));
+
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(18);
+    layout->setVerticalSpacing(12);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Checkbox"), QStringLiteral("Radio"),
+        QStringLiteral("Switch"), QStringLiteral("Segmented")});
+
+    const QStringList states = {
+        QStringLiteral("Default"), QStringLiteral("Selected"),
+        QStringLiteral("Disabled"), QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i) {
+        addStateLabel(layout, root, i + 1, states.at(i));
+    }
+
+    for (int row = 1; row <= 4; ++row) {
+        const bool selected = row != 1;
+        const bool enabled = row != 3;
+        const Qt::LayoutDirection direction = row == 4 ? Qt::RightToLeft : Qt::LeftToRight;
+
+        auto* checkbox = new QtMaterialCheckbox(root);
+        checkbox->setText(QStringLiteral("Option"));
+        checkbox->setChecked(selected);
+        checkbox->setEnabled(enabled);
+        checkbox->setLayoutDirection(direction);
+        layout->addWidget(checkbox, row, 1);
+
+        auto* radio = new QtMaterialRadioButton(QStringLiteral("Option"), root);
+        radio->setChecked(selected);
+        radio->setEnabled(enabled);
+        radio->setLayoutDirection(direction);
+        layout->addWidget(radio, row, 2);
+
+        auto* sw = new QtMaterialSwitch(QStringLiteral("Setting"), root);
+        sw->setChecked(selected);
+        sw->setEnabled(enabled);
+        sw->setLayoutDirection(direction);
+        layout->addWidget(sw, row, 3);
+
+        auto* segmented = new QtMaterialSegmentedButton(root);
+        segmented->addSegment(QStringLiteral("Day"));
+        segmented->addSegment(QStringLiteral("Week"));
+        segmented->addSegment(QStringLiteral("Month"));
+        if (selected) {
+            segmented->setCurrentIndex(1);
+        }
+        segmented->setEnabled(enabled);
+        segmented->setLayoutDirection(direction);
+        layout->addWidget(segmented, row, 4);
+    }
+
+    return root;
+}
+
+QWidget* buildInputFieldStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("inputFieldStateMatrix"));
+
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(14);
+    layout->setVerticalSpacing(12);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Outlined"), QStringLiteral("Filled"), QStringLiteral("Combo"),
+        QStringLiteral("Autocomplete"), QStringLiteral("Search"), QStringLiteral("Date"),
+        QStringLiteral("Time")});
+
+    const QStringList states = {
+        QStringLiteral("Empty"), QStringLiteral("Value"),
+        QStringLiteral("Disabled"), QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i) {
+        addStateLabel(layout, root, i + 1, states.at(i));
+    }
+
+    for (int row = 1; row <= 4; ++row) {
+        const bool hasValue = row != 1;
+        const bool enabled = row != 3;
+        const Qt::LayoutDirection direction = row == 4 ? Qt::RightToLeft : Qt::LeftToRight;
+
+        auto* outlined = new QtMaterialOutlinedTextField(root);
+        outlined->setLabelText(QStringLiteral("Email"));
+        if (hasValue) outlined->setText(QStringLiteral("dev@example.com"));
+        outlined->setEnabled(enabled);
+        outlined->setLayoutDirection(direction);
+        layout->addWidget(outlined, row, 1);
+
+        auto* filled = new QtMaterialFilledTextField(root);
+        filled->setLabelText(QStringLiteral("Name"));
+        if (hasValue) filled->setText(QStringLiteral("Ada"));
+        filled->setEnabled(enabled);
+        filled->setLayoutDirection(direction);
+        layout->addWidget(filled, row, 2);
+
+        auto* combo = new QtMaterialComboBox(root);
+        combo->setLabelText(QStringLiteral("Country"));
+        combo->addItems({QStringLiteral("France"), QStringLiteral("Germany"), QStringLiteral("Spain")});
+        combo->setCurrentIndex(hasValue ? 1 : -1);
+        combo->setEnabled(enabled);
+        combo->setLayoutDirection(direction);
+        layout->addWidget(combo, row, 3);
+
+        auto* autocomplete = new QtMaterialAutocomplete(root);
+        autocomplete->setPlaceholderText(QStringLiteral("Project"));
+        autocomplete->setSuggestions({QStringLiteral("Material"), QStringLiteral("Dashboard"), QStringLiteral("Gallery")});
+        if (hasValue) autocomplete->setText(QStringLiteral("Material"));
+        autocomplete->setEnabled(enabled);
+        autocomplete->setLayoutDirection(direction);
+        layout->addWidget(autocomplete, row, 4);
+
+        auto* search = new QtMaterialSearchBar(root);
+        search->setPlaceholderText(QStringLiteral("Search"));
+        if (hasValue) search->setText(QStringLiteral("material"));
+        search->setEnabled(enabled);
+        search->setLayoutDirection(direction);
+        layout->addWidget(search, row, 5);
+
+        auto* date = new QtMaterialDateField(root);
+        date->setLabelText(QStringLiteral("Due date"));
+        date->setDisplayFormat(QStringLiteral("yyyy-MM-dd"));
+        if (hasValue) date->setDate(QDate(2026, 10, 2));
+        date->setEnabled(enabled);
+        date->setLayoutDirection(direction);
+        layout->addWidget(date, row, 6);
+
+        auto* time = new QtMaterialTimeField(root);
+        time->setTime(hasValue ? QTime(10, 30) : QTime(0, 0));
+        time->setEnabled(enabled);
+        time->setLayoutDirection(direction);
+        layout->addWidget(time, row, 7);
+    }
+
+    return root;
+}
+
+QWidget* buildInputCompositeStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("inputCompositeStateMatrix"));
+
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(18);
+    layout->setVerticalSpacing(12);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Search View"), QStringLiteral("Date Picker"), QStringLiteral("Date Range")});
+
+    const QStringList states = {
+        QStringLiteral("Value"), QStringLiteral("Disabled"), QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i) {
+        addStateLabel(layout, root, i + 1, states.at(i));
+    }
+
+    for (int row = 1; row <= 3; ++row) {
+        const bool enabled = row != 2;
+        const Qt::LayoutDirection direction = row == 3 ? Qt::RightToLeft : Qt::LeftToRight;
+
+        auto* model = new QStringListModel({
+            QStringLiteral("Alpha"), QStringLiteral("Beta"), QStringLiteral("Gamma")}, root);
+        auto* searchView = new QtMaterialSearchView(root);
+        searchView->setSourceModel(model);
+        searchView->searchBar()->setText(QStringLiteral("a"));
+        searchView->setEnabled(enabled);
+        searchView->setLayoutDirection(direction);
+        searchView->setMinimumSize(QSize(260, 220));
+        layout->addWidget(searchView, row, 1);
+
+        auto* datePicker = new QtMaterialDatePicker(root);
+        datePicker->setSelectedDate(QDate(2026, 10, 2));
+        datePicker->setEnabled(enabled);
+        datePicker->setLayoutDirection(direction);
+        layout->addWidget(datePicker, row, 2);
+
+        auto* dateRange = new QtMaterialDateRangePicker(root);
+        dateRange->setDateRange(QDate(2026, 10, 2), QDate(2026, 10, 9));
+        dateRange->setEnabled(enabled);
+        dateRange->setLayoutDirection(direction);
+        layout->addWidget(dateRange, row, 3);
+    }
+
+    return root;
+}
+
+void addFamilyThemeRows(const QString& prefix)
+{
+    QTest::addColumn<QString>("caseName");
+    QTest::addColumn<ThemeMode>("mode");
+    QTest::addColumn<ContrastMode>("contrast");
+
+    const QByteArray lightName = (prefix + QStringLiteral("_light_standard")).toLatin1();
+    QTest::newRow(lightName.constData()) << prefix + QStringLiteral("_light_standard") << ThemeMode::Light << ContrastMode::Standard;
+    const QByteArray darkName = (prefix + QStringLiteral("_dark_standard")).toLatin1();
+    QTest::newRow(darkName.constData()) << prefix + QStringLiteral("_dark_standard") << ThemeMode::Dark << ContrastMode::Standard;
+    const QByteArray highName = (prefix + QStringLiteral("_light_high")).toLatin1();
+    QTest::newRow(highName.constData()) << prefix + QStringLiteral("_light_high") << ThemeMode::Light << ContrastMode::High;
+}
+
+void writeSmokeArtifact(const QString& caseName, const QImage& image, const QString& kind)
+{
+    QVERIFY(!image.isNull());
+    const QString artifactPath = QDir(QtMaterialVisualTest::artifactsDir()).absoluteFilePath(caseName + QStringLiteral(".actual.png"));
+    QString error;
+    QVERIFY2(QtMaterialVisualTest::savePng(artifactPath, image, &error), qPrintable(error));
+    QtMaterialVisualTest::writeManifestEntry(caseName, image, kind);
+}
+
 } // namespace
 
 class tst_ThemeVisualRegression : public QObject {
@@ -147,6 +405,18 @@ private slots:
     void componentGridSmoke();
     void componentGridStrictGoldens_data();
     void componentGridStrictGoldens();
+    void selectionStateMatrixSmoke_data();
+    void selectionStateMatrixSmoke();
+    void selectionStateMatrixCandidateGoldens_data();
+    void selectionStateMatrixCandidateGoldens();
+    void inputFieldStateMatrixSmoke_data();
+    void inputFieldStateMatrixSmoke();
+    void inputFieldStateMatrixCandidateGoldens_data();
+    void inputFieldStateMatrixCandidateGoldens();
+    void inputCompositeStateMatrixSmoke_data();
+    void inputCompositeStateMatrixSmoke();
+    void inputCompositeStateMatrixCandidateGoldens_data();
+    void inputCompositeStateMatrixCandidateGoldens();
 };
 
 void tst_ThemeVisualRegression::tokenBoardGoldens_data()
@@ -224,6 +494,114 @@ void tst_ThemeVisualRegression::componentGridStrictGoldens()
     std::unique_ptr<QWidget> grid(buildComponentGrid(theme));
     const QImage image = QtMaterialVisualTest::renderWidget(grid.get());
     QtMaterialVisualTest::verifyOrUpdateGolden(caseName, image);
+}
+
+void tst_ThemeVisualRegression::selectionStateMatrixSmoke_data()
+{
+    addFamilyThemeRows(QStringLiteral("selection_matrix"));
+}
+
+void tst_ThemeVisualRegression::selectionStateMatrixSmoke()
+{
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildSelectionStateMatrix(theme));
+    writeSmokeArtifact(caseName, QtMaterialVisualTest::renderWidget(matrix.get()), QStringLiteral("selection-state-matrix"));
+}
+
+void tst_ThemeVisualRegression::selectionStateMatrixCandidateGoldens_data()
+{
+    selectionStateMatrixSmoke_data();
+}
+
+void tst_ThemeVisualRegression::selectionStateMatrixCandidateGoldens()
+{
+    if (!QtMaterialVisualTest::strictGoldens() && !QtMaterialVisualTest::updateGoldens()) {
+        QSKIP("Family matrix goldens are opt-in.");
+    }
+
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildSelectionStateMatrix(theme));
+    QtMaterialVisualTest::verifyOrUpdateCandidateGolden(caseName, QtMaterialVisualTest::renderWidget(matrix.get()));
+}
+
+void tst_ThemeVisualRegression::inputFieldStateMatrixSmoke_data()
+{
+    addFamilyThemeRows(QStringLiteral("input_field_matrix"));
+}
+
+void tst_ThemeVisualRegression::inputFieldStateMatrixSmoke()
+{
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildInputFieldStateMatrix(theme));
+    writeSmokeArtifact(caseName, QtMaterialVisualTest::renderWidget(matrix.get()), QStringLiteral("input-field-state-matrix"));
+}
+
+void tst_ThemeVisualRegression::inputFieldStateMatrixCandidateGoldens_data()
+{
+    inputFieldStateMatrixSmoke_data();
+}
+
+void tst_ThemeVisualRegression::inputFieldStateMatrixCandidateGoldens()
+{
+    if (!QtMaterialVisualTest::strictGoldens() && !QtMaterialVisualTest::updateGoldens()) {
+        QSKIP("Family matrix goldens are opt-in.");
+    }
+
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildInputFieldStateMatrix(theme));
+    QtMaterialVisualTest::verifyOrUpdateCandidateGolden(caseName, QtMaterialVisualTest::renderWidget(matrix.get()));
+}
+
+void tst_ThemeVisualRegression::inputCompositeStateMatrixSmoke_data()
+{
+    addFamilyThemeRows(QStringLiteral("input_composite_matrix"));
+}
+
+void tst_ThemeVisualRegression::inputCompositeStateMatrixSmoke()
+{
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildInputCompositeStateMatrix(theme));
+    writeSmokeArtifact(caseName, QtMaterialVisualTest::renderWidget(matrix.get()), QStringLiteral("input-composite-state-matrix"));
+}
+
+void tst_ThemeVisualRegression::inputCompositeStateMatrixCandidateGoldens_data()
+{
+    inputCompositeStateMatrixSmoke_data();
+}
+
+void tst_ThemeVisualRegression::inputCompositeStateMatrixCandidateGoldens()
+{
+    if (!QtMaterialVisualTest::strictGoldens() && !QtMaterialVisualTest::updateGoldens()) {
+        QSKIP("Family matrix goldens are opt-in.");
+    }
+
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildInputCompositeStateMatrix(theme));
+    QtMaterialVisualTest::verifyOrUpdateCandidateGolden(caseName, QtMaterialVisualTest::renderWidget(matrix.get()));
 }
 
 QTEST_MAIN(tst_ThemeVisualRegression)
