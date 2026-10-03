@@ -86,3 +86,13 @@ if not DOXYGEN_XML_DIR.exists():
         "warning: Doxygen XML directory not found at "
         f"{DOXYGEN_XML_DIR}. Run 'doxygen Doxyfile' before 'sphinx-build'."
     )
+
+
+html_context = {
+    "display_github": True,
+    "github_user": "faudard",
+    "github_repo": "qt-material3-widget",
+    "github_version": os.environ.get("DOCS_GITHUB_REF", "main"),
+    "conf_py_path": "/docs/",
+    "doc_version": os.environ.get("DOCS_VERSION", "latest"),
+}
