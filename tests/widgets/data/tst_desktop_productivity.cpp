@@ -202,7 +202,7 @@ private slots:
         tree.render(&pixmap);
 
         QVERIFY(!pixmap.isNull());
-        QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+        QCOMPARE(pixmap.devicePixelRatio(), dpr);
     }
 
     void paginationAccessibilityKeyboardRtlAndHighDpi()
@@ -261,7 +261,7 @@ private slots:
         pagination.render(&pixmap);
 
         QVERIFY(!pixmap.isNull());
-        QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+        QCOMPARE(pixmap.devicePixelRatio(), dpr);
     }
 
     void splitViewUsesQSplitterState()
@@ -465,7 +465,7 @@ private slots:
         split.render(&pixmap);
 
         QVERIFY(!pixmap.isNull());
-        QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+        QCOMPARE(pixmap.devicePixelRatio(), dpr);
     }
 
     void breadcrumbOverflowActivatesHiddenSegment()
@@ -709,8 +709,19 @@ private slots:
         QCOMPARE(activated.at(0).at(0).toInt(), 0);
     }
 
-    void breadcrumbRendersAtHighDpi()
+    void breadcrumbRendersAtDesktopScaleFactors_data()
     {
+        QTest::addColumn<qreal>("dpr");
+        QTest::newRow("100-percent") << qreal(1.00);
+        QTest::newRow("125-percent") << qreal(1.25);
+        QTest::newRow("150-percent") << qreal(1.50);
+        QTest::newRow("175-percent") << qreal(1.75);
+        QTest::newRow("200-percent") << qreal(2.00);
+    }
+
+    void breadcrumbRendersAtDesktopScaleFactors()
+    {
+        QFETCH(qreal, dpr);
         QtMaterialBreadcrumb breadcrumb;
         breadcrumb.setItems({
             QStringLiteral("Workspace"),
@@ -720,14 +731,14 @@ private slots:
         breadcrumb.resize(520, qMax(48, breadcrumb.sizeHint().height()));
 
         QPixmap pixmap(
-            breadcrumb.width() * 2,
-            breadcrumb.height() * 2);
-        pixmap.setDevicePixelRatio(2.0);
+            qMax(1, qRound(breadcrumb.width() * dpr)),
+            qMax(1, qRound(breadcrumb.height() * dpr)));
+        pixmap.setDevicePixelRatio(dpr);
         pixmap.fill(Qt::transparent);
         breadcrumb.render(&pixmap);
 
         QVERIFY(!pixmap.isNull());
-        QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+        QCOMPARE(pixmap.devicePixelRatio(), dpr);
     }
 
     void commandPaletteEmptyStateAndShortcutRole()
@@ -864,8 +875,19 @@ private slots:
         QVERIFY(!palette.isVisible());
     }
 
-    void commandPaletteKeyboardActivationAndHighDpi()
+    void commandPaletteDesktopScaleFactors_data()
     {
+        QTest::addColumn<qreal>("dpr");
+        QTest::newRow("100-percent") << qreal(1.00);
+        QTest::newRow("125-percent") << qreal(1.25);
+        QTest::newRow("150-percent") << qreal(1.50);
+        QTest::newRow("175-percent") << qreal(1.75);
+        QTest::newRow("200-percent") << qreal(2.00);
+    }
+
+    void commandPaletteDesktopScaleFactors()
+    {
+        QFETCH(qreal, dpr);
         QStringListModel model({
             QStringLiteral("Open file"),
             QStringLiteral("Build project")
@@ -880,13 +902,13 @@ private slots:
 
         palette.resize(560, 400);
         QPixmap pixmap(
-            palette.width() * 2,
-            palette.height() * 2);
-        pixmap.setDevicePixelRatio(2.0);
+            qMax(1, qRound(palette.width() * dpr)),
+            qMax(1, qRound(palette.height() * dpr)));
+        pixmap.setDevicePixelRatio(dpr);
         pixmap.fill(Qt::transparent);
         palette.render(&pixmap);
         QVERIFY(!pixmap.isNull());
-        QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+        QCOMPARE(pixmap.devicePixelRatio(), dpr);
 
         QSignalSpy activated(&palette, &QtMaterialCommandPalette::commandActivated);
         palette.show();
