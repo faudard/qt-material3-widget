@@ -50,7 +50,7 @@ adjustment, horizontal/vertical orientation and RTL-aware horizontal mapping.
 
 The focused `tst_slider_maturity` suite certifies accessible value summaries,
 two-handle keyboard traversal for Range Slider, Home/End bounds, LTR/RTL directional
-behavior and DPR 2.0 rendering. The visual-regression harness additionally emits
+behavior and desktop rendering at 100%, 125%, 150%, 175% and 200% scale equivalents. The visual-regression harness additionally emits
 `input_slider_matrix_*` candidates covering horizontal, vertical, disabled and RTL
 states in the controlled light/dark/high-contrast theme set.
 
