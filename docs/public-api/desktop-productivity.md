@@ -78,7 +78,7 @@ model, Table accessibility/keyboard/RTL/HiDPI behavior, Tree native keyboard/RTL
 behavior, Pagination range/accessibility/RTL/HiDPI behavior, Split View collapse plus
 keyboard-resize/RTL/HiDPI behavior, Breadcrumb accessibility/RTL, and Command Palette
 keyboard/result accessibility. The focused Navigation Rail target additionally certifies
-disabled-item skipping, visual-direction RTL keyboard behavior and HiDPI rendering.
+disabled-item skipping, visual-direction RTL keyboard behavior and HiDPI rendering; the Navigation family tests additionally exercise Tabs, Menu and Rail at the same fractional desktop scale matrix.
 
 The visual-regression harness emits `desktop_data_matrix_*` candidates for Table, Tree View,
 Pagination and Split View across default, disabled and RTL states in light, dark and
