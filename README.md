@@ -23,6 +23,17 @@ ctest --test-dir build --output-on-failure
 
 Material Color Utilities is optional and disabled by default. The built-in fallback backend remains available without an external MCU checkout.
 
+### Qt Designer
+
+Build the optional custom-widget collection to drag Qt Material 3 controls directly into `.ui` forms:
+
+```bash
+cmake -S . -B build -DQTMATERIAL3_BUILD_DESIGNER_PLUGIN=ON
+cmake --build build --target qtmaterial3_designer_plugin
+```
+
+The palette is grouped into Buttons, Inputs, Selection, Navigation, Surfaces and Data. See [Qt Designer plugin](docs/designer-plugin.md) for installation and ABI/toolchain requirements.
+
 ## Examples
 
 The repository includes complementary examples for both component-level inspection and real application composition:
