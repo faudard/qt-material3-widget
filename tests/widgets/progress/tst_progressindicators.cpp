@@ -29,7 +29,8 @@ private Q_SLOTS:
     void linearDeterminateAccessibilityIncludesPercent();
     void linearIndeterminateAccessibilityUsesStatusText();
     void linearRtlPaintsFromTrailingEdge();
-    void linearRendersAtHighDpi();
+    void indicatorsRenderAtDesktopScaleFactors_data();
+    void indicatorsRenderAtDesktopScaleFactors();
 };
 
 void tst_ProgressIndicators::linearValueIsClamped()
@@ -289,19 +290,45 @@ void tst_ProgressIndicators::linearRtlPaintsFromTrailingEdge()
     QVERIFY(rtlEnd.red() > rtlEnd.blue());
 }
 
-void tst_ProgressIndicators::linearRendersAtHighDpi()
+void tst_ProgressIndicators::indicatorsRenderAtDesktopScaleFactors_data()
 {
+    QTest::addColumn<qreal>("dpr");
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent") << qreal(2.00);
+}
+
+void tst_ProgressIndicators::indicatorsRenderAtDesktopScaleFactors()
+{
+    QFETCH(qreal, dpr);
     QtMaterialLinearProgressIndicator indicator;
     indicator.resize(320, qMax(8, indicator.sizeHint().height()));
     indicator.setValue(0.5);
 
-    QPixmap pixmap(indicator.width() * 2, indicator.height() * 2);
-    pixmap.setDevicePixelRatio(2.0);
-    pixmap.fill(Qt::transparent);
-    indicator.render(&pixmap);
+    QPixmap linearPixmap(
+        qMax(1, qRound(indicator.width() * dpr)),
+        qMax(1, qRound(indicator.height() * dpr)));
+    linearPixmap.setDevicePixelRatio(dpr);
+    linearPixmap.fill(Qt::transparent);
+    indicator.render(&linearPixmap);
 
-    QVERIFY(!pixmap.isNull());
-    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
+    QVERIFY(!linearPixmap.isNull());
+    QCOMPARE(linearPixmap.devicePixelRatio(), dpr);
+
+    QtMaterialCircularProgressIndicator circular;
+    circular.resize(circular.sizeHint());
+    circular.setValue(0.5);
+    QPixmap circularPixmap(
+        qMax(1, qRound(circular.width() * dpr)),
+        qMax(1, qRound(circular.height() * dpr)));
+    circularPixmap.setDevicePixelRatio(dpr);
+    circularPixmap.fill(Qt::transparent);
+    circular.render(&circularPixmap);
+
+    QVERIFY(!circularPixmap.isNull());
+    QCOMPARE(circularPixmap.devicePixelRatio(), dpr);
 }
 
 QTEST_MAIN(tst_ProgressIndicators)
