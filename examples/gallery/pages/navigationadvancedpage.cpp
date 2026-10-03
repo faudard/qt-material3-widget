@@ -3,6 +3,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QShortcut>
+#include <QStandardItemModel>
 #include <QStringListModel>
 #include <QVBoxLayout>
 
@@ -30,8 +31,12 @@ NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
     breadcrumb->setItems({
         tr("Workspace"),
         tr("Requirements"),
+        tr("Subsystem"),
+        tr("Module"),
         tr("REQ-42")
     });
+    breadcrumb->setResponsiveElisionEnabled(true);
+    breadcrumb->setMaximumWidth(420);
     layout->addWidget(breadcrumb);
 
     auto* currentContext = new QLabel(tr("Current context: REQ-42"), this);
@@ -46,15 +51,32 @@ NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
                 QObject::tr("Current context: %1").arg(text));
         });
 
-    auto* model = new QStringListModel({
+    auto* model = new QStandardItemModel(4, 1, this);
+    const QStringList commands = {
         tr("Go to Workspace"),
         tr("Go to Requirements"),
         tr("Open REQ-42"),
         tr("Show requirement search")
-    }, this);
+    };
+    const QStringList shortcuts = {
+        tr("Alt+1"),
+        tr("Alt+2"),
+        tr("Ctrl+O"),
+        tr("Ctrl+F")
+    };
+    for (int row = 0; row < commands.size(); ++row) {
+        model->setData(
+            model->index(row, 0),
+            commands.at(row));
+        model->setData(
+            model->index(row, 0),
+            shortcuts.at(row),
+            QtMaterial::QtMaterialCommandPalette::ShortcutRole);
+    }
 
     auto* palette = new QtMaterial::QtMaterialCommandPalette(this);
     palette->setSourceModel(model);
+    palette->setEmptyStateText(tr("No matching command"));
 
     connect(
         palette,

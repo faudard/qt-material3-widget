@@ -9,6 +9,7 @@
 #include <QPalette>
 #include <QSlider>
 #include <QStringListModel>
+#include <QStandardItemModel>
 #include <QWidget>
 
 #include "qtmaterial/integration/qtmaterialpaletteadapter.h"
@@ -18,6 +19,10 @@
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
+#include "qtmaterial/widgets/data/qtmaterialpagination.h"
+#include "qtmaterial/widgets/data/qtmaterialtable.h"
+#include "qtmaterial/widgets/data/qtmaterialtreeview.h"
+#include "qtmaterial/widgets/layouts/qtmaterialsplitview.h"
 #include "qtmaterial/widgets/inputs/qtmaterialautocomplete.h"
 #include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
 #include "qtmaterial/widgets/inputs/qtmaterialdatefield.h"
@@ -26,6 +31,8 @@
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialsearchbar.h"
 #include "qtmaterial/widgets/inputs/qtmaterialsearchview.h"
+#include "qtmaterial/widgets/inputs/qtmaterialslider.h"
+#include "qtmaterial/widgets/inputs/qtmaterialrangeslider.h"
 #include "qtmaterial/widgets/inputs/qtmaterialtimefield.h"
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
@@ -471,27 +478,193 @@ QWidget* buildNavigationDesktopStateMatrix(const Theme& theme)
         breadcrumb->setItems({
             QStringLiteral("Workspace"),
             QStringLiteral("Requirements"),
+            QStringLiteral("Subsystem"),
+            QStringLiteral("Module"),
             QStringLiteral("REQ-42")});
+        breadcrumb->setMaximumVisibleItems(3);
         breadcrumb->setEnabled(enabled);
         breadcrumb->setLayoutDirection(direction);
         breadcrumb->setMinimumWidth(420);
         layout->addWidget(breadcrumb, row, 1, Qt::AlignTop);
 
-        auto* model = new QStringListModel({
+        auto* model =
+            new QStandardItemModel(4, 1, root);
+        const QStringList commands = {
             QStringLiteral("Open file"),
             QStringLiteral("Build project"),
             QStringLiteral("Run tests"),
-            QStringLiteral("Show settings")}, root);
+            QStringLiteral("Show settings")};
+        const QStringList shortcuts = {
+            QStringLiteral("Ctrl+O"),
+            QStringLiteral("Ctrl+B"),
+            QStringLiteral("Ctrl+R"),
+            QStringLiteral("Ctrl+,")};
+        for (int commandRow = 0;
+             commandRow < commands.size();
+             ++commandRow) {
+            model->setData(
+                model->index(commandRow, 0),
+                commands.at(commandRow));
+            model->setData(
+                model->index(commandRow, 0),
+                shortcuts.at(commandRow),
+                QtMaterialCommandPalette::ShortcutRole);
+        }
 
-        auto* palette = new QtMaterialCommandPalette(root);
+        auto* palette =
+            new QtMaterialCommandPalette(root);
         palette->setWindowFlags(Qt::Widget);
         palette->setModal(false);
         palette->setSourceModel(model);
-        palette->setQuery(QStringLiteral("Build"));
+        palette->setQuery(
+            row == 2
+                ? QStringLiteral("No match")
+                : QString());
         palette->setEnabled(enabled);
         palette->setLayoutDirection(direction);
         palette->setMinimumSize(QSize(420, 220));
         layout->addWidget(palette, row, 2);
+    }
+
+    return root;
+}
+
+QWidget* buildInputSliderStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("inputSliderStateMatrix"));
+
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(24);
+    layout->setVerticalSpacing(14);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Slider"),
+        QStringLiteral("Range Slider")});
+
+    const QStringList states = {
+        QStringLiteral("Value"),
+        QStringLiteral("Disabled"),
+        QStringLiteral("RTL"),
+        QStringLiteral("Vertical")};
+    for (int i = 0; i < states.size(); ++i) {
+        addStateLabel(layout, root, i + 1, states.at(i));
+    }
+
+    for (int row = 1; row <= 4; ++row) {
+        const bool enabled = row != 2;
+        const bool vertical = row == 4;
+        const Qt::LayoutDirection direction =
+            row == 3 ? Qt::RightToLeft : Qt::LeftToRight;
+        const Qt::Orientation orientation =
+            vertical ? Qt::Vertical : Qt::Horizontal;
+
+        auto* slider = new QtMaterialSlider(orientation, root);
+        slider->setRange(0, 100);
+        slider->setValue(64);
+        slider->setEnabled(enabled);
+        slider->setLayoutDirection(direction);
+        slider->setMinimumSize(
+            vertical ? QSize(56, 220) : QSize(260, 56));
+        layout->addWidget(slider, row, 1, Qt::AlignCenter);
+
+        auto* range = new QtMaterialRangeSlider(root);
+        range->setOrientation(orientation);
+        range->setRange(0, 100);
+        range->setValues(25, 75);
+        range->setEnabled(enabled);
+        range->setLayoutDirection(direction);
+        range->setMinimumSize(
+            vertical ? QSize(56, 220) : QSize(280, 56));
+        layout->addWidget(range, row, 2, Qt::AlignCenter);
+    }
+
+    return root;
+}
+
+QWidget* buildDesktopDataStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("desktopDataStateMatrix"));
+
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(16);
+    layout->setVerticalSpacing(14);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Table"),
+        QStringLiteral("Tree"),
+        QStringLiteral("Pagination"),
+        QStringLiteral("Split View")});
+
+    const QStringList states = {
+        QStringLiteral("Default"),
+        QStringLiteral("Disabled"),
+        QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i) {
+        addStateLabel(layout, root, i + 1, states.at(i));
+    }
+
+    for (int row = 1; row <= 3; ++row) {
+        const bool enabled = row != 2;
+        const Qt::LayoutDirection direction =
+            row == 3 ? Qt::RightToLeft : Qt::LeftToRight;
+
+        auto* tableModel = new QStandardItemModel(3, 3, root);
+        tableModel->setHorizontalHeaderLabels({
+            QStringLiteral("Name"),
+            QStringLiteral("State"),
+            QStringLiteral("Value")});
+        for (int r = 0; r < 3; ++r) {
+            tableModel->setData(tableModel->index(r, 0), QStringLiteral("Item %1").arg(r + 1));
+            tableModel->setData(tableModel->index(r, 1), r % 2 ? QStringLiteral("Ready") : QStringLiteral("Pending"));
+            tableModel->setData(tableModel->index(r, 2), (r + 1) * 10);
+        }
+
+        auto* table = new QtMaterialTable(root);
+        table->setModel(tableModel);
+        table->setCurrentIndex(tableModel->index(1, 0));
+        table->setEnabled(enabled);
+        table->setLayoutDirection(direction);
+        table->setMinimumSize(QSize(360, 180));
+        layout->addWidget(table, row, 1);
+
+        auto* treeModel = new QStandardItemModel(root);
+        auto* workspace = new QStandardItem(QStringLiteral("Workspace"));
+        workspace->appendRow(new QStandardItem(QStringLiteral("Requirements")));
+        workspace->appendRow(new QStandardItem(QStringLiteral("Models")));
+        treeModel->appendRow(workspace);
+
+        auto* tree = new QtMaterialTreeView(root);
+        tree->setModel(treeModel);
+        tree->expandAll();
+        tree->setCurrentIndex(treeModel->index(0, 0));
+        tree->setEnabled(enabled);
+        tree->setLayoutDirection(direction);
+        tree->setMinimumSize(QSize(260, 180));
+        layout->addWidget(tree, row, 2);
+
+        auto* pagination = new QtMaterialPagination(root);
+        pagination->setTotalCount(123);
+        pagination->setPageSize(25);
+        pagination->setPage(2);
+        pagination->setEnabled(enabled);
+        pagination->setLayoutDirection(direction);
+        pagination->setMinimumWidth(360);
+        layout->addWidget(pagination, row, 3, Qt::AlignTop);
+
+        auto* split = new QtMaterialSplitView(Qt::Horizontal, root);
+        auto* leftPane = matrixLabel(QStringLiteral("Tree pane"), split, true);
+        auto* rightPane = matrixLabel(QStringLiteral("Editor pane"), split, true);
+        leftPane->setAlignment(Qt::AlignCenter);
+        rightPane->setAlignment(Qt::AlignCenter);
+        split->addWidget(leftPane);
+        split->addWidget(rightPane);
+        split->setSizes({120, 220});
+        split->setEnabled(enabled);
+        split->setLayoutDirection(direction);
+        split->setMinimumSize(QSize(340, 160));
+        layout->addWidget(split, row, 4);
     }
 
     return root;
@@ -552,6 +725,14 @@ private slots:
     void navigationDesktopStateMatrixSmoke();
     void navigationDesktopStateMatrixCandidateGoldens_data();
     void navigationDesktopStateMatrixCandidateGoldens();
+    void inputSliderStateMatrixSmoke_data();
+    void inputSliderStateMatrixSmoke();
+    void inputSliderStateMatrixCandidateGoldens_data();
+    void inputSliderStateMatrixCandidateGoldens();
+    void desktopDataStateMatrixSmoke_data();
+    void desktopDataStateMatrixSmoke();
+    void desktopDataStateMatrixCandidateGoldens_data();
+    void desktopDataStateMatrixCandidateGoldens();
 };
 
 void tst_ThemeVisualRegression::tokenBoardGoldens_data()
@@ -816,6 +997,88 @@ void tst_ThemeVisualRegression::navigationDesktopStateMatrixCandidateGoldens()
 
     const Theme theme = makeStaticComponentTheme(mode, contrast);
     std::unique_ptr<QWidget> matrix(buildNavigationDesktopStateMatrix(theme));
+    QtMaterialVisualTest::verifyOrUpdateCandidateGolden(
+        caseName,
+        QtMaterialVisualTest::renderWidget(matrix.get()));
+}
+
+void tst_ThemeVisualRegression::inputSliderStateMatrixSmoke_data()
+{
+    addFamilyThemeRows(QStringLiteral("input_slider_matrix"));
+}
+
+void tst_ThemeVisualRegression::inputSliderStateMatrixSmoke()
+{
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildInputSliderStateMatrix(theme));
+    writeSmokeArtifact(
+        caseName,
+        QtMaterialVisualTest::renderWidget(matrix.get()),
+        QStringLiteral("input-slider-state-matrix"));
+}
+
+void tst_ThemeVisualRegression::inputSliderStateMatrixCandidateGoldens_data()
+{
+    inputSliderStateMatrixSmoke_data();
+}
+
+void tst_ThemeVisualRegression::inputSliderStateMatrixCandidateGoldens()
+{
+    if (!QtMaterialVisualTest::strictGoldens() && !QtMaterialVisualTest::updateGoldens()) {
+        QSKIP("Family matrix goldens are opt-in.");
+    }
+
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildInputSliderStateMatrix(theme));
+    QtMaterialVisualTest::verifyOrUpdateCandidateGolden(
+        caseName,
+        QtMaterialVisualTest::renderWidget(matrix.get()));
+}
+
+void tst_ThemeVisualRegression::desktopDataStateMatrixSmoke_data()
+{
+    addFamilyThemeRows(QStringLiteral("desktop_data_matrix"));
+}
+
+void tst_ThemeVisualRegression::desktopDataStateMatrixSmoke()
+{
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildDesktopDataStateMatrix(theme));
+    writeSmokeArtifact(
+        caseName,
+        QtMaterialVisualTest::renderWidget(matrix.get()),
+        QStringLiteral("desktop-data-state-matrix"));
+}
+
+void tst_ThemeVisualRegression::desktopDataStateMatrixCandidateGoldens_data()
+{
+    desktopDataStateMatrixSmoke_data();
+}
+
+void tst_ThemeVisualRegression::desktopDataStateMatrixCandidateGoldens()
+{
+    if (!QtMaterialVisualTest::strictGoldens() && !QtMaterialVisualTest::updateGoldens()) {
+        QSKIP("Family matrix goldens are opt-in.");
+    }
+
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> matrix(buildDesktopDataStateMatrix(theme));
     QtMaterialVisualTest::verifyOrUpdateCandidateGolden(
         caseName,
         QtMaterialVisualTest::renderWidget(matrix.get()));

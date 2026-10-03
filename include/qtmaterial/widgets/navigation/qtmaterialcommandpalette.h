@@ -17,8 +17,14 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialCommandPalette : public QDialog
 {
     Q_OBJECT
     Q_PROPERTY(QString query READ query WRITE setQuery NOTIFY queryChanged)
+    Q_PROPERTY(QString emptyStateText READ emptyStateText WRITE setEmptyStateText)
 
 public:
+    enum CommandRole {
+        ShortcutRole = Qt::UserRole + 1
+    };
+    Q_ENUM(CommandRole)
+
     explicit QtMaterialCommandPalette(QWidget* parent = nullptr);
     ~QtMaterialCommandPalette() override;
 
@@ -27,6 +33,9 @@ public:
 
     QString query() const;
     void setQuery(const QString& query);
+
+    QString emptyStateText() const;
+    void setEmptyStateText(const QString& text);
 
 Q_SIGNALS:
     void queryChanged(const QString& query);

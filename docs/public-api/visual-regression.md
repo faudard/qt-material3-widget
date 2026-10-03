@@ -16,6 +16,8 @@ The harness exercises:
 - Input field state matrices across empty, value, disabled and RTL states;
 - composite Input matrices for Search View, Date Picker and Date Range Picker;
 - Navigation matrices for Tabs, Navigation Rail, Menu, Breadcrumb and Command Palette;
+- Slider/Range Slider matrices covering horizontal, vertical, disabled and RTL states;
+- Desktop-data matrices for Table, Tree View, Pagination and Split View;
 - Theme Studio screenshot output.
 
 Token-board snapshots use deterministic painting and are the safest regression
@@ -57,7 +59,7 @@ shape/elevation/typography defaults, or accessibility/focus behavior changes.
 
 ## Candidate family goldens
 
-Selection, Input and Navigation state matrices use a two-stage baseline workflow.
+Selection, Input, Navigation and Desktop Productivity state matrices use a two-stage baseline workflow.
 
 A matrix without a checked-in PNG is a **candidate golden**. Smoke rendering still runs on
 every test job, while the Ubuntu/Fusion CI job regenerates the candidate PNGs and publishes

@@ -17,6 +17,7 @@ private Q_SLOTS:
     void programmaticSelectionEmitsOnce();
     void selectedDateFormattingMovesWithSelection();
     void resolvedMetricsReachChildWidgets();
+    void calendarPaletteUsesMaterialSurfaceForWeekdayHeader();
 };
 
 void tst_DatePickerStability::programmaticSelectionEmitsOnce()
@@ -75,6 +76,30 @@ void tst_DatePickerStability::resolvedMetricsReachChildWidgets()
     QVERIFY(header);
     QVERIFY(header->minimumHeight() >= 72);
     QCOMPARE(picker.layout()->spacing(), 14);
+}
+
+void tst_DatePickerStability::calendarPaletteUsesMaterialSurfaceForWeekdayHeader()
+{
+    QtMaterialDatePicker picker;
+
+    DatePickerSpec spec = picker.spec();
+    spec.backgroundColor =
+        QColor(QStringLiteral("#121016"));
+    picker.setSpec(spec);
+
+    auto* calendar =
+        picker.findChild<QCalendarWidget*>();
+    QVERIFY(calendar);
+
+    QCOMPARE(
+        calendar->palette().color(QPalette::Base),
+        spec.backgroundColor);
+    QCOMPARE(
+        calendar->palette().color(QPalette::AlternateBase),
+        spec.backgroundColor);
+    QCOMPARE(
+        calendar->palette().color(QPalette::Window),
+        spec.backgroundColor);
 }
 
 QTEST_MAIN(tst_DatePickerStability)

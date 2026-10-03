@@ -42,6 +42,11 @@ keyboard-resizable: Left/Right resize horizontal splits, Up/Down resize vertical
 Shift applies a larger step. Horizontal physical arrow direction is mirrored against pane order
 under RTL so the handle still moves in the direction of the pressed arrow.
 
+`setPaneMinimumExtent()` and `setPaneMaximumExtent()` provide orientation-aware convenience
+wrappers over the native child-widget size constraints. Passing a non-positive maximum removes
+the explicit cap. `resetPaneSizes()` redistributes panes through the native QSplitter sizing
+engine, and double-clicking a Material split handle invokes the same reset path.
+
 ## Desktop navigation and commands
 
 `QtMaterialBreadcrumb` represents a hierarchical path and emits the activated segment. Each
@@ -69,9 +74,15 @@ and keeps `mimeData()` / `dropMimeData()` in the model where Qt expects them.
 ## Certification
 
 The desktop-productivity test target exercises Model/View ownership, a 100000-row virtual
-model, selection policies, pagination invariants, splitter behavior, Breadcrumb accessibility
-and RTL behavior, Command Palette keyboard/result accessibility, command filtering and DPR 2.0
-rendering. The focused Navigation Rail target additionally certifies disabled-item skipping,
-visual-direction RTL keyboard behavior and HiDPI rendering. The release gate requires the same
-Windows Qt 5.14.2, Windows Qt 6, Linux Qt 6, macOS Qt 6, sanitizer, packaging and consumer matrix
-used by earlier releases.
+model, Table accessibility/keyboard/RTL/HiDPI behavior, Tree native keyboard/RTL/HiDPI
+behavior, Pagination range/accessibility/RTL/HiDPI behavior, Split View collapse plus
+keyboard-resize/RTL/HiDPI behavior, Breadcrumb accessibility/RTL, and Command Palette
+keyboard/result accessibility. The focused Navigation Rail target additionally certifies
+disabled-item skipping, visual-direction RTL keyboard behavior and HiDPI rendering.
+
+The visual-regression harness emits `desktop_data_matrix_*` candidates for Table, Tree View,
+Pagination and Split View across default, disabled and RTL states in light, dark and
+high-contrast themes. These remain review candidates until approved as stable release goldens.
+
+The release gate requires the same Windows Qt 5.14.2, Windows Qt 6, Linux Qt 6, macOS Qt 6,
+sanitizer, packaging and consumer matrix used by earlier releases.

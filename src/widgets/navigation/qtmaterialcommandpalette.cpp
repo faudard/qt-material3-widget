@@ -2,10 +2,15 @@
 
 #include <QAbstractItemModel>
 #include <QEvent>
+#include <QLabel>
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QListView>
+#include <QPainter>
+#include <QPalette>
 #include <QSortFilterProxyModel>
+#include <QStyledItemDelegate>
+#include <QStyle>
 #include <QVBoxLayout>
 
 namespace QtMaterial {
@@ -15,10 +20,107 @@ class QtMaterialCommandPalettePrivate final
 public:
     QLineEdit* searchEdit = nullptr;
     QListView* resultView = nullptr;
+    QLabel* emptyLabel = nullptr;
     QSortFilterProxyModel* proxyModel = nullptr;
 };
 
 namespace {
+
+class CommandPaletteDelegate final : public QStyledItemDelegate
+{
+public:
+    explicit CommandPaletteDelegate(QObject* parent = nullptr)
+        : QStyledItemDelegate(parent)
+    {
+    }
+
+    QSize sizeHint(
+        const QStyleOptionViewItem& option,
+        const QModelIndex& index) const override
+    {
+        QSize result =
+            QStyledItemDelegate::sizeHint(option, index);
+        const QString shortcut =
+            index.data(
+                QtMaterialCommandPalette::ShortcutRole)
+                .toString();
+        if (!shortcut.isEmpty()) {
+            result.rwidth() +=
+                option.fontMetrics.horizontalAdvance(shortcut)
+                + 32;
+        }
+        result.setHeight(qMax(result.height(), 40));
+        return result;
+    }
+
+    void paint(
+        QPainter* painter,
+        const QStyleOptionViewItem& option,
+        const QModelIndex& index) const override
+    {
+        const QString shortcut =
+            index.data(
+                QtMaterialCommandPalette::ShortcutRole)
+                .toString();
+        if (shortcut.isEmpty()) {
+            QStyledItemDelegate::paint(
+                painter,
+                option,
+                index);
+            return;
+        }
+
+        QStyleOptionViewItem contentOption(option);
+        initStyleOption(&contentOption, index);
+
+        const int shortcutWidth =
+            contentOption.fontMetrics.horizontalAdvance(
+                shortcut)
+            + 24;
+        QRect shortcutRect = contentOption.rect;
+
+        if (contentOption.direction
+            == Qt::RightToLeft) {
+            shortcutRect.setRight(
+                shortcutRect.left() + shortcutWidth);
+            contentOption.rect.adjust(
+                shortcutWidth,
+                0,
+                0,
+                0);
+        } else {
+            shortcutRect.setLeft(
+                shortcutRect.right() - shortcutWidth);
+            contentOption.rect.adjust(
+                0,
+                0,
+                -shortcutWidth,
+                0);
+        }
+
+        QStyledItemDelegate::paint(
+            painter,
+            contentOption,
+            index);
+
+        painter->save();
+        const bool selected =
+            option.state & QStyle::State_Selected;
+        painter->setPen(
+            option.palette.color(
+                selected
+                    ? QPalette::HighlightedText
+                    : QPalette::Text));
+        painter->drawText(
+            shortcutRect.adjusted(8, 0, -8, 0),
+            Qt::AlignVCenter
+                | (option.direction == Qt::RightToLeft
+                       ? Qt::AlignLeft
+                       : Qt::AlignRight),
+            shortcut);
+        painter->restore();
+    }
+};
 
 void syncResultState(
     QtMaterialCommandPalette* palette,
@@ -35,6 +137,9 @@ void syncResultState(
     } else {
         d->resultView->setCurrentIndex(QModelIndex());
     }
+
+    d->resultView->setVisible(count > 0);
+    d->emptyLabel->setVisible(count == 0);
 
     palette->setAccessibleDescription(
         QtMaterialCommandPalette::tr(
@@ -71,6 +176,7 @@ QtMaterialCommandPalette::QtMaterialCommandPalette(QWidget* parent)
 {
     d_ptr->searchEdit = new QLineEdit(this);
     d_ptr->resultView = new QListView(this);
+    d_ptr->emptyLabel = new QLabel(this);
     d_ptr->proxyModel = new QSortFilterProxyModel(this);
 
     setObjectName(QStringLiteral("QtMaterialCommandPalette"));
@@ -93,9 +199,22 @@ QtMaterialCommandPalette::QtMaterialCommandPalette(QWidget* parent)
     d_ptr->proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
     d_ptr->proxyModel->setFilterKeyColumn(-1);
     d_ptr->resultView->setModel(d_ptr->proxyModel);
-    d_ptr->resultView->setSelectionMode(QAbstractItemView::SingleSelection);
-    d_ptr->resultView->setAccessibleName(tr("Command results"));
+    d_ptr->resultView->setSelectionMode(
+        QAbstractItemView::SingleSelection);
+    d_ptr->resultView->setAccessibleName(
+        tr("Command results"));
+    d_ptr->resultView->setItemDelegate(
+        new CommandPaletteDelegate(
+            d_ptr->resultView));
     layout->addWidget(d_ptr->resultView, 1);
+
+    d_ptr->emptyLabel->setObjectName(
+        QStringLiteral(
+            "QtMaterialCommandPaletteEmptyState"));
+    d_ptr->emptyLabel->setAlignment(Qt::AlignCenter);
+    d_ptr->emptyLabel->setWordWrap(true);
+    setEmptyStateText(tr("No matching commands"));
+    layout->addWidget(d_ptr->emptyLabel, 1);
 
     connect(d_ptr->searchEdit, &QLineEdit::textChanged, this, [this](const QString& text) {
         d_ptr->proxyModel->setFilterFixedString(text);
@@ -107,6 +226,27 @@ QtMaterialCommandPalette::QtMaterialCommandPalette(QWidget* parent)
         &QListView::activated,
         this,
         &QtMaterialCommandPalette::activateProxyIndex);
+    connect(
+        d_ptr->proxyModel,
+        &QAbstractItemModel::rowsInserted,
+        this,
+        [this](const QModelIndex&, int, int) {
+            syncResultState(this, d_ptr.get());
+        });
+    connect(
+        d_ptr->proxyModel,
+        &QAbstractItemModel::rowsRemoved,
+        this,
+        [this](const QModelIndex&, int, int) {
+            syncResultState(this, d_ptr.get());
+        });
+    connect(
+        d_ptr->proxyModel,
+        &QAbstractItemModel::modelReset,
+        this,
+        [this]() {
+            syncResultState(this, d_ptr.get());
+        });
     connect(d_ptr->searchEdit, &QLineEdit::returnPressed, this, [this]() {
         QModelIndex proxyIndex = d_ptr->resultView->currentIndex();
         if (!proxyIndex.isValid() && d_ptr->proxyModel->rowCount() > 0) {
@@ -139,6 +279,18 @@ QString QtMaterialCommandPalette::query() const
 void QtMaterialCommandPalette::setQuery(const QString& query)
 {
     d_ptr->searchEdit->setText(query);
+}
+
+QString QtMaterialCommandPalette::emptyStateText() const
+{
+    return d_ptr->emptyLabel->text();
+}
+
+void QtMaterialCommandPalette::setEmptyStateText(
+    const QString& text)
+{
+    d_ptr->emptyLabel->setText(text);
+    d_ptr->emptyLabel->setAccessibleName(text);
 }
 
 bool QtMaterialCommandPalette::eventFilter(QObject* watched, QEvent* event)

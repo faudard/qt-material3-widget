@@ -108,3 +108,25 @@ stability and DPR 2.0 rendering.
 The advanced Navigation Gallery contains a dedicated Menu showcase with shortcut labels,
 checkable state and a disabled action so the same interaction and RTL behavior can be inspected
 without relying on another application example.
+
+## Breadcrumb overflow
+
+`QtMaterialBreadcrumb::maximumVisibleItems` bounds the number of visible path segments without
+changing the logical path. Hidden ranges collapse into an accessible `…` button backed by a
+native `QMenu`; choosing a hidden segment updates `currentIndex` and emits the same
+`activated(index, text)` signal as a visible segment. The current segment is always retained
+when a visibility limit is active, along with the path endpoints where the limit permits.
+
+`responsiveElisionEnabled` is an additive opt-in for width-driven overflow. When enabled,
+Breadcrumb estimates the visible path capacity from the current widget width and typography,
+then reduces the visible segment count only when the existing layout no longer fits. Resizing
+back to a wider surface restores segments automatically. It is disabled by default so existing
+1.x applications retain their current non-eliding layout unless they opt in.
+
+## Command Palette desktop states
+
+`QtMaterialCommandPalette` exposes a configurable `emptyStateText` and a public
+`ShortcutRole` model role. The result delegate renders shortcut text on the trailing side,
+mirroring correctly under RTL, while the empty-state label replaces the result list when the
+proxy model has no matches. Applications continue to own the source model; the extra role is
+purely presentational and does not alter filtering or activation semantics.

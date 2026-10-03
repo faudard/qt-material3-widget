@@ -48,6 +48,12 @@ editor integration remain valid application extension points.
 `QtMaterialRangeSlider` provides lower/upper values, mouse dragging, keyboard
 adjustment, horizontal/vertical orientation and RTL-aware horizontal mapping.
 
+The focused `tst_slider_maturity` suite certifies accessible value summaries,
+two-handle keyboard traversal for Range Slider, Home/End bounds, LTR/RTL directional
+behavior and DPR 2.0 rendering. The visual-regression harness additionally emits
+`input_slider_matrix_*` candidates covering horizontal, vertical, disabled and RTL
+states in the controlled light/dark/high-contrast theme set.
+
 ## Date and time
 
 `QtMaterialTimeField` is a keyboard-friendly `QTimeEdit`.

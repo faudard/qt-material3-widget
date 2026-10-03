@@ -38,3 +38,14 @@ Download the `family-visual-candidate-goldens` workflow artifact, review the ima
 commit the approved PNGs into this directory. Candidate cases tolerate a missing baseline,
 but once the file exists they use the same strict zero-pixel comparison as established
 goldens. Add only reviewed, release-critical files to `tools/release_rules.json`.
+
+## Desktop Productivity candidates
+
+The same candidate workflow also covers:
+
+- `input_slider_matrix_*.png`
+- `desktop_data_matrix_*.png`
+
+These candidates exercise Slider/Range Slider plus Table/Tree/Pagination/Split View across the
+controlled light, dark and high-contrast theme set. Promote only reviewed PNGs to stable
+release goldens.

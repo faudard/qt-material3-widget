@@ -45,6 +45,8 @@ AdvancedDataPage::AdvancedDataPage(QWidget* parent)
     auto* split = new QtMaterial::QtMaterialSplitView(Qt::Horizontal, this);
     split->addWidget(tree);
     split->addWidget(table);
+    split->setPaneMinimumExtent(0, 180);
+    split->setPaneMinimumExtent(1, 320);
     split->setStretchFactor(1, 1);
     layout->addWidget(split, 1);
 

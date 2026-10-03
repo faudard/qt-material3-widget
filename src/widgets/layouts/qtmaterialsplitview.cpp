@@ -2,6 +2,7 @@
 
 #include <QHash>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QSplitterHandle>
 
 namespace QtMaterial {
@@ -114,6 +115,19 @@ protected:
 
         event->accept();
     }
+
+    void mouseDoubleClickEvent(QMouseEvent* event) override
+    {
+        if (auto* owner =
+                qobject_cast<QtMaterialSplitView*>(splitter())) {
+            owner->resetPaneSizes();
+            if (event) {
+                event->accept();
+            }
+            return;
+        }
+        QSplitterHandle::mouseDoubleClickEvent(event);
+    }
 };
 
 } // namespace
@@ -203,7 +217,112 @@ void QtMaterialSplitView::setPaneCollapsed(int index, bool collapsed)
 bool QtMaterialSplitView::paneCollapsed(int index) const
 {
     const QList<int> currentSizes = sizes();
-    return index >= 0 && index < currentSizes.size() && currentSizes.at(index) == 0;
+    return index >= 0
+        && index < currentSizes.size()
+        && currentSizes.at(index) == 0;
+}
+
+void QtMaterialSplitView::setPaneMinimumExtent(
+    int index,
+    int extent)
+{
+    QWidget* pane =
+        index >= 0 && index < count()
+            ? widget(index)
+            : nullptr;
+    if (!pane) {
+        return;
+    }
+
+    const int normalized = qMax(0, extent);
+    if (orientation() == Qt::Horizontal) {
+        pane->setMinimumWidth(normalized);
+    } else {
+        pane->setMinimumHeight(normalized);
+    }
+}
+
+int QtMaterialSplitView::paneMinimumExtent(
+    int index) const
+{
+    QWidget* pane =
+        index >= 0 && index < count()
+            ? widget(index)
+            : nullptr;
+    if (!pane) {
+        return 0;
+    }
+
+    return orientation() == Qt::Horizontal
+        ? pane->minimumWidth()
+        : pane->minimumHeight();
+}
+
+void QtMaterialSplitView::setPaneMaximumExtent(
+    int index,
+    int extent)
+{
+    QWidget* pane =
+        index >= 0 && index < count()
+            ? widget(index)
+            : nullptr;
+    if (!pane) {
+        return;
+    }
+
+    const int normalized =
+        extent <= 0
+            ? QWIDGETSIZE_MAX
+            : extent;
+    if (orientation() == Qt::Horizontal) {
+        pane->setMaximumWidth(normalized);
+    } else {
+        pane->setMaximumHeight(normalized);
+    }
+}
+
+int QtMaterialSplitView::paneMaximumExtent(
+    int index) const
+{
+    QWidget* pane =
+        index >= 0 && index < count()
+            ? widget(index)
+            : nullptr;
+    if (!pane) {
+        return QWIDGETSIZE_MAX;
+    }
+
+    return orientation() == Qt::Horizontal
+        ? pane->maximumWidth()
+        : pane->maximumHeight();
+}
+
+void QtMaterialSplitView::resetPaneSizes()
+{
+    const int paneCount = count();
+    if (paneCount <= 0) {
+        return;
+    }
+
+    const int splitterExtent =
+        orientation() == Qt::Horizontal
+            ? width()
+            : height();
+    const int handlesExtent =
+        qMax(0, paneCount - 1) * handleWidth();
+    const int availableExtent =
+        qMax(
+            paneCount,
+            splitterExtent - handlesExtent);
+    const int equalExtent =
+        qMax(1, availableExtent / paneCount);
+
+    QList<int> equalSizes;
+    equalSizes.reserve(paneCount);
+    for (int index = 0; index < paneCount; ++index) {
+        equalSizes.push_back(equalExtent);
+    }
+    setSizes(equalSizes);
 }
 
 } // namespace QtMaterial
