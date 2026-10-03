@@ -8,6 +8,12 @@ unless a stricter ABI policy is published.
 
 ## [Unreleased]
 
+### Fixed
+- Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
+
+### Added
+- Shared Selection-family maturity coverage for accessibility, disabled keyboard behavior, RTL direction and DPR 2.0 rendering.
+
 ### Changed
 - Standalone public List, Autocomplete, Date Picker and Menu widgets are now component-registry owned instead of being classified as support headers.
 - API-freeze validation rejects duplicate widget-header ownership between the component registry and support-header allowlist.

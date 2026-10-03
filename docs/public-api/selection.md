@@ -8,6 +8,7 @@ Selection controls let users choose one or more options from a set. QtMaterial3W
 #include <qtmaterial/widgets/selection/qtmaterialcheckbox.h>
 #include <qtmaterial/widgets/selection/qtmaterialradiobutton.h>
 #include <qtmaterial/widgets/selection/qtmaterialswitch.h>
+#include <qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h>
 ```
 ## Checkbox
 
@@ -21,7 +22,7 @@ A checkbox may also represent an indeterminate state when the value is mixed or 
 ```cpp
 checkbox->setTristate(true);
 checkbox->setCheckState(Qt::PartiallyChecked);
-Radio button
+## Radio button
 ```
 Use QtMaterialRadioButton when the user must choose one option from a mutually exclusive group.
 ```cpp
@@ -45,6 +46,11 @@ Prefer switches for settings that take effect immediately. Prefer checkboxes whe
 
 ## Accessibility
 
+Selection controls synchronize their text labels into accessible names when the application
+has not supplied an explicit name. Switch descriptions expose the current On/Off state, and
+Segmented Button keeps its accessible group summary synchronized with programmatic segment,
+selection, enabled-state and multi-selection changes.
+
 Selection controls should expose a clear text label or accessible name.
 
 ```cpp
@@ -65,3 +71,15 @@ segments, Left/Right/Home/End navigation, Space/Return/Enter activation and acce
 for the group and individual segments. Rendering covers selected/unselected, enabled/disabled,
 focus and RTL states through the normal component test and visual infrastructure.
 
+
+## Keyboard, RTL and HiDPI contract
+
+Checkbox, Radio Button and Switch retain `Qt::StrongFocus` and ignore activation while
+disabled. Space activates the native selection-control contract. Switch directional keys map
+to the visual direction: Right means on in LTR and off in RTL; Left means off in LTR and on
+in RTL.
+
+Segmented Button supports Left/Right/Home/End navigation, skips disabled segments and maps
+horizontal navigation to visual direction under RTL. The selection-family maturity suite also
+checks LTR/RTL size-hint stability and DPR 2.0 rendering smoke for Checkbox, Radio Button,
+Switch and Segmented Button.

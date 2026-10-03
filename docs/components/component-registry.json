@@ -2006,19 +2006,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "No Checkbox Material reference model or deterministic visual conformance evidence is available."
+        "Checkbox has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add Checkbox state, keyboard, accessibility, RTL and visual evidence before raising maturity axes."
+        "Add deterministic Material visual-reference/state-matrix coverage for Checkbox before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -2031,22 +2031,22 @@
           "tests/widgets/selection/tst_checkbox.cpp exercises the current selection behavior."
         ],
         "accessibility": [
-          "docs/public-api/selection.md defines basic accessible-name guidance."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
         ],
         "keyboard": [
-          "Registered widget tests provide basic interaction coverage."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_selection_maturity renders Checkbox at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
         ],
         "tests": [
-          "Registered target tst_checkbox provides simple-case widget coverage."
+          "Registered focused tst_checkbox plus shared tst_selection_maturity provide component and family-level coverage."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp instantiates QtMaterialCheckbox."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
         ],
         "docs": [
           "docs/public-api/selection.md documents the public selection contract."
@@ -2072,19 +2072,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "No Radio Button Material reference model or deterministic visual conformance evidence is available."
+        "Radio Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add Radio Button state, keyboard, accessibility, RTL and visual evidence before raising maturity axes."
+        "Add deterministic Material visual-reference/state-matrix coverage for Radio Button before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -2097,22 +2097,22 @@
           "tests/widgets/selection/tst_radiobutton.cpp exercises the current selection behavior."
         ],
         "accessibility": [
-          "docs/public-api/selection.md defines basic accessible-name guidance."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
         ],
         "keyboard": [
-          "Registered widget tests provide basic interaction coverage."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_selection_maturity renders Radio Button at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
         ],
         "tests": [
-          "Registered target tst_radiobutton provides simple-case widget coverage."
+          "Registered focused tst_radiobutton plus shared tst_selection_maturity provide component and family-level coverage."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp instantiates QtMaterialRadioButton."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
         ],
         "docs": [
           "docs/public-api/selection.md documents the public selection contract."
@@ -2138,19 +2138,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "No Segmented Button Material reference model or deterministic visual conformance evidence is available."
+        "Segmented Button has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add Segmented Button state, keyboard, accessibility, RTL and visual evidence before raising maturity axes."
+        "Add deterministic Material visual-reference/state-matrix coverage for Segmented Button before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -2163,22 +2163,22 @@
           "tests/widgets/selection/tst_segmentedbutton.cpp exercises selection behavior."
         ],
         "accessibility": [
-          "The focused release-readiness guide documents accessibility behavior."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
         ],
         "keyboard": [
-          "Registered widget and spec tests provide basic interaction coverage."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_selection_maturity renders Segmented Button at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
         ],
         "tests": [
-          "Registered target tst_segmentedbutton plus resolver tests provide simple-case coverage."
+          "Registered focused tst_segmentedbutton plus shared tst_selection_maturity provide component and family-level coverage."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp instantiates QtMaterialSegmentedButton."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
         ],
         "docs": [
           "docs/public-api/selection.md links the Segmented Button release contract."
@@ -2204,19 +2204,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
-      "example": 1,
+      "example": 2,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-02",
       "gaps": [
-        "No Switch Material reference model or deterministic visual conformance evidence is available."
+        "Switch has shared keyboard, accessibility, RTL and DPR 2.0 maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
       ],
       "nextActions": [
-        "Add Switch state, keyboard, accessibility, RTL and visual evidence before raising maturity axes."
+        "Add deterministic Material visual-reference/state-matrix coverage for Switch before promoting maturity further."
       ],
       "evidence": {
         "api": [
@@ -2229,22 +2229,22 @@
           "tests/widgets/selection/tst_switch.cpp exercises the current selection behavior."
         ],
         "accessibility": [
-          "docs/public-api/selection.md defines basic accessible-name guidance."
+          "tst_selection_maturity verifies label-derived accessible names and state synchronization across the Selection family."
         ],
         "keyboard": [
-          "Registered widget tests provide basic interaction coverage."
+          "tst_selection_maturity verifies disabled activation suppression and directional keyboard contracts; focused component tests retain per-control behavior."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_selection_maturity renders Switch at DPR 2.0 as a focused HiDPI smoke contract."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
         ],
         "tests": [
-          "Registered target tst_switch provides simple-case widget coverage."
+          "Registered focused tst_switch plus shared tst_selection_maturity provide component and family-level coverage."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp instantiates QtMaterialSwitch."
+          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
         ],
         "docs": [
           "docs/public-api/selection.md documents the public selection contract."
