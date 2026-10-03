@@ -1,4 +1,5 @@
 
+#include <QPixmap>
 #include <QSignalSpy>
 #include <QStandardItemModel>
 #include <QTest>
@@ -20,6 +21,7 @@ private slots:
     void reportsRowAccessibleTextWithHeaders();
     void keyboardActivationEmitsRowActivated();
     void modelChangesUpdateAccessibilitySummary();
+    void rtlAndHighDpiRendering();
 };
 
 static QStandardItemModel* makeModel(QObject* parent = nullptr)
@@ -135,6 +137,31 @@ void tst_Table::modelChangesUpdateAccessibilitySummary()
 
     QVERIFY(table.accessibilitySummary().contains(QStringLiteral("3 rows")));
     QVERIFY(spy.count() >= 1);
+}
+
+void tst_Table::rtlAndHighDpiRendering()
+{
+    QtMaterialTable table;
+    auto model = std::unique_ptr<QStandardItemModel>(makeModel());
+    table.setModel(model.get());
+    table.setCurrentIndex(model->index(0, 1));
+    table.setLayoutDirection(Qt::RightToLeft);
+    table.resize(520, 220);
+
+    QCOMPARE(table.layoutDirection(), Qt::RightToLeft);
+    QCOMPARE(table.horizontalHeader()->layoutDirection(), Qt::RightToLeft);
+    QCOMPARE(table.accessibleName(), QStringLiteral("Table"));
+    QVERIFY(table.accessibleDescription().contains(QStringLiteral("2 rows")));
+
+    QPixmap pixmap(
+        table.width() * 2,
+        table.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    table.render(&pixmap);
+
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
 }
 
 QTEST_MAIN(tst_Table)

@@ -41,6 +41,9 @@ Q_SIGNALS:
     void pageSizeChanged(int pageSize);
     void totalCountChanged(int totalCount);
 
+protected:
+    void changeEvent(QEvent* event) override;
+
 private:
     void updateUi();
 

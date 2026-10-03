@@ -1,6 +1,7 @@
 #include "qtmaterial/widgets/data/qtmaterialpagination.h"
 
 #include <QComboBox>
+#include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSignalBlocker>
@@ -44,11 +45,6 @@ QtMaterialPagination::QtMaterialPagination(QWidget* parent)
     d_ptr->pageSizeCombo->setAccessibleName(tr("Rows per page"));
     layout->addWidget(d_ptr->pageSizeCombo);
     layout->addWidget(d_ptr->rangeLabel);
-
-    d_ptr->firstButton->setText(QStringLiteral("«"));
-    d_ptr->previousButton->setText(QStringLiteral("‹"));
-    d_ptr->nextButton->setText(QStringLiteral("›"));
-    d_ptr->lastButton->setText(QStringLiteral("»"));
 
     d_ptr->firstButton->setAccessibleName(tr("First page"));
     d_ptr->previousButton->setAccessibleName(tr("Previous page"));
@@ -199,6 +195,16 @@ void QtMaterialPagination::updateUi()
 {
     const bool hasPrevious = d_ptr->page > 1;
     const bool hasNext = d_ptr->page < pageCount();
+    const bool rtl = layoutDirection() == Qt::RightToLeft;
+
+    d_ptr->firstButton->setText(
+        rtl ? QStringLiteral("»") : QStringLiteral("«"));
+    d_ptr->previousButton->setText(
+        rtl ? QStringLiteral("›") : QStringLiteral("‹"));
+    d_ptr->nextButton->setText(
+        rtl ? QStringLiteral("‹") : QStringLiteral("›"));
+    d_ptr->lastButton->setText(
+        rtl ? QStringLiteral("«") : QStringLiteral("»"));
 
     d_ptr->firstButton->setEnabled(hasPrevious);
     d_ptr->previousButton->setEnabled(hasPrevious);
@@ -206,6 +212,22 @@ void QtMaterialPagination::updateUi()
     d_ptr->lastButton->setEnabled(hasNext);
     d_ptr->rangeLabel->setText(rangeText());
     d_ptr->rangeLabel->setAccessibleName(tr("Items %1").arg(rangeText()));
+
+    setAccessibleDescription(
+        tr("Page %1 of %2, items %3")
+            .arg(d_ptr->page)
+            .arg(pageCount())
+            .arg(rangeText()));
+}
+
+void QtMaterialPagination::changeEvent(QEvent* event)
+{
+    QWidget::changeEvent(event);
+    if (event
+        && (event->type() == QEvent::LayoutDirectionChange
+            || event->type() == QEvent::LanguageChange)) {
+        updateUi();
+    }
 }
 
 } // namespace QtMaterial
