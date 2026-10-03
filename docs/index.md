@@ -61,6 +61,7 @@ getting-started
 installation
 themes
 widgets/index
+widgets/components/index
 examples/index
 migration/index
 public-api/index
