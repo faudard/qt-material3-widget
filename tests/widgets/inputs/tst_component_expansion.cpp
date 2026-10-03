@@ -3,6 +3,7 @@
 #include <QAbstractItemView>
 #include <QLineEdit>
 #include <QPalette>
+#include <QPixmap>
 #include <QListView>
 #include <QStringListModel>
 #include <QStandardItemModel>
@@ -168,15 +169,31 @@ private slots:
     void chipFamilyVariants()
     {
         QtMaterialChip chip(QStringLiteral("Filter"));
+        QCOMPARE(chip.focusPolicy(), Qt::StrongFocus);
+        chip.setAccessibleName(QStringLiteral("Filter projects"));
+        QCOMPARE(chip.accessibleName(), QStringLiteral("Filter projects"));
+
         chip.setVariant(ChipVariant::Filter);
         QVERIFY(chip.isCheckable());
-        chip.setChecked(true);
+        QSignalSpy clickedSpy(&chip, &QtMaterialChip::clicked);
+        QTest::keyClick(&chip, Qt::Key_Space);
         QVERIFY(chip.isChecked());
+        QCOMPARE(clickedSpy.count(), 1);
 
         chip.setVariant(ChipVariant::Input);
         QVERIFY(!chip.isCheckable());
         chip.setRemovable(true);
         QVERIFY(chip.isRemovable());
+
+        chip.setLayoutDirection(Qt::RightToLeft);
+        chip.resize(chip.sizeHint());
+        QPixmap pixmap(chip.width() * 2, chip.height() * 2);
+        pixmap.setDevicePixelRatio(2.0);
+        pixmap.fill(Qt::transparent);
+        chip.render(&pixmap);
+        QVERIFY(!pixmap.isNull());
+        QCOMPARE(pixmap.devicePixelRatio(), 2.0);
+        QCOMPARE(chip.layoutDirection(), Qt::RightToLeft);
     }
 
     void menuAndDataExpansion()
