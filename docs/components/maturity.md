@@ -121,7 +121,7 @@
 | Axis | Count |
 |---|---:|
 | API | 0 |
-| Rendering | 0 |
+| Render | 0 |
 | States | 0 |
 | Accessibility | 0 |
 | Keyboard | 0 |
