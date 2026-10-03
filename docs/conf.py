@@ -27,6 +27,7 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.githubpages",
     "sphinxcontrib.mermaid",
+    "sphinx_copybutton",
 ]
 
 source_suffix = {
