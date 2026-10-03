@@ -1,3 +1,4 @@
+#include <QPixmap>
 #include <QSignalSpy>
 #include <QTest>
 
@@ -13,6 +14,9 @@ private Q_SLOTS:
     void activationTogglesCheckableItemAndEmitsSignal();
     void escapeDismissesMenu();
     void exposesAccessibilitySummary();
+    void typeAheadSelectsMatchingItem();
+    void rtlLayoutPreservesGeometryAndInteraction();
+    void rendersAtHighDpi();
 };
 
 void tst_Menu::addsItemsAndSeparators()
@@ -119,6 +123,91 @@ void tst_Menu::exposesAccessibilitySummary()
     QVERIFY(menu.itemAccessibleText(first).contains(QStringLiteral("Open")));
     QVERIFY(menu.itemAccessibleText(second).contains(QStringLiteral("checked")));
     QCOMPARE(menu.accessibleDescription(), menu.accessibilitySummary());
+}
+
+void tst_Menu::typeAheadSelectsMatchingItem()
+{
+    QtMaterialMenu menu;
+    menu.addItem(QStringLiteral("Open"));
+    menu.addItem(QStringLiteral("Paste"));
+    menu.addItem(QStringLiteral("Preferences"));
+    menu.addItem(QStringLiteral("Print"));
+    menu.setCurrentIndex(0);
+
+    menu.resize(menu.sizeHint());
+    menu.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&menu));
+    menu.activateWindow();
+    menu.setFocus();
+    QTRY_VERIFY(menu.hasFocus());
+
+    QTest::keyClicks(&menu, QStringLiteral("p"));
+    QCOMPARE(menu.currentIndex(), 1);
+
+    QTest::keyClicks(&menu, QStringLiteral("p"));
+    QCOMPARE(menu.currentIndex(), 2);
+
+    QTest::keyClicks(&menu, QStringLiteral("p"));
+    QCOMPARE(menu.currentIndex(), 3);
+}
+
+void tst_Menu::rtlLayoutPreservesGeometryAndInteraction()
+{
+    QtMaterialMenu menu;
+    const int copy = menu.addItem(QStringLiteral("Copy"));
+    menu.setItemShortcutText(copy, QStringLiteral("Ctrl+C"));
+    const int showGrid = menu.addItem(QStringLiteral("Show grid"));
+    menu.setItemCheckable(showGrid, true);
+    menu.setItemChecked(showGrid, true);
+    menu.addSeparator();
+    const int disabled = menu.addItem(QStringLiteral("Delete"));
+    menu.setItemEnabled(disabled, false);
+
+    const QSize ltrSize = menu.sizeHint();
+    const QRect ltrFirst = menu.itemRect(copy);
+
+    menu.setLayoutDirection(Qt::RightToLeft);
+    QCOMPARE(menu.sizeHint(), ltrSize);
+    QCOMPARE(menu.itemRect(copy), ltrFirst);
+
+    menu.resize(menu.sizeHint());
+    menu.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&menu));
+    menu.activateWindow();
+    menu.setFocus();
+    QTRY_VERIFY(menu.hasFocus());
+
+    QCOMPARE(menu.currentIndex(), copy);
+    QTest::keyClick(&menu, Qt::Key_Down);
+    QCOMPARE(menu.currentIndex(), showGrid);
+    QTest::keyClick(&menu, Qt::Key_Down);
+    QCOMPARE(menu.currentIndex(), copy);
+    QVERIFY(menu.itemAccessibleText(showGrid).contains(QStringLiteral("checked")));
+}
+
+void tst_Menu::rendersAtHighDpi()
+{
+    QtMaterialMenu menu;
+    const int open = menu.addItem(QStringLiteral("Open"));
+    menu.setItemShortcutText(open, QStringLiteral("Ctrl+O"));
+    const int grid = menu.addItem(QStringLiteral("Show grid"));
+    menu.setItemCheckable(grid, true);
+    menu.setItemChecked(grid, true);
+    menu.addSeparator();
+    const int remove = menu.addItem(QStringLiteral("Delete"));
+    menu.setItemEnabled(remove, false);
+    menu.setLayoutDirection(Qt::RightToLeft);
+    menu.resize(menu.sizeHint());
+
+    QPixmap pixmap(
+        menu.width() * 2,
+        menu.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    menu.render(&pixmap);
+
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
 }
 
 QTEST_MAIN(tst_Menu)
