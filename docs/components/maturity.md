@@ -43,9 +43,9 @@
 | `data.carousel` | Carousel | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Carousel Material reference model or deterministic visual conformance evidence is available. |
 | `data.grid-list` | Grid List | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Grid List Material reference model or deterministic visual conformance evidence is available. |
 | `data.list` | List | `usable` | 2 | 2 | 2 | 2 | 2 | 1 | 1 | 2 | 2 | 2 | List has focused interaction and accessibility coverage but lacks deterministic visual, RTL and HiDPI conformance evidence. |
-| `data.pagination` | Pagination | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Pagination now has synchronized accessible page/range state, keyboard activation, RTL mirroring and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; dedicated Material token specialization remains. |
-| `data.table` | Table | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Table now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a Desktop Productivity candidate visual matrix; reviewed Material visual-reference evidence remains. |
-| `data.tree-view` | Tree View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Tree View now has focused native keyboard, RTL and DPR 2.0 certification plus a Desktop Productivity candidate visual matrix; deeper screen-reader and reviewed visual evidence remain. |
+| `data.pagination` | Pagination | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Pagination now has synchronized accessible page/range state, keyboard activation, RTL mirroring and fractional desktop DPI evidence plus a Desktop Productivity candidate visual matrix; dedicated Material token specialization remains. |
+| `data.table` | Table | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Table now has focused accessibility, keyboard, RTL and fractional desktop DPI evidence plus a Desktop Productivity candidate visual matrix; reviewed Material visual-reference evidence remains. |
+| `data.tree-view` | Tree View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Tree View now has focused native keyboard, RTL and fractional desktop DPI certification plus a Desktop Productivity candidate visual matrix; deeper screen-reader and reviewed visual evidence remain. |
 
 ### Data display
 
@@ -62,10 +62,10 @@
 | `input.date-picker` | Date Picker | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Date Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.date-range-picker` | Date Range Picker | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Date Range Picker now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.date.field` | Date Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Date Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.range-slider` | Range Slider | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Range Slider now has focused two-handle keyboard, accessibility, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion. |
+| `input.range-slider` | Range Slider | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Range Slider now has focused two-handle keyboard, accessibility, RTL and fractional desktop DPI evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion. |
 | `input.search-bar` | Search Bar | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Search Bar now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.search-view` | Search View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Search View now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
-| `input.slider` | Slider | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Slider now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion. |
+| `input.slider` | Slider | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Slider now has focused accessibility, keyboard, RTL and fractional desktop DPI evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion. |
 | `input.text.filled` | Filled Text Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Filled Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.text.outlined` | Outlined Text Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Outlined Text Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
 | `input.time-field` | Time Field | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Time Field now has shared accessibility, keyboard, RTL and DPR 2.0 maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity. |
@@ -75,7 +75,7 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `layout.split-view` | Split View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Split View now has accessible keyboard resize, RTL behavior, DPR 2.0 evidence, pane min/max extents, reset behavior and candidate visual matrices; animated collapse and persisted app-level layout policy remain. |
+| `layout.split-view` | Split View | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Split View now has accessible keyboard resize, RTL behavior, fractional desktop DPI evidence, pane min/max extents, reset behavior and candidate visual matrices; animated collapse and persisted app-level layout policy remain. |
 
 ### Navigation
 
@@ -83,8 +83,8 @@
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `navigation.breadcrumb` | Breadcrumb | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Breadcrumb now has explicit and responsive overflow, accessibility/keyboard/RTL/HiDPI evidence and candidate visual matrices; reviewed stable visual-reference evidence remains. |
 | `navigation.command-palette` | Command Palette | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Command Palette now has keyboard/result accessibility, configurable empty state, shortcut-role rendering, RTL/HiDPI evidence and candidate visual matrices; provider/section/recent-command APIs remain. |
-| `navigation.menu` | Menu | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Menu now has focused accessibility, keyboard, RTL, DPR 2.0 and dedicated Gallery evidence plus a candidate visual matrix; reviewed stable visual-reference evidence remains. |
-| `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Navigation Rail now has focused accessibility, keyboard, RTL and DPR 2.0 evidence plus candidate visual matrices; reviewed stable visual-reference evidence remains before further promotion. |
+| `navigation.menu` | Menu | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Menu now has focused accessibility, keyboard, RTL, fractional desktop DPI and dedicated Gallery evidence plus a candidate visual matrix; reviewed stable visual-reference evidence remains. |
+| `navigation.rail` | Navigation Rail | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Navigation Rail now has focused accessibility, keyboard, RTL and fractional desktop DPI evidence plus candidate visual matrices; reviewed stable visual-reference evidence remains before further promotion. |
 | `navigation.tabs` | Tabs | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | Tabs has focused accessibility, keyboard, RTL, DPR 2.0 and Gallery evidence plus candidate Navigation visual matrices; reviewed stable visual-reference coverage remains before further promotion. |
 
 ### Progress
@@ -109,9 +109,9 @@
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `surface.banner` | Banner | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Banner Material reference model or deterministic visual conformance evidence is available. |
 | `surface.bottom-app-bar` | Bottom App Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Bottom App Bar Material reference model or deterministic visual conformance evidence is available. |
-| `surface.bottom-sheet` | Bottom Sheet | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Bottom Sheet Material reference model or deterministic visual conformance evidence is available. |
-| `surface.card` | Card | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Card Material reference model or deterministic visual conformance evidence is available. |
-| `surface.dialog` | Dialog | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Dialog Material reference model or deterministic visual conformance evidence is available. |
+| `surface.bottom-sheet` | Bottom Sheet | `usable` | 2 | 2 | 2 | 1 | 1 | 2 | 2 | 2 | 1 | 2 | Modal/non-modal focus, Escape, drag, RTL and fractional desktop DPI are covered; deeper accessibility and reviewed deterministic visual evidence remain. |
+| `surface.card` | Card | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Variants, interaction, accessibility, RTL and fractional desktop DPI are covered; reviewed deterministic visual-reference evidence remains. |
+| `surface.dialog` | Dialog | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Initial/restored focus, modal focus trap, Escape/default activation, accessibility, RTL and fractional desktop DPI are covered; reviewed visual-reference evidence remains. |
 | `surface.navigation-drawer` | Navigation Drawer | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Navigation Drawer Material reference model or deterministic visual conformance evidence is available. |
 | `surface.snackbar` | Snackbar | `usable` | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 2 | Reviewed visual-reference coverage and a broader transient-surface matrix remain before complete maturity. |
 | `surface.top-app-bar` | Top App Bar | `usable` | 2 | 2 | 2 | 1 | 1 | 1 | 1 | 2 | 1 | 2 | No Top App Bar Material reference model or deterministic visual conformance evidence is available. |
