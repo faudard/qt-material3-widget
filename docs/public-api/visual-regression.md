@@ -74,3 +74,44 @@ test case. Once a family baseline is considered release-critical, also add its p
 The candidate set currently contains three controlled theme variants for each matrix:
 light/standard contrast, dark/standard contrast, and light/high contrast. This intentionally
 avoids a full Cartesian explosion while covering the highest-value theme/state combinations.
+
+
+## 1.x family matrix policy
+
+The 1.x visual gate grows by **family**, not by taking the Cartesian product of every theme,
+state, direction, and scale factor for every widget.
+
+Approved family buckets are:
+
+- Buttons
+- Selection
+- Inputs
+- Navigation
+- Surfaces
+- Data
+- Progress
+- Compact
+
+Each important component must eventually have deterministic evidence for its relevant subset
+of Light, Dark, High Contrast, enabled/disabled, hover, focus, pressed, selected/checked,
+error, LTR and RTL behavior. State coverage is chosen per family: for example, checked is
+mandatory for Selection but meaningless for a plain surface, while error is mandatory for
+validated Inputs but not for Breadcrumb.
+
+DPI is split deliberately between two layers. The pixel-golden layer uses a small stable
+reference set (normally 1x plus a reviewed 2x/Retina-class case where rasterization matters).
+The desktop integration contract separately exercises 100%, 125%, 150%, 175%, and 200%.
+This catches fractional-scale assumptions without multiplying every family golden by five.
+
+Before promoting a candidate family image to a release gate, review it for:
+
+- one-pixel borders and dividers;
+- corner radii and focus-ring geometry;
+- icon rasterization and alignment;
+- text baselines, offsets, and clipping;
+- menus, popups, and overlay geometry;
+- elevation/shadow cache behavior;
+- LTR/RTL mirroring where applicable.
+
+A component registry maturity score must only be raised after the corresponding deterministic
+evidence is checked in. Candidate artifacts alone do not satisfy the visual-completion gate.
