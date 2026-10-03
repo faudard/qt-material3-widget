@@ -19,6 +19,7 @@ Use the narrative pages to understand concepts, layering, and supported workflow
 - [Widgets](widgets/index.md)
 - [Examples](examples/index.md)
 - [Migration](migration/index.md)
+- [Documentation versions](versioning.md)
 - [Public API guide](public-api/index.md)
 - [C++ API reference](api/index.md)
 
@@ -64,6 +65,7 @@ widgets/index
 widgets/components/index
 examples/index
 migration/index
+versioning
 public-api/index
 api/index
 material3/references
