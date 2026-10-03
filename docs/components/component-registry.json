@@ -2013,19 +2013,19 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Checkbox has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens remain before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Checkbox before promoting maturity further."
@@ -2062,7 +2062,8 @@
           "docs/public-api/selection.md documents the public selection contract."
         ]
       }
-    }
+    },
+    "lastReviewed": "2026-10-03"
   },
   {
     "id": "selection.radio",
@@ -2079,19 +2080,19 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Radio Button has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens remain before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Radio Button before promoting maturity further."
@@ -2128,7 +2129,8 @@
           "docs/public-api/selection.md documents the public selection contract."
         ]
       }
-    }
+    },
+    "lastReviewed": "2026-10-03"
   },
   {
     "id": "selection.segmented-button",
@@ -2145,19 +2147,19 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Segmented Button has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens remain before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Segmented Button before promoting maturity further."
@@ -2194,7 +2196,8 @@
           "docs/public-api/selection.md links the Segmented Button release contract."
         ]
       }
-    }
+    },
+    "lastReviewed": "2026-10-03"
   },
   {
     "id": "selection.switch",
@@ -2211,19 +2214,19 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
       "lastReviewed": "2026-10-03",
       "gaps": [
-        "Switch has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic Selection state-matrix goldens remain before complete maturity."
       ],
       "nextActions": [
         "Add deterministic Material visual-reference/state-matrix coverage for Switch before promoting maturity further."
@@ -2260,7 +2263,8 @@
           "docs/public-api/selection.md documents the public selection contract."
         ]
       }
-    }
+    },
+    "lastReviewed": "2026-10-03"
   },
   {
     "id": "surface.banner",
