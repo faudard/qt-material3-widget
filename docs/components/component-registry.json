@@ -653,19 +653,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-20",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "Chip family has usable 0.8 coverage; deterministic Material reference imagery remains before complete maturity."
+        "Reviewed deterministic Material visual-reference evidence remains before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic visual reference coverage and broaden accessibility/HiDPI evidence for Chip family."
+        "Promote reviewed Chip family visual baselines before complete maturity."
       ],
       "evidence": {
         "api": [
@@ -678,16 +678,18 @@
           "Chip family exposes its primary runtime states and invariants."
         ],
         "accessibility": [
-          "Chip family sets accessible names/descriptions or relies on the native Qt accessible control."
+          "Chip text supplies the accessible name through the native abstract-button contract.",
+          "tst_component_expansion certifies the accessible name for the Chip family."
         ],
         "keyboard": [
-          "Chip family preserves native Qt keyboard behavior and 0.8 smoke coverage."
+          "Chip preserves the native strong-focus abstract-button keyboard contract.",
+          "tst_component_expansion certifies the focus contract across the public Chip family."
         ],
         "hidpi": [
-          "Chip family uses Qt logical geometry and device-independent painting."
+          "tst_component_expansion renders Assist, Filter, Input and Suggestion chips at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "Chip family preserves Qt layout direction; range geometry handles RTL where directional."
+          "tst_component_expansion renders every public Chip variant under RTL layout direction."
         ],
         "tests": [
           "tst_component_expansion exercises the 0.8 public contract."
@@ -1879,19 +1881,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
+      "accessibility": 2,
       "keyboard": "N/A",
-      "hidpi": 1,
+      "hidpi": 2,
       "rtl": "N/A",
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Circular Progress Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic visual-reference coverage remains before Circular Progress can be marked complete."
       ],
       "nextActions": [
-        "Add progress token, animation, accessibility and visual evidence before raising maturity axes."
+        "Add reviewed visual references and broader animation-end-state coverage for complete maturity."
       ],
       "evidence": {
         "api": [
@@ -1904,13 +1906,14 @@
           "The shared progress test exercises determinate and indeterminate modes."
         ],
         "accessibility": [
-          "docs/public-api/progress-indicators.md documents value text and summaries."
+          "Circular progress exposes a stable accessible name and determinate/indeterminate value text.",
+          "tst_progressindicators certifies status text, percentage descriptions and async-state accessibility."
         ],
         "keyboard": [
           "Progress indicators are display-only; keyboard activation does not apply."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_progressindicators renders Circular Progress at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "The circular geometry has no leading/trailing layout axis."
@@ -1952,7 +1955,7 @@
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-19",
+      "lastReviewed": "2026-10-03",
       "gaps": [
         "Deterministic visual-reference coverage remains before Linear Progress can be marked complete."
       ],
@@ -1977,7 +1980,7 @@
           "Progress indicators are display-only; keyboard activation does not apply."
         ],
         "hidpi": [
-          "tst_progressindicators includes DPR 2.0 render smoke coverage."
+          "tst_progressindicators renders Linear Progress at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
           "Production rendering mirrors the active segment for RTL layouts.",
@@ -2411,17 +2414,17 @@
       "states": 2,
       "accessibility": 1,
       "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Bottom Sheet Material reference model or deterministic visual conformance evidence is available."
+        "Deeper accessibility/keyboard evidence and reviewed deterministic visual-reference coverage remain before complete maturity."
       ],
       "nextActions": [
-        "Add drag, focus, RTL and visual conformance evidence before raising maturity axes."
+        "Broaden Bottom Sheet semantic/keyboard certification and promote reviewed visual baselines."
       ],
       "evidence": {
         "api": [
@@ -2440,10 +2443,10 @@
           "The release-readiness guide documents Escape and Ctrl+Down behavior."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_bottomsheet renders Bottom Sheet at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "tst_bottomsheet includes dedicated RTL rendering certification."
         ],
         "tests": [
           "Registered target tst_bottomsheet plus drag-robustness coverage exercise simple cases."
@@ -2475,19 +2478,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Card Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic Material visual-reference evidence remains before Card can be marked complete."
       ],
       "nextActions": [
-        "Add Card variant, interaction, accessibility and visual evidence before raising maturity axes."
+        "Promote reviewed Card visual baselines before complete maturity."
       ],
       "evidence": {
         "api": [
@@ -2500,16 +2503,16 @@
           "tests/widgets/surfaces/tst_card.cpp exercises current card behavior."
         ],
         "accessibility": [
-          "The surfaces guide links the focused Card release-readiness contract."
+          "tst_card certifies accessible name/description summaries from title and body content."
         ],
         "keyboard": [
-          "Registered widget tests provide basic interaction coverage."
+          "tst_card certifies StrongFocus for interactive cards and Return activation with pressed/released/clicked signals."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_card renders Card at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "Directional content behavior exists without dedicated RTL conformance evidence."
+          "tst_card includes dedicated RTL rendering certification."
         ],
         "tests": [
           "Registered target tst_card provides simple-case widget coverage."
@@ -2541,19 +2544,19 @@
       "api": 2,
       "rendering": 2,
       "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
+      "accessibility": 2,
+      "keyboard": 2,
+      "hidpi": 2,
+      "rtl": 2,
       "tests": 2,
       "example": 1,
       "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "lastReviewed": "2026-10-03",
       "gaps": [
-        "No Dialog Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic Material visual-reference evidence remains before Dialog can be marked complete."
       ],
       "nextActions": [
-        "Add Dialog focus, accessibility, RTL and visual evidence before raising maturity axes."
+        "Promote reviewed Dialog visual baselines before complete maturity."
       ],
       "evidence": {
         "api": [
@@ -2566,16 +2569,16 @@
           "tests/widgets/surfaces/tst_dialog.cpp exercises current modal behavior."
         ],
         "accessibility": [
-          "docs/public-api/surfaces.md documents accessible name and description mapping."
+          "tst_dialog certifies title/supporting-text accessible name and description mapping."
         ],
         "keyboard": [
-          "The public guide documents modal focus and keyboard behavior."
+          "tst_dialog certifies initial focus, focus restoration, modal Tab/Backtab containment, Escape policy and default-button Return activation."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_dialog renders Dialog at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "Directional content behavior exists without dedicated RTL conformance evidence."
+          "tst_dialog includes dedicated RTL rendering certification."
         ],
         "tests": [
           "Registered target tst_dialog plus resolver tests provide simple-case coverage."
