@@ -16,7 +16,8 @@ private Q_SLOTS:
     void exposesAccessibilitySummary();
     void typeAheadSelectsMatchingItem();
     void rtlLayoutPreservesGeometryAndInteraction();
-    void rendersAtHighDpi();
+    void rendersAtDesktopScaleFactors_data();
+    void rendersAtDesktopScaleFactors();
 };
 
 void tst_Menu::addsItemsAndSeparators()
@@ -185,8 +186,19 @@ void tst_Menu::rtlLayoutPreservesGeometryAndInteraction()
     QVERIFY(menu.itemAccessibleText(showGrid).contains(QStringLiteral("checked")));
 }
 
-void tst_Menu::rendersAtHighDpi()
+void tst_Menu::rendersAtDesktopScaleFactors_data()
 {
+    QTest::addColumn<qreal>("dpr");
+    QTest::newRow("100-percent") << qreal(1.00);
+    QTest::newRow("125-percent") << qreal(1.25);
+    QTest::newRow("150-percent") << qreal(1.50);
+    QTest::newRow("175-percent") << qreal(1.75);
+    QTest::newRow("200-percent") << qreal(2.00);
+}
+
+void tst_Menu::rendersAtDesktopScaleFactors()
+{
+    QFETCH(qreal, dpr);
     QtMaterialMenu menu;
     const int open = menu.addItem(QStringLiteral("Open"));
     menu.setItemShortcutText(open, QStringLiteral("Ctrl+O"));
@@ -200,14 +212,14 @@ void tst_Menu::rendersAtHighDpi()
     menu.resize(menu.sizeHint());
 
     QPixmap pixmap(
-        menu.width() * 2,
-        menu.height() * 2);
-    pixmap.setDevicePixelRatio(2.0);
+        qMax(1, qRound(menu.width() * dpr)),
+        qMax(1, qRound(menu.height() * dpr)));
+    pixmap.setDevicePixelRatio(dpr);
     pixmap.fill(Qt::transparent);
     menu.render(&pixmap);
 
     QVERIFY(!pixmap.isNull());
-    QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+    QCOMPARE(pixmap.devicePixelRatio(), dpr);
 }
 
 QTEST_MAIN(tst_Menu)
