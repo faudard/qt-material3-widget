@@ -167,6 +167,101 @@ private slots:
         QCOMPARE(pagination.page(), 1);
     }
 
+    void treeViewKeyboardRtlAndHighDpi()
+    {
+        QStandardItemModel model;
+        auto* root = new QStandardItem(QStringLiteral("Root"));
+        root->appendRow(new QStandardItem(QStringLiteral("Child")));
+        model.appendRow(root);
+
+        QtMaterialTreeView tree;
+        tree.setModel(&model);
+        tree.expand(model.index(0, 0));
+        tree.setCurrentIndex(model.index(0, 0));
+        tree.setLayoutDirection(Qt::RightToLeft);
+        tree.resize(360, 240);
+
+        QCOMPARE(tree.accessibleName(), QStringLiteral("Tree"));
+        QCOMPARE(tree.layoutDirection(), Qt::RightToLeft);
+
+        tree.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&tree));
+        tree.setFocus(Qt::OtherFocusReason);
+        QTRY_VERIFY(tree.hasFocus());
+
+        QTest::keyClick(&tree, Qt::Key_Down);
+        QCOMPARE(tree.currentIndex(), model.index(0, 0, model.index(0, 0)));
+
+        QPixmap pixmap(
+            tree.width() * 2,
+            tree.height() * 2);
+        pixmap.setDevicePixelRatio(2.0);
+        pixmap.fill(Qt::transparent);
+        tree.render(&pixmap);
+
+        QVERIFY(!pixmap.isNull());
+        QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+    }
+
+    void paginationAccessibilityKeyboardRtlAndHighDpi()
+    {
+        QtMaterialPagination pagination;
+        pagination.setTotalCount(123);
+        pagination.setPageSize(25);
+        pagination.setPage(2);
+
+        QCOMPARE(pagination.accessibleName(), QStringLiteral("Pagination"));
+        QVERIFY(pagination.accessibleDescription().contains(QStringLiteral("Page 2 of 5")));
+        QVERIFY(pagination.accessibleDescription().contains(QStringLiteral("26–50 / 123")));
+
+        QToolButton* firstButton = nullptr;
+        QToolButton* previousButton = nullptr;
+        QToolButton* nextButton = nullptr;
+        QToolButton* lastButton = nullptr;
+        const auto buttons = pagination.findChildren<QToolButton*>();
+        for (QToolButton* button : buttons) {
+            if (button->accessibleName() == QStringLiteral("First page")) {
+                firstButton = button;
+            } else if (button->accessibleName() == QStringLiteral("Previous page")) {
+                previousButton = button;
+            } else if (button->accessibleName() == QStringLiteral("Next page")) {
+                nextButton = button;
+            } else if (button->accessibleName() == QStringLiteral("Last page")) {
+                lastButton = button;
+            }
+        }
+        QVERIFY(firstButton);
+        QVERIFY(previousButton);
+        QVERIFY(nextButton);
+        QVERIFY(lastButton);
+
+        pagination.setLayoutDirection(Qt::RightToLeft);
+        QCOMPARE(firstButton->text(), QStringLiteral("»"));
+        QCOMPARE(previousButton->text(), QStringLiteral("›"));
+        QCOMPARE(nextButton->text(), QStringLiteral("‹"));
+        QCOMPARE(lastButton->text(), QStringLiteral("«"));
+
+        pagination.resize(560, qMax(48, pagination.sizeHint().height()));
+        pagination.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&pagination));
+
+        nextButton->setFocus(Qt::OtherFocusReason);
+        QTRY_VERIFY(nextButton->hasFocus());
+        QTest::keyClick(nextButton, Qt::Key_Space);
+        QCOMPARE(pagination.page(), 3);
+        QVERIFY(pagination.accessibleDescription().contains(QStringLiteral("Page 3 of 5")));
+
+        QPixmap pixmap(
+            pagination.width() * 2,
+            pagination.height() * 2);
+        pixmap.setDevicePixelRatio(2.0);
+        pixmap.fill(Qt::transparent);
+        pagination.render(&pixmap);
+
+        QVERIFY(!pixmap.isNull());
+        QCOMPARE(pixmap.devicePixelRatio(), qreal(2.0));
+    }
+
     void splitViewUsesQSplitterState()
     {
         QtMaterialSplitView split;

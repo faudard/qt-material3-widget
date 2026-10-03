@@ -12,6 +12,8 @@ explicit dense, multi-selection and drag/drop policies while keeping
 `canFetchMore()/fetchMore()` and lazy models native.
 
 Uniform row heights are enabled by default because large models are a primary use case.
+Focused certification keeps QTreeView keyboard navigation authoritative and covers RTL layout
+plus DPR 2.0 rendering without materializing large models.
 
 ## Advanced Table
 
@@ -20,13 +22,16 @@ column reordering, cell-vs-row selection and internal drag/drop can be enabled w
 replacing the application's model or delegate.
 
 Sorting, resizing, hiding columns, editing and custom delegates continue to use the
-standard Qt APIs.
+standard Qt APIs. The focused Table suite also certifies the Material accessibility summary,
+native keyboard activation, RTL header/layout propagation and DPR 2.0 rendering.
 
 ## Pagination
 
 `QtMaterialPagination` exposes a one-based page, page size and total count. It does not
 own or slice a model; applications can connect `pageChanged` and `pageSizeChanged` to
-local proxy models or remote/backend queries.
+local proxy models or remote/backend queries. Pagination mirrors first/previous/next/last
+chevrons in RTL, keeps native focus/keyboard activation on the child controls, and exposes the
+current page/range through the container accessible description.
 
 ## Split View
 
