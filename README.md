@@ -89,6 +89,7 @@ entry points for applications.
 - [Installation](docs/installation.md)
 - [Themes](docs/themes.md)
 - [Widgets](docs/widgets/index.md)
+- [Complete component reference](docs/widgets/component-reference.md)
 - [Examples](docs/examples/index.md)
 - [Migration](docs/migration/index.md)
 - [Public API](docs/public-api/index.md)
