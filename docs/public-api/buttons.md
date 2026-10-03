@@ -449,14 +449,14 @@ button->setToolTip(QStringLiteral("Search"));
 
 ### Variant-specific requirements
 
-#### Text Button
+#### Text Button variant
 
 - No filled container is painted in the default state.
 - State layer remains visible enough on hover/focus/press.
 - Disabled content color is correct.
 - Text alignment and padding remain stable in RTL.
 
-#### Filled Button
+#### Filled Button variant
 
 - Container and content colors are resolved from the active theme.
 - Disabled container and disabled content colors are correct.
@@ -469,7 +469,7 @@ button->setToolTip(QStringLiteral("Search"));
 - Hover/focus/pressed overlays remain visually distinct.
 - Disabled state does not reuse enabled tonal emphasis.
 
-#### Outlined Button
+#### Outlined Button variant
 
 - Stroke color is correct in default, hover, focus, pressed, and disabled states.
 - Stroke remains crisp at DPR 1.0, 1.5, and 2.0.
@@ -483,7 +483,7 @@ button->setToolTip(QStringLiteral("Search"));
 - Shadow rendering is stable at high device pixel ratios.
 - State-layer and shadow animations do not fight each other.
 
-#### Icon Button
+#### Icon Button variant
 
 - Minimum visual/touch target is enforced.
 - Icon is centered in all states.
