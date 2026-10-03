@@ -33,3 +33,23 @@ if(QTMATERIAL3_INSTALL)
         LIBRARY DESTINATION "${QTMATERIAL3_DESIGNER_PLUGIN_INSTALL_DIR}"
     )
 endif()
+
+if(QTMATERIAL3_BUILD_TESTS)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test)
+    add_executable(tst_qtmaterial3_designer_collection
+        tst_designercollection.cpp
+        qtmaterial3designercollection.cpp
+        qtmaterial3designercollection.h
+    )
+    target_link_libraries(tst_qtmaterial3_designer_collection
+        PRIVATE
+            Qt${QT_VERSION_MAJOR}::Test
+            Qt${QT_VERSION_MAJOR}::UiPlugin
+            qtmaterial3_widgets
+    )
+    target_include_directories(tst_qtmaterial3_designer_collection
+        PRIVATE "${PROJECT_SOURCE_DIR}/include"
+    )
+    set_target_properties(tst_qtmaterial3_designer_collection PROPERTIES AUTOMOC ON)
+    add_test(NAME designer_collection_contract COMMAND tst_qtmaterial3_designer_collection)
+endif()
