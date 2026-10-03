@@ -264,6 +264,38 @@ jobs:
           --producer-build-dir "${{ github.workspace }}/build"
           --generator Ninja
 
+  designer-plugin:
+    name: designer-plugin-qt6
+    runs-on: ubuntu-latest
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Qt/build dependencies
+        run: |
+          bash scripts/ci/install-ubuntu-deps.sh
+          sudo apt-get install -y qt6-tools-dev
+
+      - name: Configure Designer plugin
+        run: >
+          cmake -S . -B build-designer -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DQTMATERIAL3_BUILD_TESTS=OFF
+          -DQTMATERIAL3_BUILD_EXAMPLES=OFF
+          -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
+          -DQTMATERIAL3_BUILD_DESIGNER_PLUGIN=ON
+          -DQTMATERIAL3_INSTALL=ON
+          -DQTMATERIAL3_USE_MCU=OFF
+
+      - name: Build Designer plugin
+        run: cmake --build build-designer --target qtmaterial3_designer_plugin --parallel
+
+      - name: Stage Designer plugin
+        run: |
+          cmake --install build-designer --prefix "${{ github.workspace }}/build-designer/stage"
+          find build-designer/stage -type f -path "*/plugins/designer/*" -print -quit | grep .
+
   consumer-contract:
     name: consumer-${{ matrix.scenario }}
     runs-on: ubuntu-latest
