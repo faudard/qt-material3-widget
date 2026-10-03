@@ -177,6 +177,52 @@ private slots:
         QVERIFY(!chip.isCheckable());
         chip.setRemovable(true);
         QVERIFY(chip.isRemovable());
+
+        chip.setVariant(ChipVariant::Assist);
+        QVERIFY(!chip.isCheckable());
+        chip.setRemovable(false);
+
+        chip.setVariant(ChipVariant::Suggestion);
+        QVERIFY(!chip.isCheckable());
+
+        QCOMPARE(chip.accessibleName(), QStringLiteral("Filter"));
+        QCOMPARE(chip.focusPolicy(), Qt::StrongFocus);
+    }
+
+    void chipDesktopScaleFactors_data()
+    {
+        QTest::addColumn<qreal>("dpr");
+        QTest::newRow("100-percent") << qreal(1.00);
+        QTest::newRow("125-percent") << qreal(1.25);
+        QTest::newRow("150-percent") << qreal(1.50);
+        QTest::newRow("175-percent") << qreal(1.75);
+        QTest::newRow("200-percent") << qreal(2.00);
+    }
+
+    void chipDesktopScaleFactors()
+    {
+        QFETCH(qreal, dpr);
+        const QList<ChipVariant> variants = {
+            ChipVariant::Assist,
+            ChipVariant::Filter,
+            ChipVariant::Input,
+            ChipVariant::Suggestion
+        };
+        for (ChipVariant variant : variants) {
+            QtMaterialChip chip(QStringLiteral("Chip"));
+            chip.setVariant(variant);
+            chip.setLayoutDirection(Qt::RightToLeft);
+            chip.resize(qMax(120, chip.sizeHint().width()), qMax(48, chip.sizeHint().height()));
+
+            QPixmap pixmap(
+                qMax(1, qRound(chip.width() * dpr)),
+                qMax(1, qRound(chip.height() * dpr)));
+            pixmap.setDevicePixelRatio(dpr);
+            pixmap.fill(Qt::transparent);
+            chip.render(&pixmap);
+            QVERIFY(!pixmap.isNull());
+            QCOMPARE(pixmap.devicePixelRatio(), dpr);
+        }
     }
 
     void menuAndDataExpansion()
