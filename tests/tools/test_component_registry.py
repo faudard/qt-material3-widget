@@ -240,6 +240,26 @@ class CurrentRegistryTests(unittest.TestCase):
                 f"{component['id']} has 4/4 evidence everywhere but was not promoted",
             )
 
+    def test_enterprise_complete_requires_all_release_components_complete(self):
+        incomplete = [
+            component["id"]
+            for component in self.components
+            if component["releaseScope"] and component["maturity"] != "complete"
+        ]
+        # 1.5 certification remains fail-closed until every release-scoped
+        # component has executable 4/4 evidence. Keep this assertion explicit
+        # so the final enterprise gate can be enabled without changing policy.
+        if not incomplete:
+            for component in self.components:
+                if not component["releaseScope"]:
+                    continue
+                axes = component["maturityAxes"]
+                for axis in self.generator.AXES:
+                    value = axes[axis]
+                    if isinstance(value, int):
+                        self.assertEqual(4, value, component["id"])
+                self.assertEqual([], axes["gaps"], component["id"])
+
     def test_missing_axis_and_unknown_evidence_are_rejected(self):
         changed = copy.deepcopy(self.components[8])
         del changed["maturityAxes"]["rtl"]

@@ -38,6 +38,8 @@ CI generates the following candidate families in the pinned Ubuntu/Fusion render
 - `input_slider_matrix_*.png`
 - `desktop_data_matrix_*.png`
 - `surface_bar_matrix_*.png`
+- `surface_overlay_matrix_*.png`
+- `layout_matrix_*.png`
 - `progress_compact_matrix_*.png`
 - `data_extended_matrix_*.png`
 

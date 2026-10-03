@@ -55,6 +55,10 @@
 #include "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h"
 #include "qtmaterial/widgets/selection/qtmaterialswitch.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialdialog.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialsnackbar.h"
 
 #include "qtmaterialvisualtesthelpers.h"
 
@@ -734,6 +738,116 @@ QWidget* buildSurfaceBarStateMatrix(const Theme& theme)
     return root;
 }
 
+QWidget* buildSurfaceOverlayStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("surfaceOverlayStateMatrix"));
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(18);
+    layout->setVerticalSpacing(12);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Dialog"), QStringLiteral("Drawer"),
+        QStringLiteral("Bottom sheet"), QStringLiteral("Snackbar")});
+
+    const QStringList states = {
+        QStringLiteral("Default"), QStringLiteral("Disabled"), QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i)
+        addStateLabel(layout, root, i + 1, states.at(i));
+
+    for (int row = 1; row <= 3; ++row) {
+        const bool enabled = row != 2;
+        const auto direction = row == 3 ? Qt::RightToLeft : Qt::LeftToRight;
+
+        auto* dialog = new QtMaterialDialog(root);
+        dialog->setTitleText(QStringLiteral("Discard changes?"));
+        dialog->setSupportingText(QStringLiteral("Unsaved changes will be lost."));
+        dialog->setEnabled(enabled);
+        dialog->setLayoutDirection(direction);
+        dialog->setMinimumSize(260, 140);
+        layout->addWidget(dialog, row, 1);
+
+        auto* drawer = new QtMaterialNavigationDrawer(root);
+        drawer->setEdge(direction == Qt::RightToLeft
+            ? QtMaterialNavigationDrawer::Edge::Right
+            : QtMaterialNavigationDrawer::Edge::Left);
+        drawer->setEnabled(enabled);
+        drawer->setLayoutDirection(direction);
+        drawer->setMinimumSize(220, 180);
+        layout->addWidget(drawer, row, 2);
+
+        auto* sheet = new QtMaterialBottomSheet(root);
+        sheet->setTitleText(QStringLiteral("Share"));
+        sheet->setSupportingText(QStringLiteral("Choose a destination"));
+        sheet->setExpanded(true);
+        sheet->setEnabled(enabled);
+        sheet->setLayoutDirection(direction);
+        sheet->setMinimumSize(280, 160);
+        layout->addWidget(sheet, row, 3);
+
+        auto* snackbar = new QtMaterialSnackbar(root);
+        snackbar->setText(QStringLiteral("Changes saved"));
+        snackbar->setActionText(QStringLiteral("Undo"));
+        snackbar->setDuration(SnackbarDuration::Indefinite);
+        snackbar->setEnabled(enabled);
+        snackbar->setLayoutDirection(direction);
+        snackbar->setMinimumWidth(280);
+        layout->addWidget(snackbar, row, 4);
+    }
+    return root;
+}
+
+QWidget* buildLayoutStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("layoutStateMatrix"));
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(18);
+    layout->setVerticalSpacing(12);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Horizontal"), QStringLiteral("Vertical")});
+
+    const QStringList states = {
+        QStringLiteral("Default"), QStringLiteral("Collapsed"), QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i)
+        addStateLabel(layout, root, i + 1, states.at(i));
+
+    for (int row = 1; row <= 3; ++row) {
+        const auto direction = row == 3 ? Qt::RightToLeft : Qt::LeftToRight;
+
+        auto makePane = [](const QString& text, QWidget* parent) {
+            auto* pane = new QLabel(text, parent);
+            pane->setAlignment(Qt::AlignCenter);
+            pane->setMinimumSize(80, 56);
+            return pane;
+        };
+
+        auto* horizontal = new QtMaterialSplitView(Qt::Horizontal, root);
+        horizontal->setLayoutDirection(direction);
+        horizontal->setAnimatedCollapseEnabled(false);
+        horizontal->addWidget(makePane(QStringLiteral("Master"), horizontal));
+        horizontal->addWidget(makePane(QStringLiteral("Detail"), horizontal));
+        horizontal->setDefaultPaneSizes({120, 180});
+        horizontal->setSizes({120, 180});
+        if (row == 2) horizontal->setPaneCollapsed(0, true);
+        horizontal->setMinimumSize(320, 100);
+        layout->addWidget(horizontal, row, 1);
+
+        auto* vertical = new QtMaterialSplitView(Qt::Vertical, root);
+        vertical->setLayoutDirection(direction);
+        vertical->setAnimatedCollapseEnabled(false);
+        vertical->addWidget(makePane(QStringLiteral("Top"), vertical));
+        vertical->addWidget(makePane(QStringLiteral("Bottom"), vertical));
+        vertical->setDefaultPaneSizes({70, 90});
+        vertical->setSizes({70, 90});
+        if (row == 2) vertical->setPaneCollapsed(1, true);
+        vertical->setMinimumSize(220, 180);
+        layout->addWidget(vertical, row, 2);
+    }
+    return root;
+}
+
 void addFamilyThemeRows(const QString& prefix)
 {
     QTest::addColumn<QString>("caseName");
@@ -800,6 +914,8 @@ private slots:
     void dataExtendedStateMatrixSmoke_data(); void dataExtendedStateMatrixSmoke(); void dataExtendedStateMatrixCandidateGoldens_data(); void dataExtendedStateMatrixCandidateGoldens();
     void progressCompactStateMatrixSmoke_data(); void progressCompactStateMatrixSmoke(); void progressCompactStateMatrixCandidateGoldens_data(); void progressCompactStateMatrixCandidateGoldens();
     void surfaceBarStateMatrixSmoke_data(); void surfaceBarStateMatrixSmoke(); void surfaceBarStateMatrixCandidateGoldens_data(); void surfaceBarStateMatrixCandidateGoldens();
+    void surfaceOverlayStateMatrixSmoke_data(); void surfaceOverlayStateMatrixSmoke(); void surfaceOverlayStateMatrixCandidateGoldens_data(); void surfaceOverlayStateMatrixCandidateGoldens();
+    void layoutStateMatrixSmoke_data(); void layoutStateMatrixSmoke(); void layoutStateMatrixCandidateGoldens_data(); void layoutStateMatrixCandidateGoldens();
 
 };
 
@@ -1162,6 +1278,8 @@ void tst_ThemeVisualRegression::Name##CandidateGoldens(){ if(!QtMaterialVisualTe
 QTM3_MATRIX_CASES(dataExtendedStateMatrix, "data_extended_matrix", buildDataExtendedStateMatrix, "data-extended-state-matrix")
 QTM3_MATRIX_CASES(progressCompactStateMatrix, "progress_compact_matrix", buildProgressCompactStateMatrix, "progress-compact-state-matrix")
 QTM3_MATRIX_CASES(surfaceBarStateMatrix, "surface_bar_matrix", buildSurfaceBarStateMatrix, "surface-bar-state-matrix")
+QTM3_MATRIX_CASES(surfaceOverlayStateMatrix, "surface_overlay_matrix", buildSurfaceOverlayStateMatrix, "surface-overlay-state-matrix")
+QTM3_MATRIX_CASES(layoutStateMatrix, "layout_matrix", buildLayoutStateMatrix, "layout-state-matrix")
 #undef QTM3_MATRIX_CASES
 
 QTEST_MAIN(tst_ThemeVisualRegression)
