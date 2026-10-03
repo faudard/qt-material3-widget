@@ -195,6 +195,38 @@ inline void verifyOrUpdateGolden(const QString& caseName, const QImage& actual)
     }
 }
 
+inline void verifyOrUpdateCandidateGolden(const QString& caseName, const QImage& actual)
+{
+    const QString goldenPath =
+        QDir(goldenDir()).absoluteFilePath(
+            caseName + QStringLiteral(".png"));
+
+    if (updateGoldens() || QFileInfo::exists(goldenPath)) {
+        verifyOrUpdateGolden(caseName, actual);
+        return;
+    }
+
+    const QString actualPath =
+        QDir(artifactsDir()).absoluteFilePath(
+            caseName + QStringLiteral(".actual.png"));
+
+    QString error;
+    QVERIFY2(
+        savePng(actualPath, actual, &error),
+        qPrintable(error));
+    writeManifestEntry(
+        caseName,
+        actual,
+        QStringLiteral("candidate"));
+
+    const QString message = QStringLiteral(
+        "Candidate visual golden %1 has not been reviewed yet. "
+        "Generate it with QTMATERIAL3_UPDATE_VISUAL_GOLDENS=1; "
+        "strict comparison starts automatically once the PNG is committed.")
+        .arg(goldenPath);
+    QWARN(qPrintable(message));
+}
+
 inline QImage renderTokenBoard(const QtMaterial::Theme& theme, const QSize& size = QSize(720, 420))
 {
     using namespace QtMaterial;
