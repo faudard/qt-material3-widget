@@ -1,4 +1,5 @@
 #include <QAbstractButton>
+#include <QPixmap>
 #include <QApplication>
 #include <QLineEdit>
 #include <QPushButton>
@@ -21,6 +22,7 @@ private slots:
     void escapeCanBeDisabled();
     void tabFocusStaysInsideDialog();
     void enterActivatesDefaultButton();
+    void rtlAndDpr2RenderingContract();
 };
 
 void tst_Dialog::basicConstruction()
@@ -205,6 +207,20 @@ void tst_Dialog::enterActivatesDefaultButton()
     QTest::keyClick(&dialog, Qt::Key_Return);
 
     QCOMPARE(clickedSpy.count(), 1);
+}
+
+void tst_Dialog::rtlAndDpr2RenderingContract()
+{
+    QtMaterial::QtMaterialDialog widget;
+    widget.setLayoutDirection(Qt::RightToLeft);
+    widget.resize(qMax(320, widget.sizeHint().width()), qMax(96, widget.sizeHint().height()));
+    QCOMPARE(widget.layoutDirection(), Qt::RightToLeft);
+    QPixmap pixmap(widget.width() * 2, widget.height() * 2);
+    pixmap.setDevicePixelRatio(2.0);
+    pixmap.fill(Qt::transparent);
+    widget.render(&pixmap);
+    QVERIFY(!pixmap.isNull());
+    QCOMPARE(pixmap.devicePixelRatio(), 2.0);
 }
 
 QTEST_MAIN(tst_Dialog)
