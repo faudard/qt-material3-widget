@@ -116,4 +116,71 @@
 | `surface.snackbar` | Snackbar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 | `surface.top-app-bar` | Top App Bar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic visual baselines are the remaining 1.5 completion gate. |
 
+## Not evaluated axes
 
+| Axis | Count |
+|---|---:|
+| API | 0 |
+| Rendering | 0 |
+| States | 0 |
+| Accessibility | 0 |
+| Keyboard | 0 |
+| HiDPI | 0 |
+| RTL | 0 |
+| Tests | 0 |
+| Example / Gallery | 0 |
+| Docs | 0 |
+
+## Next actions
+
+| Component | Action |
+|---|---|
+| Elevated Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Extended Floating Action Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Filled Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Filled Tonal Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Floating Action Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Icon Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Outlined Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Text Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Chip | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Divider | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Carousel | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Grid List | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| List | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Pagination | Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4. |
+| Table | Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4. |
+| Tree View | Promote the reviewed desktop_data_matrix goldens, then raise rendering to 4. |
+| Autocomplete | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Combo Box | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Date Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Date Picker | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Date Range Picker | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Filled Text Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Outlined Text Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Range Slider | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Search Bar | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Search View | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Slider | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Time Field | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Time Picker | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Split View | Add optional animated collapse/reset affordances and document app-level persisted layout policy before further promotion. |
+| Breadcrumb | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Command Palette | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Menu | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Navigation Rail | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Tabs | Review and promote the pinned family candidate goldens, then raise rendering to 4 and promote the component to complete. |
+| Circular Progress Indicator | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Linear Progress Indicator | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Checkbox | Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete. |
+| Radio Button | Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete. |
+| Segmented Button | Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete. |
+| Switch | Review the pinned Selection matrix candidate images, commit the approved stable goldens, then raise rendering to 4 and promote the family to complete. |
+| Banner | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Bottom App Bar | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Bottom Sheet | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Card | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Dialog | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Navigation Drawer | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Snackbar | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
+| Top App Bar | Add/review the family visual state matrix, promote its stable goldens, then raise rendering to 4. |
