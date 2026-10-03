@@ -1,12 +1,12 @@
 #include "qtmaterial3designercollection.h"
 
 #include <functional>
+#include <utility>
 
 #include <QIcon>
 #include <QString>
 #include <QWidget>
 #include <QtUiPlugin/QDesignerCustomWidgetInterface>
-#include <QtUiPlugin/QDesignerFormEditorInterface>
 
 #include "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
