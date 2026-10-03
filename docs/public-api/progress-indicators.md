@@ -51,7 +51,7 @@ Its accessibility value is a rounded percentage in determinate mode, optionally 
 - show/hide animation lifecycle;
 - linear accessibility text;
 - explicit LTR/RTL rendering direction;
-- DPR 2.0 render smoke.
+- desktop render smoke at 100%, 125%, 150%, 175% and 200% scale equivalents.
 
 Deterministic reviewed visual references and broader animation end-state certification remain
 before `complete` maturity.
