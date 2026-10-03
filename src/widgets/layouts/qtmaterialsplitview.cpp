@@ -1,6 +1,8 @@
 #include "qtmaterial/widgets/layouts/qtmaterialsplitview.h"
 
 #include <QHash>
+#include <QKeyEvent>
+#include <QSplitterHandle>
 
 namespace QtMaterial {
 
@@ -10,6 +12,111 @@ public:
     QHash<QWidget*, int> lastExpandedSize;
     QHash<QWidget*, bool> preCollapseCollapsible;
 };
+
+namespace {
+
+constexpr int kKeyboardResizeStep = 16;
+
+class QtMaterialSplitHandle final : public QSplitterHandle
+{
+public:
+    QtMaterialSplitHandle(
+        Qt::Orientation orientation,
+        QSplitter* parent)
+        : QSplitterHandle(orientation, parent)
+    {
+        setFocusPolicy(Qt::StrongFocus);
+        setAccessibleName(
+            QtMaterialSplitView::tr("Split handle"));
+        setAccessibleDescription(
+            QtMaterialSplitView::tr(
+                "Use arrow keys to resize adjacent panes"));
+    }
+
+protected:
+    void keyPressEvent(QKeyEvent* event) override
+    {
+        if (!event) {
+            return;
+        }
+
+        int physicalDelta = 0;
+        if (orientation() == Qt::Horizontal) {
+            if (event->key() == Qt::Key_Left) {
+                physicalDelta = -kKeyboardResizeStep;
+            } else if (event->key() == Qt::Key_Right) {
+                physicalDelta = kKeyboardResizeStep;
+            }
+        } else {
+            if (event->key() == Qt::Key_Up) {
+                physicalDelta = -kKeyboardResizeStep;
+            } else if (event->key() == Qt::Key_Down) {
+                physicalDelta = kKeyboardResizeStep;
+            }
+        }
+
+        if (physicalDelta == 0) {
+            QSplitterHandle::keyPressEvent(event);
+            return;
+        }
+
+        if (event->modifiers().testFlag(Qt::ShiftModifier)) {
+            physicalDelta *= 4;
+        }
+
+        QSplitter* owner = splitter();
+        if (!owner) {
+            QSplitterHandle::keyPressEvent(event);
+            return;
+        }
+
+        int handleIndex = -1;
+        for (int index = 1; index < owner->count(); ++index) {
+            if (owner->handle(index) == this) {
+                handleIndex = index;
+                break;
+            }
+        }
+
+        if (handleIndex <= 0) {
+            QSplitterHandle::keyPressEvent(event);
+            return;
+        }
+
+        QList<int> paneSizes = owner->sizes();
+        if (handleIndex >= paneSizes.size()) {
+            QSplitterHandle::keyPressEvent(event);
+            return;
+        }
+
+        int logicalDelta = physicalDelta;
+        if (orientation() == Qt::Horizontal
+            && owner->layoutDirection() == Qt::RightToLeft) {
+            logicalDelta = -logicalDelta;
+        }
+
+        const int firstIndex = handleIndex - 1;
+        const int secondIndex = handleIndex;
+        const int total =
+            paneSizes.at(firstIndex)
+            + paneSizes.at(secondIndex);
+
+        int firstSize =
+            qBound(
+                0,
+                paneSizes.at(firstIndex) + logicalDelta,
+                total);
+        int secondSize = total - firstSize;
+
+        paneSizes[firstIndex] = firstSize;
+        paneSizes[secondIndex] = secondSize;
+        owner->setSizes(paneSizes);
+
+        event->accept();
+    }
+};
+
+} // namespace
 
 QtMaterialSplitView::QtMaterialSplitView(QWidget* parent)
     : QtMaterialSplitView(Qt::Horizontal, parent)
@@ -27,6 +134,13 @@ QtMaterialSplitView::QtMaterialSplitView(Qt::Orientation orientation, QWidget* p
 }
 
 QtMaterialSplitView::~QtMaterialSplitView() = default;
+
+QSplitterHandle* QtMaterialSplitView::createHandle()
+{
+    return new QtMaterialSplitHandle(
+        orientation(),
+        this);
+}
 
 void QtMaterialSplitView::setPaneCollapsible(int index, bool collapsible)
 {
