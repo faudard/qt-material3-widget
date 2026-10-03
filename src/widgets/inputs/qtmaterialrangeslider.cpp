@@ -1,5 +1,6 @@
 #include "qtmaterial/widgets/inputs/qtmaterialrangeslider.h"
 
+#include <QFocusEvent>
 #include <QKeyEvent>
 #include <QLineF>
 #include <QMouseEvent>
@@ -18,6 +19,20 @@ public:
     Qt::Orientation orientation = Qt::Horizontal;
     QtMaterialRangeSlider::Handle activeHandle = QtMaterialRangeSlider::Handle::Lower;
     bool dragging = false;
+
+    void updateAccessibility(QtMaterialRangeSlider* q) const
+    {
+        const QString active =
+            activeHandle == QtMaterialRangeSlider::Handle::Lower
+                ? QtMaterialRangeSlider::tr("Lower")
+                : QtMaterialRangeSlider::tr("Upper");
+        q->setAccessibleDescription(
+            QtMaterialRangeSlider::tr(
+                "Lower %1, upper %2. %3 handle active")
+                .arg(lowerValue)
+                .arg(upperValue)
+                .arg(active));
+    }
 };
 
 namespace {
@@ -34,6 +49,7 @@ QtMaterialRangeSlider::QtMaterialRangeSlider(QWidget* parent)
     setFocusPolicy(Qt::StrongFocus);
     setMinimumSize(80, 32);
     setAccessibleName(tr("Range slider"));
+    d_ptr->updateAccessibility(this);
 }
 
 QtMaterialRangeSlider::~QtMaterialRangeSlider() = default;
@@ -58,6 +74,7 @@ void QtMaterialRangeSlider::setRange(int minimum, int maximum)
     const int upper = qBound(lower, d_ptr->upperValue, d_ptr->maximum);
     d_ptr->lowerValue = lower;
     d_ptr->upperValue = upper;
+    d_ptr->updateAccessibility(this);
     update();
     emit rangeChanged(d_ptr->minimum, d_ptr->maximum);
     emit valuesChanged(d_ptr->lowerValue, d_ptr->upperValue);
@@ -73,6 +90,7 @@ void QtMaterialRangeSlider::setLowerValue(int value)
         return;
     }
     d_ptr->lowerValue = bounded;
+    d_ptr->updateAccessibility(this);
     update();
     emit lowerValueChanged(bounded);
     emit valuesChanged(d_ptr->lowerValue, d_ptr->upperValue);
@@ -85,6 +103,7 @@ void QtMaterialRangeSlider::setUpperValue(int value)
         return;
     }
     d_ptr->upperValue = bounded;
+    d_ptr->updateAccessibility(this);
     update();
     emit upperValueChanged(bounded);
     emit valuesChanged(d_ptr->lowerValue, d_ptr->upperValue);
@@ -106,6 +125,7 @@ void QtMaterialRangeSlider::setValues(int lower, int upper)
 
     d_ptr->lowerValue = lower;
     d_ptr->upperValue = upper;
+    d_ptr->updateAccessibility(this);
     update();
     if (lowerChanged) emit lowerValueChanged(lower);
     if (upperChanged) emit upperValueChanged(upper);
@@ -225,6 +245,7 @@ void QtMaterialRangeSlider::mousePressEvent(QMouseEvent* event)
     const qreal lowerDistance = QLineF(p, handleCenter(Handle::Lower)).length();
     const qreal upperDistance = QLineF(p, handleCenter(Handle::Upper)).length();
     d_ptr->activeHandle = lowerDistance <= upperDistance ? Handle::Lower : Handle::Upper;
+    d_ptr->updateAccessibility(this);
     d_ptr->dragging = true;
     setFocus(Qt::MouseFocusReason);
     moveActiveHandleTo(valueForPosition(event->pos()));
@@ -276,11 +297,6 @@ void QtMaterialRangeSlider::keyPressEvent(QKeyEvent* event)
         moveActiveHandleTo(d_ptr->activeHandle == Handle::Upper ? d_ptr->maximum : d_ptr->upperValue);
         event->accept();
         return;
-    case Qt::Key_Tab:
-        d_ptr->activeHandle = d_ptr->activeHandle == Handle::Lower ? Handle::Upper : Handle::Lower;
-        update();
-        event->accept();
-        return;
     default:
         QWidget::keyPressEvent(event);
         return;
@@ -291,6 +307,41 @@ void QtMaterialRangeSlider::keyPressEvent(QKeyEvent* event)
     }
     moveActiveHandleTo((d_ptr->activeHandle == Handle::Lower ? d_ptr->lowerValue : d_ptr->upperValue) + delta);
     event->accept();
+}
+
+void QtMaterialRangeSlider::focusInEvent(QFocusEvent* event)
+{
+    QWidget::focusInEvent(event);
+
+    if (event) {
+        if (event->reason() == Qt::BacktabFocusReason) {
+            d_ptr->activeHandle = Handle::Upper;
+        } else if (event->reason() == Qt::TabFocusReason) {
+            d_ptr->activeHandle = Handle::Lower;
+        }
+    }
+
+    d_ptr->updateAccessibility(this);
+    update();
+}
+
+bool QtMaterialRangeSlider::focusNextPrevChild(bool next)
+{
+    if (next && d_ptr->activeHandle == Handle::Lower) {
+        d_ptr->activeHandle = Handle::Upper;
+        d_ptr->updateAccessibility(this);
+        update();
+        return true;
+    }
+
+    if (!next && d_ptr->activeHandle == Handle::Upper) {
+        d_ptr->activeHandle = Handle::Lower;
+        d_ptr->updateAccessibility(this);
+        update();
+        return true;
+    }
+
+    return QWidget::focusNextPrevChild(next);
 }
 
 } // namespace QtMaterial

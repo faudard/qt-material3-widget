@@ -18,6 +18,7 @@ QtMaterialSlider::QtMaterialSlider(Qt::Orientation orientation, QWidget* parent)
     setFocusPolicy(Qt::StrongFocus);
     setTracking(true);
     setAccessibleName(tr("Slider"));
+    setAccessibleDescription(tr("Value %1").arg(value()));
 
     connect(this, &QSlider::valueChanged, this, [this](int value) {
         if (d_ptr->valueLabelVisible && isSliderDown()) {
