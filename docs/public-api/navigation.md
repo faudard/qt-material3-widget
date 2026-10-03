@@ -95,6 +95,16 @@ behavior and DPR 2.0 rendering.
 
 ## Menu
 
-`QtMaterialMenu` supports action items and separators, disabled-item skipping, checkable items,
-mouse activation, directional/Home/End keyboard navigation, Space/Return/Enter activation,
-Escape dismissal, RTL-aware layout and accessible summary text.
+`QtMaterialMenu` supports action items and separators, disabled-item skipping, checkable and
+exclusive items, shortcut labels, mouse activation, directional/Home/End keyboard navigation,
+Space/Return/Enter activation, Escape dismissal, type-ahead selection and accessible summary
+text.
+
+The row painter mirrors check columns, icons, labels and shortcut text in RTL while preserving
+logical item order and geometry. `tst_menu` certifies disabled/separator skipping, activation,
+checkable state, Escape dismissal, accessibility summaries, type-ahead navigation, RTL layout
+stability and DPR 2.0 rendering.
+
+The advanced Navigation Gallery contains a dedicated Menu showcase with shortcut labels,
+checkable state and a disabled action so the same interaction and RTL behavior can be inspected
+without relying on another application example.

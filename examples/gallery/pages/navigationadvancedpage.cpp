@@ -8,6 +8,7 @@
 
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
+#include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 
 NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
     : QWidget(parent)
@@ -104,6 +105,47 @@ NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
         &QShortcut::activated,
         this,
         openCommandPalette);
+
+    auto* menuTitle = new QLabel(tr("Menu"), this);
+    layout->addWidget(menuTitle);
+
+    auto* menuDescription = new QLabel(
+        tr("Use keyboard arrows, type-ahead, checkable actions, disabled actions and shortcuts. Toggle RTL in the gallery settings to verify mirroring."),
+        this);
+    menuDescription->setWordWrap(true);
+    layout->addWidget(menuDescription);
+
+    auto* menu = new QtMaterialMenu(this);
+    menu->setAccessibleName(tr("Gallery action menu"));
+    const int openItem = menu->addItem(tr("Open requirement"));
+    menu->setItemShortcutText(openItem, tr("Ctrl+O"));
+
+    const int copyItem = menu->addItem(tr("Copy identifier"));
+    menu->setItemShortcutText(copyItem, tr("Ctrl+C"));
+
+    menu->addSeparator();
+
+    const int detailsItem = menu->addItem(tr("Show details"));
+    menu->setItemCheckable(detailsItem, true);
+    menu->setItemChecked(detailsItem, true);
+
+    const int deleteItem = menu->addItem(tr("Delete requirement"));
+    menu->setItemEnabled(deleteItem, false);
+    menu->setMaximumWidth(menu->sizeHint().width());
+    layout->addWidget(menu, 0, Qt::AlignLeading);
+
+    auto* menuStatus = new QLabel(tr("Menu action: none"), this);
+    layout->addWidget(menuStatus);
+
+    connect(
+        menu,
+        &QtMaterialMenu::activated,
+        this,
+        [menu, menuStatus](int index) {
+            menuStatus->setText(
+                QObject::tr("Menu action: %1")
+                    .arg(menu->itemText(index)));
+        });
 
     layout->addStretch(1);
 }
