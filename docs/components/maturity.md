@@ -123,12 +123,12 @@
 | API | 0 |
 | Render | 0 |
 | States | 0 |
-| Accessibility | 0 |
-| Keyboard | 0 |
+| A11y | 0 |
+| Keys | 0 |
 | HiDPI | 0 |
 | RTL | 0 |
 | Tests | 0 |
-| Example / Gallery | 0 |
+| Example | 0 |
 | Docs | 0 |
 
 ## Next actions
