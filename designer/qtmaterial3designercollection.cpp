@@ -200,7 +200,7 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
     addWidget<QtMaterialCard>(
         widgets_, this, "QtMaterial::QtMaterialCard",
         "qtmaterial/widgets/surfaces/qtmaterialcard.h",
-        "Qt Material 3 - Surfaces", "materialCard", "Material 3 card", true);
+        "Qt Material 3 - Surfaces", "materialCard", "Material 3 card");
 
     addWidget<QtMaterialLinearProgressIndicator>(
         widgets_, this, "QtMaterial::QtMaterialLinearProgressIndicator",
