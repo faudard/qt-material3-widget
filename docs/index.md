@@ -17,6 +17,7 @@ Use the narrative pages to understand concepts, layering, and supported workflow
 - [Installation](installation.md)
 - [Themes](themes.md)
 - [Widgets](widgets/index.md)
+- [Reviewed visual references](visual-reference.md)
 - [Examples](examples/index.md)
 - [Migration](migration/index.md)
 - [Documentation versions](versioning.md)
@@ -63,6 +64,7 @@ installation
 themes
 widgets/index
 widgets/components/index
+visual-reference
 examples/index
 migration/index
 versioning
