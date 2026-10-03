@@ -100,6 +100,9 @@ jobs:
             echo "Stable API baseline is not required until the 1.0 version bump."
           fi
 
+      - name: Generate component documentation
+        run: python tools/generate_component_docs.py
+
       - name: Validate consumer documentation contract
         run: python tools/check_consumer_docs.py
 
