@@ -50,6 +50,25 @@ for entry in release:
     if route and not route.startswith("/"):
         errors.append(f"{cid}: galleryRoute must be absolute: {route}")
 
+generated = ROOT / "docs/widgets/components"
+for entry in release:
+    page = generated / (entry["id"].lower().replace(".", "-") + ".md")
+    if not page.is_file():
+        errors.append(f"{entry.get('id')}: generated component page missing: {page.relative_to(ROOT)}")
+    elif entry.get("widgetType") not in page.read_text(encoding="utf-8"):
+        errors.append(f"{entry.get('id')}: generated page does not expose public API type")
+
+    if entry.get("maturity") == "complete":
+        axes = entry.get("maturityAxes", {})
+        for axis in ("api", "rendering", "states", "accessibility", "keyboard", "hidpi", "rtl", "tests", "example", "docs"):
+            value = axes.get(axis)
+            if value != 4 and value != "N/A":
+                errors.append(f"{entry.get('id')}: complete component has {axis}={value!r}")
+        evidence = axes.get("evidence", {})
+        for axis in ("rendering", "states", "accessibility", "keyboard", "tests", "example", "docs"):
+            if not evidence.get(axis):
+                errors.append(f"{entry.get('id')}: complete component lacks {axis} evidence")
+
 catalog = ROOT / "docs/widgets/component-reference.md"
 if not catalog.is_file():
     errors.append("missing docs/widgets/component-reference.md")
