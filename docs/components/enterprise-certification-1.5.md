@@ -96,9 +96,10 @@ must succeed.
 
 1. Execute the NVDA, Orca and VoiceOver sessions and fill the evidence ledger with real results.
 2. Require every one of the 72 checks (6 components × 4 behaviors × 3 readers) to be `pass`.
-3. Raise the six accessibility axes from 3/4 to 4/4, clear their final gaps and promote them to `complete`.
-4. Set `base.stable_release.enterprise_complete` to `true`.
-5. Regenerate `STATUS.md`, `docs/component-status.md` and
-   `docs/components/maturity.md`.
-6. Run the strict release checker, package/consumer lanes, documentation,
-   sanitizers and the full cross-platform CI matrix before tagging the release.
+3. Run `python tools/promote_enterprise_1_5.py` to verify that the repository is eligible for promotion.
+4. Run `python tools/promote_enterprise_1_5.py --apply`. The command raises accessibility
+   from 3/4 to 4/4 for the six components, clears their final gaps, promotes them to
+   `complete`, sets `base.stable_release.enterprise_complete=true`, regenerates the
+   generated status documents and executes the base release contract.
+5. Review the resulting diff and run package/consumer lanes, documentation, sanitizers
+   and the full cross-platform CI matrix before tagging the release.
