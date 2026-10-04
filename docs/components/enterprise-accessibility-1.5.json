@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "certification": "QtMaterial3 1.5 Enterprise accessibility",
+  "requiredComponents": [
+    "navigation.rail",
+    "navigation.tabs",
+    "navigation.menu",
+    "navigation.breadcrumb",
+    "navigation.command-palette",
+    "layout.split-view"
+  ],
+  "platforms": {
+    "windows-nvda": {
+      "screenReader": "NVDA",
+      "environment": "Windows; primary Qt 5.14.2/MSVC v142 lane",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "notes": "",
+      "components": {
+        "navigation.rail": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.tabs": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.menu": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.breadcrumb": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.command-palette": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "layout.split-view": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"}
+      }
+    },
+    "linux-orca": {
+      "screenReader": "Orca",
+      "environment": "Linux/AT-SPI; supported Qt 6 lane",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "notes": "",
+      "components": {
+        "navigation.rail": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.tabs": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.menu": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.breadcrumb": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.command-palette": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "layout.split-view": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"}
+      }
+    },
+    "macos-voiceover": {
+      "screenReader": "VoiceOver",
+      "environment": "macOS; supported Qt 6 lane",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "notes": "",
+      "components": {
+        "navigation.rail": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.tabs": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.menu": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.breadcrumb": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "navigation.command-palette": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"},
+        "layout.split-view": {"traversal": "pending", "stateAnnouncements": "pending", "activation": "pending", "focus": "pending"}
+      }
+    }
+  }
+}
