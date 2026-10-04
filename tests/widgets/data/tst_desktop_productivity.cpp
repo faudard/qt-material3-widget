@@ -1001,19 +1001,22 @@ private slots:
 
         auto* resultView = palette.findChild<QListView*>();
         QVERIFY(resultView);
-        const QModelIndex proxyIndex = resultView->model()->index(0, 0);
-        QVERIFY(proxyIndex.isValid());
 
         QSignalSpy activated(&palette, &QtMaterialCommandPalette::commandActivated);
 
         palette.show();
         QVERIFY(QTest::qWaitForWindowExposed(&palette));
 
+        // showEvent may refresh providers/results and therefore invalidate
+        // transient QSortFilterProxyModel indexes acquired while hidden.
+        const QModelIndex proxyIndex = resultView->model()->index(0, 0);
+        QVERIFY(proxyIndex.isValid());
+
         QVERIFY(QMetaObject::invokeMethod(
             resultView,
             "activated",
             Qt::DirectConnection,
-            Q_ARG(QModelIndex, proxyIndex)));
+            Q_ARG(QModelIndex, proxyIndex)))
         QCOMPARE(activated.count(), 1);
         QVERIFY(!palette.isVisible());
 
