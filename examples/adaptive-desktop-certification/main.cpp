@@ -1,6 +1,5 @@
 #include <QApplication>
 #include <QCheckBox>
-#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMainWindow>
@@ -106,7 +105,7 @@ int main(int argc, char** argv)
     contentLayout->addWidget(focusField);
 
     auto* sizes = new QWidget(content);
-    auto* sizeLayout = new QHBoxLayout(sizes);
+    auto* sizeLayout = new QVBoxLayout(sizes);
     sizeLayout->setContentsMargins(0, 0, 0, 0);
 
     struct WidthButton {
