@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QFrame>
 #include <QGroupBox>
 #include <QLabel>
 #include <QMainWindow>
@@ -111,7 +112,7 @@ int main(int argc, char** argv)
 
     auto* breadcrumb = new QtMaterial::QtMaterialBreadcrumb(content);
     breadcrumb->setAccessibleName(QStringLiteral("Enterprise Breadcrumb"));
-    breadcrumb->setItems({
+    breadcrumb->setItems(QStringList{
         QStringLiteral("Workspace"),
         QStringLiteral("Requirements"),
         QStringLiteral("Subsystem"),
@@ -181,8 +182,8 @@ int main(int argc, char** argv)
     split->setPaneMinimumExtent(0, 120);
     split->setPaneMinimumExtent(1, 160);
     split->setPaneMinimumExtent(2, 120);
-    split->setDefaultPaneSizes({220, 420, 220});
-    split->setSizes({220, 420, 220});
+    split->setDefaultPaneSizes(QList<int>{220, 420, 220});
+    split->setSizes(QList<int>{220, 420, 220});
     split->setMinimumHeight(180);
     layout->addWidget(
         section(QStringLiteral("Split View"), split, content));
