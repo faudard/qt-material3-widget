@@ -1016,7 +1016,7 @@ private slots:
             resultView,
             "activated",
             Qt::DirectConnection,
-            Q_ARG(QModelIndex, proxyIndex)))
+            Q_ARG(QModelIndex, proxyIndex)));
         QCOMPARE(activated.count(), 1);
         QVERIFY(!palette.isVisible());
 
