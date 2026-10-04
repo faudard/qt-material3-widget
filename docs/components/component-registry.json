@@ -3621,5 +3621,153 @@
         ]
       }
     }
+  },
+  {
+    "id": "layout.adaptive-shell",
+    "name": "Adaptive Shell",
+    "family": "Layouts",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h",
+    "specType": "N/A",
+    "widgetType": "QtMaterialAdaptiveShell",
+    "testTarget": "tst_adaptive_shell",
+    "galleryRoute": "/navigation/advanced",
+    "docsPath": "docs/public-api/material3-expressive-adaptive.md",
+    "releaseScope": false,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 3,
+      "keyboard": "N/A",
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
+      "gaps": [
+        "Reviewed deterministic Adaptive Shell breakpoint/density/supporting-pane goldens remain before complete maturity.",
+        "Platform assistive-technology verification of composed navigation/content/supporting-pane transitions remains pending."
+      ],
+      "nextActions": [
+        "Add compact/medium/expanded Adaptive Shell cases to the pinned visual matrix and review stable goldens.",
+        "Record NVDA, Orca and VoiceOver behavior across responsive shell transitions."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h.",
+          "The shell exposes content/supporting widgets, automatic density policy and resolved window-size classes."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/layouts/qtmaterialadaptiveshell.cpp.",
+          "The shell composes navigation, content and supporting-pane geometry from Compact/Medium/Expanded/Large/ExtraLarge size classes."
+        ],
+        "states": [
+          "tst_adaptive_shell covers compact, medium and expanded transitions plus supporting-pane visibility."
+        ],
+        "accessibility": [
+          "The shell preserves child widget ownership and accessibility surfaces while recomposing layout.",
+          "Platform screen-reader behavior across responsive transitions remains pending."
+        ],
+        "keyboard": [
+          "Adaptive Shell is a layout container; direct keyboard activation is not applicable."
+        ],
+        "hidpi": [
+          "Geometry remains device-independent and uses the existing Qt widget layout/rendering pipeline."
+        ],
+        "rtl": [
+          "tst_adaptive_shell verifies rail placement on the trailing side under RTL."
+        ],
+        "tests": [
+          "Registered tst_adaptive_shell covers breakpoint, density, supporting-pane and RTL contracts."
+        ],
+        "example": [
+          "examples/gallery/pages/navigationadvancedpage.cpp embeds a resizable Adaptive Shell."
+        ],
+        "docs": [
+          "docs/public-api/material3-expressive-adaptive.md documents Adaptive Shell breakpoints, density and supporting-pane behavior."
+        ],
+        "notes": [
+          "Adaptive Shell is additive 1.x API and remains outside the 1.5 release-scope certification count."
+        ]
+      }
+    }
+  },
+  {
+    "id": "navigation.suite",
+    "name": "Navigation Suite",
+    "family": "Navigation",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h",
+    "specType": "N/A",
+    "widgetType": "QtMaterialNavigationSuite",
+    "testTarget": "tst_adaptive_shell",
+    "galleryRoute": "/navigation/advanced",
+    "docsPath": "docs/public-api/material3-expressive-adaptive.md",
+    "releaseScope": false,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 3,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
+      "gaps": [
+        "Reviewed deterministic Navigation Suite bar/rail goldens remain before complete maturity.",
+        "Platform per-destination screen-reader traversal remains to be recorded."
+      ],
+      "nextActions": [
+        "Add compact Navigation Bar and medium/expanded Navigation Rail suite cases to the pinned navigation visual matrix.",
+        "Record NVDA, Orca and VoiceOver destination traversal/state/activation evidence."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h.",
+          "The widget exposes destinations, selected index, enablement and adaptive navigation type."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/navigation/qtmaterialnavigationsuite.cpp.",
+          "Compact renders the bar form while Medium and wider render the rail form using the navigation spec boundary."
+        ],
+        "states": [
+          "tst_adaptive_shell verifies selection retention while switching between Navigation Bar and Navigation Rail modes."
+        ],
+        "accessibility": [
+          "Per-destination QAccessible items expose name, geometry, selected/disabled/focused state and activation.",
+          "Native screen-reader traversal remains pending."
+        ],
+        "keyboard": [
+          "tst_adaptive_shell covers bar Right navigation and rail Down navigation while retaining selection."
+        ],
+        "hidpi": [
+          "Rendering uses device-independent Qt geometry and existing navigation rendering primitives."
+        ],
+        "rtl": [
+          "Navigation Suite implements visual-direction keyboard behavior and participates in RTL shell placement."
+        ],
+        "tests": [
+          "Registered tst_adaptive_shell covers adaptive navigation state and keyboard contracts."
+        ],
+        "example": [
+          "examples/gallery/pages/navigationadvancedpage.cpp demonstrates Navigation Suite inside Adaptive Shell."
+        ],
+        "docs": [
+          "docs/public-api/material3-expressive-adaptive.md documents Navigation Suite adaptation and interaction behavior."
+        ],
+        "notes": [
+          "Navigation Suite is additive 1.x API and remains outside the 1.5 release-scope certification count."
+        ]
+      }
+    }
   }
 ]
