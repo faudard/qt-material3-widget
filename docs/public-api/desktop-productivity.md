@@ -178,6 +178,9 @@ when the result list has focus. Ctrl+D toggles the selected command's favorite. 
 Shift+Tab keep native dialog focus navigation within the palette. Disabled commands remain
 visible but cannot activate. Accessible result text includes secondary/shortcut metadata,
 and the palette describes matching results and loading status.
+Activation or dismissal returns keyboard focus to the widget that opened the palette,
+provided that widget is still alive, visible and enabled. Reopening an already visible
+palette preserves the original invoker.
 
 ## Drag and drop
 

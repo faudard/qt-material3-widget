@@ -278,6 +278,28 @@ jobs:
           QT_QPA_PLATFORM: offscreen
         run: ctest --test-dir build --build-config Release --output-on-failure
 
+      - name: Report Windows QtTest failures
+        if: failure() && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (Test-Path build/tests) {
+            Get-ChildItem build/tests -Filter "tst_*.txt" | ForEach-Object {
+              if (Select-String -Path $_.FullName -Pattern 'FAIL!|QFATAL|Received signal' -Quiet) {
+                Get-Content $_.FullName
+              }
+            }
+          }
+
+      - name: Upload Windows QtTest reports
+        if: always() && runner.os == 'Windows'
+        uses: actions/upload-artifact@v6
+        with:
+          name: qttest-${{ matrix.name }}
+          path: |
+            build/tests/tst_*.txt
+            build/Testing/Temporary/LastTest.log
+          if-no-files-found: warn
+
       - name: Test macOS
         if: runner.os == 'macOS' && matrix.build-tests == 'ON'
         shell: bash
@@ -415,8 +437,11 @@ jobs:
         shell: pwsh
         run: |
           cmake --build build-designer-qt5 --parallel
+          if ($LASTEXITCODE -ne 0) { throw "Designer build failed" }
           ctest --test-dir build-designer-qt5 --output-on-failure -R "designer_(collection_contract|ui_smoke)"
+          if ($LASTEXITCODE -ne 0) { throw "Designer contracts failed" }
           cmake --install build-designer-qt5 --prefix "${{ github.workspace }}\build-designer-qt5\stage"
+          if ($LASTEXITCODE -ne 0) { throw "Designer install failed" }
           $plugin = Get-ChildItem "${{ github.workspace }}\build-designer-qt5\stage" -Recurse -File | Where-Object { $_.FullName -match '[\\/]plugins[\\/]designer[\\/]' } | Select-Object -First 1
           if (-not $plugin) { throw "Designer plugin was not staged" }
 

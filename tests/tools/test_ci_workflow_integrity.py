@@ -38,3 +38,12 @@ class CiWorkflowIntegrityTests(unittest.TestCase):
         workflow = (ROOT / ".github/workflows/ci.yml").read_text()
         designer = workflow.split("  designer-plugin-qt5-windows:\n", 1)[1].split("\n  consumer-contract:", 1)[0]
         self.assertIn('"-DQTMATERIAL3_EXPECT_QT_VERSION=5.14.2"', designer)
+
+    def test_designer_windows_checks_each_native_exit_code(self):
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text()
+        designer = workflow.split("      - name: Build and test Designer plugin\n", 1)[1].split("\n  consumer-contract:", 1)[0]
+        lines = designer.splitlines()
+        for index, line in enumerate(lines):
+            if line.strip().startswith(("cmake --build", "ctest ", "cmake --install")):
+                self.assertRegex(lines[index + 1], r"if \(\$LASTEXITCODE -ne 0\) \{ throw ",
+                                 "A later successful command must not hide Designer failures")

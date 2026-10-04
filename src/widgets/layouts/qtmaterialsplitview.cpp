@@ -7,6 +7,7 @@
 #include <QShowEvent>
 #include <QSet>
 #include <QKeyEvent>
+#include <QMargins>
 #include <QMouseEvent>
 #include <QSplitterHandle>
 #include <QTimer>
@@ -89,8 +90,15 @@ protected:
         if (event->key() == Qt::Key_Home) { position = 0; }
         else if (event->key() == Qt::Key_End) { position = extent; }
         else if (delta == 0) { QSplitterHandle::keyPressEvent(event); return; }
-        // QSplitterHandle translates physical positions for RTL and uses the
-        // native splitter constraint engine without rescaling unrelated panes.
+        // Qt moves the boundary before the next pane. In RTL that boundary is
+        // at the handle's right edge, rather than its physical left coordinate.
+        // Include the grab-area margins used for very thin native handles.
+        const QMargins margins = contentsMargins();
+        if (orientation() == Qt::Horizontal) {
+            position += owner->isRightToLeft() ? width() - margins.right() : margins.left();
+        } else {
+            position += margins.top();
+        }
         moveSplitter(closestLegalPosition(position));
 
         event->accept();

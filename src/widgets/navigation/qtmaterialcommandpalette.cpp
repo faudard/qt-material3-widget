@@ -399,6 +399,7 @@ public:
     CommandModel* commandModel = nullptr;
     CommandProxy* proxyModel = nullptr;
     QPointer<QAbstractItemModel> sourceModel;
+    QPointer<QWidget> previousFocus;
     QList<QMetaObject::Connection> sourceConnections;
     QList<ProviderState> providers;
     QList<QKeySequence> activationShortcuts;
@@ -742,6 +743,10 @@ void QtMaterialCommandPalette::setActivationShortcuts(const QList<QKeySequence>&
 
 void QtMaterialCommandPalette::openPalette()
 {
+    if (!isVisible()) {
+        QWidget* focused = QApplication::focusWidget();
+        d_ptr->previousFocus = focused && focused != this && !isAncestorOf(focused) ? focused : nullptr;
+    }
     setQuery(QString());
     show();
     raise();
@@ -804,9 +809,15 @@ void QtMaterialCommandPalette::showEvent(QShowEvent* event)
 }
 void QtMaterialCommandPalette::hideEvent(QHideEvent* event)
 {
+    const QPointer<QWidget> previousFocus = d_ptr->previousFocus;
+    d_ptr->previousFocus.clear();
     cancelProviderRequests();
     updateLoading();
     QDialog::hideEvent(event);
+    if (previousFocus && previousFocus->isVisible() && previousFocus->isEnabled()) {
+        previousFocus->window()->activateWindow();
+        if (previousFocus) { previousFocus->setFocus(Qt::OtherFocusReason); }
+    }
 }
 
 void QtMaterialCommandPalette::activateProxyIndex(const QModelIndex& proxyIndex)

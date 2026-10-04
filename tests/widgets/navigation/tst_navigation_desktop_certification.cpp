@@ -19,6 +19,7 @@
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
 #include "qtmaterial/widgets/layouts/qtmaterialsplitview.h"
+#include "../../helpers/widgettestactivation.h"
 
 using namespace QtMaterial;
 
@@ -47,7 +48,7 @@ private slots:
         auto* bar = tabs->findChild<QTabBar*>(); QVERIFY(bar);
         QWidget::setTabOrder(before, bar); QWidget::setTabOrder(bar, after);
         host.resize(800, 400); host.show(); QVERIFY(QTest::qWaitForWindowExposed(&host));
-        host.activateWindow(); before->setFocus(); QTRY_VERIFY(before->hasFocus());
+        activateTestWindow(&host); before->setFocus(); QTRY_VERIFY(before->hasFocus());
         QTest::keyClick(before, Qt::Key_Tab); QTRY_VERIFY(bar->hasFocus());
         const Qt::Key forward = direction == int(Qt::RightToLeft) ? Qt::Key_Left : Qt::Key_Right;
         QTest::keyClick(bar, forward); QCOMPARE(tabs->currentIndex(), 2);
@@ -75,7 +76,7 @@ private slots:
         rail.addDestination(QStringLiteral("Home")); rail.addDestination(QStringLiteral("Disabled"));
         rail.addDestination(QStringLiteral("Settings")); rail.setDestinationEnabled(1, false);
         rail.setCurrentIndex(0); rail.resize(rail.sizeHint()); rail.show();
-        QVERIFY(QTest::qWaitForWindowExposed(&rail)); rail.activateWindow(); rail.setFocus();
+        QVERIFY(QTest::qWaitForWindowExposed(&rail)); activateTestWindow(&rail); rail.setFocus();
         QTRY_VERIFY(rail.hasFocus());
         auto* accessible = QAccessible::queryAccessibleInterface(&rail); QVERIFY(accessible);
         QCOMPARE(accessible->role(), QAccessible::List); QCOMPARE(accessible->childCount(), 3);
@@ -111,7 +112,7 @@ private slots:
         menu.setItemCheckable(checked, true);
         const int disabled = menu.addItem(QStringLiteral("Delete")); menu.setItemEnabled(disabled, false);
         menu.resize(menu.sizeHint()); menu.show(); QVERIFY(QTest::qWaitForWindowExposed(&menu));
-        menu.activateWindow(); menu.setFocus(); QTRY_VERIFY(menu.hasFocus());
+        activateTestWindow(&menu); menu.setFocus(); QTRY_VERIFY(menu.hasFocus());
         auto* accessible = QAccessible::queryAccessibleInterface(&menu); QVERIFY(accessible);
         QCOMPARE(accessible->role(), QAccessible::PopupMenu); QCOMPARE(accessible->childCount(), 4);
         QCOMPARE(accessible->child(open)->text(QAccessible::Accelerator), QStringLiteral("Ctrl+O"));
@@ -189,7 +190,7 @@ private slots:
         breadcrumb.setItems({QStringLiteral("Root"), QStringLiteral("Projects"), QStringLiteral("Source"), QStringLiteral("File")});
         breadcrumb.setCurrentIndex(3); breadcrumb.setMaximumVisibleItems(2); breadcrumb.setLocationEditable(true);
         breadcrumb.resize(360, 64); breadcrumb.show(); QVERIFY(QTest::qWaitForWindowExposed(&breadcrumb));
-        breadcrumb.activateWindow();
+        activateTestWindow(&breadcrumb);
         QToolButton* overflow = nullptr;
         for (auto* button : breadcrumb.findChildren<QToolButton*>()) {
             if (button->isVisible() && button->menu()) { overflow = button; break; }
@@ -212,6 +213,7 @@ private slots:
         QVERIFY(keyboardSelection == 1 || keyboardSelection == 2);
         QCOMPARE(activated.first().first().toInt(), keyboardSelection);
         breadcrumb.setCurrentIndex(3);
+        activateTestWindow(&breadcrumb);
         const auto visibleRoot = [&breadcrumb]() -> QToolButton* {
             for (auto* button : breadcrumb.findChildren<QToolButton*>()) {
                 if (button->isVisible() && button->text() == QStringLiteral("Root")) { return button; }
@@ -245,6 +247,7 @@ private slots:
         item->setData(QStringLiteral("Ctrl+O"), QtMaterialCommandPalette::ShortcutRole);
         model.appendRow(item); palette.setSourceModel(&model); palette.openPalette();
         QVERIFY(QTest::qWaitForWindowExposed(&palette));
+        activateTestWindow(&palette);
         auto* results = palette.findChild<QListView*>(); QVERIFY(results);
         auto* accessible = QAccessible::queryAccessibleInterface(results); QVERIFY(accessible);
         QCOMPARE(accessible->role(), QAccessible::List);
@@ -259,19 +262,25 @@ private slots:
 
     void splitKeyboardConstraintsAndCollapsedState_data() {
         QTest::addColumn<int>("orientation"); QTest::addColumn<int>("direction");
-        QTest::newRow("horizontal-ltr") << int(Qt::Horizontal) << int(Qt::LeftToRight);
-        QTest::newRow("horizontal-rtl") << int(Qt::Horizontal) << int(Qt::RightToLeft);
-        QTest::newRow("vertical-ltr") << int(Qt::Vertical) << int(Qt::LeftToRight);
-        QTest::newRow("vertical-rtl") << int(Qt::Vertical) << int(Qt::RightToLeft);
+        QTest::addColumn<int>("handleWidth");
+        QTest::newRow("horizontal-ltr") << int(Qt::Horizontal) << int(Qt::LeftToRight) << 8;
+        QTest::newRow("horizontal-rtl") << int(Qt::Horizontal) << int(Qt::RightToLeft) << 8;
+        QTest::newRow("vertical-ltr") << int(Qt::Vertical) << int(Qt::LeftToRight) << 8;
+        QTest::newRow("vertical-rtl") << int(Qt::Vertical) << int(Qt::RightToLeft) << 8;
+        QTest::newRow("thin-horizontal-ltr") << int(Qt::Horizontal) << int(Qt::LeftToRight) << 1;
+        QTest::newRow("thin-horizontal-rtl") << int(Qt::Horizontal) << int(Qt::RightToLeft) << 1;
+        QTest::newRow("thin-vertical-ltr") << int(Qt::Vertical) << int(Qt::LeftToRight) << 1;
+        QTest::newRow("thin-vertical-rtl") << int(Qt::Vertical) << int(Qt::RightToLeft) << 1;
     }
     void splitKeyboardConstraintsAndCollapsedState() {
-        QFETCH(int, orientation); QFETCH(int, direction);
+        QFETCH(int, orientation); QFETCH(int, direction); QFETCH(int, handleWidth);
         QtMaterialSplitView split{Qt::Orientation(orientation)};
+        split.setHandleWidth(handleWidth);
         split.setLayoutDirection(Qt::LayoutDirection(direction)); split.resize(800, 600);
         split.addWidget(new QWidget); split.addWidget(new QWidget); split.addWidget(new QWidget);
         split.setPaneMinimumExtent(0, 80); split.setPaneMaximumExtent(0, 420);
         split.setSizes({200, 200, 200}); split.show(); QVERIFY(QTest::qWaitForWindowExposed(&split));
-        auto* handle = split.handle(1); split.activateWindow(); handle->setFocus(); QTRY_VERIFY(handle->hasFocus());
+        auto* handle = split.handle(1); activateTestWindow(&split); handle->setFocus(); QTRY_VERIFY(handle->hasFocus());
         auto* accessible = QAccessible::queryAccessibleInterface(handle); QVERIFY(accessible);
         QVERIFY(accessible->state().focusable); QVERIFY(accessible->state().focused);
         QVERIFY(!accessible->text(QAccessible::Name).isEmpty());
@@ -280,10 +289,9 @@ private slots:
         const int start = coordinate();
         const Qt::Key positive = orientation == int(Qt::Horizontal) ? Qt::Key_Right : Qt::Key_Down;
         const Qt::Key negative = orientation == int(Qt::Horizontal) ? Qt::Key_Left : Qt::Key_Up;
-        QTest::keyClick(handle, positive); QVERIFY(coordinate() > start);
-        const int oneStep = coordinate();
+        QTest::keyClick(handle, positive); QCOMPARE(coordinate(), start + split.keyboardResizeStep());
         QTest::keyClick(handle, negative); QCOMPARE(coordinate(), start);
-        QTest::keyClick(handle, positive, Qt::ShiftModifier); QVERIFY(coordinate() > oneStep);
+        QTest::keyClick(handle, positive, Qt::ShiftModifier); QCOMPARE(coordinate(), start + 4 * split.keyboardResizeStep());
         QTest::keyClick(handle, Qt::Key_Home); QVERIFY(split.sizes().first() >= 80);
         QTest::keyClick(handle, Qt::Key_End); QVERIFY(split.sizes().first() <= 420);
         QTest::keyClick(handle, Qt::Key_Return); QVERIFY(split.paneCollapsed(0));

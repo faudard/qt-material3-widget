@@ -13,7 +13,7 @@ API; two additional CTest targets exercise interactions across the family.
 | Menu | Accessible PopupMenu/MenuItem/Separator hierarchy, shortcut metadata, checkable/checked/disabled states, accessible press action, Home/End/Space/Escape and empty-menu behavior |
 | Breadcrumb | Keyboard access to overflow actions and Ctrl+L editing, native editor accessibility, Enter submission, Escape cancellation and focus retained within the component |
 | Command Palette | Native accessible result names include command title, secondary text and shortcut; selection and focus are exposed by QListView |
-| SplitView | Focusable accessible divider, physical keyboard movement in both orientations and LTR/RTL, Shift acceleration, min/max constraints, Enter collapse/restore and corrupt-state rejection |
+| SplitView | Focusable accessible divider, exact physical keyboard steps in both orientations and LTR/RTL with normal/thin handles, Shift acceleration, min/max constraints, Enter collapse/restore and corrupt-state rejection |
 
 Tabs, Rail and Menu expose each item through an internal accessibility adapter. Its
 item QObjects belong to the widget so Qt can invalidate cached accessible interfaces on
@@ -22,6 +22,13 @@ uses the same selection and Enter activation path as keyboard interaction. Nativ
 accessibility remains responsible for Tabs' scroll/overflow controls, Breadcrumb
 buttons/editors, Palette fields and results, and SplitView handles. Tab children report
 selection and disabled state explicitly instead of inheriting the bar's state.
+
+Offscreen fixtures prepare window activation explicitly because there is no desktop
+window manager to restore it after popups. Subsequent Tab/Backtab, shortcuts, selection
+and focus assertions use actual Qt widget state. Palette dismissal restores its invoker;
+reopening while visible retains that target and an invoker destroyed meanwhile is safe.
+QtTest keeps text reports beside stdout. Windows CI prints failing reports and uploads
+them with CTest's last-run log in the `qttest-<matrix-name>` artifact.
 
 ## Command provider stress contracts
 

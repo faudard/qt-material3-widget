@@ -1001,13 +1001,13 @@ private slots:
 
         auto* resultView = palette.findChild<QListView*>();
         QVERIFY(resultView);
-        const QModelIndex proxyIndex = resultView->model()->index(0, 0);
-        QVERIFY(proxyIndex.isValid());
-
         QSignalSpy activated(&palette, &QtMaterialCommandPalette::commandActivated);
 
         palette.show();
         QVERIFY(QTest::qWaitForWindowExposed(&palette));
+        // Showing refreshes provider snapshots and resets the proxy model.
+        const QModelIndex proxyIndex = resultView->model()->index(0, 0);
+        QVERIFY(proxyIndex.isValid());
 
         QVERIFY(QMetaObject::invokeMethod(
             resultView,

@@ -13,7 +13,10 @@ function(qtm3_add_test target source)
             ${ARGN}
     )
 
-    add_test(NAME ${target} COMMAND ${target})
+    # Keep a file report as well as stdout: Windows GUI test runners may not
+    # deliver QtTest's console output to CTest's captured stream.
+    add_test(NAME ${target} COMMAND ${target}
+        -o "${CMAKE_CURRENT_BINARY_DIR}/${target}.txt,txt" -o "-,txt")
 endfunction()
 
 qtm3_add_test(

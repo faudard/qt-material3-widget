@@ -15,7 +15,7 @@ private slots:
         QtMaterial3DesignerCollection collection;
         const auto widgets = collection.customWidgets();
 
-        QCOMPARE(widgets.size(), 20);
+        QCOMPARE(widgets.size(), 21);
 
         QSet<QString> names;
         for (QDesignerCustomWidgetInterface* item : widgets) {
@@ -34,6 +34,7 @@ private slots:
             QCOMPARE(widget->parentWidget(), &parent);
             QVERIFY(!widget->objectName().isEmpty());
         }
+        QVERIFY(names.contains(QStringLiteral("QtMaterial::QtMaterialSlider")));
     }
 
     void exposesExpectedGroups()

@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
+#include "../../helpers/widgettestactivation.h"
 
 using namespace QtMaterial;
 
@@ -56,6 +57,7 @@ private slots:
         palette.addProvider(&provider);
         palette.openPalette();
         QVERIFY(QTest::qWaitForWindowExposed(&palette));
+        activateTestWindow(&palette);
         QList<QtMaterialCommand> commands;
         commands.reserve(10000);
         for (int i = 9999; i >= 0; --i) {
@@ -274,7 +276,7 @@ private slots:
         }
         palette.setSourceModel(&model);
         host.show(); QVERIFY(QTest::qWaitForWindowExposed(&host));
-        host.activateWindow(); invoker.setFocus(); QTRY_VERIFY(invoker.hasFocus());
+        activateTestWindow(&host); invoker.setFocus(); QTRY_VERIFY(invoker.hasFocus());
         QTest::keyClick(&invoker, Qt::Key(shortcut), Qt::ControlModifier);
         QTRY_VERIFY(palette.isVisible());
         auto* search = palette.findChild<QLineEdit*>();
@@ -307,6 +309,28 @@ private slots:
         QTRY_VERIFY(search->hasFocus());
         QTest::keyClick(search, Qt::Key_Escape);
         QVERIFY(!palette.isVisible()); QTRY_VERIFY(invoker.hasFocus());
+    }
+
+    void reopeningPalettePreservesInvokerLifetime_data() {
+        QTest::addColumn<bool>("destroyInvoker");
+        QTest::newRow("return-to-invoker") << false;
+        QTest::newRow("invoker-destroyed") << true;
+    }
+    void reopeningPalettePreservesInvokerLifetime() {
+        QFETCH(bool, destroyInvoker);
+        QWidget host;
+        auto invoker = std::make_unique<QLineEdit>(&host);
+        QtMaterialCommandPalette palette(&host);
+        host.show(); QVERIFY(QTest::qWaitForWindowExposed(&host));
+        activateTestWindow(&host); invoker->setFocus(); QTRY_VERIFY(invoker->hasFocus());
+        palette.openPalette();
+        auto* search = palette.findChild<QLineEdit*>(); QVERIFY(search);
+        QTRY_VERIFY(search->hasFocus());
+        palette.openPalette(); // An already visible palette must keep its original invoker.
+        if (destroyInvoker) { invoker.reset(); }
+        palette.reject(); QVERIFY(!palette.isVisible());
+        if (invoker) { QTRY_VERIFY(invoker->hasFocus()); }
+        QCoreApplication::processEvents();
     }
 
     void emptyAndAllDisabledResultsCannotActivate() {
