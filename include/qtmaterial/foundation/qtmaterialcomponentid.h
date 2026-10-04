@@ -61,7 +61,6 @@ enum class ComponentId : std::uint32_t {
     GridList = 0x00001702u,
     Carousel = 0x00001703u,
     DatePicker = 0x00001704u,
-    Pagination = 0x00001705u,
 
     Navigation = 0x00001800u,
     Selection = 0x00001900u,
