@@ -19,6 +19,7 @@
 #include "qtmaterial/widgets/inputs/qtmaterialslider.h"
 #include "qtmaterial/widgets/inputs/qtmaterialtimefield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialtimepicker.h"
+#include "qtmaterial/widgets/qtmaterialdatepicker.h"
 #include "qtmaterial/widgets/selection/qtmaterialchip.h"
 #include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
