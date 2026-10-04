@@ -9,6 +9,9 @@
 #include "qtmaterial/theme/qtmaterialthemecontext.h"
 
 using QtMaterial::ProgressIndicatorSpec;
+using QtMaterial::Theme;
+using QtMaterial::ThemeBuilder;
+using QtMaterial::ThemeContext;
 using QtMaterial::QtMaterialCircularProgressIndicator;
 using QtMaterial::QtMaterialLinearProgressIndicator;
 

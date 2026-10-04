@@ -20,6 +20,11 @@ import header_surface
 ROOT = Path(__file__).resolve().parents[1]
 RULES = Path("tools/release_rules.json")
 RELEASE_READY = {"complete", "usable"}
+ENTERPRISE_VISUAL_SUFFIXES = (
+    "_light_standard.png",
+    "_dark_standard.png",
+    "_light_high.png",
+)
 
 
 class ReleaseConfigurationError(RuntimeError):
@@ -59,6 +64,85 @@ def load_rules(path: Path) -> dict[str, Any]:
                 f"release rules missing scope: {scope}"
             )
     return data
+
+
+def validate_enterprise_components(
+    components: list[dict[str, Any]],
+    stable: dict[str, Any],
+) -> list[str]:
+    """Fail closed for the Production / Enterprise component contract."""
+    errors: list[str] = []
+    stable_goldens = {
+        str(path) for path in stable.get("visual_goldens", [])
+    }
+    visual_prefixes = stable.get("component_visual_prefixes", {})
+    if not isinstance(visual_prefixes, dict):
+        return [
+            "stable release component_visual_prefixes must be an object"
+        ]
+
+    for component in components:
+        if not component.get("releaseScope", False):
+            continue
+
+        cid = str(component.get("id", "<unknown>"))
+        maturity = component_registry.effective_maturity(component)
+        if maturity != "complete":
+            errors.append(
+                f"release-scoped component {cid} is {maturity}; "
+                "enterprise certification requires complete"
+            )
+
+        axes = component.get("maturityAxes")
+        if not isinstance(axes, dict):
+            errors.append(
+                f"release-scoped component {cid} has no maturity axes"
+            )
+            continue
+
+        for axis in component_registry.AXES:
+            value = axes.get(axis)
+            if value == "N/A":
+                continue
+            if value != 4:
+                errors.append(
+                    f"release-scoped component {cid} has "
+                    f"{axis}={value!r}; enterprise certification "
+                    "requires 4/4 or N/A"
+                )
+
+        if axes.get("gaps") != []:
+            errors.append(
+                f"release-scoped component {cid} must have gaps=[]"
+            )
+
+        for field in ("testTarget", "galleryRoute", "docsPath"):
+            value = component.get(field)
+            if not isinstance(value, str) or not value.strip():
+                errors.append(
+                    f"release-scoped component {cid} requires {field}"
+                )
+
+        prefix = visual_prefixes.get(cid)
+        if not isinstance(prefix, str) or not prefix.strip():
+            errors.append(
+                f"release-scoped component {cid} has no visual "
+                "certification mapping"
+            )
+            continue
+        for suffix in ENTERPRISE_VISUAL_SUFFIXES:
+            expected = (
+                "tests/visual/goldens/"
+                + prefix
+                + suffix
+            )
+            if expected not in stable_goldens:
+                errors.append(
+                    f"release-scoped component {cid} is missing "
+                    f"reviewed visual golden registration: {expected}"
+                )
+
+    return errors
 
 
 def validate_version(
@@ -169,6 +253,14 @@ def validate_base(
                 errors.append(
                     f"stable release missing reviewed visual golden: {relative}"
                 )
+
+        if stable.get("enterprise_complete", False):
+            errors.extend(
+                validate_enterprise_components(
+                    components,
+                    stable,
+                )
+            )
 
     return errors
 

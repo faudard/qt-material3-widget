@@ -119,16 +119,10 @@ def derived_maturity(axes: dict[str, Any]) -> str:
 
     if api is None or api < 1 or rendering is None or rendering == 0:
         return "planned"
-    if (
-        api >= 4
-        and rendering >= 4
-        and states is not None and states >= 4
-        and accessibility is not None and accessibility >= 3
-        and keyboard is not None and keyboard >= 4
-        and hidpi is not None and hidpi >= 3
-        and tests is not None and tests >= 4
-        and example is not None and example >= 4
-        and docs is not None and docs >= 4
+    complete_scores = [score(axes, axis) for axis in AXES]
+    if all(
+        value is not None and value >= 4
+        for value in complete_scores
     ):
         return "complete"
     if (
