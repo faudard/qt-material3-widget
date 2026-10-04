@@ -1,5 +1,6 @@
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h"
 
+#include <QFocusEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
@@ -556,6 +557,20 @@ void QtMaterialNavigationSuite::leaveEvent(QEvent* event)
     d_ptr->pressedIndex = -1;
     update();
     QtMaterialControl::leaveEvent(event);
+}
+
+void QtMaterialNavigationSuite::focusInEvent(QFocusEvent* event)
+{
+    QtMaterialControl::focusInEvent(event);
+    syncAccessibility();
+    update();
+}
+
+void QtMaterialNavigationSuite::focusOutEvent(QFocusEvent* event)
+{
+    QtMaterialControl::focusOutEvent(event);
+    syncAccessibility();
+    update();
 }
 
 void QtMaterialNavigationSuite::keyPressEvent(QKeyEvent* event)
