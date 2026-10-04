@@ -8,6 +8,8 @@
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/specs/qtmaterialchipspec.h"
 
+class QKeyEvent;
+
 namespace QtMaterial {
 
 class QtMaterialRippleController;
@@ -61,6 +63,7 @@ signals:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
     void mouseReleaseEvent(
         QMouseEvent* event) override;
 
