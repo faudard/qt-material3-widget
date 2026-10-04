@@ -83,7 +83,8 @@
         "surface.navigation-drawer": "surface_overlay_matrix",
         "surface.snackbar": "surface_overlay_matrix",
         "surface.top-app-bar": "surface_bar_matrix"
-      }
+      },
+      "enterprise_complete": false
     }
   },
   "theme": {
