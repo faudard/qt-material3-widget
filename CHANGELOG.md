@@ -21,6 +21,7 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Adaptive/Desktop 1.9 certification adds five-class LTR/RTL visual evidence, responsive Navigation Suite accessible focus, observable supporting-pane state, shell accessibility summaries, a native AT fixture and fail-closed promotion tooling.
 - Missing Material 3 certification adds per-destination Navigation Bar accessibility, modal Side Sheet focus containment/restoration, a pinned 1.7 visual matrix with repeatability evidence, and fail-closed visual/NVDA/Orca/VoiceOver promotion tooling.
 - Enterprise 1.5 closure now has a fail-closed NVDA/Orca/VoiceOver evidence ledger and release checker gate for the six remaining Navigation/Desktop components.
 - Material 3 Expressive buttons add XS/S/M/L/XL sizing, Round/Square shape semantics and state-driven press/selected morphing through the shared button renderer.
