@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <QString>
 
 #include "qtmaterial/foundation/qtmaterialdensity.h"
 #include "qtmaterial/foundation/qtmaterialwindowsizeclass.h"
