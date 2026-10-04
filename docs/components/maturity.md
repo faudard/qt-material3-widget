@@ -34,87 +34,87 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `compact.chip` | Chip | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic progress_compact_matrix stable goldens remain before complete maturity. |
+| `compact.chip` | Chip | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 
 ### Data
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `data.carousel` | Carousel | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity. |
-| `data.grid-list` | Grid List | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity. |
-| `data.list` | List | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity. |
-| `data.pagination` | Pagination | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity. |
-| `data.table` | Table | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity. |
-| `data.tree-view` | Tree View | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity. |
+| `data.carousel` | Carousel | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `data.grid-list` | Grid List | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `data.list` | List | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `data.pagination` | Pagination | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `data.table` | Table | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `data.tree-view` | Tree View | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 
 ### Data display
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `data.divider` | Divider | `usable` | 4 | 3 | 4 | 4 | N/A | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic data_extended_matrix stable goldens remain before complete maturity. |
+| `data.divider` | Divider | `complete` | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 
 ### Inputs
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `input.autocomplete` | Autocomplete | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.combo-box` | Combo Box | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.date-picker` | Date Picker | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.date-range-picker` | Date Range Picker | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.date.field` | Date Field | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.range-slider` | Range Slider | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.search-bar` | Search Bar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.search-view` | Search View | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.slider` | Slider | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.text.filled` | Filled Text Field | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.text.outlined` | Outlined Text Field | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.time-field` | Time Field | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
-| `input.time-picker` | Time Picker | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity. |
+| `input.autocomplete` | Autocomplete | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.combo-box` | Combo Box | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.date-picker` | Date Picker | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.date-range-picker` | Date Range Picker | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.date.field` | Date Field | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.range-slider` | Range Slider | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.search-bar` | Search Bar | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.search-view` | Search View | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.slider` | Slider | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.text.filled` | Filled Text Field | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.text.outlined` | Outlined Text Field | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.time-field` | Time Field | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `input.time-picker` | Time Picker | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 
 ### Layouts
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `layout.split-view` | Split View | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
+| `layout.split-view` | Split View | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
 
 ### Navigation
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `navigation.breadcrumb` | Breadcrumb | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
-| `navigation.command-palette` | Command Palette | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
-| `navigation.menu` | Menu | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
-| `navigation.rail` | Navigation Rail | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
-| `navigation.tabs` | Tabs | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
+| `navigation.breadcrumb` | Breadcrumb | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
+| `navigation.command-palette` | Command Palette | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
+| `navigation.menu` | Menu | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
+| `navigation.rail` | Navigation Rail | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
+| `navigation.tabs` | Tabs | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
 
 ### Progress
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `progress.circular` | Circular Progress Indicator | `usable` | 4 | 3 | 4 | 4 | N/A | 4 | N/A | 4 | 4 | 4 | Reviewed deterministic progress_compact_matrix stable goldens remain before complete maturity. |
-| `progress.linear` | Linear Progress Indicator | `usable` | 4 | 3 | 4 | 4 | N/A | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic progress_compact_matrix stable goldens remain before complete maturity. |
+| `progress.circular` | Circular Progress Indicator | `complete` | 4 | 4 | 4 | 4 | N/A | 4 | N/A | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `progress.linear` | Linear Progress Indicator | `complete` | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 
 ### Selection
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `selection.checkbox` | Checkbox | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic selection_matrix stable goldens remain before complete maturity. |
-| `selection.radio` | Radio Button | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic selection_matrix stable goldens remain before complete maturity. |
-| `selection.segmented-button` | Segmented Button | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic selection_matrix stable goldens remain before complete maturity. |
-| `selection.switch` | Switch | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic selection_matrix stable goldens remain before complete maturity. |
+| `selection.checkbox` | Checkbox | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `selection.radio` | Radio Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `selection.segmented-button` | Segmented Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `selection.switch` | Switch | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 
 ### Surfaces
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `surface.banner` | Banner | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity. |
-| `surface.bottom-app-bar` | Bottom App Bar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity. |
-| `surface.bottom-sheet` | Bottom Sheet | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity. |
-| `surface.card` | Card | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity. |
-| `surface.dialog` | Dialog | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity. |
-| `surface.navigation-drawer` | Navigation Drawer | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity. |
-| `surface.snackbar` | Snackbar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity. |
-| `surface.top-app-bar` | Top App Bar | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity. |
+| `surface.banner` | Banner | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `surface.bottom-app-bar` | Bottom App Bar | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `surface.bottom-sheet` | Bottom Sheet | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `surface.card` | Card | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `surface.dialog` | Dialog | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `surface.navigation-drawer` | Navigation Drawer | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `surface.snackbar` | Snackbar | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `surface.top-app-bar` | Top App Bar | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 
 ## Buttons completion gate
 
@@ -158,56 +158,44 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Icon Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Outlined Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Text Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
-| Chip | Review and promote the pinned Qt 6.4/Fusion progress_compact_matrix goldens, then raise rendering to 4/4. |
-| Carousel | Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4. |
-| Grid List | Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4. |
-| List | Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4. |
-| Pagination | Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4. |
-| Table | Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4. |
-| Tree View | Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4. |
-| Divider | Review and promote the pinned Qt 6.4/Fusion data_extended_matrix goldens, then raise rendering to 4/4. |
-| Autocomplete | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Combo Box | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Date Picker | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Date Range Picker | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Date Field | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Range Slider | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Search Bar | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Search View | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Slider | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Filled Text Field | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Outlined Text Field | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Time Field | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Time Picker | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Split View | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
-| Split View | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
-| Split View | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
-| Breadcrumb | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
-| Breadcrumb | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
-| Breadcrumb | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
-| Command Palette | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
-| Command Palette | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
-| Command Palette | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
-| Menu | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
-| Menu | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
-| Menu | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
-| Navigation Rail | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
-| Navigation Rail | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
-| Navigation Rail | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
-| Tabs | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
-| Tabs | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
-| Tabs | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
-| Circular Progress Indicator | Review and promote the pinned Qt 6.4/Fusion progress_compact_matrix goldens, then raise rendering to 4/4. |
-| Linear Progress Indicator | Review and promote the pinned Qt 6.4/Fusion progress_compact_matrix goldens, then raise rendering to 4/4. |
-| Checkbox | Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4. |
-| Radio Button | Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4. |
-| Segmented Button | Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4. |
-| Switch | Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4. |
-| Banner | Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4. |
-| Bottom App Bar | Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4. |
-| Bottom Sheet | Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4. |
-| Card | Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4. |
-| Dialog | Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4. |
-| Navigation Drawer | Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4. |
-| Snackbar | Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4. |
-| Top App Bar | Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4. |
+| Chip | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Carousel | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Grid List | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| List | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Pagination | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Table | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Tree View | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Divider | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Autocomplete | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Combo Box | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Date Picker | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Date Range Picker | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Date Field | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Range Slider | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Search Bar | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Search View | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Slider | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Filled Text Field | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Outlined Text Field | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Time Field | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Time Picker | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Split View | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
+| Breadcrumb | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
+| Command Palette | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
+| Menu | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
+| Navigation Rail | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
+| Tabs | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
+| Circular Progress Indicator | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Linear Progress Indicator | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Checkbox | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Radio Button | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Segmented Button | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Switch | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Banner | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Bottom App Bar | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Bottom Sheet | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Card | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Dialog | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Navigation Drawer | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Snackbar | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Top App Bar | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
