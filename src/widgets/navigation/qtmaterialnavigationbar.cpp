@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QStyle>
+#include <QStringList>
 #include <QVector>
 
 #include "../resolution/qtmaterialmissingmaterial3specresolution_p.h"
