@@ -36,12 +36,70 @@ Until that evidence is recorded, `base.stable_release.enterprise_complete` remai
 `false`; the release gate therefore stays fail-closed rather than claiming a false
 49/49 Enterprise certification.
 
+## Manual certification fixture
+
+Build and run `qtmaterial3_accessibility_certification` from
+`examples/accessibility-certification`. The fixture places the six remaining
+release-scoped components in one stable window with deterministic labels, disabled
+states and keyboard targets.
+
+Use keyboard input rather than pointer input during certification:
+
+- Navigation Rail: traverse destinations, confirm the disabled destination is announced
+  and skipped for activation, then activate another destination.
+- Tabs: traverse tabs, confirm the disabled tab is announced/skipped and selection
+  changes are spoken.
+- Menu: traverse action/checkable/separator/disabled rows, toggle the checked action and
+  verify activation feedback.
+- Breadcrumb: traverse visible/overflow segments, use Ctrl+L, submit a location with
+  Enter, cancel with Escape and verify focus restoration.
+- Command Palette: activate the fixture button, traverse result rows including secondary
+  text/shortcuts and verify activation/dismissal focus behavior.
+- Split View: focus a divider, resize with arrows/Shift+arrows, use Home/End and
+  collapse/restore with Enter while checking spoken focus/state feedback.
+
+Repeat the same fixture on Windows/NVDA, Linux/Orca and macOS/VoiceOver. Do not promote
+a platform record from `pending` to `pass` unless the observed native reader behavior
+matches the expected behavior above.
+
+## Native screen-reader evidence gate
+
+The canonical manual evidence ledger is
+`docs/components/enterprise-accessibility-1.5.json`. It is intentionally checked in
+with all results set to `pending` until an operator performs the real platform review.
+
+The release checker validates the ledger on every stable-release check. While
+`enterprise_complete` is `false`, pending records are structurally valid. Once
+`enterprise_complete` is set to `true`, the checker requires all three platform
+records to be `pass`, every component check to be `pass`, and non-empty reviewer,
+reviewedAt and evidence fields.
+
+Required platform sessions:
+
+| Platform | Reader | Required environment |
+| --- | --- | --- |
+| Windows | NVDA | Primary Qt 5.14.2 / MSVC v142 lane |
+| Linux | Orca / AT-SPI | Supported Qt 6 desktop lane |
+| macOS | VoiceOver | Supported Qt 6 desktop lane |
+
+For each reader, verify all six components: Navigation Rail, Tabs, Menu, Breadcrumb,
+Command Palette and Split View. Each component must pass traversal, state announcements,
+activation and focus behavior. Record the reviewer, date and a durable evidence reference
+(log, recording, CI/manual artifact or review record) in the ledger. A failing bridge
+behavior remains a registry gap and must not be converted to `pass`.
+
+Use `python tools/check_enterprise_accessibility.py` while recording evidence. Before
+the final promotion, `python tools/check_enterprise_accessibility.py --require-complete`
+must succeed.
+
 ## Final closure procedure
 
-1. Record NVDA, Orca and VoiceOver evidence for the six remaining components.
-2. Raise their accessibility axes from 3/4 to 4/4 and clear the final gaps.
-3. Set `base.stable_release.enterprise_complete` to `true`.
-4. Regenerate `STATUS.md`, `docs/component-status.md` and
-   `docs/components/maturity.md`.
-5. Run the strict release checker, package/consumer lanes, documentation,
-   sanitizers and the full cross-platform CI matrix before tagging the release.
+1. Execute the NVDA, Orca and VoiceOver sessions and fill the evidence ledger with real results.
+2. Require every one of the 72 checks (6 components × 4 behaviors × 3 readers) to be `pass`.
+3. Run `python tools/promote_enterprise_1_5.py` to verify that the repository is eligible for promotion.
+4. Run `python tools/promote_enterprise_1_5.py --apply`. The command raises accessibility
+   from 3/4 to 4/4 for the six components, clears their final gaps, promotes them to
+   `complete`, sets `base.stable_release.enterprise_complete=true`, regenerates the
+   generated status documents and executes the base release contract.
+5. Review the resulting diff and run package/consumer lanes, documentation, sanitizers
+   and the full cross-platform CI matrix before tagging the release.

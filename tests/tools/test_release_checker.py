@@ -227,6 +227,100 @@ class EnterpriseReleaseCheckerTests(unittest.TestCase):
             ),
         )
 
+    def make_accessibility_evidence(self, root: Path, *, complete: bool) -> dict:
+        relative = "docs/components/enterprise-accessibility-1.5.json"
+        (root / "docs/components").mkdir(parents=True, exist_ok=True)
+        result = "pass" if complete else "pending"
+        platforms = {}
+        for platform_id, reader in check_release.ENTERPRISE_AT_PLATFORMS.items():
+            platforms[platform_id] = {
+                "screenReader": reader,
+                "environment": "test",
+                "status": result,
+                "reviewer": "reviewer" if complete else "",
+                "reviewedAt": "2026-10-04" if complete else "",
+                "evidence": "artifact://evidence" if complete else "",
+                "notes": "",
+                "components": {
+                    component_id: {
+                        check: result
+                        for check in check_release.ENTERPRISE_AT_CHECKS
+                    }
+                    for component_id in check_release.ENTERPRISE_AT_COMPONENTS
+                },
+            }
+        payload = {
+            "schemaVersion": 1,
+            "certification": "QtMaterial3 1.5 Enterprise accessibility",
+            "requiredComponents": list(check_release.ENTERPRISE_AT_COMPONENTS),
+            "platforms": platforms,
+        }
+        (root / relative).write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+        return {"accessibility_evidence": relative}
+
+    def test_enterprise_accessibility_pending_is_valid_before_closure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            stable = self.make_accessibility_evidence(root, complete=False)
+            self.assertEqual(
+                [],
+                check_release.validate_enterprise_accessibility_evidence(
+                    root,
+                    stable,
+                    require_complete=False,
+                ),
+            )
+
+    def test_enterprise_accessibility_pending_blocks_final_closure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            stable = self.make_accessibility_evidence(root, complete=False)
+            errors = check_release.validate_enterprise_accessibility_evidence(
+                root,
+                stable,
+                require_complete=True,
+            )
+            self.assertTrue(
+                any("requires pass" in error for error in errors),
+                errors,
+            )
+
+    def test_enterprise_accessibility_complete_evidence_is_accepted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            stable = self.make_accessibility_evidence(root, complete=True)
+            self.assertEqual(
+                [],
+                check_release.validate_enterprise_accessibility_evidence(
+                    root,
+                    stable,
+                    require_complete=True,
+                ),
+            )
+
+    def test_enterprise_accessibility_pass_requires_all_component_checks(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            stable = self.make_accessibility_evidence(root, complete=True)
+            path = root / stable["accessibility_evidence"]
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            payload["platforms"]["windows-nvda"]["components"][
+                "navigation.tabs"
+            ]["focus"] = "pending"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            errors = check_release.validate_enterprise_accessibility_evidence(
+                root,
+                stable,
+                require_complete=True,
+            )
+            self.assertTrue(
+                any("cannot be pass" in error for error in errors),
+                errors,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

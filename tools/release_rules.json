@@ -141,7 +141,8 @@
         "surface.snackbar": "surface_overlay_matrix",
         "surface.top-app-bar": "surface_bar_matrix"
       },
-      "enterprise_complete": false
+      "enterprise_complete": false,
+      "accessibility_evidence": "docs/components/enterprise-accessibility-1.5.json"
     }
   },
   "theme": {

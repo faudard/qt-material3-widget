@@ -21,6 +21,7 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Enterprise 1.5 closure now has a fail-closed NVDA/Orca/VoiceOver evidence ledger and release checker gate for the six remaining Navigation/Desktop components.
 - Material 3 Expressive buttons add XS/S/M/L/XL sizing, Round/Square shape semantics and state-driven press/selected morphing through the shared button renderer.
 - Expressive FAB adds Small/Standard/Medium/Large sizing while reusing the shared shape-morph and reduced-motion pipeline.
 - Adaptive window size classes, Navigation Suite and Adaptive Shell add Compact/Medium/Expanded/Large/ExtraLarge behavior, responsive Bar/Rail navigation, supporting panes, RTL layout and automatic desktop density.
