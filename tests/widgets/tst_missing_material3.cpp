@@ -1,6 +1,7 @@
 #include <QtTest/QtTest>
 
 #include <QAccessible>
+#include <QApplication>
 #include <QLabel>
 #include <QPixmap>
 #include <QPushButton>
@@ -190,6 +191,13 @@ void MissingMaterial3Test::sideSheetModalFocusTrapAndRestore()
         QWidget* next = QApplication::focusWidget();
         QVERIFY(next == &sheet || sheet.isAncestorOf(next));
     }
+
+    QWidget* focused = QApplication::focusWidget();
+    QVERIFY(focused);
+    QTest::keyClick(focused, Qt::Key_Backtab);
+    QTRY_VERIFY(QApplication::focusWidget());
+    QWidget* previous = QApplication::focusWidget();
+    QVERIFY(previous == &sheet || sheet.isAncestorOf(previous));
 
     sheet.closeSheet();
     QTRY_VERIFY(invoker->hasFocus());
