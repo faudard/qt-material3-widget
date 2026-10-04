@@ -7,6 +7,7 @@ add_subdirectory(gallery)
 add_subdirectory(dashboard-demo)
 add_subdirectory(theme-studio)
 add_subdirectory(designer-form)
+add_subdirectory(accessibility-certification)
 
 if(QTMATERIAL3_BUILD_CONSUMER_EXAMPLES)
     add_subdirectory(minimal-consumer)
