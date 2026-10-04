@@ -8,7 +8,9 @@ int main(int argc, char** argv)
     QWidget form;
     Ui::DesignerSmokeForm ui;
     ui.setupUi(&form);
-    if (!ui.filledButton || !ui.outlinedTextField || !ui.card || !ui.table)
+    if (!ui.filledButton || !ui.outlinedTextField || !ui.slider || !ui.card || !ui.table)
+        return 1;
+    if (ui.slider->parentWidget() != &form || ui.slider->orientation() != Qt::Vertical || ui.slider->value() != 37)
         return 1;
     return 0;
 }

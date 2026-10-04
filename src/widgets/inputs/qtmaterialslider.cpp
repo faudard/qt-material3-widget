@@ -10,6 +10,11 @@ public:
     bool valueLabelVisible = true;
 };
 
+QtMaterialSlider::QtMaterialSlider(QWidget* parent)
+    : QtMaterialSlider(Qt::Horizontal, parent)
+{
+}
+
 QtMaterialSlider::QtMaterialSlider(Qt::Orientation orientation, QWidget* parent)
     : QSlider(orientation, parent)
     , d_ptr(std::make_unique<QtMaterialSliderPrivate>())

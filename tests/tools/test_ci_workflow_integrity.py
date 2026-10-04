@@ -18,3 +18,10 @@ class CiWorkflowIntegrityTests(unittest.TestCase):
             for number, line in enumerate(path.read_text().splitlines(), 1):
                 if line and not line.startswith((" ", "#", "---")):
                     self.assertRegex(line, r"^[A-Za-z][A-Za-z0-9_-]*:", f"{path}:{number}: leaked script text")
+
+    def test_qt514_designer_uses_the_base_archive(self):
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text()
+        designer = workflow.split("  designer-plugin-qt5-windows:\n", 1)[1].split("\n  consumer-contract:", 1)[0]
+        self.assertNotRegex(designer, r"(?m)^\s+modules:\s*.*\bqttools\b",
+                            "Qt 5.14.2 does not publish a separate qttools add-on")
+        self.assertIn("-DQTMATERIAL3_BUILD_DESIGNER_PLUGIN=ON", designer)

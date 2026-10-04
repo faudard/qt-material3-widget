@@ -9,6 +9,8 @@ unless a stricter ABI policy is published.
 ## [Unreleased]
 
 ### Fixed
+- Slider supports parent-only construction for the gallery, Designer plugin and generated `.ui` forms, while retaining explicit orientation construction.
+- Progress reduced-motion tests qualify Theme types, and the Qt 5.14.2 Designer CI lane uses the base archive without the unavailable `qttools` add-on.
 - Restore valid CI YAML after duplicate job definitions were embedded in the Windows Designer environment script.
 - Command Palette equal-score provider results now use stable IDs and locale-independent section ordering, with deterministic duplicate ownership regardless of reply order.
 - Navigation Rail and Menu expose individual accessible items, roles, geometry, selection/check states and activation actions, including focus and structure notifications.
