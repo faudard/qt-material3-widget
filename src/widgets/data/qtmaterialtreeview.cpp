@@ -28,6 +28,8 @@ QtMaterialTreeView::QtMaterialTreeView(QWidget* parent)
     setExpandsOnDoubleClick(true);
     setIndentation(20);
     setDragDropMode(QAbstractItemView::NoDragDrop);
+    connect(this, &QTreeView::expanded, this, [this](const QModelIndex&) { syncAccessibility(); });
+    connect(this, &QTreeView::collapsed, this, [this](const QModelIndex&) { syncAccessibility(); });
     syncAccessibility();
 }
 
