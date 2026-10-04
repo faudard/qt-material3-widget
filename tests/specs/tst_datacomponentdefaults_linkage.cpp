@@ -21,10 +21,12 @@ void tst_DataComponentDefaultsLinkage::importsDefaultFactoriesFromSpecsLibrary()
     const TableSpec table = defaultTableSpec();
     const GridListSpec gridList = defaultGridListSpec();
     const CarouselSpec carousel = defaultCarouselSpec();
+    const PaginationSpec pagination = defaultPaginationSpec();
 
     QVERIFY(datePicker.cellSize > 0);
     QVERIFY(table.rowHeight > 0);
     QVERIFY(gridList.itemSize.isValid());
+    QVERIFY(pagination.controlExtent > 0);
 }
 
 void tst_DataComponentDefaultsLinkage::resolvesThemeAwareSpecs()
@@ -38,6 +40,9 @@ void tst_DataComponentDefaultsLinkage::resolvesThemeAwareSpecs()
         theme.colorScheme().color(ColorRole::Surface));
     QCOMPARE(
         resolver.carouselSpec(theme).activePageIndicatorColor,
+        theme.colorScheme().color(ColorRole::Primary));
+    QCOMPARE(
+        resolver.paginationSpec(theme).focusRingColor,
         theme.colorScheme().color(ColorRole::Primary));
 }
 
