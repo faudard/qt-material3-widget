@@ -1,0 +1,98 @@
+name: Promote reviewed 1.5 visual goldens
+
+on:
+  push:
+    branches:
+      - release/1.5-enterprise-visual-certification
+    paths:
+      - .github/workflows/promote-reviewed-1.5-goldens.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout promotion branch
+        uses: actions/checkout@v5
+        with:
+          ref: release/1.5-enterprise-visual-certification
+          fetch-depth: 0
+
+      - name: Download exact reviewed CI artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: "11304542372"
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip" \
+            --output reviewed-goldens.zip
+          rm -rf build/reviewed-goldens-artifact
+          mkdir -p build/reviewed-goldens-artifact
+          unzip -q reviewed-goldens.zip -d build/reviewed-goldens-artifact
+
+      - name: Verify and promote reviewed PNGs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import shutil
+          from pathlib import Path
+
+          root = Path("build/reviewed-goldens-artifact")
+          manifest = Path("tests/visual/goldens/enterprise-1.5-reviewed.sha256")
+          destination = Path("tests/visual/goldens")
+
+          expected = {}
+          for line in manifest.read_text(encoding="utf-8").splitlines():
+              if not line.strip():
+                  continue
+              digest, name = line.split(maxsplit=1)
+              expected[name.strip()] = digest.strip()
+
+          if len(expected) != 57:
+              raise SystemExit(f"expected 57 reviewed PNGs, manifest has {len(expected)}")
+
+          artifact_pngs = list(root.rglob("*.png"))
+          by_name = {}
+          for path in artifact_pngs:
+              if path.name in by_name:
+                  raise SystemExit(f"duplicate PNG basename in artifact: {path.name}")
+              by_name[path.name] = path
+
+          if set(by_name) != set(expected):
+              missing = sorted(set(expected) - set(by_name))
+              extra = sorted(set(by_name) - set(expected))
+              raise SystemExit(f"artifact inventory mismatch; missing={missing}, extra={extra}")
+
+          for name, digest in expected.items():
+              source = by_name[name]
+              actual = hashlib.sha256(source.read_bytes()).hexdigest()
+              if actual != digest:
+                  raise SystemExit(f"{name}: expected {digest}, got {actual}")
+              shutil.copy2(source, destination / name)
+
+          print(f"promoted {len(expected)} byte-verified reviewed PNGs")
+          PY
+
+      - name: Commit stable goldens and remove promotion workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/promote-reviewed-1.5-goldens.yml
+          git add tests/visual/goldens
+          git diff --cached --check
+          git commit -m "test(visual): promote reviewed 1.5 stable goldens"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
