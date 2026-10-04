@@ -45,6 +45,7 @@ CI generates the following candidate families in the pinned Ubuntu/Fusion render
 - `progress_compact_matrix_*.png`
 - `data_extended_matrix_*.png`
 - `missing_material3_matrix_*.png`
+- `adaptive_desktop_*.png`
 
 Download the `family-visual-candidate-goldens` workflow artifact, review the images, then
 commit the approved PNGs into this directory. Candidate cases tolerate a missing baseline,
@@ -76,6 +77,21 @@ processes on Qt 6.4.0 / Fusion / xcb at scale 1 and font DPI 96.
 different commits, dimensions or pixels. Repeatability is only determinism evidence: the ledger
 in `docs/components/material3-catalogue-certification-1.7.json` must still record a human visual
 review before these PNGs are copied here and promoted.
+
+## 1.9 Adaptive/Desktop evidence
+
+The dedicated `adaptive-desktop-visual-evidence` artifact captures 30 real-width shell cases:
+Compact, Medium, Expanded, Large and ExtraLarge in both LTR/RTL and
+light-standard, dark-standard and light-high-contrast themes. Two independent
+Qt 6.4.0 / Fusion / xcb processes must produce byte-identical PNGs with matching
+runtime provenance before human review.
+
+`tools/check_adaptive_desktop_visual_repeatability.py` rejects missing cases,
+renderer drift, source-commit drift, dimensions, PNG bytes or pixel hashes.
+Repeatability does not certify appearance or OS accessibility. All 30 reviewed
+references are required by the 1.9 certification ledger before
+`promote_adaptive_desktop_1_9.py --apply` can promote Navigation Suite and
+Adaptive Shell.
 
 ## Desktop Productivity candidates
 
