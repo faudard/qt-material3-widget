@@ -57,7 +57,7 @@ void tst_DataPaginationResolver::appliesComponentOverrides()
     tokens.custom.insert(QStringLiteral("horizontalPadding"), 14);
     tokens.custom.insert(QStringLiteral("controlColor"), QColor(Qt::red));
 
-    theme.componentOverrides().setOverride(ComponentId::Pagination, tokens);
+    theme.componentOverrides().setOverride(ComponentId::Data, tokens);
 
     const PaginationSpec spec = DataSpecResolver().paginationSpec(theme);
     QCOMPARE(spec.minimumHeight, 52);
