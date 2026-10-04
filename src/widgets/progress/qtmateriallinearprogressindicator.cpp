@@ -314,11 +314,13 @@ void QtMaterialLinearProgressIndicator::initAnimation() {
 
 void QtMaterialLinearProgressIndicator::updateAnimationState() {
     if (!d->animation) return;
-    if (d->mode == Mode::Indeterminate && isVisible()) {
+    const bool reducedMotion = theme().accessibility().reducedMotion;
+    if (d->mode == Mode::Indeterminate && isVisible() && !reducedMotion) {
         if (d->animation->state() != QVariantAnimation::Running) d->animation->start();
     } else {
         if (d->animation->state() != QVariantAnimation::Stopped) d->animation->stop();
-        d->phase = 0.0;
+        d->phase = (d->mode == Mode::Indeterminate && isVisible() && reducedMotion) ? 0.5 : 0.0;
+        update();
     }
 }
 
@@ -376,6 +378,7 @@ void QtMaterialLinearProgressIndicator::themeChangedEvent(const Theme& changedTh
     d->specDirty = true;
     ensureSpecResolved();
     initAnimation();
+    updateAnimationState();
     updateGeometry();
     update();
 }
