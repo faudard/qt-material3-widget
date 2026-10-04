@@ -21,6 +21,11 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Designer 2.0 expands the curated Qt Designer palette from 21 to 27 persistence-safe widgets, including Range Slider, Date Field, Search Bar, Top/Bottom App Bars and Divider.
+- Outlined/Filled Text Fields expose their common authored values as Qt properties for direct editing and UIC serialization.
+- A real `examples/designer-form/designerform.ui` AUTOUIC application demonstrates production `.ui` consumption.
+- The `designer-dev` CMake preset configures, builds and runs focused Designer contracts.
+- The Designer plugin installs as an explicit `Designer` component with dedicated package metadata.
 - Navigation/Desktop certification suites cover focus traversal, keyboard-only operation, LTR/RTL and real QAccessible interfaces for Tabs, Navigation Rail, Menu, Breadcrumb, Command Palette and Split View.
 - Command Palette stress coverage exercises 10,000 commands, rapid debounced/queued requests, cancellation and destruction, stale replies and deterministic ordering.
 - Pinned navigation visual evidence covers 27 matrix/focus cases in two independent render passes, with renderer provenance and a repeatability report; visual approval and platform screen-reader review remain explicit maturity gaps.

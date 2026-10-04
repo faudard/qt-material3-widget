@@ -31,6 +31,12 @@ if(QTMATERIAL3_INSTALL)
         TARGETS qtmaterial3_designer_plugin
         RUNTIME DESTINATION "${QTMATERIAL3_DESIGNER_PLUGIN_INSTALL_DIR}"
         LIBRARY DESTINATION "${QTMATERIAL3_DESIGNER_PLUGIN_INSTALL_DIR}"
+        COMPONENT Designer
+    )
+    install(
+        FILES "${PROJECT_SOURCE_DIR}/docs/designer-plugin.md"
+        DESTINATION "${CMAKE_INSTALL_DATADIR}/doc/qt-material3-widget/designer"
+        COMPONENT Designer
     )
 endif()
 

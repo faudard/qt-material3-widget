@@ -2,21 +2,52 @@
 <ui version="4.0">
  <class>DesignerSmokeForm</class>
  <widget class="QWidget" name="DesignerSmokeForm">
-  <property name="geometry"><rect><x>0</x><y>0</y><width>640</width><height>480</height></rect></property>
+  <property name="geometry"><rect><x>0</x><y>0</y><width>760</width><height>720</height></rect></property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item><widget class="QtMaterial::QtMaterialFilledButton" name="filledButton"><property name="text"><string>Continue</string></property></widget></item>
-   <item><widget class="QtMaterial::QtMaterialOutlinedTextField" name="outlinedTextField"/></item>
+   <item><widget class="QtMaterialTopAppBar" name="topAppBar"><property name="title"><string>Designer smoke</string></property></widget></item>
+   <item><widget class="QtMaterial::QtMaterialSearchBar" name="searchBar"><property name="placeholderText"><string>Search components</string></property></widget></item>
+   <item><widget class="QtMaterial::QtMaterialOutlinedTextField" name="outlinedTextField">
+    <property name="label"><string>Email</string></property>
+    <property name="placeholderText"><string>name@example.com</string></property>
+    <property name="maxLength"><number>120</number></property>
+   </widget></item>
+   <item><widget class="QtMaterialDateField" name="dateField">
+    <property name="label"><string>Delivery date</string></property>
+    <property name="displayFormat"><string>dd/MM/yyyy</string></property>
+    <property name="clearable"><bool>true</bool></property>
+   </widget></item>
+   <item><widget class="QtMaterial::QtMaterialRangeSlider" name="rangeSlider">
+    <property name="minimum"><number>0</number></property>
+    <property name="maximum"><number>100</number></property>
+    <property name="lowerValue"><number>20</number></property>
+    <property name="upperValue"><number>80</number></property>
+   </widget></item>
+   <item><widget class="QtMaterial::QtMaterialDivider" name="divider">
+    <property name="thickness"><number>2</number></property>
+    <property name="decorative"><bool>true</bool></property>
+   </widget></item>
    <item><widget class="QtMaterial::QtMaterialSlider" name="slider"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="value"><number>37</number></property></widget></item>
-   <item><widget class="QtMaterial::QtMaterialCard" name="card"><property name="titleText"><string>Material card</string></property></widget></item>
+   <item><widget class="QtMaterial::QtMaterialCard" name="card">
+    <property name="titleText"><string>Material card</string></property>
+    <property name="bodyText"><string>Created entirely from a .ui form.</string></property>
+   </widget></item>
+   <item><widget class="QtMaterial::QtMaterialFilledButton" name="filledButton"><property name="text"><string>Continue</string></property></widget></item>
    <item><widget class="QtMaterial::QtMaterialTable" name="table"/></item>
+   <item><widget class="QtMaterialBottomAppBar" name="bottomAppBar"><property name="title"><string>Designer actions</string></property></widget></item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget><class>QtMaterialTopAppBar</class><extends>QWidget</extends><header>qtmaterial/widgets/surfaces/qtmaterialtopappbar.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialSearchBar</class><extends>QWidget</extends><header>qtmaterial/widgets/inputs/qtmaterialsearchbar.h</header></customwidget>
   <customwidget><class>QtMaterial::QtMaterialFilledButton</class><extends>QWidget</extends><header>qtmaterial/widgets/buttons/qtmaterialfilledbutton.h</header></customwidget>
   <customwidget><class>QtMaterial::QtMaterialOutlinedTextField</class><extends>QWidget</extends><header>qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h</header></customwidget>
+  <customwidget><class>QtMaterialDateField</class><extends>QWidget</extends><header>qtmaterial/widgets/inputs/qtmaterialdatefield.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialRangeSlider</class><extends>QWidget</extends><header>qtmaterial/widgets/inputs/qtmaterialrangeslider.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialDivider</class><extends>QWidget</extends><header>qtmaterial/widgets/data/qtmaterialdivider.h</header></customwidget>
   <customwidget><class>QtMaterial::QtMaterialSlider</class><extends>QSlider</extends><header>qtmaterial/widgets/inputs/qtmaterialslider.h</header></customwidget>
   <customwidget><class>QtMaterial::QtMaterialCard</class><extends>QWidget</extends><header>qtmaterial/widgets/surfaces/qtmaterialcard.h</header></customwidget>
   <customwidget><class>QtMaterial::QtMaterialTable</class><extends>QWidget</extends><header>qtmaterial/widgets/data/qtmaterialtable.h</header></customwidget>
+  <customwidget><class>QtMaterialBottomAppBar</class><extends>QWidget</extends><header>qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h</header></customwidget>
  </customwidgets>
  <resources/>
  <connections/>

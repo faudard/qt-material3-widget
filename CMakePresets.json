@@ -89,6 +89,18 @@
         "QTMATERIAL3_INSTALL": "OFF",
         "QTMATERIAL3_USE_MCU": "OFF"
       }
+    },
+    {
+      "name": "designer-dev",
+      "displayName": "Qt Designer plugin development",
+      "inherits": "dev-tests",
+      "binaryDir": "${sourceDir}/build/designer-dev",
+      "cacheVariables": {
+        "QTMATERIAL3_BUILD_DESIGNER_PLUGIN": "ON",
+        "QTMATERIAL3_BUILD_EXAMPLES": "ON",
+        "QTMATERIAL3_BUILD_TESTS": "ON",
+        "QTMATERIAL3_INSTALL": "ON"
+      }
     }
   ],
   "buildPresets": [
@@ -115,6 +127,10 @@
     {
       "name": "library-static",
       "configurePreset": "library-static"
+    },
+    {
+      "name": "designer-dev",
+      "configurePreset": "designer-dev"
     }
   ],
   "testPresets": [
@@ -139,6 +155,18 @@
       "filter": {
         "include": {
           "name": "theme|serializer|seed|backend|componenttoken|runtime|systemtheme|accessibility|keyboard|visual|public"
+        }
+      }
+    },
+    {
+      "name": "designer-dev",
+      "configurePreset": "designer-dev",
+      "output": {
+        "outputOnFailure": true
+      },
+      "filter": {
+        "include": {
+          "name": "designer"
         }
       }
     }

@@ -158,3 +158,20 @@ Family promotion gate:
 - Generated component status and maturity documentation must remain synchronized with the canonical registry.
 - Windows Qt 5.14.2/MSVC v142, Windows Qt 6, Ubuntu Qt 6, macOS Qt 6, sanitizers,
   examples/benchmarks, documentation, package and installed-consumer gates remain green.
+
+## 1.6.0 — Developer Experience
+
+Goal: make the library pleasant to adopt from Qt Creator/Designer and predictable to package without weakening the stable 1.x API contract.
+
+Release gates:
+
+- Qt Designer/Qt Creator exposes a curated palette of widgets whose authored state can be serialized safely.
+- Common Text Field authoring properties are visible through the Qt property system and round-trip through UIC.
+- The Designer collection supplies useful initial DOM values instead of blank, zero-information controls.
+- A real application example is authored as a `.ui` file and compiled by AUTOUIC.
+- The Designer smoke fixture validates generated code and authored property values, not only plugin metadata.
+- A dedicated `designer-dev` CMake preset configures, builds and runs the focused Designer contracts.
+- The plugin installs as an explicit `Designer` component with an overridable plugin directory.
+- Components that need task-menu, model or custom-container persistence are not exposed until that editing contract exists.
+- Conan/vcpkg support is added only with executable shared/static, relocation and Qt-major consumer validation; the installed CMake package remains the canonical package-manager boundary until then.
+- Windows Qt 5.14.2/MSVC v142 and Linux Qt 6 Designer lanes remain green, alongside normal examples, consumers, packaging and documentation.

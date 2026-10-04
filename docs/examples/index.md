@@ -20,6 +20,12 @@ It also supports deterministic screenshot capture. See the [Dashboard showcase g
 
 `qtmaterial3_theming_workflows` demonstrates supported public theming API workflows without relying on private implementation details.
 
+## Designer form
+
+`qtmaterial3_designer_form_example` is a real AUTOUIC form built from `examples/designer-form/designerform.ui`. It demonstrates the same XML that Qt Designer writes: component properties are persisted in the form and runtime-only data such as table models is attached in C++.
+
+See the [Qt Designer plugin guide](../designer-plugin.md) for plugin installation and the supported palette.
+
 ## Build examples
 
 Examples are enabled by default when the repository is the top-level CMake project:

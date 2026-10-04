@@ -177,5 +177,8 @@ if(QTMATERIAL3_IS_TOP_LEVEL AND QTMATERIAL3_INSTALL)
         "/docs/_build/"
         "~$"
     )
+    set(CPACK_COMPONENT_DESIGNER_DISPLAY_NAME "Qt Material 3 Designer Plugin")
+    set(CPACK_COMPONENT_DESIGNER_DESCRIPTION
+        "Qt Designer/Qt Creator custom-widget plugin and Designer integration documentation")
     include(CPack)
 endif()
