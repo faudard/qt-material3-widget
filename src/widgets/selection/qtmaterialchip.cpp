@@ -1,6 +1,7 @@
 #include "qtmaterial/widgets/selection/qtmaterialchip.h"
 
 #include <QFontMetrics>
+#include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
@@ -343,6 +344,22 @@ QSize QtMaterialChip::minimumSizeHint() const
     return QSize(
         spec.minWidth,
         spec.touchTarget.height());
+}
+
+void QtMaterialChip::keyPressEvent(QKeyEvent* event)
+{
+    if (
+        event
+        && isEnabled()
+        && d_ptr->removable
+        && (event->key() == Qt::Key_Delete
+            || event->key() == Qt::Key_Backspace)) {
+        emit removeRequested();
+        event->accept();
+        return;
+    }
+
+    QtMaterialAbstractButton::keyPressEvent(event);
 }
 
 void QtMaterialChip::mouseReleaseEvent(
