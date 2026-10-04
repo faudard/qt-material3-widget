@@ -639,7 +639,7 @@
     "id": "compact.chip",
     "name": "Chip",
     "family": "Compact controls",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/selection/qtmaterialchip.h",
     "specType": "ChipSpec",
@@ -651,7 +651,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -661,11 +661,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic progress_compact_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion progress_compact_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -673,7 +671,8 @@
         ],
         "rendering": [
           "Chip family has a production implementation in the Widgets module.",
-          "progress_compact_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "progress_compact_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable progress_compact_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "Chip family exposes its primary runtime states and invariants."
@@ -713,7 +712,7 @@
     "id": "data.carousel",
     "name": "Carousel",
     "family": "Data",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/data/qtmaterialcarousel.h",
     "specType": "CarouselSpec",
@@ -725,7 +724,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -735,11 +734,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -747,7 +744,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/data/qtmaterialcarousel.cpp.",
-          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable data_extended_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/data/tst_carousel.cpp exercises the current widget behavior."
@@ -782,7 +780,7 @@
     "id": "data.divider",
     "name": "Divider",
     "family": "Data display",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/data/qtmaterialdivider.h",
     "specType": "DividerSpec",
@@ -794,7 +792,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": "N/A",
@@ -804,11 +802,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic data_extended_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion data_extended_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -816,7 +812,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/data/qtmaterialdivider.cpp.",
-          "data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable data_extended_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/data/tst_divider.cpp exercises orientation and inset behavior."
@@ -851,7 +848,7 @@
     "id": "data.grid-list",
     "name": "Grid List",
     "family": "Data",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/data/qtmaterialgridlist.h",
     "specType": "GridListSpec",
@@ -863,7 +860,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -873,11 +870,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -885,7 +880,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/data/qtmaterialgridlist.cpp.",
-          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable data_extended_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/data/tst_gridlist.cpp exercises the current widget behavior."
@@ -920,7 +916,7 @@
     "id": "data.table",
     "name": "Table",
     "family": "Data",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/data/qtmaterialtable.h",
     "specType": "TableSpec",
@@ -932,7 +928,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -942,11 +938,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -955,7 +949,8 @@
         "rendering": [
           "Production implementation exists: src/widgets/data/qtmaterialtable.cpp.",
           "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering.",
-          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable desktop_data_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tst_table and tst_desktop_productivity exercise selection plus desktop column, cell-selection and drag/drop policies.",
@@ -991,7 +986,7 @@
     "id": "input.combo-box",
     "name": "Combo Box",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialcombobox.h",
     "specType": "AutocompleteSpec",
@@ -1003,7 +998,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -1013,11 +1008,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1025,7 +1018,8 @@
         ],
         "rendering": [
           "Combo Box has a production implementation in the Widgets module.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_field_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "Combo Box exposes its primary runtime states and invariants."
@@ -1063,7 +1057,7 @@
     "id": "input.date-range-picker",
     "name": "Date Range Picker",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h",
     "specType": "DatePickerSpec",
@@ -1075,7 +1069,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -1085,11 +1079,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1097,7 +1089,8 @@
         ],
         "rendering": [
           "Date Range Picker has a production implementation in the Widgets module.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_composite_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "Date Range Picker exposes its primary runtime states and invariants."
@@ -1135,7 +1128,7 @@
     "id": "input.date.field",
     "name": "Date Field",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialdatefield.h",
     "specType": "TextFieldSpec",
@@ -1147,7 +1140,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -1157,11 +1150,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1169,7 +1160,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/inputs/qtmaterialdatefield.cpp.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_field_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/inputs/tst_datefield.cpp exercises the current field behavior."
@@ -1204,7 +1196,7 @@
     "id": "input.range-slider",
     "name": "Range Slider",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialrangeslider.h",
     "specType": "SelectionRuntimeSpec",
@@ -1216,7 +1208,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -1226,11 +1218,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1239,7 +1229,8 @@
         "rendering": [
           "Range Slider has a production implementation in the Widgets module.",
           "input_slider_matrix candidate goldens cover horizontal, vertical, disabled and RTL rendering.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_slider_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "Range Slider exposes its primary runtime states and invariants.",
@@ -1278,7 +1269,7 @@
     "id": "input.search-bar",
     "name": "Search Bar",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialsearchbar.h",
     "specType": "AutocompleteSpec",
@@ -1290,7 +1281,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -1300,11 +1291,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1312,7 +1301,8 @@
         ],
         "rendering": [
           "Search Bar has a production implementation in the Widgets module.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_field_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "Search Bar exposes its primary runtime states and invariants."
@@ -1350,7 +1340,7 @@
     "id": "input.search-view",
     "name": "Search View",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialsearchview.h",
     "specType": "AutocompleteSpec",
@@ -1362,7 +1352,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -1372,11 +1362,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1384,7 +1372,8 @@
         ],
         "rendering": [
           "Search View has a production implementation in the Widgets module.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_composite_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "Search View exposes its primary runtime states and invariants."
@@ -1422,7 +1411,7 @@
     "id": "input.slider",
     "name": "Slider",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialslider.h",
     "specType": "SelectionRuntimeSpec",
@@ -1434,7 +1423,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -1444,11 +1433,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1457,7 +1444,8 @@
         "rendering": [
           "Slider has a production implementation in the Widgets module.",
           "input_slider_matrix candidate goldens cover horizontal, vertical, disabled and RTL rendering.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_slider_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "Slider exposes its primary runtime states and invariants.",
@@ -1496,7 +1484,7 @@
     "id": "input.text.filled",
     "name": "Filled Text Field",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h",
     "specType": "TextFieldSpec",
@@ -1508,7 +1496,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -1518,11 +1506,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1530,7 +1516,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/inputs/qtmaterialfilledtextfield.cpp.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_field_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/inputs/tst_filledtextfield.cpp exercises the current field behavior."
@@ -1565,7 +1552,7 @@
     "id": "input.text.outlined",
     "name": "Outlined Text Field",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h",
     "specType": "TextFieldSpec",
@@ -1577,7 +1564,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -1587,11 +1574,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1599,7 +1584,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/inputs/qtmaterialoutlinedtextfield.cpp.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_field_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/inputs/tst_outlinedtextfield.cpp exercises the current field behavior."
@@ -1634,7 +1620,7 @@
     "id": "input.time-field",
     "name": "Time Field",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialtimefield.h",
     "specType": "DateFieldSpec",
@@ -1646,7 +1632,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -1656,11 +1642,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1668,7 +1652,8 @@
         ],
         "rendering": [
           "Time Field has a production implementation in the Widgets module.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_field_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "Time Field exposes its primary runtime states and invariants."
@@ -1706,7 +1691,7 @@
     "id": "input.time-picker",
     "name": "Time Picker",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialtimepicker.h",
     "specType": "DateFieldSpec",
@@ -1718,7 +1703,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -1728,11 +1713,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1740,7 +1723,8 @@
         ],
         "rendering": [
           "Time Picker has a production implementation in the Widgets module.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_composite_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "Time Picker exposes its primary runtime states and invariants."
@@ -1790,9 +1774,9 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
-      "accessibility": 4,
+      "accessibility": 3,
       "keyboard": 4,
       "hidpi": 4,
       "rtl": 4,
@@ -1801,13 +1785,10 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
-        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge."
       ],
       "nextActions": [
-        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
-        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
-        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
+        "Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete."
       ],
       "evidence": {
         "api": [
@@ -1817,7 +1798,9 @@
           "Production implementation exists: src/widgets/navigation/qtmaterialnavigationrail.cpp.",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
           "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
-          "tst_navigation_visual_goldens registers navigation_focus_rail candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
+          "tst_navigation_visual_goldens registers navigation_focus_rail candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending.",
+          "Reviewed stable navigation_primary_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb).",
+          "Reviewed stable navigation_focus_rail focus goldens; Navigation evidence is byte-identical across two independent pinned renders."
         ],
         "states": [
           "tests/widgets/navigation/tst_navigationrail.cpp exercises destinations and selection.",
@@ -1825,7 +1808,8 @@
         ],
         "accessibility": [
           "tst_navigationrail verifies accessible naming/state contracts for Navigation Rail and its relevant native/composed controls.",
-          "tst_navigation_desktop_certification is registered: Per-destination ListItem name, geometry, selected/disabled/focused states and accessible press action in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
+          "tst_navigation_desktop_certification is registered: Per-destination ListItem name, geometry, selected/disabled/focused states and accessible press action in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate.",
+          "Automated QAccessible contracts are complete; native screen-reader spoken-output/bridge verification remains the explicit 1.5 Enterprise blocker."
         ],
         "keyboard": [
           "tst_navigationrail exercises the focused keyboard contract for Navigation Rail while preserving native Qt behavior where applicable.",
@@ -1870,9 +1854,9 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
-      "accessibility": 4,
+      "accessibility": 3,
       "keyboard": 4,
       "hidpi": 4,
       "rtl": 4,
@@ -1881,13 +1865,10 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
-        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge."
       ],
       "nextActions": [
-        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
-        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
-        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
+        "Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete."
       ],
       "evidence": {
         "api": [
@@ -1897,7 +1878,9 @@
           "Production implementation exists: src/widgets/navigation/qtmaterialtabs.cpp.",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
           "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
-          "tst_navigation_visual_goldens registers navigation_focus_tabs candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
+          "tst_navigation_visual_goldens registers navigation_focus_tabs candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending.",
+          "Reviewed stable navigation_primary_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb).",
+          "Reviewed stable navigation_focus_tabs focus goldens; Navigation evidence is byte-identical across two independent pinned renders."
         ],
         "states": [
           "Route/resolved-lifecycle tests cover authored and resolved state.",
@@ -1906,7 +1889,8 @@
         ],
         "accessibility": [
           "tst_tabs verifies accessible naming/state contracts for Tabs and its relevant native/composed controls.",
-          "tst_navigation_desktop_certification is registered: Native PageTab selection and disabled state plus forward/backward focus traversal and disabled skipping in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
+          "tst_navigation_desktop_certification is registered: Native PageTab selection and disabled state plus forward/backward focus traversal and disabled skipping in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate.",
+          "Automated QAccessible contracts are complete; native screen-reader spoken-output/bridge verification remains the explicit 1.5 Enterprise blocker."
         ],
         "keyboard": [
           "tst_tabs exercises the focused keyboard contract for Tabs while preserving native Qt behavior where applicable.",
@@ -1939,7 +1923,7 @@
     "id": "progress.circular",
     "name": "Circular Progress Indicator",
     "family": "Progress",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h",
     "specType": "ProgressIndicatorSpec",
@@ -1951,7 +1935,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": "N/A",
@@ -1961,11 +1945,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic progress_compact_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion progress_compact_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -1973,7 +1955,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/progress/qtmaterialcircularprogressindicator.cpp.",
-          "progress_compact_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "progress_compact_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable progress_compact_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "The shared progress test exercises determinate and indeterminate modes.",
@@ -2010,7 +1993,7 @@
     "id": "progress.linear",
     "name": "Linear Progress Indicator",
     "family": "Progress",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h",
     "specType": "ProgressIndicatorSpec",
@@ -2022,7 +2005,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": "N/A",
@@ -2032,11 +2015,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic progress_compact_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion progress_compact_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2044,7 +2025,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/progress/qtmateriallinearprogressindicator.cpp.",
-          "progress_compact_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "progress_compact_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable progress_compact_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tst_progressindicators covers determinate and indeterminate modes, clamping and show/hide animation state.",
@@ -2082,7 +2064,7 @@
     "id": "selection.checkbox",
     "name": "Checkbox",
     "family": "Selection",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/selection/qtmaterialcheckbox.h",
     "specType": "CheckboxSpec",
@@ -2094,7 +2076,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2104,11 +2086,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic selection_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2116,7 +2096,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/selection/qtmaterialcheckbox.cpp.",
-          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable selection_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/selection/tst_checkbox.cpp exercises the current selection behavior."
@@ -2151,7 +2132,7 @@
     "id": "selection.radio",
     "name": "Radio Button",
     "family": "Selection",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/selection/qtmaterialradiobutton.h",
     "specType": "RadioButtonSpec",
@@ -2163,7 +2144,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2173,11 +2154,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic selection_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2185,7 +2164,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/selection/qtmaterialradiobutton.cpp.",
-          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable selection_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/selection/tst_radiobutton.cpp exercises the current selection behavior."
@@ -2220,7 +2200,7 @@
     "id": "selection.segmented-button",
     "name": "Segmented Button",
     "family": "Selection",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h",
     "specType": "SegmentedButtonSpec",
@@ -2232,7 +2212,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2242,11 +2222,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic selection_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2254,7 +2232,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/selection/qtmaterialsegmentedbutton.cpp.",
-          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable selection_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/selection/tst_segmentedbutton.cpp exercises selection behavior."
@@ -2289,7 +2268,7 @@
     "id": "selection.switch",
     "name": "Switch",
     "family": "Selection",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/selection/qtmaterialswitch.h",
     "specType": "SwitchSpec",
@@ -2301,7 +2280,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2311,11 +2290,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic selection_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2323,7 +2300,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/selection/qtmaterialswitch.cpp.",
-          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable selection_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/selection/tst_switch.cpp exercises the current selection behavior."
@@ -2358,7 +2336,7 @@
     "id": "surface.banner",
     "name": "Banner",
     "family": "Surfaces",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "releaseScope": true,
     "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialbanner.h",
@@ -2370,7 +2348,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2380,11 +2358,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2392,7 +2368,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/surfaces/qtmaterialbanner.cpp.",
-          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable surface_bar_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/surfaces/tst_banner.cpp exercises current surface behavior."
@@ -2431,7 +2408,7 @@
     "id": "surface.bottom-app-bar",
     "name": "Bottom App Bar",
     "family": "Surfaces",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h",
     "specType": "AppBarSpec",
@@ -2443,7 +2420,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2453,11 +2430,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2465,7 +2440,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/surfaces/qtmaterialbottomappbar.cpp.",
-          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable surface_bar_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/surfaces/tst_bottomappbar.cpp exercises current app-bar behavior."
@@ -2504,7 +2480,7 @@
     "id": "surface.bottom-sheet",
     "name": "Bottom Sheet",
     "family": "Surfaces",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h",
     "specType": "BottomSheetSpec",
@@ -2516,7 +2492,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2526,11 +2502,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2538,7 +2512,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/surfaces/qtmaterialbottomsheet.cpp.",
-          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable surface_overlay_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/surfaces/tst_bottomsheet.cpp exercises current sheet states."
@@ -2577,7 +2552,7 @@
     "id": "surface.card",
     "name": "Card",
     "family": "Surfaces",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialcard.h",
     "specType": "CardSpec",
@@ -2589,7 +2564,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2599,11 +2574,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2611,7 +2584,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/surfaces/qtmaterialcard.cpp.",
-          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable surface_bar_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/surfaces/tst_card.cpp exercises current card behavior."
@@ -2650,7 +2624,7 @@
     "id": "surface.dialog",
     "name": "Dialog",
     "family": "Surfaces",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialdialog.h",
     "specType": "DialogSpec",
@@ -2662,7 +2636,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2672,11 +2646,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2684,7 +2656,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/surfaces/qtmaterialdialog.cpp.",
-          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable surface_overlay_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/surfaces/tst_dialog.cpp exercises current modal behavior."
@@ -2723,7 +2696,7 @@
     "id": "surface.navigation-drawer",
     "name": "Navigation Drawer",
     "family": "Surfaces",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h",
     "specType": "NavigationDrawerSpec",
@@ -2735,7 +2708,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2745,11 +2718,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2757,7 +2728,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/surfaces/qtmaterialnavigationdrawer.cpp.",
-          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable surface_overlay_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/surfaces/tst_navigationdrawer.cpp exercises destinations and selection."
@@ -2796,7 +2768,7 @@
     "id": "surface.snackbar",
     "name": "Snackbar",
     "family": "Surfaces",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialsnackbar.h",
     "specType": "SnackbarSpec",
@@ -2808,7 +2780,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2818,11 +2790,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2830,7 +2800,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/surfaces/qtmaterialsnackbar.cpp.",
-          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable surface_overlay_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "Snackbar widget, host and lifecycle tests cover show/dismiss/action behavior.",
@@ -2873,7 +2844,7 @@
     "id": "surface.top-app-bar",
     "name": "Top App Bar",
     "family": "Surfaces",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialtopappbar.h",
     "specType": "AppBarSpec",
@@ -2885,7 +2856,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2895,11 +2866,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2907,7 +2876,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/surfaces/qtmaterialtopappbar.cpp.",
-          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable surface_bar_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tests/widgets/surfaces/tst_topappbar.cpp exercises current app-bar behavior."
@@ -2946,7 +2916,7 @@
     "id": "data.tree-view",
     "name": "Tree View",
     "family": "Data",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/data/qtmaterialtreeview.h",
     "specType": "N/A",
@@ -2958,7 +2928,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -2968,11 +2938,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -2981,7 +2949,8 @@
         "rendering": [
           "gallery exercises the desktop adaptation",
           "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering.",
-          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable desktop_data_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
@@ -3021,7 +2990,7 @@
     "id": "data.pagination",
     "name": "Pagination",
     "family": "Data",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/data/qtmaterialpagination.h",
     "specType": "PaginationSpec",
@@ -3033,7 +3002,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -3043,11 +3012,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -3056,7 +3023,8 @@
         ],
         "rendering": [
           "PaginationSpec resolves Material surface, label, control, disabled and focus tokens through DataSpecResolver.",
-          "desktop_data_matrix provides deterministic candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "desktop_data_matrix provides deterministic candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable desktop_data_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tst_desktop_productivity covers clamping, page-size changes, accessible range state and keyboard controls.",
@@ -3108,9 +3076,9 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
-      "accessibility": 4,
+      "accessibility": 3,
       "keyboard": 4,
       "hidpi": 4,
       "rtl": 4,
@@ -3119,13 +3087,10 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
-        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge."
       ],
       "nextActions": [
-        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
-        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
-        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
+        "Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete."
       ],
       "evidence": {
         "api": [
@@ -3136,7 +3101,9 @@
           "gallery exercises the desktop adaptation",
           "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering.",
           "layout_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
-          "tst_navigation_visual_goldens registers navigation_focus_split candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
+          "tst_navigation_visual_goldens registers navigation_focus_split candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending.",
+          "Reviewed stable layout_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb).",
+          "Reviewed stable navigation_focus_split focus goldens; Navigation evidence is byte-identical across two independent pinned renders."
         ],
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
@@ -3146,7 +3113,8 @@
         ],
         "accessibility": [
           "tst_desktop_productivity verifies accessible naming/state contracts for Split View and its relevant native/composed controls.",
-          "tst_navigation_desktop_certification is registered: Accessible focused dividers, constrained physical arrows/Shift/Home/End and Enter collapse/restore in both orientations and LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
+          "tst_navigation_desktop_certification is registered: Accessible focused dividers, constrained physical arrows/Shift/Home/End and Enter collapse/restore in both orientations and LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate.",
+          "Automated QAccessible contracts are complete; native screen-reader spoken-output/bridge verification remains the explicit 1.5 Enterprise blocker."
         ],
         "keyboard": [
           "tst_desktop_productivity exercises the focused keyboard contract for Split View while preserving native Qt behavior where applicable.",
@@ -3196,9 +3164,9 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
-      "accessibility": 4,
+      "accessibility": 3,
       "keyboard": 4,
       "hidpi": 4,
       "rtl": 4,
@@ -3207,13 +3175,10 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
-        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge."
       ],
       "nextActions": [
-        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
-        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
-        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
+        "Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete."
       ],
       "evidence": {
         "api": [
@@ -3224,7 +3189,9 @@
           "gallery exercises the desktop adaptation",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
           "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
-          "tst_navigation_visual_goldens registers navigation_focus_breadcrumb candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
+          "tst_navigation_visual_goldens registers navigation_focus_breadcrumb candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending.",
+          "Reviewed stable navigation_desktop_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb).",
+          "Reviewed stable navigation_focus_breadcrumb focus goldens; Navigation evidence is byte-identical across two independent pinned renders."
         ],
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
@@ -3235,7 +3202,8 @@
         ],
         "accessibility": [
           "tst_desktop_productivity verifies accessible naming/state contracts for Breadcrumb and its relevant native/composed controls.",
-          "tst_navigation_desktop_certification is registered: Native overflow-menu activation using only keys, Ctrl+L editing, Enter/Escape, accessible editor and focus restoration in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
+          "tst_navigation_desktop_certification is registered: Native overflow-menu activation using only keys, Ctrl+L editing, Enter/Escape, accessible editor and focus restoration in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate.",
+          "Automated QAccessible contracts are complete; native screen-reader spoken-output/bridge verification remains the explicit 1.5 Enterprise blocker."
         ],
         "keyboard": [
           "tst_desktop_productivity exercises the focused keyboard contract for Breadcrumb while preserving native Qt behavior where applicable.",
@@ -3284,9 +3252,9 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
-      "accessibility": 4,
+      "accessibility": 3,
       "keyboard": 4,
       "hidpi": 4,
       "rtl": 4,
@@ -3295,13 +3263,10 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
-        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge."
       ],
       "nextActions": [
-        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
-        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
-        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
+        "Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete."
       ],
       "evidence": {
         "api": [
@@ -3312,7 +3277,9 @@
           "gallery exercises the desktop adaptation",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
           "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
-          "tst_navigation_visual_goldens registers navigation_focus_palette candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
+          "tst_navigation_visual_goldens registers navigation_focus_palette candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending.",
+          "Reviewed stable navigation_desktop_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb).",
+          "Reviewed stable navigation_focus_palette focus goldens; Navigation evidence is byte-identical across two independent pinned renders."
         ],
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
@@ -3323,7 +3290,8 @@
         ],
         "accessibility": [
           "tst_desktop_productivity verifies accessible naming/state contracts for Command Palette and its relevant native/composed controls.",
-          "tst_navigation_desktop_certification is registered: Native accessible result-row metadata and a complete host/palette focus journey using Ctrl+K/P, keyboard selection, favorite toggling, Enter/Escape in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
+          "tst_navigation_desktop_certification is registered: Native accessible result-row metadata and a complete host/palette focus journey using Ctrl+K/P, keyboard selection, favorite toggling, Enter/Escape in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate.",
+          "Automated QAccessible contracts are complete; native screen-reader spoken-output/bridge verification remains the explicit 1.5 Enterprise blocker."
         ],
         "keyboard": [
           "tst_desktop_productivity exercises the focused keyboard contract for Command Palette while preserving native Qt behavior where applicable.",
@@ -3362,7 +3330,7 @@
     "id": "data.list",
     "name": "List",
     "family": "Data",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/data/qtmateriallist.h",
     "specType": "ListSpec",
@@ -3374,7 +3342,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -3384,11 +3352,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -3396,7 +3362,8 @@
         ],
         "rendering": [
           "Production rendering exists in src/widgets/data/qtmateriallist.cpp and uses the resolved ListSpec path.",
-          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable data_extended_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tst_list covers empty/populated state, disabled items, single selection and multi-selection."
@@ -3434,7 +3401,7 @@
     "id": "input.autocomplete",
     "name": "Autocomplete",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/inputs/qtmaterialautocomplete.h",
     "specType": "AutocompleteSpec",
@@ -3446,7 +3413,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -3456,11 +3423,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -3468,7 +3433,8 @@
         ],
         "rendering": [
           "Production Autocomplete and popup implementations resolve Material specs through the private input-resolution boundary.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_field_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tst_autocomplete covers popup visibility, dismissal, completion and configurable focus/Return policies."
@@ -3506,7 +3472,7 @@
     "id": "input.date-picker",
     "name": "Date Picker",
     "family": "Inputs",
-    "maturity": "usable",
+    "maturity": "complete",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/qtmaterialdatepicker.h",
     "specType": "DatePickerSpec",
@@ -3518,7 +3484,7 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
       "accessibility": 4,
       "keyboard": 4,
@@ -3528,11 +3494,9 @@
       "example": 4,
       "docs": 4,
       "lastReviewed": "2026-10-04",
-      "gaps": [
-        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
-      ],
+      "gaps": [],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
+        "Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync."
       ],
       "evidence": {
         "api": [
@@ -3540,7 +3504,8 @@
         ],
         "rendering": [
           "Production implementation applies DatePickerSpec colors, typography and metrics to the composed calendar surface.",
-          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "Reviewed stable input_composite_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb)."
         ],
         "states": [
           "tst_data_components and tst_datepickerstability cover selection changes and resolved metric propagation."
@@ -3590,9 +3555,9 @@
     "referenceCandidate": false,
     "maturityAxes": {
       "api": 4,
-      "rendering": 3,
+      "rendering": 4,
       "states": 4,
-      "accessibility": 4,
+      "accessibility": 3,
       "keyboard": 4,
       "hidpi": 4,
       "rtl": 4,
@@ -3601,13 +3566,10 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
-        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge."
       ],
       "nextActions": [
-        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
-        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
-        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
+        "Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete."
       ],
       "evidence": {
         "api": [
@@ -3617,7 +3579,9 @@
           "Production rendering exists in src/widgets/navigation/qtmaterialmenu.cpp and resolves MenuSpec through the navigation spec boundary.",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
           "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
-          "tst_navigation_visual_goldens registers navigation_focus_menu candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
+          "tst_navigation_visual_goldens registers navigation_focus_menu candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending.",
+          "Reviewed stable navigation_primary_matrix light/dark/high-contrast goldens from successful PR #72 CI run 643 (Qt 6.4.0 / Fusion / xcb).",
+          "Reviewed stable navigation_focus_menu focus goldens; Navigation evidence is byte-identical across two independent pinned renders."
         ],
         "states": [
           "tst_menu covers disabled items, separators, checkable state and activation.",
@@ -3625,7 +3589,8 @@
         ],
         "accessibility": [
           "tst_menu verifies accessible naming/state contracts for Menu and its relevant native/composed controls.",
-          "tst_navigation_desktop_certification is registered: Per-item MenuItem/Separator roles, accelerator text, checked/disabled states and accessible activation plus Home/End/Space/Escape in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
+          "tst_navigation_desktop_certification is registered: Per-item MenuItem/Separator roles, accelerator text, checked/disabled states and accessible activation plus Home/End/Space/Escape in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate.",
+          "Automated QAccessible contracts are complete; native screen-reader spoken-output/bridge verification remains the explicit 1.5 Enterprise blocker."
         ],
         "keyboard": [
           "tst_menu exercises the focused keyboard contract for Menu while preserving native Qt behavior where applicable.",
