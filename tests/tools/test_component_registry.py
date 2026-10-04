@@ -26,6 +26,60 @@ domain = importlib.util.module_from_spec(DOMAIN_SPEC)
 sys.modules[DOMAIN_SPEC.name] = domain
 DOMAIN_SPEC.loader.exec_module(domain)
 
+RELEASE_RULES = ROOT / "tools" / "release_rules.json"
+
+VISUAL_PREFIX_BY_COMPONENT = {
+    "button.elevated": "component_grid",
+    "button.extended-fab": "component_grid",
+    "button.fab": "component_grid",
+    "button.filled": "component_grid",
+    "button.filled-tonal": "component_grid",
+    "button.icon": "component_grid",
+    "button.outlined": "component_grid",
+    "button.text": "component_grid",
+    "selection.checkbox": "selection_state_matrix",
+    "selection.radio": "selection_state_matrix",
+    "selection.segmented-button": "selection_state_matrix",
+    "selection.switch": "selection_state_matrix",
+    "input.autocomplete": "input_field_matrix",
+    "input.combo-box": "input_field_matrix",
+    "input.date.field": "input_field_matrix",
+    "input.text.filled": "input_field_matrix",
+    "input.text.outlined": "input_field_matrix",
+    "input.search-bar": "input_field_matrix",
+    "input.time-field": "input_field_matrix",
+    "input.date-picker": "input_composite_matrix",
+    "input.date-range-picker": "input_composite_matrix",
+    "input.search-view": "input_composite_matrix",
+    "input.time-picker": "input_composite_matrix",
+    "input.slider": "input_slider_matrix",
+    "input.range-slider": "input_slider_matrix",
+    "navigation.rail": "navigation_primary_matrix",
+    "navigation.tabs": "navigation_primary_matrix",
+    "navigation.menu": "navigation_primary_matrix",
+    "navigation.breadcrumb": "navigation_desktop_matrix",
+    "navigation.command-palette": "navigation_desktop_matrix",
+    "surface.banner": "surface_bar_matrix",
+    "surface.card": "surface_bar_matrix",
+    "surface.top-app-bar": "surface_bar_matrix",
+    "surface.bottom-app-bar": "surface_bar_matrix",
+    "surface.dialog": "surface_overlay_matrix",
+    "surface.bottom-sheet": "surface_overlay_matrix",
+    "surface.navigation-drawer": "surface_overlay_matrix",
+    "surface.snackbar": "surface_overlay_matrix",
+    "data.table": "desktop_data_matrix",
+    "data.tree-view": "desktop_data_matrix",
+    "data.pagination": "desktop_data_matrix",
+    "data.carousel": "data_extended_matrix",
+    "data.grid-list": "data_extended_matrix",
+    "data.list": "data_extended_matrix",
+    "data.divider": "data_extended_matrix",
+    "progress.linear": "progress_compact_matrix",
+    "progress.circular": "progress_compact_matrix",
+    "compact.chip": "progress_compact_matrix",
+    "layout.split-view": "layout_matrix",
+}
+
 AXES = [
     "api","rendering","states","accessibility","keyboard",
     "hidpi","rtl","tests","example","docs",
@@ -256,6 +310,33 @@ class CurrentRegistryTests(unittest.TestCase):
                     value = axes[axis]
                     if isinstance(value, int):
                         self.assertEqual(4, value, component["id"])
+
+    def test_complete_components_require_stable_family_goldens(self):
+        rules = json.loads(RELEASE_RULES.read_text(encoding="utf-8"))
+        stable = set(
+            rules["base"]["stable_release"]["visual_goldens"]
+        )
+        suffixes = (
+            "_light_standard.png",
+            "_dark_standard.png",
+            "_light_high.png",
+        )
+
+        for component in self.components:
+            if not component["releaseScope"] or component["maturity"] != "complete":
+                continue
+            prefix = VISUAL_PREFIX_BY_COMPONENT.get(component["id"])
+            self.assertIsNotNone(
+                prefix,
+                f"{component['id']} has no visual certification mapping",
+            )
+            for suffix in suffixes:
+                expected = (
+                    "tests/visual/goldens/"
+                    + prefix
+                    + suffix
+                )
+                self.assertIn(expected, stable, component["id"])
 
     def test_enterprise_complete_requires_all_release_components_complete(self):
         incomplete = [
