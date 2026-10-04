@@ -267,6 +267,31 @@ private slots:
         QCOMPARE(chip.focusPolicy(), Qt::StrongFocus);
     }
 
+    void chipKeyboardRemovalAndFilterToggle()
+    {
+        QtMaterialChip filter(QStringLiteral("Filter"));
+        filter.setVariant(ChipVariant::Filter);
+        filter.setFocus();
+        QVERIFY(filter.isCheckable());
+        QVERIFY(!filter.isChecked());
+        QTest::keyClick(&filter, Qt::Key_Space);
+        QVERIFY(filter.isChecked());
+
+        QtMaterialChip input(QStringLiteral("Input"));
+        input.setVariant(ChipVariant::Input);
+        input.setRemovable(true);
+        QSignalSpy removeSpy(&input, &QtMaterialChip::removeRequested);
+
+        QTest::keyClick(&input, Qt::Key_Delete);
+        QCOMPARE(removeSpy.count(), 1);
+        QTest::keyClick(&input, Qt::Key_Backspace);
+        QCOMPARE(removeSpy.count(), 2);
+
+        input.setEnabled(false);
+        QTest::keyClick(&input, Qt::Key_Delete);
+        QCOMPARE(removeSpy.count(), 2);
+    }
+
     void chipDesktopScaleFactors_data()
     {
         QTest::addColumn<qreal>("dpr");
