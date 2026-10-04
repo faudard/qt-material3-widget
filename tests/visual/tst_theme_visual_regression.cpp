@@ -44,6 +44,7 @@
 #include "qtmaterial/widgets/inputs/qtmaterialslider.h"
 #include "qtmaterial/widgets/inputs/qtmaterialrangeslider.h"
 #include "qtmaterial/widgets/inputs/qtmaterialtimefield.h"
+#include "qtmaterial/widgets/inputs/qtmaterialtimepicker.h"
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
@@ -358,7 +359,7 @@ QWidget* buildInputCompositeStateMatrix(const Theme& theme)
     layout->setHorizontalSpacing(18);
     layout->setVerticalSpacing(12);
     addMatrixHeaders(layout, root, {
-        QStringLiteral("Search View"), QStringLiteral("Date Picker"), QStringLiteral("Date Range")});
+        QStringLiteral("Search View"), QStringLiteral("Date Picker"), QStringLiteral("Date Range"), QStringLiteral("Time Picker")});
 
     const QStringList states = {
         QStringLiteral("Value"), QStringLiteral("Disabled"), QStringLiteral("RTL")};
@@ -391,6 +392,15 @@ QWidget* buildInputCompositeStateMatrix(const Theme& theme)
         dateRange->setEnabled(enabled);
         dateRange->setLayoutDirection(direction);
         layout->addWidget(dateRange, row, 3);
+
+        auto* timePicker = new QtMaterialTimePicker(root);
+        timePicker->setWindowFlags(Qt::Widget);
+        timePicker->setModal(false);
+        timePicker->setSelectedTime(QTime(14, 35));
+        timePicker->setEnabled(enabled);
+        timePicker->setLayoutDirection(direction);
+        timePicker->setMinimumSize(QSize(220, 140));
+        layout->addWidget(timePicker, row, 4);
     }
 
     return root;
