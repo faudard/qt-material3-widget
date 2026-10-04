@@ -356,7 +356,7 @@ void TestQtMaterialTabs::indicatorTracksSelectionAcrossLayoutChanges()
     const auto indicatorColor = [&]() {
         const QImage image = bar->grab().toImage();
         const QRect selected = bar->tabRect(tabs.currentIndex());
-        const int y = selected.bottom() - tabs.resolvedSpec().indicatorHeight / 2;
+        const int y = selected.bottom() - tabs.indicatorHeight() / 2;
         return image.pixelColor(qRound(selected.center().x() * image.devicePixelRatio()),
                                 qRound(y * image.devicePixelRatio()));
     };
@@ -383,7 +383,7 @@ void TestQtMaterialTabs::indicatorTracksSelectionAcrossLayoutChanges()
     tabs.setCurrentIndex(0);
     theme.accessibility().reducedMotion = true;
     QVERIFY(context.setTheme(theme));
-    QCOMPARE(tabs.resolvedSpec().animationDuration, 0);
+    QCOMPARE(tabs.authoredSpec().animationDuration, duration);
     QCOMPARE(indicatorColor(), spec.activeIndicatorColor);
     QTest::qWait(60);
     QCOMPARE(indicatorColor(), spec.activeIndicatorColor);
