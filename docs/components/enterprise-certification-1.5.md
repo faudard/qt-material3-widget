@@ -36,6 +36,32 @@ Until that evidence is recorded, `base.stable_release.enterprise_complete` remai
 `false`; the release gate therefore stays fail-closed rather than claiming a false
 49/49 Enterprise certification.
 
+## Manual certification fixture
+
+Build and run `qtmaterial3_accessibility_certification` from
+`examples/accessibility-certification`. The fixture places the six remaining
+release-scoped components in one stable window with deterministic labels, disabled
+states and keyboard targets.
+
+Use keyboard input rather than pointer input during certification:
+
+- Navigation Rail: traverse destinations, confirm the disabled destination is announced
+  and skipped for activation, then activate another destination.
+- Tabs: traverse tabs, confirm the disabled tab is announced/skipped and selection
+  changes are spoken.
+- Menu: traverse action/checkable/separator/disabled rows, toggle the checked action and
+  verify activation feedback.
+- Breadcrumb: traverse visible/overflow segments, use Ctrl+L, submit a location with
+  Enter, cancel with Escape and verify focus restoration.
+- Command Palette: activate the fixture button, traverse result rows including secondary
+  text/shortcuts and verify activation/dismissal focus behavior.
+- Split View: focus a divider, resize with arrows/Shift+arrows, use Home/End and
+  collapse/restore with Enter while checking spoken focus/state feedback.
+
+Repeat the same fixture on Windows/NVDA, Linux/Orca and macOS/VoiceOver. Do not promote
+a platform record from `pending` to `pass` unless the observed native reader behavior
+matches the expected behavior above.
+
 ## Native screen-reader evidence gate
 
 The canonical manual evidence ledger is
