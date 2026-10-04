@@ -8,25 +8,27 @@ API; two additional CTest targets exercise interactions across the family.
 
 | Component | Evidence prepared in `tst_navigation_desktop_certification` |
 | --- | --- |
-| Tabs | Tab/Backtab traversal through a host form, disabled-tab skipping, visual arrow direction in LTR/RTL, bounded navigation and native accessible PageTab selection/disabled state |
+| Tabs | Tab/Backtab traversal through a host form, disabled-tab skipping, visual arrow direction in LTR/RTL, bounded navigation and accessible PageTab selection/focus/disabled states |
 | Navigation Rail | Accessible List/ListItem hierarchy, destination names, hit testing, selected/focused/disabled states, accessible press action and all-disabled keyboard behavior |
 | Menu | Accessible PopupMenu/MenuItem/Separator hierarchy, shortcut metadata, checkable/checked/disabled states, accessible press action, Home/End/Space/Escape and empty-menu behavior |
 | Breadcrumb | Keyboard access to overflow actions and Ctrl+L editing, native editor accessibility, Enter submission, Escape cancellation and focus retained within the component |
 | Command Palette | Native accessible result names include command title, secondary text and shortcut; selection and focus are exposed by QListView |
 | SplitView | Focusable accessible divider, physical keyboard movement in both orientations and LTR/RTL, Shift acceleration, min/max constraints, Enter collapse/restore and corrupt-state rejection |
 
-Rail and Menu expose each painted item through an internal accessibility adapter. Its
+Tabs, Rail and Menu expose each item through an internal accessibility adapter. Its
 item QObjects belong to the widget so Qt can invalidate cached accessible interfaces on
 destruction. Disabled entries and separators expose no press actions. Accessible press
 uses the same selection and Enter activation path as keyboard interaction. Native Qt
-accessibility remains responsible for Tabs, Breadcrumb buttons/editors, Palette fields
-and results, and SplitView handles.
+accessibility remains responsible for Tabs' scroll/overflow controls, Breadcrumb
+buttons/editors, Palette fields and results, and SplitView handles. Tab children report
+selection and disabled state explicitly instead of inheriting the bar's state.
 
 ## Command provider stress contracts
 
 `tst_commandpalette_stress` covers:
 
 - a 10,000-command provider, filtering and activation of the final command;
+- query changes clear old snapshots; filtering assertions wait for the new request's reply;
 - 100 synchronous query changes coalesced into the latest debounced request;
 - 30 explicit request generations with queued replies arriving in reverse order;
 - stale success/error rejection and cancellation accounting;

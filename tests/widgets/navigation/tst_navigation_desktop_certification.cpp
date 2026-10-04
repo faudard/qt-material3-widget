@@ -57,7 +57,10 @@ private slots:
         auto* selected = accessible->child(2); QVERIFY(selected);
         QCOMPARE(selected->role(), QAccessible::PageTab);
         QVERIFY(selected->state().selected);
+        QVERIFY(selected->state().focused);
+        QCOMPARE(accessible->focusChild(), selected);
         QVERIFY(accessible->child(1)->state().disabled);
+        QVERIFY(accessible->child(1)->actionInterface()->actionNames().isEmpty());
         QTest::keyClick(bar, Qt::Key_Tab); QTRY_VERIFY(after->hasFocus());
         QTest::keyClick(after, Qt::Key_Backtab); QTRY_VERIFY(bar->hasFocus());
         tabs->setTabEnabled(0, false); tabs->setTabEnabled(2, false);
@@ -131,6 +134,31 @@ private slots:
     }
 
     void paintedItemAccessibleCacheTracksMutationAndDestruction() {
+        auto tabs = std::make_unique<QtMaterialTabs>();
+        tabs->addTab(new QWidget(tabs.get()), QStringLiteral("&First"));
+        tabs->addTab(new QWidget(tabs.get()), QStringLiteral("Unavailable"));
+        tabs->addTab(new QWidget(tabs.get()), QStringLiteral("Last && final"));
+        auto* bar = tabs->findChild<QTabBar*>(); QVERIFY(bar);
+        auto* tabRoot = QAccessible::queryAccessibleInterface(bar); QVERIFY(tabRoot);
+        QCOMPARE(tabRoot->role(), QAccessible::PageTabList);
+        QCOMPARE(tabRoot->child(0)->text(QAccessible::Name), QStringLiteral("First"));
+        auto* lastTab = tabRoot->child(2); QVERIFY(lastTab);
+        const auto removedTabId = QAccessible::uniqueId(lastTab);
+        tabs->removeTab(1);
+        QVERIFY(tabRoot->childCount() >= tabs->count());
+        QVERIFY(!QAccessible::accessibleInterface(removedTabId));
+        QCOMPARE(tabRoot->child(1)->text(QAccessible::Name), QStringLiteral("Last & final"));
+        for (auto* button : bar->findChildren<QToolButton*>(QString(), Qt::FindDirectChildrenOnly)) {
+            auto* control = QAccessible::queryAccessibleInterface(button); QVERIFY(control);
+            QVERIFY(tabRoot->indexOfChild(control) >= tabs->count());
+        }
+        tabRoot->child(1)->actionInterface()->doAction(QAccessibleActionInterface::pressAction());
+        QCOMPARE(tabs->currentIndex(), 1);
+        QVERIFY(tabRoot->child(1)->state().selected);
+        const auto survivingTabId = QAccessible::uniqueId(tabRoot->child(0));
+        tabs.reset();
+        QVERIFY(!QAccessible::accessibleInterface(survivingTabId));
+
         auto rail = std::make_unique<QtMaterialNavigationRail>();
         rail->addDestination(QStringLiteral("Home"));
         rail->addDestination(QStringLiteral("Projects"));
@@ -170,20 +198,29 @@ private slots:
         auto* accessible = QAccessible::queryAccessibleInterface(overflow); QVERIFY(accessible);
         QVERIFY(!accessible->text(QAccessible::Name).isEmpty());
         auto* menu = overflow->menu();
+        int keyboardSelection = -1;
         QSignalSpy activated(&breadcrumb, &QtMaterialBreadcrumb::activated);
-        QTimer::singleShot(0, menu, [menu]() {
-            QTest::keyClick(menu, Qt::Key_Home); QTest::keyClick(menu, Qt::Key_Return);
+        QTimer::singleShot(0, menu, [menu, &keyboardSelection]() {
+            // Home only scrolls a native QMenu; Down selects an action.
+            QTest::keyClick(menu, Qt::Key_Down);
+            if (auto* action = menu->activeAction()) { keyboardSelection = action->data().toInt(); }
+            QTest::keyClick(menu, Qt::Key_Return);
             menu->close(); // Also releases a native popup loop if no action was selected.
         });
         QTest::keyClick(overflow, Qt::Key_Space);
         QTRY_COMPARE(activated.count(), 1);
-        QCOMPARE(activated.first().first().toInt(), 1);
+        QVERIFY(keyboardSelection == 1 || keyboardSelection == 2);
+        QCOMPARE(activated.first().first().toInt(), keyboardSelection);
         breadcrumb.setCurrentIndex(3);
-        QToolButton* root = nullptr;
-        for (auto* button : breadcrumb.findChildren<QToolButton*>()) {
-            if (button->isVisible() && button->text() == QStringLiteral("Root")) { root = button; break; }
-        }
-        QVERIFY(root); root->setFocus(); QTRY_VERIFY(root->hasFocus());
+        const auto visibleRoot = [&breadcrumb]() -> QToolButton* {
+            for (auto* button : breadcrumb.findChildren<QToolButton*>()) {
+                if (button->isVisible() && button->text() == QStringLiteral("Root")) { return button; }
+            }
+            return nullptr;
+        };
+        // Rebuilt layout children become visible when Qt processes layout events.
+        QTRY_VERIFY(visibleRoot());
+        auto* root = visibleRoot(); root->setFocus(); QTRY_VERIFY(root->hasFocus());
         QTest::keyClick(root, Qt::Key_L, Qt::ControlModifier); QTRY_VERIFY(breadcrumb.isEditingLocation());
         auto* edit = breadcrumb.findChild<QLineEdit*>(); QVERIFY(edit);
         QTRY_VERIFY(edit->hasFocus());

@@ -4,6 +4,7 @@
 #include <QAccessibleWidget>
 #include <QCoreApplication>
 #include <QKeyEvent>
+#include <QList>
 #include <QPointer>
 #include <QVector>
 #include <functional>
@@ -20,6 +21,7 @@ struct ItemAccess {
     std::function<QAccessible::Role(int)> role;
     std::function<QAccessible::State(int)> state;
     std::function<void(int)> select;
+    std::function<QList<QWidget*>()> childWidgets;
 };
 
 // QObject ownership lets Qt's accessibility cache invalidate item interfaces
@@ -103,11 +105,15 @@ public:
     int childCount() const override {
         const int count = isValid() ? m_access.count() : 0;
         while (m_children.size() > count) { delete m_children.takeLast().data(); }
-        return count;
+        return count + (isValid() && m_access.childWidgets ? m_access.childWidgets().size() : 0);
     }
     QAccessibleInterface* child(int index) const override {
         if (index < 0 || index >= childCount()) { return nullptr; }
-        while (m_children.size() < childCount()) {
+        const int itemCount = m_access.count();
+        if (index >= itemCount) {
+            return QAccessible::queryAccessibleInterface(m_access.childWidgets().value(index - itemCount));
+        }
+        while (m_children.size() < itemCount) {
             auto* item = new ItemObject(widget(), m_children.size(), m_access);
             QAccessible::registerAccessibleInterface(new ItemInterface(item));
             m_children.push_back(item);
@@ -121,12 +127,19 @@ public:
     QAccessibleInterface* childAt(int x, int y) const override {
         for (int i = 0; i < childCount(); ++i) {
             auto* item = child(i);
-            if (item && item->rect().contains(x, y)) { return item; }
+            if (item && !item->state().invisible && item->rect().contains(x, y)) { return item; }
         }
         return nullptr;
     }
     QAccessibleInterface* focusChild() const override {
-        return isValid() && widget()->hasFocus() ? child(m_access.current()) : nullptr;
+        if (!isValid()) { return nullptr; }
+        if (widget()->hasFocus()) { return child(m_access.current()); }
+        if (m_access.childWidgets) {
+            for (QWidget* control : m_access.childWidgets()) {
+                if (control && control->hasFocus()) { return QAccessible::queryAccessibleInterface(control); }
+            }
+        }
+        return nullptr;
     }
 private:
     ItemAccess m_access;

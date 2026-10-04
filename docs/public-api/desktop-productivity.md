@@ -65,6 +65,9 @@ collapsibility of individually collapsed panes. They use a versioned envelope ar
 native splitter state and reject mismatched pane counts/orientations or corrupt envelopes.
 Native `saveState()`/`restoreState()` remain available; use the extended pair when
 restoring an explicitly collapsed pane's policy matters.
+Use `setPaneCollapsible` to configure per-pane collapse policies. Unconfigured panes
+inherit `childrenCollapsible`; an explicit policy takes precedence. Programmatic
+collapse temporarily enables collapse and expansion restores the previous policy.
 
 Storage belongs to the application. Set pane constraints before restoring state and use
 stable pane ordering. `paneStateChanged` publishes a snapshot after divider movement

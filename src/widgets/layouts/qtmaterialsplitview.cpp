@@ -20,6 +20,7 @@ public:
     QHash<QWidget*, int> lastExpandedSize;
     QHash<QWidget*, bool> preCollapseCollapsible;
     QSet<QWidget*> trackedPanes;
+    QSet<QWidget*> explicitPanePolicies;
     QList<int> defaultPaneSizes;
     int keyboardResizeStep = 16;
     bool animatedCollapseEnabled = false;
@@ -152,6 +153,15 @@ QtMaterialSplitView::QtMaterialSplitView(Qt::Orientation orientation, QWidget* p
 QtMaterialSplitView::~QtMaterialSplitView()
 {
     d_ptr->animation->stop();
+    d_ptr->persistTimer->stop();
+    // QSplitter deletes its panes after our private state has been destroyed.
+    // Disconnect callbacks that capture that state while it is still alive.
+    for (QWidget* pane : d_ptr->trackedPanes) {
+        disconnect(pane, nullptr, this, nullptr);
+    }
+    disconnect(d_ptr->animation, nullptr, this, nullptr);
+    disconnect(d_ptr->persistTimer, nullptr, this, nullptr);
+    disconnect(this, nullptr, this, nullptr);
 }
 
 QSplitterHandle* QtMaterialSplitView::createHandle()
@@ -166,6 +176,8 @@ void QtMaterialSplitView::setPaneCollapsible(int index, bool collapsible)
     if (index < 0 || index >= count()) {
         return;
     }
+    trackPane(widget(index));
+    d_ptr->explicitPanePolicies.insert(widget(index));
     if (d_ptr->preCollapseCollapsible.contains(widget(index))) {
         d_ptr->preCollapseCollapsible[widget(index)] = collapsible;
         return;
@@ -175,8 +187,15 @@ void QtMaterialSplitView::setPaneCollapsible(int index, bool collapsible)
 
 bool QtMaterialSplitView::paneCollapsible(int index) const
 {
-    return index >= 0 && index < count()
-        && d_ptr->preCollapseCollapsible.value(widget(index), isCollapsible(index));
+    if (index < 0 || index >= count()) { return false; }
+    QWidget* pane = widget(index);
+    if (d_ptr->preCollapseCollapsible.contains(pane)) {
+        return d_ptr->preCollapseCollapsible.value(pane);
+    }
+    // Qt's isCollapsible() also returns true for its internal default flag,
+    // even when that pane inherits childrenCollapsible() == false.
+    return isCollapsible(index)
+        && (d_ptr->explicitPanePolicies.contains(pane) || childrenCollapsible());
 }
 
 void QtMaterialSplitView::setPaneCollapsed(int index, bool collapsed)
@@ -196,7 +215,7 @@ void QtMaterialSplitView::setPaneCollapsed(int index, bool collapsed)
         for (int i = 0; i < count(); ++i) { anotherExpanded |= i != index && startSizes.value(i) > 0; }
         if (isVisible() && !anotherExpanded) { return; }
         d_ptr->lastExpandedSize.insert(pane, qMax(1, startSizes.value(index)));
-        d_ptr->preCollapseCollapsible.insert(pane, isCollapsible(index));
+        d_ptr->preCollapseCollapsible.insert(pane, paneCollapsible(index));
         setCollapsible(index, true);
         targetSizes[index] = 0;
     } else {
@@ -293,6 +312,11 @@ int QtMaterialSplitView::paneMinimumExtent(
         return 0;
     }
 
+    if (d_ptr->animationPane == pane && d_ptr->constraintsRelaxed
+        && d_ptr->animationOrientation == orientation()) {
+        return d_ptr->animationMinimum;
+    }
+
     return orientation() == Qt::Horizontal
         ? pane->minimumWidth()
         : pane->minimumHeight();
@@ -349,7 +373,7 @@ void QtMaterialSplitView::resetPaneSizes()
     for (int i = 0; i < paneCount; ++i) {
         if (paneCollapsed(i)) { collapsedIndexes.push_back(i); }
         if (d_ptr->preCollapseCollapsible.contains(widget(i))) {
-            setCollapsible(i, d_ptr->preCollapseCollapsible.take(widget(i)));
+            setPaneCollapsible(i, d_ptr->preCollapseCollapsible.take(widget(i)));
         }
     }
     d_ptr->lastExpandedSize.clear();
@@ -395,7 +419,7 @@ void QtMaterialSplitView::finishCollapseAnimation()
     if (index < 0) { return; }
     if (!collapsed) {
         if (d_ptr->preCollapseCollapsible.contains(pane)) {
-            setCollapsible(index, d_ptr->preCollapseCollapsible.take(pane));
+            setPaneCollapsible(index, d_ptr->preCollapseCollapsible.take(pane));
         }
         d_ptr->lastExpandedSize.remove(pane);
     }
@@ -409,6 +433,7 @@ void QtMaterialSplitView::trackPane(QWidget* pane)
     d_ptr->trackedPanes.insert(pane);
     connect(pane, &QObject::destroyed, this, [this, pane]() {
         d_ptr->trackedPanes.remove(pane);
+        d_ptr->explicitPanePolicies.remove(pane);
         d_ptr->lastExpandedSize.remove(pane);
         d_ptr->preCollapseCollapsible.remove(pane);
     });

@@ -1,6 +1,7 @@
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
 #include "../resolution/qtmaterialnavigationspecresolution_p.h"
 #include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
+#include "qtmaterialitemaccessibility_p.h"
 
 #include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h"
@@ -8,8 +9,10 @@
 #include <QAction>
 #include <QApplication>
 #include <QEvent>
+#include <QFocusEvent>
 #include <QHBoxLayout>
 #include <QKeyEvent>
+#include <QKeySequence>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
@@ -90,6 +93,55 @@ public:
         , m_overflowButton(new QToolButton(this))
         , m_overflowMenu(new QMenu(this))
     {
+#ifndef QT_NO_ACCESSIBILITY
+        static const bool accessibilityInstalled = []() {
+            QAccessible::installFactory([](const QString&, QObject* object) -> QAccessibleInterface* {
+                auto* bar = qobject_cast<QtMaterialTabsBar*>(object);
+                if (!bar) { return nullptr; }
+                QtMaterialItemAccessibility::ItemAccess access;
+                access.count = [bar]() { return bar->count(); };
+                access.current = [bar]() { return bar->currentIndex(); };
+                access.text = [bar](int index, QAccessible::Text type) {
+                    if (type == QAccessible::Name) {
+                        const QString name = bar->accessibleTabName(index);
+                        if (!name.isEmpty()) { return name; }
+                        QString text = bar->tabText(index);
+                        // Preserve escaped ampersands while removing mnemonic markers.
+                        for (int i = 0; i < text.size(); ++i) {
+                            if (text.at(i) == QLatin1Char('&')) { text.remove(i, 1); }
+                        }
+                        return text;
+                    }
+                    if (type == QAccessible::Accelerator) {
+                        return QKeySequence::mnemonic(bar->tabText(index)).toString(QKeySequence::NativeText);
+                    }
+                    if (type == QAccessible::Description) { return bar->tabToolTip(index); }
+                    return type == QAccessible::Help ? bar->tabWhatsThis(index) : QString();
+                };
+                access.rect = [bar](int index) { return bar->tabRect(index); };
+                access.role = [](int) { return QAccessible::PageTab; };
+                access.state = [bar](int index) {
+                    QAccessible::State state;
+                    state.disabled = !bar->isTabEnabled(index);
+                    state.focusable = state.selectable = true;
+                    state.selected = bar->currentIndex() == index;
+                    return state;
+                };
+                access.select = [bar](int index) { if (bar->isTabEnabled(index)) { bar->setCurrentIndex(index); } };
+                // Keep native scroll and overflow controls in the accessible tree.
+                access.childWidgets = [bar]() {
+                    QList<QWidget*> controls;
+                    for (auto* button : bar->findChildren<QToolButton*>(QString(), Qt::FindDirectChildrenOnly)) {
+                        controls.push_back(button);
+                    }
+                    return controls;
+                };
+                return new QtMaterialItemAccessibility::ItemWidgetInterface(bar, QAccessible::PageTabList, std::move(access));
+            });
+            return true;
+        }();
+        Q_UNUSED(accessibilityInstalled);
+#endif
         setDrawBase(false);
         setMovable(false);
         setTabsClosable(false);
@@ -108,6 +160,9 @@ public:
         m_overflowButton->hide();
 
         connect(this, &QTabBar::currentChanged, this, &QtMaterialTabsBar::animateIndicatorToCurrentTab);
+#ifndef QT_NO_ACCESSIBILITY
+        connect(this, &QTabBar::currentChanged, this, [this]() { QtMaterialItemAccessibility::notifyItems(this); });
+#endif
         connect(m_overflowMenu, &QMenu::triggered, this, [this](QAction* action) {
             bool ok = false;
             const int index = action->data().toInt(&ok);
@@ -157,6 +212,22 @@ public:
     }
 
 protected:
+    void focusInEvent(QFocusEvent* event) override
+    {
+        QTabBar::focusInEvent(event);
+#ifndef QT_NO_ACCESSIBILITY
+        QtMaterialItemAccessibility::notifyItems(this);
+#endif
+    }
+
+    void focusOutEvent(QFocusEvent* event) override
+    {
+        QTabBar::focusOutEvent(event);
+#ifndef QT_NO_ACCESSIBILITY
+        QtMaterialItemAccessibility::notifyItems(this);
+#endif
+    }
+
     void resizeEvent(QResizeEvent* event) override
     {
         QTabBar::resizeEvent(event);
@@ -166,6 +237,9 @@ protected:
     void tabLayoutChange() override
     {
         QTabBar::tabLayoutChange();
+#ifndef QT_NO_ACCESSIBILITY
+        QtMaterialItemAccessibility::notifyStructure(this);
+#endif
         updateOverflowButtonGeometry();
         rebuildOverflowMenu();
         if (currentIndex() >= 0) {

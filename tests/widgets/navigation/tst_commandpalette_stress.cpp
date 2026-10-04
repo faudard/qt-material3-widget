@@ -76,7 +76,12 @@ private slots:
         palette.openPalette();
         provider.publish(provider.requests.last(), commands);
         palette.setFuzzyMatchingEnabled(false);
+        const int requests = provider.requests.size();
         palette.setQuery(QStringLiteral("resource-9999"));
+        QCOMPARE(view(palette)->model()->rowCount(), 0);
+        QTRY_COMPARE(provider.requests.size(), requests + 1);
+        QCOMPARE(provider.queries.last(), QStringLiteral("resource-9999"));
+        provider.publish(provider.requests.last(), commands);
         QCOMPARE(view(palette)->model()->rowCount(), 1);
         QCOMPARE(resultIds(palette), QStringList{QStringLiteral("command.09999")});
     }
@@ -141,7 +146,13 @@ private slots:
         const QStringList expected = {QStringLiteral("a"), QStringLiteral("m"), QStringLiteral("shared"), QStringLiteral("z")};
         QCOMPARE(resultIds(palette), expected);
         QCOMPARE(view(palette)->model()->index(2, 0).data(QtMaterialCommandPalette::SecondaryTextRole).toString(), shared.secondaryText);
+        const int firstRequests = first.requests.size(), secondRequests = second.requests.size();
         palette.setQuery(QStringLiteral("command"));
+        QVERIFY(resultIds(palette).isEmpty());
+        QTRY_COMPARE(first.requests.size(), firstRequests + 1);
+        QTRY_COMPARE(second.requests.size(), secondRequests + 1);
+        if (reverseCompletion) { second.publish(second.requests.last(), b); first.publish(first.requests.last(), a); }
+        else { first.publish(first.requests.last(), a); second.publish(second.requests.last(), b); }
         QCOMPARE(resultIds(palette), expected); // Equal fuzzy scores use stable IDs.
         palette.refreshProviders();
         auto shuffled = a; std::reverse(shuffled.begin(), shuffled.end());
@@ -199,7 +210,12 @@ private slots:
         provider.publish(provider.requests.last(), commands);
         const QStringList expected = {QStringLiteral("4"), QStringLiteral("3"), QStringLiteral("2"), QStringLiteral("1"), QStringLiteral("0")};
         QCOMPARE(resultIds(palette), expected);
-        palette.setQuery(QStringLiteral("command")); QCOMPARE(resultIds(palette), expected);
+        const int requests = provider.requests.size();
+        palette.setQuery(QStringLiteral("command"));
+        QVERIFY(resultIds(palette).isEmpty());
+        QTRY_COMPARE(provider.requests.size(), requests + 1);
+        provider.publish(provider.requests.last(), commands);
+        QCOMPARE(resultIds(palette), expected);
     }
 
     void invalidProviderCommandsAreRejectedAndSourceOrderIsPreserved() {

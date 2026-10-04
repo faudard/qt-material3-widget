@@ -6,6 +6,7 @@
 #include <QListView>
 #include <QMenu>
 #include <QMimeData>
+#include <QPointer>
 #include <QShortcut>
 #include <QSignalSpy>
 #include <QSplitterHandle>
@@ -13,6 +14,7 @@
 #include <QTest>
 #include <QThread>
 #include <QToolButton>
+#include <memory>
 
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
@@ -356,11 +358,27 @@ private slots:
         QVERIFY(!breadcrumb.acceptDrops());
     }
 
+    void splitStateRestoresCollapsedPaneAndOriginalPolicy_data()
+    {
+        QTest::addColumn<bool>("defaultCollapsible");
+        QTest::addColumn<int>("panePolicy");
+        QTest::newRow("inherited-false") << false << -1;
+        QTest::newRow("inherited-true") << true << -1;
+        QTest::newRow("explicit-true") << false << 1;
+        QTest::newRow("explicit-false") << true << 0;
+    }
+
     void splitStateRestoresCollapsedPaneAndOriginalPolicy()
     {
+        QFETCH(bool, defaultCollapsible);
+        QFETCH(int, panePolicy);
         QtMaterialSplitView split;
         split.resize(640, 240);
         split.addWidget(new QWidget); split.addWidget(new QWidget);
+        split.setChildrenCollapsible(defaultCollapsible);
+        if (panePolicy >= 0) { split.setPaneCollapsible(0, panePolicy != 0); }
+        const bool expectedPolicy = panePolicy < 0 ? defaultCollapsible : panePolicy != 0;
+        QCOMPARE(split.paneCollapsible(0), expectedPolicy);
         split.show();
         QVERIFY(QTest::qWaitForWindowExposed(&split));
         split.setSizes({220, 412});
@@ -373,13 +391,46 @@ private slots:
         split.setPaneCollapsed(0, false);
         QVERIFY(!split.paneCollapsed(0));
         QVERIFY(qAbs(split.sizes().first() - expandedSize) <= 2);
-        QVERIFY(!split.paneCollapsible(0));
+        QCOMPARE(split.paneCollapsible(0), expectedPolicy);
         const QList<int> before = split.sizes();
         QVERIFY(!split.restorePaneState(state.left(12)));
         QCOMPARE(split.sizes(), before);
         QtMaterialSplitView other;
         other.addWidget(new QWidget);
         QVERIFY(!other.restorePaneState(state));
+        other.addWidget(new QWidget);
+        QVERIFY(other.restorePaneState(state));
+        QVERIFY(other.paneCollapsed(0));
+        other.setPaneCollapsed(0, false);
+        QCOMPARE(other.paneCollapsible(0), expectedPolicy);
+    }
+
+    void splitDestructionDisconnectsPaneCallbacks_data()
+    {
+        QTest::addColumn<bool>("animated");
+        QTest::newRow("immediate-collapse") << false;
+        QTest::newRow("animation-in-flight") << true;
+    }
+
+    void splitDestructionDisconnectsPaneCallbacks()
+    {
+        QFETCH(bool, animated);
+        auto split = std::make_unique<QtMaterialSplitView>();
+        QPointer<QWidget> first = new QWidget;
+        QPointer<QWidget> second = new QWidget;
+        split->addWidget(first); split->addWidget(second);
+        split->setPaneCollapsible(0, false);
+        split->setRememberPaneSizes(true);
+        split->setAnimatedCollapseEnabled(animated);
+        split->setCollapseAnimationDuration(10000);
+        split->resize(640, 240); split->show();
+        QVERIFY(QTest::qWaitForWindowExposed(split.get()));
+        split->setSizes({220, 412});
+        split->setPaneCollapsed(1, true);
+        QVERIFY(split->paneCollapsed(1));
+        split.reset();
+        QVERIFY(first.isNull()); QVERIFY(second.isNull());
+        QCoreApplication::processEvents();
     }
 
     void splitAnimatedCollapseRestoresConstraintsAndCanReverse()
@@ -395,10 +446,12 @@ private slots:
         split.setSizes({240, 392});
         QSignalSpy collapsed(&split, &QtMaterialSplitView::paneCollapsedChanged);
         split.setPaneCollapsed(0, true);
+        QCOMPARE(split.paneMinimumExtent(0), 120);
         QTRY_COMPARE(split.sizes().first(), 0);
         QTRY_COMPARE(collapsed.count(), 1);
         QCOMPARE(split.paneMinimumExtent(0), 120);
         split.setPaneCollapsed(0, false);
+        QCOMPARE(split.paneMinimumExtent(0), 120);
         QTRY_VERIFY(split.sizes().first() >= 120);
         QTRY_COMPARE(collapsed.count(), 2);
         QVERIFY(!split.paneCollapsible(0));

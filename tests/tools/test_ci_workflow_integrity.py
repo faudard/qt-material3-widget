@@ -25,3 +25,16 @@ class CiWorkflowIntegrityTests(unittest.TestCase):
         self.assertNotRegex(designer, r"(?m)^\s+modules:\s*.*\bqttools\b",
                             "Qt 5.14.2 does not publish a separate qttools add-on")
         self.assertIn("-DQTMATERIAL3_BUILD_DESIGNER_PLUGIN=ON", designer)
+
+    def test_designer_builds_the_contract_executables_before_ctest(self):
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text()
+        designer = workflow.split("  designer-plugin:\n", 1)[1].split("\n  designer-plugin-qt5-windows:", 1)[0]
+        build = designer.split("      - name: Build Designer plugin\n", 1)[1].split("\n      - name:", 1)[0]
+        targets = build.split("--target", 1)[1].split()
+        self.assertTrue({"qtmaterial3_designer_plugin", "tst_qtmaterial3_designer_collection",
+                         "tst_qtmaterial3_designer_ui_smoke"}.issubset(targets))
+
+    def test_powershell_preserves_the_exact_qt_version_argument(self):
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text()
+        designer = workflow.split("  designer-plugin-qt5-windows:\n", 1)[1].split("\n  consumer-contract:", 1)[0]
+        self.assertIn('"-DQTMATERIAL3_EXPECT_QT_VERSION=5.14.2"', designer)
