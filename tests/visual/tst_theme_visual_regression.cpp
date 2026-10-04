@@ -26,6 +26,7 @@
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
+#include "qtmaterial/widgets/data/qtmaterialbadge.h"
 #include "qtmaterial/widgets/data/qtmaterialcarousel.h"
 #include "qtmaterial/widgets/data/qtmaterialdivider.h"
 #include "qtmaterial/widgets/data/qtmaterialgridlist.h"
@@ -56,6 +57,7 @@
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
 #include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
+#include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
@@ -66,7 +68,9 @@
 #include "qtmaterial/widgets/surfaces/qtmaterialdialog.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialsidesheet.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialsnackbar.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialtooltip.h"
 
 #include "qtmaterialvisualtesthelpers.h"
 
@@ -984,6 +988,106 @@ QWidget* buildSurfaceOverlayStateMatrix(const Theme& theme)
     return root;
 }
 
+QWidget* buildMissingMaterial3StateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("missingMaterial3StateMatrix"));
+
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(18);
+    layout->setVerticalSpacing(12);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Navigation Bar"),
+        QStringLiteral("Side Sheet"),
+        QStringLiteral("Tooltip"),
+        QStringLiteral("Badge")});
+
+    const QStringList states = {
+        QStringLiteral("Default"),
+        QStringLiteral("Variant"),
+        QStringLiteral("Disabled"),
+        QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i) {
+        addStateLabel(layout, root, i + 1, states.at(i));
+    }
+
+    for (int row = 1; row <= 4; ++row) {
+        const bool enabled = row != 3;
+        const Qt::LayoutDirection direction =
+            row == 4 ? Qt::RightToLeft : Qt::LeftToRight;
+
+        auto* bar = new QtMaterialNavigationBar(root);
+        bar->addDestination(QStringLiteral("Home"));
+        bar->addDestination(QStringLiteral("Search"));
+        bar->addDestination(QStringLiteral("Settings"));
+        bar->setCurrentIndex(row == 2 ? 2 : 1);
+        bar->setDestinationEnabled(2, row != 3);
+        bar->setLabelsVisible(row != 2);
+        bar->setEnabled(enabled);
+        bar->setLayoutDirection(direction);
+        bar->setMinimumSize(QSize(360, 80));
+        layout->addWidget(bar, row, 1);
+
+        auto* sheetHost = new QWidget(root);
+        sheetHost->setObjectName(QStringLiteral("missingMaterial3SideSheetHost"));
+        sheetHost->setFixedSize(320, 190);
+        auto* sheet = new QtMaterialSideSheet(sheetHost);
+        sheet->setTitleText(row == 2
+            ? QStringLiteral("Filters")
+            : QStringLiteral("Details"));
+        sheet->setEdge(
+            row == 2
+                ? QtMaterialSideSheet::Edge::Left
+                : QtMaterialSideSheet::Edge::Right);
+        sheet->setModal(row != 2);
+        sheet->setEnabled(enabled);
+        sheet->setLayoutDirection(direction);
+        auto* sheetContent = new QVBoxLayout(sheet->contentWidget());
+        auto* sheetLabel = new QLabel(
+            row == 2
+                ? QStringLiteral("Supporting filters")
+                : QStringLiteral("Supporting content"),
+            sheet->contentWidget());
+        sheetContent->addWidget(sheetLabel);
+        sheet->open();
+        layout->addWidget(sheetHost, row, 2);
+
+        auto* tooltip = new QtMaterialTooltip(root);
+        tooltip->setWindowFlags(Qt::Widget);
+        tooltip->setText(
+            row == 2
+                ? QStringLiteral("Longer helpful context")
+                : row == 4
+                    ? QStringLiteral("RTL tooltip")
+                    : QStringLiteral("Helpful context"));
+        tooltip->setPlacement(
+            row == 2
+                ? QtMaterialTooltip::Placement::Below
+                : QtMaterialTooltip::Placement::Above);
+        tooltip->setEnabled(enabled);
+        tooltip->setLayoutDirection(direction);
+        tooltip->resize(tooltip->sizeHint());
+        tooltip->setMinimumSize(tooltip->sizeHint());
+        tooltip->show();
+        layout->addWidget(tooltip, row, 3, Qt::AlignCenter);
+
+        auto* badge = new QtMaterialBadge(root);
+        if (row == 2) {
+            badge->setDot(true);
+        } else {
+            badge->setMaximum(99);
+            badge->setCount(row == 3 ? 120 : 8);
+        }
+        badge->setEnabled(enabled);
+        badge->setLayoutDirection(direction);
+        badge->resize(badge->sizeHint());
+        layout->addWidget(badge, row, 4, Qt::AlignCenter);
+    }
+
+    return root;
+}
+
 QWidget* buildLayoutStateMatrix(const Theme& theme)
 {
     auto* root = new QWidget;
@@ -1108,6 +1212,7 @@ private slots:
     void progressCompactStateMatrixSmoke_data(); void progressCompactStateMatrixSmoke(); void progressCompactStateMatrixCandidateGoldens_data(); void progressCompactStateMatrixCandidateGoldens();
     void surfaceBarStateMatrixSmoke_data(); void surfaceBarStateMatrixSmoke(); void surfaceBarStateMatrixCandidateGoldens_data(); void surfaceBarStateMatrixCandidateGoldens();
     void surfaceOverlayStateMatrixSmoke_data(); void surfaceOverlayStateMatrixSmoke(); void surfaceOverlayStateMatrixCandidateGoldens_data(); void surfaceOverlayStateMatrixCandidateGoldens();
+    void missingMaterial3StateMatrixSmoke_data(); void missingMaterial3StateMatrixSmoke(); void missingMaterial3StateMatrixCandidateGoldens_data(); void missingMaterial3StateMatrixCandidateGoldens();
     void layoutStateMatrixSmoke_data(); void layoutStateMatrixSmoke(); void layoutStateMatrixCandidateGoldens_data(); void layoutStateMatrixCandidateGoldens();
 
 };
@@ -1473,6 +1578,7 @@ QTM3_MATRIX_CASES(navigationSplitStateMatrix, "navigation_split_matrix", buildNa
 QTM3_MATRIX_CASES(progressCompactStateMatrix, "progress_compact_matrix", buildProgressCompactStateMatrix, "progress-compact-state-matrix")
 QTM3_MATRIX_CASES(surfaceBarStateMatrix, "surface_bar_matrix", buildSurfaceBarStateMatrix, "surface-bar-state-matrix")
 QTM3_MATRIX_CASES(surfaceOverlayStateMatrix, "surface_overlay_matrix", buildSurfaceOverlayStateMatrix, "surface-overlay-state-matrix")
+QTM3_MATRIX_CASES(missingMaterial3StateMatrix, "missing_material3_matrix", buildMissingMaterial3StateMatrix, "missing-material3-state-matrix")
 QTM3_MATRIX_CASES(layoutStateMatrix, "layout_matrix", buildLayoutStateMatrix, "layout-state-matrix")
 #undef QTM3_MATRIX_CASES
 

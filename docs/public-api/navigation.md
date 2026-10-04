@@ -96,12 +96,19 @@ changing logical destination order.
 
 The keyboard contract uses Left/Right, Home/End and Space/Return/Enter. Horizontal traversal
 follows visual direction, so Left/Right mirror under RTL while Home/End continue to address the
-first and last enabled logical destinations. Disabled destinations are skipped. The widget keeps
-an accessible container name and synchronized selection summary, and the focused 1.7 test covers
-selection, disabled-state fallback, keyboard activation, RTL direction and DPR 2.0 rendering.
+first and last enabled logical destinations. Disabled destinations are skipped.
 
-The initial 1.7 entry is tracked as **usable**. Reviewed deterministic navigation goldens and
-platform screen-reader traversal remain before release-scope promotion and `complete` maturity.
+The accessibility surface mirrors the mature Navigation Rail contract: the bar exposes a
+`QAccessible::List` with one `ListItem` child per destination. Each child exposes its label,
+position, selected/disabled/focused state and accessible press/focus actions. Structural and
+state changes notify the Qt accessibility layer rather than relying only on the container
+description. `tst_missing_material3` exercises these per-destination interfaces.
+
+The initial 1.7 entry is tracked as **usable**. The dedicated
+`missing_material3_matrix` is rendered twice on the pinned Qt 6.4/Fusion/xcb profile and must
+be visually reviewed before rendering can reach 4/4. Native NVDA/Orca/VoiceOver traversal,
+state, activation and focus evidence remains required before release-scope promotion and
+`complete` maturity.
 
 ## Navigation Rail
 

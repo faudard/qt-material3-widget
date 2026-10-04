@@ -1,7 +1,10 @@
 #include <QtTest/QtTest>
 
+#include <QAccessible>
+#include <QApplication>
 #include <QLabel>
 #include <QPixmap>
+#include <QPushButton>
 #include <QSignalSpy>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -20,7 +23,9 @@ class MissingMaterial3Test : public QObject
 private slots:
     void navigationBarDestinationModel();
     void navigationBarKeyboardAndRtl();
+    void navigationBarAccessibleDestinations();
     void sideSheetLifecycle();
+    void sideSheetModalFocusTrapAndRestore();
     void tooltipTargetAndVisibility();
     void badgeCountAndDotMode();
     void customPaintingSupportsDpr2();
@@ -71,6 +76,58 @@ void MissingMaterial3Test::navigationBarKeyboardAndRtl()
     QCOMPARE(activated.count(), 1);
 }
 
+void MissingMaterial3Test::navigationBarAccessibleDestinations()
+{
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialNavigationBar bar;
+    bar.addDestination(QStringLiteral("Home"));
+    bar.addDestination(QStringLiteral("Search"));
+    bar.addDestination(QStringLiteral("Disabled"));
+    bar.setDestinationEnabled(2, false);
+    bar.setCurrentIndex(1);
+    bar.resize(360, 80);
+    bar.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&bar));
+    bar.activateWindow();
+    bar.setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(bar.hasFocus());
+
+    auto* root = QAccessible::queryAccessibleInterface(&bar);
+    QVERIFY(root);
+    QCOMPARE(root->role(), QAccessible::List);
+    QCOMPARE(root->childCount(), 3);
+
+    auto* home = root->child(0);
+    auto* search = root->child(1);
+    auto* disabled = root->child(2);
+    QVERIFY(home);
+    QVERIFY(search);
+    QVERIFY(disabled);
+
+    QCOMPARE(home->role(), QAccessible::ListItem);
+    QCOMPARE(home->text(QAccessible::Name), QStringLiteral("Home"));
+    QVERIFY(home->text(QAccessible::Description).contains(QStringLiteral("1 of 3")));
+
+    QVERIFY(search->state().selected);
+    QVERIFY(search->state().focused);
+    QVERIFY(disabled->state().disabled);
+
+    auto* action = static_cast<QAccessibleActionInterface*>(
+        home->interface_cast(QAccessible::ActionInterface));
+    QVERIFY(action);
+    QVERIFY(action->actionNames().contains(
+        QAccessibleActionInterface::pressAction()));
+
+    QSignalSpy activated(&bar, &QtMaterialNavigationBar::destinationActivated);
+    action->doAction(QAccessibleActionInterface::pressAction());
+    QCOMPARE(bar.currentIndex(), 0);
+    QCOMPARE(activated.count(), 1);
+    QTRY_VERIFY(home->state().focused);
+#else
+    QSKIP("Qt accessibility disabled");
+#endif
+}
+
 void MissingMaterial3Test::sideSheetLifecycle()
 {
     QWidget host;
@@ -96,6 +153,54 @@ void MissingMaterial3Test::sideSheetLifecycle()
     QTest::keyClick(&sheet, Qt::Key_Escape);
     QVERIFY(!sheet.isOpen());
     QVERIFY(!sheet.isVisible());
+}
+
+void MissingMaterial3Test::sideSheetModalFocusTrapAndRestore()
+{
+    QWidget host;
+    auto* hostLayout = new QVBoxLayout(&host);
+    auto* invoker = new QPushButton(QStringLiteral("Open details"), &host);
+    hostLayout->addWidget(invoker);
+    host.resize(800, 600);
+    host.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&host));
+
+    invoker->setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(invoker->hasFocus());
+
+    QtMaterialSideSheet sheet(&host);
+    sheet.setTitleText(QStringLiteral("Details"));
+    sheet.setModal(true);
+
+    auto* contentLayout = new QVBoxLayout(sheet.contentWidget());
+    auto* first = new QPushButton(QStringLiteral("First action"), sheet.contentWidget());
+    auto* second = new QPushButton(QStringLiteral("Second action"), sheet.contentWidget());
+    contentLayout->addWidget(first);
+    contentLayout->addWidget(second);
+
+    sheet.setInitialFocusWidget(second);
+    QVERIFY(sheet.restoreFocusOnClose());
+    sheet.open();
+    QTRY_VERIFY(second->hasFocus());
+
+    for (int i = 0; i < 5; ++i) {
+        QWidget* focused = QApplication::focusWidget();
+        QVERIFY(focused);
+        QTest::keyClick(focused, Qt::Key_Tab);
+        QTRY_VERIFY(QApplication::focusWidget());
+        QWidget* next = QApplication::focusWidget();
+        QVERIFY(next == &sheet || sheet.isAncestorOf(next));
+    }
+
+    QWidget* focused = QApplication::focusWidget();
+    QVERIFY(focused);
+    QTest::keyClick(focused, Qt::Key_Backtab);
+    QTRY_VERIFY(QApplication::focusWidget());
+    QWidget* previous = QApplication::focusWidget();
+    QVERIFY(previous == &sheet || sheet.isAncestorOf(previous));
+
+    sheet.closeSheet();
+    QTRY_VERIFY(invoker->hasFocus());
 }
 
 void MissingMaterial3Test::tooltipTargetAndVisibility()

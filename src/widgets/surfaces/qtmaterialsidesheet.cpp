@@ -1,5 +1,6 @@
 #include "qtmaterial/widgets/surfaces/qtmaterialsidesheet.h"
 
+#include <QApplication>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QHideEvent>
@@ -13,6 +14,8 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 
+#include <algorithm>
+
 #include "qtmaterial/effects/qtmaterialscrimwidget.h"
 #include "../resolution/qtmaterialmissingmaterial3specresolution_p.h"
 
@@ -24,20 +27,6 @@ constexpr int kPreferredWidth = 360;
 constexpr int kMinimumWidth = 256;
 constexpr int kCornerRadius = 28;
 
-QWidget* firstFocusableChild(QtMaterialSideSheet* sheet)
-{
-    const auto children = sheet->findChildren<QWidget*>();
-    for (QWidget* child : children) {
-        if (child
-            && child->isVisible()
-            && child->isEnabled()
-            && child->focusPolicy() != Qt::NoFocus) {
-            return child;
-        }
-    }
-    return nullptr;
-}
-
 } // namespace
 
 class QtMaterialSideSheetPrivate
@@ -46,9 +35,12 @@ public:
     QtMaterialSideSheet::Edge edge = QtMaterialSideSheet::Edge::Right;
     bool modal = true;
     bool dismissOnScrimClick = true;
+    bool restoreFocusOnClose = true;
     bool open = false;
     QString titleText;
 
+    QPointer<QWidget> initialFocusWidget;
+    QPointer<QWidget> lastFocusBeforeOpen;
     QLabel* titleLabel = nullptr;
     QToolButton* closeButton = nullptr;
     QWidget* content = nullptr;
@@ -177,6 +169,34 @@ void QtMaterialSideSheet::setDismissOnScrimClick(bool enabled)
     Q_EMIT dismissOnScrimClickChanged(enabled);
 }
 
+bool QtMaterialSideSheet::restoreFocusOnClose() const noexcept
+{
+    return d_ptr->restoreFocusOnClose;
+}
+
+void QtMaterialSideSheet::setRestoreFocusOnClose(bool enabled)
+{
+    if (d_ptr->restoreFocusOnClose == enabled) {
+        return;
+    }
+
+    d_ptr->restoreFocusOnClose = enabled;
+    Q_EMIT restoreFocusOnCloseChanged(enabled);
+}
+
+QWidget* QtMaterialSideSheet::initialFocusWidget() const noexcept
+{
+    return d_ptr->initialFocusWidget.data();
+}
+
+void QtMaterialSideSheet::setInitialFocusWidget(QWidget* widget)
+{
+    if (widget && widget != this && !isAncestorOf(widget)) {
+        return;
+    }
+    d_ptr->initialFocusWidget = widget;
+}
+
 QWidget* QtMaterialSideSheet::contentWidget() const noexcept
 {
     return d_ptr->content;
@@ -202,15 +222,15 @@ QSize QtMaterialSideSheet::minimumSizeHint() const
 
 void QtMaterialSideSheet::open()
 {
+    if (!isVisible() && !d_ptr->open) {
+        d_ptr->lastFocusBeforeOpen = QApplication::focusWidget();
+    }
+
     syncGeometryToHost();
     show();
     raise();
     syncScrim();
-    if (QWidget* child = firstFocusableChild(this)) {
-        child->setFocus(Qt::OtherFocusReason);
-    } else {
-        setFocus(Qt::OtherFocusReason);
-    }
+    focusFirstChild();
 }
 
 void QtMaterialSideSheet::closeSheet()
@@ -218,8 +238,10 @@ void QtMaterialSideSheet::closeSheet()
     if (!isVisible() && !d_ptr->open) {
         return;
     }
+
     hide();
     syncScrim();
+    restorePreviousFocus();
     Q_EMIT dismissed();
 }
 
@@ -274,6 +296,14 @@ void QtMaterialSideSheet::keyPressEvent(QKeyEvent* event)
         return;
     }
     QtMaterialOverlaySurface::keyPressEvent(event);
+}
+
+bool QtMaterialSideSheet::focusNextPrevChild(bool next)
+{
+    if (!d_ptr->modal || !isVisible() || !d_ptr->open) {
+        return QtMaterialOverlaySurface::focusNextPrevChild(next);
+    }
+    return moveFocusInsideSheet(next);
 }
 
 void QtMaterialSideSheet::showEvent(QShowEvent* event)
@@ -335,6 +365,102 @@ void QtMaterialSideSheet::themeChangedEvent(const QtMaterial::Theme& theme)
 {
     QtMaterialOverlaySurface::themeChangedEvent(theme);
     update();
+}
+
+void QtMaterialSideSheet::focusFirstChild()
+{
+    QWidget* target = d_ptr->initialFocusWidget.data();
+    if (!target
+        || (target != this && !isAncestorOf(target))
+        || !target->isVisible()
+        || !target->isEnabled()
+        || target->focusPolicy() == Qt::NoFocus) {
+        const QList<QWidget*> children = focusableSheetChildren();
+        target = children.isEmpty() ? static_cast<QWidget*>(this) : children.first();
+    }
+
+    target->setFocus(Qt::OtherFocusReason);
+}
+
+QList<QWidget*> QtMaterialSideSheet::focusableSheetChildren() const
+{
+    QList<QWidget*> result;
+
+    const auto appendIfFocusable = [&result, this](QWidget* child) {
+        if (!child
+            || !child->isEnabled()
+            || !child->isVisibleTo(this)
+            || child->focusPolicy() == Qt::NoFocus) {
+            return;
+        }
+        if (!result.contains(child)) {
+            result.append(child);
+        }
+    };
+
+    appendIfFocusable(d_ptr->closeButton);
+
+    const auto children = d_ptr->content->findChildren<QWidget*>(
+        QString(),
+        Qt::FindChildrenRecursively);
+    for (QWidget* child : children) {
+        appendIfFocusable(child);
+    }
+
+    std::sort(
+        result.begin(),
+        result.end(),
+        [](QWidget* lhs, QWidget* rhs) {
+            const QPoint left = lhs->mapTo(lhs->window(), QPoint(0, 0));
+            const QPoint right = rhs->mapTo(rhs->window(), QPoint(0, 0));
+            if (left.y() == right.y()) {
+                return left.x() < right.x();
+            }
+            return left.y() < right.y();
+        });
+
+    return result;
+}
+
+bool QtMaterialSideSheet::moveFocusInsideSheet(bool next)
+{
+    const QList<QWidget*> focusable = focusableSheetChildren();
+    if (focusable.isEmpty()) {
+        setFocus(next ? Qt::TabFocusReason : Qt::BacktabFocusReason);
+        return true;
+    }
+
+    QWidget* current = QApplication::focusWidget();
+    int currentIndex = focusable.indexOf(current);
+    if (currentIndex < 0) {
+        currentIndex = next ? -1 : 0;
+    }
+
+    const int direction = next ? 1 : -1;
+    const int nextIndex =
+        (currentIndex + direction + focusable.size())
+        % focusable.size();
+    focusable.at(nextIndex)->setFocus(
+        next ? Qt::TabFocusReason : Qt::BacktabFocusReason);
+    return true;
+}
+
+void QtMaterialSideSheet::restorePreviousFocus()
+{
+    if (!d_ptr->restoreFocusOnClose) {
+        d_ptr->lastFocusBeforeOpen.clear();
+        return;
+    }
+
+    QWidget* target = d_ptr->lastFocusBeforeOpen.data();
+    d_ptr->lastFocusBeforeOpen.clear();
+    if (!target
+        || !target->isVisible()
+        || !target->isEnabled()
+        || target->focusPolicy() == Qt::NoFocus) {
+        return;
+    }
+    target->setFocus(Qt::OtherFocusReason);
 }
 
 void QtMaterialSideSheet::syncScrim()

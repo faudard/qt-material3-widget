@@ -125,6 +125,12 @@ geometry. The modal scrim stays below the sheet and follows host resize events t
 overlay-surface contract. Edge placement is logical API state and remains deterministic in RTL;
 applications choose the semantic edge appropriate to their layout.
 
+Modal sheets now expose `initialFocusWidget` and `restoreFocusOnClose`. While open, Tab and
+Shift+Tab are contained inside the sheet's close/content controls; closing the sheet restores
+the pre-open focus target when it remains valid. Non-modal sheets retain native host focus
+traversal. `tst_missing_material3` certifies initial focus, modal containment, Escape dismissal
+and restoration.
+
 ## Tooltip
 
 `QtMaterialTooltip` attaches to any target `QWidget` without taking ownership of that target.
@@ -145,6 +151,9 @@ direction-neutral and can be positioned by the owning layout on the appropriate 
 edge under RTL.
 
 The Side Sheet, Tooltip and Badge enter the 1.7 catalogue as **usable** components. Focused tests
-cover lifecycle, Escape/focus behavior, target visibility, count/dot state and DPR 2.0 custom
-painting. Reviewed family goldens and platform assistive-technology verification remain before
-promotion to the release-scoped `complete` gate.
+cover modal focus containment/restoration, Escape behavior, target visibility, count/dot state
+and DPR 2.0 custom painting. The dedicated `missing_material3_matrix` provides pinned
+light/dark/high-contrast candidates with a two-pass repeatability report. Reviewed goldens and
+the component-specific NVDA/Orca/VoiceOver checks recorded in
+`docs/components/material3-catalogue-certification-1.7.json` remain before promotion to the
+release-scoped `complete` gate.

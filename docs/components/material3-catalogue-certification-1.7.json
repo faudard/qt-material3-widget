@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "certification": "QtMaterial3 1.7 Missing Material 3 catalogue",
+  "requiredComponents": [
+    "navigation.bar",
+    "surface.side-sheet",
+    "surface.tooltip",
+    "data.badge"
+  ],
+  "visual": {
+    "prefix": "missing_material3_matrix",
+    "renderer": {
+      "qtVersion": "6.4.0",
+      "style": "Fusion",
+      "platform": "xcb",
+      "scaleFactor": "1",
+      "fontDpi": "96"
+    },
+    "status": "pending",
+    "reviewer": "",
+    "reviewedAt": "",
+    "evidence": "",
+    "requiredGoldens": [
+      "tests/visual/goldens/missing_material3_matrix_light_standard.png",
+      "tests/visual/goldens/missing_material3_matrix_dark_standard.png",
+      "tests/visual/goldens/missing_material3_matrix_light_high.png"
+    ]
+  },
+  "platforms": {
+    "windows-nvda": {
+      "screenReader": "NVDA",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "components": {
+        "navigation.bar": {
+          "traversal": "pending",
+          "stateAnnouncements": "pending",
+          "activation": "pending",
+          "focus": "pending"
+        },
+        "surface.side-sheet": {
+          "focusContainment": "pending",
+          "titleAnnouncement": "pending",
+          "dismissal": "pending",
+          "focusRestoration": "pending"
+        },
+        "surface.tooltip": {
+          "focusTrigger": "pending",
+          "announcement": "pending",
+          "dismissal": "pending",
+          "focusPreservation": "pending"
+        },
+        "data.badge": {
+          "numericAnnouncement": "pending",
+          "overflowAnnouncement": "pending",
+          "dotAnnouncement": "pending",
+          "dynamicUpdate": "pending"
+        }
+      }
+    },
+    "linux-orca": {
+      "screenReader": "Orca",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "components": {
+        "navigation.bar": {
+          "traversal": "pending",
+          "stateAnnouncements": "pending",
+          "activation": "pending",
+          "focus": "pending"
+        },
+        "surface.side-sheet": {
+          "focusContainment": "pending",
+          "titleAnnouncement": "pending",
+          "dismissal": "pending",
+          "focusRestoration": "pending"
+        },
+        "surface.tooltip": {
+          "focusTrigger": "pending",
+          "announcement": "pending",
+          "dismissal": "pending",
+          "focusPreservation": "pending"
+        },
+        "data.badge": {
+          "numericAnnouncement": "pending",
+          "overflowAnnouncement": "pending",
+          "dotAnnouncement": "pending",
+          "dynamicUpdate": "pending"
+        }
+      }
+    },
+    "macos-voiceover": {
+      "screenReader": "VoiceOver",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "components": {
+        "navigation.bar": {
+          "traversal": "pending",
+          "stateAnnouncements": "pending",
+          "activation": "pending",
+          "focus": "pending"
+        },
+        "surface.side-sheet": {
+          "focusContainment": "pending",
+          "titleAnnouncement": "pending",
+          "dismissal": "pending",
+          "focusRestoration": "pending"
+        },
+        "surface.tooltip": {
+          "focusTrigger": "pending",
+          "announcement": "pending",
+          "dismissal": "pending",
+          "focusPreservation": "pending"
+        },
+        "data.badge": {
+          "numericAnnouncement": "pending",
+          "overflowAnnouncement": "pending",
+          "dotAnnouncement": "pending",
+          "dynamicUpdate": "pending"
+        }
+      }
+    }
+  }
+}

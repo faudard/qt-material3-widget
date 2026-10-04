@@ -3649,12 +3649,12 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic Navigation Bar goldens remain before release-scope promotion and complete maturity.",
-        "Per-destination platform screen-reader traversal remains to be recorded before accessibility can reach 4/4."
+        "Reviewed deterministic missing_material3_matrix goldens remain before release-scope promotion and complete maturity.",
+        "Native NVDA, Orca and VoiceOver destination traversal/state/activation/focus evidence remains before accessibility can reach 4/4."
       ],
       "nextActions": [
-        "Add Navigation Bar to the pinned navigation visual matrix and review stable goldens.",
-        "Record per-destination NVDA, Orca and VoiceOver traversal before release-scope promotion."
+        "Review the pinned Qt 6.4/Fusion missing_material3_matrix repeatability artifact and commit approved goldens.",
+        "Record the Navigation Bar NVDA, Orca and VoiceOver checks in material3-catalogue-certification-1.7.json."
       ],
       "evidence": {
         "api": [
@@ -3663,14 +3663,16 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/navigation/qtmaterialnavigationbar.cpp.",
-          "Rendering resolves SurfaceContainer, SecondaryContainer, OnSecondaryContainer and OnSurfaceVariant from ThemeContext."
+          "Rendering resolves SurfaceContainer, SecondaryContainer, OnSecondaryContainer and OnSurfaceVariant from ThemeContext.",
+          "tst_missing_material3_visual_goldens registers the Navigation Bar in missing_material3_matrix for light, dark and high-contrast pinned Qt 6.4/Fusion captures; visual review remains pending."
         ],
         "states": [
           "tst_missing_material3 covers destination selection, disabled-state fallback and activation."
         ],
         "accessibility": [
-          "The widget exposes a stable Navigation bar accessible name and synchronized selection summary.",
-          "Platform per-destination screen-reader traversal remains pending."
+          "Navigation Bar exposes a QAccessible List with per-destination ListItem children, names, position/selection/disabled descriptions, focus state and accessible press/focus actions.",
+          "tst_missing_material3 verifies per-destination accessible roles, names, selected/disabled states and press activation.",
+          "Native NVDA, Orca and VoiceOver spoken-output/bridge verification remains pending."
         ],
         "keyboard": [
           "tst_missing_material3 covers Left/Right traversal, RTL mirroring and Space activation."
@@ -3723,31 +3725,35 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic Side Sheet modal/non-modal goldens remain before release-scope promotion and complete maturity.",
-        "Platform screen-reader focus and dismissal announcements remain to be recorded."
+        "Reviewed deterministic missing_material3_matrix modal/non-modal and left/right evidence remains before release-scope promotion and complete maturity.",
+        "Native NVDA, Orca and VoiceOver focus/title/dismissal/restoration evidence remains before accessibility can reach 4/4."
       ],
       "nextActions": [
-        "Add Side Sheet modal/non-modal and left/right cases to the pinned surface visual matrix.",
-        "Record NVDA, Orca and VoiceOver focus/dismissal behavior before release-scope promotion."
+        "Review the pinned Qt 6.4/Fusion missing_material3_matrix repeatability artifact and commit approved goldens.",
+        "Record Side Sheet NVDA, Orca and VoiceOver focus containment, title, dismissal and focus-restoration checks."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialsidesheet.h.",
-          "The widget exposes edge, modal, title, scrim-dismiss and contentWidget composition APIs."
+          "The widget exposes edge, modal, title, scrim-dismiss and contentWidget composition APIs.",
+          "The stable additive API exposes initialFocusWidget and restoreFocusOnClose for modal focus management."
         ],
         "rendering": [
           "Production implementation exists: src/widgets/surfaces/qtmaterialsidesheet.cpp.",
-          "Rendering resolves SurfaceContainerLow from ThemeContext and uses the shared scrim widget."
+          "Rendering resolves SurfaceContainerLow from ThemeContext and uses the shared scrim widget.",
+          "tst_missing_material3_visual_goldens registers Side Sheet left/right, modal/non-modal, disabled and RTL cases in missing_material3_matrix; visual review remains pending."
         ],
         "states": [
           "tst_missing_material3 covers open/close lifecycle and modal presentation."
         ],
         "accessibility": [
           "Title text synchronizes the Side Sheet accessible name and description.",
-          "Platform focus announcements remain pending."
+          "Modal Side Sheet traps Tab/Shift+Tab inside its close/content controls and restores the pre-open focus target on close.",
+          "tst_missing_material3 certifies initial focus, modal focus containment and focus restoration.",
+          "Native NVDA, Orca and VoiceOver spoken focus/title/dismissal verification remains pending."
         ],
         "keyboard": [
-          "tst_missing_material3 certifies Escape dismissal and focusable content composition."
+          "tst_missing_material3 certifies Escape dismissal, explicit initial focus, modal Tab/Shift+Tab containment and focus restoration."
         ],
         "hidpi": [
           "Side Sheet uses vector/Qt painting and shared overlay geometry; the focused suite exercises production rendering paths."
@@ -3797,12 +3803,12 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic Tooltip placement/theme goldens remain before release-scope promotion and complete maturity.",
-        "Platform assistive-technology announcement behavior remains to be recorded."
+        "Reviewed deterministic missing_material3_matrix evidence remains before release-scope promotion and complete maturity.",
+        "Native assistive-technology tooltip focus-trigger/announcement/dismissal evidence remains before accessibility can reach 4/4."
       ],
       "nextActions": [
-        "Add Tooltip placement, theme and focus-trigger cases to the pinned surface visual matrix.",
-        "Record platform assistive-technology tooltip announcement behavior before release-scope promotion."
+        "Review the pinned Qt 6.4/Fusion missing_material3_matrix repeatability artifact and commit approved goldens.",
+        "Record Tooltip NVDA, Orca and VoiceOver focus-trigger, announcement, dismissal and focus-preservation checks."
       ],
       "evidence": {
         "api": [
@@ -3811,7 +3817,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/surfaces/qtmaterialtooltip.cpp.",
-          "Rendering resolves InverseSurface and InverseOnSurface from ThemeContext and clamps placement to available screen geometry."
+          "Rendering resolves InverseSurface and InverseOnSurface from ThemeContext and clamps placement to available screen geometry.",
+          "tst_missing_material3_visual_goldens registers Tooltip theme/state cases in missing_material3_matrix; visual review remains pending."
         ],
         "states": [
           "tst_missing_material3 covers target attachment and explicit show/hide lifecycle."
@@ -3871,12 +3878,12 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic Badge dot/numeric/theme goldens remain before release-scope promotion and complete maturity.",
-        "Platform announcement semantics for dynamically changing counts remain to be recorded."
+        "Reviewed deterministic missing_material3_matrix evidence remains before release-scope promotion and complete maturity.",
+        "Native assistive-technology numeric/overflow/dot/dynamic-update evidence remains before accessibility can reach 4/4."
       ],
       "nextActions": [
-        "Add Badge dot, bounded numeric and theme cases to the pinned data/surface visual matrix.",
-        "Record platform accessibility behavior for dynamically changing badge counts before release-scope promotion."
+        "Review the pinned Qt 6.4/Fusion missing_material3_matrix repeatability artifact and commit approved goldens.",
+        "Record Badge NVDA, Orca and VoiceOver numeric, overflow, dot and dynamic-update checks."
       ],
       "evidence": {
         "api": [
@@ -3885,7 +3892,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/data/qtmaterialbadge.cpp.",
-          "Rendering resolves Error and OnError from ThemeContext."
+          "Rendering resolves Error and OnError from ThemeContext.",
+          "tst_missing_material3_visual_goldens registers Badge theme/state cases in missing_material3_matrix; visual review remains pending."
         ],
         "states": [
           "tst_missing_material3 covers numeric, bounded maximum and dot modes."

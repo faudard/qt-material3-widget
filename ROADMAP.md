@@ -196,8 +196,14 @@ Promotion gate:
 
 - The four 1.7 components remain outside the 1.5 release-scope count until deterministic family
   visual goldens are reviewed and platform accessibility verification is recorded.
-- Promotion to release scope requires the normal API, rendering, states, accessibility, keyboard,
-  HiDPI, RTL, tests, example and documentation evidence.
+- `missing_material3_matrix` provides pinned Qt 6.4/Fusion light, dark and high-contrast
+  candidates; CI captures it twice and rejects renderer or pixel drift before human review.
+- Navigation Bar exposes per-destination accessible items/actions and Side Sheet owns modal
+  focus containment, initial focus and focus restoration before native AT review begins.
+- Native NVDA, Orca and VoiceOver results are recorded per component in the fail-closed
+  `material3-catalogue-certification-1.7.json` ledger.
+- `promote_material3_catalogue_1_7.py --apply` may move the four widgets to release-scope
+  `complete` only after reviewed goldens and all native AT checks pass.
 - Existing package, consumer, sanitizer, architecture and public API gates must remain green.
 
 ## 1.8.0 — Material 3 Expressive

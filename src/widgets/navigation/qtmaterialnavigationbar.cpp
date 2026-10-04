@@ -1,15 +1,18 @@
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 
 #include <QEvent>
+#include <QFocusEvent>
 #include <QFontMetrics>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
 #include <QStyle>
+#include <QStringList>
 #include <QVector>
 
 #include "../resolution/qtmaterialmissingmaterial3specresolution_p.h"
+#include "qtmaterialitemaccessibility_p.h"
 
 namespace QtMaterial {
 
@@ -140,6 +143,52 @@ QtMaterialNavigationBar::QtMaterialNavigationBar(QWidget* parent)
     : QtMaterialControl(parent)
     , d_ptr(std::make_unique<QtMaterialNavigationBarPrivate>())
 {
+#ifndef QT_NO_ACCESSIBILITY
+    static const bool accessibilityInstalled = []() {
+        QAccessible::installFactory([](const QString&, QObject* object) -> QAccessibleInterface* {
+            auto* bar = qobject_cast<QtMaterialNavigationBar*>(object);
+            if (!bar) {
+                return nullptr;
+            }
+
+            QtMaterialItemAccessibility::ItemAccess access;
+            access.count = [bar]() { return bar->count(); };
+            access.current = [bar]() { return bar->currentIndex(); };
+            access.text = [bar](int index, QAccessible::Text type) {
+                if (type == QAccessible::Name) {
+                    return bar->destinationText(index);
+                }
+                return type == QAccessible::Description
+                    ? bar->destinationAccessibleText(index)
+                    : QString();
+            };
+            access.rect = [bar](int index) {
+                return bar->d_ptr->itemRect(bar, index);
+            };
+            access.role = [](int) {
+                return QAccessible::ListItem;
+            };
+            access.state = [bar](int index) {
+                QAccessible::State state;
+                state.disabled = !bar->isDestinationEnabled(index);
+                state.focusable = true;
+                state.selectable = true;
+                state.selected = bar->currentIndex() == index;
+                return state;
+            };
+            access.select = [bar](int index) {
+                bar->setCurrentIndex(index);
+            };
+            return new QtMaterialItemAccessibility::ItemWidgetInterface(
+                bar,
+                QAccessible::List,
+                std::move(access));
+        });
+        return true;
+    }();
+    Q_UNUSED(accessibilityInstalled);
+#endif
+
     setAttribute(Qt::WA_Hover, true);
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
@@ -171,6 +220,9 @@ void QtMaterialNavigationBar::insertDestination(int index, const QString& text, 
         ++d_ptr->pressedIndex;
     }
 
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyStructure(this);
+#endif
     updateGeometry();
     update();
     syncAccessibility();
@@ -217,6 +269,9 @@ void QtMaterialNavigationBar::removeDestination(int index)
         Q_EMIT currentIndexChanged(nextCurrent);
     }
 
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyStructure(this);
+#endif
     updateGeometry();
     update();
     syncAccessibility();
@@ -236,6 +291,9 @@ void QtMaterialNavigationBar::clearDestinations()
     if (changed) {
         Q_EMIT currentIndexChanged(-1);
     }
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyStructure(this);
+#endif
     updateGeometry();
     update();
     syncAccessibility();
@@ -265,6 +323,27 @@ bool QtMaterialNavigationBar::isDestinationEnabled(int index) const noexcept
     return d_ptr->enabledIndex(index);
 }
 
+QString QtMaterialNavigationBar::destinationAccessibleText(int index) const
+{
+    if (index < 0 || index >= d_ptr->destinations.size()) {
+        return {};
+    }
+
+    const auto& destination = d_ptr->destinations.at(index);
+    QStringList parts;
+    parts << destination.text;
+    parts << tr("%1 of %2")
+                 .arg(index + 1)
+                 .arg(d_ptr->destinations.size());
+    if (index == d_ptr->currentIndex) {
+        parts << tr("selected");
+    }
+    if (!destination.enabled) {
+        parts << tr("disabled");
+    }
+    return parts.join(QStringLiteral(", "));
+}
+
 void QtMaterialNavigationBar::setDestinationEnabled(int index, bool enabled)
 {
     if (index < 0 || index >= d_ptr->destinations.size()
@@ -280,6 +359,9 @@ void QtMaterialNavigationBar::setDestinationEnabled(int index, bool enabled)
     }
 
     Q_EMIT destinationEnabledChanged(index, enabled);
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyItems(this);
+#endif
     update();
     syncAccessibility();
 }
@@ -308,6 +390,9 @@ void QtMaterialNavigationBar::setCurrentIndex(int index)
 
     d_ptr->currentIndex = index;
     Q_EMIT currentIndexChanged(index);
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyItems(this);
+#endif
     update();
     syncAccessibility();
 }
@@ -405,6 +490,20 @@ void QtMaterialNavigationBar::leaveEvent(QEvent* event)
     d_ptr->pressedIndex = -1;
     update();
     QtMaterialControl::leaveEvent(event);
+}
+
+void QtMaterialNavigationBar::focusInEvent(QFocusEvent* event)
+{
+    QtMaterialControl::focusInEvent(event);
+    syncAccessibility();
+    update();
+}
+
+void QtMaterialNavigationBar::focusOutEvent(QFocusEvent* event)
+{
+    QtMaterialControl::focusOutEvent(event);
+    syncAccessibility();
+    update();
 }
 
 void QtMaterialNavigationBar::keyPressEvent(QKeyEvent* event)
@@ -557,6 +656,9 @@ void QtMaterialNavigationBar::themeChangedEvent(const QtMaterial::Theme& theme)
 
 void QtMaterialNavigationBar::syncAccessibility()
 {
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyItems(this);
+#endif
     const QString summary = accessibilitySummary();
     setAccessibleDescription(summary);
     if (summary != d_ptr->lastAccessibilitySummary) {
