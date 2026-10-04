@@ -10,6 +10,7 @@
 #include "qtmaterial/qtmaterialglobal.h"
 
 class QEvent;
+class QFocusEvent;
 class QKeyEvent;
 class QMouseEvent;
 class QPaintEvent;
@@ -70,6 +71,8 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void leaveEvent(QEvent* event) override;
+    void focusInEvent(QFocusEvent* event) override;
+    void focusOutEvent(QFocusEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void paintEvent(QPaintEvent* event) override;
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
