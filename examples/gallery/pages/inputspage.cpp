@@ -6,6 +6,8 @@
 #include <QVBoxLayout>
 #include <QStringListModel>
 #include <QLabel>
+#include <QPushButton>
+#include <QTime>
 
 #include "qtmaterial/widgets/inputs/qtmaterialautocomplete.h"
 #include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
@@ -164,10 +166,24 @@ InputsPage::InputsPage(QWidget* parent)
     openTimePicker->setModal(false);
     openTimePicker->setSelectedTime(QTime(9, 30));
 
-    auto* timePickerHint = new QLabel(
-        QStringLiteral("Time Picker is demonstrated as a non-modal dialog from the Inputs page."),
+    auto* timePickerButton = new QPushButton(
+        QStringLiteral("Open time picker"),
         this);
-    timePickerHint->setWordWrap(true);
+    connect(
+        timePickerButton,
+        &QPushButton::clicked,
+        openTimePicker,
+        [openTimePicker, timeField]() {
+            openTimePicker->setSelectedTime(timeField->time());
+            openTimePicker->show();
+            openTimePicker->raise();
+            openTimePicker->activateWindow();
+        });
+    connect(
+        openTimePicker,
+        &QtMaterial::QtMaterialTimePicker::timeAccepted,
+        timeField,
+        &QtMaterial::QtMaterialTimeField::setTime);
 
     layout->addWidget(autocomplete);
     layout->addWidget(combo);
@@ -177,6 +193,6 @@ InputsPage::InputsPage(QWidget* parent)
     layout->addWidget(searchView);
     layout->addWidget(dateRange);
     layout->addWidget(timeField);
-    layout->addWidget(timePickerHint);
+    layout->addWidget(timePickerButton);
     layout->addStretch(1);
 }
