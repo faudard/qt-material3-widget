@@ -96,7 +96,14 @@ disabled announcements, activation, modal focus containment/return, editable loc
 submission, and divider resize/collapse announcements. Keep unresolved bridge-specific
 issues in the registry instead of inferring completion from widget labels.
 
+The manual result is recorded in
+`docs/components/enterprise-accessibility-1.5.json`. The ledger covers the six
+release-scoped Navigation/Desktop components on NVDA, Orca and VoiceOver with four
+required checks per component: traversal, state announcements, activation and focus.
+A platform can only be marked `pass` when every component check is `pass`.
+
 These C++ suites and visual captures are registered for CI. Local authoring validation
 uses repository/tooling/documentation checks without compiling or installing Qt. New
 goldens and OS screen-reader sessions remain review work until their evidence exists;
-registry scores are not raised merely because these tests have been added.
+registry scores are not raised merely because these tests have been added. The release
+checker rejects `enterprise_complete=true` while any ledger result is pending or failed.
