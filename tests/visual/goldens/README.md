@@ -44,6 +44,7 @@ CI generates the following candidate families in the pinned Ubuntu/Fusion render
 - `layout_matrix_*.png`
 - `progress_compact_matrix_*.png`
 - `data_extended_matrix_*.png`
+- `missing_material3_matrix_*.png`
 
 Download the `family-visual-candidate-goldens` workflow artifact, review the images, then
 commit the approved PNGs into this directory. Candidate cases tolerate a missing baseline,
@@ -65,6 +66,16 @@ nonblinking caret; repeatability alone does not certify appearance or OS accessi
 
 CI redirects candidates with `QTMATERIAL3_VISUAL_GOLDENS_DIR` rather than writing into
 this directory. Reviewed references are compared before candidate generation.
+
+## 1.7 Missing Material 3 evidence
+
+The dedicated `missing-material3-visual-evidence` artifact renders
+`missing_material3_matrix_{light_standard,dark_standard,light_high}.png` twice in independent
+processes on Qt 6.4.0 / Fusion / xcb at scale 1 and font DPI 96.
+`tools/check_missing_material3_visual_repeatability.py` rejects renderer drift, missing cases,
+different commits, dimensions or pixels. Repeatability is only determinism evidence: the ledger
+in `docs/components/material3-catalogue-certification-1.7.json` must still record a human visual
+review before these PNGs are copied here and promoted.
 
 ## Desktop Productivity candidates
 
