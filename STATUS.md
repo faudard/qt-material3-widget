@@ -9,8 +9,8 @@ Total tracked components: **49**.
 
 | Maturity | Count |
 |---|---:|
-| `complete` | 8 |
-| `usable` | 41 |
+| `complete` | 43 |
+| `usable` | 6 |
 | `partial` | 0 |
 | `skeleton` | 0 |
 | `planned` | 0 |
