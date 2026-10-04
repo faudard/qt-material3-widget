@@ -47,3 +47,16 @@ class CiWorkflowIntegrityTests(unittest.TestCase):
             if line.strip().startswith(("cmake --build", "ctest ", "cmake --install")):
                 self.assertRegex(lines[index + 1], r"if \(\$LASTEXITCODE -ne 0\) \{ throw ",
                                  "A later successful command must not hide Designer failures")
+
+    def test_visual_jobs_wait_for_the_window_manager(self):
+        for workflow_name in ("ci.yml", "release-readiness.yml"):
+            workflow = (ROOT / ".github/workflows" / workflow_name).read_text()
+            self.assertNotIn("bash -c 'openbox", workflow,
+                             "CTest must not race the background window-manager startup")
+            self.assertIn("python3 scripts/ci/run-with-openbox.py -- ctest", workflow)
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text()
+        family = workflow.split("      - name: Generate family visual candidate goldens\n", 1)[1].split("\n      - name:", 1)[0]
+        self.assertIn("python3 scripts/ci/run-with-openbox.py -- ctest", family)
+        for setting in ('QT_QPA_PLATFORM: xcb', 'QT_SCALE_FACTOR: "1"', 'QT_FONT_DPI: "96"', 'LC_ALL: C.UTF-8'):
+            self.assertIn(setting, family)
+        self.assertIn("x11-utils", (ROOT / "scripts/ci/install-ubuntu-deps.sh").read_text())

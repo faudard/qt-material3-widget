@@ -9,6 +9,7 @@ sudo apt-get install -y \
   ninja-build \
   pkg-config \
   xvfb \
+  x11-utils \
   libgl1 \
   libegl1 \
   libxkbcommon-x11-0 \

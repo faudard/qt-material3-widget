@@ -95,6 +95,13 @@ still requires approved source PNGs and release rules. The
 [certification guide](navigation-desktop-certification.md) records behavioral coverage and
 the separate platform accessibility review.
 
+Linux CI starts Openbox through `scripts/ci/run-with-openbox.py`. It waits for matching
+`_NET_SUPPORTING_WM_CHECK` properties on the root and supporting window before starting
+CTest, with a bounded timeout and startup diagnostics. This prevents the first real
+focus fixture from racing window-manager initialization. Qt exposure and focus assertions
+remain required. The full-family candidate job uses the same pinned xcb, scale and font
+settings as the Navigation captures.
+
 
 ## 1.x family matrix policy
 

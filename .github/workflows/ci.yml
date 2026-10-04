@@ -191,7 +191,7 @@ jobs:
         shell: bash
         run: |
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
-            bash -c 'openbox >/tmp/openbox.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure'
+            python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure
 
       - name: Compare reviewed Navigation goldens
         if: matrix.name == 'ubuntu-qt6.4.0-floor'
@@ -206,7 +206,7 @@ jobs:
           LC_ALL: C.UTF-8
         run: |
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
-            bash -c 'openbox >/tmp/openbox-navigation-goldens.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure -R "^tst_navigation_visual_goldens$"'
+            python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure -R "^tst_navigation_visual_goldens$"
 
       - name: Render Navigation evidence twice
         if: matrix.name == 'ubuntu-qt6.4.0-floor'
@@ -223,7 +223,7 @@ jobs:
             QTMATERIAL3_VISUAL_GOLDENS_DIR="${GITHUB_WORKSPACE}/build/navigation-${pass}/goldens" \
             QTMATERIAL3_VISUAL_ARTIFACTS_DIR="${GITHUB_WORKSPACE}/build/navigation-${pass}/artifacts" \
             xvfb-run -a --server-args="-screen 0 1920x1080x24" \
-              bash -c 'openbox >/tmp/openbox-navigation-repeat.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure -R "^tst_navigation_visual_goldens$"'
+              python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure -R "^tst_navigation_visual_goldens$"
           done
           python3 tools/check_navigation_visual_repeatability.py \
             build/navigation-first build/navigation-second \
@@ -248,9 +248,13 @@ jobs:
           QTMATERIAL3_UPDATE_VISUAL_GOLDENS: "1"
           QTMATERIAL3_VISUAL_GOLDENS_DIR: ${{ github.workspace }}/build/family-candidate-goldens
           QT_STYLE_OVERRIDE: Fusion
+          QT_QPA_PLATFORM: xcb
+          QT_SCALE_FACTOR: "1"
+          QT_FONT_DPI: "96"
+          LC_ALL: C.UTF-8
         run: |
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
-            bash -c 'openbox >/tmp/openbox-visual-candidates.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure -R tst_theme_visual_regression'
+            python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure -R "^tst_theme_visual_regression$"
 
       - name: Upload family visual candidate goldens
         if: always() && matrix.name == 'ubuntu-qt6.4.0-floor'
@@ -594,7 +598,7 @@ jobs:
         shell: bash
         run: |
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
-            bash -c 'openbox >/tmp/openbox-sanitize.log 2>&1 & ctest --test-dir build-sanitize --output-on-failure'
+            python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build-sanitize --output-on-failure
 
   architecture:
     name: architecture
