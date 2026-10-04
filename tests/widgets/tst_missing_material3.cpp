@@ -87,6 +87,9 @@ void MissingMaterial3Test::navigationBarAccessibleDestinations()
     bar.resize(360, 80);
     bar.show();
     QVERIFY(QTest::qWaitForWindowExposed(&bar));
+    bar.activateWindow();
+    bar.setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(bar.hasFocus());
 
     auto* root = QAccessible::queryAccessibleInterface(&bar);
     QVERIFY(root);
@@ -105,6 +108,7 @@ void MissingMaterial3Test::navigationBarAccessibleDestinations()
     QVERIFY(home->text(QAccessible::Description).contains(QStringLiteral("1 of 3")));
 
     QVERIFY(search->state().selected);
+    QVERIFY(search->state().focused);
     QVERIFY(disabled->state().disabled);
 
     auto* action = static_cast<QAccessibleActionInterface*>(
@@ -117,6 +121,7 @@ void MissingMaterial3Test::navigationBarAccessibleDestinations()
     action->doAction(QAccessibleActionInterface::pressAction());
     QCOMPARE(bar.currentIndex(), 0);
     QCOMPARE(activated.count(), 1);
+    QTRY_VERIFY(home->state().focused);
 #else
     QSKIP("Qt accessibility disabled");
 #endif
