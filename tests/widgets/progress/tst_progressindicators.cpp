@@ -294,6 +294,60 @@ void tst_ProgressIndicators::linearRtlPaintsFromTrailingEdge()
     QVERIFY(rtlEnd.red() > rtlEnd.blue());
 }
 
+void tst_ProgressIndicators::reducedMotionFreezesIndeterminateRendering()
+{
+    Theme theme = ThemeBuilder().buildLightFromSeed(
+        QColor(QStringLiteral("#6750A4")));
+    theme.accessibility().reducedMotion = true;
+    ThemeContext context(theme);
+
+    auto render = [](QWidget& widget) {
+        QImage image(
+            widget.size(),
+            QImage::Format_ARGB32_Premultiplied);
+        image.fill(Qt::transparent);
+        widget.render(&image);
+        return image;
+    };
+
+    QtMaterialLinearProgressIndicator linear;
+    linear.setThemeContext(&context);
+    linear.setIndeterminate(true);
+    linear.resize(320, qMax(8, linear.sizeHint().height()));
+    linear.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&linear));
+    const QImage linearFirst = render(linear);
+    QTest::qWait(80);
+    const QImage linearSecond = render(linear);
+    QCOMPARE(linearFirst, linearSecond);
+
+    QtMaterialCircularProgressIndicator circular;
+    circular.setThemeContext(&context);
+    circular.setIndeterminate(true);
+    circular.resize(circular.sizeHint());
+    circular.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&circular));
+    const QImage circularFirst = render(circular);
+    QTest::qWait(80);
+    const QImage circularSecond = render(circular);
+    QCOMPARE(circularFirst, circularSecond);
+}
+
+void tst_ProgressIndicators::determinateEndStatesRemainStable()
+{
+    QtMaterialLinearProgressIndicator linear;
+    linear.setValue(0.0);
+    QCOMPARE(linear.accessibleValueText(), QStringLiteral("0%"));
+    linear.setValue(1.0);
+    QCOMPARE(linear.accessibleValueText(), QStringLiteral("100%"));
+
+    QtMaterialCircularProgressIndicator circular;
+    circular.setValue(0.0);
+    QCOMPARE(circular.accessibleValueText(), QStringLiteral("0%"));
+    circular.setValue(1.0);
+    QCOMPARE(circular.accessibleValueText(), QStringLiteral("100%"));
+}
+
 void tst_ProgressIndicators::indicatorsRenderAtDesktopScaleFactors_data()
 {
     QTest::addColumn<qreal>("dpr");
