@@ -337,7 +337,6 @@ jobs:
             build/family-candidate-goldens/surface_bar_matrix_*.png
             build/family-candidate-goldens/surface_overlay_matrix_*.png
             build/family-candidate-goldens/missing_material3_matrix_*.png
-            build/family-candidate-goldens/adaptive_desktop_*.png
             build/family-candidate-goldens/layout_matrix_*.png
           if-no-files-found: warn
 
