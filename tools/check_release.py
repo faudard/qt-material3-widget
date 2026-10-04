@@ -25,6 +25,26 @@ ENTERPRISE_VISUAL_SUFFIXES = (
     "_dark_standard.png",
     "_light_high.png",
 )
+ENTERPRISE_AT_COMPONENTS = (
+    "navigation.rail",
+    "navigation.tabs",
+    "navigation.menu",
+    "navigation.breadcrumb",
+    "navigation.command-palette",
+    "layout.split-view",
+)
+ENTERPRISE_AT_PLATFORMS = {
+    "windows-nvda": "NVDA",
+    "linux-orca": "Orca",
+    "macos-voiceover": "VoiceOver",
+}
+ENTERPRISE_AT_CHECKS = (
+    "traversal",
+    "stateAnnouncements",
+    "activation",
+    "focus",
+)
+ENTERPRISE_AT_RESULTS = {"pending", "pass", "fail"}
 
 
 class ReleaseConfigurationError(RuntimeError):
@@ -145,6 +165,115 @@ def validate_enterprise_components(
     return errors
 
 
+def validate_enterprise_accessibility_evidence(
+    root: Path,
+    stable: dict[str, Any],
+    *,
+    require_complete: bool,
+) -> list[str]:
+    """Validate the manually recorded native screen-reader certification."""
+    errors: list[str] = []
+    relative = stable.get("accessibility_evidence")
+    if not isinstance(relative, str) or not relative.strip():
+        return [
+            "stable release requires accessibility_evidence for Enterprise certification"
+        ]
+
+    path = root / relative
+    try:
+        payload = json.loads(read(path))
+    except FileNotFoundError:
+        return [f"missing Enterprise accessibility evidence: {relative}"]
+    except json.JSONDecodeError as exc:
+        return [f"invalid Enterprise accessibility evidence JSON: {exc}"]
+
+    if payload.get("schemaVersion") != 1:
+        errors.append(
+            "Enterprise accessibility evidence must use schemaVersion 1"
+        )
+
+    declared = payload.get("requiredComponents")
+    if declared != list(ENTERPRISE_AT_COMPONENTS):
+        errors.append(
+            "Enterprise accessibility evidence requiredComponents "
+            "does not match the certified 1.5 component set"
+        )
+
+    platforms = payload.get("platforms")
+    if not isinstance(platforms, dict):
+        return errors + [
+            "Enterprise accessibility evidence platforms must be an object"
+        ]
+
+    for platform_id, reader_name in ENTERPRISE_AT_PLATFORMS.items():
+        record = platforms.get(platform_id)
+        if not isinstance(record, dict):
+            errors.append(
+                f"Enterprise accessibility evidence missing platform {platform_id}"
+            )
+            continue
+
+        if record.get("screenReader") != reader_name:
+            errors.append(
+                f"{platform_id} must record screenReader={reader_name}"
+            )
+
+        status = record.get("status")
+        if status not in ENTERPRISE_AT_RESULTS:
+            errors.append(
+                f"{platform_id} has invalid status {status!r}"
+            )
+
+        components = record.get("components")
+        if not isinstance(components, dict):
+            errors.append(
+                f"{platform_id} components must be an object"
+            )
+            continue
+
+        all_checks_pass = True
+        for component_id in ENTERPRISE_AT_COMPONENTS:
+            component = components.get(component_id)
+            if not isinstance(component, dict):
+                errors.append(
+                    f"{platform_id} missing component {component_id}"
+                )
+                all_checks_pass = False
+                continue
+
+            for check in ENTERPRISE_AT_CHECKS:
+                result = component.get(check)
+                if result not in ENTERPRISE_AT_RESULTS:
+                    errors.append(
+                        f"{platform_id}/{component_id}/{check} "
+                        f"has invalid result {result!r}"
+                    )
+                    all_checks_pass = False
+                elif result != "pass":
+                    all_checks_pass = False
+
+        if status == "pass" and not all_checks_pass:
+            errors.append(
+                f"{platform_id} cannot be pass while component checks are incomplete"
+            )
+
+        if require_complete:
+            if status != "pass":
+                errors.append(
+                    f"{platform_id} screen-reader certification is {status!r}; "
+                    "Enterprise completion requires pass"
+                )
+            for field in ("reviewer", "reviewedAt", "evidence"):
+                value = record.get(field)
+                if not isinstance(value, str) or not value.strip():
+                    errors.append(
+                        f"{platform_id} requires non-empty {field} "
+                        "for Enterprise completion"
+                    )
+
+    return errors
+
+
 def validate_version(
     root: Path,
     rules: dict[str, Any],
@@ -253,6 +382,15 @@ def validate_base(
                 errors.append(
                     f"stable release missing reviewed visual golden: {relative}"
                 )
+
+        evidence_errors = validate_enterprise_accessibility_evidence(
+            root,
+            stable,
+            require_complete=bool(
+                stable.get("enterprise_complete", False)
+            ),
+        )
+        errors.extend(evidence_errors)
 
         if stable.get("enterprise_complete", False):
             errors.extend(
