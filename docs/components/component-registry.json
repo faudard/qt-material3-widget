@@ -1039,8 +1039,7 @@
           "Combo Box entered release scope in 0.8.0."
         ]
       }
-    },
-    "lastReviewed": "2026-10-04"
+    }
   },
   {
     "id": "input.date-range-picker",
@@ -1109,8 +1108,7 @@
           "Date Range Picker entered release scope in 0.8.0."
         ]
       }
-    },
-    "lastReviewed": "2026-10-04"
+    }
   },
   {
     "id": "input.date.field",
@@ -1316,8 +1314,7 @@
           "Search Bar entered release scope in 0.8.0."
         ]
       }
-    },
-    "lastReviewed": "2026-10-04"
+    }
   },
   {
     "id": "input.search-view",
@@ -1386,8 +1383,7 @@
           "Search View entered release scope in 0.8.0."
         ]
       }
-    },
-    "lastReviewed": "2026-10-04"
+    }
   },
   {
     "id": "input.slider",
@@ -1659,8 +1655,7 @@
           "Time Field entered release scope in 0.8.0."
         ]
       }
-    },
-    "lastReviewed": "2026-10-04"
+    }
   },
   {
     "id": "input.time-picker",
@@ -1729,8 +1724,7 @@
           "Time Picker entered release scope in 0.8.0."
         ]
       }
-    },
-    "lastReviewed": "2026-10-04"
+    }
   },
   {
     "id": "navigation.rail",
@@ -2068,8 +2062,7 @@
           "docs/public-api/selection.md documents the public selection contract."
         ]
       }
-    },
-    "lastReviewed": "2026-10-03"
+    }
   },
   {
     "id": "selection.radio",
@@ -2135,8 +2128,7 @@
           "docs/public-api/selection.md documents the public selection contract."
         ]
       }
-    },
-    "lastReviewed": "2026-10-03"
+    }
   },
   {
     "id": "selection.segmented-button",
@@ -2202,8 +2194,7 @@
           "docs/public-api/selection.md links the Segmented Button release contract."
         ]
       }
-    },
-    "lastReviewed": "2026-10-03"
+    }
   },
   {
     "id": "selection.switch",
@@ -2269,8 +2260,7 @@
           "docs/public-api/selection.md documents the public selection contract."
         ]
       }
-    },
-    "lastReviewed": "2026-10-03"
+    }
   },
   {
     "id": "surface.banner",
