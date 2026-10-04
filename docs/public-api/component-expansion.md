@@ -9,7 +9,9 @@ input, focus and accessibility primitives and the common 0.6/0.7 infrastructure.
 `QtMaterialChip` is the canonical implementation for Assist, Filter, Input and
 Suggestion variants. Filter chips are checkable, Input chips can expose a removable
 trailing affordance, and all variants share the common interaction-state, ripple,
-focus and reduced-motion behavior.
+focus and reduced-motion behavior. Filter chips toggle through the native Space/Return button
+contract. A removable chip emits `removeRequested()` from its trailing affordance and also from
+Delete or Backspace while focused; disabled chips suppress keyboard removal.
 
 ## Search and choice
 
