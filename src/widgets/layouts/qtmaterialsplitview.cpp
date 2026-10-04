@@ -321,6 +321,15 @@ int QtMaterialSplitView::paneMinimumExtent(
         return 0;
     }
 
+    // Animated collapse temporarily relaxes the QWidget minimum so QSplitter
+    // can interpolate through zero. Keep the public API stable during that
+    // implementation detail by reporting the caller-visible logical minimum.
+    if (d_ptr->animationPane == pane
+        && d_ptr->constraintsRelaxed
+        && d_ptr->animationOrientation == orientation()) {
+        return d_ptr->animationMinimum;
+    }
+
     return orientation() == Qt::Horizontal
         ? pane->minimumWidth()
         : pane->minimumHeight();
