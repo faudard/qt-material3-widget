@@ -683,6 +683,46 @@ void applyListOverrides(
         &spec->cornerRadius);
 }
 
+void applyPaginationOverrides(
+    const Theme& theme,
+    PaginationSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    const ComponentTokenOverride tokens =
+        mergedComponentOverride(
+            theme,
+            QVector<ComponentId>{ ComponentId::Data, ComponentId::Pagination });
+
+    if (tokens.isEmpty()) {
+        return;
+    }
+
+    applyTokenColor(&spec->backgroundColor, tokens, ColorRole::Surface);
+    applyTokenColor(&spec->foregroundColor, tokens, ColorRole::OnSurfaceVariant);
+    applyTokenColor(&spec->controlColor, tokens, ColorRole::OnSurface);
+    applyTokenColor(&spec->focusRingColor, tokens, ColorRole::Primary);
+
+    const QVariantMap& custom = tokens.custom;
+    readColor(custom, "backgroundColor", &spec->backgroundColor);
+    readColor(custom, "foregroundColor", &spec->foregroundColor);
+    readColor(custom, "controlColor", &spec->controlColor);
+    readColor(custom, "disabledControlColor", &spec->disabledControlColor);
+    readColor(custom, "focusRingColor", &spec->focusRingColor);
+
+    if (tokens.typography.contains(TypeRole::LabelMedium)) {
+        spec->labelFont = tokens.typography.value(TypeRole::LabelMedium).font;
+    }
+
+    readInt(custom, "minimumHeight", &spec->minimumHeight);
+    readInt(custom, "controlExtent", &spec->controlExtent);
+    readInt(custom, "spacing", &spec->spacing);
+    readInt(custom, "horizontalPadding", &spec->horizontalPadding);
+    readInt(custom, "focusRingWidth", &spec->focusRingWidth);
+}
+
 void applyTableOverrides(
     const Theme& theme,
     TableSpec* spec)
@@ -1553,6 +1593,61 @@ TableSpec DataSpecResolver::tableSpec(
                 theme,
                 spec.bodyTypeRole,
                 fallback);
+    }
+
+    return spec;
+}
+
+PaginationSpec DataSpecResolver::paginationSpec(
+    const Theme& theme,
+    Density density) const
+{
+    PaginationSpec spec = defaultPaginationSpec();
+
+    spec.backgroundColor =
+        roleOr(theme, ColorRole::Surface, spec.backgroundColor);
+    spec.foregroundColor =
+        roleOr(theme, ColorRole::OnSurfaceVariant, spec.foregroundColor);
+    spec.controlColor =
+        roleOr(theme, ColorRole::OnSurface, spec.controlColor);
+    spec.focusRingColor =
+        roleOr(theme, ColorRole::Primary, spec.focusRingColor);
+    spec.disabledControlColor =
+        withOpacity(spec.controlColor, 0.38);
+
+    const QFont fallback = applicationFont();
+    spec.labelFont =
+        fontFor(theme, TypeRole::LabelMedium, fallback);
+
+    switch (density) {
+    case Density::Compact:
+        spec.minimumHeight = 36;
+        spec.controlExtent = 32;
+        spec.spacing = 2;
+        spec.horizontalPadding = 4;
+        break;
+    case Density::Comfortable:
+        spec.minimumHeight = 48;
+        spec.controlExtent = 40;
+        spec.spacing = 8;
+        spec.horizontalPadding = 12;
+        break;
+    case Density::Default:
+    default:
+        break;
+    }
+
+    applyPaginationOverrides(theme, &spec);
+
+    spec.minimumHeight = qMax(32, spec.minimumHeight);
+    spec.controlExtent = qMax(28, spec.controlExtent);
+    spec.spacing = qMax(0, spec.spacing);
+    spec.horizontalPadding = qMax(0, spec.horizontalPadding);
+    spec.focusRingWidth = qMax(0, spec.focusRingWidth);
+
+    if (spec.labelFont.family().isEmpty()) {
+        spec.labelFont =
+            fontFor(theme, TypeRole::LabelMedium, fallback);
     }
 
     return spec;
