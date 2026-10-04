@@ -65,6 +65,7 @@ set(QTMATERIAL3_PUBLIC_HEADERS
     "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
     "qtmaterial/widgets/compact/qtmaterialfilterchip.h"
     "qtmaterial/widgets/compact/qtmaterialinputchip.h"
+    "qtmaterial/widgets/data/qtmaterialbadge.h"
     "qtmaterial/widgets/data/qtmaterialcarousel.h"
     "qtmaterial/widgets/data/qtmaterialdivider.h"
     "qtmaterial/widgets/data/qtmaterialgridlist.h"
@@ -94,6 +95,7 @@ set(QTMATERIAL3_PUBLIC_HEADERS
     "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
     "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
     "qtmaterial/widgets/navigation/qtmaterialmenu.h"
+    "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
     "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h"
     "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
     "qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h"
@@ -113,8 +115,10 @@ set(QTMATERIAL3_PUBLIC_HEADERS
     "qtmaterial/widgets/surfaces/qtmaterialcard.h"
     "qtmaterial/widgets/surfaces/qtmaterialdialog.h"
     "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h"
+    "qtmaterial/widgets/surfaces/qtmaterialsidesheet.h"
     "qtmaterial/widgets/surfaces/qtmaterialsnackbar.h"
     "qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h"
+    "qtmaterial/widgets/surfaces/qtmaterialtooltip.h"
     "qtmaterial/widgets/surfaces/qtmaterialtopappbar.h"
 )
 
