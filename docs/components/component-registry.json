@@ -683,8 +683,8 @@
           "tst_component_expansion certifies the accessible name for the Chip family."
         ],
         "keyboard": [
-          "Chip preserves the native strong-focus abstract-button keyboard contract.",
-          "tst_component_expansion certifies the focus contract across the public Chip family."
+          "QtMaterialChip preserves the native strong-focus abstract-button activation contract.",
+          "tst_component_expansion certifies Filter-chip Space toggling plus Delete/Backspace removal for removable chips, including disabled suppression."
         ],
         "hidpi": [
           "tst_component_expansion renders Assist, Filter, Input and Suggestion chips at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
@@ -1958,7 +1958,8 @@
           "progress_compact_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
-          "The shared progress test exercises determinate and indeterminate modes."
+          "The shared progress test exercises determinate and indeterminate modes.",
+          "tst_progressindicators certifies deterministic reduced-motion indeterminate rendering and explicit 0%/100% end states."
         ],
         "accessibility": [
           "Circular progress exposes a stable accessible name and determinate/indeterminate value text.",
@@ -2028,7 +2029,8 @@
           "progress_compact_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
-          "tst_progressindicators covers determinate and indeterminate modes, clamping and show/hide animation state."
+          "tst_progressindicators covers determinate and indeterminate modes, clamping and show/hide animation state.",
+          "tst_progressindicators certifies deterministic reduced-motion indeterminate rendering and explicit 0%/100% end states."
         ],
         "accessibility": [
           "Linear progress exposes a stable accessible name and determinate/indeterminate value text.",
@@ -3031,8 +3033,8 @@
       ],
       "evidence": {
         "api": [
-          "QtMaterialPagination has a public theme-aware API with page/range ownership, ThemeContext integration and explicit PaginationSpec override/reset.",
-          "ComponentId::Pagination is a stable first-party theme override identifier."
+          "QtMaterialPagination preserves QWidget inheritance while adding page/range ownership, ThemeContext composition and explicit PaginationSpec override/reset.",
+          "PaginationSpec is a dedicated public data-component spec; its overrides resolve through the stable ComponentId::Data scope to preserve the 1.0 ComponentId ABI."
         ],
         "rendering": [
           "PaginationSpec resolves Material surface, label, control, disabled and focus tokens through DataSpecResolver.",
