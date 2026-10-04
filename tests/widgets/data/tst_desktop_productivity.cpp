@@ -88,6 +88,37 @@ private slots:
         QVERIFY(!tree.dragDropEnabled());
     }
 
+    void treeViewAccessibilitySummaryTracksCurrentItemAndExpansion()
+    {
+        QStandardItemModel model;
+        auto* root = new QStandardItem(QStringLiteral("Workspace"));
+        root->setData(QStringLiteral("Workspace root"), Qt::AccessibleTextRole);
+        root->appendRow(new QStandardItem(QStringLiteral("requirements.xml")));
+        model.appendRow(root);
+
+        QtMaterialTreeView tree;
+        tree.setModel(&model);
+        tree.setCurrentIndex(model.index(0, 0));
+
+        QVERIFY(tree.accessibilitySummary().contains(QStringLiteral("1 top-level items")));
+        QVERIFY(tree.currentItemAccessibleText().contains(QStringLiteral("Workspace root")));
+        QVERIFY(tree.currentItemAccessibleText().contains(QStringLiteral("collapsed")));
+        QCOMPARE(tree.accessibleDescription(), tree.accessibilitySummary());
+
+        tree.expand(model.index(0, 0));
+        tree.setCurrentIndex(model.index(0, 0));
+        tree.collapse(model.index(0, 0));
+        tree.setCurrentIndex(model.index(0, 0));
+        QVERIFY(tree.currentItemAccessibleText().contains(QStringLiteral("collapsed")));
+
+        tree.expand(model.index(0, 0));
+        tree.setCurrentIndex(model.index(0, 0));
+        QVERIFY(tree.currentItemAccessibleText().contains(QStringLiteral("expanded")));
+
+        tree.setCurrentIndex(model.index(0, 0, model.index(0, 0)));
+        QVERIFY(tree.currentItemAccessibleText().contains(QStringLiteral("requirements.xml")));
+    }
+
     void largeModelDoesNotRequireMaterialization()
     {
         LargeModel model;
