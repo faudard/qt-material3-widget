@@ -18,6 +18,16 @@ inline TableSpec tableSpec(
         density);
 }
 
+inline PaginationSpec paginationSpec(
+    const QtMaterialThemeContextBinding* binding,
+    Density density)
+{
+    Q_ASSERT(binding);
+    return DataSpecResolver().paginationSpec(
+        binding->theme(),
+        density);
+}
+
 inline GridListSpec gridListSpec(
     const QtMaterialThemeContextBinding* binding,
     Density density)
