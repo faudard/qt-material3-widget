@@ -75,6 +75,8 @@ private slots:
 
         shell.setContentWidget(&content);
         shell.setSupportingWidget(&supporting);
+        shell.show();
+        QCoreApplication::processEvents();
 
         shell.resize(500, 700);
         QCoreApplication::processEvents();
