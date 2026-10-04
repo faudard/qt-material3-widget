@@ -284,6 +284,11 @@ if(QTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS)
     navigationSplitStateMatrixCandidateGoldens navigationFocusCandidateGoldens)
   set_tests_properties(tst_navigation_visual_goldens PROPERTIES LABELS "navigation;visual" TIMEOUT 180)
 
+  add_test(NAME tst_missing_material3_visual_goldens COMMAND tst_theme_visual_regression
+    missingMaterial3StateMatrixCandidateGoldens)
+  set_tests_properties(tst_missing_material3_visual_goldens
+    PROPERTIES LABELS "material3;1.7;visual" TIMEOUT 120)
+
 endif()
 
 # Public API guardrail: every public theming header must compile as a standalone include.
