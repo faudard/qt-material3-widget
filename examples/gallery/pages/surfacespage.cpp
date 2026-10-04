@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+#include "qtmaterial/widgets/data/qtmaterialbadge.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialbanner.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h"
@@ -13,6 +14,8 @@
 #include "qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialsnackbar.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialsidesheet.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialtooltip.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialtopappbar.h"
 
 SurfacesPage::SurfacesPage(QWidget* parent)
@@ -61,6 +64,32 @@ SurfacesPage::SurfacesPage(QWidget* parent)
     auto* openDrawer = new QPushButton(QStringLiteral("Open navigation drawer"), this);
     connect(openDrawer, &QPushButton::clicked, drawer, &QtMaterial::QtMaterialNavigationDrawer::open);
     actions->addWidget(openDrawer);
+
+    auto* sideSheet = new QtMaterial::QtMaterialSideSheet(this);
+    sideSheet->setTitleText(QStringLiteral("Details"));
+    auto* sideSheetLayout = new QVBoxLayout(sideSheet->contentWidget());
+    auto* sideSheetBody = new QLabel(
+        QStringLiteral("Side sheets keep supporting content anchored to the window edge."),
+        sideSheet->contentWidget());
+    sideSheetBody->setWordWrap(true);
+    sideSheetLayout->addWidget(sideSheetBody);
+    sideSheetLayout->addStretch(1);
+
+    auto* openSideSheet = new QPushButton(QStringLiteral("Open side sheet"), this);
+    connect(openSideSheet, &QPushButton::clicked, sideSheet, &QtMaterial::QtMaterialSideSheet::open);
+    actions->addWidget(openSideSheet);
+
+    auto* tooltipButton = new QPushButton(QStringLiteral("Hover for tooltip"), this);
+    auto* tooltip = new QtMaterial::QtMaterialTooltip(this);
+    tooltip->setTargetWidget(tooltipButton);
+    tooltip->setText(QStringLiteral("Tooltips provide short contextual help."));
+    tooltip->setShowDelay(250);
+    actions->addWidget(tooltipButton);
+
+    auto* badge = new QtMaterial::QtMaterialBadge(this);
+    badge->setCount(7);
+    badge->setMaterialTestId(QStringLiteral("gallery.badge"));
+    actions->addWidget(badge);
 
     auto* snackbarHost = new QtMaterial::QtMaterialSnackbarHost(this, this);
     auto* snackbarButton = new QPushButton(QStringLiteral("Show snackbar"), this);

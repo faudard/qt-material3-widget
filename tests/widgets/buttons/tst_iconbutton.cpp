@@ -42,8 +42,9 @@ void tst_QtMaterialIconButton::keyboardActivationWithSpaceAndEnter()
     QSignalSpy clickedSpy(&button, &QAbstractButton::clicked);
     QVERIFY(clickedSpy.isValid());
 
-    button.setFocus();
-    QVERIFY(button.hasFocus());
+    button.activateWindow();
+    button.setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(button.hasFocus());
 
     QTest::keyClick(&button, Qt::Key_Space);
     QCOMPARE(clickedSpy.count(), 1);

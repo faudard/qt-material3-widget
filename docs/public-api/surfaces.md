@@ -10,6 +10,9 @@ Release-scoped surface widgets include:
 - `QtMaterialTopAppBar`
 - `QtMaterialBottomAppBar`
 - `QtMaterialSnackbar`
+- `QtMaterialSideSheet`
+- `QtMaterialTooltip`
+- `QtMaterialBadge`
 
 Component maturity is tracked in `docs/components/component-registry.json`.
 
@@ -111,3 +114,37 @@ focusable.
 `QtMaterialTopAppBar` and `QtMaterialBottomAppBar` provide title text, navigation/action
 controls, keyboard activation, deterministic size hints and accessible names. Bottom app bars
 also expose accessible text for an attached FAB.
+
+
+## Side Sheet
+
+`QtMaterialSideSheet` provides a left- or right-anchored supporting surface with a stable
+`contentWidget()` composition point. It supports modal and non-modal presentation, optional
+scrim-click dismissal, Escape dismissal, title/accessibility synchronization and host-relative
+geometry. The modal scrim stays below the sheet and follows host resize events through the
+overlay-surface contract. Edge placement is logical API state and remains deterministic in RTL;
+applications choose the semantic edge appropriate to their layout.
+
+## Tooltip
+
+`QtMaterialTooltip` attaches to any target `QWidget` without taking ownership of that target.
+Pointer hover and keyboard focus use the same delayed presentation path. Placement can be
+automatic or explicitly Above, Below, Left or Right, and the popup is clamped to the current
+screen's available geometry. Tooltips never take keyboard focus; accessible description text
+mirrors the visible content, and target FocusIn/FocusOut behavior provides keyboard parity.
+Placement geometry is screen-relative and remains stable under RTL because no logical text order
+is inverted.
+
+## Badge
+
+`QtMaterialBadge` renders either a small dot or a numeric count. Numeric badges support a
+configurable maximum (for example `99+`) and use the theme Error/OnError roles. Badges are
+non-interactive and therefore have no keyboard activation contract; their accessible description
+announces either new content or the displayed notification count. The compact geometry is
+direction-neutral and can be positioned by the owning layout on the appropriate leading/trailing
+edge under RTL.
+
+The Side Sheet, Tooltip and Badge enter the 1.7 catalogue as **usable** components. Focused tests
+cover lifecycle, Escape/focus behavior, target visibility, count/dot state and DPR 2.0 custom
+painting. Reviewed family goldens and platform assistive-technology verification remain before
+promotion to the release-scoped `complete` gate.

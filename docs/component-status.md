@@ -40,6 +40,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
 | `data.divider` | Divider | `complete` | `qtmaterial/widgets/data/qtmaterialdivider.h` | `DividerSpec` | `tst_divider` | `docs/public-api/data-widgets.md` | `/data/divider` |
+| `data.badge` | Badge | `usable` | `qtmaterial/widgets/data/qtmaterialbadge.h` | `N/A` | `tst_missing_material3` | `docs/public-api/surfaces.md` | `/surfaces/badge` |
 
 ## Inputs
 
@@ -69,6 +70,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
+| `navigation.bar` | Navigation Bar | `usable` | `qtmaterial/widgets/navigation/qtmaterialnavigationbar.h` | `N/A` | `tst_missing_material3` | `docs/public-api/navigation.md` | `/navigation/bar` |
 | `navigation.breadcrumb` | Breadcrumb | `usable` | `qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/navigation/breadcrumb` |
 | `navigation.command-palette` | Command Palette | `usable` | `qtmaterial/widgets/navigation/qtmaterialcommandpalette.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/navigation/command-palette` |
 | `navigation.menu` | Menu | `usable` | `qtmaterial/widgets/navigation/qtmaterialmenu.h` | `MenuSpec` | `tst_menu` | `docs/public-api/navigation.md` | `/navigation/menu` |
@@ -103,3 +105,5 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 | `surface.navigation-drawer` | Navigation Drawer | `complete` | `qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h` | `NavigationDrawerSpec` | `tst_navigationdrawer` | `docs/public-api/surfaces.md` | `/surfaces/navigation-drawer` |
 | `surface.snackbar` | Snackbar | `complete` | `qtmaterial/widgets/surfaces/qtmaterialsnackbar.h` | `SnackbarSpec` | `tst_snackbar` | `docs/public-api/surfaces.md` | `/surfaces/snackbar` |
 | `surface.top-app-bar` | Top App Bar | `complete` | `qtmaterial/widgets/surfaces/qtmaterialtopappbar.h` | `AppBarSpec` | `tst_topappbar` | `docs/public-api/surfaces.md` | `/surfaces/top-app-bar` |
+| `surface.side-sheet` | Side Sheet | `usable` | `qtmaterial/widgets/surfaces/qtmaterialsidesheet.h` | `N/A` | `tst_missing_material3` | `docs/public-api/surfaces.md` | `/surfaces/side-sheet` |
+| `surface.tooltip` | Tooltip | `usable` | `qtmaterial/widgets/surfaces/qtmaterialtooltip.h` | `N/A` | `tst_missing_material3` | `docs/public-api/surfaces.md` | `/surfaces/tooltip` |

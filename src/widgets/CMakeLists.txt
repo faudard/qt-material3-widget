@@ -20,6 +20,8 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     selection/qtmaterialradiobutton.cpp
     surfaces/qtmaterialdialog.cpp
     surfaces/qtmaterialnavigationdrawer.cpp
+    surfaces/qtmaterialsidesheet.cpp
+    surfaces/qtmaterialtooltip.cpp
     surfaces/qtmaterialbottomsheet.cpp
     surfaces/qtmaterialbanner.cpp
     surfaces/qtmaterialcard.cpp
@@ -41,7 +43,9 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     data/qtmateriallistitem.cpp
     data/qtmateriallist.cpp
     data/qtmaterialdivider.cpp
+    data/qtmaterialbadge.cpp
     navigation/qtmaterialtabs.cpp
+    navigation/qtmaterialnavigationbar.cpp
     surfaces/qtmaterialsnackbar.cpp
     surfaces/qtmaterialsnackbarhost.cpp
     progress/qtmateriallinearprogressindicator.cpp
@@ -80,6 +84,8 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/selection/qtmaterialradiobutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialdialog.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialsidesheet.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialtooltip.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialbanner.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialcard.h
@@ -104,8 +110,10 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialtabs.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationbar.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialroute.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialdivider.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialbadge.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h
