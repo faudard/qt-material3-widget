@@ -1,13 +1,30 @@
 #include "qtmaterial/widgets/data/qtmaterialpagination.h"
 
+#include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
+#include "../resolution/qtmaterialdataspecresolution_p.h"
+
 #include <QComboBox>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPalette>
 #include <QSignalBlocker>
 #include <QToolButton>
 
 namespace QtMaterial {
+namespace {
+
+PaginationSpec normalizedPaginationSpec(PaginationSpec spec)
+{
+    spec.minimumHeight = qMax(32, spec.minimumHeight);
+    spec.controlExtent = qMax(28, spec.controlExtent);
+    spec.spacing = qMax(0, spec.spacing);
+    spec.horizontalPadding = qMax(0, spec.horizontalPadding);
+    spec.focusRingWidth = qMax(0, spec.focusRingWidth);
+    return spec;
+}
+
+} // namespace
 
 class QtMaterialPaginationPrivate final
 {
@@ -15,6 +32,13 @@ public:
     int page = 1;
     int pageSize = 25;
     int totalCount = 0;
+
+    PaginationSpec spec = defaultPaginationSpec();
+    PaginationSpec explicitSpec = defaultPaginationSpec();
+    bool specDirty = true;
+    bool explicitSpecSet = false;
+
+    QtMaterialThemeContextBinding* themeBinding = nullptr;
     QToolButton* firstButton = nullptr;
     QToolButton* previousButton = nullptr;
     QToolButton* nextButton = nullptr;
@@ -27,6 +51,25 @@ QtMaterialPagination::QtMaterialPagination(QWidget* parent)
     : QWidget(parent)
     , d_ptr(std::make_unique<QtMaterialPaginationPrivate>())
 {
+    d_ptr->themeBinding = new QtMaterialThemeContextBinding(this, this);
+    connect(
+        d_ptr->themeBinding,
+        &QtMaterialThemeContextBinding::effectiveThemeContextChanged,
+        this,
+        &QtMaterialPagination::effectiveThemeContextChanged);
+    connect(
+        d_ptr->themeBinding,
+        &QtMaterialThemeContextBinding::themeChanged,
+        this,
+        [this](const Theme&) {
+            if (d_ptr->explicitSpecSet) {
+                return;
+            }
+            d_ptr->specDirty = true;
+            ensureSpecResolved();
+            applyResolvedSpec();
+        });
+
     d_ptr->firstButton = new QToolButton(this);
     d_ptr->previousButton = new QToolButton(this);
     d_ptr->nextButton = new QToolButton(this);
@@ -39,7 +82,6 @@ QtMaterialPagination::QtMaterialPagination(QWidget* parent)
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(4);
     layout->addStretch(1);
 
     d_ptr->pageSizeCombo->setAccessibleName(tr("Rows per page"));
@@ -72,10 +114,67 @@ QtMaterialPagination::QtMaterialPagination(QWidget* parent)
             }
         });
 
+    ensureSpecResolved();
+    applyResolvedSpec();
     updateUi();
 }
 
 QtMaterialPagination::~QtMaterialPagination() = default;
+
+void QtMaterialPagination::setThemeContext(ThemeContext* context)
+{
+    if (d_ptr->themeBinding->themeContext() == context) {
+        return;
+    }
+    d_ptr->themeBinding->setThemeContext(context);
+    Q_EMIT themeContextChanged(context);
+}
+
+ThemeContext* QtMaterialPagination::themeContext() const noexcept
+{
+    return d_ptr->themeBinding->themeContext();
+}
+
+ThemeContext* QtMaterialPagination::effectiveThemeContext() const noexcept
+{
+    return d_ptr->themeBinding->effectiveThemeContext();
+}
+
+PaginationSpec QtMaterialPagination::spec() const
+{
+    return resolvedSpec();
+}
+
+const PaginationSpec& QtMaterialPagination::resolvedSpec() const
+{
+    ensureSpecResolved();
+    return d_ptr->spec;
+}
+
+void QtMaterialPagination::setSpec(const PaginationSpec& spec)
+{
+    d_ptr->explicitSpec = normalizedPaginationSpec(spec);
+    d_ptr->explicitSpecSet = true;
+    d_ptr->specDirty = true;
+    ensureSpecResolved();
+    applyResolvedSpec();
+}
+
+void QtMaterialPagination::resetSpec()
+{
+    if (!d_ptr->explicitSpecSet) {
+        return;
+    }
+    d_ptr->explicitSpecSet = false;
+    d_ptr->specDirty = true;
+    ensureSpecResolved();
+    applyResolvedSpec();
+}
+
+bool QtMaterialPagination::hasExplicitSpec() const noexcept
+{
+    return d_ptr->explicitSpecSet;
+}
 
 int QtMaterialPagination::page() const noexcept { return d_ptr->page; }
 int QtMaterialPagination::pageSize() const noexcept { return d_ptr->pageSize; }
@@ -189,6 +288,79 @@ QString QtMaterialPagination::rangeText() const
         .arg(first)
         .arg(last)
         .arg(d_ptr->totalCount);
+}
+
+void QtMaterialPagination::ensureSpecResolved() const
+{
+    if (!d_ptr->specDirty) {
+        return;
+    }
+
+    if (d_ptr->explicitSpecSet) {
+        d_ptr->spec = d_ptr->explicitSpec;
+    } else {
+        d_ptr->spec =
+            DataSpecResolution::paginationSpec(
+                d_ptr->themeBinding,
+                Density::Default);
+    }
+    d_ptr->specDirty = false;
+}
+
+void QtMaterialPagination::applyResolvedSpec()
+{
+    ensureSpecResolved();
+    const PaginationSpec& current = d_ptr->spec;
+
+    setMinimumHeight(current.minimumHeight);
+    setFont(current.labelFont);
+
+    if (auto* row = qobject_cast<QHBoxLayout*>(layout())) {
+        row->setContentsMargins(
+            current.horizontalPadding,
+            0,
+            current.horizontalPadding,
+            0);
+        row->setSpacing(current.spacing);
+    }
+
+    QPalette resolved = palette();
+    resolved.setColor(QPalette::Window, current.backgroundColor);
+    resolved.setColor(QPalette::WindowText, current.foregroundColor);
+    resolved.setColor(QPalette::Text, current.foregroundColor);
+    resolved.setColor(QPalette::ButtonText, current.controlColor);
+    resolved.setColor(QPalette::Highlight, current.focusRingColor);
+    resolved.setColor(
+        QPalette::Disabled,
+        QPalette::ButtonText,
+        current.disabledControlColor);
+    resolved.setColor(
+        QPalette::Disabled,
+        QPalette::Text,
+        current.disabledControlColor);
+    setPalette(resolved);
+
+    d_ptr->rangeLabel->setFont(current.labelFont);
+    d_ptr->rangeLabel->setPalette(resolved);
+    d_ptr->pageSizeCombo->setFont(current.labelFont);
+    d_ptr->pageSizeCombo->setPalette(resolved);
+    d_ptr->pageSizeCombo->setMinimumHeight(current.controlExtent);
+
+    const QList<QToolButton*> controls = {
+        d_ptr->firstButton,
+        d_ptr->previousButton,
+        d_ptr->nextButton,
+        d_ptr->lastButton
+    };
+    for (QToolButton* button : controls) {
+        button->setFont(current.labelFont);
+        button->setPalette(resolved);
+        button->setFixedSize(
+            current.controlExtent,
+            current.controlExtent);
+    }
+
+    updateGeometry();
 }
 
 void QtMaterialPagination::updateUi()
