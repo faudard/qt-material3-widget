@@ -22,42 +22,42 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `compact.chip` | Chip | `usable` | `qtmaterial/widgets/selection/qtmaterialchip.h` | `ChipSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/compact/chip` |
+| `compact.chip` | Chip | `complete` | `qtmaterial/widgets/selection/qtmaterialchip.h` | `ChipSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/compact/chip` |
 
 ## Data
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `data.carousel` | Carousel | `usable` | `qtmaterial/widgets/data/qtmaterialcarousel.h` | `CarouselSpec` | `tst_carousel` | `docs/public-api/data-widgets.md` | `/data/carousel` |
-| `data.grid-list` | Grid List | `usable` | `qtmaterial/widgets/data/qtmaterialgridlist.h` | `GridListSpec` | `tst_gridlist` | `docs/public-api/data-widgets.md` | `/data/grid-list` |
-| `data.list` | List | `usable` | `qtmaterial/widgets/data/qtmateriallist.h` | `ListSpec` | `tst_list` | `docs/public-api/data-widgets.md` | `/data/list` |
-| `data.pagination` | Pagination | `usable` | `qtmaterial/widgets/data/qtmaterialpagination.h` | `PaginationSpec` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/pagination` |
-| `data.table` | Table | `usable` | `qtmaterial/widgets/data/qtmaterialtable.h` | `TableSpec` | `tst_table` | `docs/public-api/data-widgets.md` | `/data/table` |
-| `data.tree-view` | Tree View | `usable` | `qtmaterial/widgets/data/qtmaterialtreeview.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/tree-view` |
+| `data.carousel` | Carousel | `complete` | `qtmaterial/widgets/data/qtmaterialcarousel.h` | `CarouselSpec` | `tst_carousel` | `docs/public-api/data-widgets.md` | `/data/carousel` |
+| `data.grid-list` | Grid List | `complete` | `qtmaterial/widgets/data/qtmaterialgridlist.h` | `GridListSpec` | `tst_gridlist` | `docs/public-api/data-widgets.md` | `/data/grid-list` |
+| `data.list` | List | `complete` | `qtmaterial/widgets/data/qtmateriallist.h` | `ListSpec` | `tst_list` | `docs/public-api/data-widgets.md` | `/data/list` |
+| `data.pagination` | Pagination | `complete` | `qtmaterial/widgets/data/qtmaterialpagination.h` | `PaginationSpec` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/pagination` |
+| `data.table` | Table | `complete` | `qtmaterial/widgets/data/qtmaterialtable.h` | `TableSpec` | `tst_table` | `docs/public-api/data-widgets.md` | `/data/table` |
+| `data.tree-view` | Tree View | `complete` | `qtmaterial/widgets/data/qtmaterialtreeview.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/tree-view` |
 
 ## Data display
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `data.divider` | Divider | `usable` | `qtmaterial/widgets/data/qtmaterialdivider.h` | `DividerSpec` | `tst_divider` | `docs/public-api/data-widgets.md` | `/data/divider` |
+| `data.divider` | Divider | `complete` | `qtmaterial/widgets/data/qtmaterialdivider.h` | `DividerSpec` | `tst_divider` | `docs/public-api/data-widgets.md` | `/data/divider` |
 
 ## Inputs
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `input.autocomplete` | Autocomplete | `usable` | `qtmaterial/widgets/inputs/qtmaterialautocomplete.h` | `AutocompleteSpec` | `tst_autocomplete` | `docs/public-api/inputs.md` | `/inputs/autocomplete` |
-| `input.combo-box` | Combo Box | `usable` | `qtmaterial/widgets/inputs/qtmaterialcombobox.h` | `AutocompleteSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/combo-box` |
-| `input.date-picker` | Date Picker | `usable` | `qtmaterial/widgets/qtmaterialdatepicker.h` | `DatePickerSpec` | `tst_data_components` | `docs/public-api/inputs.md` | `/inputs/date-picker` |
-| `input.date-range-picker` | Date Range Picker | `usable` | `qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h` | `DatePickerSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/date-range-picker` |
-| `input.date.field` | Date Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialdatefield.h` | `TextFieldSpec` | `tst_datefield` | `docs/public-api/inputs.md` | `/inputs/date-field` |
-| `input.range-slider` | Range Slider | `usable` | `qtmaterial/widgets/inputs/qtmaterialrangeslider.h` | `SelectionRuntimeSpec` | `tst_slider_maturity` | `docs/public-api/component-expansion.md` | `/inputs/range-slider` |
-| `input.search-bar` | Search Bar | `usable` | `qtmaterial/widgets/inputs/qtmaterialsearchbar.h` | `AutocompleteSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/search-bar` |
-| `input.search-view` | Search View | `usable` | `qtmaterial/widgets/inputs/qtmaterialsearchview.h` | `AutocompleteSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/search-view` |
-| `input.slider` | Slider | `usable` | `qtmaterial/widgets/inputs/qtmaterialslider.h` | `SelectionRuntimeSpec` | `tst_slider_maturity` | `docs/public-api/component-expansion.md` | `/inputs/slider` |
-| `input.text.filled` | Filled Text Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h` | `TextFieldSpec` | `tst_filledtextfield` | `docs/public-api/inputs.md` | `/inputs/filled-text-field` |
-| `input.text.outlined` | Outlined Text Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h` | `TextFieldSpec` | `tst_outlinedtextfield` | `docs/public-api/inputs.md` | `/inputs/outlined-text-field` |
-| `input.time-field` | Time Field | `usable` | `qtmaterial/widgets/inputs/qtmaterialtimefield.h` | `DateFieldSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/time-field` |
-| `input.time-picker` | Time Picker | `usable` | `qtmaterial/widgets/inputs/qtmaterialtimepicker.h` | `DateFieldSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/time-picker` |
+| `input.autocomplete` | Autocomplete | `complete` | `qtmaterial/widgets/inputs/qtmaterialautocomplete.h` | `AutocompleteSpec` | `tst_autocomplete` | `docs/public-api/inputs.md` | `/inputs/autocomplete` |
+| `input.combo-box` | Combo Box | `complete` | `qtmaterial/widgets/inputs/qtmaterialcombobox.h` | `AutocompleteSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/combo-box` |
+| `input.date-picker` | Date Picker | `complete` | `qtmaterial/widgets/qtmaterialdatepicker.h` | `DatePickerSpec` | `tst_data_components` | `docs/public-api/inputs.md` | `/inputs/date-picker` |
+| `input.date-range-picker` | Date Range Picker | `complete` | `qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h` | `DatePickerSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/date-range-picker` |
+| `input.date.field` | Date Field | `complete` | `qtmaterial/widgets/inputs/qtmaterialdatefield.h` | `TextFieldSpec` | `tst_datefield` | `docs/public-api/inputs.md` | `/inputs/date-field` |
+| `input.range-slider` | Range Slider | `complete` | `qtmaterial/widgets/inputs/qtmaterialrangeslider.h` | `SelectionRuntimeSpec` | `tst_slider_maturity` | `docs/public-api/component-expansion.md` | `/inputs/range-slider` |
+| `input.search-bar` | Search Bar | `complete` | `qtmaterial/widgets/inputs/qtmaterialsearchbar.h` | `AutocompleteSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/search-bar` |
+| `input.search-view` | Search View | `complete` | `qtmaterial/widgets/inputs/qtmaterialsearchview.h` | `AutocompleteSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/search-view` |
+| `input.slider` | Slider | `complete` | `qtmaterial/widgets/inputs/qtmaterialslider.h` | `SelectionRuntimeSpec` | `tst_slider_maturity` | `docs/public-api/component-expansion.md` | `/inputs/slider` |
+| `input.text.filled` | Filled Text Field | `complete` | `qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h` | `TextFieldSpec` | `tst_filledtextfield` | `docs/public-api/inputs.md` | `/inputs/filled-text-field` |
+| `input.text.outlined` | Outlined Text Field | `complete` | `qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h` | `TextFieldSpec` | `tst_outlinedtextfield` | `docs/public-api/inputs.md` | `/inputs/outlined-text-field` |
+| `input.time-field` | Time Field | `complete` | `qtmaterial/widgets/inputs/qtmaterialtimefield.h` | `DateFieldSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/time-field` |
+| `input.time-picker` | Time Picker | `complete` | `qtmaterial/widgets/inputs/qtmaterialtimepicker.h` | `DateFieldSpec` | `tst_component_expansion` | `docs/public-api/component-expansion.md` | `/inputs/time-picker` |
 
 ## Layouts
 
@@ -79,27 +79,27 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `progress.circular` | Circular Progress Indicator | `usable` | `qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress-indicators.md` | `/progress/circular` |
-| `progress.linear` | Linear Progress Indicator | `usable` | `qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress-indicators.md` | `/progress/linear` |
+| `progress.circular` | Circular Progress Indicator | `complete` | `qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress-indicators.md` | `/progress/circular` |
+| `progress.linear` | Linear Progress Indicator | `complete` | `qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress-indicators.md` | `/progress/linear` |
 
 ## Selection
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `selection.checkbox` | Checkbox | `usable` | `qtmaterial/widgets/selection/qtmaterialcheckbox.h` | `CheckboxSpec` | `tst_checkbox` | `docs/public-api/selection.md` | `/selection/checkbox` |
-| `selection.radio` | Radio Button | `usable` | `qtmaterial/widgets/selection/qtmaterialradiobutton.h` | `RadioButtonSpec` | `tst_radiobutton` | `docs/public-api/selection.md` | `/selection/radio` |
-| `selection.segmented-button` | Segmented Button | `usable` | `qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h` | `SegmentedButtonSpec` | `tst_segmentedbutton` | `docs/public-api/selection.md` | `/selection/segmented-button` |
-| `selection.switch` | Switch | `usable` | `qtmaterial/widgets/selection/qtmaterialswitch.h` | `SwitchSpec` | `tst_switch` | `docs/public-api/selection.md` | `/selection/switch` |
+| `selection.checkbox` | Checkbox | `complete` | `qtmaterial/widgets/selection/qtmaterialcheckbox.h` | `CheckboxSpec` | `tst_checkbox` | `docs/public-api/selection.md` | `/selection/checkbox` |
+| `selection.radio` | Radio Button | `complete` | `qtmaterial/widgets/selection/qtmaterialradiobutton.h` | `RadioButtonSpec` | `tst_radiobutton` | `docs/public-api/selection.md` | `/selection/radio` |
+| `selection.segmented-button` | Segmented Button | `complete` | `qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h` | `SegmentedButtonSpec` | `tst_segmentedbutton` | `docs/public-api/selection.md` | `/selection/segmented-button` |
+| `selection.switch` | Switch | `complete` | `qtmaterial/widgets/selection/qtmaterialswitch.h` | `SwitchSpec` | `tst_switch` | `docs/public-api/selection.md` | `/selection/switch` |
 
 ## Surfaces
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
-| `surface.banner` | Banner | `usable` | `qtmaterial/widgets/surfaces/qtmaterialbanner.h` | `BannerSpec` | `tst_banner` | `docs/public-api/surfaces.md` | `/surfaces/banner` |
-| `surface.bottom-app-bar` | Bottom App Bar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h` | `AppBarSpec` | `tst_bottomappbar` | `docs/public-api/surfaces.md` | `/surfaces/bottom-app-bar` |
-| `surface.bottom-sheet` | Bottom Sheet | `usable` | `qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h` | `BottomSheetSpec` | `tst_bottomsheet` | `docs/public-api/surfaces.md` | `/surfaces/bottom-sheet` |
-| `surface.card` | Card | `usable` | `qtmaterial/widgets/surfaces/qtmaterialcard.h` | `CardSpec` | `tst_card` | `docs/public-api/surfaces.md` | `/surfaces/card` |
-| `surface.dialog` | Dialog | `usable` | `qtmaterial/widgets/surfaces/qtmaterialdialog.h` | `DialogSpec` | `tst_dialog` | `docs/public-api/surfaces.md` | `/surfaces/dialog` |
-| `surface.navigation-drawer` | Navigation Drawer | `usable` | `qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h` | `NavigationDrawerSpec` | `tst_navigationdrawer` | `docs/public-api/surfaces.md` | `/surfaces/navigation-drawer` |
-| `surface.snackbar` | Snackbar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialsnackbar.h` | `SnackbarSpec` | `tst_snackbar` | `docs/public-api/surfaces.md` | `/surfaces/snackbar` |
-| `surface.top-app-bar` | Top App Bar | `usable` | `qtmaterial/widgets/surfaces/qtmaterialtopappbar.h` | `AppBarSpec` | `tst_topappbar` | `docs/public-api/surfaces.md` | `/surfaces/top-app-bar` |
+| `surface.banner` | Banner | `complete` | `qtmaterial/widgets/surfaces/qtmaterialbanner.h` | `BannerSpec` | `tst_banner` | `docs/public-api/surfaces.md` | `/surfaces/banner` |
+| `surface.bottom-app-bar` | Bottom App Bar | `complete` | `qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h` | `AppBarSpec` | `tst_bottomappbar` | `docs/public-api/surfaces.md` | `/surfaces/bottom-app-bar` |
+| `surface.bottom-sheet` | Bottom Sheet | `complete` | `qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h` | `BottomSheetSpec` | `tst_bottomsheet` | `docs/public-api/surfaces.md` | `/surfaces/bottom-sheet` |
+| `surface.card` | Card | `complete` | `qtmaterial/widgets/surfaces/qtmaterialcard.h` | `CardSpec` | `tst_card` | `docs/public-api/surfaces.md` | `/surfaces/card` |
+| `surface.dialog` | Dialog | `complete` | `qtmaterial/widgets/surfaces/qtmaterialdialog.h` | `DialogSpec` | `tst_dialog` | `docs/public-api/surfaces.md` | `/surfaces/dialog` |
+| `surface.navigation-drawer` | Navigation Drawer | `complete` | `qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h` | `NavigationDrawerSpec` | `tst_navigationdrawer` | `docs/public-api/surfaces.md` | `/surfaces/navigation-drawer` |
+| `surface.snackbar` | Snackbar | `complete` | `qtmaterial/widgets/surfaces/qtmaterialsnackbar.h` | `SnackbarSpec` | `tst_snackbar` | `docs/public-api/surfaces.md` | `/surfaces/snackbar` |
+| `surface.top-app-bar` | Top App Bar | `complete` | `qtmaterial/widgets/surfaces/qtmaterialtopappbar.h` | `AppBarSpec` | `tst_topappbar` | `docs/public-api/surfaces.md` | `/surfaces/top-app-bar` |
