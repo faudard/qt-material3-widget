@@ -102,6 +102,7 @@ qtm3_add_test(tst_fab widgets/buttons/tst_fab.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_extendedfab widgets/buttons/tst_extendedfab.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_extendedfab_maturity widgets/buttons/tst_extendedfab_maturity.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_button_contracts widgets/buttons/tst_button_contracts.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_expressive_buttons widgets/buttons/tst_expressive_buttons.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_checkbox widgets/selection/tst_checkbox.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_switch widgets/selection/tst_switch.cpp qtmaterial3_widgets)
@@ -225,6 +226,7 @@ qtm3_add_test(tst_tabsresolvedlifecycle widgets/navigation/tst_tabsresolvedlifec
 qtm3_add_test(tst_tabs_route_robustness widgets/navigation/tst_tabs_route_robustness.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_navigationrail widgets/navigation/tst_navigationrail.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_missing_material3 widgets/tst_missing_material3.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_adaptive_shell widgets/navigation/tst_adaptive_shell.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_commandpalette_stress widgets/navigation/tst_commandpalette_stress.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_navigation_desktop_certification widgets/navigation/tst_navigation_desktop_certification.cpp qtmaterial3_widgets)
 set_tests_properties(tst_commandpalette_stress tst_navigation_desktop_certification

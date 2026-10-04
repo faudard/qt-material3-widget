@@ -211,6 +211,89 @@ ButtonsPage::ButtonsPage(QWidget* parent)
     addLabeledWidget(fabGrid, 3, 2, QStringLiteral("Surface Extended"), surfaceExtended, this);
     root->addLayout(fabGrid);
 
+
+    root->addWidget(separator(this));
+    root->addWidget(sectionTitle(QStringLiteral("Material 3 Expressive"), this));
+    root->addWidget(helperText(
+        QStringLiteral("Expressive sizing is opt-in. Press the buttons to see Round/Square shape morphing; "
+                       "the selected examples are checkable and keep the selected morph target."),
+        this));
+
+    auto* expressiveGrid = new QGridLayout();
+    expressiveGrid->setHorizontalSpacing(16);
+    expressiveGrid->setVerticalSpacing(20);
+
+    struct ExpressiveSizeExample {
+        QtMaterial::QtMaterialButtonSize size;
+        const char* label;
+    };
+    const ExpressiveSizeExample expressiveSizes[] = {
+        {QtMaterial::QtMaterialButtonSize::ExtraSmall, "XS"},
+        {QtMaterial::QtMaterialButtonSize::Small, "S"},
+        {QtMaterial::QtMaterialButtonSize::Medium, "M"},
+        {QtMaterial::QtMaterialButtonSize::Large, "L"},
+        {QtMaterial::QtMaterialButtonSize::ExtraLarge, "XL"},
+    };
+
+    for (int index = 0; index < 5; ++index) {
+        auto* expressiveButton =
+            new QtMaterial::QtMaterialFilledButton(
+                QString::fromLatin1(expressiveSizes[index].label),
+                this);
+        expressiveButton->setExpressive(true);
+        expressiveButton->setExpressiveSize(expressiveSizes[index].size);
+        expressiveButton->setExpressiveShape(
+            index % 2 == 0
+                ? QtMaterial::QtMaterialButtonShape::Round
+                : QtMaterial::QtMaterialButtonShape::Square);
+        if (index == 2 || index == 4) {
+            expressiveButton->setCheckable(true);
+            expressiveButton->setChecked(true);
+        }
+        addLabeledWidget(
+            expressiveGrid,
+            0,
+            index,
+            QString::fromLatin1(expressiveSizes[index].label),
+            expressiveButton,
+            this);
+    }
+
+    const QIcon expressiveFabIcon =
+        standardIcon(this, QStyle::SP_FileDialogNewFolder);
+    struct ExpressiveFabExample {
+        QtMaterial::QtMaterialFabSize size;
+        const char* label;
+    };
+    const ExpressiveFabExample expressiveFabs[] = {
+        {QtMaterial::QtMaterialFabSize::Small, "Small FAB"},
+        {QtMaterial::QtMaterialFabSize::Standard, "Standard FAB"},
+        {QtMaterial::QtMaterialFabSize::Medium, "Medium FAB"},
+        {QtMaterial::QtMaterialFabSize::Large, "Large FAB"},
+    };
+
+    for (int index = 0; index < 4; ++index) {
+        auto* expressiveFab =
+            new QtMaterial::QtMaterialFab(expressiveFabIcon, this);
+        expressiveFab->setExpressive(true);
+        expressiveFab->setFabSize(expressiveFabs[index].size);
+        expressiveFab->setExpressiveShape(
+            index % 2 == 0
+                ? QtMaterial::QtMaterialButtonShape::Round
+                : QtMaterial::QtMaterialButtonShape::Square);
+        expressiveFab->setAccessibleName(
+            QString::fromLatin1(expressiveFabs[index].label));
+        addLabeledWidget(
+            expressiveGrid,
+            1,
+            index,
+            QString::fromLatin1(expressiveFabs[index].label),
+            expressiveFab,
+            this);
+    }
+
+    root->addLayout(expressiveGrid);
+
  // BEGIN GENERATED BUTTONS MATURITY GALLERY COVERAGE
  root->addWidget(separator(this));
 

@@ -46,6 +46,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     data/qtmaterialbadge.cpp
     navigation/qtmaterialtabs.cpp
     navigation/qtmaterialnavigationbar.cpp
+    navigation/qtmaterialnavigationsuite.cpp
     surfaces/qtmaterialsnackbar.cpp
     surfaces/qtmaterialsnackbarhost.cpp
     progress/qtmateriallinearprogressindicator.cpp
@@ -66,6 +67,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     data/qtmaterialpagination.cpp
     data/qtmaterialtreeview.cpp
     layouts/qtmaterialsplitview.cpp
+    layouts/qtmaterialadaptiveshell.cpp
     navigation/qtmaterialbreadcrumb.cpp
     navigation/qtmaterialcommandpalette.cpp
 )
@@ -111,6 +113,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialtabs.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationbar.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialroute.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialdivider.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialbadge.h
@@ -132,6 +135,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialpagination.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialtreeview.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/layouts/qtmaterialsplitview.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialcommandpalette.h
 )

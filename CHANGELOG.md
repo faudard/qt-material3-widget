@@ -21,6 +21,9 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Material 3 Expressive buttons add XS/S/M/L/XL sizing, Round/Square shape semantics and state-driven press/selected morphing through the shared button renderer.
+- Expressive FAB adds Small/Standard/Medium/Large sizing while reusing the shared shape-morph and reduced-motion pipeline.
+- Adaptive window size classes, Navigation Suite and Adaptive Shell add Compact/Medium/Expanded/Large/ExtraLarge behavior, responsive Bar/Rail navigation, supporting panes, RTL layout and automatic desktop density.
 - Material 3 catalogue coverage adds Navigation Bar, Side Sheet, Tooltip and Badge with theme-aware rendering, focused tests, Gallery examples and 1.7 maturity tracking.
 - Designer 2.0 expands the curated Qt Designer palette from 21 to 27 persistence-safe widgets, including Range Slider, Date Field, Search Bar, Top/Bottom App Bars and Divider.
 - Outlined/Filled Text Fields expose their common authored values as Qt properties for direct editing and UIC serialization.

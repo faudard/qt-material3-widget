@@ -199,3 +199,31 @@ Promotion gate:
 - Promotion to release scope requires the normal API, rendering, states, accessibility, keyboard,
   HiDPI, RTL, tests, example and documentation evidence.
 - Existing package, consumer, sanitizer, architecture and public API gates must remain green.
+
+## 1.8.0 — Material 3 Expressive
+
+Goal: move from an Expressive foundation to production widget behavior without
+changing the stable default appearance of existing 1.x applications.
+
+Release gates:
+
+- Common buttons expose ExtraSmall, Small, Medium, Large and ExtraLarge Expressive sizes.
+- Round and Square shapes are public semantic choices and morph on press/selection.
+- FAB exposes dedicated Small, Standard, Medium and Large Expressive sizing.
+- Expressive widget motion uses semantic spatial motion tokens and honors reduced motion.
+- Expressive rendering is shared by production button pipelines rather than example-only styling.
+- Keyboard, accessibility, RTL, HiDPI, package, consumer and visual-regression gates remain green.
+
+## 1.9.0 — Adaptive / Desktop
+
+Goal: make Qt Widgets applications respond to available window space with one
+navigation/content shell instead of application-specific breakpoint code.
+
+Release gates:
+
+- Window size classes cover Compact, Medium, Expanded, Large and ExtraLarge widths.
+- Navigation Suite switches between Navigation Bar and Navigation Rail without losing state.
+- Adaptive Shell owns responsive navigation, main content and an optional supporting pane.
+- Expanded layouts can expose a secondary pane while preserving a usable main-content width.
+- Desktop density is resolved and propagated to QtMaterial controls with an opt-out for app-owned density.
+- RTL, keyboard navigation, accessibility, resize/tiling behavior and cross-platform CI are executable contracts.

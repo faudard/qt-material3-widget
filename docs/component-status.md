@@ -64,6 +64,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 
 | ID | Component | Maturity | Header | Spec | Test | Docs | Gallery |
 |---|---|---:|---|---|---|---|---|
+| `layout.adaptive-shell` | Adaptive Shell | `usable` | `qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h` | `N/A` | `tst_adaptive_shell` | `docs/public-api/material3-expressive-adaptive.md` | `/layouts/adaptive-shell` |
 | `layout.split-view` | Split View | `usable` | `qtmaterial/widgets/layouts/qtmaterialsplitview.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/layouts/split-view` |
 
 ## Navigation
@@ -75,6 +76,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 | `navigation.command-palette` | Command Palette | `usable` | `qtmaterial/widgets/navigation/qtmaterialcommandpalette.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/navigation/command-palette` |
 | `navigation.menu` | Menu | `usable` | `qtmaterial/widgets/navigation/qtmaterialmenu.h` | `MenuSpec` | `tst_menu` | `docs/public-api/navigation.md` | `/navigation/menu` |
 | `navigation.rail` | Navigation Rail | `usable` | `qtmaterial/widgets/navigation/qtmaterialnavigationrail.h` | `NavigationRailSpec` | `tst_navigationrail` | `docs/public-api/navigation.md` | `/navigation/rail` |
+| `navigation.suite` | Navigation Suite | `usable` | `qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h` | `N/A` | `tst_adaptive_shell` | `docs/public-api/material3-expressive-adaptive.md` | `/navigation/suite` |
 | `navigation.tabs` | Tabs | `usable` | `qtmaterial/widgets/navigation/qtmaterialtabs.h` | `TabsSpec` | `tst_tabs` | `docs/public-api/navigation.md` | `/navigation/tabs` |
 
 ## Progress

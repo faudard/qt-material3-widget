@@ -92,6 +92,9 @@ void QtMaterialExtendedFab::initializeExtendedFab()
     setMaterialComponent(QStringLiteral("button"));
     setMaterialVariant(QStringLiteral("extended-fab"));
     setMaterialRole(QStringLiteral("action"));
+    // The Expressive common-button medium tier preserves the 56 px
+    // standard extended-FAB height when Expressive behavior is enabled.
+    setExpressiveSize(QtMaterialButtonSize::Medium);
 }
 
 QString QtMaterialExtendedFab::effectiveAccessibleName() const
@@ -221,7 +224,8 @@ ButtonSpec QtMaterialExtendedFab::resolveButtonSpec() const
 
 QSize QtMaterialExtendedFab::sizeHint() const
 {
-    const ButtonSpec spec = resolveButtonSpec();
+    ensureSpecResolved();
+    const ButtonSpec& spec = currentButtonSpec();
     const QFont labelFont = spec.hasResolvedLabelFont
         ? spec.labelFont
         : font();

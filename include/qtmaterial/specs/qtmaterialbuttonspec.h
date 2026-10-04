@@ -38,6 +38,11 @@ struct QTMATERIAL3_SPECS_EXPORT ButtonSpec {
     bool hasResolvedElevationStyle = false;
     bool hasResolvedHoverElevationStyle = false;
     qreal cornerRadius = -1.0;
+    // Optional state-shape radii used by Material 3 Expressive. Negative values
+    // mean a full/pill radius, matching cornerRadius semantics.
+    qreal pressedCornerRadius = -1.0;
+    qreal selectedCornerRadius = -1.0;
+    bool hasStateShapeMorph = false;
     qreal hoverStateLayerOpacity = 0.08;
     qreal focusStateLayerOpacity = 0.10;
     qreal pressStateLayerOpacity = 0.10;
