@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <QTreeView>
+#include <QString>
 
 #include "qtmaterial/qtmaterialglobal.h"
 
@@ -16,6 +17,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTreeView : public QTreeView
     Q_PROPERTY(bool dense READ dense WRITE setDense NOTIFY denseChanged)
     Q_PROPERTY(bool multiSelectionEnabled READ multiSelectionEnabled WRITE setMultiSelectionEnabled NOTIFY multiSelectionEnabledChanged)
     Q_PROPERTY(bool dragDropEnabled READ dragDropEnabled WRITE setDragDropEnabled NOTIFY dragDropEnabledChanged)
+    Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
 
 public:
     explicit QtMaterialTreeView(QWidget* parent = nullptr);
@@ -30,12 +32,21 @@ public:
     bool dragDropEnabled() const noexcept;
     void setDragDropEnabled(bool enabled);
 
+    QString accessibilitySummary() const;
+    QString currentItemAccessibleText() const;
+    void setModel(QAbstractItemModel* model) override;
+
 Q_SIGNALS:
     void denseChanged(bool dense);
     void multiSelectionEnabledChanged(bool enabled);
     void dragDropEnabledChanged(bool enabled);
+    void accessibilitySummaryChanged(const QString& summary);
+
+protected:
+    void currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
 
 private:
+    void syncAccessibility();
     std::unique_ptr<QtMaterialTreeViewPrivate> d_ptr;
 };
 

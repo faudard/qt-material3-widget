@@ -194,7 +194,7 @@ jobs:
             bash -c 'openbox >/tmp/openbox.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure'
 
       - name: Generate family visual candidate goldens
-        if: matrix.name == 'ubuntu-qt6'
+        if: matrix.name == 'ubuntu-qt6.4.0-floor'
         shell: bash
         env:
           QTMATERIAL3_UPDATE_VISUAL_GOLDENS: 1
@@ -204,7 +204,7 @@ jobs:
             bash -c 'openbox >/tmp/openbox-visual-candidates.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure -R tst_theme_visual_regression'
 
       - name: Upload family visual candidate goldens
-        if: always() && matrix.name == 'ubuntu-qt6'
+        if: always() && matrix.name == 'ubuntu-qt6.4.0-floor'
         uses: actions/upload-artifact@v6
         with:
           name: family-visual-candidate-goldens
@@ -219,6 +219,8 @@ jobs:
             tests/visual/goldens/data_extended_matrix_*.png
             tests/visual/goldens/progress_compact_matrix_*.png
             tests/visual/goldens/surface_bar_matrix_*.png
+            tests/visual/goldens/surface_overlay_matrix_*.png
+            tests/visual/goldens/layout_matrix_*.png
           if-no-files-found: warn
 
       - name: Test Windows

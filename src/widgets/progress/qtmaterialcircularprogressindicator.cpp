@@ -380,7 +380,8 @@ void QtMaterialCircularProgressIndicator::updateAnimationState()
         return;
     }
 
-    if (d->mode == Mode::Indeterminate && isVisible()) {
+    const bool reducedMotion = theme().accessibility().reducedMotion;
+    if (d->mode == Mode::Indeterminate && isVisible() && !reducedMotion) {
         if (d->animation->state() != QVariantAnimation::Running) {
             d->animation->start();
         }
@@ -388,7 +389,11 @@ void QtMaterialCircularProgressIndicator::updateAnimationState()
         if (d->animation->state() != QVariantAnimation::Stopped) {
             d->animation->stop();
         }
-        d->phase = 0.0;
+        d->phase =
+            (d->mode == Mode::Indeterminate && isVisible() && reducedMotion)
+            ? 0.5
+            : 0.0;
+        update();
     }
 }
 
@@ -444,6 +449,7 @@ void QtMaterialCircularProgressIndicator::themeChangedEvent(const Theme& changed
     d->specDirty = true;
     ensureSpecResolved();
     initAnimation();
+    updateAnimationState();
     updateGeometry();
     update();
 }

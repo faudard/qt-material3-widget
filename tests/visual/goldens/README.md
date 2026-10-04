@@ -66,3 +66,14 @@ reviewed PNGs committed here and listed in `tools/release_rules.json`. Candidate
 therefore cap the rendering axis at 3/4. Families without a deterministic matrix remain below
 that gate until one is added. This rule applies equally to Selection, Inputs, Navigation,
 Surfaces, Data, Progress and Compact controls.
+
+## 1.5 enterprise certification
+
+Family candidates are generated only by the pinned Qt 6.4.0 / Fusion CI lane. A family
+matrix can become a stable release golden only after the generated PNG has been visually
+reviewed. Once promoted, its light-standard, dark-standard and light-high variants are
+listed in `tools/release_rules.json` and the registry may raise that family's rendering
+axis to 4/4.
+
+The 1.5 gate intentionally rejects a `complete` release-scoped component when its mapped
+family goldens are absent from the stable release rules.

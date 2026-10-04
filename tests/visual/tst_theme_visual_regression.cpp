@@ -44,6 +44,7 @@
 #include "qtmaterial/widgets/inputs/qtmaterialslider.h"
 #include "qtmaterial/widgets/inputs/qtmaterialrangeslider.h"
 #include "qtmaterial/widgets/inputs/qtmaterialtimefield.h"
+#include "qtmaterial/widgets/inputs/qtmaterialtimepicker.h"
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
@@ -358,7 +359,7 @@ QWidget* buildInputCompositeStateMatrix(const Theme& theme)
     layout->setHorizontalSpacing(18);
     layout->setVerticalSpacing(12);
     addMatrixHeaders(layout, root, {
-        QStringLiteral("Search View"), QStringLiteral("Date Picker"), QStringLiteral("Date Range")});
+        QStringLiteral("Search View"), QStringLiteral("Date Picker"), QStringLiteral("Date Range"), QStringLiteral("Time Picker")});
 
     const QStringList states = {
         QStringLiteral("Value"), QStringLiteral("Disabled"), QStringLiteral("RTL")};
@@ -391,6 +392,15 @@ QWidget* buildInputCompositeStateMatrix(const Theme& theme)
         dateRange->setEnabled(enabled);
         dateRange->setLayoutDirection(direction);
         layout->addWidget(dateRange, row, 3);
+
+        auto* timePicker = new QtMaterialTimePicker(root);
+        timePicker->setWindowFlags(Qt::Widget);
+        timePicker->setModal(false);
+        timePicker->setSelectedTime(QTime(14, 35));
+        timePicker->setEnabled(enabled);
+        timePicker->setLayoutDirection(direction);
+        timePicker->setMinimumSize(QSize(220, 140));
+        layout->addWidget(timePicker, row, 4);
     }
 
     return root;
@@ -706,18 +716,79 @@ QWidget* buildDataExtendedStateMatrix(const Theme& theme)
 
 QWidget* buildProgressCompactStateMatrix(const Theme& theme)
 {
-    auto* root=new QWidget; configureMatrixRoot(root,theme,QStringLiteral("progressCompactStateMatrix"));
-    auto* layout=new QGridLayout(root); layout->setContentsMargins(24,24,24,24);
-    addMatrixHeaders(layout,root,{QStringLiteral("Linear"),QStringLiteral("Circular"),QStringLiteral("Assist chip"),QStringLiteral("Filter chip")});
-    const QStringList states={QStringLiteral("Default"),QStringLiteral("Selected"),QStringLiteral("Disabled"),QStringLiteral("RTL")};
-    for(int i=0;i<states.size();++i)addStateLabel(layout,root,i+1,states.at(i));
-    for(int row=1;row<=4;++row){
-        const bool enabled=row!=3; const auto dir=row==4?Qt::RightToLeft:Qt::LeftToRight;
-        auto* linear=new QtMaterialLinearProgressIndicator(root); linear->setValue(row==2?0.75:0.42); linear->setEnabled(enabled); linear->setLayoutDirection(dir); linear->setMinimumWidth(220); layout->addWidget(linear,row,1);
-        auto* circular=new QtMaterialCircularProgressIndicator(root); circular->setValue(row==2?0.75:0.42); circular->setEnabled(enabled); circular->setLayoutDirection(dir); layout->addWidget(circular,row,2,Qt::AlignCenter);
-        auto* assist=new QtMaterialChip(QStringLiteral("Assist"),root); assist->setVariant(ChipVariant::Assist); assist->setEnabled(enabled); assist->setLayoutDirection(dir); layout->addWidget(assist,row,3);
-        auto* filter=new QtMaterialChip(QStringLiteral("Filter"),root); filter->setVariant(ChipVariant::Filter); filter->setChecked(row==2||row==4); filter->setEnabled(enabled); filter->setLayoutDirection(dir); layout->addWidget(filter,row,4);
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("progressCompactStateMatrix"));
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(16);
+    layout->setVerticalSpacing(12);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Linear"),
+        QStringLiteral("Circular"),
+        QStringLiteral("Assist chip"),
+        QStringLiteral("Filter chip"),
+        QStringLiteral("Input chip"),
+        QStringLiteral("Suggestion chip")});
+
+    const QStringList states = {
+        QStringLiteral("Default"),
+        QStringLiteral("Selected / 100%"),
+        QStringLiteral("Disabled"),
+        QStringLiteral("RTL"),
+        QStringLiteral("Indeterminate")};
+    for (int i = 0; i < states.size(); ++i) {
+        addStateLabel(layout, root, i + 1, states.at(i));
     }
+
+    for (int row = 1; row <= 5; ++row) {
+        const bool enabled = row != 3;
+        const auto direction =
+            row == 4 ? Qt::RightToLeft : Qt::LeftToRight;
+        const bool indeterminate = row == 5;
+        const qreal value = row == 2 ? 1.0 : 0.42;
+
+        auto* linear = new QtMaterialLinearProgressIndicator(root);
+        linear->setValue(value);
+        linear->setIndeterminate(indeterminate);
+        linear->setEnabled(enabled);
+        linear->setLayoutDirection(direction);
+        linear->setMinimumWidth(220);
+        layout->addWidget(linear, row, 1);
+
+        auto* circular = new QtMaterialCircularProgressIndicator(root);
+        circular->setValue(value);
+        circular->setIndeterminate(indeterminate);
+        circular->setEnabled(enabled);
+        circular->setLayoutDirection(direction);
+        layout->addWidget(circular, row, 2, Qt::AlignCenter);
+
+        auto* assist = new QtMaterialChip(QStringLiteral("Assist"), root);
+        assist->setVariant(ChipVariant::Assist);
+        assist->setEnabled(enabled);
+        assist->setLayoutDirection(direction);
+        layout->addWidget(assist, row, 3);
+
+        auto* filter = new QtMaterialChip(QStringLiteral("Filter"), root);
+        filter->setVariant(ChipVariant::Filter);
+        filter->setChecked(row == 2 || row == 4);
+        filter->setEnabled(enabled);
+        filter->setLayoutDirection(direction);
+        layout->addWidget(filter, row, 4);
+
+        auto* input = new QtMaterialChip(QStringLiteral("Input"), root);
+        input->setVariant(ChipVariant::Input);
+        input->setRemovable(true);
+        input->setEnabled(enabled);
+        input->setLayoutDirection(direction);
+        layout->addWidget(input, row, 5);
+
+        auto* suggestion = new QtMaterialChip(QStringLiteral("Suggestion"), root);
+        suggestion->setVariant(ChipVariant::Suggestion);
+        suggestion->setEnabled(enabled);
+        suggestion->setLayoutDirection(direction);
+        layout->addWidget(suggestion, row, 6);
+    }
+
     return root;
 }
 
@@ -747,53 +818,77 @@ QWidget* buildSurfaceOverlayStateMatrix(const Theme& theme)
     layout->setHorizontalSpacing(18);
     layout->setVerticalSpacing(12);
     addMatrixHeaders(layout, root, {
-        QStringLiteral("Dialog"), QStringLiteral("Drawer"),
-        QStringLiteral("Bottom sheet"), QStringLiteral("Snackbar")});
+        QStringLiteral("Dialog"),
+        QStringLiteral("Drawer"),
+        QStringLiteral("Bottom sheet"),
+        QStringLiteral("Snackbar")});
 
     const QStringList states = {
-        QStringLiteral("Default"), QStringLiteral("Disabled"), QStringLiteral("RTL")};
-    for (int i = 0; i < states.size(); ++i)
+        QStringLiteral("Open"),
+        QStringLiteral("Disabled"),
+        QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i) {
         addStateLabel(layout, root, i + 1, states.at(i));
+    }
+
+    auto makeHost = [root]() {
+        auto* host = new QWidget(root);
+        host->setObjectName(QStringLiteral("visualOverlayHost"));
+        host->setFixedSize(320, 210);
+        return host;
+    };
 
     for (int row = 1; row <= 3; ++row) {
         const bool enabled = row != 2;
-        const auto direction = row == 3 ? Qt::RightToLeft : Qt::LeftToRight;
+        const auto direction =
+            row == 3 ? Qt::RightToLeft : Qt::LeftToRight;
 
-        auto* dialog = new QtMaterialDialog(root);
+        auto* dialogHost = makeHost();
+        auto* dialog = new QtMaterialDialog(dialogHost);
         dialog->setTitleText(QStringLiteral("Discard changes?"));
         dialog->setSupportingText(QStringLiteral("Unsaved changes will be lost."));
         dialog->setEnabled(enabled);
         dialog->setLayoutDirection(direction);
-        dialog->setMinimumSize(260, 140);
-        layout->addWidget(dialog, row, 1);
+        dialog->open();
+        layout->addWidget(dialogHost, row, 1);
 
-        auto* drawer = new QtMaterialNavigationDrawer(root);
-        drawer->setEdge(direction == Qt::RightToLeft
-            ? QtMaterialNavigationDrawer::Edge::Right
-            : QtMaterialNavigationDrawer::Edge::Left);
+        auto* drawerHost = makeHost();
+        auto* drawer = new QtMaterialNavigationDrawer(drawerHost);
+        drawer->setEdge(
+            direction == Qt::RightToLeft
+                ? QtMaterialNavigationDrawer::Edge::Right
+                : QtMaterialNavigationDrawer::Edge::Left);
         drawer->setEnabled(enabled);
         drawer->setLayoutDirection(direction);
-        drawer->setMinimumSize(220, 180);
-        layout->addWidget(drawer, row, 2);
+        drawer->resize(250, drawerHost->height());
+        drawer->open();
+        layout->addWidget(drawerHost, row, 2);
 
-        auto* sheet = new QtMaterialBottomSheet(root);
+        auto* sheetHost = makeHost();
+        auto* sheet = new QtMaterialBottomSheet(sheetHost);
+        sheet->setModal(false);
+        sheet->setExpandedHeight(170);
+        sheet->setCollapsedHeight(72);
         sheet->setTitleText(QStringLiteral("Share"));
         sheet->setSupportingText(QStringLiteral("Choose a destination"));
         sheet->setExpanded(true);
         sheet->setEnabled(enabled);
         sheet->setLayoutDirection(direction);
-        sheet->setMinimumSize(280, 160);
-        layout->addWidget(sheet, row, 3);
+        sheet->open();
+        layout->addWidget(sheetHost, row, 3);
 
-        auto* snackbar = new QtMaterialSnackbar(root);
+        auto* snackbarHost = makeHost();
+        auto* snackbar = new QtMaterialSnackbar(snackbarHost);
         snackbar->setText(QStringLiteral("Changes saved"));
         snackbar->setActionText(QStringLiteral("Undo"));
+        snackbar->setShowDismissButton(true);
         snackbar->setDuration(SnackbarDuration::Indefinite);
         snackbar->setEnabled(enabled);
         snackbar->setLayoutDirection(direction);
-        snackbar->setMinimumWidth(280);
-        layout->addWidget(snackbar, row, 4);
+        snackbar->showSnackbar();
+        layout->addWidget(snackbarHost, row, 4);
     }
+
     return root;
 }
 

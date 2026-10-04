@@ -6,6 +6,7 @@
 #include <QListView>
 #include <QStringListModel>
 #include <QStandardItemModel>
+#include <QTimeEdit>
 
 #include "qtmaterial/theme/qtmaterialcolortoken.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
@@ -18,6 +19,7 @@
 #include "qtmaterial/widgets/inputs/qtmaterialslider.h"
 #include "qtmaterial/widgets/inputs/qtmaterialtimefield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialtimepicker.h"
+#include "qtmaterial/widgets/qtmaterialdatepicker.h"
 #include "qtmaterial/widgets/selection/qtmaterialchip.h"
 #include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
@@ -165,6 +167,82 @@ private slots:
         QCOMPARE(range.endDate(), second);
     }
 
+    void inputKeyboardAccessibilityAndRtlContracts()
+    {
+        QtMaterialSearchBar search;
+        QCOMPARE(search.focusProxy(), search.lineEdit());
+        QCOMPARE(search.accessibleName(), QStringLiteral("Search"));
+        search.setText(QStringLiteral("material"));
+        search.setLayoutDirection(Qt::RightToLeft);
+        QCOMPARE(search.lineEdit()->layoutDirection(), Qt::RightToLeft);
+
+        QSignalSpy requested(&search, &QtMaterialSearchBar::searchRequested);
+        QTest::keyClick(search.lineEdit(), Qt::Key_Return);
+        QCOMPARE(requested.count(), 1);
+
+        QStringListModel model({
+            QStringLiteral("Alpha"),
+            QStringLiteral("Beta"),
+            QStringLiteral("Gamma")
+        });
+        QtMaterialSearchView view;
+        view.setSourceModel(&model);
+        view.setLayoutDirection(Qt::RightToLeft);
+        view.searchBar()->setText(QStringLiteral("Gamma"));
+        QCOMPARE(view.resultView()->model()->rowCount(), 1);
+        QCOMPARE(view.resultView()->layoutDirection(), Qt::RightToLeft);
+
+        QtMaterialRangeSlider range;
+        range.setRange(0, 100);
+        range.setValues(25, 75);
+        range.setFocus();
+        QTest::keyClick(&range, Qt::Key_Right);
+        QVERIFY(range.lowerValue() >= 25);
+        range.setLayoutDirection(Qt::RightToLeft);
+        const QSize rtlHint = range.sizeHint();
+        range.setLayoutDirection(Qt::LeftToRight);
+        QCOMPARE(range.sizeHint(), rtlHint);
+
+        QtMaterialDateRangePicker dates;
+        dates.setDateRange(QDate(2026, 10, 10), QDate(2026, 10, 3));
+        QCOMPARE(dates.startDate(), QDate(2026, 10, 3));
+        QCOMPARE(dates.endDate(), QDate(2026, 10, 10));
+        dates.setLayoutDirection(Qt::RightToLeft);
+        QCOMPARE(dates.startPicker()->layoutDirection(), Qt::RightToLeft);
+        QCOMPARE(dates.endPicker()->layoutDirection(), Qt::RightToLeft);
+
+        QtMaterialTimePicker time;
+        QCOMPARE(time.accessibleName(), QStringLiteral("Time picker"));
+        time.setSelectedTime(QTime(14, 35));
+        QCOMPARE(time.timeField()->time(), QTime(14, 35));
+        time.setLayoutDirection(Qt::RightToLeft);
+        QCOMPARE(time.timeField()->layoutDirection(), Qt::RightToLeft);
+    }
+
+    void disabledInputsDoNotMutateFromKeyboard()
+    {
+        QtMaterialSlider slider;
+        slider.setRange(0, 10);
+        slider.setValue(5);
+        slider.setEnabled(false);
+        QTest::keyClick(&slider, Qt::Key_Right);
+        QCOMPARE(slider.value(), 5);
+
+        QtMaterialRangeSlider range;
+        range.setRange(0, 100);
+        range.setValues(20, 80);
+        range.setEnabled(false);
+        QTest::keyClick(&range, Qt::Key_Right);
+        QCOMPARE(range.lowerValue(), 20);
+        QCOMPARE(range.upperValue(), 80);
+
+        QtMaterialSearchBar search;
+        search.setText(QStringLiteral("locked"));
+        search.setEnabled(false);
+        QTest::keyClick(search.lineEdit(), Qt::Key_A);
+        QCOMPARE(search.text(), QStringLiteral("locked"));
+    }
+
     void chipFamilyVariants()
     {
         QtMaterialChip chip(QStringLiteral("Filter"));
@@ -187,6 +265,31 @@ private slots:
 
         QCOMPARE(chip.accessibleName(), QStringLiteral("Filter"));
         QCOMPARE(chip.focusPolicy(), Qt::StrongFocus);
+    }
+
+    void chipKeyboardRemovalAndFilterToggle()
+    {
+        QtMaterialChip filter(QStringLiteral("Filter"));
+        filter.setVariant(ChipVariant::Filter);
+        filter.setFocus();
+        QVERIFY(filter.isCheckable());
+        QVERIFY(!filter.isChecked());
+        QTest::keyClick(&filter, Qt::Key_Space);
+        QVERIFY(filter.isChecked());
+
+        QtMaterialChip input(QStringLiteral("Input"));
+        input.setVariant(ChipVariant::Input);
+        input.setRemovable(true);
+        QSignalSpy removeSpy(&input, &QtMaterialChip::removeRequested);
+
+        QTest::keyClick(&input, Qt::Key_Delete);
+        QCOMPARE(removeSpy.count(), 1);
+        QTest::keyClick(&input, Qt::Key_Backspace);
+        QCOMPARE(removeSpy.count(), 2);
+
+        input.setEnabled(false);
+        QTest::keyClick(&input, Qt::Key_Delete);
+        QCOMPARE(removeSpy.count(), 2);
     }
 
     void chipDesktopScaleFactors_data()

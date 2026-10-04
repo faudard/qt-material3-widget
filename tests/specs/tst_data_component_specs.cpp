@@ -23,6 +23,10 @@ private slots:
 
         const auto carousel = QtMaterial::defaultCarouselSpec();
         QVERIFY(carousel.indicatorSize > 0);
+
+        const auto pagination = QtMaterial::defaultPaginationSpec();
+        QVERIFY(pagination.backgroundColor.isValid());
+        QVERIFY(pagination.controlExtent > 0);
     }
 };
 

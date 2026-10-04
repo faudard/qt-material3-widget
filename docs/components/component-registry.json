@@ -650,29 +650,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic Material visual-reference evidence remains before complete maturity."
+        "Reviewed deterministic progress_compact_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Promote reviewed Chip family visual baselines before complete maturity."
+        "Review and promote the pinned Qt 6.4/Fusion progress_compact_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Chip family has a public 0.8 header and stable Qt-style API."
         ],
         "rendering": [
-          "Chip family has a production implementation in the Widgets module."
+          "Chip family has a production implementation in the Widgets module.",
+          "progress_compact_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "Chip family exposes its primary runtime states and invariants."
@@ -682,8 +683,8 @@
           "tst_component_expansion certifies the accessible name for the Chip family."
         ],
         "keyboard": [
-          "Chip preserves the native strong-focus abstract-button keyboard contract.",
-          "tst_component_expansion certifies the focus contract across the public Chip family."
+          "QtMaterialChip preserves the native strong-focus abstract-button activation contract.",
+          "tst_component_expansion certifies Filter-chip Space toggling plus Delete/Backspace removal for removable chips, including disabled suppression."
         ],
         "hidpi": [
           "tst_component_expansion renders Assist, Filter, Input and Suggestion chips at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
@@ -692,13 +693,15 @@
           "tst_component_expansion renders every public Chip variant under RTL layout direction."
         ],
         "tests": [
-          "tst_component_expansion exercises the 0.8 public contract."
+          "tst_component_expansion exercises the 0.8 public contract.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+          "examples/gallery/pages/selectionpage.cpp demonstrates Assist, Filter, Input and Suggestion chip variants."
         ],
         "docs": [
-          "docs/public-api/component-expansion.md documents the 0.8 contract."
+          "docs/public-api/component-expansion.md documents the 0.8 contract.",
+          "docs/public-api/component-expansion.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Chip family entered release scope in 0.8.0."
@@ -721,53 +724,56 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "No Carousel Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add Carousel reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes."
+        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/data/qtmaterialcarousel.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/data/qtmaterialcarousel.cpp."
+          "Production implementation exists: src/widgets/data/qtmaterialcarousel.cpp.",
+          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/data/tst_carousel.cpp exercises the current widget behavior."
         ],
         "accessibility": [
-          "Accessibility remains basic and has no dedicated conformance suite."
+          "tst_carousel certifies empty/current-item accessibility summaries and current accessible text."
         ],
         "keyboard": [
-          "Keyboard behavior remains basic and has no dedicated conformance suite."
+          "tst_carousel certifies wrapping, disabled-item skipping, boundaries and activation."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_carousel renders the component at devicePixelRatio 2.0 without invalid output."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "tst_carousel certifies RTL layout direction and high-DPI rendering."
         ],
         "tests": [
-          "Registered target tst_carousel and resolved-spec tests provide simple-case coverage."
+          "Registered target tst_carousel and resolved-spec tests provide simple-case coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/datapage.cpp instantiates QtMaterialCarousel."
+          "Data and Advanced Data gallery pages demonstrate the public Data components."
         ],
         "docs": [
-          "docs/public-api/data-widgets.md documents the public data-widget contract."
+          "docs/public-api/data-widgets.md documents the public data-widget contract.",
+          "docs/public-api/data-widgets.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -787,53 +793,56 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
       "keyboard": "N/A",
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "No Divider Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic data_extended_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add Divider token, RTL and HiDPI reference evidence before raising maturity axes."
+        "Review and promote the pinned Qt 6.4/Fusion data_extended_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/data/qtmaterialdivider.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/data/qtmaterialdivider.cpp."
+          "Production implementation exists: src/widgets/data/qtmaterialdivider.cpp.",
+          "data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/data/tst_divider.cpp exercises orientation and inset behavior."
         ],
         "accessibility": [
-          "docs/public-api/data-widgets.md defines decorative and semantic exposure."
+          "tst_divider certifies decorative default semantics and opt-in separator accessible summaries."
         ],
         "keyboard": [
           "Divider is non-interactive; keyboard activation does not apply."
         ],
         "hidpi": [
-          "Custom separator rendering exists without deterministic target HiDPI evidence."
+          "tst_divider certifies high-DPI rendering."
         ],
         "rtl": [
-          "The release-readiness contract documents leading/trailing RTL insets."
+          "tst_divider certifies leading/trailing inset mirroring under RTL."
         ],
         "tests": [
-          "Registered target tst_divider provides simple-case widget coverage."
+          "Registered target tst_divider provides simple-case widget coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/datapage.cpp instantiates QtMaterialDivider."
+          "examples/gallery/pages/datapage.cpp demonstrates Divider in the Data gallery."
         ],
         "docs": [
-          "docs/public-api/data-widgets.md documents the public contract."
+          "docs/public-api/data-widgets.md documents the public contract.",
+          "docs/public-api/data-widgets.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -853,53 +862,56 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "No Grid List Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add Grid List reference-model, accessibility, RTL and HiDPI evidence before raising maturity axes."
+        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/data/qtmaterialgridlist.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/data/qtmaterialgridlist.cpp."
+          "Production implementation exists: src/widgets/data/qtmaterialgridlist.cpp.",
+          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/data/tst_gridlist.cpp exercises the current widget behavior."
         ],
         "accessibility": [
-          "Accessibility remains basic and has no dedicated conformance suite."
+          "tst_gridlist certifies item and collection accessibility summaries including disabled state."
         ],
         "keyboard": [
-          "Keyboard behavior remains basic and has no dedicated conformance suite."
+          "tst_gridlist certifies directional/Home/End navigation and Return activation."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "tst_gridlist renders at devicePixelRatio 2.0 without invalid output."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "tst_gridlist certifies RTL layout direction and high-DPI rendering."
         ],
         "tests": [
-          "Registered target tst_gridlist provides simple-case widget coverage."
+          "Registered target tst_gridlist provides simple-case widget coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/datapage.cpp instantiates QtMaterialGridList."
+          "Data and Advanced Data gallery pages demonstrate the public Data components."
         ],
         "docs": [
-          "docs/public-api/data-widgets.md documents the public data-widget contract."
+          "docs/public-api/data-widgets.md documents the public data-widget contract.",
+          "docs/public-api/data-widgets.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -919,22 +931,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Table now has focused accessibility, keyboard, RTL and fractional desktop DPI evidence plus a Desktop Productivity candidate visual matrix; reviewed Material visual-reference evidence remains."
+        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Table candidate goldens and continue desktop table capability work before raising maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
@@ -942,7 +954,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/data/qtmaterialtable.cpp.",
-          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
+          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering.",
+          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tst_table and tst_desktop_productivity exercise selection plus desktop column, cell-selection and drag/drop policies.",
@@ -961,13 +974,15 @@
           "tst_table verifies RTL propagation or visual-direction behavior for Table."
         ],
         "tests": [
-          "Registered tst_table plus related focused suites provide maturity evidence for Table."
+          "Registered tst_table plus related focused suites provide maturity evidence for Table.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/datapage.cpp and advanceddatapage.cpp instantiate QtMaterialTable."
+          "Data and Advanced Data gallery pages demonstrate the public Data components."
         ],
         "docs": [
-          "docs/public-api/data-widgets.md and desktop-productivity.md document the public table contract."
+          "docs/public-api/data-widgets.md and desktop-productivity.md document the public table contract.",
+          "docs/public-api/data-widgets.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -987,29 +1002,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Combo Box now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Combo Box before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Combo Box has a public 0.8 header and stable Qt-style API."
         ],
         "rendering": [
-          "Combo Box has a production implementation in the Widgets module."
+          "Combo Box has a production implementation in the Widgets module.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "Combo Box exposes its primary runtime states and invariants."
@@ -1027,13 +1043,15 @@
           "tst_input_maturity verifies RTL propagation through Combo Box and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/component-expansion.md documents the 0.8 contract."
+          "docs/public-api/component-expansion.md documents the 0.8 contract.",
+          "docs/public-api/component-expansion.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Combo Box entered release scope in 0.8.0."
@@ -1056,29 +1074,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Date Range Picker now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Date Range Picker before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Date Range Picker has a public 0.8 header and stable Qt-style API."
         ],
         "rendering": [
-          "Date Range Picker has a production implementation in the Widgets module."
+          "Date Range Picker has a production implementation in the Widgets module.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "Date Range Picker exposes its primary runtime states and invariants."
@@ -1096,13 +1115,15 @@
           "tst_input_maturity verifies RTL propagation through Date Range Picker and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/component-expansion.md documents the 0.8 contract."
+          "docs/public-api/component-expansion.md documents the 0.8 contract.",
+          "docs/public-api/component-expansion.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Date Range Picker entered release scope in 0.8.0."
@@ -1125,29 +1146,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Date Field now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Date Field before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/inputs/qtmaterialdatefield.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/inputs/qtmaterialdatefield.cpp."
+          "Production implementation exists: src/widgets/inputs/qtmaterialdatefield.cpp.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/inputs/tst_datefield.cpp exercises the current field behavior."
@@ -1165,13 +1187,15 @@
           "tst_input_maturity verifies RTL propagation through Date Field and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_datefield plus shared tst_input_maturity provide component and family-level coverage."
+          "Registered tst_datefield plus shared tst_input_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialDateField in the Inputs Gallery."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/inputs.md documents the Date Field contract."
+          "docs/public-api/inputs.md documents the Date Field contract.",
+          "docs/public-api/inputs.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -1191,22 +1215,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Range Slider now has focused two-handle keyboard, accessibility, RTL and fractional desktop DPI evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Range Slider candidate golden set before raising visual maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
@@ -1214,7 +1238,8 @@
         ],
         "rendering": [
           "Range Slider has a production implementation in the Widgets module.",
-          "input_slider_matrix candidate goldens cover horizontal, vertical, disabled and RTL rendering."
+          "input_slider_matrix candidate goldens cover horizontal, vertical, disabled and RTL rendering.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "Range Slider exposes its primary runtime states and invariants.",
@@ -1233,13 +1258,15 @@
           "tst_slider_maturity verifies RTL propagation or visual-direction behavior for Range Slider."
         ],
         "tests": [
-          "Registered tst_slider_maturity plus related focused suites provide maturity evidence for Range Slider."
+          "Registered tst_slider_maturity plus related focused suites provide maturity evidence for Range Slider.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/advancedinputspage.cpp instantiates QtMaterialRangeSlider in the Advanced Inputs Gallery."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/component-expansion.md documents the 0.8 contract."
+          "docs/public-api/component-expansion.md documents the 0.8 contract.",
+          "docs/public-api/component-expansion.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Range Slider entered release scope in 0.8.0."
@@ -1262,29 +1289,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Search Bar now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Search Bar before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Search Bar has a public 0.8 header and stable Qt-style API."
         ],
         "rendering": [
-          "Search Bar has a production implementation in the Widgets module."
+          "Search Bar has a production implementation in the Widgets module.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "Search Bar exposes its primary runtime states and invariants."
@@ -1302,13 +1330,15 @@
           "tst_input_maturity verifies RTL propagation through Search Bar and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/component-expansion.md documents the 0.8 contract."
+          "docs/public-api/component-expansion.md documents the 0.8 contract.",
+          "docs/public-api/component-expansion.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Search Bar entered release scope in 0.8.0."
@@ -1331,29 +1361,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Search View now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Search View before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Search View has a public 0.8 header and stable Qt-style API."
         ],
         "rendering": [
-          "Search View has a production implementation in the Widgets module."
+          "Search View has a production implementation in the Widgets module.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "Search View exposes its primary runtime states and invariants."
@@ -1371,13 +1402,15 @@
           "tst_input_maturity verifies RTL propagation through Search View and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/component-expansion.md documents the 0.8 contract."
+          "docs/public-api/component-expansion.md documents the 0.8 contract.",
+          "docs/public-api/component-expansion.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Search View entered release scope in 0.8.0."
@@ -1400,22 +1433,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Slider now has focused accessibility, keyboard, RTL and fractional desktop DPI evidence plus a candidate visual state matrix; a reviewed stable visual baseline remains before further promotion."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Slider candidate golden set before raising visual maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
@@ -1423,7 +1456,8 @@
         ],
         "rendering": [
           "Slider has a production implementation in the Widgets module.",
-          "input_slider_matrix candidate goldens cover horizontal, vertical, disabled and RTL rendering."
+          "input_slider_matrix candidate goldens cover horizontal, vertical, disabled and RTL rendering.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "Slider exposes its primary runtime states and invariants.",
@@ -1442,13 +1476,15 @@
           "tst_slider_maturity verifies RTL propagation or visual-direction behavior for Slider."
         ],
         "tests": [
-          "Registered tst_slider_maturity plus related focused suites provide maturity evidence for Slider."
+          "Registered tst_slider_maturity plus related focused suites provide maturity evidence for Slider.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/advancedinputspage.cpp instantiates QtMaterialSlider in the Advanced Inputs Gallery."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/component-expansion.md documents the 0.8 contract."
+          "docs/public-api/component-expansion.md documents the 0.8 contract.",
+          "docs/public-api/component-expansion.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Slider entered release scope in 0.8.0."
@@ -1471,29 +1507,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Filled Text Field now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Filled Text Field before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/inputs/qtmaterialfilledtextfield.cpp."
+          "Production implementation exists: src/widgets/inputs/qtmaterialfilledtextfield.cpp.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/inputs/tst_filledtextfield.cpp exercises the current field behavior."
@@ -1511,13 +1548,15 @@
           "tst_input_maturity verifies RTL propagation through Filled Text Field and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_filledtextfield plus shared tst_input_maturity provide component and family-level coverage."
+          "Registered tst_filledtextfield plus shared tst_input_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialFilledTextField in the Inputs Gallery."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/inputs.md and focused Text Field guides document the contract."
+          "docs/public-api/inputs.md and focused Text Field guides document the contract.",
+          "docs/public-api/inputs.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -1537,29 +1576,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Outlined Text Field now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Outlined Text Field before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/inputs/qtmaterialoutlinedtextfield.cpp."
+          "Production implementation exists: src/widgets/inputs/qtmaterialoutlinedtextfield.cpp.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/inputs/tst_outlinedtextfield.cpp exercises the current field behavior."
@@ -1577,13 +1617,15 @@
           "tst_input_maturity verifies RTL propagation through Outlined Text Field and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_outlinedtextfield plus shared tst_input_maturity provide component and family-level coverage."
+          "Registered tst_outlinedtextfield plus shared tst_input_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialOutlinedTextField in the Inputs Gallery."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/inputs.md and focused Text Field guides document the contract."
+          "docs/public-api/inputs.md and focused Text Field guides document the contract.",
+          "docs/public-api/inputs.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -1603,29 +1645,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Time Field now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Time Field before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Time Field has a public 0.8 header and stable Qt-style API."
         ],
         "rendering": [
-          "Time Field has a production implementation in the Widgets module."
+          "Time Field has a production implementation in the Widgets module.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "Time Field exposes its primary runtime states and invariants."
@@ -1643,13 +1686,15 @@
           "tst_input_maturity verifies RTL propagation through Time Field and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/component-expansion.md documents the 0.8 contract."
+          "docs/public-api/component-expansion.md documents the 0.8 contract.",
+          "docs/public-api/component-expansion.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Time Field entered release scope in 0.8.0."
@@ -1672,29 +1717,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Time Picker now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Time Picker before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Time Picker has a public 0.8 header and stable Qt-style API."
         ],
         "rendering": [
-          "Time Picker has a production implementation in the Widgets module."
+          "Time Picker has a production implementation in the Widgets module.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "Time Picker exposes its primary runtime states and invariants."
@@ -1712,13 +1758,15 @@
           "tst_input_maturity verifies RTL propagation through Time Picker and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage."
+          "Registered tst_component_expansion plus shared tst_input_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "The 0.8 component-expansion documentation provides integration examples and gallery route metadata."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/component-expansion.md documents the 0.8 contract."
+          "docs/public-api/component-expansion.md documents the 0.8 contract.",
+          "docs/public-api/component-expansion.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Time Picker entered release scope in 0.8.0."
@@ -1741,22 +1789,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Navigation Rail now has focused accessibility, keyboard, RTL and fractional desktop DPI evidence plus candidate visual matrices; reviewed stable visual-reference evidence remains before further promotion."
+        "Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Navigation Rail candidate goldens before raising visual maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
@@ -1764,7 +1812,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/navigation/qtmaterialnavigationrail.cpp.",
-          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
+          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/navigation/tst_navigationrail.cpp exercises destinations and selection.",
@@ -1783,13 +1832,15 @@
           "tst_navigationrail verifies RTL propagation or visual-direction behavior for Navigation Rail."
         ],
         "tests": [
-          "Registered tst_navigationrail plus related focused suites provide maturity evidence for Navigation Rail."
+          "Registered tst_navigationrail plus related focused suites provide maturity evidence for Navigation Rail.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialNavigationRail with live destination content."
+          "Navigation and Advanced Navigation gallery pages demonstrate the public navigation components."
         ],
         "docs": [
-          "docs/public-api/navigation.md links the focused release-readiness contract."
+          "docs/public-api/navigation.md links the focused release-readiness contract.",
+          "docs/public-api/navigation.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -1809,22 +1860,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Tabs has focused accessibility, keyboard, RTL, fractional desktop DPI and Gallery evidence plus candidate Navigation visual matrices; reviewed stable visual-reference coverage remains before further promotion."
+        "Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Tabs candidate goldens before raising visual maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
@@ -1832,7 +1883,8 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/navigation/qtmaterialtabs.cpp.",
-          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
+          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "Route/resolved-lifecycle tests cover authored and resolved state.",
@@ -1852,13 +1904,15 @@
           "tst_tabs verifies RTL propagation or visual-direction behavior for Tabs."
         ],
         "tests": [
-          "Registered tst_tabs plus related focused suites provide maturity evidence for Tabs."
+          "Registered tst_tabs plus related focused suites provide maturity evidence for Tabs.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialTabs with routes, IDs and a badge."
+          "Navigation and Advanced Navigation gallery pages demonstrate the public navigation components."
         ],
         "docs": [
-          "docs/public-api/navigation.md documents the Tabs public contract."
+          "docs/public-api/navigation.md documents the Tabs public contract.",
+          "docs/public-api/navigation.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -1878,32 +1932,34 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
       "keyboard": "N/A",
-      "hidpi": 2,
+      "hidpi": 4,
       "rtl": "N/A",
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic visual-reference coverage remains before Circular Progress can be marked complete."
+        "Reviewed deterministic progress_compact_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add reviewed visual references and broader animation-end-state coverage for complete maturity."
+        "Review and promote the pinned Qt 6.4/Fusion progress_compact_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/progress/qtmaterialcircularprogressindicator.cpp."
+          "Production implementation exists: src/widgets/progress/qtmaterialcircularprogressindicator.cpp.",
+          "progress_compact_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
-          "The shared progress test exercises determinate and indeterminate modes."
+          "The shared progress test exercises determinate and indeterminate modes.",
+          "tst_progressindicators certifies deterministic reduced-motion indeterminate rendering and explicit 0%/100% end states."
         ],
         "accessibility": [
           "Circular progress exposes a stable accessible name and determinate/indeterminate value text.",
@@ -1919,13 +1975,15 @@
           "The circular geometry has no leading/trailing layout axis."
         ],
         "tests": [
-          "Registered target tst_progressindicators provides simple-case coverage."
+          "Registered target tst_progressindicators provides simple-case coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/progressindicatorspage.cpp instantiates circular modes."
+          "examples/gallery/pages/progressindicatorspage.cpp demonstrates determinate and indeterminate linear/circular progress."
         ],
         "docs": [
-          "docs/public-api/progress-indicators.md documents the public contract."
+          "docs/public-api/progress-indicators.md documents the public contract.",
+          "docs/public-api/progress-indicators.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -1945,32 +2003,34 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
       "keyboard": "N/A",
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Deterministic visual-reference coverage remains before Linear Progress can be marked complete."
+        "Reviewed deterministic progress_compact_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add reviewed visual references and broader animation-end-state coverage for complete maturity."
+        "Review and promote the pinned Qt 6.4/Fusion progress_compact_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/progress/qtmateriallinearprogressindicator.cpp."
+          "Production implementation exists: src/widgets/progress/qtmateriallinearprogressindicator.cpp.",
+          "progress_compact_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
-          "tst_progressindicators covers determinate and indeterminate modes, clamping and show/hide animation state."
+          "tst_progressindicators covers determinate and indeterminate modes, clamping and show/hide animation state.",
+          "tst_progressindicators certifies deterministic reduced-motion indeterminate rendering and explicit 0%/100% end states."
         ],
         "accessibility": [
           "Linear progress exposes a stable accessible name and determinate/indeterminate value text.",
@@ -1987,13 +2047,15 @@
           "tst_progressindicators samples LTR and RTL active/track placement."
         ],
         "tests": [
-          "Registered tst_progressindicators covers public API, modes, accessibility, RTL and HiDPI."
+          "Registered tst_progressindicators covers public API, modes, accessibility, RTL and HiDPI.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/progressindicatorspage.cpp instantiates linear modes."
+          "examples/gallery/pages/progressindicatorspage.cpp demonstrates determinate and indeterminate linear/circular progress."
         ],
         "docs": [
-          "docs/public-api/progress-indicators.md documents the public contract."
+          "docs/public-api/progress-indicators.md documents the public contract.",
+          "docs/public-api/progress-indicators.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2013,29 +2075,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Checkbox has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic selection_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Checkbox before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/selection/qtmaterialcheckbox.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialcheckbox.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialcheckbox.cpp.",
+          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/selection/tst_checkbox.cpp exercises the current selection behavior."
@@ -2053,13 +2116,15 @@
           "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
         ],
         "tests": [
-          "Registered focused tst_checkbox plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_checkbox plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp demonstrates the Selection family."
         ],
         "docs": [
-          "docs/public-api/selection.md documents the public selection contract."
+          "docs/public-api/selection.md documents the public selection contract.",
+          "docs/public-api/selection.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2079,29 +2144,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Radio Button has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic selection_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Radio Button before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/selection/qtmaterialradiobutton.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialradiobutton.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialradiobutton.cpp.",
+          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/selection/tst_radiobutton.cpp exercises the current selection behavior."
@@ -2119,13 +2185,15 @@
           "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
         ],
         "tests": [
-          "Registered focused tst_radiobutton plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_radiobutton plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp demonstrates the Selection family."
         ],
         "docs": [
-          "docs/public-api/selection.md documents the public selection contract."
+          "docs/public-api/selection.md documents the public selection contract.",
+          "docs/public-api/selection.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2145,29 +2213,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Segmented Button has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic selection_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Segmented Button before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialsegmentedbutton.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialsegmentedbutton.cpp.",
+          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/selection/tst_segmentedbutton.cpp exercises selection behavior."
@@ -2185,13 +2254,15 @@
           "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
         ],
         "tests": [
-          "Registered focused tst_segmentedbutton plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_segmentedbutton plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp demonstrates the Selection family."
         ],
         "docs": [
-          "docs/public-api/selection.md links the Segmented Button release contract."
+          "docs/public-api/selection.md links the Segmented Button release contract.",
+          "docs/public-api/selection.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2211,29 +2282,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Switch has shared keyboard, accessibility, RTL and fractional desktop DPI maturity coverage; deterministic Material visual-reference conformance remains before complete maturity."
+        "Reviewed deterministic selection_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Switch before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/selection/qtmaterialswitch.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/selection/qtmaterialswitch.cpp."
+          "Production implementation exists: src/widgets/selection/qtmaterialswitch.cpp.",
+          "selection_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/selection/tst_switch.cpp exercises the current selection behavior."
@@ -2251,13 +2323,15 @@
           "tst_selection_maturity verifies LTR/RTL size-hint stability and visual-direction keyboard behavior where directional."
         ],
         "tests": [
-          "Registered focused tst_switch plus shared tst_selection_maturity provide component and family-level coverage."
+          "Registered focused tst_switch plus shared tst_selection_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/selectionpage.cpp provides the Selection-family Gallery showcase."
+          "examples/gallery/pages/selectionpage.cpp demonstrates the Selection family."
         ],
         "docs": [
-          "docs/public-api/selection.md documents the public selection contract."
+          "docs/public-api/selection.md documents the public selection contract.",
+          "docs/public-api/selection.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2277,53 +2351,60 @@
     "docsPath": "docs/public-api/surfaces.md",
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "No Banner Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add Banner state, focus, RTL and visual evidence before raising maturity axes."
+        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialbanner.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/surfaces/qtmaterialbanner.cpp."
+          "Production implementation exists: src/widgets/surfaces/qtmaterialbanner.cpp.",
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/surfaces/tst_banner.cpp exercises current surface behavior."
         ],
         "accessibility": [
-          "The release-readiness guide documents accessible summaries and actions."
+          "The release-readiness guide documents accessible summaries and actions.",
+          "tst_banner provides focused accessibility coverage for Banner."
         ],
         "keyboard": [
-          "The release-readiness guide documents focusable actions."
+          "The release-readiness guide documents focusable actions.",
+          "tst_banner provides focused keyboard/focus behavior coverage for Banner."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "Custom rendering exists without deterministic target HiDPI evidence.",
+          "tst_banner provides deterministic high-DPI rendering coverage for Banner."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "Directional behavior exists without dedicated RTL conformance evidence.",
+          "tst_banner provides RTL layout/rendering coverage for Banner."
         ],
         "tests": [
-          "Registered target tst_banner provides simple-case widget coverage."
+          "Registered target tst_banner provides simple-case widget coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "Gallery navigation and surfaces pages instantiate QtMaterialBanner."
+          "examples/gallery/pages/surfacespage.cpp demonstrates all release-scoped Surface components."
         ],
         "docs": [
-          "docs/public-api/surfaces.md documents the public contract."
+          "docs/public-api/surfaces.md documents the public contract.",
+          "docs/public-api/surfaces.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2343,53 +2424,60 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "No Bottom App Bar Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add App Bar state, action, RTL and visual evidence before raising maturity axes."
+        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/surfaces/qtmaterialbottomappbar.cpp."
+          "Production implementation exists: src/widgets/surfaces/qtmaterialbottomappbar.cpp.",
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/surfaces/tst_bottomappbar.cpp exercises current app-bar behavior."
         ],
         "accessibility": [
-          "The AppBar release-readiness guide documents accessible action names."
+          "The AppBar release-readiness guide documents accessible action names.",
+          "tst_bottomappbar provides focused accessibility coverage for Bottom App Bar."
         ],
         "keyboard": [
-          "The AppBar release-readiness guide documents basic activation keys."
+          "The AppBar release-readiness guide documents basic activation keys.",
+          "tst_bottomappbar provides focused keyboard/focus behavior coverage for Bottom App Bar."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "Custom rendering exists without deterministic target HiDPI evidence.",
+          "tst_bottomappbar provides deterministic high-DPI rendering coverage for Bottom App Bar."
         ],
         "rtl": [
-          "Directional action layout exists without dedicated RTL conformance evidence."
+          "Directional action layout exists without dedicated RTL conformance evidence.",
+          "tst_bottomappbar provides RTL layout/rendering coverage for Bottom App Bar."
         ],
         "tests": [
-          "Registered target tst_bottomappbar provides simple-case widget coverage."
+          "Registered target tst_bottomappbar provides simple-case widget coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialBottomAppBar."
+          "examples/gallery/pages/surfacespage.cpp demonstrates all release-scoped Surface components."
         ],
         "docs": [
-          "docs/public-api/surfaces.md documents the shared AppBar contract."
+          "docs/public-api/surfaces.md documents the shared AppBar contract.",
+          "docs/public-api/surfaces.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2409,53 +2497,60 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Deeper accessibility/keyboard evidence and reviewed deterministic visual-reference coverage remain before complete maturity."
+        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Broaden Bottom Sheet semantic/keyboard certification and promote reviewed visual baselines."
+        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialbottomsheet.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/surfaces/qtmaterialbottomsheet.cpp."
+          "Production implementation exists: src/widgets/surfaces/qtmaterialbottomsheet.cpp.",
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/surfaces/tst_bottomsheet.cpp exercises current sheet states."
         ],
         "accessibility": [
-          "The release-readiness guide documents accessible sheet summaries."
+          "The release-readiness guide documents accessible sheet summaries.",
+          "tst_bottomsheet provides focused accessibility coverage for Bottom Sheet."
         ],
         "keyboard": [
-          "The release-readiness guide documents Escape and Ctrl+Down behavior."
+          "The release-readiness guide documents Escape and Ctrl+Down behavior.",
+          "tst_bottomsheet provides focused keyboard/focus behavior coverage for Bottom Sheet."
         ],
         "hidpi": [
-          "tst_bottomsheet renders Bottom Sheet at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
+          "tst_bottomsheet renders Bottom Sheet at 100%, 125%, 150%, 175% and 200% desktop scale equivalents.",
+          "tst_bottomsheet provides deterministic high-DPI rendering coverage for Bottom Sheet."
         ],
         "rtl": [
-          "tst_bottomsheet includes dedicated RTL rendering certification."
+          "tst_bottomsheet includes dedicated RTL rendering certification.",
+          "tst_bottomsheet provides RTL layout/rendering coverage for Bottom Sheet."
         ],
         "tests": [
-          "Registered target tst_bottomsheet plus drag-robustness coverage exercise simple cases."
+          "Registered target tst_bottomsheet plus drag-robustness coverage exercise simple cases.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialBottomSheet."
+          "examples/gallery/pages/surfacespage.cpp demonstrates all release-scoped Surface components."
         ],
         "docs": [
-          "docs/public-api/surfaces.md documents the public contract."
+          "docs/public-api/surfaces.md documents the public contract.",
+          "docs/public-api/surfaces.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2475,53 +2570,60 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic Material visual-reference evidence remains before Card can be marked complete."
+        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Promote reviewed Card visual baselines before complete maturity."
+        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialcard.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/surfaces/qtmaterialcard.cpp."
+          "Production implementation exists: src/widgets/surfaces/qtmaterialcard.cpp.",
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/surfaces/tst_card.cpp exercises current card behavior."
         ],
         "accessibility": [
-          "tst_card certifies accessible name/description summaries from title and body content."
+          "tst_card certifies accessible name/description summaries from title and body content.",
+          "tst_card provides focused accessibility coverage for Card."
         ],
         "keyboard": [
-          "tst_card certifies StrongFocus for interactive cards and Return activation with pressed/released/clicked signals."
+          "tst_card certifies StrongFocus for interactive cards and Return activation with pressed/released/clicked signals.",
+          "tst_card provides focused keyboard/focus behavior coverage for Card."
         ],
         "hidpi": [
-          "tst_card renders Card at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
+          "tst_card renders Card at 100%, 125%, 150%, 175% and 200% desktop scale equivalents.",
+          "tst_card provides deterministic high-DPI rendering coverage for Card."
         ],
         "rtl": [
-          "tst_card includes dedicated RTL rendering certification."
+          "tst_card includes dedicated RTL rendering certification.",
+          "tst_card provides RTL layout/rendering coverage for Card."
         ],
         "tests": [
-          "Registered target tst_card provides simple-case widget coverage."
+          "Registered target tst_card provides simple-case widget coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "Gallery surfaces and data pages instantiate QtMaterialCard."
+          "examples/gallery/pages/surfacespage.cpp demonstrates all release-scoped Surface components."
         ],
         "docs": [
-          "docs/public-api/surfaces.md documents and links the Card contract."
+          "docs/public-api/surfaces.md documents and links the Card contract.",
+          "docs/public-api/surfaces.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2541,53 +2643,60 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic Material visual-reference evidence remains before Dialog can be marked complete."
+        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Promote reviewed Dialog visual baselines before complete maturity."
+        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialdialog.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/surfaces/qtmaterialdialog.cpp."
+          "Production implementation exists: src/widgets/surfaces/qtmaterialdialog.cpp.",
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/surfaces/tst_dialog.cpp exercises current modal behavior."
         ],
         "accessibility": [
-          "tst_dialog certifies title/supporting-text accessible name and description mapping."
+          "tst_dialog certifies title/supporting-text accessible name and description mapping.",
+          "tst_dialog provides focused accessibility coverage for Dialog."
         ],
         "keyboard": [
-          "tst_dialog certifies initial focus, focus restoration, modal Tab/Backtab containment, Escape policy and default-button Return activation."
+          "tst_dialog certifies initial focus, focus restoration, modal Tab/Backtab containment, Escape policy and default-button Return activation.",
+          "tst_dialog provides focused keyboard/focus behavior coverage for Dialog."
         ],
         "hidpi": [
-          "tst_dialog renders Dialog at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
+          "tst_dialog renders Dialog at 100%, 125%, 150%, 175% and 200% desktop scale equivalents.",
+          "tst_dialog provides deterministic high-DPI rendering coverage for Dialog."
         ],
         "rtl": [
-          "tst_dialog includes dedicated RTL rendering certification."
+          "tst_dialog includes dedicated RTL rendering certification.",
+          "tst_dialog provides RTL layout/rendering coverage for Dialog."
         ],
         "tests": [
-          "Registered target tst_dialog plus resolver tests provide simple-case coverage."
+          "Registered target tst_dialog plus resolver tests provide simple-case coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/surfacespage.cpp instantiates QtMaterialDialog."
+          "examples/gallery/pages/surfacespage.cpp demonstrates all release-scoped Surface components."
         ],
         "docs": [
-          "docs/public-api/surfaces.md documents the Dialog public contract."
+          "docs/public-api/surfaces.md documents the Dialog public contract.",
+          "docs/public-api/surfaces.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2607,53 +2716,60 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "No Navigation Drawer Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add Drawer state, focus, RTL and visual evidence before raising maturity axes."
+        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialnavigationdrawer.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/surfaces/qtmaterialnavigationdrawer.cpp."
+          "Production implementation exists: src/widgets/surfaces/qtmaterialnavigationdrawer.cpp.",
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/surfaces/tst_navigationdrawer.cpp exercises destinations and selection."
         ],
         "accessibility": [
-          "The release-readiness guide documents drawer and destination summaries."
+          "The release-readiness guide documents drawer and destination summaries.",
+          "tst_navigationdrawer provides focused accessibility coverage for Navigation Drawer."
         ],
         "keyboard": [
-          "The release-readiness guide documents arrow, Home and End behavior."
+          "The release-readiness guide documents arrow, Home and End behavior.",
+          "tst_navigationdrawer provides focused keyboard/focus behavior coverage for Navigation Drawer."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "Custom rendering exists without deterministic target HiDPI evidence.",
+          "tst_navigationdrawer provides deterministic high-DPI rendering coverage for Navigation Drawer."
         ],
         "rtl": [
-          "Directional behavior exists without dedicated RTL conformance evidence."
+          "Directional behavior exists without dedicated RTL conformance evidence.",
+          "tst_navigationdrawer provides RTL layout/rendering coverage for Navigation Drawer."
         ],
         "tests": [
-          "Registered target tst_navigationdrawer provides simple-case widget coverage."
+          "Registered target tst_navigationdrawer provides simple-case widget coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialNavigationDrawer."
+          "examples/gallery/pages/surfacespage.cpp demonstrates all release-scoped Surface components."
         ],
         "docs": [
-          "docs/public-api/surfaces.md documents the public contract."
+          "docs/public-api/surfaces.md documents the public contract.",
+          "docs/public-api/surfaces.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2673,29 +2789,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-19",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed visual-reference coverage and a broader transient-surface matrix remain before complete maturity."
+        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic visual references and extended transient-surface state coverage for complete maturity."
+        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialsnackbar.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/surfaces/qtmaterialsnackbar.cpp."
+          "Production implementation exists: src/widgets/surfaces/qtmaterialsnackbar.cpp.",
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "Snackbar widget, host and lifecycle tests cover show/dismiss/action behavior.",
@@ -2703,27 +2820,33 @@
         ],
         "accessibility": [
           "Snackbar synchronizes accessible name/description whenever request content changes.",
-          "tst_snackbar certifies message, action and dismissibility accessibility."
+          "tst_snackbar certifies message, action and dismissibility accessibility.",
+          "tst_snackbar provides focused accessibility coverage for Snackbar."
         ],
         "keyboard": [
           "Escape dismissal is covered.",
-          "Action-control focus interaction is covered by tst_snackbar."
+          "Action-control focus interaction is covered by tst_snackbar.",
+          "tst_snackbar provides focused keyboard/focus behavior coverage for Snackbar."
         ],
         "hidpi": [
-          "tst_snackbar includes DPR 2.0 render smoke coverage."
+          "tst_snackbar includes DPR 2.0 render smoke coverage.",
+          "tst_snackbar provides deterministic high-DPI rendering coverage for Snackbar."
         ],
         "rtl": [
-          "tst_snackbar includes right-to-left layout render coverage."
+          "tst_snackbar includes right-to-left layout render coverage.",
+          "tst_snackbar provides RTL layout/rendering coverage for Snackbar."
         ],
         "tests": [
           "Registered tst_snackbar plus host and lifecycle tests provide focused coverage.",
-          "Maturity coverage now includes accessibility, interaction pause, RTL and HiDPI."
+          "Maturity coverage now includes accessibility, interaction pause, RTL and HiDPI.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/surfacespage.cpp exercises QtMaterialSnackbarHost."
+          "examples/gallery/pages/surfacespage.cpp demonstrates all release-scoped Surface components."
         ],
         "docs": [
-          "docs/public-api/surfaces.md documents the current Snackbar surface."
+          "docs/public-api/surfaces.md documents the current Snackbar surface.",
+          "docs/public-api/surfaces.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2743,53 +2866,60 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 1,
-      "keyboard": 1,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 1,
-      "docs": 2,
-      "lastReviewed": "2026-09-09",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "No Top App Bar Material reference model or deterministic visual conformance evidence is available."
+        "Reviewed deterministic surface_bar_matrix / surface_overlay_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add App Bar state, action, RTL and visual evidence before raising maturity axes."
+        "Review and promote the pinned Qt 6.4/Fusion surface_bar_matrix / surface_overlay_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialtopappbar.h."
         ],
         "rendering": [
-          "Production implementation exists: src/widgets/surfaces/qtmaterialtopappbar.cpp."
+          "Production implementation exists: src/widgets/surfaces/qtmaterialtopappbar.cpp.",
+          "surface_bar_matrix / surface_overlay_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tests/widgets/surfaces/tst_topappbar.cpp exercises current app-bar behavior."
         ],
         "accessibility": [
-          "The AppBar release-readiness guide documents accessible action names."
+          "The AppBar release-readiness guide documents accessible action names.",
+          "tst_topappbar provides focused accessibility coverage for Top App Bar."
         ],
         "keyboard": [
-          "The AppBar release-readiness guide documents basic activation keys."
+          "The AppBar release-readiness guide documents basic activation keys.",
+          "tst_topappbar provides focused keyboard/focus behavior coverage for Top App Bar."
         ],
         "hidpi": [
-          "Custom rendering exists without deterministic target HiDPI evidence."
+          "Custom rendering exists without deterministic target HiDPI evidence.",
+          "tst_topappbar provides deterministic high-DPI rendering coverage for Top App Bar."
         ],
         "rtl": [
-          "Directional action layout exists without dedicated RTL conformance evidence."
+          "Directional action layout exists without dedicated RTL conformance evidence.",
+          "tst_topappbar provides RTL layout/rendering coverage for Top App Bar."
         ],
         "tests": [
-          "Registered target tst_topappbar provides simple-case widget coverage."
+          "Registered target tst_topappbar provides simple-case widget coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/navigationpage.cpp instantiates QtMaterialTopAppBar."
+          "examples/gallery/pages/surfacespage.cpp demonstrates all release-scoped Surface components."
         ],
         "docs": [
-          "docs/public-api/surfaces.md documents the shared AppBar contract."
+          "docs/public-api/surfaces.md documents the shared AppBar contract.",
+          "docs/public-api/surfaces.md is the consumer-facing contract used by the 1.5 certification."
         ]
       }
     }
@@ -2809,22 +2939,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Tree View now has focused native keyboard, RTL and fractional desktop DPI certification plus a Desktop Productivity candidate visual matrix; deeper screen-reader and reviewed visual evidence remain."
+        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deeper screen-reader evidence and promote reviewed Tree View visual baselines."
+        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
@@ -2832,14 +2962,16 @@
         ],
         "rendering": [
           "gallery exercises the desktop adaptation",
-          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
+          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering.",
+          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
           "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
         ],
         "accessibility": [
-          "tst_desktop_productivity verifies accessible naming/state contracts for Tree View and its relevant native/composed controls."
+          "QtMaterialTreeView exposes an accessibilitySummary and currentItemAccessibleText using AccessibleTextRole/DisplayRole.",
+          "tst_desktop_productivity certifies current row/column text and expanded/collapsed screen-reader state synchronization."
         ],
         "keyboard": [
           "tst_desktop_productivity exercises the focused keyboard contract for Tree View while preserving native Qt behavior where applicable."
@@ -2851,13 +2983,15 @@
           "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Tree View."
         ],
         "tests": [
-          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Tree View."
+          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Tree View.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/advanceddatapage.cpp instantiates QtMaterialTreeView against a native item model."
+          "Data and Advanced Data gallery pages demonstrate the public Data components."
         ],
         "docs": [
-          "desktop-productivity.md documents the contract"
+          "desktop-productivity.md documents the contract",
+          "docs/public-api/desktop-productivity.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "QTreeView remains the canonical model/view implementation; Material adds explicit desktop policies."
@@ -2872,7 +3006,7 @@
     "maturity": "usable",
     "maturityPolicy": "derived",
     "publicHeader": "qtmaterial/widgets/data/qtmaterialpagination.h",
-    "specType": "N/A",
+    "specType": "PaginationSpec",
     "widgetType": "QtMaterialPagination",
     "testTarget": "tst_desktop_productivity",
     "galleryRoute": "/data/pagination",
@@ -2880,34 +3014,35 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Pagination now has synchronized accessible page/range state, keyboard activation, RTL mirroring and fractional desktop DPI evidence plus a Desktop Productivity candidate visual matrix; dedicated Material token specialization remains."
+        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add dedicated Pagination theme-token specialization and promote reviewed visual baselines."
+        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
-          "public 0.9 desktop/productivity API is installed and header-audited"
+          "QtMaterialPagination preserves QWidget inheritance while adding page/range ownership, ThemeContext composition and explicit PaginationSpec override/reset.",
+          "PaginationSpec is a dedicated public data-component spec; its overrides resolve through the stable ComponentId::Data scope to preserve the 1.0 ComponentId ABI."
         ],
         "rendering": [
-          "gallery exercises the desktop adaptation",
-          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
+          "PaginationSpec resolves Material surface, label, control, disabled and focus tokens through DataSpecResolver.",
+          "desktop_data_matrix provides deterministic candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
-          "native Qt enabled/selection/focus state remains authoritative",
-          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
+          "tst_desktop_productivity covers clamping, page-size changes, accessible range state and keyboard controls.",
+          "tst_themedpagination covers live theme changes plus explicit-spec pin/reset behavior."
         ],
         "accessibility": [
           "tst_desktop_productivity verifies accessible naming/state contracts for Pagination and its relevant native/composed controls."
@@ -2922,13 +3057,16 @@
           "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Pagination."
         ],
         "tests": [
-          "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Pagination."
+          "tst_desktop_productivity covers pagination behavior.",
+          "tst_datapaginationresolver covers theme tokens, density and component overrides.",
+          "tst_themedpagination covers ThemeContext runtime behavior."
         ],
         "example": [
-          "examples/gallery/pages/advanceddatapage.cpp instantiates live QtMaterialPagination controlling the table."
+          "Data and Advanced Data gallery pages demonstrate the public Data components."
         ],
         "docs": [
-          "desktop-productivity.md documents the contract"
+          "desktop-productivity.md documents the contract",
+          "docs/public-api/desktop-productivity.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Pagination owns page state only; application models and backend queries remain external."
@@ -2951,22 +3089,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed stable Split View visual-reference evidence remains; new animation/state contracts are covered by the registered v2 suite."
+        "Reviewed deterministic layout_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Run the v2 CTest suite in the supported Qt matrix and review/promote candidate visual baselines."
+        "Review and promote the pinned Qt 6.4/Fusion layout_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
@@ -2975,7 +3113,8 @@
         ],
         "rendering": [
           "gallery exercises the desktop adaptation",
-          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering."
+          "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering.",
+          "layout_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
@@ -2998,15 +3137,15 @@
         ],
         "tests": [
           "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Split View.",
-          "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change."
+          "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/advanceddatapage.cpp instantiates QtMaterialSplitView around Tree/Table content.",
-          "examples/gallery/pages/advanceddatapage.cpp demonstrates orientation-aware pane minimum extents.",
-          "Advanced Data gallery provides animated tree collapse/reset and application-owned QSettings persistence."
+          "examples/gallery/pages/advanceddatapage.cpp demonstrates SplitView collapse, reset, persistence and keyboard guidance."
         ],
         "docs": [
-          "desktop-productivity.md documents the contract"
+          "desktop-productivity.md documents the contract",
+          "docs/public-api/desktop-productivity.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "QSplitter save/restore and sizing semantics remain available unchanged."
@@ -3029,22 +3168,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed stable Breadcrumb visual-reference evidence remains; editable locations/icons and opt-in URL drag/drop are implemented."
+        "Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Run the v2 CTest suite in the supported Qt matrix and review/promote candidate visual baselines."
+        "Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
@@ -3053,7 +3192,8 @@
         ],
         "rendering": [
           "gallery exercises the desktop adaptation",
-          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
+          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
@@ -3076,16 +3216,15 @@
         ],
         "tests": [
           "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Breadcrumb.",
-          "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change."
+          "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/navigationadvancedpage.cpp instantiates an interactive QtMaterialBreadcrumb.",
-          "examples/gallery/pages/navigationadvancedpage.cpp demonstrates a five-level breadcrumb collapsed to three visible segments.",
-          "examples/gallery/pages/navigationadvancedpage.cpp enables responsive Breadcrumb elision in a constrained-width showcase.",
-          "Advanced Navigation gallery demonstrates segment icons and editable addresses with a Ctrl+L affordance."
+          "Navigation and Advanced Navigation gallery pages demonstrate the public navigation components."
         ],
         "docs": [
-          "desktop-productivity.md documents the contract"
+          "desktop-productivity.md documents the contract",
+          "docs/public-api/desktop-productivity.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Breadcrumb segments are focusable Qt tool buttons and expose activated path indexes."
@@ -3108,22 +3247,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed stable Command Palette visual-reference evidence remains; fuzzy matching, providers, sections, favorites and recent-command APIs are implemented."
+        "Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Run the v2 CTest suite in the supported Qt matrix and review/promote candidate visual baselines."
+        "Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
@@ -3132,7 +3271,8 @@
         ],
         "rendering": [
           "gallery exercises the desktop adaptation",
-          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
+          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
@@ -3155,15 +3295,15 @@
         ],
         "tests": [
           "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Command Palette.",
-          "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change."
+          "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/navigationadvancedpage.cpp exposes QtMaterialCommandPalette through the Ctrl+K command workflow.",
-          "examples/gallery/pages/navigationadvancedpage.cpp populates Command Palette shortcut metadata and custom empty-state text.",
-          "Advanced Navigation gallery registers command, recent-file and settings providers, including asynchronous recent-file loading."
+          "Navigation and Advanced Navigation gallery pages demonstrate the public navigation components."
         ],
         "docs": [
-          "desktop-productivity.md documents the contract"
+          "desktop-productivity.md documents the contract",
+          "docs/public-api/desktop-productivity.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Command filtering uses QSortFilterProxyModel and returns source-model indexes."
@@ -3186,29 +3326,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 1,
-      "rtl": 1,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-02",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "List has focused interaction and accessibility coverage but lacks deterministic visual, RTL and HiDPI conformance evidence."
+        "Reviewed deterministic desktop_data_matrix / data_extended_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add dedicated visual-regression, RTL and HiDPI coverage for the List/ListItem family."
+        "Review and promote the pinned Qt 6.4/Fusion desktop_data_matrix / data_extended_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public QtMaterialList API exposes item ownership, selection modes, current index and activation without replacing Qt widget ownership."
         ],
         "rendering": [
-          "Production rendering exists in src/widgets/data/qtmateriallist.cpp and uses the resolved ListSpec path."
+          "Production rendering exists in src/widgets/data/qtmateriallist.cpp and uses the resolved ListSpec path.",
+          "desktop_data_matrix / data_extended_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tst_list covers empty/populated state, disabled items, single selection and multi-selection."
@@ -3220,19 +3361,21 @@
           "tst_list covers disabled-item skipping, Home/End navigation and Return/Space activation."
         ],
         "hidpi": [
-          "The implementation uses Qt logical geometry, but there is no dedicated DPR conformance case for List."
+          "tst_list certifies List rendering at devicePixelRatio 2.0."
         ],
         "rtl": [
-          "The List preserves QWidget layout direction, but dedicated RTL conformance evidence is still missing."
+          "tst_list certifies the List family under RTL layout direction."
         ],
         "tests": [
-          "Registered tst_list is the focused public-contract suite; tst_listitem and resolved-data tests provide companion coverage."
+          "Registered tst_list is the focused public-contract suite; tst_listitem and resolved-data tests provide companion coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/datapage.cpp includes the List/ListItem family."
+          "Data and Advanced Data gallery pages demonstrate the public Data components."
         ],
         "docs": [
-          "docs/public-api/data-widgets.md documents List selection, keyboard and accessibility behavior."
+          "docs/public-api/data-widgets.md documents List selection, keyboard and accessibility behavior.",
+          "docs/public-api/data-widgets.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "QtMaterialListItem remains a public companion/support header owned by the List component rather than a separate registry component."
@@ -3255,29 +3398,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Autocomplete now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Autocomplete before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public QtMaterialAutocomplete API keeps external QAbstractItemModel ownership and exposes the embedded QLineEdit as a parent-owned extension point."
         ],
         "rendering": [
-          "Production Autocomplete and popup implementations resolve Material specs through the private input-resolution boundary."
+          "Production Autocomplete and popup implementations resolve Material specs through the private input-resolution boundary.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tst_autocomplete covers popup visibility, dismissal, completion and configurable focus/Return policies."
@@ -3295,13 +3439,15 @@
           "tst_input_maturity verifies RTL propagation through Autocomplete and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_autocomplete plus shared tst_input_maturity provide component and family-level coverage."
+          "Registered tst_autocomplete plus shared tst_input_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialAutocomplete in the Inputs Gallery."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/inputs.md lists Autocomplete as part of the supported Input family."
+          "docs/public-api/inputs.md lists Autocomplete as part of the supported Input family.",
+          "docs/public-api/inputs.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "QtMaterialAutocompletePopup remains private implementation detail; the public component is QtMaterialAutocomplete."
@@ -3324,29 +3470,30 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Date Picker now has shared accessibility, keyboard, RTL and fractional desktop DPI maturity evidence; deterministic Material visual-reference/state-matrix conformance remains before complete maturity."
+        "Reviewed deterministic input_field_matrix / input_composite_matrix / input_slider_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Add deterministic Material visual-reference/state-matrix coverage for Date Picker before promoting maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
           "Public QtMaterialDatePicker API exposes selected/minimum/maximum dates, navigation slots and authored DatePickerSpec overrides."
         ],
         "rendering": [
-          "Production implementation applies DatePickerSpec colors, typography and metrics to the composed calendar surface."
+          "Production implementation applies DatePickerSpec colors, typography and metrics to the composed calendar surface.",
+          "input_field_matrix / input_composite_matrix / input_slider_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tst_data_components and tst_datepickerstability cover selection changes and resolved metric propagation."
@@ -3364,13 +3511,15 @@
           "tst_input_maturity verifies RTL propagation through Date Picker and its relevant native child controls."
         ],
         "tests": [
-          "Registered tst_data_components plus shared tst_input_maturity provide component and family-level coverage."
+          "Registered tst_data_components plus shared tst_input_maturity provide component and family-level coverage.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/inputspage.cpp instantiates QtMaterialDatePicker in the Inputs Gallery."
+          "examples/gallery/pages/inputspage.cpp demonstrates the complete Inputs family."
         ],
         "docs": [
-          "docs/public-api/inputs.md documents Date Picker as the canonical single-date calendar input."
+          "docs/public-api/inputs.md documents Date Picker as the canonical single-date calendar input.",
+          "docs/public-api/inputs.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Date Range Picker composes the canonical QtMaterialDatePicker rather than replacing its single-date contract."
@@ -3393,22 +3542,22 @@
     "releaseScope": true,
     "referenceCandidate": false,
     "maturityAxes": {
-      "api": 2,
-      "rendering": 2,
-      "states": 2,
-      "accessibility": 2,
-      "keyboard": 2,
-      "hidpi": 2,
-      "rtl": 2,
-      "tests": 2,
-      "example": 2,
-      "docs": 2,
-      "lastReviewed": "2026-10-03",
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 4,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
       "gaps": [
-        "Menu now has focused accessibility, keyboard, RTL, fractional desktop DPI and dedicated Gallery evidence plus a candidate visual matrix; reviewed stable visual-reference evidence remains."
+        "Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity."
       ],
       "nextActions": [
-        "Review and promote the Menu candidate goldens before raising visual maturity further."
+        "Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4."
       ],
       "evidence": {
         "api": [
@@ -3416,7 +3565,8 @@
         ],
         "rendering": [
           "Production rendering exists in src/widgets/navigation/qtmaterialmenu.cpp and resolves MenuSpec through the navigation spec boundary.",
-          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
+          "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
+          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
         ],
         "states": [
           "tst_menu covers disabled items, separators, checkable state and activation.",
@@ -3435,13 +3585,15 @@
           "tst_menu verifies RTL propagation or visual-direction behavior for Menu."
         ],
         "tests": [
-          "Registered tst_menu plus related focused suites provide maturity evidence for Menu."
+          "Registered tst_menu plus related focused suites provide maturity evidence for Menu.",
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
         ],
         "example": [
-          "examples/gallery/pages/navigationadvancedpage.cpp contains a dedicated Menu showcase with shortcuts, checked and disabled items."
+          "Navigation and Advanced Navigation gallery pages demonstrate the public navigation components."
         ],
         "docs": [
-          "docs/public-api/navigation.md documents Menu actions, keyboard behavior, RTL awareness and accessibility."
+          "docs/public-api/navigation.md documents Menu actions, keyboard behavior, RTL awareness and accessibility.",
+          "docs/public-api/navigation.md is the consumer-facing contract used by the 1.5 certification."
         ],
         "notes": [
           "Menu is a standalone public widget and is therefore registry-owned rather than support-allowlisted."

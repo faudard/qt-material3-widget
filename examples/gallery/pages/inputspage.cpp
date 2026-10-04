@@ -4,8 +4,20 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
+#include <QStringListModel>
+#include <QLabel>
+#include <QPushButton>
+#include <QTime>
 
 #include "qtmaterial/widgets/inputs/qtmaterialautocomplete.h"
+#include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
+#include "qtmaterial/widgets/inputs/qtmaterialdaterangepicker.h"
+#include "qtmaterial/widgets/inputs/qtmaterialrangeslider.h"
+#include "qtmaterial/widgets/inputs/qtmaterialsearchbar.h"
+#include "qtmaterial/widgets/inputs/qtmaterialsearchview.h"
+#include "qtmaterial/widgets/inputs/qtmaterialslider.h"
+#include "qtmaterial/widgets/inputs/qtmaterialtimefield.h"
+#include "qtmaterial/widgets/inputs/qtmaterialtimepicker.h"
 #include "qtmaterial/widgets/inputs/qtmaterialdatefield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialfilledtextfield.h"
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
@@ -111,6 +123,76 @@ InputsPage::InputsPage(QWidget* parent)
     layout->addWidget(outlined);
     layout->addWidget(filled);
     layout->addWidget(date);
+    auto* combo = new QtMaterial::QtMaterialComboBox(this);
+    combo->setLabelText(QStringLiteral("Combo box"));
+    combo->addItems({
+        QStringLiteral("Default density"),
+        QStringLiteral("Compact"),
+        QStringLiteral("Comfortable")
+    });
+
+    auto* slider = new QtMaterial::QtMaterialSlider(this);
+    slider->setRange(0, 100);
+    slider->setValue(64);
+
+    auto* rangeSlider = new QtMaterial::QtMaterialRangeSlider(this);
+    rangeSlider->setRange(0, 100);
+    rangeSlider->setValues(25, 75);
+
+    auto* searchBar = new QtMaterial::QtMaterialSearchBar(this);
+    searchBar->setPlaceholderText(QStringLiteral("Search components"));
+
+    auto* searchModel = new QStringListModel({
+        QStringLiteral("Buttons"),
+        QStringLiteral("Inputs"),
+        QStringLiteral("Navigation"),
+        QStringLiteral("Surfaces")
+    }, this);
+    auto* searchView = new QtMaterial::QtMaterialSearchView(this);
+    searchView->setSourceModel(searchModel);
+    searchView->searchBar()->setPlaceholderText(
+        QStringLiteral("Filter component families"));
+
+    auto* dateRange = new QtMaterial::QtMaterialDateRangePicker(this);
+    dateRange->setDateRange(
+        QDate::currentDate(),
+        QDate::currentDate().addDays(7));
+
+    auto* timeField = new QtMaterial::QtMaterialTimeField(this);
+    timeField->setTime(QTime(9, 30));
+
+    auto* openTimePicker = new QtMaterial::QtMaterialTimePicker(this);
+    openTimePicker->setWindowTitle(QStringLiteral("Time picker"));
+    openTimePicker->setModal(false);
+    openTimePicker->setSelectedTime(QTime(9, 30));
+
+    auto* timePickerButton = new QPushButton(
+        QStringLiteral("Open time picker"),
+        this);
+    connect(
+        timePickerButton,
+        &QPushButton::clicked,
+        openTimePicker,
+        [openTimePicker, timeField]() {
+            openTimePicker->setSelectedTime(timeField->time());
+            openTimePicker->show();
+            openTimePicker->raise();
+            openTimePicker->activateWindow();
+        });
+    connect(
+        openTimePicker,
+        &QtMaterial::QtMaterialTimePicker::timeAccepted,
+        timeField,
+        &QtMaterial::QtMaterialTimeField::setTime);
+
     layout->addWidget(autocomplete);
+    layout->addWidget(combo);
+    layout->addWidget(slider);
+    layout->addWidget(rangeSlider);
+    layout->addWidget(searchBar);
+    layout->addWidget(searchView);
+    layout->addWidget(dateRange);
+    layout->addWidget(timeField);
+    layout->addWidget(timePickerButton);
     layout->addStretch(1);
 }

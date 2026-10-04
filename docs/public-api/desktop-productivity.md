@@ -14,6 +14,9 @@ explicit dense, multi-selection and drag/drop policies while keeping
 Uniform row heights are enabled by default because large models are a primary use case.
 Focused certification keeps QTreeView keyboard navigation authoritative and covers RTL layout
 plus desktop rendering at 100%, 125%, 150%, 175% and 200% scale equivalents without materializing large models.
+The widget also exposes `accessibilitySummary` and `currentItemAccessibleText()`; the summary
+tracks model changes, the current row/column, AccessibleTextRole/DisplayRole and expanded/collapsed
+state so screen-reader clients receive stable contextual text.
 
 ## Advanced Table
 
@@ -32,6 +35,11 @@ own or slice a model; applications can connect `pageChanged` and `pageSizeChange
 local proxy models or remote/backend queries. Pagination mirrors first/previous/next/last
 chevrons in RTL, keeps native focus/keyboard activation on the child controls, and exposes the
 current page/range through the container accessible description.
+
+Pagination now resolves a dedicated `PaginationSpec` through `DataSpecResolver`. ThemeContext
+changes update surface/label/control/focus tokens and density metrics; `setSpec()` pins an explicit
+resolved spec until `resetSpec()` returns to live theme resolution. Applications still own data
+paging and model/backend queries.
 
 ## Split View 2.0
 

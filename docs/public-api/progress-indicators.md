@@ -23,7 +23,9 @@ Both widgets support:
 - accessible progress/status descriptions.
 
 Indeterminate animation runs only while needed and stops when the widget is hidden or returns to
-determinate mode.
+determinate mode. When the resolved theme requests reduced motion, indeterminate indicators stop
+their timeline and render a deterministic static representative phase instead of continuously
+animating. This also keeps visual-regression captures stable.
 
 ## Linear Progress Indicator
 
@@ -51,10 +53,11 @@ Its accessibility value is a rounded percentage in determinate mode, optionally 
 - show/hide animation lifecycle;
 - linear accessibility text;
 - explicit LTR/RTL rendering direction;
-- desktop render smoke at 100%, 125%, 150%, 175% and 200% scale equivalents.
+- desktop render smoke at 100%, 125%, 150%, 175% and 200% scale equivalents;
+- reduced-motion indeterminate rendering remaining pixel-stable over time;
+- explicit 0% and 100% determinate end-state accessibility.
 
-Deterministic reviewed visual references and broader animation end-state certification remain
-before `complete` maturity.
+Reviewed deterministic visual references remain before `complete` maturity.
 
 ## Circular Progress Indicator
 

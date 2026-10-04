@@ -6,14 +6,17 @@
 #include <QWidget>
 
 #include "qtmaterial/qtmaterialglobal.h"
+#include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
 
 namespace QtMaterial {
 
+class ThemeContext;
 class QtMaterialPaginationPrivate;
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialPagination : public QWidget
 {
     Q_OBJECT
+    Q_PROPERTY(QtMaterial::ThemeContext* themeContext READ themeContext WRITE setThemeContext NOTIFY themeContextChanged)
     Q_PROPERTY(int page READ page WRITE setPage NOTIFY pageChanged)
     Q_PROPERTY(int pageSize READ pageSize WRITE setPageSize NOTIFY pageSizeChanged)
     Q_PROPERTY(int totalCount READ totalCount WRITE setTotalCount NOTIFY totalCountChanged)
@@ -21,6 +24,15 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialPagination : public QWidget
 public:
     explicit QtMaterialPagination(QWidget* parent = nullptr);
     ~QtMaterialPagination() override;
+
+    void setThemeContext(ThemeContext* context);
+    ThemeContext* themeContext() const noexcept;
+    ThemeContext* effectiveThemeContext() const noexcept;
+
+    PaginationSpec spec() const;
+    void setSpec(const PaginationSpec& spec);
+    void resetSpec();
+    bool hasExplicitSpec() const noexcept;
 
     int page() const noexcept;
     int pageSize() const noexcept;
@@ -37,6 +49,8 @@ public:
     QString rangeText() const;
 
 Q_SIGNALS:
+    void themeContextChanged(QtMaterial::ThemeContext* context);
+    void effectiveThemeContextChanged(QtMaterial::ThemeContext* context);
     void pageChanged(int page);
     void pageSizeChanged(int pageSize);
     void totalCountChanged(int totalCount);
@@ -45,6 +59,9 @@ protected:
     void changeEvent(QEvent* event) override;
 
 private:
+    const PaginationSpec& resolvedSpec() const;
+    void ensureSpecResolved() const;
+    void applyResolvedSpec();
     void updateUi();
 
     std::unique_ptr<QtMaterialPaginationPrivate> d_ptr;
