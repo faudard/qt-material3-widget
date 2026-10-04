@@ -62,6 +62,10 @@ activation and focus behavior. Record the reviewer, date and a durable evidence 
 (log, recording, CI/manual artifact or review record) in the ledger. A failing bridge
 behavior remains a registry gap and must not be converted to `pass`.
 
+Use `python tools/check_enterprise_accessibility.py` while recording evidence. Before
+the final promotion, `python tools/check_enterprise_accessibility.py --require-complete`
+must succeed.
+
 ## Final closure procedure
 
 1. Execute the NVDA, Orca and VoiceOver sessions and fill the evidence ledger with real results.
