@@ -52,6 +52,7 @@
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `data.divider` | Divider | `complete` | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `data.badge` | Badge | `usable` | 4 | 3 | 4 | 3 | N/A | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Badge dot/numeric/theme goldens remain before release-scope promotion and complete maturity. |
 
 ### Inputs
 
@@ -81,6 +82,7 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| `navigation.bar` | Navigation Bar | `usable` | 4 | 3 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Navigation Bar goldens remain before release-scope promotion and complete maturity. |
 | `navigation.breadcrumb` | Breadcrumb | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
 | `navigation.command-palette` | Command Palette | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
 | `navigation.menu` | Menu | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
@@ -115,6 +117,8 @@
 | `surface.navigation-drawer` | Navigation Drawer | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | `surface.snackbar` | Snackbar | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | `surface.top-app-bar` | Top App Bar | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `surface.side-sheet` | Side Sheet | `usable` | 4 | 3 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Side Sheet modal/non-modal goldens remain before release-scope promotion and complete maturity. |
+| `surface.tooltip` | Tooltip | `usable` | 4 | 3 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Tooltip placement/theme goldens remain before release-scope promotion and complete maturity. |
 
 ## Buttons completion gate
 
@@ -166,6 +170,8 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Table | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Tree View | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Divider | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Badge | Add Badge dot, bounded numeric and theme cases to the pinned data/surface visual matrix. |
+| Badge | Record platform accessibility behavior for dynamically changing badge counts before release-scope promotion. |
 | Autocomplete | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Combo Box | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Date Picker | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
@@ -180,6 +186,8 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Time Field | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Time Picker | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Split View | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
+| Navigation Bar | Add Navigation Bar to the pinned navigation visual matrix and review stable goldens. |
+| Navigation Bar | Record per-destination NVDA, Orca and VoiceOver traversal before release-scope promotion. |
 | Breadcrumb | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
 | Command Palette | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
 | Menu | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
@@ -199,3 +207,7 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Navigation Drawer | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Snackbar | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Top App Bar | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Side Sheet | Add Side Sheet modal/non-modal and left/right cases to the pinned surface visual matrix. |
+| Side Sheet | Record NVDA, Orca and VoiceOver focus/dismissal behavior before release-scope promotion. |
+| Tooltip | Add Tooltip placement, theme and focus-trigger cases to the pinned surface visual matrix. |
+| Tooltip | Record platform assistive-technology tooltip announcement behavior before release-scope promotion. |

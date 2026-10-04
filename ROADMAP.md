@@ -175,3 +175,27 @@ Release gates:
 - Components that need task-menu, model or custom-container persistence are not exposed until that editing contract exists.
 - Conan/vcpkg support is added only with executable shared/static, relocation and Qt-major consumer validation; the installed CMake package remains the canonical package-manager boundary until then.
 - Windows Qt 5.14.2/MSVC v142 and Linux Qt 6 Designer lanes remain green, alongside normal examples, consumers, packaging and documentation.
+
+## 1.7.0 — Missing Material 3
+
+Goal: close high-value gaps in the Material 3 widget catalogue without changing the already
+certified 1.5 release scope.
+
+Initial catalogue additions:
+
+- Navigation Bar for compact primary destinations with keyboard, disabled-state and RTL behavior.
+- Side Sheet for modal/non-modal edge-anchored supporting content.
+- Tooltip with hover and keyboard-focus parity plus screen-aware placement.
+- Badge with dot and bounded numeric variants.
+- Theme-aware rendering uses the existing Material color roles and ThemeContext pipeline rather
+  than introducing parallel styling infrastructure.
+- Focused CTest coverage, Gallery examples, public-header ownership and consumer documentation
+  are required in the same change.
+
+Promotion gate:
+
+- The four 1.7 components remain outside the 1.5 release-scope count until deterministic family
+  visual goldens are reviewed and platform accessibility verification is recorded.
+- Promotion to release scope requires the normal API, rendering, states, accessibility, keyboard,
+  HiDPI, RTL, tests, example and documentation evidence.
+- Existing package, consumer, sanitizer, architecture and public API gates must remain green.

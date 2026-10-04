@@ -21,6 +21,7 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Material 3 catalogue coverage adds Navigation Bar, Side Sheet, Tooltip and Badge with theme-aware rendering, focused tests, Gallery examples and 1.7 maturity tracking.
 - Designer 2.0 expands the curated Qt Designer palette from 21 to 27 persistence-safe widgets, including Range Slider, Date Field, Search Bar, Top/Bottom App Bars and Divider.
 - Outlined/Filled Text Fields expose their common authored values as Qt properties for direct editing and UIC serialization.
 - A real `examples/designer-form/designerform.ui` AUTOUIC application demonstrates production `.ui` consumption.

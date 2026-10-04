@@ -5,12 +5,12 @@
 
 ## Component maturity summary
 
-Total tracked components: **49**.
+Total tracked components: **53**.
 
 | Maturity | Count |
 |---|---:|
 | `complete` | 43 |
-| `usable` | 6 |
+| `usable` | 10 |
 | `partial` | 0 |
 | `skeleton` | 0 |
 | `planned` | 0 |

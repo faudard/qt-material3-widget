@@ -3621,5 +3621,301 @@
         ]
       }
     }
+  },
+  {
+    "id": "navigation.bar",
+    "name": "Navigation Bar",
+    "family": "Navigation",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "releaseScope": false,
+    "referenceCandidate": false,
+    "publicHeader": "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h",
+    "specType": "N/A",
+    "widgetType": "QtMaterialNavigationBar",
+    "testTarget": "tst_missing_material3",
+    "galleryRoute": "/navigation/bar",
+    "docsPath": "docs/public-api/navigation.md",
+    "maturityAxes": {
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 3,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
+      "gaps": [
+        "Reviewed deterministic Navigation Bar goldens remain before release-scope promotion and complete maturity.",
+        "Per-destination platform screen-reader traversal remains to be recorded before accessibility can reach 4/4."
+      ],
+      "nextActions": [
+        "Add Navigation Bar to the pinned navigation visual matrix and review stable goldens.",
+        "Record per-destination NVDA, Orca and VoiceOver traversal before release-scope promotion."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/navigation/qtmaterialnavigationbar.h.",
+          "The widget exposes destination, currentIndex, labelsVisible and enabled-state APIs."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/navigation/qtmaterialnavigationbar.cpp.",
+          "Rendering resolves SurfaceContainer, SecondaryContainer, OnSecondaryContainer and OnSurfaceVariant from ThemeContext."
+        ],
+        "states": [
+          "tst_missing_material3 covers destination selection, disabled-state fallback and activation."
+        ],
+        "accessibility": [
+          "The widget exposes a stable Navigation bar accessible name and synchronized selection summary.",
+          "Platform per-destination screen-reader traversal remains pending."
+        ],
+        "keyboard": [
+          "tst_missing_material3 covers Left/Right traversal, RTL mirroring and Space activation."
+        ],
+        "hidpi": [
+          "tst_missing_material3 renders Navigation Bar at DPR 2.0."
+        ],
+        "rtl": [
+          "Left/Right navigation follows visual direction and the item painter uses visual rectangles under RTL."
+        ],
+        "tests": [
+          "Registered target tst_missing_material3 covers the 1.7 Navigation Bar contract."
+        ],
+        "example": [
+          "examples/gallery/pages/navigationpage.cpp demonstrates the Navigation Bar."
+        ],
+        "docs": [
+          "docs/public-api/navigation.md documents the Navigation Bar API, keyboard, accessibility and RTL contracts."
+        ],
+        "notes": [
+          "Navigation Bar enters the tracked 1.7 catalogue without changing the 1.5 release-scope gate."
+        ]
+      }
+    }
+  },
+  {
+    "id": "surface.side-sheet",
+    "name": "Side Sheet",
+    "family": "Surfaces",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "releaseScope": false,
+    "referenceCandidate": false,
+    "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialsidesheet.h",
+    "specType": "N/A",
+    "widgetType": "QtMaterialSideSheet",
+    "testTarget": "tst_missing_material3",
+    "galleryRoute": "/surfaces/side-sheet",
+    "docsPath": "docs/public-api/surfaces.md",
+    "maturityAxes": {
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 3,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
+      "gaps": [
+        "Reviewed deterministic Side Sheet modal/non-modal goldens remain before release-scope promotion and complete maturity.",
+        "Platform screen-reader focus and dismissal announcements remain to be recorded."
+      ],
+      "nextActions": [
+        "Add Side Sheet modal/non-modal and left/right cases to the pinned surface visual matrix.",
+        "Record NVDA, Orca and VoiceOver focus/dismissal behavior before release-scope promotion."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialsidesheet.h.",
+          "The widget exposes edge, modal, title, scrim-dismiss and contentWidget composition APIs."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/surfaces/qtmaterialsidesheet.cpp.",
+          "Rendering resolves SurfaceContainerLow from ThemeContext and uses the shared scrim widget."
+        ],
+        "states": [
+          "tst_missing_material3 covers open/close lifecycle and modal presentation."
+        ],
+        "accessibility": [
+          "Title text synchronizes the Side Sheet accessible name and description.",
+          "Platform focus announcements remain pending."
+        ],
+        "keyboard": [
+          "tst_missing_material3 certifies Escape dismissal and focusable content composition."
+        ],
+        "hidpi": [
+          "Side Sheet uses vector/Qt painting and shared overlay geometry; the focused suite exercises production rendering paths."
+        ],
+        "rtl": [
+          "Left/right edge placement remains explicit and deterministic under layout-direction changes."
+        ],
+        "tests": [
+          "Registered target tst_missing_material3 covers the 1.7 Side Sheet lifecycle contract."
+        ],
+        "example": [
+          "examples/gallery/pages/surfacespage.cpp demonstrates the Side Sheet."
+        ],
+        "docs": [
+          "docs/public-api/surfaces.md documents Side Sheet lifecycle, keyboard, accessibility and RTL behavior."
+        ],
+        "notes": [
+          "Side Sheet enters the tracked 1.7 catalogue without changing the 1.5 release-scope gate."
+        ]
+      }
+    }
+  },
+  {
+    "id": "surface.tooltip",
+    "name": "Tooltip",
+    "family": "Surfaces",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "releaseScope": false,
+    "referenceCandidate": false,
+    "publicHeader": "qtmaterial/widgets/surfaces/qtmaterialtooltip.h",
+    "specType": "N/A",
+    "widgetType": "QtMaterialTooltip",
+    "testTarget": "tst_missing_material3",
+    "galleryRoute": "/surfaces/tooltip",
+    "docsPath": "docs/public-api/surfaces.md",
+    "maturityAxes": {
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 3,
+      "keyboard": 4,
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
+      "gaps": [
+        "Reviewed deterministic Tooltip placement/theme goldens remain before release-scope promotion and complete maturity.",
+        "Platform assistive-technology announcement behavior remains to be recorded."
+      ],
+      "nextActions": [
+        "Add Tooltip placement, theme and focus-trigger cases to the pinned surface visual matrix.",
+        "Record platform assistive-technology tooltip announcement behavior before release-scope promotion."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/surfaces/qtmaterialtooltip.h.",
+          "The widget exposes text, placement, delay and targetWidget APIs."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/surfaces/qtmaterialtooltip.cpp.",
+          "Rendering resolves InverseSurface and InverseOnSurface from ThemeContext and clamps placement to available screen geometry."
+        ],
+        "states": [
+          "tst_missing_material3 covers target attachment and explicit show/hide lifecycle."
+        ],
+        "accessibility": [
+          "Tooltip visible text is mirrored into the accessible description.",
+          "Platform announcement behavior remains pending."
+        ],
+        "keyboard": [
+          "Target FocusIn/FocusOut uses the same presentation path as pointer hover without stealing focus."
+        ],
+        "hidpi": [
+          "Tooltip uses device-independent Qt geometry and vector painting on the active screen."
+        ],
+        "rtl": [
+          "Placement is screen-relative and text layout uses Qt direction handling without logical-order mutation."
+        ],
+        "tests": [
+          "Registered target tst_missing_material3 covers the 1.7 Tooltip target and visibility contract."
+        ],
+        "example": [
+          "examples/gallery/pages/surfacespage.cpp demonstrates keyboard/pointer Tooltip usage."
+        ],
+        "docs": [
+          "docs/public-api/surfaces.md documents Tooltip placement, keyboard, accessibility and RTL behavior."
+        ],
+        "notes": [
+          "Tooltip enters the tracked 1.7 catalogue without changing the 1.5 release-scope gate."
+        ]
+      }
+    }
+  },
+  {
+    "id": "data.badge",
+    "name": "Badge",
+    "family": "Data display",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "releaseScope": false,
+    "referenceCandidate": false,
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialbadge.h",
+    "specType": "N/A",
+    "widgetType": "QtMaterialBadge",
+    "testTarget": "tst_missing_material3",
+    "galleryRoute": "/surfaces/badge",
+    "docsPath": "docs/public-api/surfaces.md",
+    "maturityAxes": {
+      "api": 4,
+      "rendering": 3,
+      "states": 4,
+      "accessibility": 3,
+      "keyboard": "N/A",
+      "hidpi": 4,
+      "rtl": 4,
+      "tests": 4,
+      "example": 4,
+      "docs": 4,
+      "lastReviewed": "2026-10-04",
+      "gaps": [
+        "Reviewed deterministic Badge dot/numeric/theme goldens remain before release-scope promotion and complete maturity.",
+        "Platform announcement semantics for dynamically changing counts remain to be recorded."
+      ],
+      "nextActions": [
+        "Add Badge dot, bounded numeric and theme cases to the pinned data/surface visual matrix.",
+        "Record platform accessibility behavior for dynamically changing badge counts before release-scope promotion."
+      ],
+      "evidence": {
+        "api": [
+          "Public header exists: include/qtmaterial/widgets/data/qtmaterialbadge.h.",
+          "The widget exposes count, maximum, dot and displayText APIs."
+        ],
+        "rendering": [
+          "Production implementation exists: src/widgets/data/qtmaterialbadge.cpp.",
+          "Rendering resolves Error and OnError from ThemeContext."
+        ],
+        "states": [
+          "tst_missing_material3 covers numeric, bounded maximum and dot modes."
+        ],
+        "accessibility": [
+          "Badge state synchronizes a descriptive new-content or notification-count announcement.",
+          "Dynamic platform announcements remain pending."
+        ],
+        "keyboard": [
+          "Badge is non-interactive; keyboard activation does not apply."
+        ],
+        "hidpi": [
+          "tst_missing_material3 renders Badge at DPR 2.0."
+        ],
+        "rtl": [
+          "Badge geometry is direction-neutral and can be placed by the owning layout on the appropriate visual edge."
+        ],
+        "tests": [
+          "Registered target tst_missing_material3 covers the 1.7 Badge state contract."
+        ],
+        "example": [
+          "examples/gallery/pages/surfacespage.cpp demonstrates a numeric Badge."
+        ],
+        "docs": [
+          "docs/public-api/surfaces.md documents Badge states, accessibility, HiDPI and RTL behavior."
+        ],
+        "notes": [
+          "Badge enters the tracked 1.7 catalogue without changing the 1.5 release-scope gate."
+        ]
+      }
+    }
   }
 ]
