@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <QList>
 
 #include "qtmaterial/core/qtmaterialoverlaysurface.h"
 #include "qtmaterial/qtmaterialglobal.h"
@@ -23,6 +24,8 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSideSheet : public QtMaterialOverlayS
     Q_PROPERTY(bool modal READ isModal WRITE setModal NOTIFY modalChanged)
     Q_PROPERTY(QString titleText READ titleText WRITE setTitleText NOTIFY titleTextChanged)
     Q_PROPERTY(bool dismissOnScrimClick READ dismissOnScrimClick WRITE setDismissOnScrimClick NOTIFY dismissOnScrimClickChanged)
+    Q_PROPERTY(bool restoreFocusOnClose READ restoreFocusOnClose WRITE setRestoreFocusOnClose NOTIFY restoreFocusOnCloseChanged)
+    Q_PROPERTY(QWidget* initialFocusWidget READ initialFocusWidget WRITE setInitialFocusWidget)
     Q_PROPERTY(bool open READ isOpen NOTIFY openChanged)
 
 public:
@@ -47,6 +50,12 @@ public:
     bool dismissOnScrimClick() const noexcept;
     void setDismissOnScrimClick(bool enabled);
 
+    bool restoreFocusOnClose() const noexcept;
+    void setRestoreFocusOnClose(bool enabled);
+
+    QWidget* initialFocusWidget() const noexcept;
+    void setInitialFocusWidget(QWidget* widget);
+
     QWidget* contentWidget() const noexcept;
 
     bool isOpen() const noexcept;
@@ -63,12 +72,14 @@ Q_SIGNALS:
     void modalChanged(bool modal);
     void titleTextChanged(const QString& text);
     void dismissOnScrimClickChanged(bool enabled);
+    void restoreFocusOnCloseChanged(bool enabled);
     void openChanged(bool open);
     void dismissed();
 
 protected:
     void paintEvent(QPaintEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
+    bool focusNextPrevChild(bool next) override;
     void showEvent(QShowEvent* event) override;
     void hideEvent(QHideEvent* event) override;
     bool eventFilter(QObject* watched, QEvent* event) override;
@@ -76,6 +87,10 @@ protected:
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
 
 private:
+    void focusFirstChild();
+    QList<QWidget*> focusableSheetChildren() const;
+    bool moveFocusInsideSheet(bool next);
+    void restorePreviousFocus();
     void syncScrim();
     void syncAccessibility();
 
