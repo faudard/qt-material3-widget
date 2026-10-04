@@ -1,0 +1,20 @@
+from pathlib import Path
+import re
+import unittest
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+class CiWorkflowIntegrityTests(unittest.TestCase):
+    def test_ci_jobs_are_unique_and_keep_the_supported_lanes(self):
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text()
+        jobs = re.findall(r"^  ([a-z][a-z0-9-]*):\s*$", workflow.split("jobs:\n", 1)[1], re.MULTILINE)
+        self.assertEqual(len(jobs), len(set(jobs)), "Duplicate CI job identifiers")
+        self.assertTrue({"build-test", "designer-plugin", "designer-plugin-qt5-windows", "consumer-contract",
+                         "release-package", "examples-benchmarks", "sanitizers", "architecture"}.issubset(jobs))
+
+    def test_workflow_has_no_unindented_script_fragments(self):
+        for path in (ROOT / ".github/workflows").glob("*.yml"):
+            for number, line in enumerate(path.read_text().splitlines(), 1):
+                if line and not line.startswith((" ", "#", "---")):
+                    self.assertRegex(line, r"^[A-Za-z][A-Za-z0-9_-]*:", f"{path}:{number}: leaked script text")

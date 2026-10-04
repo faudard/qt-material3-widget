@@ -117,6 +117,12 @@ receive priority. `setFuzzyMatchingEnabled(false)` selects literal substring fil
 Results are grouped into Favorites, Recent commands and explicit sections, ranked within
 each group. Icons, secondary descriptions and shortcut text have dedicated display areas.
 
+Equal-score provider commands sort by stable ID. Provider entries without an ID or title
+are ignored. External model rows preserve the application's ordering, even without IDs.
+Sections use locale-independent QString comparison. The
+[navigation/Desktop certification guide](navigation-desktop-certification.md) describes
+stress, keyboard, accessibility and visual evidence, including the remaining review gaps.
+
 ### Providers and asynchronous results
 
 ```cpp

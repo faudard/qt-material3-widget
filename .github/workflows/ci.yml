@@ -193,11 +193,60 @@ jobs:
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
             bash -c 'openbox >/tmp/openbox.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure'
 
+      - name: Compare reviewed Navigation goldens
+        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        shell: bash
+        env:
+          QTMATERIAL3_VISUAL_STRICT: "1"
+          QTMATERIAL3_VISUAL_ARTIFACTS_DIR: ${{ github.workspace }}/build/navigation-strict/artifacts
+          QT_STYLE_OVERRIDE: Fusion
+          QT_QPA_PLATFORM: xcb
+          QT_SCALE_FACTOR: "1"
+          QT_FONT_DPI: "96"
+          LC_ALL: C.UTF-8
+        run: |
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            bash -c 'openbox >/tmp/openbox-navigation-goldens.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure -R "^tst_navigation_visual_goldens$"'
+
+      - name: Render Navigation evidence twice
+        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        shell: bash
+        env:
+          QTMATERIAL3_UPDATE_VISUAL_GOLDENS: "1"
+          QT_STYLE_OVERRIDE: Fusion
+          QT_QPA_PLATFORM: xcb
+          QT_SCALE_FACTOR: "1"
+          QT_FONT_DPI: "96"
+          LC_ALL: C.UTF-8
+        run: |
+          for pass in first second; do
+            QTMATERIAL3_VISUAL_GOLDENS_DIR="${GITHUB_WORKSPACE}/build/navigation-${pass}/goldens" \
+            QTMATERIAL3_VISUAL_ARTIFACTS_DIR="${GITHUB_WORKSPACE}/build/navigation-${pass}/artifacts" \
+            xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+              bash -c 'openbox >/tmp/openbox-navigation-repeat.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure -R "^tst_navigation_visual_goldens$"'
+          done
+          python3 tools/check_navigation_visual_repeatability.py \
+            build/navigation-first build/navigation-second \
+            --output build/navigation-repeatability.json
+
+      - name: Upload Navigation visual evidence
+        if: always() && matrix.name == 'ubuntu-qt6.4.0-floor'
+        uses: actions/upload-artifact@v6
+        with:
+          name: navigation-desktop-visual-evidence
+          path: |
+            build/navigation-first/
+            build/navigation-second/
+            build/navigation-strict/
+            build/navigation-repeatability.json
+          if-no-files-found: warn
+
       - name: Generate family visual candidate goldens
         if: matrix.name == 'ubuntu-qt6.4.0-floor'
         shell: bash
         env:
-          QTMATERIAL3_UPDATE_VISUAL_GOLDENS: 1
+          QTMATERIAL3_UPDATE_VISUAL_GOLDENS: "1"
+          QTMATERIAL3_VISUAL_GOLDENS_DIR: ${{ github.workspace }}/build/family-candidate-goldens
           QT_STYLE_OVERRIDE: Fusion
         run: |
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
@@ -209,18 +258,17 @@ jobs:
         with:
           name: family-visual-candidate-goldens
           path: |
-            tests/visual/goldens/selection_matrix_*.png
-            tests/visual/goldens/input_field_matrix_*.png
-            tests/visual/goldens/input_composite_matrix_*.png
-            tests/visual/goldens/navigation_primary_matrix_*.png
-            tests/visual/goldens/navigation_desktop_matrix_*.png
-            tests/visual/goldens/input_slider_matrix_*.png
-            tests/visual/goldens/desktop_data_matrix_*.png
-            tests/visual/goldens/data_extended_matrix_*.png
-            tests/visual/goldens/progress_compact_matrix_*.png
-            tests/visual/goldens/surface_bar_matrix_*.png
-            tests/visual/goldens/surface_overlay_matrix_*.png
-            tests/visual/goldens/layout_matrix_*.png
+            build/family-candidate-goldens/selection_matrix_*.png
+            build/family-candidate-goldens/input_field_matrix_*.png
+            build/family-candidate-goldens/input_composite_matrix_*.png
+            build/family-candidate-goldens/navigation_*.png
+            build/family-candidate-goldens/input_slider_matrix_*.png
+            build/family-candidate-goldens/desktop_data_matrix_*.png
+            build/family-candidate-goldens/data_extended_matrix_*.png
+            build/family-candidate-goldens/progress_compact_matrix_*.png
+            build/family-candidate-goldens/surface_bar_matrix_*.png
+            build/family-candidate-goldens/surface_overlay_matrix_*.png
+            build/family-candidate-goldens/layout_matrix_*.png
           if-no-files-found: warn
 
       - name: Test Windows
@@ -329,171 +377,7 @@ jobs:
           $environment = cmd.exe /d /s /c ('"' + $vsDevCmd + '" -no_logo -arch=x64 -host_arch=x64 -vcvars_ver=14.29 && set')
           if ($LASTEXITCODE -ne 0) { throw "VsDevCmd failed" }
           foreach ($line in $environment) {
-            if ($line -match '^([^=]+)=(.*)    name: consumer-${{ matrix.scenario }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        scenario:
-          - source-static
-          - add-subdirectory-shared
-          - fetchcontent-static
-          - install-shared
-          - install-static
-          - invalid-package-component
-
-    env:
-      CMAKE_BUILD_PARALLEL_LEVEL: 2
-      QT_QPA_PLATFORM: offscreen
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install Qt/build dependencies
-        run: bash scripts/ci/install-ubuntu-deps.sh
-
-      - name: Validate matrix contract
-        run: python3 tools/check_build_consumer_matrix.py
-
-      - name: Build consumer scenario
-        run: >
-          python3 scripts/ci/run-consumer-matrix.py
-          --scenario "${{ matrix.scenario }}"
-          --build-root "${{ github.workspace }}/build/consumer-contract"
-
-  release-package:
-    name: release-package
-    runs-on: ubuntu-latest
-    env:
-      CMAKE_BUILD_PARALLEL_LEVEL: 2
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install Qt/build dependencies
-        run: bash scripts/ci/install-ubuntu-deps.sh
-
-      - name: Configure release package
-        run: >
-          cmake -S . -B build-release -G Ninja
-          -DCMAKE_BUILD_TYPE=Release
-          -DQTMATERIAL3_BUILD_TESTS=OFF
-          -DQTMATERIAL3_BUILD_EXAMPLES=OFF
-          -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
-          -DQTMATERIAL3_USE_MCU=OFF
-          -DQTMATERIAL3_INSTALL=ON
-
-      - name: Build and stage install
-        run: |
-          cmake --build build-release --parallel
-          cmake --install build-release --prefix "${{ github.workspace }}/build-release/stage"
-
-      - name: Build binary archives
-        working-directory: build-release
-        run: |
-          cpack -G TGZ
-          cpack -G ZIP
-
-      - name: Build source archives
-        working-directory: build-release
-        run: |
-          cpack --config CPackSourceConfig.cmake -G TGZ
-          cpack --config CPackSourceConfig.cmake -G ZIP
-
-      - name: Verify archive set
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(find build-release -maxdepth 1 -name 'qt-material3-widget-*.tar.gz' | wc -l)" -ge 1
-          test "$(find build-release -maxdepth 1 -name 'qt-material3-widget-*.zip' | wc -l)" -ge 1
-          test -f build-release/stage/share/doc/qt-material3-widget/LICENSE
-          test -f build-release/stage/share/doc/qt-material3-widget/CHANGELOG.md
-
-      - name: Upload release archives
-        uses: actions/upload-artifact@v6
-        with:
-          name: qt-material3-widget-packages
-          path: |
-            build-release/qt-material3-widget-*.tar.gz
-            build-release/qt-material3-widget-*.zip
-          if-no-files-found: error
-
-  examples-benchmarks:
-    name: examples-benchmarks
-    runs-on: ubuntu-latest
-    env:
-      CMAKE_BUILD_PARALLEL_LEVEL: 2
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install Qt/build dependencies
-        run: bash scripts/ci/install-ubuntu-deps.sh
-
-      - name: Configure examples and benchmarks
-        run: >
-          cmake -S . -B build-extras -G Ninja
-          -DCMAKE_BUILD_TYPE=Release
-          -DQTMATERIAL3_BUILD_TESTS=OFF
-          -DQTMATERIAL3_BUILD_EXAMPLES=ON
-          -DQTMATERIAL3_BUILD_BENCHMARKS=ON
-          -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=OFF
-          -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=ON
-          -DQTMATERIAL3_USE_MCU=OFF
-
-      - name: Build examples and benchmarks
-        run: cmake --build build-extras --parallel
-
-  sanitizers:
-    name: sanitizers-linux
-    runs-on: ubuntu-latest
-    env:
-      CMAKE_BUILD_PARALLEL_LEVEL: 2
-      ASAN_OPTIONS: detect_leaks=0:halt_on_error=1
-      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install Qt/build dependencies
-        run: bash scripts/ci/install-ubuntu-deps.sh
-
-      - name: Configure ASan and UBSan
-        run: >
-          cmake -S . -B build-sanitize -G Ninja
-          -DCMAKE_BUILD_TYPE=Debug
-          -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
-          -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
-          -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address,undefined"
-          -DQTMATERIAL3_BUILD_TESTS=ON
-          -DQTMATERIAL3_BUILD_EXAMPLES=OFF
-          -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
-          -DQTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS=OFF
-          -DQTMATERIAL3_USE_MCU=OFF
-
-      - name: Build sanitizer configuration
-        run: cmake --build build-sanitize --parallel
-
-      - name: Run sanitizer tests
-        shell: bash
-        run: |
-          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
-            bash -c 'openbox >/tmp/openbox-sanitize.log 2>&1 & ctest --test-dir build-sanitize --output-on-failure'
-
-  architecture:
-    name: architecture
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Python checker tests
-        run: >
-          python3 -m unittest discover
-          -s tests/tools
-          -p "test_architecture_checker.py"
-          -v
-
-      - name: Architecture checker
-        run: python3 scripts/architecture/check_architecture.py --root .
-
-) {
+            if ($line -match '^([^=]+)=(.*)$') {
               $name = $matches[1]
               if (@("PATH","INCLUDE","LIB","LIBPATH","VCINSTALLDIR","VCToolsInstallDir","VCToolsVersion","VSINSTALLDIR","VisualStudioVersion","WindowsSdkDir","WindowsSDKVersion","UniversalCRTSdkDir","UCRTVersion") -contains $name) {
                 "$name=$($matches[2])" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
@@ -699,4 +583,3 @@ jobs:
 
       - name: Architecture checker
         run: python3 scripts/architecture/check_architecture.py --root .
-

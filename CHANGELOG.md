@@ -9,6 +9,9 @@ unless a stricter ABI policy is published.
 ## [Unreleased]
 
 ### Fixed
+- Restore valid CI YAML after duplicate job definitions were embedded in the Windows Designer environment script.
+- Command Palette equal-score provider results now use stable IDs and locale-independent section ordering, with deterministic duplicate ownership regardless of reply order.
+- Navigation Rail and Menu expose individual accessible items, roles, geometry, selection/check states and activation actions, including focus and structure notifications.
 - Date Picker weekday header now inherits the Material surface through the native `QPalette::AlternateBase` role, preventing a light strip in dark themes.
 - Editable ComboBox labels now synchronize to the native editor without overwriting an application-provided accessible name.
 - Autocomplete initializes and refreshes its accessible fallback when the placeholder changes.
@@ -16,6 +19,9 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Navigation/Desktop certification suites cover focus traversal, keyboard-only operation, LTR/RTL and real QAccessible interfaces for Tabs, Navigation Rail, Menu, Breadcrumb, Command Palette and Split View.
+- Command Palette stress coverage exercises 10,000 commands, rapid debounced/queued requests, cancellation and destruction, stale replies and deterministic ordering.
+- Pinned navigation visual evidence covers 27 matrix/focus cases in two independent render passes, with renderer provenance and a repeatability report; visual approval and platform screen-reader review remain explicit maturity gaps.
 - Command Palette 2.0 adds fuzzy search, sections, favorites/history, icons and secondary text, configurable Ctrl+K/Ctrl+P shortcuts, and application-owned synchronous/asynchronous providers with cancellation and stale-response rejection.
 - Breadcrumb 2.0 adds editable locations, segment/overflow icons, bounded responsive labels and opt-in URL drag/drop, including a strict visible-item limit when the current segment is internal to the path.
 - Split View 2.0 adds native constrained keyboard movement with Home/End and Enter, configurable reset sizes, extended collapsed-pane state persistence, remember-on-show behavior and opt-in animated collapse with constraint restoration.

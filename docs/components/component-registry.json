@@ -1801,10 +1801,13 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity."
+        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
       ],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4."
+        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
+        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
+        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
       ],
       "evidence": {
         "api": [
@@ -1813,34 +1816,40 @@
         "rendering": [
           "Production implementation exists: src/widgets/navigation/qtmaterialnavigationrail.cpp.",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
-          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "tst_navigation_visual_goldens registers navigation_focus_rail candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
         ],
         "states": [
           "tests/widgets/navigation/tst_navigationrail.cpp exercises destinations and selection.",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
         ],
         "accessibility": [
-          "tst_navigationrail verifies accessible naming/state contracts for Navigation Rail and its relevant native/composed controls."
+          "tst_navigationrail verifies accessible naming/state contracts for Navigation Rail and its relevant native/composed controls.",
+          "tst_navigation_desktop_certification is registered: Per-destination ListItem name, geometry, selected/disabled/focused states and accessible press action in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
         ],
         "keyboard": [
-          "tst_navigationrail exercises the focused keyboard contract for Navigation Rail while preserving native Qt behavior where applicable."
+          "tst_navigationrail exercises the focused keyboard contract for Navigation Rail while preserving native Qt behavior where applicable.",
+          "tst_navigation_desktop_certification is registered: Per-destination ListItem name, geometry, selected/disabled/focused states and accessible press action in LTR/RTL."
         ],
         "hidpi": [
           "tst_navigationrail and/or the focused maturity suite renders Navigation Rail at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "tst_navigationrail verifies RTL propagation or visual-direction behavior for Navigation Rail."
+          "tst_navigationrail verifies RTL propagation or visual-direction behavior for Navigation Rail.",
+          "tst_navigation_desktop_certification supplies LTR/RTL rows for Navigation Rail behavioral contracts."
         ],
         "tests": [
           "Registered tst_navigationrail plus related focused suites provide maturity evidence for Navigation Rail.",
-          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence.",
+          "Registered tst_navigation_desktop_certification adds semantic accessibility/focus/keyboard contracts; no local Qt execution is claimed."
         ],
         "example": [
           "Navigation and Advanced Navigation gallery pages demonstrate the public navigation components."
         ],
         "docs": [
           "docs/public-api/navigation.md links the focused release-readiness contract.",
-          "docs/public-api/navigation.md is the consumer-facing contract used by the 1.5 certification."
+          "docs/public-api/navigation.md is the consumer-facing contract used by the 1.5 certification.",
+          "docs/public-api/navigation-desktop-certification.md records scope, ordering and pending visual/platform review without score promotion."
         ]
       }
     }
@@ -1872,10 +1881,13 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity."
+        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
       ],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4."
+        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
+        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
+        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
       ],
       "evidence": {
         "api": [
@@ -1884,7 +1896,8 @@
         "rendering": [
           "Production implementation exists: src/widgets/navigation/qtmaterialtabs.cpp.",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
-          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "tst_navigation_visual_goldens registers navigation_focus_tabs candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
         ],
         "states": [
           "Route/resolved-lifecycle tests cover authored and resolved state.",
@@ -1892,27 +1905,32 @@
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
         ],
         "accessibility": [
-          "tst_tabs verifies accessible naming/state contracts for Tabs and its relevant native/composed controls."
+          "tst_tabs verifies accessible naming/state contracts for Tabs and its relevant native/composed controls.",
+          "tst_navigation_desktop_certification is registered: Native PageTab selection and disabled state plus forward/backward focus traversal and disabled skipping in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
         ],
         "keyboard": [
-          "tst_tabs exercises the focused keyboard contract for Tabs while preserving native Qt behavior where applicable."
+          "tst_tabs exercises the focused keyboard contract for Tabs while preserving native Qt behavior where applicable.",
+          "tst_navigation_desktop_certification is registered: Native PageTab selection and disabled state plus forward/backward focus traversal and disabled skipping in LTR/RTL."
         ],
         "hidpi": [
           "tst_tabs and/or the focused maturity suite renders Tabs at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "tst_tabs verifies RTL propagation or visual-direction behavior for Tabs."
+          "tst_tabs verifies RTL propagation or visual-direction behavior for Tabs.",
+          "tst_navigation_desktop_certification supplies LTR/RTL rows for Tabs behavioral contracts."
         ],
         "tests": [
           "Registered tst_tabs plus related focused suites provide maturity evidence for Tabs.",
-          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence.",
+          "Registered tst_navigation_desktop_certification adds semantic accessibility/focus/keyboard contracts; no local Qt execution is claimed."
         ],
         "example": [
           "Navigation and Advanced Navigation gallery pages demonstrate the public navigation components."
         ],
         "docs": [
           "docs/public-api/navigation.md documents the Tabs public contract.",
-          "docs/public-api/navigation.md is the consumer-facing contract used by the 1.5 certification."
+          "docs/public-api/navigation.md is the consumer-facing contract used by the 1.5 certification.",
+          "docs/public-api/navigation-desktop-certification.md records scope, ordering and pending visual/platform review without score promotion."
         ]
       }
     }
@@ -3101,10 +3119,13 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic layout_matrix stable goldens remain before complete maturity."
+        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
       ],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion layout_matrix goldens, then raise rendering to 4/4."
+        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
+        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
+        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
       ],
       "evidence": {
         "api": [
@@ -3114,7 +3135,8 @@
         "rendering": [
           "gallery exercises the desktop adaptation",
           "desktop_data_matrix candidate goldens cover default, disabled and RTL rendering.",
-          "layout_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "layout_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "tst_navigation_visual_goldens registers navigation_focus_split candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
         ],
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
@@ -3123,29 +3145,34 @@
           "tst_desktop_navigation_v2 covers collapsed-pane persistence, animation reversal and minimum/collapsibility restoration."
         ],
         "accessibility": [
-          "tst_desktop_productivity verifies accessible naming/state contracts for Split View and its relevant native/composed controls."
+          "tst_desktop_productivity verifies accessible naming/state contracts for Split View and its relevant native/composed controls.",
+          "tst_navigation_desktop_certification is registered: Accessible focused dividers, constrained physical arrows/Shift/Home/End and Enter collapse/restore in both orientations and LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
         ],
         "keyboard": [
           "tst_desktop_productivity exercises the focused keyboard contract for Split View while preserving native Qt behavior where applicable.",
-          "tst_desktop_navigation_v2 covers native constrained divider movement, Home/End and default reset without resizing an unrelated pane."
+          "tst_desktop_navigation_v2 covers native constrained divider movement, Home/End and default reset without resizing an unrelated pane.",
+          "tst_navigation_desktop_certification is registered: Accessible focused dividers, constrained physical arrows/Shift/Home/End and Enter collapse/restore in both orientations and LTR/RTL."
         ],
         "hidpi": [
           "tst_desktop_productivity and/or the focused maturity suite renders Split View at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Split View."
+          "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Split View.",
+          "tst_navigation_desktop_certification supplies LTR/RTL rows for Split View behavioral contracts."
         ],
         "tests": [
           "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Split View.",
           "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change.",
-          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence.",
+          "Registered tst_navigation_desktop_certification adds semantic accessibility/focus/keyboard contracts; no local Qt execution is claimed."
         ],
         "example": [
           "examples/gallery/pages/advanceddatapage.cpp demonstrates SplitView collapse, reset, persistence and keyboard guidance."
         ],
         "docs": [
           "desktop-productivity.md documents the contract",
-          "docs/public-api/desktop-productivity.md is the consumer-facing contract used by the 1.5 certification."
+          "docs/public-api/desktop-productivity.md is the consumer-facing contract used by the 1.5 certification.",
+          "docs/public-api/navigation-desktop-certification.md records scope, ordering and pending visual/platform review without score promotion."
         ],
         "notes": [
           "QSplitter save/restore and sizing semantics remain available unchanged."
@@ -3180,10 +3207,13 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity."
+        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
       ],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4."
+        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
+        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
+        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
       ],
       "evidence": {
         "api": [
@@ -3193,7 +3223,8 @@
         "rendering": [
           "gallery exercises the desktop adaptation",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
-          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "tst_navigation_visual_goldens registers navigation_focus_breadcrumb candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
         ],
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
@@ -3203,28 +3234,33 @@
           "tst_desktop_navigation_v2 covers Enter/Escape editing, overflow icons, strict visible limits and URL drop routing."
         ],
         "accessibility": [
-          "tst_desktop_productivity verifies accessible naming/state contracts for Breadcrumb and its relevant native/composed controls."
+          "tst_desktop_productivity verifies accessible naming/state contracts for Breadcrumb and its relevant native/composed controls.",
+          "tst_navigation_desktop_certification is registered: Native overflow-menu activation using only keys, Ctrl+L editing, Enter/Escape, accessible editor and focus restoration in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
         ],
         "keyboard": [
-          "tst_desktop_productivity exercises the focused keyboard contract for Breadcrumb while preserving native Qt behavior where applicable."
+          "tst_desktop_productivity exercises the focused keyboard contract for Breadcrumb while preserving native Qt behavior where applicable.",
+          "tst_navigation_desktop_certification is registered: Native overflow-menu activation using only keys, Ctrl+L editing, Enter/Escape, accessible editor and focus restoration in LTR/RTL."
         ],
         "hidpi": [
           "tst_desktop_productivity and/or the focused maturity suite renders Breadcrumb at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Breadcrumb."
+          "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Breadcrumb.",
+          "tst_navigation_desktop_certification supplies LTR/RTL rows for Breadcrumb behavioral contracts."
         ],
         "tests": [
           "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Breadcrumb.",
           "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change.",
-          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence.",
+          "Registered tst_navigation_desktop_certification adds semantic accessibility/focus/keyboard contracts; no local Qt execution is claimed."
         ],
         "example": [
           "Navigation and Advanced Navigation gallery pages demonstrate the public navigation components."
         ],
         "docs": [
           "desktop-productivity.md documents the contract",
-          "docs/public-api/desktop-productivity.md is the consumer-facing contract used by the 1.5 certification."
+          "docs/public-api/desktop-productivity.md is the consumer-facing contract used by the 1.5 certification.",
+          "docs/public-api/navigation-desktop-certification.md records scope, ordering and pending visual/platform review without score promotion."
         ],
         "notes": [
           "Breadcrumb segments are focusable Qt tool buttons and expose activated path indexes."
@@ -3259,10 +3295,13 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity."
+        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
       ],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4."
+        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
+        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
+        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
       ],
       "evidence": {
         "api": [
@@ -3272,38 +3311,46 @@
         "rendering": [
           "gallery exercises the desktop adaptation",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
-          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "tst_navigation_visual_goldens registers navigation_focus_palette candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
         ],
         "states": [
           "native Qt enabled/selection/focus state remains authoritative",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
           "tst_desktop_productivity verifies empty-state visibility and ShortcutRole propagation through the proxy model.",
-          "tst_desktop_navigation_v2 covers stale replies, cancellation/removal/destruction, loading/errors and worker-thread dispatch."
+          "tst_desktop_navigation_v2 covers stale replies, cancellation/removal/destruction, loading/errors and worker-thread dispatch.",
+          "Registered tst_commandpalette_stress covers 10,000 commands, 100 rapid query edits, 30 reverse queued reply generations, stale errors, cancellation/destruction and deterministic ID/deduplication ordering."
         ],
         "accessibility": [
-          "tst_desktop_productivity verifies accessible naming/state contracts for Command Palette and its relevant native/composed controls."
+          "tst_desktop_productivity verifies accessible naming/state contracts for Command Palette and its relevant native/composed controls.",
+          "tst_navigation_desktop_certification is registered: Native accessible result-row metadata and a complete host/palette focus journey using Ctrl+K/P, keyboard selection, favorite toggling, Enter/Escape in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
         ],
         "keyboard": [
           "tst_desktop_productivity exercises the focused keyboard contract for Command Palette while preserving native Qt behavior where applicable.",
-          "tst_desktop_navigation_v2 covers disabled-command skipping, favorite toggling and original-model index activation."
+          "tst_desktop_navigation_v2 covers disabled-command skipping, favorite toggling and original-model index activation.",
+          "tst_navigation_desktop_certification is registered: Native accessible result-row metadata and a complete host/palette focus journey using Ctrl+K/P, keyboard selection, favorite toggling, Enter/Escape in LTR/RTL."
         ],
         "hidpi": [
           "tst_desktop_productivity and/or the focused maturity suite renders Command Palette at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Command Palette."
+          "tst_desktop_productivity verifies RTL propagation or visual-direction behavior for Command Palette.",
+          "tst_navigation_desktop_certification supplies LTR/RTL rows for Command Palette behavioral contracts."
         ],
         "tests": [
           "Registered tst_desktop_productivity plus related focused suites provide maturity evidence for Command Palette.",
           "Registered tst_desktop_navigation_v2 adds contract coverage; execution is left to CI for this change.",
-          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence.",
+          "Registered tst_navigation_desktop_certification adds semantic accessibility/focus/keyboard contracts; no local Qt execution is claimed.",
+          "Registered tst_commandpalette_stress covers large providers, lifecycle races and mouse-free LTR/RTL activation; execution is delegated to CI."
         ],
         "example": [
           "Navigation and Advanced Navigation gallery pages demonstrate the public navigation components."
         ],
         "docs": [
           "desktop-productivity.md documents the contract",
-          "docs/public-api/desktop-productivity.md is the consumer-facing contract used by the 1.5 certification."
+          "docs/public-api/desktop-productivity.md is the consumer-facing contract used by the 1.5 certification.",
+          "docs/public-api/navigation-desktop-certification.md records scope, ordering and pending visual/platform review without score promotion."
         ],
         "notes": [
           "Command filtering uses QSortFilterProxyModel and returns source-model indexes."
@@ -3554,10 +3601,13 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity."
+        "Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval.",
+        "Platform screen-reader verification with NVDA, Orca and VoiceOver remains; QAccessible contract tests do not certify spoken output or the OS bridge."
       ],
       "nextActions": [
-        "Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4."
+        "Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation.",
+        "Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4.",
+        "Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility."
       ],
       "evidence": {
         "api": [
@@ -3566,34 +3616,40 @@
         "rendering": [
           "Production rendering exists in src/widgets/navigation/qtmaterialmenu.cpp and resolves MenuSpec through the navigation spec boundary.",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering.",
-          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner."
+          "navigation_primary_matrix / navigation_desktop_matrix provides deterministic family candidate coverage on the pinned Qt 6.4/Fusion visual runner.",
+          "tst_navigation_visual_goldens registers navigation_focus_menu candidates in three themes plus the relevant navigation matrix, with two independent captures and runtime provenance; PNG review is pending."
         ],
         "states": [
           "tst_menu covers disabled items, separators, checkable state and activation.",
           "Navigation candidate state matrices in tst_theme_visual_regression cover light, dark and high-contrast rendering."
         ],
         "accessibility": [
-          "tst_menu verifies accessible naming/state contracts for Menu and its relevant native/composed controls."
+          "tst_menu verifies accessible naming/state contracts for Menu and its relevant native/composed controls.",
+          "tst_navigation_desktop_certification is registered: Per-item MenuItem/Separator roles, accelerator text, checked/disabled states and accessible activation plus Home/End/Space/Escape in LTR/RTL. Execution is delegated to CI, with OS screen-reader review separate."
         ],
         "keyboard": [
-          "tst_menu exercises the focused keyboard contract for Menu while preserving native Qt behavior where applicable."
+          "tst_menu exercises the focused keyboard contract for Menu while preserving native Qt behavior where applicable.",
+          "tst_navigation_desktop_certification is registered: Per-item MenuItem/Separator roles, accelerator text, checked/disabled states and accessible activation plus Home/End/Space/Escape in LTR/RTL."
         ],
         "hidpi": [
           "tst_menu and/or the focused maturity suite renders Menu at 100%, 125%, 150%, 175% and 200% desktop scale equivalents."
         ],
         "rtl": [
-          "tst_menu verifies RTL propagation or visual-direction behavior for Menu."
+          "tst_menu verifies RTL propagation or visual-direction behavior for Menu.",
+          "tst_navigation_desktop_certification supplies LTR/RTL rows for Menu behavioral contracts."
         ],
         "tests": [
           "Registered tst_menu plus related focused suites provide maturity evidence for Menu.",
-          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence."
+          "The 1.5 certification gate cross-checks this release-scoped component against its registered focused CTest evidence.",
+          "Registered tst_navigation_desktop_certification adds semantic accessibility/focus/keyboard contracts; no local Qt execution is claimed."
         ],
         "example": [
           "Navigation and Advanced Navigation gallery pages demonstrate the public navigation components."
         ],
         "docs": [
           "docs/public-api/navigation.md documents Menu actions, keyboard behavior, RTL awareness and accessibility.",
-          "docs/public-api/navigation.md is the consumer-facing contract used by the 1.5 certification."
+          "docs/public-api/navigation.md is the consumer-facing contract used by the 1.5 certification.",
+          "docs/public-api/navigation-desktop-certification.md records scope, ordering and pending visual/platform review without score promotion."
         ],
         "notes": [
           "Menu is a standalone public widget and is therefore registry-owned rather than support-allowlisted."

@@ -57,6 +57,7 @@ interaction-effects
 expressive-foundation
 component-expansion
 desktop-productivity
+navigation-desktop-certification
 buttons
 compact-controls
 data-widgets

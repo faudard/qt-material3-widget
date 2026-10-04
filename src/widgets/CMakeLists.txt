@@ -1,4 +1,5 @@
 set(QTMATERIAL3_WIDGETS_SOURCES
+    navigation/qtmaterialitemaccessibility_p.h
     buttons/private/qtmaterialbuttonrenderhelper.cpp
     buttons/qtmaterialtextbutton.cpp
     buttons/qtmaterialfilledbutton.cpp

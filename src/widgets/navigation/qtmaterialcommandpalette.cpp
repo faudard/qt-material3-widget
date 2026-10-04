@@ -196,7 +196,8 @@ protected:
         const QString leftSection = section(left);
         const QString rightSection = section(right);
         if (leftSection != rightSection) {
-            return QString::localeAwareCompare(leftSection, rightSection) < 0;
+            const int folded = QString::compare(leftSection, rightSection, Qt::CaseInsensitive);
+            return folded != 0 ? folded < 0 : leftSection < rightSection;
         }
         if (!query.isEmpty()) {
             const int leftScore = matchScore(left);
@@ -207,6 +208,17 @@ protected:
         } else if (leftGroup == 1) {
             return recents.indexOf(left.data(QtMaterialCommandPalette::IdRole).toString())
                 < recents.indexOf(right.data(QtMaterialCommandPalette::IdRole).toString());
+        }
+        // Preserve an application's external-model order. Provider snapshots
+        // may arrive or be enumerated in any order: stable IDs break score ties.
+        const auto* commands = static_cast<const CommandModel*>(sourceModel());
+        if (!commands->commands.at(left.row()).source.isValid()
+            && !commands->commands.at(right.row()).source.isValid()) {
+            const QString leftId = left.data(QtMaterialCommandPalette::IdRole).toString();
+            const QString rightId = right.data(QtMaterialCommandPalette::IdRole).toString();
+            if (leftId != rightId) {
+                return leftId < rightId;
+            }
         }
         return left.row() < right.row();
     }

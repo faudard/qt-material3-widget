@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QByteArray>
+#include <QApplication>
 #include <QColor>
 #include <QCoreApplication>
 #include <QCryptographicHash>
@@ -18,6 +19,7 @@
 #include <QPixmap>
 #include <QSize>
 #include <QString>
+#include <QStyle>
 #include <QtTest/QtTest>
 #include <QWidget>
 
@@ -67,6 +69,8 @@ inline QString artifactsDir()
 
 inline QString goldenDir()
 {
+    const QString overrideDir = QString::fromLocal8Bit(qgetenv("QTMATERIAL3_VISUAL_GOLDENS_DIR"));
+    if (!overrideDir.isEmpty()) { QDir().mkpath(overrideDir); return overrideDir; }
     const QString source = visualSourceDir();
     const QString dir = source.isEmpty()
         ? QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(QStringLiteral("visual/goldens"))
@@ -141,6 +145,12 @@ inline void writeManifestEntry(const QString& name, const QImage& image, const Q
     object.insert(QStringLiteral("width"), image.width());
     object.insert(QStringLiteral("height"), image.height());
     object.insert(QStringLiteral("sha256"), QString::fromLatin1(sha256(image)));
+    object.insert(QStringLiteral("qtVersion"), QString::fromLatin1(qVersion()));
+    object.insert(QStringLiteral("style"), QApplication::style()->objectName());
+    object.insert(QStringLiteral("platform"), QGuiApplication::platformName());
+    object.insert(QStringLiteral("sourceCommit"), QString::fromLocal8Bit(qgetenv("GITHUB_SHA")));
+    object.insert(QStringLiteral("scaleFactor"), QString::fromLocal8Bit(qgetenv("QT_SCALE_FACTOR")));
+    object.insert(QStringLiteral("fontDpi"), QString::fromLocal8Bit(qgetenv("QT_FONT_DPI")));
     entries.append(object);
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
