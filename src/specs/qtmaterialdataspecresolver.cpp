@@ -694,7 +694,7 @@ void applyPaginationOverrides(
     const ComponentTokenOverride tokens =
         mergedComponentOverride(
             theme,
-            QVector<ComponentId>{ ComponentId::Data, ComponentId::Pagination });
+            QVector<ComponentId>{ ComponentId::Data });
 
     if (tokens.isEmpty()) {
         return;
