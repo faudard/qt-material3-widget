@@ -102,6 +102,18 @@ GridListSpec defaultGridListSpec()
     return spec;
 }
 
+PaginationSpec defaultPaginationSpec()
+{
+    PaginationSpec spec;
+    spec.backgroundColor = QColor(QStringLiteral("#FFFBFE"));
+    spec.foregroundColor = QColor(QStringLiteral("#49454F"));
+    spec.controlColor = QColor(QStringLiteral("#1D1B20"));
+    spec.disabledControlColor = QColor(0x1D, 0x1B, 0x20, 0x61);
+    spec.focusRingColor = QColor(QStringLiteral("#6750A4"));
+    spec.labelFont = appFont(-1, QFont::Medium);
+    return spec;
+}
+
 CarouselSpec defaultCarouselSpec()
 {
     CarouselSpec spec;
