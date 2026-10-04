@@ -19,6 +19,7 @@
 #include <QWidget>
 
 #include "qtmaterial/integration/qtmaterialpaletteadapter.h"
+#include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h"
@@ -89,6 +90,7 @@ Theme makeStaticComponentTheme(ThemeMode mode, ContrastMode contrast)
     Theme theme = makeTheme(mode, contrast);
     // Pixel goldens must capture a stable end state, never an animation frame.
     theme.accessibility().reducedMotion = true;
+    applyReducedMotion(&theme.motion(), true);
     return theme;
 }
 

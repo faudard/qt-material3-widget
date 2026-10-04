@@ -151,6 +151,14 @@ TabsSpec TabsSpecResolver::resolve(
         QVector<ComponentId>{ ComponentId::Navigation, ComponentId::Tabs },
         &resolved);
 
+    if (theme.accessibility().reducedMotion) {
+        // Accessibility takes precedence over authored/component durations,
+        // including themes whose flag was changed after construction.
+        resolved.animationDuration = 0;
+        resolved.indicatorMotionStyle.durationMs = 0;
+        resolved.indicatorMotionStyle.easing = QEasingCurve(QEasingCurve::Linear);
+    }
+
     return resolved;
 }
 

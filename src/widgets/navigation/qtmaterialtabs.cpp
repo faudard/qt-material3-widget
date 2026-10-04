@@ -197,7 +197,7 @@ public:
         updateStyleSheet();
         rebuildOverflowMenu();
         updateOverflowButtonGeometry();
-        update();
+        snapIndicatorToCurrentTab();
     }
 
     void setBadgeProvider(std::function<QPair<QString, bool>(int)> provider)
@@ -212,6 +212,16 @@ public:
     }
 
 protected:
+    void changeEvent(QEvent* event) override
+    {
+        QTabBar::changeEvent(event);
+        if (event->type() == QEvent::LayoutDirectionChange) {
+            // Native tabRect() mirrors on demand without a layout callback.
+            updateOverflowButtonGeometry();
+            snapIndicatorToCurrentTab();
+        }
+    }
+
     void focusInEvent(QFocusEvent* event) override
     {
         QTabBar::focusInEvent(event);
@@ -232,6 +242,7 @@ protected:
     {
         QTabBar::resizeEvent(event);
         updateOverflowButtonGeometry();
+        snapIndicatorToCurrentTab();
     }
 
     void tabLayoutChange() override
@@ -242,9 +253,7 @@ protected:
 #endif
         updateOverflowButtonGeometry();
         rebuildOverflowMenu();
-        if (currentIndex() >= 0) {
-            m_indicatorRect = indicatorRectForIndex(currentIndex());
-        }
+        snapIndicatorToCurrentTab();
     }
 
     void leaveEvent(QEvent* event) override
@@ -564,16 +573,23 @@ QToolButton::menu-indicator {
             m_spec.indicatorHeight);
     }
 
+    void snapIndicatorToCurrentTab()
+    {
+        // An animation's endpoints belong to the previous tab layout. A late
+        // frame must not overwrite the current resize/RTL/theme geometry.
+        m_indicatorAnimation->stop();
+        m_indicatorRect = indicatorRectForIndex(currentIndex());
+        update();
+    }
+
     void animateIndicatorToCurrentTab(int index)
     {
         const QRect target = indicatorRectForIndex(index);
-        if (!m_indicatorRect.isValid()) {
+        if (!m_indicatorRect.isValid() || target == m_indicatorRect
+            || m_spec.animationDuration <= 0 || !isVisible()) {
+            m_indicatorAnimation->stop();
             m_indicatorRect = target;
             update();
-            return;
-        }
-
-        if (target == m_indicatorRect) {
             return;
         }
 

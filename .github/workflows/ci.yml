@@ -364,9 +364,11 @@ jobs:
           -DQTMATERIAL3_USE_MCU=OFF
 
       - name: Build Designer plugin
-        run: >
-          cmake --build build-designer --parallel
-          --target qtmaterial3_designer_plugin tst_qtmaterial3_designer_collection tst_qtmaterial3_designer_ui_smoke
+        # The install contract stages the complete QtMaterial3 package, not
+        # only the Designer module. Build the default target so every
+        # installable runtime dependency (ThemeIO, ThemeModel, widgets, …)
+        # exists before cmake --install.
+        run: cmake --build build-designer --parallel
 
       - name: Test Designer contracts
         env:

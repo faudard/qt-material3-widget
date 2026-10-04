@@ -14,6 +14,8 @@ private slots:
     void resolvesRuntimeValues();
     void componentOverridesWin();
     void clampsRenderingMetrics();
+    void reducedMotionOverridesAnimationDurations_data();
+    void reducedMotionOverridesAnimationDurations();
 };
 
 void tst_TabsResolvedSpec::resolvesRuntimeValues()
@@ -124,6 +126,36 @@ void tst_TabsResolvedSpec::clampsRenderingMetrics()
         >= spec.minimumTabWidth);
     QVERIFY(spec.focusRingWidth >= 1.0);
     QVERIFY(spec.animationDuration >= 0);
+}
+
+void tst_TabsResolvedSpec::reducedMotionOverridesAnimationDurations_data()
+{
+    QTest::addColumn<bool>("componentOverride");
+    QTest::newRow("authored-duration") << false;
+    QTest::newRow("component-duration") << true;
+}
+
+void tst_TabsResolvedSpec::reducedMotionOverridesAnimationDurations()
+{
+    QFETCH(bool, componentOverride);
+    Theme theme = ThemeBuilder().buildLightFromSeed(QColor(QStringLiteral("#6750A4")));
+    TabsSpec authored;
+    authored.animationDuration = 900;
+    if (componentOverride) {
+        ComponentTokenOverride tokens;
+        MotionStyle motion;
+        motion.durationMs = 700;
+        tokens.motion.insert(authored.indicatorMotion, motion);
+        tokens.custom.insert(QStringLiteral("animationDuration"), 600);
+        theme.componentOverrides().setOverride(ComponentId::Tabs, tokens);
+    }
+    // Deliberately change only the flag after building the theme.
+    theme.accessibility().reducedMotion = true;
+    const TabsSpec resolved = TabsSpecResolver().resolve(theme, authored);
+    QCOMPARE(resolved.animationDuration, 0);
+    QCOMPARE(resolved.indicatorMotionStyle.durationMs, 0);
+    QCOMPARE(resolved.indicatorMotionStyle.easing.type(), QEasingCurve::Linear);
+    QCOMPARE(authored.animationDuration, 900);
 }
 
 QTEST_MAIN(tst_TabsResolvedSpec)

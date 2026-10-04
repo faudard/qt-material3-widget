@@ -26,13 +26,13 @@ class CiWorkflowIntegrityTests(unittest.TestCase):
                             "Qt 5.14.2 does not publish a separate qttools add-on")
         self.assertIn("-DQTMATERIAL3_BUILD_DESIGNER_PLUGIN=ON", designer)
 
-    def test_designer_builds_the_contract_executables_before_ctest(self):
+    def test_designer_builds_all_installable_targets_before_staging(self):
         workflow = (ROOT / ".github/workflows/ci.yml").read_text()
         designer = workflow.split("  designer-plugin:\n", 1)[1].split("\n  designer-plugin-qt5-windows:", 1)[0]
         build = designer.split("      - name: Build Designer plugin\n", 1)[1].split("\n      - name:", 1)[0]
-        targets = build.split("--target", 1)[1].split()
-        self.assertTrue({"qtmaterial3_designer_plugin", "tst_qtmaterial3_designer_collection",
-                         "tst_qtmaterial3_designer_ui_smoke"}.issubset(targets))
+        self.assertIn("cmake --build build-designer --parallel", build)
+        self.assertNotIn("--target", build,
+                         "A plugin-only build omits installable siblings such as ThemeIO")
 
     def test_powershell_preserves_the_exact_qt_version_argument(self):
         workflow = (ROOT / ".github/workflows/ci.yml").read_text()

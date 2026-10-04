@@ -138,5 +138,95 @@ class ApiFreezeReleaseCheckerTests(unittest.TestCase):
         )
 
 
+class EnterpriseReleaseCheckerTests(unittest.TestCase):
+    def make_component(self) -> dict:
+        axes = {
+            axis: 4
+            for axis in check_release.component_registry.AXES
+        }
+        axes.update({
+            "lastReviewed": "2026-10-04",
+            "gaps": [],
+            "nextActions": ["keep evidence current"],
+            "evidence": {
+                axis: [f"{axis} evidence"]
+                for axis in check_release.component_registry.AXES
+            },
+        })
+        return {
+            "id": "selection.checkbox",
+            "maturity": "complete",
+            "maturityPolicy": "derived",
+            "releaseScope": True,
+            "testTarget": "tst_checkbox",
+            "galleryRoute": "/selection",
+            "docsPath": "docs/public-api/selection.md",
+            "maturityAxes": axes,
+        }
+
+    def make_stable(self) -> dict:
+        prefix = "selection_matrix"
+        return {
+            "component_visual_prefixes": {
+                "selection.checkbox": prefix,
+            },
+            "visual_goldens": [
+                "tests/visual/goldens/" + prefix + suffix
+                for suffix in check_release.ENTERPRISE_VISUAL_SUFFIXES
+            ],
+        }
+
+    def test_enterprise_component_accepts_complete_4_of_4_evidence(self):
+        self.assertEqual(
+            [],
+            check_release.validate_enterprise_components(
+                [self.make_component()],
+                self.make_stable(),
+            ),
+        )
+
+    def test_enterprise_component_rejects_usable_or_sub_4_axis(self):
+        component = self.make_component()
+        component["maturity"] = "usable"
+        component["maturityAxes"]["rendering"] = 3
+        errors = check_release.validate_enterprise_components(
+            [component],
+            self.make_stable(),
+        )
+        self.assertTrue(any("requires complete" in error for error in errors))
+        self.assertTrue(any("rendering=3" in error for error in errors))
+
+    def test_enterprise_component_rejects_open_gaps(self):
+        component = self.make_component()
+        component["maturityAxes"]["gaps"] = ["visual review pending"]
+        errors = check_release.validate_enterprise_components(
+            [component],
+            self.make_stable(),
+        )
+        self.assertTrue(any("gaps=[]" in error for error in errors))
+
+    def test_enterprise_component_requires_registered_visual_evidence(self):
+        stable = self.make_stable()
+        stable["visual_goldens"].pop()
+        errors = check_release.validate_enterprise_components(
+            [self.make_component()],
+            stable,
+        )
+        self.assertTrue(
+            any("reviewed visual golden registration" in error for error in errors)
+        )
+
+    def test_enterprise_component_allows_not_applicable_axis(self):
+        component = self.make_component()
+        component["maturityAxes"]["keyboard"] = "N/A"
+        self.assertEqual(
+            [],
+            check_release.validate_enterprise_components(
+                [component],
+                self.make_stable(),
+            ),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

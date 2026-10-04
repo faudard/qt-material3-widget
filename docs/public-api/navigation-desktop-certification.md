@@ -66,7 +66,11 @@ globally unique IDs to get deterministic ordering, favorites and recent history.
 Each has light/standard, dark/standard and light/high-contrast variants. Focus fixtures
 use actual keyboard focus, disable caret blinking, keep the pointer outside the fixture,
 and capture the client widget directly. Themes request reduced motion so snapshots
-capture end states. Existing desktop scale-factor suites cover fractional DPI separately.
+capture end states and explicitly apply it to motion tokens. Tabs suppress indicator
+animation under reduced motion even when authored/component durations are nonzero;
+layout, resize, RTL and theme changes cancel obsolete geometry animations. Behavioral
+tests sample the selected indicator before/after these changes, independently of PNG
+approval. Existing desktop scale-factor suites cover fractional DPI separately.
 
 The pinned Ubuntu 24.04 / Qt 6.4.0 / Fusion lane first compares any checked-in references,
 then renders these cases in **two independent processes**. Candidate output is redirected
