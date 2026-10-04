@@ -37,6 +37,7 @@ public:
     QIcon destinationIcon(int index) const;
     bool isDestinationEnabled(int index) const noexcept;
     void setDestinationEnabled(int index, bool enabled);
+    QString destinationAccessibleText(int index) const;
 
     int currentIndex() const noexcept;
     void setCurrentIndex(int index);
