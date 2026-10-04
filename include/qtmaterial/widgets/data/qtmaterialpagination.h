@@ -7,19 +7,15 @@
 
 #include "qtmaterial/qtmaterialglobal.h"
 #include "qtmaterial/specs/qtmaterialdatacomponentspecs.h"
-#include "qtmaterial/theme/qtmaterialthemecontexthost.h"
 
 namespace QtMaterial {
 
 class ThemeContext;
 class QtMaterialPaginationPrivate;
 
-class QTMATERIAL3_WIDGETS_EXPORT QtMaterialPagination
-    : public QWidget
-    , public ThemeContextHost
+class QTMATERIAL3_WIDGETS_EXPORT QtMaterialPagination : public QWidget
 {
     Q_OBJECT
-    Q_INTERFACES(QtMaterial::ThemeContextHost)
     Q_PROPERTY(QtMaterial::ThemeContext* themeContext READ themeContext WRITE setThemeContext NOTIFY themeContextChanged)
     Q_PROPERTY(int page READ page WRITE setPage NOTIFY pageChanged)
     Q_PROPERTY(int pageSize READ pageSize WRITE setPageSize NOTIFY pageSizeChanged)
@@ -30,8 +26,8 @@ public:
     ~QtMaterialPagination() override;
 
     void setThemeContext(ThemeContext* context);
-    ThemeContext* themeContext() const noexcept override;
-    ThemeContext* effectiveThemeContext() const noexcept override;
+    ThemeContext* themeContext() const noexcept;
+    ThemeContext* effectiveThemeContext() const noexcept;
 
     PaginationSpec spec() const;
     void setSpec(const PaginationSpec& spec);
