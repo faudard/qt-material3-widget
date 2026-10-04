@@ -1,6 +1,7 @@
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 
 #include <QEvent>
+#include <QFocusEvent>
 #include <QFontMetrics>
 #include <QKeyEvent>
 #include <QMouseEvent>
@@ -489,6 +490,20 @@ void QtMaterialNavigationBar::leaveEvent(QEvent* event)
     d_ptr->pressedIndex = -1;
     update();
     QtMaterialControl::leaveEvent(event);
+}
+
+void QtMaterialNavigationBar::focusInEvent(QFocusEvent* event)
+{
+    QtMaterialControl::focusInEvent(event);
+    syncAccessibility();
+    update();
+}
+
+void QtMaterialNavigationBar::focusOutEvent(QFocusEvent* event)
+{
+    QtMaterialControl::focusOutEvent(event);
+    syncAccessibility();
+    update();
 }
 
 void QtMaterialNavigationBar::keyPressEvent(QKeyEvent* event)
