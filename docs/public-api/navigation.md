@@ -3,6 +3,7 @@
 The navigation surface exposes:
 
 - `QtMaterial::QtMaterialTabs`
+- `QtMaterial::QtMaterialNavigationBar`
 - `QtMaterial::QtMaterialNavigationRail`
 - `QtMaterialMenu`
 
@@ -84,6 +85,23 @@ The gallery navigation page includes a Tabs example with routes, IDs, and a badg
 
 `QtMaterialTabs` is tracked as **usable**. Reviewed visual-reference coverage and a broader
 full state matrix remain before `complete` maturity.
+
+## Navigation Bar
+
+`QtMaterialNavigationBar` implements the Material 3 bottom navigation pattern for a compact
+set of primary destinations. Destinations expose label, icon and enabled state; the selected
+destination is highlighted with the theme's secondary-container roles while the bar itself uses
+the surface-container role. Applications can hide labels for compact presentations without
+changing logical destination order.
+
+The keyboard contract uses Left/Right, Home/End and Space/Return/Enter. Horizontal traversal
+follows visual direction, so Left/Right mirror under RTL while Home/End continue to address the
+first and last enabled logical destinations. Disabled destinations are skipped. The widget keeps
+an accessible container name and synchronized selection summary, and the focused 1.7 test covers
+selection, disabled-state fallback, keyboard activation, RTL direction and DPR 2.0 rendering.
+
+The initial 1.7 entry is tracked as **usable**. Reviewed deterministic navigation goldens and
+platform screen-reader traversal remain before release-scope promotion and `complete` maturity.
 
 ## Navigation Rail
 

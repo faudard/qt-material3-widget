@@ -5,6 +5,7 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 
+#include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
 
@@ -73,6 +74,15 @@ NavigationPage::NavigationPage(QWidget* parent)
     tabs->setBadgeVisible(1, true);
     tabs->setMinimumHeight(170);
     layout->addWidget(tabs);
+
+    auto* navigationBar = new QtMaterial::QtMaterialNavigationBar(this);
+    navigationBar->addDestination(QStringLiteral("Home"));
+    navigationBar->addDestination(QStringLiteral("Explore"));
+    navigationBar->addDestination(QStringLiteral("Saved"));
+    navigationBar->addDestination(QStringLiteral("Profile"));
+    navigationBar->setCurrentIndex(0);
+    navigationBar->setMaterialTestId(QStringLiteral("gallery.navigation.bar"));
+    layout->addWidget(navigationBar);
 
     auto* railRow = new QHBoxLayout;
     railRow->setSpacing(16);
