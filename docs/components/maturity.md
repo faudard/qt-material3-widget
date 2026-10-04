@@ -76,7 +76,7 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `layout.adaptive-shell` | Adaptive Shell | `usable` | 4 | 3 | 4 | 3 | N/A | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Adaptive Shell breakpoint/density/supporting-pane goldens remain before complete maturity. |
+| `layout.adaptive-shell` | Adaptive Shell | `usable` | 4 | 3 | 4 | 3 | N/A | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic adaptive_desktop breakpoint/density/supporting-pane LTR/RTL goldens remain before rendering can reach 4/4. |
 | `layout.split-view` | Split View | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
 
 ### Navigation
@@ -88,7 +88,7 @@
 | `navigation.command-palette` | Command Palette | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
 | `navigation.menu` | Menu | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
 | `navigation.rail` | Navigation Rail | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
-| `navigation.suite` | Navigation Suite | `usable` | 4 | 3 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic Navigation Suite bar/rail goldens remain before complete maturity. |
+| `navigation.suite` | Navigation Suite | `usable` | 4 | 3 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic adaptive_desktop Compact/Medium/Expanded/Large/ExtraLarge LTR/RTL goldens remain before rendering can reach 4/4. |
 | `navigation.tabs` | Tabs | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
 
 ### Progress
@@ -187,8 +187,8 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Outlined Text Field | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Time Field | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Time Picker | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
-| Adaptive Shell | Add compact/medium/expanded Adaptive Shell cases to the pinned visual matrix and review stable goldens. |
-| Adaptive Shell | Record NVDA, Orca and VoiceOver behavior across responsive shell transitions. |
+| Adaptive Shell | Review the pinned Qt 6.4/Fusion adaptive-desktop two-pass artifact and commit all 30 approved goldens. |
+| Adaptive Shell | Record Adaptive Shell NVDA, Orca and VoiceOver responsive composition, focus preservation, supporting-pane transition and RTL reading-order checks. |
 | Split View | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
 | Navigation Bar | Review the pinned Qt 6.4/Fusion missing_material3_matrix repeatability artifact and commit approved goldens. |
 | Navigation Bar | Record the Navigation Bar NVDA, Orca and VoiceOver checks in material3-catalogue-certification-1.7.json. |
@@ -196,8 +196,8 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Command Palette | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
 | Menu | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
 | Navigation Rail | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
-| Navigation Suite | Add compact Navigation Bar and medium/expanded Navigation Rail suite cases to the pinned navigation visual matrix. |
-| Navigation Suite | Record NVDA, Orca and VoiceOver destination traversal/state/activation evidence. |
+| Navigation Suite | Review the pinned Qt 6.4/Fusion adaptive-desktop two-pass artifact and commit all 30 approved goldens. |
+| Navigation Suite | Record Navigation Suite NVDA, Orca and VoiceOver traversal/state/activation/focus-across-mode-switch checks in adaptive-desktop-certification-1.9.json. |
 | Tabs | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
 | Circular Progress Indicator | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Linear Progress Indicator | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
