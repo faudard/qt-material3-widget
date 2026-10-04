@@ -292,7 +292,10 @@ if(QTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS)
   add_test(NAME tst_adaptive_desktop_visual_goldens COMMAND tst_theme_visual_regression
     adaptiveDesktopCandidateGoldens)
   set_tests_properties(tst_adaptive_desktop_visual_goldens
-    PROPERTIES LABELS "adaptive;desktop;1.9;visual" TIMEOUT 240)
+    PROPERTIES
+      LABELS "adaptive;desktop;1.9;visual"
+      TIMEOUT 240
+      ENVIRONMENT "QTMATERIAL3_ADAPTIVE_VISUAL=1")
 
 endif()
 
