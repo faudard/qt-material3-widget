@@ -101,6 +101,22 @@ struct GridListSpec
     int minimumCellWidth = 120;
 };
 
+struct PaginationSpec
+{
+    QColor backgroundColor;
+    QColor foregroundColor;
+    QColor controlColor;
+    QColor disabledControlColor;
+    QColor focusRingColor;
+    QFont labelFont;
+
+    int minimumHeight = 40;
+    int controlExtent = 36;
+    int spacing = 4;
+    int horizontalPadding = 8;
+    int focusRingWidth = 2;
+};
+
 struct CarouselSpec
 {
     // Carousel surface, label, indicator and focus tokens.
@@ -150,5 +166,6 @@ QTMATERIAL3_SPECS_EXPORT DatePickerSpec defaultDatePickerSpec();
 QTMATERIAL3_SPECS_EXPORT TableSpec defaultTableSpec();
 QTMATERIAL3_SPECS_EXPORT GridListSpec defaultGridListSpec();
 QTMATERIAL3_SPECS_EXPORT CarouselSpec defaultCarouselSpec();
+QTMATERIAL3_SPECS_EXPORT PaginationSpec defaultPaginationSpec();
 
 } // namespace QtMaterial
