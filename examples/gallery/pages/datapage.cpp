@@ -23,6 +23,14 @@ DataPage::DataPage(QWidget* parent)
     auto* card = new QtMaterial::QtMaterialCard(this);
     layout->addWidget(card);
 
+    auto* list = new QtMaterial::QtMaterialList(this);
+    list->addItem(QStringLiteral("Inbox"));
+    list->addItem(QStringLiteral("Archive"));
+    list->addItem(QStringLiteral("Trash"));
+    list->setCurrentIndex(0);
+    list->setMinimumHeight(160);
+    layout->addWidget(list);
+
     auto* item = new QtMaterial::QtMaterialListItem(this);
     item->setHeadlineText(QStringLiteral("Item headline"));
     item->setSupportingText(QStringLiteral("Supporting text"));
