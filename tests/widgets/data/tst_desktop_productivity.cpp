@@ -1017,12 +1017,19 @@ private slots:
         QCOMPARE(activated.count(), 1);
         QVERIFY(!palette.isVisible());
 
+        // Activation updates the recent-command ordering and invalidates
+        // transient proxy indexes. Reacquire one before exercising the
+        // deliberately unconnected double-click signal.
+        const QModelIndex refreshedProxyIndex =
+            resultView->model()->index(0, 0);
+        QVERIFY(refreshedProxyIndex.isValid());
+
         // Double-click is intentionally not a second activation path.
         QVERIFY(QMetaObject::invokeMethod(
             resultView,
             "doubleClicked",
             Qt::DirectConnection,
-            Q_ARG(QModelIndex, proxyIndex)));
+            Q_ARG(QModelIndex, refreshedProxyIndex)));
         QCOMPARE(activated.count(), 1);
     }
 };
