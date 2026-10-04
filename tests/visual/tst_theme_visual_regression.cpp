@@ -818,53 +818,77 @@ QWidget* buildSurfaceOverlayStateMatrix(const Theme& theme)
     layout->setHorizontalSpacing(18);
     layout->setVerticalSpacing(12);
     addMatrixHeaders(layout, root, {
-        QStringLiteral("Dialog"), QStringLiteral("Drawer"),
-        QStringLiteral("Bottom sheet"), QStringLiteral("Snackbar")});
+        QStringLiteral("Dialog"),
+        QStringLiteral("Drawer"),
+        QStringLiteral("Bottom sheet"),
+        QStringLiteral("Snackbar")});
 
     const QStringList states = {
-        QStringLiteral("Default"), QStringLiteral("Disabled"), QStringLiteral("RTL")};
-    for (int i = 0; i < states.size(); ++i)
+        QStringLiteral("Open"),
+        QStringLiteral("Disabled"),
+        QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i) {
         addStateLabel(layout, root, i + 1, states.at(i));
+    }
+
+    auto makeHost = [root]() {
+        auto* host = new QWidget(root);
+        host->setObjectName(QStringLiteral("visualOverlayHost"));
+        host->setFixedSize(320, 210);
+        return host;
+    };
 
     for (int row = 1; row <= 3; ++row) {
         const bool enabled = row != 2;
-        const auto direction = row == 3 ? Qt::RightToLeft : Qt::LeftToRight;
+        const auto direction =
+            row == 3 ? Qt::RightToLeft : Qt::LeftToRight;
 
-        auto* dialog = new QtMaterialDialog(root);
+        auto* dialogHost = makeHost();
+        auto* dialog = new QtMaterialDialog(dialogHost);
         dialog->setTitleText(QStringLiteral("Discard changes?"));
         dialog->setSupportingText(QStringLiteral("Unsaved changes will be lost."));
         dialog->setEnabled(enabled);
         dialog->setLayoutDirection(direction);
-        dialog->setMinimumSize(260, 140);
-        layout->addWidget(dialog, row, 1);
+        dialog->open();
+        layout->addWidget(dialogHost, row, 1);
 
-        auto* drawer = new QtMaterialNavigationDrawer(root);
-        drawer->setEdge(direction == Qt::RightToLeft
-            ? QtMaterialNavigationDrawer::Edge::Right
-            : QtMaterialNavigationDrawer::Edge::Left);
+        auto* drawerHost = makeHost();
+        auto* drawer = new QtMaterialNavigationDrawer(drawerHost);
+        drawer->setEdge(
+            direction == Qt::RightToLeft
+                ? QtMaterialNavigationDrawer::Edge::Right
+                : QtMaterialNavigationDrawer::Edge::Left);
         drawer->setEnabled(enabled);
         drawer->setLayoutDirection(direction);
-        drawer->setMinimumSize(220, 180);
-        layout->addWidget(drawer, row, 2);
+        drawer->resize(250, drawerHost->height());
+        drawer->open();
+        layout->addWidget(drawerHost, row, 2);
 
-        auto* sheet = new QtMaterialBottomSheet(root);
+        auto* sheetHost = makeHost();
+        auto* sheet = new QtMaterialBottomSheet(sheetHost);
+        sheet->setModal(false);
+        sheet->setExpandedHeight(170);
+        sheet->setCollapsedHeight(72);
         sheet->setTitleText(QStringLiteral("Share"));
         sheet->setSupportingText(QStringLiteral("Choose a destination"));
         sheet->setExpanded(true);
         sheet->setEnabled(enabled);
         sheet->setLayoutDirection(direction);
-        sheet->setMinimumSize(280, 160);
-        layout->addWidget(sheet, row, 3);
+        sheet->open();
+        layout->addWidget(sheetHost, row, 3);
 
-        auto* snackbar = new QtMaterialSnackbar(root);
+        auto* snackbarHost = makeHost();
+        auto* snackbar = new QtMaterialSnackbar(snackbarHost);
         snackbar->setText(QStringLiteral("Changes saved"));
         snackbar->setActionText(QStringLiteral("Undo"));
+        snackbar->setShowDismissButton(true);
         snackbar->setDuration(SnackbarDuration::Indefinite);
         snackbar->setEnabled(enabled);
         snackbar->setLayoutDirection(direction);
-        snackbar->setMinimumWidth(280);
-        layout->addWidget(snackbar, row, 4);
+        snackbar->showSnackbar();
+        layout->addWidget(snackbarHost, row, 4);
     }
+
     return root;
 }
 
