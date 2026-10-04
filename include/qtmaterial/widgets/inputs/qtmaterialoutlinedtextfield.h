@@ -25,6 +25,15 @@ class QtMaterialTransitionController;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialOutlinedTextField : public QtMaterialInputControl
 {
     Q_OBJECT
+    Q_PROPERTY(QString text READ text WRITE setText)
+    Q_PROPERTY(QString placeholderText READ placeholderText WRITE setPlaceholderText)
+    Q_PROPERTY(QString prefixText READ prefixText WRITE setPrefixText)
+    Q_PROPERTY(QString suffixText READ suffixText WRITE setSuffixText)
+    Q_PROPERTY(bool clearButtonEnabled READ isClearButtonEnabled WRITE setClearButtonEnabled)
+    Q_PROPERTY(QLineEdit::EchoMode echoMode READ echoMode WRITE setEchoMode)
+    Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly)
+    Q_PROPERTY(int maxLength READ maxLength WRITE setMaxLength)
+    Q_PROPERTY(bool characterCounterEnabled READ isCharacterCounterEnabled WRITE setCharacterCounterEnabled)
 
 public:
     enum class ValidationFeedbackMode {

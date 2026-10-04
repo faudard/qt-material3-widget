@@ -32,7 +32,15 @@ cmake -S . -B build -DQTMATERIAL3_BUILD_DESIGNER_PLUGIN=ON
 cmake --build build --target qtmaterial3_designer_plugin
 ```
 
-The palette is grouped into Buttons, Inputs, Selection, Navigation, Surfaces and Data. See [Qt Designer plugin](docs/designer-plugin.md) for installation and ABI/toolchain requirements.
+For day-to-day plugin work, the repository also provides a preset:
+
+```bash
+cmake --preset designer-dev
+cmake --build --preset designer-dev
+ctest --preset designer-dev
+```
+
+The Designer palette includes 27 safely serializable controls across Buttons, Inputs, Selection, Navigation, Surfaces, Progress and Data. Text fields expose their common authored properties directly in the Property Editor. See [Qt Designer plugin](docs/designer-plugin.md) for installation, packaging and ABI/toolchain requirements.
 
 ## Examples
 
@@ -42,6 +50,7 @@ The repository includes complementary examples for both component-level inspecti
 - `qtmaterial3_dashboard_demo` — responsive multi-page application showcase using sidebar/rail/drawer navigation, analytics, orders, profile, pricing, application states, live theme/contrast/RTL controls, command palette, dialogs, banners, progress indicators, tables, chips and theme-aware private chart widgets.
 - `qtmaterial3_theme_studio` — interactive theme authoring and inspection.
 - `qtmaterial3_theming_workflows` — public theming API workflows.
+- `qtmaterial3_designer_form_example` — a real AUTOUIC `.ui` form composed from Qt Material 3 widgets.
 
 The dashboard intentionally keeps its line and donut charts private to the example. They demonstrate composing custom application visuals from Material 3 theme tokens without expanding the public widget API.
 
