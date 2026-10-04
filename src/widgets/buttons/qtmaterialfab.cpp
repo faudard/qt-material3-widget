@@ -13,6 +13,7 @@ public:
     QString lastAccessibilitySummary;
     bool requiresAccessibleName = true;
     QtMaterialFabVariant fabVariant = QtMaterialFabVariant::Primary;
+    QtMaterialFabSize fabSize = QtMaterialFabSize::Standard;
 };
 
 namespace {
@@ -66,6 +67,24 @@ void QtMaterialFab::setFabVariant(QtMaterialFabVariant variant)
     invalidateResolvedSpec();
     updateGeometry();
     update();
+}
+
+QtMaterialFabSize QtMaterialFab::fabSize() const noexcept
+{
+    return d_ptr->fabSize;
+}
+
+void QtMaterialFab::setFabSize(QtMaterialFabSize size)
+{
+    if (d_ptr->fabSize == size) {
+        return;
+    }
+
+    d_ptr->fabSize = size;
+    invalidateResolvedSpec();
+    updateGeometry();
+    update();
+    emit fabSizeChanged(size);
 }
 
 QtMaterialFab::~QtMaterialFab() = default;
@@ -222,9 +241,54 @@ ButtonSpec QtMaterialFab::resolveButtonSpec() const
         toFabColorVariant(d_ptr->fabVariant));
 }
 
+void QtMaterialFab::applyExpressiveSpec(ButtonSpec& spec) const
+{
+    int diameter = 56;
+    int iconSize = 24;
+    qreal roundRadius = 16.0;
+
+    switch (d_ptr->fabSize) {
+    case QtMaterialFabSize::Small:
+        diameter = 40;
+        iconSize = 24;
+        roundRadius = 12.0;
+        break;
+    case QtMaterialFabSize::Medium:
+        diameter = 80;
+        iconSize = 28;
+        roundRadius = 20.0;
+        break;
+    case QtMaterialFabSize::Large:
+        diameter = 96;
+        iconSize = 36;
+        roundRadius = 28.0;
+        break;
+    case QtMaterialFabSize::Standard:
+    default:
+        break;
+    }
+
+    const qreal squareRadius = qMax<qreal>(8.0, roundRadius * 0.5);
+    const bool round = expressiveShape() == QtMaterialButtonShape::Round;
+
+    spec.containerHeight = diameter;
+    spec.touchTarget = QSize(qMax(48, diameter), qMax(48, diameter));
+    spec.iconSize = iconSize;
+    spec.horizontalPadding = 0;
+    spec.iconSpacing = 0;
+    spec.cornerRadius = round ? roundRadius : squareRadius;
+    spec.pressedCornerRadius = round ? squareRadius : roundRadius;
+    spec.selectedCornerRadius = spec.pressedCornerRadius;
+    spec.hasStateShapeMorph = true;
+    spec.motionToken = MotionToken::SpatialFast;
+    spec.motionStyle = theme().motion().style(MotionToken::SpatialFast);
+    spec.hasResolvedMotionStyle = true;
+}
+
 QSize QtMaterialFab::sizeHint() const
 {
-    const ButtonSpec spec = resolveButtonSpec();
+    ensureSpecResolved();
+    const ButtonSpec& spec = currentButtonSpec();
     return spec.touchTarget.expandedTo(QSize(spec.containerHeight, spec.containerHeight));
 }
 

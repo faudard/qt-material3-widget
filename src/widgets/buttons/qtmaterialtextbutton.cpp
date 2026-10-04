@@ -4,6 +4,8 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QPointF>
+#include <QRectF>
+#include <QtMath>
 
 #include "private/qtmaterialbuttonmotionhelper_p.h"
 #include "private/qtmaterialbuttonrenderhelper_p.h"
@@ -14,6 +16,45 @@
 #include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 
 namespace QtMaterial {
+
+namespace {
+
+struct ExpressiveButtonMetrics
+{
+ int height;
+ int touchTarget;
+ int horizontalPadding;
+ int iconSize;
+ int iconSpacing;
+ qreal squareRadius;
+ TypeRole typeRole;
+};
+
+ExpressiveButtonMetrics expressiveMetrics(QtMaterialButtonSize size)
+{
+ switch (size) {
+ case QtMaterialButtonSize::ExtraSmall:
+  return {32, 48, 12, 20, 4, 8.0, TypeRole::LabelLarge};
+ case QtMaterialButtonSize::Medium:
+  return {56, 56, 24, 24, 8, 12.0, TypeRole::TitleMedium};
+ case QtMaterialButtonSize::Large:
+  return {96, 96, 48, 32, 12, 16.0, TypeRole::HeadlineSmall};
+ case QtMaterialButtonSize::ExtraLarge:
+  return {136, 136, 64, 40, 16, 16.0, TypeRole::HeadlineLarge};
+ case QtMaterialButtonSize::Small:
+ default:
+  return {40, 48, 16, 20, 8, 8.0, TypeRole::LabelLarge};
+ }
+}
+
+qreal resolvedRadius(qreal radius, const QRectF& bounds)
+{
+ return radius < 0.0
+  ? bounds.height() / 2.0
+  : qMin(radius, bounds.height() / 2.0);
+}
+
+} // namespace
 
 QtMaterialTextButton::QtMaterialTextButton(QWidget* parent)
  : QtMaterialAbstractButton(parent)
@@ -30,6 +71,14 @@ QtMaterialTextButton::QtMaterialTextButton(QWidget* parent)
  setMaterialRole(QStringLiteral("action"));
  QObject::connect(
   d->stateLayerTransition,
+  &QtMaterialTransitionController::progressChanged,
+  this,
+  [this](qreal) { update(); });
+ d->shapeTransition->setObjectName(
+  QStringLiteral("_qtm3_button_shape_transition"));
+ d->shapeTransition->setProgress(0.0);
+ QObject::connect(
+  d->shapeTransition,
   &QtMaterialTransitionController::progressChanged,
   this,
   [this](qreal) { update(); });
@@ -50,16 +99,76 @@ QtMaterialTextButton::QtMaterialTextButton(const QIcon& icon, const QString& tex
 
 QtMaterialTextButton::~QtMaterialTextButton() = default;
 
+bool QtMaterialTextButton::expressive() const noexcept
+{
+ return d->expressive;
+}
+
+void QtMaterialTextButton::setExpressive(bool enabled)
+{
+ if (d->expressive == enabled) {
+  return;
+ }
+ d->expressive = enabled;
+ d->specDirty = true;
+ d->shapeMorph.clear();
+ contentChangedEvent();
+ updateGeometry();
+ syncExpressiveShapeAnimation();
+ update();
+ emit expressiveChanged(enabled);
+}
+
+QtMaterialButtonSize QtMaterialTextButton::expressiveSize() const noexcept
+{
+ return d->expressiveSize;
+}
+
+void QtMaterialTextButton::setExpressiveSize(QtMaterialButtonSize size)
+{
+ if (d->expressiveSize == size) {
+  return;
+ }
+ d->expressiveSize = size;
+ d->specDirty = true;
+ d->shapeMorph.clear();
+ contentChangedEvent();
+ updateGeometry();
+ update();
+ emit expressiveSizeChanged(size);
+}
+
+QtMaterialButtonShape QtMaterialTextButton::expressiveShape() const noexcept
+{
+ return d->expressiveShape;
+}
+
+void QtMaterialTextButton::setExpressiveShape(QtMaterialButtonShape shape)
+{
+ if (d->expressiveShape == shape) {
+  return;
+ }
+ d->expressiveShape = shape;
+ d->specDirty = true;
+ d->shapeMorph.clear();
+ contentChangedEvent();
+ syncExpressiveShapeAnimation();
+ update();
+ emit expressiveShapeChanged(shape);
+}
+
 void QtMaterialTextButton::themeChangedEvent(const Theme& theme)
 {
  QtMaterialAbstractButton::themeChangedEvent(theme);
  d->specDirty = true;
  syncStateLayerAnimation();
+ syncExpressiveShapeAnimation();
 }
 
 void QtMaterialTextButton::invalidateResolvedSpec()
 {
  d->specDirty = true;
+ d->shapeMorph.clear();
 }
 
 ButtonSpec QtMaterialTextButton::resolveButtonSpec() const
@@ -68,12 +177,40 @@ ButtonSpec QtMaterialTextButton::resolveButtonSpec() const
  return factory.textButtonSpec(theme(), density());
 }
 
+void QtMaterialTextButton::applyExpressiveSpec(ButtonSpec& spec) const
+{
+ const ExpressiveButtonMetrics metrics = expressiveMetrics(d->expressiveSize);
+ spec.containerHeight = metrics.height;
+ spec.touchTarget = QSize(metrics.touchTarget, metrics.touchTarget);
+ spec.horizontalPadding = metrics.horizontalPadding;
+ spec.iconSize = metrics.iconSize;
+ spec.iconSpacing = metrics.iconSpacing;
+ spec.labelTypeRole = metrics.typeRole;
+ spec.motionToken = MotionToken::SpatialFast;
+ spec.motionStyle = theme().motion().style(MotionToken::SpatialFast);
+ spec.hasResolvedMotionStyle = true;
+
+ if (theme().typography().contains(metrics.typeRole)) {
+  spec.labelFont = theme().typography().style(metrics.typeRole).font;
+  spec.hasResolvedLabelFont = true;
+ }
+
+ const bool round = d->expressiveShape == QtMaterialButtonShape::Round;
+ spec.cornerRadius = round ? -1.0 : metrics.squareRadius;
+ spec.pressedCornerRadius = round ? metrics.squareRadius : -1.0;
+ spec.selectedCornerRadius = spec.pressedCornerRadius;
+ spec.hasStateShapeMorph = true;
+}
+
 void QtMaterialTextButton::ensureSpecResolved() const
 {
  if (!d->specDirty) {
   return;
  }
  d->spec = resolveButtonSpec();
+ if (d->expressive) {
+  applyExpressiveSpec(d->spec);
+ }
  ButtonMotionHelper::configureMotion(
   d->spec,
   d->stateLayerTransition,
@@ -135,6 +272,7 @@ void QtMaterialTextButton::stateChangedEvent()
   d->ripple->addRipple(QPointF(rect().center()));
  }
  syncStateLayerAnimation();
+ syncExpressiveShapeAnimation();
 }
 
 void QtMaterialTextButton::syncStateLayerAnimation()
@@ -179,6 +317,71 @@ void QtMaterialTextButton::paintRipple(QPainter* painter, const QColor& color)
  }
 }
 
+void QtMaterialTextButton::syncExpressiveShapeAnimation()
+{
+ if (!d->shapeTransition) {
+  return;
+ }
+
+ d->shapeTransition->applyMotionToken(theme(), MotionToken::SpatialFast);
+ const bool active =
+  d->expressive
+  && isEnabled()
+  && (interactionState().isPressed()
+      || (interactionState().isCheckable() && interactionState().isChecked()));
+ d->shapeTransition->startTo(active ? 1.0 : 0.0);
+}
+
+QPainterPath QtMaterialTextButton::buttonContainerPath(const QRectF& bounds) const
+{
+ ensureSpecResolved();
+ const ButtonSpec& spec = currentButtonSpec();
+ if (!d->expressive || !spec.hasStateShapeMorph || !d->shapeTransition) {
+  return ButtonRenderHelper::containerPath(spec, bounds);
+ }
+
+ const qreal sourceRadius = resolvedRadius(spec.cornerRadius, bounds);
+ qreal targetToken = interactionState().isCheckable() && interactionState().isChecked()
+  ? spec.selectedCornerRadius
+  : spec.pressedCornerRadius;
+ const qreal targetRadius = resolvedRadius(targetToken, bounds);
+
+ const bool cacheMiss =
+  d->morphBounds != bounds
+  || !qFuzzyCompare(d->morphSourceRadius + 1.0, sourceRadius + 1.0)
+  || !qFuzzyCompare(d->morphTargetRadius + 1.0, targetRadius + 1.0);
+ if (cacheMiss) {
+  d->morphBounds = bounds;
+  d->morphSourceRadius = sourceRadius;
+  d->morphTargetRadius = targetRadius;
+  d->shapeMorph.setShapes(
+   QtMaterialShapeMorph::roundedRectangle(bounds, sourceRadius),
+   QtMaterialShapeMorph::roundedRectangle(bounds, targetRadius));
+ }
+
+ if (!d->shapeMorph.isValid()) {
+  return ButtonRenderHelper::containerPath(spec, bounds);
+ }
+ return d->shapeMorph.pathAt(d->shapeTransition->progress());
+}
+
+qreal QtMaterialTextButton::buttonContainerCornerRadius(const QRectF& bounds) const
+{
+ ensureSpecResolved();
+ const ButtonSpec& spec = currentButtonSpec();
+ const qreal sourceRadius = resolvedRadius(spec.cornerRadius, bounds);
+ if (!d->expressive || !spec.hasStateShapeMorph || !d->shapeTransition) {
+  return sourceRadius;
+ }
+
+ const qreal targetToken = interactionState().isCheckable() && interactionState().isChecked()
+  ? spec.selectedCornerRadius
+  : spec.pressedCornerRadius;
+ const qreal targetRadius = resolvedRadius(targetToken, bounds);
+ const qreal progress = d->shapeTransition->progress();
+ return sourceRadius + (targetRadius - sourceRadius) * progress;
+}
+
 void QtMaterialTextButton::paintEvent(QPaintEvent*)
 {
  ensureSpecResolved();
@@ -188,8 +391,8 @@ void QtMaterialTextButton::paintEvent(QPaintEvent*)
  painter.setRenderHint(QPainter::Antialiasing, true);
 
  const QRectF visualRect = ButtonRenderHelper::containerRect(rect(), spec);
- const qreal radius = ButtonRenderHelper::cornerRadius(spec, visualRect);
- const QPainterPath path = ButtonRenderHelper::containerPath(spec, visualRect);
+ const qreal radius = buttonContainerCornerRadius(visualRect);
+ const QPainterPath path = buttonContainerPath(visualRect);
 
  painter.save();
  painter.setPen(Qt::NoPen);

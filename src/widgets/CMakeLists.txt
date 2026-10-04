@@ -51,6 +51,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     compact/qtmaterialinputchip.cpp
     selection/qtmaterialsegmentedbutton.cpp
     navigation/qtmaterialnavigationrail.cpp
+    navigation/qtmaterialnavigationsuite.cpp
     navigation/qtmaterialnavigationcontroller.cpp
     navigation/model/qtmaterialnavigationmodel.cpp
     navigation/qtmaterialmenu.cpp
@@ -62,6 +63,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     data/qtmaterialpagination.cpp
     data/qtmaterialtreeview.cpp
     layouts/qtmaterialsplitview.cpp
+    layouts/qtmaterialadaptiveshell.cpp
     navigation/qtmaterialbreadcrumb.cpp
     navigation/qtmaterialcommandpalette.cpp
 )
@@ -115,6 +117,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/compact/qtmaterialinputchip.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationrail.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialmenu.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialautocomplete.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/qtmaterialdatepicker.h
@@ -124,6 +127,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialpagination.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialtreeview.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/layouts/qtmaterialsplitview.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialcommandpalette.h
 )

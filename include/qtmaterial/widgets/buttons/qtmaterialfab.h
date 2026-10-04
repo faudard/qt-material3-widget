@@ -21,6 +21,14 @@ enum class QtMaterialFabVariant
     Surface,
 };
 
+enum class QtMaterialFabSize
+{
+    Small,
+    Standard,
+    Medium,
+    Large
+};
+
 
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialFab : public QtMaterialFilledButton
 {
@@ -33,6 +41,9 @@ public:
 
     QtMaterialFabVariant fabVariant() const noexcept;
     void setFabVariant(QtMaterialFabVariant variant);
+
+    QtMaterialFabSize fabSize() const noexcept;
+    void setFabSize(QtMaterialFabSize size);
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
@@ -50,8 +61,12 @@ public:
 signals:
     void accessibilitySummaryChanged(const QString& summary);
 
+signals:
+    void fabSizeChanged(QtMaterial::QtMaterialFabSize size);
+
 protected:
     ButtonSpec resolveButtonSpec() const override;
+    void applyExpressiveSpec(ButtonSpec& spec) const override;
     void changeEvent(QEvent* event) override;
     void contentChangedEvent() override;
     void syncAccessibilityState() override;

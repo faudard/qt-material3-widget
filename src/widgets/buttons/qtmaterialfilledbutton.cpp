@@ -176,6 +176,8 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
  ensureSpecResolved();
  d->ensureLayoutResolved(*this);
  const ButtonSpec& spec = currentButtonSpec();
+ const QPainterPath containerPath = buttonContainerPath(d->layout.visualRect);
+ const qreal containerRadius = buttonContainerCornerRadius(d->layout.visualRect);
 
  const QFont resolvedFont = ButtonRenderHelper::resolvedLabelFont(font(), spec);
 
@@ -189,11 +191,11 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
         isEnabled()
         && spec.hasResolvedElevationStyle
         && spec.hasResolvedHoverElevationStyle
-        && !d->layout.containerPath.isEmpty()) {
+        && !containerPath.isEmpty()) {
         QtMaterialElevationRenderer::
             paintInterpolatedPathElevation(
                 &painter,
-                d->layout.containerPath,
+                containerPath,
                 spec.shadowColor,
                 spec.elevationStyle,
                 spec.hoverElevationStyle,
@@ -204,19 +206,19 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
  painter.save();
  painter.setPen(Qt::NoPen);
  painter.setBrush(isEnabled() ? spec.containerColor : spec.disabledContainerColor);
- painter.drawPath(d->layout.containerPath);
+ painter.drawPath(containerPath);
  painter.restore();
 
  const qreal layerOpacity = animatedStateLayerOpacity();
  if (isEnabled() && layerOpacity > 0.0) {
   QtMaterialStateLayerPainter::paintPath(
    &painter,
-   d->layout.containerPath,
+   containerPath,
    spec.stateLayerColor,
    layerOpacity);
  }
 
- setRippleClipPath(d->layout.containerPath);
+ setRippleClipPath(containerPath);
  if (isEnabled()) {
   paintRipple(&painter, spec.stateLayerColor);
  }
@@ -246,7 +248,7 @@ void QtMaterialFilledButton::paintEvent(QPaintEvent*)
    &painter,
    d->layout.visualRect,
    spec.focusRingColor,
-   d->layout.cornerRadius,
+   containerRadius,
    spec.focusRingWidth);
  }
 }

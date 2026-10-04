@@ -148,6 +148,8 @@ void QtMaterialOutlinedButton::paintEvent(QPaintEvent*)
     d->ensureLayoutResolved(*this);
 
     const ButtonSpec& spec = currentButtonSpec();
+    const QPainterPath containerPath = buttonContainerPath(d->layout.visualRect);
+    const qreal containerRadius = buttonContainerCornerRadius(d->layout.visualRect);
     const QFont resolvedFont = ButtonRenderHelper::resolvedLabelFont(font(), spec);
 
     QPainter painter(this);
@@ -157,13 +159,13 @@ void QtMaterialOutlinedButton::paintEvent(QPaintEvent*)
     if (layerOpacity > 0.0) {
         QtMaterialStateLayerPainter::paintPath(
             &painter,
-            d->layout.containerPath,
+            containerPath,
             spec.stateLayerColor,
             layerOpacity);
     }
 
     if (isEnabled()) {
-        setRippleClipPath(d->layout.containerPath);
+        setRippleClipPath(containerPath);
         paintRipple(&painter, spec.stateLayerColor);
     }
 
@@ -177,7 +179,7 @@ void QtMaterialOutlinedButton::paintEvent(QPaintEvent*)
         painter.save();
         painter.setBrush(Qt::NoBrush);
         painter.setPen(outlinePen);
-        painter.drawPath(d->layout.containerPath);
+        painter.drawPath(containerPath);
         painter.restore();
     }
 
@@ -208,7 +210,7 @@ void QtMaterialOutlinedButton::paintEvent(QPaintEvent*)
             &painter,
             d->layout.visualRect,
             spec.focusRingColor,
-            d->layout.cornerRadius,
+            containerRadius,
             spec.focusRingWidth);
     }
 }

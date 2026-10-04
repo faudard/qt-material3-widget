@@ -1,5 +1,6 @@
 #include "navigationadvancedpage.h"
 
+#include <QFrame>
 #include <QLabel>
 #include <QPushButton>
 #include <QStyle>
@@ -12,6 +13,8 @@
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
 #include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
+#include "qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h"
+#include "qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h"
 
 namespace {
 
@@ -58,6 +61,110 @@ NavigationAdvancedPage::NavigationAdvancedPage(QWidget* parent)
         this);
     explanation->setWordWrap(true);
     layout->addWidget(explanation);
+
+
+    auto* adaptiveTitle = new QLabel(tr("Adaptive / Desktop shell"), this);
+    layout->addWidget(adaptiveTitle);
+
+    auto* adaptiveHelp = new QLabel(
+        tr("Resize the gallery window: Compact uses a bottom Navigation Bar, Medium+ uses a Navigation Rail, "
+           "and Expanded+ reveals the supporting pane when enough content width remains."),
+        this);
+    adaptiveHelp->setWordWrap(true);
+    layout->addWidget(adaptiveHelp);
+
+    auto* adaptiveShell =
+        new QtMaterial::QtMaterialAdaptiveShell(this);
+    adaptiveShell->setMinimumHeight(320);
+
+    auto* adaptiveContent = new QFrame(adaptiveShell);
+    auto* adaptiveContentLayout = new QVBoxLayout(adaptiveContent);
+    auto* adaptivePageLabel =
+        new QLabel(tr("Home — main adaptive content"), adaptiveContent);
+    adaptivePageLabel->setAlignment(Qt::AlignCenter);
+    adaptiveContentLayout->addWidget(adaptivePageLabel, 1);
+
+    auto* adaptiveSupporting = new QFrame(adaptiveShell);
+    auto* adaptiveSupportingLayout =
+        new QVBoxLayout(adaptiveSupporting);
+    auto* supportingTitle =
+        new QLabel(tr("Supporting pane"), adaptiveSupporting);
+    supportingTitle->setWordWrap(true);
+    adaptiveSupportingLayout->addWidget(supportingTitle);
+    adaptiveSupportingLayout->addStretch(1);
+
+    adaptiveShell->setContentWidget(adaptiveContent);
+    adaptiveShell->setSupportingWidget(adaptiveSupporting);
+
+    auto* adaptiveNavigation = adaptiveShell->navigationSuite();
+    adaptiveNavigation->addDestination(
+        tr("Home"),
+        style()->standardIcon(QStyle::SP_DirHomeIcon));
+    adaptiveNavigation->addDestination(
+        tr("Search"),
+        style()->standardIcon(QStyle::SP_FileDialogContentsView));
+    adaptiveNavigation->addDestination(
+        tr("Settings"),
+        style()->standardIcon(QStyle::SP_FileDialogDetailedView));
+    adaptiveNavigation->setCurrentIndex(0);
+
+    connect(
+        adaptiveNavigation,
+        &QtMaterial::QtMaterialNavigationSuite::currentIndexChanged,
+        this,
+        [adaptiveNavigation, adaptivePageLabel](int index) {
+            adaptivePageLabel->setText(
+                QObject::tr("%1 — main adaptive content")
+                    .arg(adaptiveNavigation->destinationText(index)));
+        });
+
+    auto* adaptiveStatus = new QLabel(this);
+    adaptiveStatus->setWordWrap(true);
+    const auto updateAdaptiveStatus =
+        [adaptiveShell, adaptiveStatus](QtMaterial::WindowWidthSizeClass) {
+            QString widthClass;
+            switch (adaptiveShell->windowSizeClass().width) {
+            case QtMaterial::WindowWidthSizeClass::Compact:
+                widthClass = QObject::tr("Compact");
+                break;
+            case QtMaterial::WindowWidthSizeClass::Medium:
+                widthClass = QObject::tr("Medium");
+                break;
+            case QtMaterial::WindowWidthSizeClass::Expanded:
+                widthClass = QObject::tr("Expanded");
+                break;
+            case QtMaterial::WindowWidthSizeClass::Large:
+                widthClass = QObject::tr("Large");
+                break;
+            case QtMaterial::WindowWidthSizeClass::ExtraLarge:
+                widthClass = QObject::tr("ExtraLarge");
+                break;
+            }
+            adaptiveStatus->setText(
+                QObject::tr("Window class: %1 · navigation: %2 · desktop density: %3")
+                    .arg(widthClass)
+                    .arg(
+                        adaptiveShell->navigationSuite()->navigationType()
+                                == QtMaterial::NavigationSuiteType::NavigationBar
+                            ? QObject::tr("Bar")
+                            : QObject::tr("Rail"))
+                    .arg(
+                        adaptiveShell->resolvedDensity() == QtMaterial::Density::Compact
+                            ? QObject::tr("Compact")
+                            : adaptiveShell->resolvedDensity() == QtMaterial::Density::Comfortable
+                                ? QObject::tr("Comfortable")
+                                : QObject::tr("Default")));
+        };
+    connect(
+        adaptiveShell,
+        &QtMaterial::QtMaterialAdaptiveShell::widthSizeClassChanged,
+        this,
+        updateAdaptiveStatus);
+    updateAdaptiveStatus(adaptiveShell->windowSizeClass().width);
+
+    layout->addWidget(adaptiveStatus);
+    layout->addWidget(adaptiveShell);
+
 
     auto* breadcrumb = new QtMaterial::QtMaterialBreadcrumb(this);
     breadcrumb->setItems({
