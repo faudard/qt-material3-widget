@@ -1711,6 +1711,10 @@ void tst_ThemeVisualRegression::adaptiveDesktopCandidateGoldens_data()
 
 void tst_ThemeVisualRegression::adaptiveDesktopCandidateGoldens()
 {
+    if (!qEnvironmentVariableIsSet("QTMATERIAL3_ADAPTIVE_VISUAL")) {
+        QSKIP("Adaptive/Desktop visual evidence runs only through its dedicated CTest target.");
+    }
+
     if (!QtMaterialVisualTest::strictGoldens()
         && !QtMaterialVisualTest::updateGoldens()) {
         QSKIP("Adaptive/Desktop goldens are opt-in.");
