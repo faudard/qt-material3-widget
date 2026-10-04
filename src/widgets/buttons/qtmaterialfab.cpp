@@ -2,6 +2,7 @@
 
 #include <QEvent>
 #include "qtmaterial/specs/qtmaterialactionbuttonspecresolver.h"
+#include "qtmaterial/specs/qtmaterialbuttonspecresolver.h"
 
 
 namespace QtMaterial {
@@ -281,8 +282,7 @@ void QtMaterialFab::applyExpressiveSpec(ButtonSpec& spec) const
     spec.selectedCornerRadius = spec.pressedCornerRadius;
     spec.hasStateShapeMorph = true;
     spec.motionToken = MotionToken::SpatialFast;
-    spec.motionStyle = theme().motion().style(MotionToken::SpatialFast);
-    spec.hasResolvedMotionStyle = true;
+    ButtonSpecResolver().resolveRuntimeValues(theme(), &spec);
 }
 
 QSize QtMaterialFab::sizeHint() const

@@ -187,19 +187,14 @@ void QtMaterialTextButton::applyExpressiveSpec(ButtonSpec& spec) const
  spec.iconSpacing = metrics.iconSpacing;
  spec.labelTypeRole = metrics.typeRole;
  spec.motionToken = MotionToken::SpatialFast;
- spec.motionStyle = theme().motion().style(MotionToken::SpatialFast);
- spec.hasResolvedMotionStyle = true;
-
- if (theme().typography().contains(metrics.typeRole)) {
-  spec.labelFont = theme().typography().style(metrics.typeRole).font;
-  spec.hasResolvedLabelFont = true;
- }
 
  const bool round = d->expressiveShape == QtMaterialButtonShape::Round;
  spec.cornerRadius = round ? -1.0 : metrics.squareRadius;
  spec.pressedCornerRadius = round ? metrics.squareRadius : -1.0;
  spec.selectedCornerRadius = spec.pressedCornerRadius;
  spec.hasStateShapeMorph = true;
+
+ ButtonSpecResolver().resolveRuntimeValues(theme(), &spec);
 }
 
 void QtMaterialTextButton::ensureSpecResolved() const

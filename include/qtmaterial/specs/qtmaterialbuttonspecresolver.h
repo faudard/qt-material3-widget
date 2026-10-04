@@ -49,6 +49,12 @@ public:
         const Theme& theme,
         Density density = Density::Default) const;
 
+    // Re-resolve concrete theme values after callers change semantic roles/tokens.
+    // This keeps widget implementations on the spec-resolver boundary.
+    void resolveRuntimeValues(
+        const Theme& theme,
+        ButtonSpec* spec) const;
+
 private:
     static ButtonSpec baseButtonSpec(Density density) noexcept;
     static int buttonHeightForDensity(Density density) noexcept;

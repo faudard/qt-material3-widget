@@ -66,6 +66,28 @@ ButtonSpec ButtonSpecResolver::resolve(
     return textButtonSpec(theme, density);
 }
 
+void ButtonSpecResolver::resolveRuntimeValues(
+    const Theme& theme,
+    ButtonSpec* spec) const
+{
+    if (!spec) {
+        return;
+    }
+
+    spec->motionStyle =
+        theme.motion().style(spec->motionToken);
+    spec->hasResolvedMotionStyle = true;
+
+    if (theme.typography().contains(spec->labelTypeRole)) {
+        spec->labelFont =
+            theme.typography().style(spec->labelTypeRole).font;
+        spec->hasResolvedLabelFont = true;
+    } else {
+        spec->labelFont = QFont();
+        spec->hasResolvedLabelFont = false;
+    }
+}
+
 ButtonSpec ButtonSpecResolver::textButtonSpec(
     const Theme& theme,
     Density density) const
