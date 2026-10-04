@@ -5,6 +5,8 @@
 
 #include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
+#include "qtmaterial/theme/qtmaterialthemebuilder.h"
+#include "qtmaterial/theme/qtmaterialthemecontext.h"
 
 using QtMaterial::ProgressIndicatorSpec;
 using QtMaterial::QtMaterialCircularProgressIndicator;
@@ -29,6 +31,8 @@ private Q_SLOTS:
     void linearDeterminateAccessibilityIncludesPercent();
     void linearIndeterminateAccessibilityUsesStatusText();
     void linearRtlPaintsFromTrailingEdge();
+    void reducedMotionFreezesIndeterminateRendering();
+    void determinateEndStatesRemainStable();
     void indicatorsRenderAtDesktopScaleFactors_data();
     void indicatorsRenderAtDesktopScaleFactors();
 };
