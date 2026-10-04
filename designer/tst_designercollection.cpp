@@ -34,6 +34,7 @@ private slots:
             QCOMPARE(widget->parentWidget(), &parent);
             QVERIFY(!widget->objectName().isEmpty());
         }
+        QVERIFY(names.contains(QStringLiteral("QtMaterial::QtMaterialSlider")));
     }
 
     void exposesExpectedGroups()

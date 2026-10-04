@@ -8,6 +8,10 @@ The navigation surface exposes:
 
 Component maturity is tracked in `docs/components/component-registry.json`.
 
+The [Navigation/Desktop certification guide](navigation-desktop-certification.md) follows
+Tabs, Rail, Menu, Breadcrumb, Command Palette and SplitView in that order. It records the
+registered keyboard/accessibility contracts and the pending visual/platform review.
+
 ## Tabs
 
 `QtMaterialTabs` is a themed `QTabWidget` integration with typed routes, stable per-tab metadata,

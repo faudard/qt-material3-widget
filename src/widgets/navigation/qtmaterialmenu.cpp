@@ -18,6 +18,7 @@
 #include "qtmaterial/effects/qtmaterialelevationrenderer.h"
 #include "qtmaterial/specs/qtmaterialmenuspecresolver.h"
 #include "../resolution/qtmaterialnavigationspecresolution_p.h"
+#include "qtmaterialitemaccessibility_p.h"
 
 using QtMaterial::MenuSpec;
 using QtMaterial::MenuSpecResolver;
@@ -159,6 +160,38 @@ QtMaterialMenu::QtMaterialMenu(QWidget* parent)
     : QWidget(parent)
     , d_ptr(std::make_unique<QtMaterialMenuPrivate>())
 {
+#ifndef QT_NO_ACCESSIBILITY
+    static const bool accessibilityInstalled = []() {
+        QAccessible::installFactory([](const QString&, QObject* object) -> QAccessibleInterface* {
+            auto* menu = qobject_cast<QtMaterialMenu*>(object);
+            if (!menu) { return nullptr; }
+            QtMaterialItemAccessibility::ItemAccess access;
+            access.count = [menu]() { return menu->count(); };
+            access.current = [menu]() { return menu->currentIndex(); };
+            access.text = [menu](int index, QAccessible::Text type) {
+                if (type == QAccessible::Name) { return menu->itemText(index); }
+                if (type == QAccessible::Accelerator) { return menu->itemShortcutText(index); }
+                return type == QAccessible::Description ? menu->itemAccessibleText(index) : QString();
+            };
+            access.rect = [menu](int index) { return menu->itemRect(index); };
+            access.role = [menu](int index) { return menu->isSeparator(index) ? QAccessible::Separator : QAccessible::MenuItem; };
+            access.state = [menu](int index) {
+                QAccessible::State state;
+                state.disabled = !menu->isItemEnabled(index);
+                state.focusable = state.selectable = !menu->isSeparator(index);
+                state.selected = menu->currentIndex() == index;
+                state.checkable = menu->isItemCheckable(index);
+                state.checked = menu->isItemChecked(index);
+                return state;
+            };
+            access.select = [menu](int index) { menu->setCurrentIndex(index); };
+            return new QtMaterialItemAccessibility::ItemWidgetInterface(menu, QAccessible::PopupMenu, std::move(access));
+        });
+        return true;
+    }();
+    Q_UNUSED(accessibilityInstalled);
+#endif
+
     d_ptr->themeBinding =
         new QtMaterialThemeContextBinding(this, this);
     connect(
@@ -182,6 +215,7 @@ QtMaterialMenu::QtMaterialMenu(QWidget* parent)
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
     setAccessibleName(tr("Menu"));
+
 
     resolveThemeSpec();
     updateAccessibility();
@@ -244,6 +278,9 @@ int QtMaterialMenu::addItem(
     const int index = d_ptr->items.size();
     d_ptr->items.append(item);
     ensureCurrentIndex();
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyStructure(this);
+#endif
     updateGeometry();
     updateAccessibility();
     update();
@@ -258,6 +295,9 @@ int QtMaterialMenu::addSeparator()
 
     const int index = d_ptr->items.size();
     d_ptr->items.append(item);
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyStructure(this);
+#endif
     updateGeometry();
     updateAccessibility();
     update();
@@ -273,6 +313,9 @@ void QtMaterialMenu::clear()
     d_ptr->items.clear();
     d_ptr->pressedIndex = -1;
     setCurrentIndex(-1);
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyStructure(this);
+#endif
     updateGeometry();
     updateAccessibility();
     update();
@@ -1034,6 +1077,9 @@ void QtMaterialMenu::activateIndex(int index)
 
 void QtMaterialMenu::updateAccessibility()
 {
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyItems(this);
+#endif
     if (accessibleName().isEmpty()) {
         setAccessibleName(tr("Menu"));
     }

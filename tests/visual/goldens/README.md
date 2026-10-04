@@ -6,7 +6,7 @@ Three categories are maintained:
 
 1. deterministic token-board goldens;
 2. reviewed component-grid goldens rendered with real Qt widgets;
-3. reviewable Selection/Input family state-matrix candidates.
+3. reviewable family state-matrix and focus candidates.
 
 Generate or intentionally update goldens with:
 
@@ -35,6 +35,8 @@ CI generates the following candidate families in the pinned Ubuntu/Fusion render
 - `input_composite_matrix_*.png`
 - `navigation_primary_matrix_*.png`
 - `navigation_desktop_matrix_*.png`
+- `navigation_split_matrix_*.png`
+- `navigation_focus_{tabs,rail,menu,breadcrumb,palette,split}_*.png`
 - `input_slider_matrix_*.png`
 - `desktop_data_matrix_*.png`
 - `surface_bar_matrix_*.png`
@@ -47,6 +49,22 @@ Download the `family-visual-candidate-goldens` workflow artifact, review the ima
 commit the approved PNGs into this directory. Candidate cases tolerate a missing baseline,
 but once the file exists they use the same strict zero-pixel comparison as established
 goldens. Add only reviewed, release-critical files to `tools/release_rules.json`.
+
+## Navigation/Desktop evidence
+
+The dedicated `navigation-desktop-visual-evidence` artifact captures 27 navigation and
+SplitView cases twice in independent processes on Qt 6.4.0 / Fusion / xcb at scale 1 and
+font DPI 96. Each pass contains `goldens/` and `artifacts/manifest.json`; the artifact also
+includes strict comparison output and `navigation-repeatability.json`.
+
+`tools/check_navigation_visual_repeatability.py` rejects missing cases, renderer drift,
+different commits, changed pixels or dimensions. A repeatable result keeps `visualReview`
+at `pending`. Review approved images from the first pass, copy them here, and add the
+release-critical paths to the release rules. Focus fixtures use keyboard focus and a
+nonblinking caret; repeatability alone does not certify appearance or OS accessibility.
+
+CI redirects candidates with `QTMATERIAL3_VISUAL_GOLDENS_DIR` rather than writing into
+this directory. Reviewed references are compared before candidate generation.
 
 ## Desktop Productivity candidates
 

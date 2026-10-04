@@ -4,8 +4,14 @@
 
 #include <QApplication>
 #include <QComboBox>
+#include <QCursor>
 #include <QGridLayout>
 #include <QLabel>
+#include <QLineEdit>
+#include <QSplitterHandle>
+#include <QTabBar>
+#include <QToolButton>
+#include <QVBoxLayout>
 #include <QPalette>
 #include <QSlider>
 #include <QStringListModel>
@@ -13,6 +19,7 @@
 #include <QWidget>
 
 #include "qtmaterial/integration/qtmaterialpaletteadapter.h"
+#include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h"
@@ -83,6 +90,7 @@ Theme makeStaticComponentTheme(ThemeMode mode, ContrastMode contrast)
     Theme theme = makeTheme(mode, contrast);
     // Pixel goldens must capture a stable end state, never an animation frame.
     theme.accessibility().reducedMotion = true;
+    applyReducedMotion(&theme.motion(), true);
     return theme;
 }
 
@@ -533,6 +541,9 @@ QWidget* buildNavigationDesktopStateMatrix(const Theme& theme)
                 model->index(commandRow, 0),
                 shortcuts.at(commandRow),
                 QtMaterialCommandPalette::ShortcutRole);
+            model->setData(model->index(commandRow, 0), QStringLiteral("command.%1").arg(commandRow), QtMaterialCommandPalette::IdRole);
+            model->setData(model->index(commandRow, 0), commandRow < 2 ? QStringLiteral("Workspace") : QStringLiteral("Tools"), QtMaterialCommandPalette::SectionRole);
+            model->setData(model->index(commandRow, 0), QStringLiteral("Workspace action %1").arg(commandRow + 1), QtMaterialCommandPalette::SecondaryTextRole);
         }
 
         auto* palette =
@@ -540,6 +551,9 @@ QWidget* buildNavigationDesktopStateMatrix(const Theme& theme)
         palette->setWindowFlags(Qt::Widget);
         palette->setModal(false);
         palette->setSourceModel(model);
+        palette->setActivationShortcuts({});
+        palette->setFavoriteCommandIds({QStringLiteral("command.0")});
+        palette->setRecentCommandIds({QStringLiteral("command.1")});
         palette->setQuery(
             row == 2
                 ? QStringLiteral("No match")
@@ -551,6 +565,84 @@ QWidget* buildNavigationDesktopStateMatrix(const Theme& theme)
     }
 
     return root;
+}
+
+QWidget* buildNavigationSplitStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("navigationSplitStateMatrix"));
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    addMatrixHeaders(layout, root, {QStringLiteral("Horizontal SplitView"), QStringLiteral("Vertical SplitView")});
+    const QStringList states = {QStringLiteral("Expanded"), QStringLiteral("Collapsed"), QStringLiteral("RTL")};
+    for (int row = 0; row < states.size(); ++row) {
+        addStateLabel(layout, root, row + 1, states.at(row));
+        for (int column = 0; column < 2; ++column) {
+            auto* split = new QtMaterialSplitView(column == 0 ? Qt::Horizontal : Qt::Vertical, root);
+            split->setLayoutDirection(row == 2 ? Qt::RightToLeft : Qt::LeftToRight);
+            split->addWidget(new QLabel(QStringLiteral("Explorer")));
+            split->addWidget(new QLabel(QStringLiteral("Editor")));
+            split->addWidget(new QLabel(QStringLiteral("Inspector")));
+            split->setSizes({100, 200, 100}); split->setMinimumSize(420, 160);
+            split->setPaneCollapsed(0, row == 1);
+            layout->addWidget(split, row + 1, column + 1);
+        }
+    }
+    return root;
+}
+
+struct NavigationFocusFixture { QWidget* root; QWidget* target; };
+
+NavigationFocusFixture buildNavigationFocusFixture(const Theme& theme, const QString& component)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("navigationFocusFixture"));
+    auto* layout = new QVBoxLayout(root); layout->setContentsMargins(24, 24, 24, 24);
+    QWidget* target = nullptr;
+    if (component == QStringLiteral("tabs")) {
+        auto* tabs = new QtMaterialTabs(root);
+        tabs->addTab(new QWidget(tabs), QStringLiteral("Overview"));
+        tabs->addTab(new QWidget(tabs), QStringLiteral("Activity"));
+        tabs->addTab(new QWidget(tabs), QStringLiteral("Disabled"));
+        tabs->setTabEnabled(2, false); tabs->setCurrentIndex(1);
+        layout->addWidget(tabs); target = tabs->findChild<QTabBar*>();
+    } else if (component == QStringLiteral("rail")) {
+        auto* rail = new QtMaterialNavigationRail(root);
+        rail->addDestination(QStringLiteral("Home")); rail->addDestination(QStringLiteral("Search"));
+        rail->addDestination(QStringLiteral("Disabled")); rail->setDestinationEnabled(2, false); rail->setCurrentIndex(1);
+        layout->addWidget(rail); target = rail;
+    } else if (component == QStringLiteral("menu")) {
+        auto* menu = new QtMaterialMenu(root);
+        menu->addItem(QStringLiteral("Open")); menu->setItemShortcutText(0, QStringLiteral("Ctrl+O"));
+        menu->addSeparator(); menu->addItem(QStringLiteral("Show details"));
+        menu->setItemCheckable(2, true); menu->setItemChecked(2, true); menu->setCurrentIndex(2);
+        layout->addWidget(menu); target = menu;
+    } else if (component == QStringLiteral("breadcrumb")) {
+        auto* breadcrumb = new QtMaterialBreadcrumb(root);
+        breadcrumb->setItems({QStringLiteral("Workspace"), QStringLiteral("Projects"), QStringLiteral("Source")});
+        breadcrumb->setLocationEditable(true); breadcrumb->setEditingLocation(true);
+        layout->addWidget(breadcrumb); target = breadcrumb->findChild<QLineEdit*>();
+    } else if (component == QStringLiteral("palette")) {
+        auto* palette = new QtMaterialCommandPalette(root);
+        palette->setWindowFlags(Qt::Widget); palette->setModal(false); palette->setActivationShortcuts({});
+        auto* model = new QStandardItemModel(3, 1, root);
+        const QStringList titles = {QStringLiteral("Open workspace"), QStringLiteral("Open settings"), QStringLiteral("Run tests")};
+        for (int i = 0; i < titles.size(); ++i) {
+            model->setData(model->index(i, 0), titles.at(i));
+            model->setData(model->index(i, 0), QStringLiteral("id.%1").arg(i), QtMaterialCommandPalette::IdRole);
+            model->setData(model->index(i, 0), QStringLiteral("Action description %1").arg(i + 1), QtMaterialCommandPalette::SecondaryTextRole);
+        }
+        palette->setSourceModel(model); palette->setFavoriteCommandIds({QStringLiteral("id.0")});
+        palette->setRecentCommandIds({QStringLiteral("id.2")});
+        layout->addWidget(palette); target = palette->findChild<QLineEdit*>();
+    } else {
+        auto* split = new QtMaterialSplitView(root);
+        split->addWidget(new QLabel(QStringLiteral("Explorer")));
+        split->addWidget(new QLabel(QStringLiteral("Editor")));
+        split->setSizes({180, 300}); layout->addWidget(split); target = split->handle(1);
+    }
+    root->resize(540, 420);
+    return {root, target};
 }
 
 QWidget* buildInputSliderStateMatrix(const Theme& theme)
@@ -972,6 +1064,12 @@ class tst_ThemeVisualRegression : public QObject {
     Q_OBJECT
 
 private slots:
+    void navigationFocusCandidateGoldens_data();
+    void navigationFocusCandidateGoldens();
+    void navigationSplitStateMatrixSmoke_data();
+    void navigationSplitStateMatrixSmoke();
+    void navigationSplitStateMatrixCandidateGoldens_data();
+    void navigationSplitStateMatrixCandidateGoldens();
     void tokenBoardGoldens_data();
     void tokenBoardGoldens();
     void componentGridSmoke_data();
@@ -1371,11 +1469,49 @@ void tst_ThemeVisualRegression::Name##CandidateGoldens_data(){ Name##Smoke_data(
 void tst_ThemeVisualRegression::Name##CandidateGoldens(){ if(!QtMaterialVisualTest::strictGoldens()&&!QtMaterialVisualTest::updateGoldens()) QSKIP("Family matrix goldens are opt-in."); QFETCH(QString,caseName); QFETCH(ThemeMode,mode); QFETCH(ContrastMode,contrast); const Theme theme=makeStaticComponentTheme(mode,contrast); std::unique_ptr<QWidget> matrix(Builder(theme)); QtMaterialVisualTest::verifyOrUpdateCandidateGolden(caseName,QtMaterialVisualTest::renderWidget(matrix.get())); }
 
 QTM3_MATRIX_CASES(dataExtendedStateMatrix, "data_extended_matrix", buildDataExtendedStateMatrix, "data-extended-state-matrix")
+QTM3_MATRIX_CASES(navigationSplitStateMatrix, "navigation_split_matrix", buildNavigationSplitStateMatrix, "navigation-split-state-matrix")
 QTM3_MATRIX_CASES(progressCompactStateMatrix, "progress_compact_matrix", buildProgressCompactStateMatrix, "progress-compact-state-matrix")
 QTM3_MATRIX_CASES(surfaceBarStateMatrix, "surface_bar_matrix", buildSurfaceBarStateMatrix, "surface-bar-state-matrix")
 QTM3_MATRIX_CASES(surfaceOverlayStateMatrix, "surface_overlay_matrix", buildSurfaceOverlayStateMatrix, "surface-overlay-state-matrix")
 QTM3_MATRIX_CASES(layoutStateMatrix, "layout_matrix", buildLayoutStateMatrix, "layout-state-matrix")
 #undef QTM3_MATRIX_CASES
+
+void tst_ThemeVisualRegression::navigationFocusCandidateGoldens_data()
+{
+    QTest::addColumn<QString>("caseName"); QTest::addColumn<QString>("component");
+    QTest::addColumn<ThemeMode>("mode"); QTest::addColumn<ContrastMode>("contrast");
+    const QStringList components = {QStringLiteral("tabs"), QStringLiteral("rail"), QStringLiteral("menu"),
+        QStringLiteral("breadcrumb"), QStringLiteral("palette"), QStringLiteral("split")};
+    for (const QString& component : components) {
+        for (int variant = 0; variant < 3; ++variant) {
+            const QString suffix = variant == 0 ? QStringLiteral("light_standard") : variant == 1 ? QStringLiteral("dark_standard") : QStringLiteral("light_high");
+            const QString name = QStringLiteral("navigation_focus_%1_%2").arg(component, suffix);
+            QTest::newRow(qPrintable(name)) << name << component << (variant == 1 ? ThemeMode::Dark : ThemeMode::Light)
+                << (variant == 2 ? ContrastMode::High : ContrastMode::Standard);
+        }
+    }
+}
+
+void tst_ThemeVisualRegression::navigationFocusCandidateGoldens()
+{
+    if (!QtMaterialVisualTest::strictGoldens() && !QtMaterialVisualTest::updateGoldens()) { QSKIP("Focus goldens are opt-in."); }
+    QFETCH(QString, caseName); QFETCH(QString, component); QFETCH(ThemeMode, mode); QFETCH(ContrastMode, contrast);
+    struct CursorGuard {
+        int previous = QApplication::cursorFlashTime();
+        CursorGuard() { QApplication::setCursorFlashTime(0); }
+        ~CursorGuard() { QApplication::setCursorFlashTime(previous); }
+    } cursorGuard;
+    const auto fixture = buildNavigationFocusFixture(makeStaticComponentTheme(mode, contrast), component);
+    std::unique_ptr<QWidget> root(fixture.root);
+    QVERIFY(fixture.target);
+    root->resize(root->sizeHint().expandedTo(QSize(720, 420)));
+    QCursor::setPos(0, 0); // Keep native hover outside the focused reference fixture.
+    root->show(); QVERIFY(QTest::qWaitForWindowExposed(root.get()));
+    root->activateWindow(); fixture.target->setFocus(Qt::TabFocusReason);
+    QTRY_VERIFY(fixture.target->hasFocus());
+    QCoreApplication::processEvents();
+    QtMaterialVisualTest::verifyOrUpdateCandidateGolden(caseName, root->grab().toImage());
+}
 
 QTEST_MAIN(tst_ThemeVisualRegression)
 #include "tst_theme_visual_regression.moc"

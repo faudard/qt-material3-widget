@@ -13,7 +13,10 @@ function(qtm3_add_test target source)
             ${ARGN}
     )
 
-    add_test(NAME ${target} COMMAND ${target})
+    # Keep a file report as well as stdout: Windows GUI test runners may not
+    # deliver QtTest's console output to CTest's captured stream.
+    add_test(NAME ${target} COMMAND ${target}
+        -o "${CMAKE_CURRENT_BINARY_DIR}/${target}.txt,txt" -o "-,txt")
 endfunction()
 
 qtm3_add_test(
@@ -221,6 +224,10 @@ qtm3_add_test(tst_tabsgenericthemebinding widgets/navigation/tst_tabsgenericthem
 qtm3_add_test(tst_tabsresolvedlifecycle widgets/navigation/tst_tabsresolvedlifecycle.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_tabs_route_robustness widgets/navigation/tst_tabs_route_robustness.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_navigationrail widgets/navigation/tst_navigationrail.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_commandpalette_stress widgets/navigation/tst_commandpalette_stress.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_navigation_desktop_certification widgets/navigation/tst_navigation_desktop_certification.cpp qtmaterial3_widgets)
+set_tests_properties(tst_commandpalette_stress tst_navigation_desktop_certification
+    PROPERTIES LABELS "navigation;desktop;accessibility" TIMEOUT 120)
 
 qtm3_add_test(tst_data_component_specs specs/tst_data_component_specs.cpp qtmaterial3_specs)
 qtm3_add_test(tst_data_components widgets/tst_data_components.cpp qtmaterial3_widgets)
@@ -269,6 +276,10 @@ if(QTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS)
   qtm3_add_test(tst_theme_visual_regression visual/tst_theme_visual_regression.cpp qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime qtmaterial3_widgets qtmaterial3_integration)
   target_compile_definitions(tst_theme_visual_regression PRIVATE
     QTMATERIAL3_VISUAL_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/visual")
+  add_test(NAME tst_navigation_visual_goldens COMMAND tst_theme_visual_regression
+    navigationPrimaryStateMatrixCandidateGoldens navigationDesktopStateMatrixCandidateGoldens
+    navigationSplitStateMatrixCandidateGoldens navigationFocusCandidateGoldens)
+  set_tests_properties(tst_navigation_visual_goldens PROPERTIES LABELS "navigation;visual" TIMEOUT 180)
 
 endif()
 

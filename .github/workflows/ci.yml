@@ -191,17 +191,70 @@ jobs:
         shell: bash
         run: |
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
-            bash -c 'openbox >/tmp/openbox.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure'
+            python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure
+
+      - name: Compare reviewed Navigation goldens
+        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        shell: bash
+        env:
+          QTMATERIAL3_VISUAL_STRICT: "1"
+          QTMATERIAL3_VISUAL_ARTIFACTS_DIR: ${{ github.workspace }}/build/navigation-strict/artifacts
+          QT_STYLE_OVERRIDE: Fusion
+          QT_QPA_PLATFORM: xcb
+          QT_SCALE_FACTOR: "1"
+          QT_FONT_DPI: "96"
+          LC_ALL: C.UTF-8
+        run: |
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure -R "^tst_navigation_visual_goldens$"
+
+      - name: Render Navigation evidence twice
+        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        shell: bash
+        env:
+          QTMATERIAL3_UPDATE_VISUAL_GOLDENS: "1"
+          QT_STYLE_OVERRIDE: Fusion
+          QT_QPA_PLATFORM: xcb
+          QT_SCALE_FACTOR: "1"
+          QT_FONT_DPI: "96"
+          LC_ALL: C.UTF-8
+        run: |
+          for pass in first second; do
+            QTMATERIAL3_VISUAL_GOLDENS_DIR="${GITHUB_WORKSPACE}/build/navigation-${pass}/goldens" \
+            QTMATERIAL3_VISUAL_ARTIFACTS_DIR="${GITHUB_WORKSPACE}/build/navigation-${pass}/artifacts" \
+            xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+              python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure -R "^tst_navigation_visual_goldens$"
+          done
+          python3 tools/check_navigation_visual_repeatability.py \
+            build/navigation-first build/navigation-second \
+            --output build/navigation-repeatability.json
+
+      - name: Upload Navigation visual evidence
+        if: always() && matrix.name == 'ubuntu-qt6.4.0-floor'
+        uses: actions/upload-artifact@v6
+        with:
+          name: navigation-desktop-visual-evidence
+          path: |
+            build/navigation-first/
+            build/navigation-second/
+            build/navigation-strict/
+            build/navigation-repeatability.json
+          if-no-files-found: warn
 
       - name: Generate family visual candidate goldens
         if: matrix.name == 'ubuntu-qt6.4.0-floor'
         shell: bash
         env:
-          QTMATERIAL3_UPDATE_VISUAL_GOLDENS: 1
+          QTMATERIAL3_UPDATE_VISUAL_GOLDENS: "1"
+          QTMATERIAL3_VISUAL_GOLDENS_DIR: ${{ github.workspace }}/build/family-candidate-goldens
           QT_STYLE_OVERRIDE: Fusion
+          QT_QPA_PLATFORM: xcb
+          QT_SCALE_FACTOR: "1"
+          QT_FONT_DPI: "96"
+          LC_ALL: C.UTF-8
         run: |
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
-            bash -c 'openbox >/tmp/openbox-visual-candidates.log 2>&1 & ctest --test-dir build --build-config Release --output-on-failure -R tst_theme_visual_regression'
+            python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure -R "^tst_theme_visual_regression$"
 
       - name: Upload family visual candidate goldens
         if: always() && matrix.name == 'ubuntu-qt6.4.0-floor'
@@ -209,18 +262,17 @@ jobs:
         with:
           name: family-visual-candidate-goldens
           path: |
-            tests/visual/goldens/selection_matrix_*.png
-            tests/visual/goldens/input_field_matrix_*.png
-            tests/visual/goldens/input_composite_matrix_*.png
-            tests/visual/goldens/navigation_primary_matrix_*.png
-            tests/visual/goldens/navigation_desktop_matrix_*.png
-            tests/visual/goldens/input_slider_matrix_*.png
-            tests/visual/goldens/desktop_data_matrix_*.png
-            tests/visual/goldens/data_extended_matrix_*.png
-            tests/visual/goldens/progress_compact_matrix_*.png
-            tests/visual/goldens/surface_bar_matrix_*.png
-            tests/visual/goldens/surface_overlay_matrix_*.png
-            tests/visual/goldens/layout_matrix_*.png
+            build/family-candidate-goldens/selection_matrix_*.png
+            build/family-candidate-goldens/input_field_matrix_*.png
+            build/family-candidate-goldens/input_composite_matrix_*.png
+            build/family-candidate-goldens/navigation_*.png
+            build/family-candidate-goldens/input_slider_matrix_*.png
+            build/family-candidate-goldens/desktop_data_matrix_*.png
+            build/family-candidate-goldens/data_extended_matrix_*.png
+            build/family-candidate-goldens/progress_compact_matrix_*.png
+            build/family-candidate-goldens/surface_bar_matrix_*.png
+            build/family-candidate-goldens/surface_overlay_matrix_*.png
+            build/family-candidate-goldens/layout_matrix_*.png
           if-no-files-found: warn
 
       - name: Test Windows
@@ -229,6 +281,28 @@ jobs:
         env:
           QT_QPA_PLATFORM: offscreen
         run: ctest --test-dir build --build-config Release --output-on-failure
+
+      - name: Report Windows QtTest failures
+        if: failure() && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (Test-Path build/tests) {
+            Get-ChildItem build/tests -Filter "tst_*.txt" | ForEach-Object {
+              if (Select-String -Path $_.FullName -Pattern 'FAIL!|QFATAL|Received signal' -Quiet) {
+                Get-Content $_.FullName
+              }
+            }
+          }
+
+      - name: Upload Windows QtTest reports
+        if: always() && runner.os == 'Windows'
+        uses: actions/upload-artifact@v6
+        with:
+          name: qttest-${{ matrix.name }}
+          path: |
+            build/tests/tst_*.txt
+            build/Testing/Temporary/LastTest.log
+          if-no-files-found: warn
 
       - name: Test macOS
         if: runner.os == 'macOS' && matrix.build-tests == 'ON'
@@ -369,8 +443,11 @@ jobs:
         shell: pwsh
         run: |
           cmake --build build-designer-qt5 --parallel
+          if ($LASTEXITCODE -ne 0) { throw "Designer build failed" }
           ctest --test-dir build-designer-qt5 --output-on-failure -R "designer_(collection_contract|ui_smoke)"
+          if ($LASTEXITCODE -ne 0) { throw "Designer contracts failed" }
           cmake --install build-designer-qt5 --prefix "${{ github.workspace }}\build-designer-qt5\stage"
+          if ($LASTEXITCODE -ne 0) { throw "Designer install failed" }
           $plugin = Get-ChildItem "${{ github.workspace }}\build-designer-qt5\stage" -Recurse -File | Where-Object { $_.FullName -match '[\\/]plugins[\\/]designer[\\/]' } | Select-Object -First 1
           if (-not $plugin) { throw "Designer plugin was not staged" }
 
@@ -521,7 +598,7 @@ jobs:
         shell: bash
         run: |
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
-            bash -c 'openbox >/tmp/openbox-sanitize.log 2>&1 & ctest --test-dir build-sanitize --output-on-failure'
+            python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build-sanitize --output-on-failure
 
   architecture:
     name: architecture
@@ -538,4 +615,3 @@ jobs:
 
       - name: Architecture checker
         run: python3 scripts/architecture/check_architecture.py --root .
-

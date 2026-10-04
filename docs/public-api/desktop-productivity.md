@@ -65,6 +65,9 @@ collapsibility of individually collapsed panes. They use a versioned envelope ar
 native splitter state and reject mismatched pane counts/orientations or corrupt envelopes.
 Native `saveState()`/`restoreState()` remain available; use the extended pair when
 restoring an explicitly collapsed pane's policy matters.
+Use `setPaneCollapsible` to configure per-pane collapse policies. Unconfigured panes
+inherit `childrenCollapsible`; an explicit policy takes precedence. Programmatic
+collapse temporarily enables collapse and expansion restores the previous policy.
 
 Storage belongs to the application. Set pane constraints before restoring state and use
 stable pane ordering. `paneStateChanged` publishes a snapshot after divider movement
@@ -116,6 +119,12 @@ any word order. Keywords and secondary text participate in searching; exact titl
 receive priority. `setFuzzyMatchingEnabled(false)` selects literal substring filtering.
 Results are grouped into Favorites, Recent commands and explicit sections, ranked within
 each group. Icons, secondary descriptions and shortcut text have dedicated display areas.
+
+Equal-score provider commands sort by stable ID. Provider entries without an ID or title
+are ignored. External model rows preserve the application's ordering, even without IDs.
+Sections use locale-independent QString comparison. The
+[navigation/Desktop certification guide](navigation-desktop-certification.md) describes
+stress, keyboard, accessibility and visual evidence, including the remaining review gaps.
 
 ### Providers and asynchronous results
 
@@ -169,6 +178,9 @@ when the result list has focus. Ctrl+D toggles the selected command's favorite. 
 Shift+Tab keep native dialog focus navigation within the palette. Disabled commands remain
 visible but cannot activate. Accessible result text includes secondary/shortcut metadata,
 and the palette describes matching results and loading status.
+Activation or dismissal returns keyboard focus to the widget that opened the palette,
+provided that widget is still alive, visible and enabled. Reopening an already visible
+palette preserves the original invoker.
 
 ## Drag and drop
 

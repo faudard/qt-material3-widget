@@ -75,17 +75,17 @@
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `layout.split-view` | Split View | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic layout_matrix stable goldens remain before complete maturity. |
+| `layout.split-view` | Split View | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
 
 ### Navigation
 
 | ID | Component | Status | API | Render | States | A11y | Keys | HiDPI | RTL | Tests | Example | Docs | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| `navigation.breadcrumb` | Breadcrumb | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity. |
-| `navigation.command-palette` | Command Palette | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity. |
-| `navigation.menu` | Menu | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity. |
-| `navigation.rail` | Navigation Rail | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity. |
-| `navigation.tabs` | Tabs | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic navigation_primary_matrix / navigation_desktop_matrix stable goldens remain before complete maturity. |
+| `navigation.breadcrumb` | Breadcrumb | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
+| `navigation.command-palette` | Command Palette | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
+| `navigation.menu` | Menu | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
+| `navigation.rail` | Navigation Rail | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
+| `navigation.tabs` | Tabs | `usable` | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed stable navigation matrix/focus PNGs remain before complete maturity; two-pass repeatability does not establish visual approval. |
 
 ### Progress
 
@@ -179,12 +179,24 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Outlined Text Field | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
 | Time Field | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
 | Time Picker | Review and promote the pinned Qt 6.4/Fusion input_field_matrix / input_composite_matrix / input_slider_matrix goldens, then raise rendering to 4/4. |
-| Split View | Review and promote the pinned Qt 6.4/Fusion layout_matrix goldens, then raise rendering to 4/4. |
-| Breadcrumb | Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4. |
-| Command Palette | Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4. |
-| Menu | Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4. |
-| Navigation Rail | Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4. |
-| Tabs | Review and promote the pinned Qt 6.4/Fusion navigation_primary_matrix / navigation_desktop_matrix goldens, then raise rendering to 4/4. |
+| Split View | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
+| Split View | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
+| Split View | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
+| Breadcrumb | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
+| Breadcrumb | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
+| Breadcrumb | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
+| Command Palette | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
+| Command Palette | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
+| Command Palette | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
+| Menu | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
+| Menu | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
+| Menu | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
+| Navigation Rail | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
+| Navigation Rail | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
+| Navigation Rail | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
+| Tabs | Run the registered Navigation/Desktop C++ suites in CI; local authoring intentionally avoids Qt compilation and installation. |
+| Tabs | Review the navigation-desktop-visual-evidence artifact, promote approved matrix/focus PNGs and update stable release rules before raising rendering to 4/4. |
+| Tabs | Record platform screen-reader traversal, state announcements, activation and focus/resize behavior before claiming complete accessibility. |
 | Circular Progress Indicator | Review and promote the pinned Qt 6.4/Fusion progress_compact_matrix goldens, then raise rendering to 4/4. |
 | Linear Progress Indicator | Review and promote the pinned Qt 6.4/Fusion progress_compact_matrix goldens, then raise rendering to 4/4. |
 | Checkbox | Review and promote the pinned Qt 6.4/Fusion selection_matrix goldens, then raise rendering to 4/4. |

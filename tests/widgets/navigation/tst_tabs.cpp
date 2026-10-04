@@ -1,12 +1,15 @@
 #include <QtTest/QtTest>
 
 #include <QLabel>
+#include <QImage>
 #include <QStackedWidget>
 #include <QTabBar>
 #include <QVBoxLayout>
 
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
+#include "qtmaterial/theme/qtmaterialthemebuilder.h"
+#include "qtmaterial/theme/qtmaterialthemecontext.h"
 
 class TestNavigationController final : public QtMaterial::QtMaterialNavigationController {
     Q_OBJECT
@@ -51,6 +54,8 @@ private slots:
     void exposesAccessibleTabBar();
     void rendersAtDesktopScaleFactors_data();
     void rendersAtDesktopScaleFactors();
+    void indicatorTracksSelectionAcrossLayoutChanges_data();
+    void indicatorTracksSelectionAcrossLayoutChanges();
 };
 
 void TestQtMaterialTabs::constructs()
@@ -317,6 +322,71 @@ void TestQtMaterialTabs::rendersAtDesktopScaleFactors()
 
     QVERIFY(!pixmap.isNull());
     QCOMPARE(pixmap.devicePixelRatio(), dpr);
+}
+
+void TestQtMaterialTabs::indicatorTracksSelectionAcrossLayoutChanges_data()
+{
+    QTest::addColumn<int>("direction");
+    QTest::addColumn<int>("duration");
+    QTest::newRow("ltr-animated") << int(Qt::LeftToRight) << 10000;
+    QTest::newRow("rtl-animated") << int(Qt::RightToLeft) << 10000;
+    QTest::newRow("ltr-immediate") << int(Qt::LeftToRight) << 0;
+    QTest::newRow("rtl-immediate") << int(Qt::RightToLeft) << 0;
+}
+
+void TestQtMaterialTabs::indicatorTracksSelectionAcrossLayoutChanges()
+{
+    QFETCH(int, direction);
+    QFETCH(int, duration);
+    QtMaterial::Theme theme = QtMaterial::ThemeBuilder().buildLightFromSeed(QColor(QStringLiteral("#6750A4")));
+    QtMaterial::ThemeContext context(theme);
+    QtMaterial::TabsSpec spec;
+    spec.activeIndicatorColor = QColor(QStringLiteral("#FF0081"));
+    spec.animationDuration = duration;
+    QtMaterial::QtMaterialTabs tabs(spec);
+    tabs.setThemeContext(&context);
+    tabs.setLayoutDirection(Qt::LayoutDirection(direction));
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("First"));
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("Second"));
+    tabs.addTab(new QWidget(&tabs), QStringLiteral("Third"));
+    auto* bar = tabs.findChild<QTabBar*>();
+    QVERIFY(bar);
+    bar->setFocusPolicy(Qt::NoFocus);
+    tabs.setFocusPolicy(Qt::NoFocus);
+    const auto indicatorColor = [&]() {
+        const QImage image = bar->grab().toImage();
+        const QRect selected = bar->tabRect(tabs.currentIndex());
+        const int y = selected.bottom() - tabs.indicatorHeight() / 2;
+        return image.pixelColor(qRound(selected.center().x() * image.devicePixelRatio()),
+                                qRound(y * image.devicePixelRatio()));
+    };
+
+    // Hidden selection must already point at the selected tab on first show.
+    tabs.setCurrentIndex(1);
+    tabs.resize(480, 180);
+    tabs.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&tabs));
+    QCOMPARE(indicatorColor(), spec.activeIndicatorColor);
+
+    // A layout change during a long animation must discard its old endpoints.
+    tabs.setCurrentIndex(2);
+    tabs.setLayoutDirection(direction == int(Qt::LeftToRight) ? Qt::RightToLeft : Qt::LeftToRight);
+    QTest::qWait(60);
+    QCOMPARE(indicatorColor(), spec.activeIndicatorColor);
+
+    tabs.setCurrentIndex(1);
+    bar->resize(bar->width() + 120, bar->height());
+    QTest::qWait(60);
+    QCOMPARE(indicatorColor(), spec.activeIndicatorColor);
+
+    // A live accessibility change must finish the current selection immediately.
+    tabs.setCurrentIndex(0);
+    theme.accessibility().reducedMotion = true;
+    QVERIFY(context.setTheme(theme));
+    QCOMPARE(tabs.authoredSpec().animationDuration, duration);
+    QCOMPARE(indicatorColor(), spec.activeIndicatorColor);
+    QTest::qWait(60);
+    QCOMPARE(indicatorColor(), spec.activeIndicatorColor);
 }
 
 QTEST_MAIN(TestQtMaterialTabs)

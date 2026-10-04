@@ -14,6 +14,9 @@ using QtMaterial::ThemeBuilder;
 using QtMaterial::ThemeContext;
 using QtMaterial::QtMaterialCircularProgressIndicator;
 using QtMaterial::QtMaterialLinearProgressIndicator;
+using QtMaterial::Theme;
+using QtMaterial::ThemeBuilder;
+using QtMaterial::ThemeContext;
 
 class tst_ProgressIndicators : public QObject
 {

@@ -71,7 +71,7 @@ jobs:
       - name: Compare reviewed visual goldens
         run: |
           xvfb-run -a --server-args="-screen 0 1920x1080x24" \
-            bash -c 'openbox >/tmp/openbox-visual.log 2>&1 & ctest --test-dir build-visual --output-on-failure -R tst_theme_visual_regression'
+            python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build-visual --output-on-failure -R "^tst_theme_visual_regression$"
 
   linux:
     needs: release-contract

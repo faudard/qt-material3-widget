@@ -9,6 +9,7 @@
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/specs/qtmaterialnavigationrailspecresolver.h"
+#include "qtmaterialitemaccessibility_p.h"
 
 namespace QtMaterial {
 
@@ -168,6 +169,35 @@ QtMaterialNavigationRail::QtMaterialNavigationRail(
           std::make_unique<
               QtMaterialNavigationRailPrivate>())
 {
+#ifndef QT_NO_ACCESSIBILITY
+    static const bool accessibilityInstalled = []() {
+        QAccessible::installFactory([](const QString&, QObject* object) -> QAccessibleInterface* {
+            auto* rail = qobject_cast<QtMaterialNavigationRail*>(object);
+            if (!rail) { return nullptr; }
+            QtMaterialItemAccessibility::ItemAccess access;
+            access.count = [rail]() { return rail->count(); };
+            access.current = [rail]() { return rail->currentIndex(); };
+            access.text = [rail](int index, QAccessible::Text type) {
+                if (type == QAccessible::Name) { return rail->destinationText(index); }
+                return type == QAccessible::Description ? rail->destinationAccessibleText(index) : QString();
+            };
+            access.rect = [rail](int index) { rail->ensureSpecResolved(); return rail->d_ptr->itemRect(index); };
+            access.role = [](int) { return QAccessible::ListItem; };
+            access.state = [rail](int index) {
+                QAccessible::State state;
+                state.disabled = !rail->isDestinationEnabled(index);
+                state.focusable = state.selectable = true;
+                state.selected = rail->currentIndex() == index;
+                return state;
+            };
+            access.select = [rail](int index) { rail->setCurrentIndex(index); };
+            return new QtMaterialItemAccessibility::ItemWidgetInterface(rail, QAccessible::List, std::move(access));
+        });
+        return true;
+    }();
+    Q_UNUSED(accessibilityInstalled);
+#endif
+
     setAttribute(Qt::WA_Hover, true);
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
@@ -215,6 +245,9 @@ void QtMaterialNavigationRail::insertDestination(
         ++d_ptr->pressedIndex;
     }
 
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyStructure(this);
+#endif
     updateGeometry();
     update();
     syncAccessibility();
@@ -280,6 +313,9 @@ void QtMaterialNavigationRail::removeDestination(
         Q_EMIT currentIndexChanged(nextCurrent);
     }
 
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyStructure(this);
+#endif
     updateGeometry();
     update();
     syncAccessibility();
@@ -300,6 +336,9 @@ void QtMaterialNavigationRail::clearDestinations()
         d_ptr->currentIndex != -1;
     d_ptr->currentIndex = -1;
 
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyStructure(this);
+#endif
     updateGeometry();
     update();
     if (currentChanged) {
@@ -808,6 +847,9 @@ void QtMaterialNavigationRail::ensureSpecResolved() const
 
 void QtMaterialNavigationRail::syncAccessibility()
 {
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyItems(this);
+#endif
     const QString summary = accessibilitySummary();
     setAccessibleDescription(summary);
 

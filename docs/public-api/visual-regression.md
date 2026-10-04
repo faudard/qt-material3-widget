@@ -16,6 +16,7 @@ The harness exercises:
 - Input field state matrices across empty, value, disabled and RTL states;
 - composite Input matrices for Search View, Date Picker and Date Range Picker;
 - Navigation matrices for Tabs, Navigation Rail, Menu, Breadcrumb and Command Palette;
+- focused fixtures for all six Navigation/Desktop components and a SplitView state matrix;
 - Slider/Range Slider matrices covering horizontal, vertical, disabled and RTL states;
 - Desktop-data matrices for Table, Tree View, Pagination and Split View;
 - Theme Studio screenshot output.
@@ -54,6 +55,9 @@ ctest --test-dir build --output-on-failure -R tst_theme_visual_regression
 Artifacts are written to `visual-artifacts` next to the test executable unless
 `QTMATERIAL3_VISUAL_ARTIFACTS_DIR` overrides the directory.
 
+`QTMATERIAL3_VISUAL_GOLDENS_DIR` redirects baseline lookup and candidate output. CI uses
+separate output directories so candidate generation preserves reviewed source PNGs.
+
 Golden changes should be reviewed when theme generation, component specs,
 shape/elevation/typography defaults, or accessibility/focus behavior changes.
 
@@ -74,6 +78,29 @@ test case. Once a family baseline is considered release-critical, also add its p
 The candidate set currently contains three controlled theme variants for each matrix:
 light/standard contrast, dark/standard contrast, and light/high contrast. This intentionally
 avoids a full Cartesian explosion while covering the highest-value theme/state combinations.
+
+## Navigation/Desktop repeatability
+
+The `tst_navigation_visual_goldens` CTest entry selects 27 cases: primary and desktop
+Navigation matrices, the SplitView matrix, and focused fixtures for all six components,
+each in the three controlled theme variants. The pinned Qt 6.4.0 / Fusion / xcb lane
+compares committed references and renders two independent passes at scale 1 and font DPI 96.
+It publishes `navigation-desktop-visual-evidence` with PNGs, manifests, comparison artifacts
+and the report from `tools/check_navigation_visual_repeatability.py`.
+
+Both passes must have identical image bytes, pixel hashes, dimensions and source commits,
+with the expected runtime renderer profile. This catches nondeterministic captures; the
+report's `visualReview` remains `pending` until a human reviews the candidates. Promotion
+still requires approved source PNGs and release rules. The
+[certification guide](navigation-desktop-certification.md) records behavioral coverage and
+the separate platform accessibility review.
+
+Linux CI starts Openbox through `scripts/ci/run-with-openbox.py`. It waits for matching
+`_NET_SUPPORTING_WM_CHECK` properties on the root and supporting window before starting
+CTest, with a bounded timeout and startup diagnostics. This prevents the first real
+focus fixture from racing window-manager initialization. Qt exposure and focus assertions
+remain required. The full-family candidate job uses the same pinned xcb, scale and font
+settings as the Navigation captures.
 
 
 ## 1.x family matrix policy

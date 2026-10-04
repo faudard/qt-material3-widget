@@ -16,6 +16,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSlider : public QSlider
     Q_PROPERTY(bool valueLabelVisible READ isValueLabelVisible WRITE setValueLabelVisible NOTIFY valueLabelVisibleChanged)
 
 public:
+    // Supports Qt Designer/uic's standard parent-only widget construction.
     explicit QtMaterialSlider(QWidget* parent);
     explicit QtMaterialSlider(Qt::Orientation orientation = Qt::Horizontal, QWidget* parent = nullptr);
     ~QtMaterialSlider() override;
