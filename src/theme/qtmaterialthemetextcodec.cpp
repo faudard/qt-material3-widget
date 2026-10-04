@@ -52,6 +52,7 @@ static const ComponentNamePair kCanonicalComponents[] = {
     { ComponentId::GridList, "gridList" },
     { ComponentId::Carousel, "carousel" },
     { ComponentId::DatePicker, "datePicker" },
+    { ComponentId::Pagination, "pagination" },
     { ComponentId::Navigation, "navigation" },
     { ComponentId::Selection, "selection" },
     { ComponentId::Chip, "chip" },
