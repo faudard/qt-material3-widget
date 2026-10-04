@@ -294,7 +294,7 @@ jobs:
           -DQTMATERIAL3_USE_MCU=OFF
 
       - name: Build Designer plugin
-        run: cmake --build build-designer --target qtmaterial3_designer_plugin --parallel
+        run: cmake --build build-designer --target qtmaterial3_designer_plugin tst_qtmaterial3_designer_collection tst_qtmaterial3_designer_ui_smoke --parallel
 
       - name: Test Designer contracts
         env:
@@ -353,7 +353,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_C_COMPILER=cl
           -DCMAKE_CXX_COMPILER=cl
-          -DQTMATERIAL3_EXPECT_QT_VERSION=5.14.2
+          "-DQTMATERIAL3_EXPECT_QT_VERSION=5.14.2"
           -DQTMATERIAL3_BUILD_TESTS=ON
           -DQTMATERIAL3_BUILD_EXAMPLES=OFF
           -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
