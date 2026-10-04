@@ -32,6 +32,13 @@ SelectionPage::SelectionPage(QWidget* parent)
     auto* assistChip = new QtMaterial::QtMaterialChip(QStringLiteral("Assist chip"), this);
     assistChip->setVariant(QtMaterial::ChipVariant::Assist);
 
+    auto* filterChip = new QtMaterial::QtMaterialChip(QStringLiteral("Filter chip"), this);
+    filterChip->setVariant(QtMaterial::ChipVariant::Filter);
+    filterChip->setChecked(true);
+
+    auto* suggestionChip = new QtMaterial::QtMaterialChip(QStringLiteral("Suggestion chip"), this);
+    suggestionChip->setVariant(QtMaterial::ChipVariant::Suggestion);
+
     auto* inputChip = new QtMaterial::QtMaterialChip(QStringLiteral("Input chip"), this);
     inputChip->setVariant(QtMaterial::ChipVariant::Input);
     inputChip->setRemovable(true);
@@ -50,7 +57,9 @@ SelectionPage::SelectionPage(QWidget* parent)
 
     layout->addLayout(row);
     layout->addWidget(assistChip);
+    layout->addWidget(filterChip);
     layout->addWidget(inputChip);
+    layout->addWidget(suggestionChip);
     layout->addWidget(segmented);
     layout->addStretch(1);
 }
