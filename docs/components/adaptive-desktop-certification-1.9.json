@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "certification": "QtMaterial3 1.9 Adaptive / Desktop",
+  "requiredComponents": [
+    "navigation.suite",
+    "layout.adaptive-shell"
+  ],
+  "visual": {
+    "prefix": "adaptive_desktop",
+    "renderer": {
+      "qtVersion": "6.4.0",
+      "style": "Fusion",
+      "platform": "xcb",
+      "scaleFactor": "1",
+      "fontDpi": "96"
+    },
+    "status": "pending",
+    "reviewer": "",
+    "reviewedAt": "",
+    "evidence": "",
+    "requiredGoldens": [
+      "tests/visual/goldens/adaptive_desktop_compact_ltr_light_standard.png",
+      "tests/visual/goldens/adaptive_desktop_compact_ltr_dark_standard.png",
+      "tests/visual/goldens/adaptive_desktop_compact_ltr_light_high.png",
+      "tests/visual/goldens/adaptive_desktop_compact_rtl_light_standard.png",
+      "tests/visual/goldens/adaptive_desktop_compact_rtl_dark_standard.png",
+      "tests/visual/goldens/adaptive_desktop_compact_rtl_light_high.png",
+      "tests/visual/goldens/adaptive_desktop_medium_ltr_light_standard.png",
+      "tests/visual/goldens/adaptive_desktop_medium_ltr_dark_standard.png",
+      "tests/visual/goldens/adaptive_desktop_medium_ltr_light_high.png",
+      "tests/visual/goldens/adaptive_desktop_medium_rtl_light_standard.png",
+      "tests/visual/goldens/adaptive_desktop_medium_rtl_dark_standard.png",
+      "tests/visual/goldens/adaptive_desktop_medium_rtl_light_high.png",
+      "tests/visual/goldens/adaptive_desktop_expanded_ltr_light_standard.png",
+      "tests/visual/goldens/adaptive_desktop_expanded_ltr_dark_standard.png",
+      "tests/visual/goldens/adaptive_desktop_expanded_ltr_light_high.png",
+      "tests/visual/goldens/adaptive_desktop_expanded_rtl_light_standard.png",
+      "tests/visual/goldens/adaptive_desktop_expanded_rtl_dark_standard.png",
+      "tests/visual/goldens/adaptive_desktop_expanded_rtl_light_high.png",
+      "tests/visual/goldens/adaptive_desktop_large_ltr_light_standard.png",
+      "tests/visual/goldens/adaptive_desktop_large_ltr_dark_standard.png",
+      "tests/visual/goldens/adaptive_desktop_large_ltr_light_high.png",
+      "tests/visual/goldens/adaptive_desktop_large_rtl_light_standard.png",
+      "tests/visual/goldens/adaptive_desktop_large_rtl_dark_standard.png",
+      "tests/visual/goldens/adaptive_desktop_large_rtl_light_high.png",
+      "tests/visual/goldens/adaptive_desktop_extra_large_ltr_light_standard.png",
+      "tests/visual/goldens/adaptive_desktop_extra_large_ltr_dark_standard.png",
+      "tests/visual/goldens/adaptive_desktop_extra_large_ltr_light_high.png",
+      "tests/visual/goldens/adaptive_desktop_extra_large_rtl_light_standard.png",
+      "tests/visual/goldens/adaptive_desktop_extra_large_rtl_dark_standard.png",
+      "tests/visual/goldens/adaptive_desktop_extra_large_rtl_light_high.png"
+    ]
+  },
+  "platforms": {
+    "windows-nvda": {
+      "screenReader": "NVDA",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "components": {
+        "navigation.suite": {
+          "traversal": "pending",
+          "stateAnnouncements": "pending",
+          "activation": "pending",
+          "focusAcrossModeSwitch": "pending"
+        },
+        "layout.adaptive-shell": {
+          "responsiveComposition": "pending",
+          "contentFocusPreservation": "pending",
+          "supportingPaneTransition": "pending",
+          "rtlReadingOrder": "pending"
+        }
+      }
+    },
+    "linux-orca": {
+      "screenReader": "Orca",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "components": {
+        "navigation.suite": {
+          "traversal": "pending",
+          "stateAnnouncements": "pending",
+          "activation": "pending",
+          "focusAcrossModeSwitch": "pending"
+        },
+        "layout.adaptive-shell": {
+          "responsiveComposition": "pending",
+          "contentFocusPreservation": "pending",
+          "supportingPaneTransition": "pending",
+          "rtlReadingOrder": "pending"
+        }
+      }
+    },
+    "macos-voiceover": {
+      "screenReader": "VoiceOver",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "components": {
+        "navigation.suite": {
+          "traversal": "pending",
+          "stateAnnouncements": "pending",
+          "activation": "pending",
+          "focusAcrossModeSwitch": "pending"
+        },
+        "layout.adaptive-shell": {
+          "responsiveComposition": "pending",
+          "contentFocusPreservation": "pending",
+          "supportingPaneTransition": "pending",
+          "rtlReadingOrder": "pending"
+        }
+      }
+    }
+  }
+}
