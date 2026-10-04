@@ -716,18 +716,79 @@ QWidget* buildDataExtendedStateMatrix(const Theme& theme)
 
 QWidget* buildProgressCompactStateMatrix(const Theme& theme)
 {
-    auto* root=new QWidget; configureMatrixRoot(root,theme,QStringLiteral("progressCompactStateMatrix"));
-    auto* layout=new QGridLayout(root); layout->setContentsMargins(24,24,24,24);
-    addMatrixHeaders(layout,root,{QStringLiteral("Linear"),QStringLiteral("Circular"),QStringLiteral("Assist chip"),QStringLiteral("Filter chip")});
-    const QStringList states={QStringLiteral("Default"),QStringLiteral("Selected"),QStringLiteral("Disabled"),QStringLiteral("RTL")};
-    for(int i=0;i<states.size();++i)addStateLabel(layout,root,i+1,states.at(i));
-    for(int row=1;row<=4;++row){
-        const bool enabled=row!=3; const auto dir=row==4?Qt::RightToLeft:Qt::LeftToRight;
-        auto* linear=new QtMaterialLinearProgressIndicator(root); linear->setValue(row==2?0.75:0.42); linear->setEnabled(enabled); linear->setLayoutDirection(dir); linear->setMinimumWidth(220); layout->addWidget(linear,row,1);
-        auto* circular=new QtMaterialCircularProgressIndicator(root); circular->setValue(row==2?0.75:0.42); circular->setEnabled(enabled); circular->setLayoutDirection(dir); layout->addWidget(circular,row,2,Qt::AlignCenter);
-        auto* assist=new QtMaterialChip(QStringLiteral("Assist"),root); assist->setVariant(ChipVariant::Assist); assist->setEnabled(enabled); assist->setLayoutDirection(dir); layout->addWidget(assist,row,3);
-        auto* filter=new QtMaterialChip(QStringLiteral("Filter"),root); filter->setVariant(ChipVariant::Filter); filter->setChecked(row==2||row==4); filter->setEnabled(enabled); filter->setLayoutDirection(dir); layout->addWidget(filter,row,4);
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("progressCompactStateMatrix"));
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(16);
+    layout->setVerticalSpacing(12);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Linear"),
+        QStringLiteral("Circular"),
+        QStringLiteral("Assist chip"),
+        QStringLiteral("Filter chip"),
+        QStringLiteral("Input chip"),
+        QStringLiteral("Suggestion chip")});
+
+    const QStringList states = {
+        QStringLiteral("Default"),
+        QStringLiteral("Selected / 100%"),
+        QStringLiteral("Disabled"),
+        QStringLiteral("RTL"),
+        QStringLiteral("Indeterminate")};
+    for (int i = 0; i < states.size(); ++i) {
+        addStateLabel(layout, root, i + 1, states.at(i));
     }
+
+    for (int row = 1; row <= 5; ++row) {
+        const bool enabled = row != 3;
+        const auto direction =
+            row == 4 ? Qt::RightToLeft : Qt::LeftToRight;
+        const bool indeterminate = row == 5;
+        const qreal value = row == 2 ? 1.0 : 0.42;
+
+        auto* linear = new QtMaterialLinearProgressIndicator(root);
+        linear->setValue(value);
+        linear->setIndeterminate(indeterminate);
+        linear->setEnabled(enabled);
+        linear->setLayoutDirection(direction);
+        linear->setMinimumWidth(220);
+        layout->addWidget(linear, row, 1);
+
+        auto* circular = new QtMaterialCircularProgressIndicator(root);
+        circular->setValue(value);
+        circular->setIndeterminate(indeterminate);
+        circular->setEnabled(enabled);
+        circular->setLayoutDirection(direction);
+        layout->addWidget(circular, row, 2, Qt::AlignCenter);
+
+        auto* assist = new QtMaterialChip(QStringLiteral("Assist"), root);
+        assist->setVariant(ChipVariant::Assist);
+        assist->setEnabled(enabled);
+        assist->setLayoutDirection(direction);
+        layout->addWidget(assist, row, 3);
+
+        auto* filter = new QtMaterialChip(QStringLiteral("Filter"), root);
+        filter->setVariant(ChipVariant::Filter);
+        filter->setChecked(row == 2 || row == 4);
+        filter->setEnabled(enabled);
+        filter->setLayoutDirection(direction);
+        layout->addWidget(filter, row, 4);
+
+        auto* input = new QtMaterialChip(QStringLiteral("Input"), root);
+        input->setVariant(ChipVariant::Input);
+        input->setRemovable(true);
+        input->setEnabled(enabled);
+        input->setLayoutDirection(direction);
+        layout->addWidget(input, row, 5);
+
+        auto* suggestion = new QtMaterialChip(QStringLiteral("Suggestion"), root);
+        suggestion->setVariant(ChipVariant::Suggestion);
+        suggestion->setEnabled(enabled);
+        suggestion->setLayoutDirection(direction);
+        layout->addWidget(suggestion, row, 6);
+    }
+
     return root;
 }
 
