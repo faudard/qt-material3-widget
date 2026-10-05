@@ -129,7 +129,6 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DQTMATERIAL3_BUILD_TESTS=ON \
             -DQTMATERIAL3_BUILD_EXAMPLES=ON \
-            -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=ON \
             -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=ON \
             -DQTMATERIAL3_BUILD_BENCHMARKS=OFF \
             ${{ matrix.cmake_extra_args }}
