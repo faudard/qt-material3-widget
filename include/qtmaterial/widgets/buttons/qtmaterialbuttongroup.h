@@ -54,6 +54,7 @@ Q_SIGNALS:
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event) override;
+    void changeEvent(QEvent* event) override;
 
 private:
     int indexOf(const QObject* object) const noexcept;
