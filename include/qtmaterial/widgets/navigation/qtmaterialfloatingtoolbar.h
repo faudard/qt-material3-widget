@@ -53,12 +53,14 @@ Q_SIGNALS:
 protected:
     void paintEvent(QPaintEvent* event) override;
     bool eventFilter(QObject* watched, QEvent* event) override;
+    void changeEvent(QEvent* event) override;
     void themeChangedEvent(const QtMaterial::Theme& theme) override;
 
 private:
     int itemIndex(const QObject* object) const noexcept;
     int nextFocusable(int start, int step) const noexcept;
     void syncVisibility();
+    void syncLayoutDirection();
     void focusIndex(int index);
 
     QBoxLayout* m_layout = nullptr;
