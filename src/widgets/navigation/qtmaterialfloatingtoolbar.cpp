@@ -20,6 +20,7 @@ QtMaterialFloatingToolbar::QtMaterialFloatingToolbar(QWidget* parent)
     setAttribute(Qt::WA_TranslucentBackground, true);
     m_layout->setContentsMargins(6, 6, 6, 6);
     m_layout->setSpacing(4);
+    syncLayoutDirection();
     setAccessibleName(tr("Floating toolbar"));
 }
 
@@ -50,10 +51,7 @@ void QtMaterialFloatingToolbar::setOrientation(Qt::Orientation orientation)
     }
 
     m_orientation = orientation;
-    m_layout->setDirection(
-        orientation == Qt::Horizontal
-            ? QBoxLayout::LeftToRight
-            : QBoxLayout::TopToBottom);
+    syncLayoutDirection();
     updateGeometry();
     Q_EMIT orientationChanged(orientation);
 }
@@ -236,6 +234,14 @@ bool QtMaterialFloatingToolbar::eventFilter(QObject* watched, QEvent* event)
     return true;
 }
 
+void QtMaterialFloatingToolbar::changeEvent(QEvent* event)
+{
+    QtMaterialWidget::changeEvent(event);
+    if (event && event->type() == QEvent::LayoutDirectionChange) {
+        syncLayoutDirection();
+    }
+}
+
 void QtMaterialFloatingToolbar::themeChangedEvent(const Theme& theme)
 {
     QtMaterialWidget::themeChangedEvent(theme);
@@ -290,6 +296,19 @@ void QtMaterialFloatingToolbar::syncVisibility()
             .arg(m_items.size()));
     updateGeometry();
     update();
+}
+
+void QtMaterialFloatingToolbar::syncLayoutDirection()
+{
+    if (m_orientation == Qt::Vertical) {
+        m_layout->setDirection(QBoxLayout::TopToBottom);
+        return;
+    }
+
+    m_layout->setDirection(
+        layoutDirection() == Qt::RightToLeft
+            ? QBoxLayout::RightToLeft
+            : QBoxLayout::LeftToRight);
 }
 
 void QtMaterialFloatingToolbar::focusIndex(int index)
