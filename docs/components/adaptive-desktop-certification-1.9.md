@@ -52,9 +52,17 @@ render passes plus `adaptive-desktop-repeatability.json`.
 `tools/check_adaptive_desktop_visual_repeatability.py` rejects missing cases,
 renderer drift, different commits, dimensions, PNG bytes or pixel hashes.
 
-Repeatability proves determinism only. A reviewer must inspect all 30 images
-before copying them to `tests/visual/goldens/` and marking visual evidence
-`pass`.
+Successful CI run `37333756951` (artifact `11355542969`, source commit
+`43b44f686d983b848fcced5840474108435d3ea4`) produced byte-identical
+first/second passes for all 30 cases. Renderer metadata, dimensions, PNG hashes
+and pixel hashes are recorded in
+`docs/components/adaptive-desktop-visual-repeatability-1.9.json`, and the
+candidate PNGs are committed under `tests/visual/goldens/`. The pinned Qt
+6.4.0 CI lane also compares future renders against those files in strict mode.
+
+Repeatability proves determinism only. The visual ledger intentionally remains
+`pending` until a human reviewer inspects all 30 committed images and records
+reviewer, date and durable evidence before changing visual evidence to `pass`.
 
 ## Native accessibility review
 
@@ -103,8 +111,9 @@ Final validation:
 python tools/check_adaptive_desktop_1_9.py --require-complete
 ```
 
-The final command fails until every reviewed golden exists and all three native
-screen-reader records are complete.
+The final command still fails until the visual record is explicitly approved
+with reviewer/date/evidence and all three native screen-reader records are
+complete.
 
 ## Promotion
 
