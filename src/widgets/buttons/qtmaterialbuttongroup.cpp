@@ -109,6 +109,7 @@ void QtMaterialButtonGroup::removeButton(QtMaterialTextButton* button)
     m_buttons.remove(index);
     m_layout->removeWidget(button);
     button->removeEventFilter(this);
+    QObject::disconnect(button, nullptr, this, nullptr);
 
     if (m_currentIndex == index) {
         m_currentIndex = -1;
