@@ -878,9 +878,11 @@ void QtMaterialList::syncItemSelection()
 
     switch (d_ptr->selectionMode) {
     case SelectionMode::NoSelection:
-        for (const auto& pointer : d_ptr->items) {
-            if (pointer) {
-                pointer->setSelected(false);
+        for (int index = 0;
+             index < count();
+             ++index) {
+            if (auto* item = itemAt(index)) {
+                item->setSelected(false);
             }
         }
         break;
