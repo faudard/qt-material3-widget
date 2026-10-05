@@ -23,7 +23,20 @@ QtMaterialFloatingToolbar::QtMaterialFloatingToolbar(QWidget* parent)
     setAccessibleName(tr("Floating toolbar"));
 }
 
-QtMaterialFloatingToolbar::~QtMaterialFloatingToolbar() = default;
+QtMaterialFloatingToolbar::~QtMaterialFloatingToolbar()
+{
+    // QWidget destroys child items after derived members have been torn down.
+    // Disconnect callbacks now so QObject::destroyed cannot access m_items
+    // once its storage has already been released.
+    for (QWidget* item : m_items) {
+        if (!item) {
+            continue;
+        }
+        item->removeEventFilter(this);
+        QObject::disconnect(item, nullptr, this, nullptr);
+    }
+    m_items.clear();
+}
 
 Qt::Orientation QtMaterialFloatingToolbar::orientation() const noexcept
 {
