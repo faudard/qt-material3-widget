@@ -56,6 +56,7 @@ private Q_SLOTS:
         auto* button = group.addButton(QStringLiteral("Temporary"));
 
         group.removeButton(button);
+        delete button;
 
         QCOMPARE(group.count(), 0);
     }
@@ -81,6 +82,7 @@ private Q_SLOTS:
         auto* action = toolbar.addAction(QIcon(), QStringLiteral("Temporary"));
 
         toolbar.removeWidget(action);
+        delete action;
 
         QCOMPARE(toolbar.count(), 0);
     }
@@ -112,6 +114,22 @@ private Q_SLOTS:
         QCOMPARE(middle->expressiveSegmentPosition(),
                  QtMaterialListItem::ExpressiveSegmentPosition::Middle);
         QCOMPARE(last->expressiveSegmentPosition(),
+                 QtMaterialListItem::ExpressiveSegmentPosition::Last);
+    }
+
+    void segmentedListRefreshesAfterExternalDeletion()
+    {
+        QtMaterialSegmentedList list;
+        auto* first = list.addItem(QStringLiteral("First"));
+        auto* second = list.addItem(QStringLiteral("Second"));
+        auto* third = list.addItem(QStringLiteral("Third"));
+
+        delete first;
+
+        QCOMPARE(list.count(), 2);
+        QCOMPARE(second->expressiveSegmentPosition(),
+                 QtMaterialListItem::ExpressiveSegmentPosition::First);
+        QCOMPARE(third->expressiveSegmentPosition(),
                  QtMaterialListItem::ExpressiveSegmentPosition::Last);
     }
 
