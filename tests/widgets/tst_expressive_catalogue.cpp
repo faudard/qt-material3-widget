@@ -50,6 +50,16 @@ private Q_SLOTS:
         QCOMPARE(currentSpy.count(), 1);
     }
 
+    void buttonGroupRemovalIsTeardownSafe()
+    {
+        QtMaterialButtonGroup group;
+        auto* button = group.addButton(QStringLiteral("Temporary"));
+
+        group.removeButton(button);
+
+        QCOMPARE(group.count(), 0);
+    }
+
     void floatingToolbarCollapsesToLeadingAction()
     {
         QtMaterialFloatingToolbar toolbar;
@@ -63,6 +73,16 @@ private Q_SLOTS:
 
         toolbar.setOrientation(Qt::Vertical);
         QCOMPARE(toolbar.orientation(), Qt::Vertical);
+    }
+
+    void floatingToolbarRemovalIsTeardownSafe()
+    {
+        QtMaterialFloatingToolbar toolbar;
+        auto* action = toolbar.addAction(QIcon(), QStringLiteral("Temporary"));
+
+        toolbar.removeWidget(action);
+
+        QCOMPARE(toolbar.count(), 0);
     }
 
     void loadingIndicatorIsStateful()
