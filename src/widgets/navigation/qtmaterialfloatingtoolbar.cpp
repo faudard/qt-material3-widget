@@ -152,6 +152,7 @@ void QtMaterialFloatingToolbar::removeWidget(QWidget* widget)
     m_items.remove(index);
     m_layout->removeWidget(widget);
     widget->removeEventFilter(this);
+    QObject::disconnect(widget, nullptr, this, nullptr);
     syncVisibility();
 }
 
