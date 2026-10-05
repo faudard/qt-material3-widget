@@ -10,6 +10,9 @@ QtMaterialSegmentedList::QtMaterialSegmentedList(QWidget* parent)
     setMaterialComponent(QStringLiteral("SegmentedList"));
     setDividersVisible(false);
     setAccessibleName(tr("Segmented list"));
+
+    connect(this, &QtMaterialList::countChanged,
+            this, [this](int) { refreshSegments(); });
 }
 
 QtMaterialSegmentedList::~QtMaterialSegmentedList() = default;
