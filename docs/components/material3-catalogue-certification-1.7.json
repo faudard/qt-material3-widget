@@ -19,7 +19,7 @@
     "status": "pending",
     "reviewer": "",
     "reviewedAt": "",
-    "evidence": "",
+    "evidence": "docs/components/material3-catalogue-visual-repeatability-1.7.json; GitHub Actions run 37295121374 / artifact 11337969085",
     "requiredGoldens": [
       "tests/visual/goldens/missing_material3_matrix_light_standard.png",
       "tests/visual/goldens/missing_material3_matrix_dark_standard.png",
