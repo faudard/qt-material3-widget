@@ -310,11 +310,20 @@ def milestone_summary(
     complete = (
         native_totals["pending"] == 0
         and native_totals["fail"] == 0
-        and all(item.get("status") == "pass" for item in platform_summaries.values())
+        and all(
+            item.get("status") == "pass"
+            and bool(str(item.get("reviewer", "")).strip())
+            and bool(str(item.get("reviewedAt", "")).strip())
+            and bool(item.get("evidence"))
+            for item in platform_summaries.values()
+        )
         and (
             visual_summary is None
             or (
                 visual_summary["status"] == "pass"
+                and bool(str(visual_summary.get("reviewer", "")).strip())
+                and bool(str(visual_summary.get("reviewedAt", "")).strip())
+                and bool(visual_summary.get("evidence"))
                 and not visual_summary["missingGoldens"]
             )
         )
