@@ -49,11 +49,20 @@ the `missing-material3-visual-evidence` artifact.
 - different image dimensions;
 - different pixels or pixel hashes.
 
-Repeatability proves determinism only. A reviewer must inspect the first-pass
-PNGs for layout, clipping, theme contrast, RTL, Side Sheet edges/scrim, Tooltip
-surface/text and Badge dot/overflow presentation. Approved files are copied to
-`tests/visual/goldens/`, then the ledger visual record is changed to `pass`
-with reviewer, date and durable evidence reference.
+CI run `37295121374` (artifact `11337969085`, source commit
+`db30c1c1a7c822c1dd7cff2cf9fe0ee3c10a9306`) produced two byte-identical
+passes for all three matrices. Their renderer, dimensions, PNG hashes and pixel
+hashes are recorded in
+`docs/components/material3-catalogue-visual-repeatability-1.7.json`, and the
+candidate PNGs are committed under `tests/visual/goldens/`. The pinned CI lane
+also compares future renders against those committed files in strict mode so
+pixel drift fails before promotion.
+
+Repeatability proves determinism only. The visual ledger intentionally remains
+`pending` until a human reviewer inspects the committed PNGs for layout,
+clipping, theme contrast, RTL, Side Sheet edges/scrim, Tooltip surface/text and
+Badge dot/overflow presentation. Only then is the ledger visual record changed
+to `pass` with reviewer, date and a durable evidence reference.
 
 ## Native accessibility review
 
@@ -118,8 +127,8 @@ Final validation:
 python tools/check_material3_catalogue_1_7.py --require-complete
 ```
 
-The second command fails until reviewed PNGs are committed and every native AT
-record is complete.
+The second command still fails until the visual record is explicitly approved
+with reviewer/date/evidence and every native AT record is complete.
 
 ## Promotion
 
