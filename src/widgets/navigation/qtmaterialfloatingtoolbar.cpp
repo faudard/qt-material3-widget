@@ -6,24 +6,10 @@
 #include <QPainter>
 #include <QPalette>
 
-#include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include "../resolution/qtmaterialmissingmaterial3specresolution_p.h"
 #include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
 
 namespace QtMaterial {
-namespace {
-
-QColor toolbarColor(const Theme& theme, const QPalette& palette)
-{
-    if (theme.colorScheme().contains(ColorRole::SurfaceContainer)) {
-        const QColor color = theme.colorScheme().color(ColorRole::SurfaceContainer);
-        if (color.isValid()) {
-            return color;
-        }
-    }
-    return palette.color(QPalette::Window);
-}
-
-} // namespace
 
 QtMaterialFloatingToolbar::QtMaterialFloatingToolbar(QWidget* parent)
     : QtMaterialWidget(parent)
@@ -176,8 +162,14 @@ void QtMaterialFloatingToolbar::paintEvent(QPaintEvent* event)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
+
+    const auto resolved =
+        MissingMaterial3SpecResolution::floatingToolbarSpec(
+            theme(),
+            palette());
+
     painter.setPen(Qt::NoPen);
-    painter.setBrush(toolbarColor(theme(), palette()));
+    painter.setBrush(resolved.containerColor);
 
     const QRectF bounds = QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5);
     const qreal radius = qMin<qreal>(28.0, bounds.height() / 2.0);

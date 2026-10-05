@@ -10,7 +10,7 @@
 
 #include <cmath>
 
-#include "qtmaterial/theme/qtmaterialcolortoken.h"
+#include "../resolution/qtmaterialmissingmaterial3specresolution_p.h"
 
 namespace QtMaterial {
 
@@ -22,21 +22,6 @@ public:
     qreal phase = 0.0;
     QVariantAnimation* animation = nullptr;
 };
-
-namespace {
-
-QColor indicatorColor(const Theme& theme, const QPalette& palette)
-{
-    if (theme.colorScheme().contains(ColorRole::Primary)) {
-        const QColor color = theme.colorScheme().color(ColorRole::Primary);
-        if (color.isValid()) {
-            return color;
-        }
-    }
-    return palette.color(QPalette::Highlight);
-}
-
-} // namespace
 
 QtMaterialLoadingIndicator::QtMaterialLoadingIndicator(QWidget* parent)
     : QtMaterialWidget(parent)
@@ -157,8 +142,13 @@ void QtMaterialLoadingIndicator::paintEvent(QPaintEvent*)
     }
     path.closeSubpath();
 
+    const auto resolved =
+        MissingMaterial3SpecResolution::loadingIndicatorSpec(
+            theme(),
+            palette());
+
     painter.setPen(Qt::NoPen);
-    painter.setBrush(indicatorColor(theme(), palette()));
+    painter.setBrush(resolved.indicatorColor);
     painter.drawPath(path);
 }
 
@@ -189,7 +179,12 @@ void QtMaterialLoadingIndicator::updateAnimationState()
         return;
     }
 
-    const bool reducedMotion = theme().accessibility().reducedMotion;
+    const auto resolved =
+        MissingMaterial3SpecResolution::loadingIndicatorSpec(
+            theme(),
+            palette());
+    const bool reducedMotion = resolved.reducedMotion;
+
     if (!d->active || !isVisible() || reducedMotion) {
         d->animation->stop();
         if (reducedMotion) {

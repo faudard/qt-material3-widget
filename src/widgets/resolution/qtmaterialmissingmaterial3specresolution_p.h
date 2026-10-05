@@ -135,5 +135,43 @@ inline BadgeSpec badgeSpec(
     };
 }
 
+struct FloatingToolbarSpec
+{
+    QColor containerColor;
+};
+
+inline FloatingToolbarSpec floatingToolbarSpec(
+    const Theme& theme,
+    const QPalette& palette)
+{
+    return {
+        resolvedColor(
+            theme,
+            ColorRole::SurfaceContainer,
+            palette,
+            QPalette::Window)
+    };
+}
+
+struct LoadingIndicatorSpec
+{
+    QColor indicatorColor;
+    bool reducedMotion = false;
+};
+
+inline LoadingIndicatorSpec loadingIndicatorSpec(
+    const Theme& theme,
+    const QPalette& palette)
+{
+    return {
+        resolvedColor(
+            theme,
+            ColorRole::Primary,
+            palette,
+            QPalette::Highlight),
+        theme.accessibility().reducedMotion
+    };
+}
+
 } // namespace MissingMaterial3SpecResolution
 } // namespace QtMaterial
