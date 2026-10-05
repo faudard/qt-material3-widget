@@ -262,6 +262,21 @@ jobs:
             build/missing-material3-first build/missing-material3-second \
             --output build/missing-material3-repeatability.json
 
+      - name: Compare committed Missing Material 3 goldens
+        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        shell: bash
+        env:
+          QTMATERIAL3_VISUAL_STRICT: "1"
+          QTMATERIAL3_VISUAL_ARTIFACTS_DIR: ${{ github.workspace }}/build/missing-material3-strict/artifacts
+          QT_STYLE_OVERRIDE: Fusion
+          QT_QPA_PLATFORM: xcb
+          QT_SCALE_FACTOR: "1"
+          QT_FONT_DPI: "96"
+          LC_ALL: C.UTF-8
+        run: |
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure -R "^tst_missing_material3_visual_goldens$"
+
       - name: Upload Missing Material 3 visual evidence
         if: always() && matrix.name == 'ubuntu-qt6.4.0-floor'
         uses: actions/upload-artifact@v6
@@ -270,6 +285,7 @@ jobs:
           path: |
             build/missing-material3-first/
             build/missing-material3-second/
+            build/missing-material3-strict/
             build/missing-material3-repeatability.json
           if-no-files-found: warn
 
