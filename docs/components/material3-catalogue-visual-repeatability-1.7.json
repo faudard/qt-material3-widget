@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "db30c1c1a7c822c1dd7cff2cf9fe0ee3c10a9306",
+  "sourceRunId": 37295121374,
+  "sourceArtifactId": 11337969085,
+  "sourceArtifactName": "missing-material3-visual-evidence",
+  "renderer": {
+    "qtVersion": "6.4.0",
+    "style": "fusion",
+    "platform": "xcb",
+    "scaleFactor": "1",
+    "fontDpi": "96"
+  },
+  "repeatable": true,
+  "visualReview": "pending",
+  "images": [
+    {
+      "name": "missing_material3_matrix_light_standard",
+      "width": 1062,
+      "height": 870,
+      "pngSha256": "c17cc63dc1f87cb0340d6dab693cd796bbfdb7199c537e210dc0ee99d531ad35",
+      "pixelSha256": "8c966d03fe46f92ed0942a4439c0f34855636a33578a554778605f598346bff6"
+    },
+    {
+      "name": "missing_material3_matrix_dark_standard",
+      "width": 1062,
+      "height": 870,
+      "pngSha256": "ca91328d468f002f92e60e7ed61b2c97264bd64bb006814dd1b2d6ef57804b8a",
+      "pixelSha256": "008a9181d293f85097694d58794af9a6aac170567c2396d732c7bc3f2648d538"
+    },
+    {
+      "name": "missing_material3_matrix_light_high",
+      "width": 1062,
+      "height": 870,
+      "pngSha256": "f3291af5ae162840cce021926e65710d94d2cc2079c3f9cf5b781e8b3989a289",
+      "pixelSha256": "0c7e0cf2352a8f97a4d299cea4d2952b07e32f0041b3c0b3c508671ed4c7cec6"
+    }
+  ]
+}
