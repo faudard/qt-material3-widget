@@ -103,7 +103,7 @@ NavigationPage::NavigationPage(QWidget* parent)
         QStringLiteral("Close"));
 
     auto* expressiveMenu =
-        new QtMaterial::QtMaterialMenu(this);
+        new QtMaterialMenu(this);
     expressiveMenu->setExpressive(true);
     expressiveMenu->addItem(QStringLiteral("Open"));
     expressiveMenu->addItem(QStringLiteral("Rename"));
