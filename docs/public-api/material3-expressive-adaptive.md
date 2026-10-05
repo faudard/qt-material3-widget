@@ -89,7 +89,11 @@ presentation from the current width class:
 
 Selection survives presentation changes. Pointer, keyboard, RTL, disabled-item
 and accessibility behavior are implemented by the same widget rather than by
-recreating navigation controls during resize.
+recreating navigation controls during resize. The accessibility surface remains
+a `QAccessible::List` across Bar/Rail transitions; each destination stays a
+`ListItem` with selected, disabled and focused state plus activation actions.
+Focus changes notify the item-level accessibility interface, so a responsive
+mode switch does not collapse screen-reader focus back to an opaque container.
 
 ```cpp
 auto* navigation = shell.navigationSuite();
@@ -114,6 +118,12 @@ pane appears from Expanded width when at least 320 logical pixels remain for the
 main content. RTL places the rail and supporting pane on the corresponding
 trailing/leading sides.
 
+`supportingPaneVisible` exposes the resolved pane state and emits
+`supportingPaneVisibleChanged` only when the effective composition changes.
+`accessibilitySummary` reports the current width class, resolved density and
+supporting-pane visibility, which makes resize/split-screen transitions
+observable without inspecting private geometry.
+
 Automatic density is enabled by default. It is a Qt desktop adaptation rather
 than a new Material breakpoint contract:
 
@@ -123,7 +133,21 @@ than a new Material breakpoint contract:
 
 The shell propagates the resolved density to descendant QtMaterial controls and
 buttons. Call `setAutomaticDensity(false)` when an application wants to own
-density explicitly.
+density explicitly; subsequent breakpoint changes still update
+`resolvedDensity()` but do not overwrite application-owned child density.
+
+## 1.9 certification
+
+`tst_adaptive_shell` covers all five width classes, Navigation Bar/Rail
+selection continuity, disabled-item skipping, per-destination accessible focus,
+automatic-density opt-out, supporting-pane visibility and RTL composition.
+
+The pinned visual lane renders 30 `adaptive_desktop_*` cases:
+five width classes × LTR/RTL × light/dark/high-contrast. CI renders them twice
+on Qt 6.4.0 / Fusion / xcb and rejects renderer, dimension or pixel drift.
+Visual review and native NVDA/Orca/VoiceOver results are recorded in
+`docs/components/adaptive-desktop-certification-1.9.json`; promotion remains
+fail-closed until all evidence passes.
 
 ## References
 

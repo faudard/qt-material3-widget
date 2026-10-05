@@ -233,3 +233,7 @@ Release gates:
 - Expanded layouts can expose a secondary pane while preserving a usable main-content width.
 - Desktop density is resolved and propagated to QtMaterial controls with an opt-out for app-owned density.
 - RTL, keyboard navigation, accessibility, resize/tiling behavior and cross-platform CI are executable contracts.
+- `adaptive_desktop_*` covers Compact/Medium/Expanded/Large/ExtraLarge in LTR/RTL and light/dark/high-contrast on the pinned Qt 6.4/Fusion lane, with two independent renders.
+- Navigation Suite keeps per-destination accessible focus while switching Bar/Rail; Adaptive Shell exposes effective supporting-pane state and a synchronized accessibility summary.
+- Native NVDA, Orca and VoiceOver results are recorded per component in `adaptive-desktop-certification-1.9.json`.
+- `promote_adaptive_desktop_1_9.py --apply` may move Navigation Suite and Adaptive Shell to release-scope `complete` only after all 30 visual references and native AT checks pass.

@@ -40,6 +40,7 @@
 #include "qtmaterial/widgets/data/qtmaterialpagination.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
 #include "qtmaterial/widgets/data/qtmaterialtreeview.h"
+#include "qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h"
 #include "qtmaterial/widgets/layouts/qtmaterialsplitview.h"
 #include "qtmaterial/widgets/inputs/qtmaterialautocomplete.h"
 #include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
@@ -58,6 +59,7 @@
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
 #include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
+#include "qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
@@ -1088,6 +1090,74 @@ QWidget* buildMissingMaterial3StateMatrix(const Theme& theme)
     return root;
 }
 
+QWidget* buildAdaptiveDesktopFixture(
+    const Theme& theme,
+    int logicalWidth,
+    Qt::LayoutDirection direction)
+{
+    ThemeManager::instance().setTheme(theme);
+
+    auto* shell = new QtMaterialAdaptiveShell;
+    shell->setObjectName(QStringLiteral("adaptiveDesktopVisualFixture"));
+    shell->setLayoutDirection(direction);
+    shell->setFixedSize(logicalWidth, 620);
+    shell->setSupportingPaneWidth(360);
+
+    auto* navigation = shell->navigationSuite();
+    navigation->addDestination(QStringLiteral("Home"));
+    navigation->addDestination(QStringLiteral("Search"));
+    navigation->addDestination(QStringLiteral("Projects"));
+    navigation->addDestination(QStringLiteral("Settings"));
+    navigation->setDestinationEnabled(2, false);
+    navigation->setCurrentIndex(1);
+
+    auto configurePane = [&theme](QWidget* pane, const QString& objectName) {
+        pane->setObjectName(objectName);
+        pane->setAutoFillBackground(true);
+        pane->setPalette(QtMaterialPaletteAdapter::toPalette(theme, pane->palette()));
+    };
+
+    auto* content = new QWidget;
+    configurePane(content, QStringLiteral("adaptiveDesktopMainContent"));
+    auto* contentLayout = new QVBoxLayout(content);
+    contentLayout->setContentsMargins(24, 24, 24, 24);
+    auto* contentTitle = new QLabel(QStringLiteral("Main adaptive content"), content);
+    QFont contentFont = contentTitle->font();
+    contentFont.setPixelSize(22);
+    contentFont.setBold(true);
+    contentTitle->setFont(contentFont);
+    auto* contentInfo = new QLabel(
+        QStringLiteral("Selection is retained while navigation changes between Bar and Rail."),
+        content);
+    contentInfo->setWordWrap(true);
+    auto* contentButton = new QtMaterialFilledButton(content);
+    contentButton->setText(QStringLiteral("Primary action"));
+    contentLayout->addWidget(contentTitle);
+    contentLayout->addWidget(contentInfo);
+    contentLayout->addWidget(contentButton, 0, Qt::AlignLeft);
+    contentLayout->addStretch(1);
+
+    auto* supporting = new QWidget;
+    configurePane(supporting, QStringLiteral("adaptiveDesktopSupportingPane"));
+    auto* supportingLayout = new QVBoxLayout(supporting);
+    supportingLayout->setContentsMargins(20, 20, 20, 20);
+    auto* supportingTitle = new QLabel(QStringLiteral("Supporting pane"), supporting);
+    QFont supportingFont = supportingTitle->font();
+    supportingFont.setBold(true);
+    supportingTitle->setFont(supportingFont);
+    auto* supportingInfo = new QLabel(
+        QStringLiteral("Visible from Expanded when the main pane can keep its minimum width."),
+        supporting);
+    supportingInfo->setWordWrap(true);
+    supportingLayout->addWidget(supportingTitle);
+    supportingLayout->addWidget(supportingInfo);
+    supportingLayout->addStretch(1);
+
+    shell->setContentWidget(content);
+    shell->setSupportingWidget(supporting);
+    return shell;
+}
+
 QWidget* buildLayoutStateMatrix(const Theme& theme)
 {
     auto* root = new QWidget;
@@ -1213,6 +1283,8 @@ private slots:
     void surfaceBarStateMatrixSmoke_data(); void surfaceBarStateMatrixSmoke(); void surfaceBarStateMatrixCandidateGoldens_data(); void surfaceBarStateMatrixCandidateGoldens();
     void surfaceOverlayStateMatrixSmoke_data(); void surfaceOverlayStateMatrixSmoke(); void surfaceOverlayStateMatrixCandidateGoldens_data(); void surfaceOverlayStateMatrixCandidateGoldens();
     void missingMaterial3StateMatrixSmoke_data(); void missingMaterial3StateMatrixSmoke(); void missingMaterial3StateMatrixCandidateGoldens_data(); void missingMaterial3StateMatrixCandidateGoldens();
+    void adaptiveDesktopCandidateGoldens_data();
+    void adaptiveDesktopCandidateGoldens();
     void layoutStateMatrixSmoke_data(); void layoutStateMatrixSmoke(); void layoutStateMatrixCandidateGoldens_data(); void layoutStateMatrixCandidateGoldens();
 
 };
@@ -1581,6 +1653,89 @@ QTM3_MATRIX_CASES(surfaceOverlayStateMatrix, "surface_overlay_matrix", buildSurf
 QTM3_MATRIX_CASES(missingMaterial3StateMatrix, "missing_material3_matrix", buildMissingMaterial3StateMatrix, "missing-material3-state-matrix")
 QTM3_MATRIX_CASES(layoutStateMatrix, "layout_matrix", buildLayoutStateMatrix, "layout-state-matrix")
 #undef QTM3_MATRIX_CASES
+
+void tst_ThemeVisualRegression::adaptiveDesktopCandidateGoldens_data()
+{
+    QTest::addColumn<QString>("caseName");
+    QTest::addColumn<ThemeMode>("mode");
+    QTest::addColumn<ContrastMode>("contrast");
+    QTest::addColumn<int>("logicalWidth");
+    QTest::addColumn<int>("direction");
+
+    struct WidthCase {
+        const char* name;
+        int width;
+    };
+    const WidthCase widths[] = {
+        {"compact", 520},
+        {"medium", 720},
+        {"expanded", 1000},
+        {"large", 1280},
+        {"extra_large", 1640},
+    };
+
+    struct ThemeCase {
+        const char* name;
+        ThemeMode mode;
+        ContrastMode contrast;
+    };
+    const ThemeCase themes[] = {
+        {"light_standard", ThemeMode::Light, ContrastMode::Standard},
+        {"dark_standard", ThemeMode::Dark, ContrastMode::Standard},
+        {"light_high", ThemeMode::Light, ContrastMode::High},
+    };
+
+    for (const WidthCase& widthCase : widths) {
+        for (int direction : {int(Qt::LeftToRight), int(Qt::RightToLeft)}) {
+            const QString directionName =
+                direction == int(Qt::RightToLeft)
+                    ? QStringLiteral("rtl")
+                    : QStringLiteral("ltr");
+            for (const ThemeCase& themeCase : themes) {
+                const QString name =
+                    QStringLiteral("adaptive_desktop_%1_%2_%3")
+                        .arg(
+                            QString::fromLatin1(widthCase.name),
+                            directionName,
+                            QString::fromLatin1(themeCase.name));
+                QTest::newRow(qPrintable(name))
+                    << name
+                    << themeCase.mode
+                    << themeCase.contrast
+                    << widthCase.width
+                    << direction;
+            }
+        }
+    }
+}
+
+void tst_ThemeVisualRegression::adaptiveDesktopCandidateGoldens()
+{
+    if (!qEnvironmentVariableIsSet("QTMATERIAL3_ADAPTIVE_VISUAL")) {
+        QSKIP("Adaptive/Desktop visual evidence runs only through its dedicated CTest target.");
+    }
+
+    if (!QtMaterialVisualTest::strictGoldens()
+        && !QtMaterialVisualTest::updateGoldens()) {
+        QSKIP("Adaptive/Desktop goldens are opt-in.");
+    }
+
+    QFETCH(QString, caseName);
+    QFETCH(ThemeMode, mode);
+    QFETCH(ContrastMode, contrast);
+    QFETCH(int, logicalWidth);
+    QFETCH(int, direction);
+
+    const Theme theme = makeStaticComponentTheme(mode, contrast);
+    std::unique_ptr<QWidget> fixture(
+        buildAdaptiveDesktopFixture(
+            theme,
+            logicalWidth,
+            static_cast<Qt::LayoutDirection>(direction)));
+    QtMaterialVisualTest::verifyOrUpdateCandidateGolden(
+        caseName,
+        QtMaterialVisualTest::renderWidget(fixture.get()));
+}
 
 void tst_ThemeVisualRegression::navigationFocusCandidateGoldens_data()
 {

@@ -18,7 +18,9 @@ struct QtMaterialAdaptiveShellPrivate
     WindowSizeClass sizeClass;
     Density density = Density::Default;
     bool automaticDensity = true;
+    bool supportingPaneVisible = false;
     int supportingPaneWidth = 360;
+    QString lastAccessibilitySummary;
 };
 
 namespace {
@@ -54,11 +56,13 @@ QtMaterialAdaptiveShell::QtMaterialAdaptiveShell(QWidget* parent)
     d_ptr->navigation = new QtMaterialNavigationSuite(this);
     d_ptr->navigation->show();
 
+    setAccessibleName(tr("Adaptive shell"));
     setMaterialComponent(QStringLiteral("adaptive-shell"));
     setMaterialVariant(QStringLiteral("responsive"));
     setMaterialRole(QStringLiteral("layout"));
 
     applyAdaptiveState();
+    syncAccessibility();
 }
 
 QtMaterialAdaptiveShell::~QtMaterialAdaptiveShell() = default;
@@ -94,6 +98,7 @@ void QtMaterialAdaptiveShell::setContentWidget(QWidget* widget)
         applyDensityToChildren();
     }
     applyAdaptiveGeometry();
+    syncAccessibility();
 }
 
 QWidget* QtMaterialAdaptiveShell::supportingWidget() const noexcept
@@ -121,6 +126,7 @@ void QtMaterialAdaptiveShell::setSupportingWidget(QWidget* widget)
         applyDensityToChildren();
     }
     applyAdaptiveGeometry();
+    syncAccessibility();
 }
 
 WindowSizeClass QtMaterialAdaptiveShell::windowSizeClass() const noexcept
@@ -149,11 +155,55 @@ void QtMaterialAdaptiveShell::setAutomaticDensity(bool enabled)
         applyDensityToChildren();
     }
     emit automaticDensityChanged(enabled);
+    syncAccessibility();
 }
 
 int QtMaterialAdaptiveShell::supportingPaneWidth() const noexcept
 {
     return d_ptr->supportingPaneWidth;
+}
+
+bool QtMaterialAdaptiveShell::isSupportingPaneVisible() const noexcept
+{
+    return d_ptr->supportingPaneVisible;
+}
+
+QString QtMaterialAdaptiveShell::accessibilitySummary() const
+{
+    QString widthClass;
+    switch (d_ptr->sizeClass.width) {
+    case WindowWidthSizeClass::Compact:
+        widthClass = tr("compact");
+        break;
+    case WindowWidthSizeClass::Medium:
+        widthClass = tr("medium");
+        break;
+    case WindowWidthSizeClass::Expanded:
+        widthClass = tr("expanded");
+        break;
+    case WindowWidthSizeClass::Large:
+        widthClass = tr("large");
+        break;
+    case WindowWidthSizeClass::ExtraLarge:
+        widthClass = tr("extra large");
+        break;
+    }
+
+    QString density;
+    switch (d_ptr->density) {
+    case Density::Default:
+        density = tr("default density");
+        break;
+    case Density::Comfortable:
+        density = tr("comfortable density");
+        break;
+    case Density::Compact:
+        density = tr("compact density");
+        break;
+    }
+
+    return tr("Adaptive shell, %1 width, %2, supporting pane %3")
+        .arg(widthClass, density, d_ptr->supportingPaneVisible ? tr("visible") : tr("hidden"));
 }
 
 void QtMaterialAdaptiveShell::setSupportingPaneWidth(int width)
@@ -208,6 +258,7 @@ void QtMaterialAdaptiveShell::applyAdaptiveState()
     }
 
     applyAdaptiveGeometry();
+    syncAccessibility();
 }
 
 void QtMaterialAdaptiveShell::applyDensityToChildren()
@@ -261,6 +312,7 @@ void QtMaterialAdaptiveShell::applyAdaptiveGeometry()
         if (d_ptr->supporting) {
             d_ptr->supporting->hide();
         }
+        setSupportingPaneVisibleState(false);
         return;
     }
 
@@ -323,6 +375,7 @@ void QtMaterialAdaptiveShell::applyAdaptiveGeometry()
 
         d_ptr->supporting->setGeometry(supportRect);
         d_ptr->supporting->show();
+        setSupportingPaneVisibleState(true);
 
         if (d_ptr->content) {
             d_ptr->content->setGeometry(contentRect);
@@ -334,10 +387,32 @@ void QtMaterialAdaptiveShell::applyAdaptiveGeometry()
     if (d_ptr->supporting) {
         d_ptr->supporting->hide();
     }
+    setSupportingPaneVisibleState(false);
 
     if (d_ptr->content) {
         d_ptr->content->setGeometry(body);
         d_ptr->content->show();
+    }
+}
+
+void QtMaterialAdaptiveShell::setSupportingPaneVisibleState(bool visible)
+{
+    if (d_ptr->supportingPaneVisible == visible) {
+        return;
+    }
+
+    d_ptr->supportingPaneVisible = visible;
+    emit supportingPaneVisibleChanged(visible);
+    syncAccessibility();
+}
+
+void QtMaterialAdaptiveShell::syncAccessibility()
+{
+    const QString summary = accessibilitySummary();
+    setAccessibleDescription(summary);
+    if (summary != d_ptr->lastAccessibilitySummary) {
+        d_ptr->lastAccessibilitySummary = summary;
+        emit accessibilitySummaryChanged(summary);
     }
 }
 

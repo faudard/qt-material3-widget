@@ -3953,28 +3953,31 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic Adaptive Shell breakpoint/density/supporting-pane goldens remain before complete maturity.",
-        "Platform assistive-technology verification of composed navigation/content/supporting-pane transitions remains pending."
+        "Reviewed deterministic adaptive_desktop breakpoint/density/supporting-pane LTR/RTL goldens remain before rendering can reach 4/4.",
+        "Native NVDA, Orca and VoiceOver responsive-composition/focus/supporting-pane/RTL evidence remains before accessibility can reach 4/4."
       ],
       "nextActions": [
-        "Add compact/medium/expanded Adaptive Shell cases to the pinned visual matrix and review stable goldens.",
-        "Record NVDA, Orca and VoiceOver behavior across responsive shell transitions."
+        "Review the pinned Qt 6.4/Fusion adaptive-desktop two-pass artifact and commit all 30 approved goldens.",
+        "Record Adaptive Shell NVDA, Orca and VoiceOver responsive composition, focus preservation, supporting-pane transition and RTL reading-order checks."
       ],
       "evidence": {
         "api": [
           "Public header exists: include/qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h.",
-          "The shell exposes content/supporting widgets, automatic density policy and resolved window-size classes."
+          "The shell exposes content/supporting widgets, automatic density policy, resolved window-size classes, effective supportingPaneVisible state and accessibilitySummary."
         ],
         "rendering": [
           "Production implementation exists: src/widgets/layouts/qtmaterialadaptiveshell.cpp.",
-          "The shell composes navigation, content and supporting-pane geometry from Compact/Medium/Expanded/Large/ExtraLarge size classes."
+          "The shell composes navigation, content and supporting-pane geometry from Compact/Medium/Expanded/Large/ExtraLarge size classes.",
+          "tst_adaptive_desktop_visual_goldens renders real Compact/Medium/Expanded/Large/ExtraLarge shell widths in LTR/RTL and light/dark/high-contrast on the pinned Qt 6.4/Fusion visual runner; review remains pending."
         ],
         "states": [
-          "tst_adaptive_shell covers compact, medium and expanded transitions plus supporting-pane visibility."
+          "tst_adaptive_shell covers Compact, Medium, Expanded, Large and ExtraLarge transitions, supporting-pane visibility thresholds and automatic-density opt-out."
         ],
         "accessibility": [
-          "The shell preserves child widget ownership and accessibility surfaces while recomposing layout.",
-          "Platform screen-reader behavior across responsive transitions remains pending."
+          "Adaptive Shell keeps child accessibility surfaces intact while recomposing navigation, main content and supporting pane.",
+          "supportingPaneVisible and accessibilitySummary expose effective responsive composition without requiring private-geometry inspection.",
+          "tst_adaptive_shell verifies synchronized accessibility summaries and focusable Navigation Suite state across responsive transitions.",
+          "Native NVDA, Orca and VoiceOver responsive reading/focus behavior remains pending."
         ],
         "keyboard": [
           "Adaptive Shell is a layout container; direct keyboard activation is not applicable."
@@ -3983,10 +3986,11 @@
           "Geometry remains device-independent and uses the existing Qt widget layout/rendering pipeline."
         ],
         "rtl": [
-          "tst_adaptive_shell verifies rail placement on the trailing side under RTL."
+          "tst_adaptive_shell verifies Navigation Rail on the trailing side and Supporting Pane on the opposite visual edge under RTL while preserving minimum main-content width."
         ],
         "tests": [
-          "Registered tst_adaptive_shell covers breakpoint, density, supporting-pane and RTL contracts."
+          "Registered tst_adaptive_shell covers all five width classes, density propagation/opt-out, supporting-pane constraints, RTL and accessibility contracts.",
+          "Registered tst_adaptive_desktop_visual_goldens covers the pinned five-class LTR/RTL visual evidence."
         ],
         "example": [
           "examples/gallery/pages/navigationadvancedpage.cpp embeds a resizable Adaptive Shell."
@@ -4027,12 +4031,12 @@
       "docs": 4,
       "lastReviewed": "2026-10-04",
       "gaps": [
-        "Reviewed deterministic Navigation Suite bar/rail goldens remain before complete maturity.",
-        "Platform per-destination screen-reader traversal remains to be recorded."
+        "Reviewed deterministic adaptive_desktop Compact/Medium/Expanded/Large/ExtraLarge LTR/RTL goldens remain before rendering can reach 4/4.",
+        "Native NVDA, Orca and VoiceOver traversal/state/activation/focus-across-mode-switch evidence remains before accessibility can reach 4/4."
       ],
       "nextActions": [
-        "Add compact Navigation Bar and medium/expanded Navigation Rail suite cases to the pinned navigation visual matrix.",
-        "Record NVDA, Orca and VoiceOver destination traversal/state/activation evidence."
+        "Review the pinned Qt 6.4/Fusion adaptive-desktop two-pass artifact and commit all 30 approved goldens.",
+        "Record Navigation Suite NVDA, Orca and VoiceOver traversal/state/activation/focus-across-mode-switch checks in adaptive-desktop-certification-1.9.json."
       ],
       "evidence": {
         "api": [
@@ -4041,14 +4045,17 @@
         ],
         "rendering": [
           "Production implementation exists: src/widgets/navigation/qtmaterialnavigationsuite.cpp.",
-          "Compact renders the bar form while Medium and wider render the rail form using the navigation spec boundary."
+          "Compact renders the bar form while Medium and wider render the rail form using the navigation spec boundary.",
+          "tst_adaptive_desktop_visual_goldens renders Navigation Suite inside real Compact/Medium/Expanded/Large/ExtraLarge shells in LTR/RTL and three pinned theme variants; visual review remains pending."
         ],
         "states": [
           "tst_adaptive_shell verifies selection retention while switching between Navigation Bar and Navigation Rail modes."
         ],
         "accessibility": [
-          "Per-destination QAccessible items expose name, geometry, selected/disabled/focused state and activation.",
-          "Native screen-reader traversal remains pending."
+          "Navigation Suite exposes a QAccessible List with per-destination ListItem name, geometry, selected/disabled/focused state and activation actions.",
+          "Focused destination accessibility notifications remain item-level while the same widget switches between Navigation Bar and Navigation Rail presentations.",
+          "tst_adaptive_shell verifies selected/focused/disabled accessible destination state before and after a Compact-to-Medium mode switch.",
+          "Native NVDA, Orca and VoiceOver spoken-output verification remains pending."
         ],
         "keyboard": [
           "tst_adaptive_shell covers bar Right navigation and rail Down navigation while retaining selection."
@@ -4060,7 +4067,8 @@
           "Navigation Suite implements visual-direction keyboard behavior and participates in RTL shell placement."
         ],
         "tests": [
-          "Registered tst_adaptive_shell covers adaptive navigation state and keyboard contracts."
+          "Registered tst_adaptive_shell covers all width classes, Bar/Rail selection continuity, disabled skipping, keyboard contracts, RTL and accessible focused destinations.",
+          "Registered tst_adaptive_desktop_visual_goldens covers the pinned five-class LTR/RTL visual evidence."
         ],
         "example": [
           "examples/gallery/pages/navigationadvancedpage.cpp demonstrates Navigation Suite inside Adaptive Shell."

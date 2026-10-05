@@ -289,6 +289,14 @@ if(QTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS)
   set_tests_properties(tst_missing_material3_visual_goldens
     PROPERTIES LABELS "material3;1.7;visual" TIMEOUT 120)
 
+  add_test(NAME tst_adaptive_desktop_visual_goldens COMMAND tst_theme_visual_regression
+    adaptiveDesktopCandidateGoldens)
+  set_tests_properties(tst_adaptive_desktop_visual_goldens
+    PROPERTIES
+      LABELS "adaptive;desktop;1.9;visual"
+      TIMEOUT 240
+      ENVIRONMENT "QTMATERIAL3_ADAPTIVE_VISUAL=1")
+
 endif()
 
 # Public API guardrail: every public theming header must compile as a standalone include.
