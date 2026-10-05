@@ -4105,14 +4105,14 @@
       "hidpi": 2,
       "rtl": 2,
       "tests": 3,
-      "example": 1,
+      "example": 3,
       "docs": 3,
       "lastReviewed": "2026-10-05",
       "gaps": [
-        "Pinned Expressive visual references, Gallery coverage and native assistive-technology evidence remain before complete maturity."
+        "Pinned Expressive visual references and native assistive-technology evidence remain before complete maturity."
       ],
       "nextActions": [
-        "Add Split Button to the Gallery and certify pinned light/dark/high-contrast, RTL, DPR 2.0 and native AT evidence."
+        "certify pinned light/dark/high-contrast, RTL, DPR 2.0 and native AT evidence."
       ],
       "evidence": {
         "api": [
@@ -4140,7 +4140,7 @@
           "Registered tst_expressive_catalogue exercises Split Button construction and activation contracts."
         ],
         "example": [
-          "Focused executable test demonstrates the component; Gallery route is reserved but Gallery integration remains pending."
+          "Gallery coverage is included in the relevant Buttons, Navigation, Progress, Data or Compact Controls page."
         ],
         "docs": [
           "docs/public-api/expressive-catalogue.md documents API, focus and secondary-action usage."
@@ -4174,14 +4174,14 @@
       "hidpi": 2,
       "rtl": 3,
       "tests": 3,
-      "example": 1,
+      "example": 3,
       "docs": 3,
       "lastReviewed": "2026-10-05",
       "gaps": [
-        "Pinned Expressive visual references, Gallery coverage and native assistive-technology group semantics remain before complete maturity."
+        "Pinned Expressive visual references and native assistive-technology group semantics remain before complete maturity."
       ],
       "nextActions": [
-        "Add Button Group to the Gallery and certify visual, DPR 2.0 and NVDA/Orca/VoiceOver grouped-selection evidence."
+        "certify visual, DPR 2.0 and NVDA/Orca/VoiceOver grouped-selection evidence."
       ],
       "evidence": {
         "api": [
@@ -4209,7 +4209,7 @@
           "Registered tst_expressive_catalogue verifies selection ownership and checked-state synchronization."
         ],
         "example": [
-          "Focused executable test demonstrates the component; Gallery route is reserved but Gallery integration remains pending."
+          "Gallery coverage is included in the relevant Buttons, Navigation, Progress, Data or Compact Controls page."
         ],
         "docs": [
           "docs/public-api/expressive-catalogue.md documents exclusive/action behavior and keyboard navigation."
@@ -4243,14 +4243,14 @@
       "hidpi": 2,
       "rtl": 3,
       "tests": 3,
-      "example": 1,
+      "example": 3,
       "docs": 3,
       "lastReviewed": "2026-10-05",
       "gaps": [
-        "Pinned theme/state visual references, Gallery coverage and native toolbar AT semantics remain before complete maturity."
+        "Pinned theme/state visual references and native toolbar AT semantics remain before complete maturity."
       ],
       "nextActions": [
-        "Add Floating Toolbar to the Gallery and certify expanded/collapsed, orientation, RTL, DPR 2.0 and native AT evidence."
+        "certify expanded/collapsed, orientation, RTL, DPR 2.0 and native AT evidence."
       ],
       "evidence": {
         "api": [
@@ -4278,7 +4278,7 @@
           "Registered tst_expressive_catalogue exercises expansion and orientation contracts."
         ],
         "example": [
-          "Focused executable test demonstrates the component; Gallery route is reserved but Gallery integration remains pending."
+          "Gallery coverage is included in the relevant Buttons, Navigation, Progress, Data or Compact Controls page."
         ],
         "docs": [
           "docs/public-api/expressive-catalogue.md documents toolbar composition, collapse and keyboard behavior."
@@ -4312,14 +4312,14 @@
       "hidpi": 2,
       "rtl": "N/A",
       "tests": 3,
-      "example": 1,
+      "example": 3,
       "docs": 3,
       "lastReviewed": "2026-10-05",
       "gaps": [
-        "Pinned morphing visual references, Gallery coverage and native busy-state announcement evidence remain before complete maturity."
+        "Pinned morphing visual references and native busy-state announcement evidence remain before complete maturity."
       ],
       "nextActions": [
-        "Add Loading Indicator to the Gallery and certify repeated animation frames, reduced motion, DPR 2.0 and native AT busy-state evidence."
+        "certify repeated animation frames, reduced motion, DPR 2.0 and native AT busy-state evidence."
       ],
       "evidence": {
         "api": [
@@ -4347,7 +4347,7 @@
           "Registered tst_expressive_catalogue verifies active state and sizing contracts."
         ],
         "example": [
-          "Focused executable test demonstrates the component; Gallery route is reserved but Gallery integration remains pending."
+          "Gallery coverage is included in the relevant Buttons, Navigation, Progress, Data or Compact Controls page."
         ],
         "docs": [
           "docs/public-api/expressive-catalogue.md documents active state, morphing behavior and reduced motion."
@@ -4381,14 +4381,14 @@
       "hidpi": 2,
       "rtl": 2,
       "tests": 3,
-      "example": 1,
+      "example": 3,
       "docs": 3,
       "lastReviewed": "2026-10-05",
       "gaps": [
-        "Pinned Expressive segmented-list visuals, Gallery coverage and native list/selection AT evidence remain before complete maturity."
+        "Pinned Expressive segmented-list visuals and native list/selection AT evidence remain before complete maturity."
       ],
       "nextActions": [
-        "Add Segmented List to the Gallery and certify segment geometry, selection, RTL, DPR 2.0 and native AT evidence."
+        "certify segment geometry, selection, RTL, DPR 2.0 and native AT evidence."
       ],
       "evidence": {
         "api": [
@@ -4416,7 +4416,7 @@
           "Registered tst_expressive_catalogue verifies automatic segment-position assignment."
         ],
         "example": [
-          "Focused executable test demonstrates the component; Gallery route is reserved but Gallery integration remains pending."
+          "Gallery coverage is included in the relevant Buttons, Navigation, Progress, Data or Compact Controls page."
         ],
         "docs": [
           "docs/public-api/expressive-catalogue.md documents Expressive List Item and Segmented List behavior."
