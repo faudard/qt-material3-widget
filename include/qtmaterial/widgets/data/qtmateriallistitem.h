@@ -33,6 +33,16 @@ public:
     };
     Q_ENUM(DensityVariant)
 
+    enum class ExpressiveSegmentPosition
+    {
+        None,
+        Single,
+        First,
+        Middle,
+        Last
+    };
+    Q_ENUM(ExpressiveSegmentPosition)
+
     Q_PROPERTY(
         QString headlineText
         READ headlineText
@@ -62,6 +72,16 @@ public:
         DensityVariant densityVariant
         READ densityVariant
         WRITE setDensityVariant)
+    Q_PROPERTY(
+        bool expressive
+        READ expressive
+        WRITE setExpressive
+        NOTIFY expressiveChanged)
+    Q_PROPERTY(
+        ExpressiveSegmentPosition expressiveSegmentPosition
+        READ expressiveSegmentPosition
+        WRITE setExpressiveSegmentPosition
+        NOTIFY expressiveSegmentPositionChanged)
 
     explicit QtMaterialListItem(
         QWidget* parent = nullptr);
@@ -91,6 +111,11 @@ public:
     DensityVariant densityVariant() const noexcept;
     void setDensityVariant(DensityVariant variant);
 
+    bool expressive() const noexcept;
+    void setExpressive(bool expressive);
+
+    ExpressiveSegmentPosition expressiveSegmentPosition() const noexcept;
+    void setExpressiveSegmentPosition(ExpressiveSegmentPosition position);
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
@@ -99,6 +124,9 @@ Q_SIGNALS:
     void clicked();
     void activated();
     void selectionChanged(bool selected);
+    void expressiveChanged(bool expressive);
+    void expressiveSegmentPositionChanged(
+        QtMaterial::QtMaterialListItem::ExpressiveSegmentPosition position);
 
 protected:
     void paintEvent(QPaintEvent* event) override;

@@ -3,8 +3,11 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QStackedWidget>
+#include <QStyle>
 #include <QVBoxLayout>
 
+#include "qtmaterial/widgets/navigation/qtmaterialfloatingtoolbar.h"
+#include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
@@ -83,6 +86,34 @@ NavigationPage::NavigationPage(QWidget* parent)
     navigationBar->setCurrentIndex(0);
     navigationBar->setMaterialTestId(QStringLiteral("gallery.navigation.bar"));
     layout->addWidget(navigationBar);
+
+    auto* expressiveRow = new QHBoxLayout;
+    expressiveRow->setSpacing(16);
+
+    auto* floatingToolbar =
+        new QtMaterial::QtMaterialFloatingToolbar(this);
+    floatingToolbar->addAction(
+        style()->standardIcon(QStyle::SP_FileDialogDetailedView),
+        QStringLiteral("Details"));
+    floatingToolbar->addAction(
+        style()->standardIcon(QStyle::SP_DialogSaveButton),
+        QStringLiteral("Save"));
+    floatingToolbar->addAction(
+        style()->standardIcon(QStyle::SP_DialogCloseButton),
+        QStringLiteral("Close"));
+
+    auto* expressiveMenu =
+        new QtMaterial::QtMaterialMenu(this);
+    expressiveMenu->setExpressive(true);
+    expressiveMenu->addItem(QStringLiteral("Open"));
+    expressiveMenu->addItem(QStringLiteral("Rename"));
+    expressiveMenu->addItem(QStringLiteral("Share"));
+    expressiveMenu->setMinimumWidth(220);
+
+    expressiveRow->addWidget(floatingToolbar, 0, Qt::AlignTop);
+    expressiveRow->addWidget(expressiveMenu, 0, Qt::AlignTop);
+    expressiveRow->addStretch(1);
+    layout->addLayout(expressiveRow);
 
     auto* railRow = new QHBoxLayout;
     railRow->setSpacing(16);

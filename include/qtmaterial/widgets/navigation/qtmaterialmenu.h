@@ -34,6 +34,11 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialMenu
         QString accessibilitySummary
         READ accessibilitySummary
         NOTIFY accessibilitySummaryChanged)
+    Q_PROPERTY(
+        bool expressive
+        READ expressive
+        WRITE setExpressive
+        NOTIFY expressiveChanged)
 
 public:
     enum class ItemRole {
@@ -65,6 +70,9 @@ public:
     void setSpec(const QtMaterial::MenuSpec& spec);
     bool hasExplicitSpec() const noexcept;
     void resetSpec();
+
+    bool expressive() const noexcept;
+    void setExpressive(bool expressive);
 
     int addItem(
         const QString& text,
@@ -113,6 +121,7 @@ Q_SIGNALS:
     void activated(int index);
     void currentIndexChanged(int index);
     void accessibilitySummaryChanged(const QString& summary);
+    void expressiveChanged(bool expressive);
     void dismissed();
 
 protected:

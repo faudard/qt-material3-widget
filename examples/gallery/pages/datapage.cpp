@@ -12,6 +12,7 @@
 #include "qtmaterial/widgets/data/qtmaterialgridlist.h"
 #include "qtmaterial/widgets/data/qtmateriallist.h"
 #include "qtmaterial/widgets/data/qtmateriallistitem.h"
+#include "qtmaterial/widgets/data/qtmaterialsegmentedlist.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
 
@@ -35,6 +36,21 @@ DataPage::DataPage(QWidget* parent)
     item->setHeadlineText(QStringLiteral("Item headline"));
     item->setSupportingText(QStringLiteral("Supporting text"));
     layout->addWidget(item);
+
+    auto* expressiveItem = new QtMaterial::QtMaterialListItem(this);
+    expressiveItem->setHeadlineText(QStringLiteral("Expressive list item"));
+    expressiveItem->setSupportingText(QStringLiteral("Larger opt-in geometry with rounded state container"));
+    expressiveItem->setExpressive(true);
+    layout->addWidget(expressiveItem);
+
+    auto* segmentedList =
+        new QtMaterial::QtMaterialSegmentedList(this);
+    segmentedList->addItem(QStringLiteral("Personal"));
+    segmentedList->addItem(QStringLiteral("Work"));
+    segmentedList->addItem(QStringLiteral("Shared"));
+    segmentedList->setCurrentIndex(0);
+    segmentedList->setMinimumHeight(210);
+    layout->addWidget(segmentedList);
 
     layout->addWidget(new QtMaterial::QtMaterialDivider(this));
 

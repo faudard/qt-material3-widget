@@ -103,6 +103,7 @@ qtm3_add_test(tst_extendedfab widgets/buttons/tst_extendedfab.cpp qtmaterial3_wi
 qtm3_add_test(tst_extendedfab_maturity widgets/buttons/tst_extendedfab_maturity.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_button_contracts widgets/buttons/tst_button_contracts.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_expressive_buttons widgets/buttons/tst_expressive_buttons.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_expressive_catalogue widgets/tst_expressive_catalogue.cpp qtmaterial3_widgets)
 
 qtm3_add_test(tst_checkbox widgets/selection/tst_checkbox.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_switch widgets/selection/tst_switch.cpp qtmaterial3_widgets)

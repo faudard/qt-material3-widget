@@ -29,6 +29,8 @@
 | `button.icon` | Icon Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | `button.outlined` | Outlined Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | `button.text` | Text Button | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| `button.group` | Button Group | `usable` | 3 | 2 | 3 | 2 | 3 | 2 | 3 | 3 | 1 | 3 | Pinned Expressive visual references, Gallery coverage and native assistive-technology group semantics remain before complete maturity. |
+| `button.split` | Split Button | `usable` | 3 | 2 | 3 | 2 | 3 | 2 | 2 | 3 | 1 | 3 | Pinned Expressive visual references, Gallery coverage and native assistive-technology evidence remain before complete maturity. |
 
 ### Compact controls
 
@@ -46,6 +48,7 @@
 | `data.pagination` | Pagination | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | `data.table` | Table | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | `data.tree-view` | Tree View | `complete` | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `data.segmented-list` | Segmented List | `usable` | 3 | 2 | 3 | 2 | 3 | 2 | 2 | 3 | 1 | 3 | Pinned Expressive segmented-list visuals, Gallery coverage and native list/selection AT evidence remain before complete maturity. |
 
 ### Data display
 
@@ -86,6 +89,7 @@
 | `navigation.bar` | Navigation Bar | `usable` | 4 | 3 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic missing_material3_matrix goldens remain before release-scope promotion and complete maturity. |
 | `navigation.breadcrumb` | Breadcrumb | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
 | `navigation.command-palette` | Command Palette | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
+| `navigation.floating-toolbar` | Floating Toolbar | `usable` | 3 | 2 | 3 | 2 | 3 | 2 | 3 | 3 | 1 | 3 | Pinned theme/state visual references, Gallery coverage and native toolbar AT semantics remain before complete maturity. |
 | `navigation.menu` | Menu | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
 | `navigation.rail` | Navigation Rail | `usable` | 4 | 4 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Platform screen-reader verification with NVDA, Orca and VoiceOver remains before Enterprise complete; QAccessible and AT contract tests do not certify spoken output or every OS bridge. |
 | `navigation.suite` | Navigation Suite | `usable` | 4 | 3 | 4 | 3 | 4 | 4 | 4 | 4 | 4 | 4 | Reviewed deterministic adaptive_desktop Compact/Medium/Expanded/Large/ExtraLarge LTR/RTL goldens remain before rendering can reach 4/4. |
@@ -97,6 +101,7 @@
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `progress.circular` | Circular Progress Indicator | `complete` | 4 | 4 | 4 | 4 | N/A | 4 | N/A | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | `progress.linear` | Linear Progress Indicator | `complete` | 4 | 4 | 4 | 4 | N/A | 4 | 4 | 4 | 4 | 4 | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| `progress.loading-indicator` | Loading Indicator | `usable` | 3 | 2 | 3 | 2 | N/A | 2 | N/A | 3 | 1 | 3 | Pinned morphing visual references, Gallery coverage and native busy-state announcement evidence remain before complete maturity. |
 
 ### Selection
 
@@ -164,6 +169,8 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Icon Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Outlined Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
 | Text Button | Maintain complete status by keeping registry, tests, gallery and documentation evidence in sync. |
+| Button Group | Add Button Group to the Gallery and certify visual, DPR 2.0 and NVDA/Orca/VoiceOver grouped-selection evidence. |
+| Split Button | Add Split Button to the Gallery and certify pinned light/dark/high-contrast, RTL, DPR 2.0 and native AT evidence. |
 | Chip | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Carousel | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Grid List | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
@@ -171,6 +178,7 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Pagination | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Table | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Tree View | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Segmented List | Add Segmented List to the Gallery and certify segment geometry, selection, RTL, DPR 2.0 and native AT evidence. |
 | Divider | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Badge | Review the pinned Qt 6.4/Fusion missing_material3_matrix repeatability artifact and commit approved goldens. |
 | Badge | Record Badge NVDA, Orca and VoiceOver numeric, overflow, dot and dynamic-update checks. |
@@ -194,6 +202,7 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Navigation Bar | Record the Navigation Bar NVDA, Orca and VoiceOver checks in material3-catalogue-certification-1.7.json. |
 | Breadcrumb | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
 | Command Palette | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
+| Floating Toolbar | Add Floating Toolbar to the Gallery and certify expanded/collapsed, orientation, RTL, DPR 2.0 and native AT evidence. |
 | Menu | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
 | Navigation Rail | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
 | Navigation Suite | Review the pinned Qt 6.4/Fusion adaptive-desktop two-pass artifact and commit all 30 approved goldens. |
@@ -201,6 +210,7 @@ The Buttons family can be considered `complete` only when all eight public varia
 | Tabs | Record NVDA, Orca and VoiceOver traversal/state/activation/focus evidence, then raise accessibility to 4/4, clear the final gap and enable enterprise_complete. |
 | Circular Progress Indicator | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Linear Progress Indicator | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
+| Loading Indicator | Add Loading Indicator to the Gallery and certify repeated animation frames, reduced motion, DPR 2.0 and native AT busy-state evidence. |
 | Checkbox | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Radio Button | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |
 | Segmented Button | Maintain complete status by keeping registry, tests, gallery, documentation and reviewed stable visual evidence in sync. |

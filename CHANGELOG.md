@@ -21,6 +21,8 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Expressive Catalogue 1.10 adds Split Button, Button Group, Floating Toolbar and morphing Loading Indicator widgets with keyboard/accessibility contracts and reduced-motion handling.
+- Expressive Data 1.11 adds opt-in expressive List Item geometry, automatic Segmented List grouping, expressive Menu metrics and press/selected Chip shape morphing.
 - Adaptive/Desktop 1.9 certification adds five-class LTR/RTL visual evidence, responsive Navigation Suite accessible focus, observable supporting-pane state, shell accessibility summaries, a native AT fixture and fail-closed promotion tooling.
 - Missing Material 3 certification adds per-destination Navigation Bar accessibility, modal Side Sheet focus containment/restoration, a pinned 1.7 visual matrix with repeatability evidence, and fail-closed visual/NVDA/Orca/VoiceOver promotion tooling.
 - Enterprise 1.5 closure now has a fail-closed NVDA/Orca/VoiceOver evidence ledger and release checker gate for the six remaining Navigation/Desktop components.

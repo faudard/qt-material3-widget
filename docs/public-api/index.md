@@ -56,6 +56,7 @@ theme-studio
 interaction-effects
 expressive-foundation
 material3-expressive-adaptive
+expressive-catalogue
 component-expansion
 desktop-productivity
 navigation-desktop-certification

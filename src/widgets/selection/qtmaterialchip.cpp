@@ -7,6 +7,7 @@
 #include <QPainterPath>
 #include <QPixmap>
 #include <QStyle>
+#include <QVariantAnimation>
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
 #include "qtmaterial/effects/qtmaterialripplecontroller.h"
@@ -20,7 +21,10 @@ class QtMaterialChipPrivate final
 public:
     ChipVariant variant = ChipVariant::Assist;
     bool removable = false;
+    bool expressive = false;
     QIcon trailingIcon;
+    qreal expressiveMorphProgress = 0.0;
+    QVariantAnimation* expressiveMorphAnimation = nullptr;
     bool specDirty = true;
     ChipSpec spec;
     QtMaterialRippleController* ripple = nullptr;
@@ -112,6 +116,24 @@ QtMaterialChip::QtMaterialChip(
     setMaterialVariant(
         QStringLiteral("assist"));
     d_ptr->ripple = new QtMaterialRippleController(this);
+
+    d_ptr->expressiveMorphAnimation =
+        new QVariantAnimation(this);
+    d_ptr->expressiveMorphAnimation->setDuration(240);
+    d_ptr->expressiveMorphAnimation->setEasingCurve(
+        QEasingCurve::OutCubic);
+    connect(
+        d_ptr->expressiveMorphAnimation,
+        &QVariantAnimation::valueChanged,
+        this,
+        [this](const QVariant& value) {
+            d_ptr->expressiveMorphProgress =
+                qBound<qreal>(
+                    0.0,
+                    value.toReal(),
+                    1.0);
+            update();
+        });
 }
 
 QtMaterialChip::QtMaterialChip(
@@ -175,6 +197,24 @@ void QtMaterialChip::setRemovable(
     emit removableChanged(removable);
 }
 
+bool QtMaterialChip::expressive() const noexcept
+{
+    return d_ptr->expressive;
+}
+
+void QtMaterialChip::setExpressive(bool expressive)
+{
+    if (d_ptr->expressive == expressive) {
+        return;
+    }
+
+    d_ptr->expressive = expressive;
+    syncExpressiveMorph();
+    updateGeometry();
+    update();
+    Q_EMIT expressiveChanged(expressive);
+}
+
 QIcon QtMaterialChip::trailingIcon() const
 {
     return d_ptr->trailingIcon;
@@ -204,6 +244,7 @@ void QtMaterialChip::themeChangedEvent(
     QtMaterialAbstractButton::
         themeChangedEvent(theme);
     invalidateResolvedSpec();
+    syncExpressiveMorph();
 }
 
 void QtMaterialChip::invalidateResolvedSpec()
@@ -223,6 +264,7 @@ void QtMaterialChip::stateChangedEvent()
             d_ptr->ripple->addRipple(containerRect().center());
         }
     }
+    syncExpressiveMorph();
     update();
 }
 
@@ -404,10 +446,30 @@ void QtMaterialChip::paintEvent(
         return;
     }
 
-    const qreal radius =
+    qreal radius =
         qMin(
             spec.cornerRadius,
             visualRect.height() / 2.0);
+
+    if (d_ptr->expressive) {
+        const qreal roundRadius =
+            visualRect.height() / 2.0;
+        const qreal compactRadius =
+            qMax<qreal>(
+                6.0,
+                qMin<qreal>(
+                    spec.cornerRadius,
+                    visualRect.height() / 4.0));
+        const qreal progress =
+            qBound<qreal>(
+                0.0,
+                d_ptr->expressiveMorphProgress,
+                1.0);
+        radius =
+            roundRadius
+            + (compactRadius - roundRadius)
+                * progress;
+    }
 
     QPainterPath path;
     path.addRoundedRect(
@@ -636,6 +698,41 @@ void QtMaterialChip::paintEvent(
                 spec.focusRingColor,
                 spec.focusRingWidth);
     }
+}
+
+void QtMaterialChip::syncExpressiveMorph()
+{
+    const qreal target =
+        d_ptr->expressive
+        && (
+            interactionState().isPressed()
+            || isChecked())
+            ? 1.0
+            : 0.0;
+
+    if (!d_ptr->expressiveMorphAnimation) {
+        d_ptr->expressiveMorphProgress = target;
+        return;
+    }
+
+    if (theme().accessibility().reducedMotion) {
+        d_ptr->expressiveMorphAnimation->stop();
+        d_ptr->expressiveMorphProgress = target;
+        update();
+        return;
+    }
+
+    if (qFuzzyCompare(
+            d_ptr->expressiveMorphProgress + 1.0,
+            target + 1.0)) {
+        return;
+    }
+
+    d_ptr->expressiveMorphAnimation->stop();
+    d_ptr->expressiveMorphAnimation->setStartValue(
+        d_ptr->expressiveMorphProgress);
+    d_ptr->expressiveMorphAnimation->setEndValue(target);
+    d_ptr->expressiveMorphAnimation->start();
 }
 
 } // namespace QtMaterial

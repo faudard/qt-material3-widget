@@ -25,6 +25,9 @@ public:
 
     QtMaterialListItem::DensityVariant densityVariant =
         QtMaterialListItem::DensityVariant::Standard;
+    bool expressive = false;
+    QtMaterialListItem::ExpressiveSegmentPosition expressiveSegmentPosition =
+        QtMaterialListItem::ExpressiveSegmentPosition::None;
 
     mutable ListItemSpec resolvedSpec;
     mutable bool specDirty = true;
@@ -263,6 +266,44 @@ void QtMaterialListItem::setDensityVariant(
     d_ptr->densityVariant = variant;
     updateGeometry();
     update();
+}
+
+bool QtMaterialListItem::expressive() const noexcept
+{
+    return d_ptr->expressive;
+}
+
+void QtMaterialListItem::setExpressive(bool expressive)
+{
+    if (d_ptr->expressive == expressive) {
+        return;
+    }
+
+    d_ptr->expressive = expressive;
+    invalidateResolvedSpec();
+    updateGeometry();
+    update();
+    Q_EMIT expressiveChanged(expressive);
+}
+
+QtMaterialListItem::ExpressiveSegmentPosition
+QtMaterialListItem::expressiveSegmentPosition() const noexcept
+{
+    return d_ptr->expressiveSegmentPosition;
+}
+
+void QtMaterialListItem::setExpressiveSegmentPosition(
+    ExpressiveSegmentPosition position)
+{
+    if (d_ptr->expressiveSegmentPosition == position) {
+        return;
+    }
+
+    d_ptr->expressiveSegmentPosition = position;
+    invalidateResolvedSpec();
+    updateGeometry();
+    update();
+    Q_EMIT expressiveSegmentPositionChanged(position);
 }
 
 const ListItemSpec&
@@ -682,6 +723,39 @@ void QtMaterialListItem::ensureSpecResolved() const
         resolver.listItemSpec(
             theme(),
             density());
+
+    if (d_ptr->expressive) {
+        ListItemSpec& spec = d_ptr->resolvedSpec;
+        spec.compactMinHeight =
+            qMax(spec.compactMinHeight, 56);
+        spec.minHeight =
+            qMax(spec.minHeight, 64);
+        spec.largeMinHeight =
+            qMax(spec.largeMinHeight, 80);
+        spec.showDivider = false;
+
+        switch (d_ptr->expressiveSegmentPosition) {
+        case ExpressiveSegmentPosition::Single:
+            spec.cornerRadius =
+                qMax<qreal>(spec.cornerRadius, 24.0);
+            break;
+        case ExpressiveSegmentPosition::First:
+        case ExpressiveSegmentPosition::Last:
+            spec.cornerRadius =
+                qMax<qreal>(spec.cornerRadius, 20.0);
+            break;
+        case ExpressiveSegmentPosition::Middle:
+            spec.cornerRadius =
+                qMax<qreal>(spec.cornerRadius, 8.0);
+            break;
+        case ExpressiveSegmentPosition::None:
+        default:
+            spec.cornerRadius =
+                qMax<qreal>(spec.cornerRadius, 16.0);
+            break;
+        }
+    }
+
     d_ptr->specDirty = false;
 }
 

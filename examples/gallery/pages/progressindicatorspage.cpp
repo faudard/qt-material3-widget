@@ -9,6 +9,7 @@
 #include "qtmaterial/specs/qtmaterialprogressindicatorspec.h"
 #include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
+#include "qtmaterial/widgets/progress/qtmaterialloadingindicator.h"
 
 namespace QtMaterialGallery {
 namespace {
@@ -104,6 +105,28 @@ ProgressIndicatorsPage::ProgressIndicatorsPage(QWidget* parent)
     indeterminateCircularRow->addWidget(indeterminateCircular);
     indeterminateCircularRow->addStretch();
     indeterminateCard->layout()->addItem(indeterminateCircularRow);
+
+    auto* expressiveCard = card(this);
+    root->addWidget(expressiveCard);
+    expressiveCard->layout()->addWidget(
+        sectionTitle(tr("Expressive loading indicator"), expressiveCard));
+    auto* expressiveText = new QLabel(
+        tr("The Material 3 Expressive loading silhouette morphs continuously and freezes to a deterministic state when reduced motion is enabled."),
+        expressiveCard);
+    expressiveText->setWordWrap(true);
+    expressiveCard->layout()->addWidget(expressiveText);
+
+    auto* loadingRow = new QHBoxLayout;
+    auto* loadingSmall =
+        new QtMaterial::QtMaterialLoadingIndicator(expressiveCard);
+    loadingSmall->setIndicatorSize(40);
+    auto* loadingLarge =
+        new QtMaterial::QtMaterialLoadingIndicator(expressiveCard);
+    loadingLarge->setIndicatorSize(64);
+    loadingRow->addWidget(loadingSmall);
+    loadingRow->addWidget(loadingLarge);
+    loadingRow->addStretch();
+    expressiveCard->layout()->addItem(loadingRow);
 
     root->addStretch();
 }
