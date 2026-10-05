@@ -310,6 +310,21 @@ jobs:
             build/adaptive-desktop-first build/adaptive-desktop-second \
             --output build/adaptive-desktop-repeatability.json
 
+      - name: Compare committed Adaptive Desktop goldens
+        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        shell: bash
+        env:
+          QTMATERIAL3_VISUAL_STRICT: "1"
+          QTMATERIAL3_VISUAL_ARTIFACTS_DIR: ${{ github.workspace }}/build/adaptive-desktop-strict/artifacts
+          QT_STYLE_OVERRIDE: Fusion
+          QT_QPA_PLATFORM: xcb
+          QT_SCALE_FACTOR: "1"
+          QT_FONT_DPI: "96"
+          LC_ALL: C.UTF-8
+        run: |
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure -R "^tst_adaptive_desktop_visual_goldens$"
+
       - name: Upload Adaptive Desktop visual evidence
         if: always() && matrix.name == 'ubuntu-qt6.4.0-floor'
         uses: actions/upload-artifact@v6
@@ -318,6 +333,7 @@ jobs:
           path: |
             build/adaptive-desktop-first/
             build/adaptive-desktop-second/
+            build/adaptive-desktop-strict/
             build/adaptive-desktop-repeatability.json
           if-no-files-found: warn
 
