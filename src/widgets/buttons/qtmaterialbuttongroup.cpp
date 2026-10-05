@@ -17,6 +17,10 @@ QtMaterialButtonGroup::QtMaterialButtonGroup(QWidget* parent)
     setFocusPolicy(Qt::NoFocus);
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(2);
+    m_layout->setDirection(
+        layoutDirection() == Qt::RightToLeft
+            ? QBoxLayout::RightToLeft
+            : QBoxLayout::LeftToRight);
 }
 
 QtMaterialButtonGroup::~QtMaterialButtonGroup()
@@ -250,6 +254,17 @@ bool QtMaterialButtonGroup::eventFilter(QObject* watched, QEvent* event)
     focusIndex(nextEnabledIndex(current, step));
     keyEvent->accept();
     return true;
+}
+
+void QtMaterialButtonGroup::changeEvent(QEvent* event)
+{
+    QtMaterialWidget::changeEvent(event);
+    if (event && event->type() == QEvent::LayoutDirectionChange) {
+        m_layout->setDirection(
+            layoutDirection() == Qt::RightToLeft
+                ? QBoxLayout::RightToLeft
+                : QBoxLayout::LeftToRight);
+    }
 }
 
 int QtMaterialButtonGroup::indexOf(const QObject* object) const noexcept
