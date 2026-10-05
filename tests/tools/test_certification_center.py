@@ -169,6 +169,23 @@ class CertificationCenterTests(unittest.TestCase):
         self.assertIn("review/visual-001", visual["evidence"])
         self.assertEqual(payload["visual"]["status"], "pending")
 
+    def test_ready_requires_platform_evidence_metadata(self) -> None:
+        payload = sample_ledger()
+        record = payload["platforms"]["windows-nvda"]
+        for checks in record["components"].values():
+            for check in checks:
+                checks[check] = "pass"
+        record["status"] = "pass"
+
+        blocked = center.milestone_summary("1.5", payload)
+        self.assertFalse(blocked["complete"])
+
+        record["reviewer"] = "Native AT reviewer"
+        record["reviewedAt"] = "2026-10-05"
+        record["evidence"] = "review/session-001"
+        ready = center.milestone_summary("1.5", payload)
+        self.assertTrue(ready["complete"])
+
     def test_invalid_review_date_is_rejected(self) -> None:
         with self.assertRaises(ValueError):
             center.parse_review_date("05/10/2026")
