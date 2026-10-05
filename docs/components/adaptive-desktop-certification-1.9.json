@@ -17,7 +17,7 @@
     "status": "pending",
     "reviewer": "",
     "reviewedAt": "",
-    "evidence": "",
+    "evidence": "docs/components/adaptive-desktop-visual-repeatability-1.9.json; GitHub Actions run 37333756951 / artifact 11355542969",
     "requiredGoldens": [
       "tests/visual/goldens/adaptive_desktop_compact_ltr_light_standard.png",
       "tests/visual/goldens/adaptive_desktop_compact_ltr_dark_standard.png",
