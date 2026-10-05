@@ -1,0 +1,65 @@
+name: bootstrap-material3-goldens
+
+on:
+  push:
+    branches:
+      - cert/p0-1.5-1.7-closure
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  import-reviewed-candidates:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout closure branch
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Download pinned Missing Material 3 evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: "11337969085"
+        run: |
+          set -euo pipefail
+          curl -fL             -H "Authorization: Bearer ${GH_TOKEN}"             -H "Accept: application/vnd.github+json"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip"             -o /tmp/missing-material3-evidence.zip
+          mkdir -p /tmp/missing-material3-evidence
+          unzip -q /tmp/missing-material3-evidence.zip             -d /tmp/missing-material3-evidence
+
+      - name: Verify and stage deterministic goldens
+        run: |
+          set -euo pipefail
+          src=/tmp/missing-material3-evidence/missing-material3-first/goldens
+          dst=tests/visual/goldens
+          mkdir -p "${dst}"
+
+          echo "c17cc63dc1f87cb0340d6dab693cd796bbfdb7199c537e210dc0ee99d531ad35  ${src}/missing_material3_matrix_light_standard.png" | sha256sum -c -
+          echo "ca91328d468f002f92e60e7ed61b2c97264bd64bb006814dd1b2d6ef57804b8a  ${src}/missing_material3_matrix_dark_standard.png" | sha256sum -c -
+          echo "f3291af5ae162840cce021926e65710d94d2cc2079c3f9cf5b781e8b3989a289  ${src}/missing_material3_matrix_light_high.png" | sha256sum -c -
+
+          cmp "${src}/missing_material3_matrix_light_standard.png"               /tmp/missing-material3-evidence/missing-material3-second/goldens/missing_material3_matrix_light_standard.png
+          cmp "${src}/missing_material3_matrix_dark_standard.png"               /tmp/missing-material3-evidence/missing-material3-second/goldens/missing_material3_matrix_dark_standard.png
+          cmp "${src}/missing_material3_matrix_light_high.png"               /tmp/missing-material3-evidence/missing-material3-second/goldens/missing_material3_matrix_light_high.png
+
+          cp "${src}/missing_material3_matrix_light_standard.png" "${dst}/"
+          cp "${src}/missing_material3_matrix_dark_standard.png" "${dst}/"
+          cp "${src}/missing_material3_matrix_light_high.png" "${dst}/"
+
+      - name: Commit pinned goldens
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add             tests/visual/goldens/missing_material3_matrix_light_standard.png             tests/visual/goldens/missing_material3_matrix_dark_standard.png             tests/visual/goldens/missing_material3_matrix_light_high.png
+
+          if git diff --cached --quiet; then
+            echo "Pinned goldens already match the CI artifact."
+            exit 0
+          fi
+
+          git commit -m "test(visual): pin deterministic 1.7 catalogue goldens"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
