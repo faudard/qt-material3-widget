@@ -19,7 +19,20 @@ QtMaterialButtonGroup::QtMaterialButtonGroup(QWidget* parent)
     m_layout->setSpacing(2);
 }
 
-QtMaterialButtonGroup::~QtMaterialButtonGroup() = default;
+QtMaterialButtonGroup::~QtMaterialButtonGroup()
+{
+    // QWidget destroys child buttons after derived members have been torn down.
+    // Disconnect callbacks now so QObject::destroyed cannot access m_buttons
+    // once its storage has already been released.
+    for (QtMaterialTextButton* button : m_buttons) {
+        if (!button) {
+            continue;
+        }
+        button->removeEventFilter(this);
+        QObject::disconnect(button, nullptr, this, nullptr);
+    }
+    m_buttons.clear();
+}
 
 int QtMaterialButtonGroup::count() const noexcept
 {
