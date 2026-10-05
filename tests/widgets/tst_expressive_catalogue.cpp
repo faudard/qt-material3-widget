@@ -1,5 +1,6 @@
 #include <QtTest/QtTest>
 
+#include <QBoxLayout>
 #include <QSignalSpy>
 
 #include "qtmaterial/widgets/buttons/qtmaterialbuttongroup.h"
@@ -59,6 +60,30 @@ private Q_SLOTS:
         delete button;
 
         QCOMPARE(group.count(), 0);
+    }
+
+    void rtlMirrorsExpressiveHorizontalLayouts()
+    {
+        QtMaterialButtonGroup group;
+        group.addButton(QStringLiteral("One"));
+        group.addButton(QStringLiteral("Two"));
+        group.setLayoutDirection(Qt::RightToLeft);
+
+        auto* groupLayout = static_cast<QBoxLayout*>(group.layout());
+        QVERIFY(groupLayout);
+        QCOMPARE(groupLayout->direction(), QBoxLayout::RightToLeft);
+
+        QtMaterialFloatingToolbar toolbar;
+        toolbar.addAction(QIcon(), QStringLiteral("First"));
+        toolbar.addAction(QIcon(), QStringLiteral("Second"));
+        toolbar.setLayoutDirection(Qt::RightToLeft);
+
+        auto* toolbarLayout = static_cast<QBoxLayout*>(toolbar.layout());
+        QVERIFY(toolbarLayout);
+        QCOMPARE(toolbarLayout->direction(), QBoxLayout::RightToLeft);
+
+        toolbar.setOrientation(Qt::Vertical);
+        QCOMPARE(toolbarLayout->direction(), QBoxLayout::TopToBottom);
     }
 
     void floatingToolbarCollapsesToLeadingAction()
