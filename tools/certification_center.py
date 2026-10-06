@@ -565,7 +565,15 @@ def build_parser() -> argparse.ArgumentParser:
         "review-visual",
         help="record explicit human review of committed visual certification goldens",
     )
-    visual_parser.add_argument(\n        "--milestone",\n        choices=tuple(\n            milestone\n            for milestone, config in MILESTONES.items()\n            if config.get("visual", False)\n        ),\n        required=True,\n    )
+    visual_parser.add_argument(
+        "--milestone",
+        choices=tuple(
+            milestone
+            for milestone, config in MILESTONES.items()
+            if config.get("visual", False)
+        ),
+        required=True,
+    )
     visual_parser.add_argument("--status", choices=("pass", "fail"), required=True)
     visual_parser.add_argument("--reviewer", required=True)
     visual_parser.add_argument("--reviewed-at", required=True)
