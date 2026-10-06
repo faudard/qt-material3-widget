@@ -33,7 +33,7 @@ jobs:
       - name: Check repository health
         run: python tools/repo_health.py --strict
 
-      - name: Report final certification readiness
+      - name: Report final 60/60 certification readiness
         run: python tools/certification_center.py status
 
       - name: Check patch whitespace
