@@ -191,5 +191,33 @@ class CertificationCenterTests(unittest.TestCase):
             center.parse_review_date("05/10/2026")
 
 
+    def test_final_center_tracks_expressive_60_closure(self) -> None:
+        self.assertIn("1.10/1.11", center.MILESTONES)
+        expressive = center.MILESTONES["1.10/1.11"]
+        self.assertTrue(expressive["visual"])
+        self.assertEqual(
+            expressive["promoter"],
+            "tools/promote_expressive_1_10_1_11.py",
+        )
+
+    def test_expressive_session_template_uses_native_contract(self) -> None:
+        payload = center.load_ledger("1.10/1.11")
+        template = center.build_session_template(
+            "1.10/1.11",
+            "windows-nvda",
+            payload,
+        )
+        self.assertEqual(template["screenReader"], "NVDA")
+        self.assertIn("button.split", template["checks"])
+        self.assertIn("data.segmented-list", template["checks"])
+        self.assertTrue(
+            all(
+                value == "pending"
+                for checks in template["checks"].values()
+                for value in checks.values()
+            )
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
