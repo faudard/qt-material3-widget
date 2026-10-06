@@ -346,6 +346,22 @@ def milestone_summary(
     }
 
 
+def registry_completion(root: Path = ROOT) -> dict[str, int]:
+    path = root / "docs/components/component-registry.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, list):
+        raise ValueError("component registry must contain a JSON array")
+    return {
+        "complete": sum(
+            1
+            for component in payload
+            if isinstance(component, dict)
+            and component.get("maturity") == "complete"
+        ),
+        "total": len(payload),
+    }
+
+
 def certification_status(root: Path = ROOT) -> dict[str, Any]:
     milestones = {
         milestone: milestone_summary(
@@ -357,6 +373,7 @@ def certification_status(root: Path = ROOT) -> dict[str, Any]:
     }
     return {
         "complete": all(item["complete"] for item in milestones.values()),
+        "registry": registry_completion(root),
         "milestones": milestones,
     }
 
@@ -364,6 +381,11 @@ def certification_status(root: Path = ROOT) -> dict[str, Any]:
 def print_status(status: dict[str, Any]) -> None:
     print("QtMaterial3 final certification status")
     print("=" * 38)
+    registry = status.get("registry", {})
+    print(
+        f"Registry: {registry.get('complete', '?')}/"
+        f"{registry.get('total', '?')} complete"
+    )
     for milestone, summary in status["milestones"].items():
         native = summary["nativeChecks"]
         state = "READY" if summary["complete"] else "BLOCKED"
