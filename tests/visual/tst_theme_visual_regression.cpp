@@ -24,6 +24,8 @@
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialbuttongroup.h"
+#include "qtmaterial/widgets/buttons/qtmaterialsplitbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
 #include "qtmaterial/widgets/data/qtmaterialbadge.h"
@@ -31,7 +33,9 @@
 #include "qtmaterial/widgets/data/qtmaterialdivider.h"
 #include "qtmaterial/widgets/data/qtmaterialgridlist.h"
 #include "qtmaterial/widgets/data/qtmateriallist.h"
+#include "qtmaterial/widgets/data/qtmaterialsegmentedlist.h"
 #include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
+#include "qtmaterial/widgets/progress/qtmaterialloadingindicator.h"
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 #include "qtmaterial/widgets/selection/qtmaterialchip.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialbanner.h"
@@ -57,6 +61,7 @@
 #include "qtmaterial/widgets/qtmaterialdatepicker.h"
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
+#include "qtmaterial/widgets/navigation/qtmaterialfloatingtoolbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h"
@@ -990,6 +995,108 @@ QWidget* buildSurfaceOverlayStateMatrix(const Theme& theme)
     return root;
 }
 
+QWidget* buildExpressiveCatalogueStateMatrix(const Theme& theme)
+{
+    auto* root = new QWidget;
+    configureMatrixRoot(root, theme, QStringLiteral("expressiveCatalogueStateMatrix"));
+
+    auto* layout = new QGridLayout(root);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setHorizontalSpacing(18);
+    layout->setVerticalSpacing(12);
+    addMatrixHeaders(layout, root, {
+        QStringLiteral("Split Button"),
+        QStringLiteral("Button Group"),
+        QStringLiteral("Floating Toolbar"),
+        QStringLiteral("Loading"),
+        QStringLiteral("Segmented List"),
+        QStringLiteral("Menu"),
+        QStringLiteral("Chip")});
+
+    const QStringList states = {
+        QStringLiteral("Default"),
+        QStringLiteral("Variant / selected"),
+        QStringLiteral("Disabled"),
+        QStringLiteral("RTL")};
+    for (int i = 0; i < states.size(); ++i) {
+        addStateLabel(layout, root, i + 1, states.at(i));
+    }
+
+    for (int row = 1; row <= 4; ++row) {
+        const bool enabled = row != 3;
+        const Qt::LayoutDirection direction =
+            row == 4 ? Qt::RightToLeft : Qt::LeftToRight;
+
+        auto* split = new QtMaterialSplitButton(
+            row == 2 ? QStringLiteral("Publish") : QStringLiteral("Create"),
+            root);
+        split->setEnabled(enabled);
+        split->setLayoutDirection(direction);
+        split->setMinimumWidth(190);
+        layout->addWidget(split, row, 1);
+
+        auto* group = new QtMaterialButtonGroup(root);
+        group->addButton(QStringLiteral("Day"));
+        group->addButton(QStringLiteral("Week"));
+        group->addButton(QStringLiteral("Month"));
+        group->setCurrentIndex(row == 2 ? 1 : 0);
+        group->setEnabled(enabled);
+        group->setLayoutDirection(direction);
+        layout->addWidget(group, row, 2);
+
+        auto* toolbar = new QtMaterialFloatingToolbar(root);
+        toolbar->addAction(QIcon(), QStringLiteral("Edit"));
+        toolbar->addAction(QIcon(), QStringLiteral("Share"));
+        toolbar->addAction(QIcon(), QStringLiteral("More"));
+        toolbar->setExpanded(row != 2);
+        toolbar->setEnabled(enabled);
+        toolbar->setLayoutDirection(direction);
+        toolbar->setMinimumWidth(180);
+        layout->addWidget(toolbar, row, 3);
+
+        auto* loading = new QtMaterialLoadingIndicator(root);
+        loading->setIndicatorSize(row == 2 ? 56 : 44);
+        loading->setActive(row != 2);
+        loading->setEnabled(enabled);
+        loading->setLayoutDirection(direction);
+        layout->addWidget(loading, row, 4, Qt::AlignCenter);
+
+        auto* segmented = new QtMaterialSegmentedList(root);
+        segmented->addItem(QStringLiteral("Personal"));
+        segmented->addItem(QStringLiteral("Work"));
+        segmented->addItem(QStringLiteral("Shared"));
+        segmented->setCurrentIndex(row == 2 ? 1 : 0);
+        segmented->setEnabled(enabled);
+        segmented->setLayoutDirection(direction);
+        segmented->setMinimumSize(220, 190);
+        layout->addWidget(segmented, row, 5);
+
+        auto* menu = new QtMaterialMenu(root);
+        const int openIndex = menu->addItem(QStringLiteral("Open"));
+        const int pinIndex = menu->addItem(QStringLiteral("Pin"));
+        menu->setItemCheckable(pinIndex, true);
+        menu->setItemChecked(pinIndex, row == 2);
+        menu->setCurrentIndex(row == 2 ? pinIndex : openIndex);
+        menu->setExpressive(true);
+        menu->setEnabled(enabled);
+        menu->setLayoutDirection(direction);
+        menu->setMinimumWidth(180);
+        layout->addWidget(menu, row, 6);
+
+        auto* chip = new QtMaterialChip(
+            row == 2 ? QStringLiteral("Selected") : QStringLiteral("Filter"),
+            root);
+        chip->setVariant(ChipVariant::Filter);
+        chip->setExpressive(true);
+        chip->setChecked(row == 2);
+        chip->setEnabled(enabled);
+        chip->setLayoutDirection(direction);
+        layout->addWidget(chip, row, 7, Qt::AlignCenter);
+    }
+
+    return root;
+}
+
 QWidget* buildMissingMaterial3StateMatrix(const Theme& theme)
 {
     auto* root = new QWidget;
@@ -1283,6 +1390,7 @@ private slots:
     void surfaceBarStateMatrixSmoke_data(); void surfaceBarStateMatrixSmoke(); void surfaceBarStateMatrixCandidateGoldens_data(); void surfaceBarStateMatrixCandidateGoldens();
     void surfaceOverlayStateMatrixSmoke_data(); void surfaceOverlayStateMatrixSmoke(); void surfaceOverlayStateMatrixCandidateGoldens_data(); void surfaceOverlayStateMatrixCandidateGoldens();
     void missingMaterial3StateMatrixSmoke_data(); void missingMaterial3StateMatrixSmoke(); void missingMaterial3StateMatrixCandidateGoldens_data(); void missingMaterial3StateMatrixCandidateGoldens();
+    void expressiveCatalogueStateMatrixSmoke_data(); void expressiveCatalogueStateMatrixSmoke(); void expressiveCatalogueStateMatrixCandidateGoldens_data(); void expressiveCatalogueStateMatrixCandidateGoldens();
     void adaptiveDesktopCandidateGoldens_data();
     void adaptiveDesktopCandidateGoldens();
     void layoutStateMatrixSmoke_data(); void layoutStateMatrixSmoke(); void layoutStateMatrixCandidateGoldens_data(); void layoutStateMatrixCandidateGoldens();
@@ -1651,6 +1759,7 @@ QTM3_MATRIX_CASES(progressCompactStateMatrix, "progress_compact_matrix", buildPr
 QTM3_MATRIX_CASES(surfaceBarStateMatrix, "surface_bar_matrix", buildSurfaceBarStateMatrix, "surface-bar-state-matrix")
 QTM3_MATRIX_CASES(surfaceOverlayStateMatrix, "surface_overlay_matrix", buildSurfaceOverlayStateMatrix, "surface-overlay-state-matrix")
 QTM3_MATRIX_CASES(missingMaterial3StateMatrix, "missing_material3_matrix", buildMissingMaterial3StateMatrix, "missing-material3-state-matrix")
+QTM3_MATRIX_CASES(expressiveCatalogueStateMatrix, "expressive_catalogue_matrix", buildExpressiveCatalogueStateMatrix, "expressive-catalogue-state-matrix")
 QTM3_MATRIX_CASES(layoutStateMatrix, "layout_matrix", buildLayoutStateMatrix, "layout-state-matrix")
 #undef QTM3_MATRIX_CASES
 
