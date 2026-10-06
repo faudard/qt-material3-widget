@@ -289,6 +289,38 @@ jobs:
             build/missing-material3-repeatability.json
           if-no-files-found: warn
 
+      - name: Render Expressive Catalogue evidence twice
+        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        shell: bash
+        env:
+          QTMATERIAL3_UPDATE_VISUAL_GOLDENS: "1"
+          QT_STYLE_OVERRIDE: Fusion
+          QT_QPA_PLATFORM: xcb
+          QT_SCALE_FACTOR: "1"
+          QT_FONT_DPI: "96"
+          LC_ALL: C.UTF-8
+        run: |
+          for pass in first second; do
+            QTMATERIAL3_VISUAL_GOLDENS_DIR="${GITHUB_WORKSPACE}/build/expressive-catalogue-${pass}/goldens" \
+            QTMATERIAL3_VISUAL_ARTIFACTS_DIR="${GITHUB_WORKSPACE}/build/expressive-catalogue-${pass}/artifacts" \
+            xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+              python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure -R "^tst_expressive_catalogue_visual_goldens$"
+          done
+          python3 tools/check_expressive_catalogue_visual_repeatability.py \
+            build/expressive-catalogue-first build/expressive-catalogue-second \
+            --output build/expressive-catalogue-repeatability.json
+
+      - name: Upload Expressive Catalogue visual evidence
+        if: always() && matrix.name == 'ubuntu-qt6.4.0-floor'
+        uses: actions/upload-artifact@v6
+        with:
+          name: expressive-catalogue-visual-evidence
+          path: |
+            build/expressive-catalogue-first/
+            build/expressive-catalogue-second/
+            build/expressive-catalogue-repeatability.json
+          if-no-files-found: warn
+
       - name: Render Adaptive Desktop evidence twice
         if: matrix.name == 'ubuntu-qt6.4.0-floor'
         shell: bash
@@ -369,6 +401,7 @@ jobs:
             build/family-candidate-goldens/surface_bar_matrix_*.png
             build/family-candidate-goldens/surface_overlay_matrix_*.png
             build/family-candidate-goldens/missing_material3_matrix_*.png
+            build/family-candidate-goldens/expressive_catalogue_matrix_*.png
             build/family-candidate-goldens/layout_matrix_*.png
           if-no-files-found: warn
 
