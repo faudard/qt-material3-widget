@@ -31,10 +31,12 @@ class QtMaterialMenuPrivate
 public:
     QVector<QtMaterialMenu::Item> items;
     MenuSpec spec;
+    MenuSpec baseSpec;
     QtMaterialThemeContextBinding* themeBinding = nullptr;
     int currentIndex = -1;
     int pressedIndex = -1;
     bool hasExplicitSpec = false;
+    bool expressive = false;
     QString lastAccessibilitySummary;
 };
 
@@ -126,6 +128,27 @@ QColor withOpacity(
 {
     color.setAlphaF(qBound(0.0, opacity, 1.0));
     return color;
+}
+
+void applyExpressiveMenuSpec(MenuSpec* spec)
+{
+    if (!spec) {
+        return;
+    }
+
+    spec->minItemSize.setHeight(
+        qMax(spec->minItemSize.height(), 56));
+    spec->itemPadding = QMargins(
+        qMax(spec->itemPadding.left(), 16),
+        spec->itemPadding.top(),
+        qMax(spec->itemPadding.right(), 16),
+        spec->itemPadding.bottom());
+    spec->cornerRadius =
+        qMax<qreal>(spec->cornerRadius, 20.0);
+    spec->verticalPadding =
+        qMax(spec->verticalPadding, 8);
+    spec->iconSpacing =
+        qMax(spec->iconSpacing, 12);
 }
 
 int typeAheadMatch(
@@ -252,7 +275,11 @@ const MenuSpec& QtMaterialMenu::resolvedSpec() const noexcept
 void QtMaterialMenu::setSpec(const MenuSpec& spec)
 {
     d_ptr->hasExplicitSpec = true;
-    d_ptr->spec = spec;
+    d_ptr->baseSpec = spec;
+    d_ptr->spec = d_ptr->baseSpec;
+    if (d_ptr->expressive) {
+        applyExpressiveMenuSpec(&d_ptr->spec);
+    }
     applySpec();
 }
 
@@ -265,6 +292,26 @@ void QtMaterialMenu::resetSpec()
 {
     d_ptr->hasExplicitSpec = false;
     resolveThemeSpec();
+}
+
+bool QtMaterialMenu::expressive() const noexcept
+{
+    return d_ptr->expressive;
+}
+
+void QtMaterialMenu::setExpressive(bool expressive)
+{
+    if (d_ptr->expressive == expressive) {
+        return;
+    }
+
+    d_ptr->expressive = expressive;
+    d_ptr->spec = d_ptr->baseSpec;
+    if (d_ptr->expressive) {
+        applyExpressiveMenuSpec(&d_ptr->spec);
+    }
+    applySpec();
+    Q_EMIT expressiveChanged(expressive);
 }
 
 int QtMaterialMenu::addItem(
@@ -1028,8 +1075,12 @@ void QtMaterialMenu::resolveThemeSpec()
         return;
     }
 
-    d_ptr->spec =
+    d_ptr->baseSpec =
         QtMaterial::NavigationSpecResolution::menuSpec(d_ptr->themeBinding);
+    d_ptr->spec = d_ptr->baseSpec;
+    if (d_ptr->expressive) {
+        applyExpressiveMenuSpec(&d_ptr->spec);
+    }
     applySpec();
 }
 

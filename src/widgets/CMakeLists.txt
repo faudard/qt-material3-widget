@@ -3,6 +3,8 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     buttons/private/qtmaterialbuttonrenderhelper.cpp
     buttons/qtmaterialtextbutton.cpp
     buttons/qtmaterialfilledbutton.cpp
+    buttons/qtmaterialbuttongroup.cpp
+    buttons/qtmaterialsplitbutton.cpp
     buttons/qtmaterialiconbutton.cpp
     buttons/qtmaterialfilledtonalbutton.cpp
     buttons/qtmaterialoutlinedbutton.cpp
@@ -42,6 +44,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     inputs/qtmaterialdaterangepicker.cpp
     data/qtmateriallistitem.cpp
     data/qtmateriallist.cpp
+    data/qtmaterialsegmentedlist.cpp
     data/qtmaterialdivider.cpp
     data/qtmaterialbadge.cpp
     navigation/qtmaterialtabs.cpp
@@ -51,6 +54,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     surfaces/qtmaterialsnackbarhost.cpp
     progress/qtmateriallinearprogressindicator.cpp
     progress/qtmaterialcircularprogressindicator.cpp
+    progress/qtmaterialloadingindicator.cpp
     selection/qtmaterialchip.cpp
     compact/qtmaterialfilterchip.cpp
     compact/qtmaterialinputchip.cpp
@@ -59,6 +63,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     navigation/qtmaterialnavigationcontroller.cpp
     navigation/model/qtmaterialnavigationmodel.cpp
     navigation/qtmaterialmenu.cpp
+    navigation/qtmaterialfloatingtoolbar.cpp
     inputs/qtmaterialautocomplete.cpp
     qtmaterialdatepicker.cpp
     data/qtmaterialtable.cpp
@@ -75,6 +80,8 @@ set(QTMATERIAL3_WIDGETS_SOURCES
 set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialtextbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialfilledbutton.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialbuttongroup.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialsplitbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialiconbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h
@@ -109,6 +116,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmateriallistitem.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmateriallist.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialsegmentedlist.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialtabs.h
@@ -121,12 +129,14 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/surfaces/qtmaterialsnackbarhost.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/progress/qtmaterialloadingindicator.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/selection/qtmaterialchip.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/compact/qtmaterialfilterchip.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/compact/qtmaterialinputchip.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/selection/qtmaterialsegmentedbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialnavigationrail.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialmenu.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/navigation/qtmaterialfloatingtoolbar.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialautocomplete.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/qtmaterialdatepicker.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialtable.h

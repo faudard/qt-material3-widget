@@ -17,7 +17,12 @@ namespace QtMaterial {
 struct QtMaterialListPrivate
 {
     QVBoxLayout* layout = nullptr;
-    QList<QPointer<QtMaterialListItem>> items;
+    // Keep the weak guard at QObject level. During QObject::destroyed the
+    // QtMaterialListItem subobject has already been torn down; asking
+    // QPointer<QtMaterialListItem>::data() to downcast at that point is
+    // undefined under UBSan. Cast to QtMaterialListItem only while the object
+    // is still alive.
+    QList<QPointer<QObject>> items;
 
     mutable ListSpec spec;
     mutable bool specDirty = true;
@@ -56,8 +61,9 @@ QtMaterialList::~QtMaterialList()
     // QWidget destroys child items after derived members have been torn down.
     // Disconnect item callbacks now so QObject::destroyed cannot enter this
     // object after d_ptr has already been released.
-    for (const QPointer<QtMaterialListItem>& pointer : d_ptr->items) {
-        if (QtMaterialListItem* item = pointer.data()) {
+    for (const QPointer<QObject>& pointer : d_ptr->items) {
+        if (QtMaterialListItem* item =
+                qobject_cast<QtMaterialListItem*>(pointer.data())) {
             item->removeEventFilter(this);
             QObject::disconnect(item, nullptr, this, nullptr);
         }
@@ -79,7 +85,8 @@ QtMaterialListItem* QtMaterialList::itemAt(
     int index) const
 {
     return isValidIndex(index)
-        ? d_ptr->items.at(index).data()
+        ? qobject_cast<QtMaterialListItem*>(
+              d_ptr->items.at(index).data())
         : nullptr;
 }
 
@@ -93,7 +100,8 @@ int QtMaterialList::indexOf(
     for (int index = 0;
          index < d_ptr->items.size();
          ++index) {
-        if (d_ptr->items.at(index).data() == item) {
+        if (d_ptr->items.at(index).data()
+            == static_cast<const QObject*>(item)) {
             return index;
         }
     }
@@ -218,7 +226,8 @@ QtMaterialListItem* QtMaterialList::takeItem(
         d_ptr->currentIndex;
 
     QtMaterialListItem* item =
-        d_ptr->items.at(index).data();
+        qobject_cast<QtMaterialListItem*>(
+            d_ptr->items.at(index).data());
     d_ptr->items.removeAt(index);
 
     if (item) {
@@ -291,9 +300,11 @@ void QtMaterialList::clear()
     d_ptr->items.clear();
     d_ptr->currentIndex = -1;
 
-    for (const QPointer<QtMaterialListItem>& pointer
+    for (const QPointer<QObject>& pointer
          : items) {
-        QtMaterialListItem* item = pointer.data();
+        QtMaterialListItem* item =
+            qobject_cast<QtMaterialListItem*>(
+                pointer.data());
         if (!item) {
             continue;
         }
@@ -346,9 +357,11 @@ void QtMaterialList::setCurrentIndex(int index)
     d_ptr->syncingSelection = true;
     switch (d_ptr->selectionMode) {
     case SelectionMode::NoSelection:
-        for (const auto& pointer : d_ptr->items) {
-            if (pointer) {
-                pointer->setSelected(false);
+        for (int index = 0;
+             index < count();
+             ++index) {
+            if (auto* item = itemAt(index)) {
+                item->setSelected(false);
             }
         }
         break;
@@ -431,9 +444,11 @@ void QtMaterialList::clearSelection()
     }
 
     d_ptr->syncingSelection = true;
-    for (const auto& pointer : d_ptr->items) {
-        if (pointer) {
-            pointer->setSelected(false);
+    for (int index = 0;
+         index < count();
+         ++index) {
+        if (auto* item = itemAt(index)) {
+            item->setSelected(false);
         }
     }
     d_ptr->syncingSelection = false;
@@ -863,9 +878,11 @@ void QtMaterialList::syncItemSelection()
 
     switch (d_ptr->selectionMode) {
     case SelectionMode::NoSelection:
-        for (const auto& pointer : d_ptr->items) {
-            if (pointer) {
-                pointer->setSelected(false);
+        for (int index = 0;
+             index < count();
+             ++index) {
+            if (auto* item = itemAt(index)) {
+                item->setSelected(false);
             }
         }
         break;
@@ -1102,7 +1119,7 @@ void QtMaterialList::synchronizeItemDividers()
          index < itemCount;
          ++index) {
         QtMaterialListItem* item =
-            d_ptr->items.at(index).data();
+            itemAt(index);
 
         if (!item) {
             continue;

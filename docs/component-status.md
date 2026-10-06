@@ -17,6 +17,8 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 | `button.icon` | Icon Button | `complete` | `qtmaterial/widgets/buttons/qtmaterialiconbutton.h` | `IconButtonSpec` | `tst_iconbutton` | `docs/public-api/buttons.md` | `/buttons/icon` |
 | `button.outlined` | Outlined Button | `complete` | `qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h` | `ButtonSpec` | `tst_outlinedbutton` | `docs/public-api/buttons.md` | `/buttons/outlined` |
 | `button.text` | Text Button | `complete` | `qtmaterial/widgets/buttons/qtmaterialtextbutton.h` | `ButtonSpec` | `tst_textbutton` | `docs/public-api/buttons.md` | `/buttons/text` |
+| `button.group` | Button Group | `usable` | `qtmaterial/widgets/buttons/qtmaterialbuttongroup.h` | `N/A` | `tst_expressive_catalogue` | `docs/public-api/expressive-catalogue.md` | `/buttons/button-group` |
+| `button.split` | Split Button | `usable` | `qtmaterial/widgets/buttons/qtmaterialsplitbutton.h` | `N/A` | `tst_expressive_catalogue` | `docs/public-api/expressive-catalogue.md` | `/buttons/split-button` |
 
 ## Compact controls
 
@@ -34,6 +36,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 | `data.pagination` | Pagination | `complete` | `qtmaterial/widgets/data/qtmaterialpagination.h` | `PaginationSpec` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/pagination` |
 | `data.table` | Table | `complete` | `qtmaterial/widgets/data/qtmaterialtable.h` | `TableSpec` | `tst_table` | `docs/public-api/data-widgets.md` | `/data/table` |
 | `data.tree-view` | Tree View | `complete` | `qtmaterial/widgets/data/qtmaterialtreeview.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/data/tree-view` |
+| `data.segmented-list` | Segmented List | `usable` | `qtmaterial/widgets/data/qtmaterialsegmentedlist.h` | `N/A` | `tst_expressive_catalogue` | `docs/public-api/expressive-catalogue.md` | `/data/segmented-list` |
 
 ## Data display
 
@@ -74,6 +77,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 | `navigation.bar` | Navigation Bar | `usable` | `qtmaterial/widgets/navigation/qtmaterialnavigationbar.h` | `N/A` | `tst_missing_material3` | `docs/public-api/navigation.md` | `/navigation/bar` |
 | `navigation.breadcrumb` | Breadcrumb | `usable` | `qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/navigation/breadcrumb` |
 | `navigation.command-palette` | Command Palette | `usable` | `qtmaterial/widgets/navigation/qtmaterialcommandpalette.h` | `N/A` | `tst_desktop_productivity` | `docs/public-api/desktop-productivity.md` | `/navigation/command-palette` |
+| `navigation.floating-toolbar` | Floating Toolbar | `usable` | `qtmaterial/widgets/navigation/qtmaterialfloatingtoolbar.h` | `N/A` | `tst_expressive_catalogue` | `docs/public-api/expressive-catalogue.md` | `/navigation/floating-toolbar` |
 | `navigation.menu` | Menu | `usable` | `qtmaterial/widgets/navigation/qtmaterialmenu.h` | `MenuSpec` | `tst_menu` | `docs/public-api/navigation.md` | `/navigation/menu` |
 | `navigation.rail` | Navigation Rail | `usable` | `qtmaterial/widgets/navigation/qtmaterialnavigationrail.h` | `NavigationRailSpec` | `tst_navigationrail` | `docs/public-api/navigation.md` | `/navigation/rail` |
 | `navigation.suite` | Navigation Suite | `usable` | `qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h` | `N/A` | `tst_adaptive_shell` | `docs/public-api/material3-expressive-adaptive.md` | `/navigation/suite` |
@@ -85,6 +89,7 @@ Maturity levels: `complete`, `usable`, `partial`, `skeleton`, `planned`.
 |---|---|---:|---|---|---|---|---|
 | `progress.circular` | Circular Progress Indicator | `complete` | `qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress-indicators.md` | `/progress/circular` |
 | `progress.linear` | Linear Progress Indicator | `complete` | `qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h` | `ProgressIndicatorSpec` | `tst_progressindicators` | `docs/public-api/progress-indicators.md` | `/progress/linear` |
+| `progress.loading-indicator` | Loading Indicator | `usable` | `qtmaterial/widgets/progress/qtmaterialloadingindicator.h` | `N/A` | `tst_expressive_catalogue` | `docs/public-api/expressive-catalogue.md` | `/progress/loading-indicator` |
 
 ## Selection
 

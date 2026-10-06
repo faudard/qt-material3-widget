@@ -8,6 +8,7 @@
 #include <QStyle>
 #include <QVBoxLayout>
 
+#include "qtmaterial/widgets/buttons/qtmaterialbuttongroup.h"
 #include "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialextendedfab.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfab.h"
@@ -15,6 +16,7 @@
 #include "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialsplitbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
 
 namespace {
@@ -293,6 +295,37 @@ ButtonsPage::ButtonsPage(QWidget* parent)
     }
 
     root->addLayout(expressiveGrid);
+
+    root->addWidget(separator(this));
+    root->addWidget(sectionTitle(QStringLiteral("Expressive catalogue 1.10"), this));
+    root->addWidget(helperText(
+        QStringLiteral("Split Button keeps primary and secondary actions distinct. Button Group owns a connected "
+                       "single-choice selection and supports arrow/Home/End keyboard navigation."),
+        this));
+
+    auto* catalogueRow = new QHBoxLayout;
+    catalogueRow->setSpacing(20);
+
+    auto* splitButton =
+        new QtMaterial::QtMaterialSplitButton(
+            QStringLiteral("Create"),
+            this);
+    splitButton->primaryButton()->setIcon(
+        standardIcon(this, QStyle::SP_FileDialogNewFolder));
+    splitButton->trailingButton()->setToolTip(
+        QStringLiteral("More create actions"));
+
+    auto* buttonGroup =
+        new QtMaterial::QtMaterialButtonGroup(this);
+    buttonGroup->addButton(QStringLiteral("Day"));
+    buttonGroup->addButton(QStringLiteral("Week"));
+    buttonGroup->addButton(QStringLiteral("Month"));
+    buttonGroup->setCurrentIndex(1);
+
+    catalogueRow->addWidget(splitButton);
+    catalogueRow->addWidget(buttonGroup);
+    catalogueRow->addStretch(1);
+    root->addLayout(catalogueRow);
 
  // BEGIN GENERATED BUTTONS MATURITY GALLERY COVERAGE
  root->addWidget(separator(this));

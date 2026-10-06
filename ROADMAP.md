@@ -237,3 +237,31 @@ Release gates:
 - Navigation Suite keeps per-destination accessible focus while switching Bar/Rail; Adaptive Shell exposes effective supporting-pane state and a synchronized accessibility summary.
 - Native NVDA, Orca and VoiceOver results are recorded per component in `adaptive-desktop-certification-1.9.json`.
 - `promote_adaptive_desktop_1_9.py --apply` may move Navigation Suite and Adaptive Shell to release-scope `complete` only after all 30 visual references and native AT checks pass.
+
+## 1.10.0 — Expressive Catalogue
+
+Goal: expose the high-value Material 3 Expressive action and feedback patterns as
+first-class Qt Widgets while preserving the stable 1.x defaults of existing controls.
+
+Release gates:
+
+- Split Button separates primary and secondary actions with independent focus and activation.
+- Button Groups provide exclusive/action modes, checked-state synchronization and RTL-aware keyboard traversal.
+- Floating Toolbar supports horizontal/vertical layouts, expanded/collapsed presentation and keyboard-only navigation.
+- Loading Indicator provides the Expressive morphing indeterminate silhouette and honors reduced motion.
+- New widgets use the existing ThemeContext, interaction, accessibility and 1.x additive API boundaries.
+- Focused CTest coverage, public API documentation, registry ownership and package/header-surface validation remain green.
+
+## 1.11.0 — Expressive Data
+
+Goal: extend the Expressive language into dense application data and command surfaces
+without replacing the existing List, Menu or Chip contracts.
+
+Release gates:
+
+- List Item exposes opt-in Expressive row geometry and semantic segment positions.
+- Segmented List automatically maintains Single/First/Middle/Last segment roles as content changes.
+- Menu exposes opt-in Expressive item geometry and container shape while preserving authored base specs.
+- Chip exposes opt-in press/selected shape morphing with deterministic reduced-motion completion.
+- Existing stable List/Menu/Chip appearance remains unchanged when Expressive is disabled.
+- Visual matrices, Gallery coverage and native assistive-technology evidence are required before promotion from usable to complete.

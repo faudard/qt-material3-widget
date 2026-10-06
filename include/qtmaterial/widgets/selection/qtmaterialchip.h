@@ -32,6 +32,12 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialChip
         WRITE setRemovable
         NOTIFY removableChanged)
 
+    Q_PROPERTY(
+        bool expressive
+        READ expressive
+        WRITE setExpressive
+        NOTIFY expressiveChanged)
+
 public:
     explicit QtMaterialChip(
         QWidget* parent = nullptr);
@@ -48,6 +54,9 @@ public:
     bool isRemovable() const noexcept;
     void setRemovable(bool removable);
 
+    bool expressive() const noexcept;
+    void setExpressive(bool expressive);
+
     QIcon trailingIcon() const;
     void setTrailingIcon(const QIcon& icon);
 
@@ -59,6 +68,7 @@ signals:
     void variantChanged(
         QtMaterial::ChipVariant variant);
     void removableChanged(bool removable);
+    void expressiveChanged(bool expressive);
     void removeRequested();
 
 protected:
@@ -82,6 +92,7 @@ private:
     QRectF containerRect() const;
     QRect trailingIconRect(
         const QRectF& visualRect) const;
+    void syncExpressiveMorph();
 
     std::unique_ptr<QtMaterialChipPrivate> d_ptr;
 };

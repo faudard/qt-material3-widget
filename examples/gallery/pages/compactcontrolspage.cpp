@@ -34,6 +34,10 @@ CompactControlsPage::CompactControlsPage(QWidget* parent)
         if (item.variant == ChipVariant::Input) {
             chip->setRemovable(true);
         }
+        chip->setExpressive(true);
+        if (item.variant == ChipVariant::Filter) {
+            chip->setChecked(true);
+        }
         layout->addWidget(chip, 0, Qt::AlignLeft);
     }
 

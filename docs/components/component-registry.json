@@ -4081,5 +4081,350 @@
         ]
       }
     }
+  },
+  {
+    "id": "button.split",
+    "name": "Split Button",
+    "family": "Buttons",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialsplitbutton.h",
+    "specType": "N/A",
+    "widgetType": "QtMaterialSplitButton",
+    "testTarget": "tst_expressive_catalogue",
+    "galleryRoute": "/buttons/split-button",
+    "docsPath": "docs/public-api/expressive-catalogue.md",
+    "releaseScope": false,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 3,
+      "accessibility": 2,
+      "keyboard": 3,
+      "hidpi": 2,
+      "rtl": 2,
+      "tests": 3,
+      "example": 3,
+      "docs": 3,
+      "lastReviewed": "2026-10-05",
+      "gaps": [
+        "Pinned Expressive visual references and native assistive-technology evidence remain before complete maturity."
+      ],
+      "nextActions": [
+        "certify pinned light/dark/high-contrast, RTL, DPR 2.0 and native AT evidence."
+      ],
+      "evidence": {
+        "api": [
+          "Public additive QtMaterialSplitButton API separates primary and secondary child actions."
+        ],
+        "rendering": [
+          "Production source composes two themed QtMaterialFilledButton segments through the existing Expressive button pipeline."
+        ],
+        "states": [
+          "Focused tests verify independent primary and secondary activation and Expressive state."
+        ],
+        "accessibility": [
+          "Primary and secondary actions retain separate focus targets; the trailing action has an explicit accessible name."
+        ],
+        "keyboard": [
+          "Native child buttons preserve Enter/Space activation and independent focus traversal."
+        ],
+        "hidpi": [
+          "Rendering uses device-independent Qt widget geometry; dedicated DPR 2.0 review remains pending."
+        ],
+        "rtl": [
+          "Layout delegates direction to Qt layout and child controls; dedicated RTL visual review remains pending."
+        ],
+        "tests": [
+          "Registered tst_expressive_catalogue exercises Split Button construction and activation contracts."
+        ],
+        "example": [
+          "Gallery coverage is included in the relevant Buttons, Navigation, Progress, Data or Compact Controls page."
+        ],
+        "docs": [
+          "docs/public-api/expressive-catalogue.md documents API, focus and secondary-action usage."
+        ],
+        "notes": [
+          "1.10 component is intentionally outside prior release-scope certification until visual and native AT evidence is reviewed."
+        ]
+      }
+    }
+  },
+  {
+    "id": "button.group",
+    "name": "Button Group",
+    "family": "Buttons",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/buttons/qtmaterialbuttongroup.h",
+    "specType": "N/A",
+    "widgetType": "QtMaterialButtonGroup",
+    "testTarget": "tst_expressive_catalogue",
+    "galleryRoute": "/buttons/button-group",
+    "docsPath": "docs/public-api/expressive-catalogue.md",
+    "releaseScope": false,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 3,
+      "accessibility": 2,
+      "keyboard": 3,
+      "hidpi": 2,
+      "rtl": 3,
+      "tests": 3,
+      "example": 3,
+      "docs": 3,
+      "lastReviewed": "2026-10-05",
+      "gaps": [
+        "Pinned Expressive visual references and native assistive-technology group semantics remain before complete maturity."
+      ],
+      "nextActions": [
+        "certify visual, DPR 2.0 and NVDA/Orca/VoiceOver grouped-selection evidence."
+      ],
+      "evidence": {
+        "api": [
+          "Public additive QtMaterialButtonGroup API exposes exclusive/action modes, selection, spacing and child ownership."
+        ],
+        "rendering": [
+          "Production source reuses the stable Expressive QtMaterialTextButton rendering pipeline and connected segment shapes."
+        ],
+        "states": [
+          "Exclusive mode synchronizes checked state and currentIndex across button activation."
+        ],
+        "accessibility": [
+          "Container publishes an accessible group summary while child buttons retain names, checked state and activation."
+        ],
+        "keyboard": [
+          "Event filtering implements Left/Right, Home and End focus traversal while native child activation remains intact."
+        ],
+        "hidpi": [
+          "Child rendering is device-independent; dedicated grouped DPR 2.0 reference review remains pending."
+        ],
+        "rtl": [
+          "Left/Right traversal mirrors under RightToLeft layout direction."
+        ],
+        "tests": [
+          "Registered tst_expressive_catalogue verifies selection ownership and checked-state synchronization."
+        ],
+        "example": [
+          "Gallery coverage is included in the relevant Buttons, Navigation, Progress, Data or Compact Controls page."
+        ],
+        "docs": [
+          "docs/public-api/expressive-catalogue.md documents exclusive/action behavior and keyboard navigation."
+        ],
+        "notes": [
+          "1.10 component remains outside earlier release scopes."
+        ]
+      }
+    }
+  },
+  {
+    "id": "navigation.floating-toolbar",
+    "name": "Floating Toolbar",
+    "family": "Navigation",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/navigation/qtmaterialfloatingtoolbar.h",
+    "specType": "N/A",
+    "widgetType": "QtMaterialFloatingToolbar",
+    "testTarget": "tst_expressive_catalogue",
+    "galleryRoute": "/navigation/floating-toolbar",
+    "docsPath": "docs/public-api/expressive-catalogue.md",
+    "releaseScope": false,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 3,
+      "accessibility": 2,
+      "keyboard": 3,
+      "hidpi": 2,
+      "rtl": 3,
+      "tests": 3,
+      "example": 3,
+      "docs": 3,
+      "lastReviewed": "2026-10-05",
+      "gaps": [
+        "Pinned theme/state visual references and native toolbar AT semantics remain before complete maturity."
+      ],
+      "nextActions": [
+        "certify expanded/collapsed, orientation, RTL, DPR 2.0 and native AT evidence."
+      ],
+      "evidence": {
+        "api": [
+          "Public additive QtMaterialFloatingToolbar API owns orientation, expansion and application-provided toolbar items."
+        ],
+        "rendering": [
+          "Production source paints a theme-aware SurfaceContainer and reuses public IconButton actions."
+        ],
+        "states": [
+          "Expanded/collapsed presentation keeps the leading action and deterministically hides secondary actions."
+        ],
+        "accessibility": [
+          "Toolbar and generated actions expose accessible names/descriptions; native toolbar-role verification remains pending."
+        ],
+        "keyboard": [
+          "Arrow navigation follows orientation with Home/End boundaries and RTL mirroring for horizontal toolbars."
+        ],
+        "hidpi": [
+          "The surface and child controls use logical Qt geometry; dedicated DPR 2.0 review remains pending."
+        ],
+        "rtl": [
+          "Horizontal arrow semantics explicitly mirror under RTL."
+        ],
+        "tests": [
+          "Registered tst_expressive_catalogue exercises expansion and orientation contracts."
+        ],
+        "example": [
+          "Gallery coverage is included in the relevant Buttons, Navigation, Progress, Data or Compact Controls page."
+        ],
+        "docs": [
+          "docs/public-api/expressive-catalogue.md documents toolbar composition, collapse and keyboard behavior."
+        ],
+        "notes": [
+          "1.10 component remains outside earlier release scopes."
+        ]
+      }
+    }
+  },
+  {
+    "id": "progress.loading-indicator",
+    "name": "Loading Indicator",
+    "family": "Progress",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/progress/qtmaterialloadingindicator.h",
+    "specType": "N/A",
+    "widgetType": "QtMaterialLoadingIndicator",
+    "testTarget": "tst_expressive_catalogue",
+    "galleryRoute": "/progress/loading-indicator",
+    "docsPath": "docs/public-api/expressive-catalogue.md",
+    "releaseScope": false,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 3,
+      "accessibility": 2,
+      "keyboard": "N/A",
+      "hidpi": 2,
+      "rtl": "N/A",
+      "tests": 3,
+      "example": 3,
+      "docs": 3,
+      "lastReviewed": "2026-10-05",
+      "gaps": [
+        "Pinned morphing visual references and native busy-state announcement evidence remain before complete maturity."
+      ],
+      "nextActions": [
+        "certify repeated animation frames, reduced motion, DPR 2.0 and native AT busy-state evidence."
+      ],
+      "evidence": {
+        "api": [
+          "Public additive QtMaterialLoadingIndicator API exposes active state and logical indicator size."
+        ],
+        "rendering": [
+          "Production source paints a theme Primary morphing radial silhouette using a bounded animation."
+        ],
+        "states": [
+          "Active/idle transitions start and stop animation; reduced motion stops at a deterministic static phase."
+        ],
+        "accessibility": [
+          "The non-interactive indicator exposes Loading/In progress or Idle accessible text; native announcement behavior remains pending."
+        ],
+        "keyboard": [
+          "Loading Indicator is non-interactive, so direct keyboard activation is not applicable."
+        ],
+        "hidpi": [
+          "Custom painting uses logical coordinates and antialiasing; dedicated DPR 2.0 references remain pending."
+        ],
+        "rtl": [
+          "The indicator has no directional content, so RTL-specific interaction is not applicable."
+        ],
+        "tests": [
+          "Registered tst_expressive_catalogue verifies active state and sizing contracts."
+        ],
+        "example": [
+          "Gallery coverage is included in the relevant Buttons, Navigation, Progress, Data or Compact Controls page."
+        ],
+        "docs": [
+          "docs/public-api/expressive-catalogue.md documents active state, morphing behavior and reduced motion."
+        ],
+        "notes": [
+          "1.10 component remains outside earlier release scopes."
+        ]
+      }
+    }
+  },
+  {
+    "id": "data.segmented-list",
+    "name": "Segmented List",
+    "family": "Data",
+    "maturity": "usable",
+    "maturityPolicy": "derived",
+    "publicHeader": "qtmaterial/widgets/data/qtmaterialsegmentedlist.h",
+    "specType": "N/A",
+    "widgetType": "QtMaterialSegmentedList",
+    "testTarget": "tst_expressive_catalogue",
+    "galleryRoute": "/data/segmented-list",
+    "docsPath": "docs/public-api/expressive-catalogue.md",
+    "releaseScope": false,
+    "referenceCandidate": false,
+    "maturityAxes": {
+      "api": 3,
+      "rendering": 2,
+      "states": 3,
+      "accessibility": 2,
+      "keyboard": 3,
+      "hidpi": 2,
+      "rtl": 2,
+      "tests": 3,
+      "example": 3,
+      "docs": 3,
+      "lastReviewed": "2026-10-05",
+      "gaps": [
+        "Pinned Expressive segmented-list visuals and native list/selection AT evidence remain before complete maturity."
+      ],
+      "nextActions": [
+        "certify segment geometry, selection, RTL, DPR 2.0 and native AT evidence."
+      ],
+      "evidence": {
+        "api": [
+          "Public additive QtMaterialSegmentedList API derives from QtMaterialList and exposes opt-in Expressive grouping."
+        ],
+        "rendering": [
+          "Production source reuses QtMaterialList/ListItem rendering and assigns Single/First/Middle/Last Expressive geometry."
+        ],
+        "states": [
+          "Segment positions are recomputed after insertion, removal, take and clear operations."
+        ],
+        "accessibility": [
+          "The container retains QtMaterialList accessibility while items preserve names, descriptions and selection state."
+        ],
+        "keyboard": [
+          "Keyboard behavior is inherited from QtMaterialList and QtMaterialListItem activation contracts."
+        ],
+        "hidpi": [
+          "Custom row geometry is logical-pixel based; dedicated segmented DPR 2.0 visual review remains pending."
+        ],
+        "rtl": [
+          "Item painting continues through Qt layout-direction handling; dedicated segmented RTL visual review remains pending."
+        ],
+        "tests": [
+          "Registered tst_expressive_catalogue verifies automatic segment-position assignment."
+        ],
+        "example": [
+          "Gallery coverage is included in the relevant Buttons, Navigation, Progress, Data or Compact Controls page."
+        ],
+        "docs": [
+          "docs/public-api/expressive-catalogue.md documents Expressive List Item and Segmented List behavior."
+        ],
+        "notes": [
+          "1.11 component remains outside earlier release scopes; expressive Menu and Chip are additive modes on existing registry components."
+        ]
+      }
+    }
   }
 ]
