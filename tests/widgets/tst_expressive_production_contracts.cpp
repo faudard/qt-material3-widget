@@ -7,6 +7,7 @@
 
 #include "qtmaterial/widgets/buttons/qtmaterialbuttongroup.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialsplitbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
 #include "qtmaterial/widgets/data/qtmateriallistitem.h"
