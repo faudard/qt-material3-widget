@@ -74,6 +74,7 @@ api/index
 material3/references
 release-process
 components/final-certification-60-60
+components/final-certification-55-55
 release/api-abi-policy
 ```
 
