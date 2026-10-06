@@ -298,6 +298,13 @@ if(QTMATERIAL3_BUILD_VISUAL_REGRESSION_TESTS)
       TIMEOUT 240
       ENVIRONMENT "QTMATERIAL3_ADAPTIVE_VISUAL=1")
 
+  add_test(NAME tst_expressive_catalogue_visual_goldens COMMAND tst_theme_visual_regression
+    expressiveCatalogueStateMatrixCandidateGoldens)
+  set_tests_properties(tst_expressive_catalogue_visual_goldens
+    PROPERTIES
+      LABELS "expressive;1.10;1.11;visual"
+      TIMEOUT 180)
+
 endif()
 
 # Public API guardrail: every public theming header must compile as a standalone include.
