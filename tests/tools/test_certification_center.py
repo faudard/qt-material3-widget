@@ -191,6 +191,12 @@ class CertificationCenterTests(unittest.TestCase):
             center.parse_review_date("05/10/2026")
 
 
+    def test_registry_progress_targets_current_60_component_catalogue(self) -> None:
+        progress = center.registry_completion()
+        self.assertEqual(progress["total"], 60)
+        self.assertEqual(progress["complete"], 43)
+
+
     def test_final_center_tracks_expressive_60_closure(self) -> None:
         self.assertIn("1.10/1.11", center.MILESTONES)
         expressive = center.MILESTONES["1.10/1.11"]
