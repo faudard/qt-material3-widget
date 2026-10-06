@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unified fail-closed certification workflow for the final QtMaterial3 55/55 closure."""
+"""Unified fail-closed certification workflow for the final QtMaterial3 60/60 closure."""
 
 from __future__ import annotations
 
@@ -35,6 +35,13 @@ MILESTONES: dict[str, dict[str, Any]] = {
         "ledger": "docs/components/adaptive-desktop-certification-1.9.json",
         "checker": "tools/check_adaptive_desktop_1_9.py",
         "promoter": "tools/promote_adaptive_desktop_1_9.py",
+        "visual": True,
+    },
+    "1.10/1.11": {
+        "name": "Expressive Catalogue / Data",
+        "ledger": "docs/components/expressive-certification-1.10-1.11.json",
+        "checker": "tools/check_expressive_catalogue_1_10_1_11.py",
+        "promoter": "tools/promote_expressive_1_10_1_11.py",
         "visual": True,
     },
 }
@@ -442,8 +449,11 @@ def command_record(args: argparse.Namespace) -> int:
 
 
 def command_visual(args: argparse.Namespace) -> int:
-    if args.milestone not in {"1.7", "1.9"}:
-        raise ValueError("visual review is supported only for 1.7 and 1.9")
+    config = MILESTONES.get(args.milestone)
+    if not isinstance(config, dict) or not config.get("visual", False):
+        raise ValueError(
+            f"visual review is not supported for milestone {args.milestone!r}"
+        )
     if not args.confirm_reviewed_all_goldens:
         raise ValueError(
             "refusing to record visual review without "
@@ -496,7 +506,7 @@ def command_promote(args: argparse.Namespace) -> int:
     if not args.apply:
         print(
             "All final certification gates are complete. "
-            "Run again with --apply to promote 1.5 -> 1.7 -> 1.9 to 55/55."
+            "Run again with --apply to promote 1.5 -> 1.7 -> 1.9 -> 1.10/1.11 to 60/60."
         )
         return 0
 
@@ -509,7 +519,7 @@ def command_promote(args: argparse.Namespace) -> int:
             ]
         )
 
-    print("Final QtMaterial3 certification promotion completed through 55/55.")
+    print("Final QtMaterial3 certification promotion completed through 60/60.")
     return 0
 
 
@@ -519,7 +529,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     status_parser = subparsers.add_parser(
         "status",
-        help="show the combined 1.5 / 1.7 / 1.9 certification state",
+        help="show the combined 1.5 / 1.7 / 1.9 / 1.10-1.11 certification state",
     )
     status_parser.add_argument("--json", action="store_true")
     status_parser.add_argument("--require-complete", action="store_true")
@@ -553,9 +563,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     visual_parser = subparsers.add_parser(
         "review-visual",
-        help="record explicit human review of committed 1.7 or 1.9 goldens",
+        help="record explicit human review of committed visual certification goldens",
     )
-    visual_parser.add_argument("--milestone", choices=("1.7", "1.9"), required=True)
+    visual_parser.add_argument(\n        "--milestone",\n        choices=tuple(\n            milestone\n            for milestone, config in MILESTONES.items()\n            if config.get("visual", False)\n        ),\n        required=True,\n    )
     visual_parser.add_argument("--status", choices=("pass", "fail"), required=True)
     visual_parser.add_argument("--reviewer", required=True)
     visual_parser.add_argument("--reviewed-at", required=True)
@@ -569,7 +579,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     promote_parser = subparsers.add_parser(
         "promote",
-        help="preflight or apply the complete 1.5 -> 1.7 -> 1.9 promotion chain",
+        help="preflight or apply the complete 1.5 -> 1.7 -> 1.9 -> 1.10/1.11 promotion chain",
     )
     promote_parser.add_argument("--apply", action="store_true")
     promote_parser.set_defaults(func=command_promote)
