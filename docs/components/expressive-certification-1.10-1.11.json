@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "certification": "QtMaterial3 1.10 / 1.11 Expressive Catalogue and Data",
+  "requiredComponents": [
+    "button.split",
+    "button.group",
+    "navigation.floating-toolbar",
+    "progress.loading-indicator",
+    "data.segmented-list"
+  ],
+  "integratedModes": [
+    "navigation.menu",
+    "compact.chip"
+  ],
+  "visual": {
+    "prefix": "expressive_catalogue_matrix",
+    "renderer": {
+      "qtVersion": "6.4.0",
+      "style": "Fusion",
+      "platform": "xcb",
+      "scaleFactor": "1",
+      "fontDpi": "96"
+    },
+    "status": "pending",
+    "reviewer": "",
+    "reviewedAt": "",
+    "evidence": "",
+    "requiredGoldens": [
+      "tests/visual/goldens/expressive_catalogue_matrix_light_standard.png",
+      "tests/visual/goldens/expressive_catalogue_matrix_dark_standard.png",
+      "tests/visual/goldens/expressive_catalogue_matrix_light_high.png"
+    ]
+  },
+  "platforms": {
+    "windows-nvda": {
+      "screenReader": "NVDA",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "components": {
+        "button.split": {
+          "primaryAction": "pending",
+          "secondaryAction": "pending",
+          "focusOrder": "pending",
+          "disabledState": "pending"
+        },
+        "button.group": {
+          "traversal": "pending",
+          "checkedState": "pending",
+          "activation": "pending",
+          "rtlTraversal": "pending"
+        },
+        "navigation.floating-toolbar": {
+          "traversal": "pending",
+          "collapsedState": "pending",
+          "activation": "pending",
+          "orientation": "pending"
+        },
+        "progress.loading-indicator": {
+          "busyAnnouncement": "pending",
+          "idleAnnouncement": "pending",
+          "reducedMotionState": "pending",
+          "stateChange": "pending"
+        },
+        "data.segmented-list": {
+          "traversal": "pending",
+          "selectionState": "pending",
+          "activation": "pending",
+          "segmentContext": "pending"
+        },
+        "navigation.menu": {
+          "traversal": "pending",
+          "expressiveState": "pending",
+          "activation": "pending",
+          "focus": "pending"
+        },
+        "compact.chip": {
+          "checkedState": "pending",
+          "activation": "pending",
+          "removal": "pending",
+          "focus": "pending"
+        }
+      }
+    },
+    "linux-orca": {
+      "screenReader": "Orca",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "components": {
+        "button.split": {
+          "primaryAction": "pending",
+          "secondaryAction": "pending",
+          "focusOrder": "pending",
+          "disabledState": "pending"
+        },
+        "button.group": {
+          "traversal": "pending",
+          "checkedState": "pending",
+          "activation": "pending",
+          "rtlTraversal": "pending"
+        },
+        "navigation.floating-toolbar": {
+          "traversal": "pending",
+          "collapsedState": "pending",
+          "activation": "pending",
+          "orientation": "pending"
+        },
+        "progress.loading-indicator": {
+          "busyAnnouncement": "pending",
+          "idleAnnouncement": "pending",
+          "reducedMotionState": "pending",
+          "stateChange": "pending"
+        },
+        "data.segmented-list": {
+          "traversal": "pending",
+          "selectionState": "pending",
+          "activation": "pending",
+          "segmentContext": "pending"
+        },
+        "navigation.menu": {
+          "traversal": "pending",
+          "expressiveState": "pending",
+          "activation": "pending",
+          "focus": "pending"
+        },
+        "compact.chip": {
+          "checkedState": "pending",
+          "activation": "pending",
+          "removal": "pending",
+          "focus": "pending"
+        }
+      }
+    },
+    "macos-voiceover": {
+      "screenReader": "VoiceOver",
+      "status": "pending",
+      "reviewer": "",
+      "reviewedAt": "",
+      "evidence": "",
+      "components": {
+        "button.split": {
+          "primaryAction": "pending",
+          "secondaryAction": "pending",
+          "focusOrder": "pending",
+          "disabledState": "pending"
+        },
+        "button.group": {
+          "traversal": "pending",
+          "checkedState": "pending",
+          "activation": "pending",
+          "rtlTraversal": "pending"
+        },
+        "navigation.floating-toolbar": {
+          "traversal": "pending",
+          "collapsedState": "pending",
+          "activation": "pending",
+          "orientation": "pending"
+        },
+        "progress.loading-indicator": {
+          "busyAnnouncement": "pending",
+          "idleAnnouncement": "pending",
+          "reducedMotionState": "pending",
+          "stateChange": "pending"
+        },
+        "data.segmented-list": {
+          "traversal": "pending",
+          "selectionState": "pending",
+          "activation": "pending",
+          "segmentContext": "pending"
+        },
+        "navigation.menu": {
+          "traversal": "pending",
+          "expressiveState": "pending",
+          "activation": "pending",
+          "focus": "pending"
+        },
+        "compact.chip": {
+          "checkedState": "pending",
+          "activation": "pending",
+          "removal": "pending",
+          "focus": "pending"
+        }
+      }
+    }
+  }
+}

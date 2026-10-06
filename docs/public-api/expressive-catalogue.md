@@ -97,3 +97,11 @@ unchanged.
 
 All additions are source-additive for the 1.x line. Qt 5.14.2 remains the
 minimum Qt 5 target, and the implementations avoid Qt 6-only APIs.
+## Production certification
+
+The 1.10/1.11 components intentionally enter the catalogue as `usable` rather
+than claiming complete maturity from implementation alone. Deterministic visual
+review and native NVDA/Orca/VoiceOver evidence are tracked by the fail-closed
+ledger and runbook in
+[Expressive certification](../components/expressive-certification-1.10-1.11.md).
+
