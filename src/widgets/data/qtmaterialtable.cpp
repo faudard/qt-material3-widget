@@ -789,8 +789,14 @@ void QtMaterialTable::keyPressEvent(
         return;
     }
 
+    const Qt::KeyboardModifiers commandModifiers =
+        event->modifiers()
+        & (Qt::ShiftModifier
+           | Qt::ControlModifier
+           | Qt::AltModifier
+           | Qt::MetaModifier);
     const bool plainActivation =
-        event->modifiers() == Qt::NoModifier;
+        commandModifiers == Qt::NoModifier;
 
     switch (event->key()) {
     case Qt::Key_Return:
