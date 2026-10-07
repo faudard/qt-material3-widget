@@ -41,3 +41,29 @@ Budgets are expressed as process CPU milliseconds and resident-memory growth (Mi
 Hosted pull-request runs are report-only; scheduled/manual Linux runs enforce the checked-in
 budget table. A budget increase requires a rationale in the PR and must not be used to hide
 an uninvestigated regression.
+
+
+## Desktop Scale 2.0 gate
+
+The 1.21 gate extends the 1.14 scale evidence to sustained desktop-application workloads.
+
+Required workloads:
+
+- Table and Tree View over 1,000,000-row/item virtual models,
+- lazy model growth to 1,000,000 rows through repeated `fetchMore()`,
+- application-owned `QSortFilterProxyModel` filtering across 1,000,000 source rows,
+- 100,000-command Command Palette provider snapshots and repeated fuzzy refreshes,
+- thousands of global theme changes with live Material widgets,
+- adaptive shell resize storms crossing every width breakpoint,
+- repeated Dialog and Side Sheet construction/open/close/destruction,
+- sustained shadow/pixmap cache hit traffic,
+- post-warm-up long-run create/destroy cycles with retained-RSS observation.
+
+Desktop Scale 2.0 records per-scenario process CPU, RSS growth, p95 and p99 operation
+latency. Pull requests collect report-only evidence. Scheduled/manual Linux runs enforce
+the checked-in budgets in `docs/performance/desktop-scale-2-budgets.json`.
+
+A canonical history artifact stores the latest bounded per-commit results from `main`.
+Pull requests compare against that history without mutating it. Scheduled/manual runs also
+capture a Valgrind Massif heap profile for the long-run lifecycle scenario so allocation
+growth can be investigated separately from RSS/tail-latency gates.

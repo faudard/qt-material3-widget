@@ -9,6 +9,8 @@ on:
       - "src/**"
       - "include/**"
       - "scripts/run_performance_baseline.py"
+      - "scripts/update_performance_history.py"
+      - "scripts/profile_desktop_scale_allocations.py"
       - "docs/performance/**"
       - "docs/public-api/performance-and-caching.md"
       - "docs/release/performance-policy.md"
@@ -24,6 +26,7 @@ concurrency:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   linux-scale:
@@ -41,18 +44,66 @@ jobs:
       - name: Install Qt/build dependencies
         run: bash scripts/ci/install-ubuntu-deps.sh
 
-      - name: Build and collect scale baseline
-        run: python3 scripts/run_performance_baseline.py build-perf --scale
+      - name: Restore canonical performance history
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p build-perf/performance-history-previous
+          artifact_id="$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100&name=performance-history-main" --jq '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | last | .id // empty')"
+          if [ -n "$artifact_id" ]; then
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}/zip" > /tmp/performance-history.zip
+            unzip -q -o /tmp/performance-history.zip -d build-perf/performance-history-previous
+          fi
 
-      - name: Enforce CPU/RSS budgets
+      - name: Build and collect Desktop Scale 2.0 baseline
+        run: >
+          python3 scripts/run_performance_baseline.py
+          build-perf
+          --desktop-scale-2
+
+      - name: Update per-commit performance history
+        run: |
+          previous=""
+          if [ -f build-perf/performance-history-previous/performance-history.json ]; then
+            previous="--previous build-perf/performance-history-previous/performance-history.json"
+          fi
+          python3 scripts/update_performance_history.py --current build-perf/performance-results/desktop-scale-2.json $previous --output build-perf/performance-results/performance-history.json --summary build-perf/performance-results/performance-summary.md --commit "$GITHUB_SHA" --ref "${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}" --event "$GITHUB_EVENT_NAME"
+
+      - name: Publish performance summary
+        run: cat build-perf/performance-results/performance-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Enforce CPU/RSS/p95/p99 budgets
         if: github.event_name != 'pull_request'
         env:
           QTMATERIAL3_RUN_SCALE_PERF: "1"
+          QTMATERIAL3_RUN_DESKTOP_SCALE_2: "1"
           QTMATERIAL3_ENFORCE_PERF_BUDGETS: "1"
         run: >
           ctest --test-dir build-perf
           --output-on-failure
-          -R "^tst_scale_performance_contracts$"
+          -R "^(tst_scale_performance_contracts|tst_desktop_scale_2_contracts)$"
+
+      - name: Install heap profiler
+        if: github.event_name != 'pull_request'
+        run: sudo apt-get install -y valgrind
+
+      - name: Profile long-run allocations
+        if: github.event_name != 'pull_request'
+        run: >
+          python3 scripts/profile_desktop_scale_allocations.py
+          build-perf
+          --output-dir build-perf/performance-results/allocation-profile
+          --cycles 40
+
+      - name: Upload canonical performance history
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v6
+        with:
+          name: performance-history-main
+          path: build-perf/performance-results/performance-history.json
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Upload performance evidence
         if: always()
@@ -61,6 +112,5 @@ jobs:
           name: performance-scale-linux
           path: |
             build-perf/performance-results/
-            build-perf/tests/tst_scale_performance_contracts.txt
             build-perf/Testing/Temporary/LastTest.log
           if-no-files-found: warn

@@ -24,6 +24,7 @@ unless a stricter ABI policy is published.
 - Designer 3.0 adds specialized color/token, enum, date/time and collection editors; token/default reset support through Designer's reset path; Compact/Medium/Expanded, DPR 1x/2x and LTR/RTL preview rendering; six theme presets; and promotes Adaptive Shell, Tooltip and Badge for a 35-control palette.
 - Adaptive Shell exposes serializable `automaticDensity` and `supportingPaneWidth` properties for no-code Designer authoring.
 - Native Qt button adaptation lets existing `QPushButton` instances opt into Text/Filled/FilledTonal/Outlined/Elevated Material rendering, density, effective ThemeContext updates, widget-tree migration and opt-out without replacing their Qt type or signal contract.
+- Desktop Scale 2.0 adds million-row Table/Tree and proxy/lazy-model workloads, 100k Command Palette scale, theme/resize/surface/cache storms, p95/p99 budgets, long-run memory detection, per-commit performance history and scheduled Massif heap profiling.
 - Designer 2.0 adds Material task-menu property authoring, reversible Light/Dark/Expressive previews and explicit Tabs/Adaptive Shell container extensions when Qt's Designer development API is available.
 - The Designer palette grows to 32 persistence-safe controls, adding Split Button, Button Group, Navigation Bar, Loading Indicator and Segmented List with AUTOUIC round-trip coverage.
 - Button Group, Navigation Bar and Segmented List expose serializable QStringList authoring properties for their labels.

@@ -332,6 +332,27 @@ if(WIN32)
     target_link_libraries(tst_scale_performance_contracts PRIVATE Psapi)
 endif()
 
+qtm3_add_test(
+    tst_desktop_scale_2_contracts
+    performance/tst_desktop_scale_2_contracts.cpp
+    qtmaterial3_theme_model
+    qtmaterial3_theme_io
+    qtmaterial3_theme_runtime
+    qtmaterial3_core
+    qtmaterial3_effects
+    qtmaterial3_specs
+    qtmaterial3_widgets
+)
+target_compile_definitions(tst_desktop_scale_2_contracts PRIVATE
+    QTMATERIAL3_DESKTOP_SCALE_2_BUDGET_FILE="${PROJECT_SOURCE_DIR}/docs/performance/desktop-scale-2-budgets.json")
+set_tests_properties(tst_desktop_scale_2_contracts
+    PROPERTIES
+      LABELS "performance;scale;desktop-scale-2"
+      TIMEOUT 900)
+if(WIN32)
+    target_link_libraries(tst_desktop_scale_2_contracts PRIVATE Psapi)
+endif()
+
 # Release architecture cleanup tests.
 qtm3_add_test(tst_interactionstate_contracts core/tst_interactionstate_contracts.cpp qtmaterial3_core)
 qtm3_add_test(tst_metadataruntime core/tst_metadataruntime.cpp qtmaterial3_core)
