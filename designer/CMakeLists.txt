@@ -1,8 +1,20 @@
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS UiPlugin)
+find_package(Qt${QT_VERSION_MAJOR} QUIET COMPONENTS Designer)
 
-add_library(qtmaterial3_designer_plugin MODULE
+set(_qtm3_designer_plugin_sources
     qtmaterial3designercollection.cpp
     qtmaterial3designercollection.h
+)
+
+if(TARGET Qt${QT_VERSION_MAJOR}::Designer)
+    list(APPEND _qtm3_designer_plugin_sources
+        qtmaterial3designerextensions.cpp
+        qtmaterial3designerextensions.h
+    )
+endif()
+
+add_library(qtmaterial3_designer_plugin MODULE
+    ${_qtm3_designer_plugin_sources}
 )
 
 target_compile_features(qtmaterial3_designer_plugin PRIVATE cxx_std_17)
@@ -19,6 +31,20 @@ target_link_libraries(qtmaterial3_designer_plugin
 target_include_directories(qtmaterial3_designer_plugin
     PRIVATE "${PROJECT_SOURCE_DIR}/include"
 )
+
+if(TARGET Qt${QT_VERSION_MAJOR}::Designer)
+    target_link_libraries(qtmaterial3_designer_plugin
+        PRIVATE Qt${QT_VERSION_MAJOR}::Designer
+    )
+    target_compile_definitions(qtmaterial3_designer_plugin
+        PRIVATE QTMATERIAL3_HAS_DESIGNER_EXTENSIONS=1
+    )
+else()
+    message(STATUS
+        "Qt Designer development API not found: building palette-only plugin; "
+        "task menus, theme previews and custom container extensions are disabled"
+    )
+endif()
 
 set_target_properties(qtmaterial3_designer_plugin PROPERTIES
     AUTOMOC ON
@@ -73,4 +99,23 @@ if(QTMATERIAL3_BUILD_TESTS)
     )
     set_target_properties(tst_qtmaterial3_designer_ui_smoke PROPERTIES AUTOUIC ON)
     add_test(NAME designer_ui_smoke COMMAND tst_qtmaterial3_designer_ui_smoke)
+
+    if(TARGET Qt${QT_VERSION_MAJOR}::Designer)
+        add_executable(tst_qtmaterial3_designer_extensions
+            tst_designerextensions.cpp
+            qtmaterial3designerextensions.cpp
+            qtmaterial3designerextensions.h
+        )
+        target_link_libraries(tst_qtmaterial3_designer_extensions
+            PRIVATE
+                Qt${QT_VERSION_MAJOR}::Test
+                Qt${QT_VERSION_MAJOR}::Designer
+                qtmaterial3_widgets
+        )
+        target_include_directories(tst_qtmaterial3_designer_extensions
+            PRIVATE "${PROJECT_SOURCE_DIR}/include"
+        )
+        set_target_properties(tst_qtmaterial3_designer_extensions PROPERTIES AUTOMOC ON)
+        add_test(NAME designer_extensions_contract COMMAND tst_qtmaterial3_designer_extensions)
+    endif()
 endif()
