@@ -5,6 +5,7 @@
 #include <QAbstractItemModel>
 #include <QAbstractListModel>
 #include <QApplication>
+#include <QDataStream>
 #include <QEvent>
 #include <QHash>
 #include <QHideEvent>
@@ -739,6 +740,63 @@ void QtMaterialCommandPalette::setActivationShortcuts(const QList<QKeySequence>&
         d_ptr->shortcuts.push_back(shortcut);
         d_ptr->activationShortcuts.push_back(key);
     }
+}
+
+QByteArray QtMaterialCommandPalette::saveWorkspaceState() const
+{
+    constexpr quint32 magic = 0x514d4357; // QMCW
+    constexpr quint32 version = 1;
+
+    QByteArray state;
+    QDataStream stream(&state, QIODevice::WriteOnly);
+    stream.setVersion(QDataStream::Qt_5_12);
+    stream
+        << magic
+        << version
+        << favoriteCommandIds()
+        << recentCommandIds()
+        << fuzzyMatchingEnabled();
+    return state;
+}
+
+bool QtMaterialCommandPalette::restoreWorkspaceState(
+    const QByteArray& state)
+{
+    constexpr quint32 magic = 0x514d4357; // QMCW
+    constexpr quint32 version = 1;
+
+    QDataStream stream(state);
+    stream.setVersion(QDataStream::Qt_5_12);
+
+    quint32 storedMagic = 0;
+    quint32 storedVersion = 0;
+    QStringList favorites;
+    QStringList recents;
+    bool fuzzy = true;
+    stream
+        >> storedMagic
+        >> storedVersion
+        >> favorites
+        >> recents
+        >> fuzzy;
+
+    if (
+        stream.status() != QDataStream::Ok
+        || !stream.atEnd()
+        || storedMagic != magic
+        || storedVersion != version
+        || favorites.size() > 10000
+        || recents.size() > 1000) {
+        return false;
+    }
+
+    favorites = normalizedIds(favorites);
+    recents = normalizedIds(recents, 20);
+
+    setFavoriteCommandIds(favorites);
+    setRecentCommandIds(recents);
+    setFuzzyMatchingEnabled(fuzzy);
+    return true;
 }
 
 void QtMaterialCommandPalette::openPalette()

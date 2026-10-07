@@ -520,6 +520,17 @@ bool QtMaterialSplitView::restorePaneState(const QByteArray& state)
     return true;
 }
 
+QByteArray QtMaterialSplitView::saveWorkspaceState() const
+{
+    return savePaneState();
+}
+
+bool QtMaterialSplitView::restoreWorkspaceState(
+    const QByteArray& state)
+{
+    return restorePaneState(state);
+}
+
 bool QtMaterialSplitView::rememberPaneSizes() const noexcept { return d_ptr->rememberPaneSizes; }
 void QtMaterialSplitView::setRememberPaneSizes(bool remember)
 {

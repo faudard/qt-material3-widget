@@ -4,6 +4,7 @@
 #include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include <QAbstractItemModel>
 #include <QAccessible>
+#include <QDataStream>
 #include <QFocusEvent>
 #include <QHeaderView>
 #include <QItemSelectionModel>
@@ -261,6 +262,19 @@ QtMaterialTable::QtMaterialTable(
     setShowGrid(true);
     setFocusPolicy(Qt::StrongFocus);
     setSortingEnabled(true);
+    setEditTriggers(
+        QAbstractItemView::DoubleClicked
+        | QAbstractItemView::EditKeyPressed);
+
+    connect(
+        viewport(),
+        &QWidget::customContextMenuRequested,
+        this,
+        [this](const QPoint& position) {
+            Q_EMIT contextMenuRequested(
+                indexAt(position),
+                viewport()->mapToGlobal(position));
+        });
 
     d_ptr->delegate =
         new MaterialTableDelegate(this);
@@ -454,6 +468,44 @@ void QtMaterialTable::setDragDropEnabled(bool enabled)
     Q_EMIT dragDropEnabledChanged(enabled);
 }
 
+bool QtMaterialTable::inlineEditingEnabled() const noexcept
+{
+    return editTriggers() != QAbstractItemView::NoEditTriggers;
+}
+
+void QtMaterialTable::setInlineEditingEnabled(bool enabled)
+{
+    if (inlineEditingEnabled() == enabled) {
+        return;
+    }
+
+    setEditTriggers(
+        enabled
+            ? QAbstractItemView::EditTriggers(
+                QAbstractItemView::DoubleClicked
+                | QAbstractItemView::EditKeyPressed)
+            : QAbstractItemView::NoEditTriggers);
+    Q_EMIT inlineEditingEnabledChanged(enabled);
+}
+
+bool QtMaterialTable::contextMenuEnabled() const noexcept
+{
+    return viewport()->contextMenuPolicy() == Qt::CustomContextMenu;
+}
+
+void QtMaterialTable::setContextMenuEnabled(bool enabled)
+{
+    if (contextMenuEnabled() == enabled) {
+        return;
+    }
+
+    viewport()->setContextMenuPolicy(
+        enabled
+            ? Qt::CustomContextMenu
+            : Qt::DefaultContextMenu);
+    Q_EMIT contextMenuEnabledChanged(enabled);
+}
+
 QString
 QtMaterialTable::accessibilitySummary() const
 {
@@ -554,6 +606,125 @@ QString QtMaterialTable::rowAccessibleText(
                 QStringLiteral(", ")));
 }
 
+QByteArray QtMaterialTable::saveWorkspaceState() const
+{
+    constexpr quint32 magic = 0x514d5457; // QMTW
+    constexpr quint32 version = 1;
+
+    QByteArray state;
+    QDataStream stream(&state, QIODevice::WriteOnly);
+    stream.setVersion(QDataStream::Qt_5_12);
+
+    const QHeaderView* header = horizontalHeader();
+    stream
+        << magic
+        << version
+        << qint32(header ? header->count() : 0)
+        << (header ? header->saveState() : QByteArray())
+        << dense()
+        << multiSelectionEnabled()
+        << columnReorderingEnabled()
+        << cellSelectionEnabled()
+        << dragDropEnabled()
+        << inlineEditingEnabled()
+        << contextMenuEnabled()
+        << isSortingEnabled()
+        << qint32(header ? header->sortIndicatorSection() : -1)
+        << qint32(
+            header
+                ? int(header->sortIndicatorOrder())
+                : int(Qt::AscendingOrder));
+
+    return state;
+}
+
+bool QtMaterialTable::restoreWorkspaceState(
+    const QByteArray& state)
+{
+    constexpr quint32 magic = 0x514d5457; // QMTW
+    constexpr quint32 version = 1;
+
+    QDataStream stream(state);
+    stream.setVersion(QDataStream::Qt_5_12);
+
+    quint32 storedMagic = 0;
+    quint32 storedVersion = 0;
+    qint32 sectionCount = 0;
+    QByteArray headerState;
+    bool storedDense = false;
+    bool storedMultiSelection = false;
+    bool storedColumnReordering = false;
+    bool storedCellSelection = false;
+    bool storedDragDrop = false;
+    bool storedInlineEditing = false;
+    bool storedContextMenu = false;
+    bool storedSorting = false;
+    qint32 sortSection = -1;
+    qint32 sortOrder = int(Qt::AscendingOrder);
+
+    stream
+        >> storedMagic
+        >> storedVersion
+        >> sectionCount
+        >> headerState
+        >> storedDense
+        >> storedMultiSelection
+        >> storedColumnReordering
+        >> storedCellSelection
+        >> storedDragDrop
+        >> storedInlineEditing
+        >> storedContextMenu
+        >> storedSorting
+        >> sortSection
+        >> sortOrder;
+
+    if (
+        stream.status() != QDataStream::Ok
+        || !stream.atEnd()
+        || storedMagic != magic
+        || storedVersion != version
+        || sectionCount < 0
+        || sortOrder < int(Qt::AscendingOrder)
+        || sortOrder > int(Qt::DescendingOrder)) {
+        return false;
+    }
+
+    QHeaderView* header = horizontalHeader();
+    if (!header || header->count() != sectionCount) {
+        return false;
+    }
+    if (
+        sortSection < -1
+        || sortSection >= sectionCount) {
+        return false;
+    }
+
+    const QByteArray previousHeaderState =
+        header->saveState();
+
+    if (!header->restoreState(headerState)) {
+        header->restoreState(previousHeaderState);
+        return false;
+    }
+
+    setDense(storedDense);
+    setMultiSelectionEnabled(storedMultiSelection);
+    setColumnReorderingEnabled(storedColumnReordering);
+    setCellSelectionEnabled(storedCellSelection);
+    setDragDropEnabled(storedDragDrop);
+    setInlineEditingEnabled(storedInlineEditing);
+    setContextMenuEnabled(storedContextMenu);
+    setSortingEnabled(storedSorting);
+    if (storedSorting && sortSection >= 0) {
+        sortByColumn(
+            sortSection,
+            static_cast<Qt::SortOrder>(sortOrder));
+    }
+
+    syncAccessibility();
+    return true;
+}
+
 void QtMaterialTable::
 activateCurrentRow()
 {
@@ -618,17 +789,25 @@ void QtMaterialTable::keyPressEvent(
         return;
     }
 
+    const bool plainActivation =
+        event->modifiers() == Qt::NoModifier;
+
     switch (event->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter:
     case Qt::Key_Space:
-        activateCurrentRow();
-        event->accept();
-        return;
+        if (plainActivation) {
+            activateCurrentRow();
+            event->accept();
+            return;
+        }
+        break;
     default:
         break;
     }
 
+    // Modifier-based selection (Shift/Ctrl/Meta + arrows/Space), F2 editing,
+    // Home/End and page navigation stay under QTableView ownership.
     QTableView::keyPressEvent(event);
 }
 

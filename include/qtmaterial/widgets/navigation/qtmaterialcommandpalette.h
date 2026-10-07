@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include <QByteArray>
 #include <QDialog>
 #include <QIcon>
 #include <QKeySequence>
@@ -94,6 +95,20 @@ public:
 
     QList<QKeySequence> activationShortcuts() const;
     void setActivationShortcuts(const QList<QKeySequence>& shortcuts);
+
+    /**
+     * Saves user-facing palette preferences (favorites, recents and fuzzy
+     * matching). Providers, source models, shortcuts and the transient query
+     * remain application-owned and are not serialized.
+     */
+    QByteArray saveWorkspaceState() const;
+
+    /**
+     * Restores preferences produced by saveWorkspaceState().
+     * Malformed/unsupported payloads are rejected before any preference is
+     * changed.
+     */
+    bool restoreWorkspaceState(const QByteArray& state);
 
 public Q_SLOTS:
     void openPalette();
