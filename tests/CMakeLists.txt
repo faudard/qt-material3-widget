@@ -174,6 +174,8 @@ qtm3_add_test(tst_themedtable widgets/data/tst_themedtable.cpp qtmaterial3_widge
 qtm3_add_test(tst_table_resolvedspec widgets/data/tst_table_resolvedspec.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_desktop_productivity widgets/data/tst_desktop_productivity.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_desktop_navigation_v2 widgets/data/tst_desktop_navigation_v2.cpp qtmaterial3_widgets)
+qtm3_add_test(tst_desktop_workspace_state widgets/tst_desktop_workspace_state.cpp qtmaterial3_widgets)
+set_tests_properties(tst_desktop_workspace_state PROPERTIES LABELS "desktop;workspace;state")
 qtm3_add_test(tst_expressive_foundation effects/tst_expressive_foundation.cpp qtmaterial3_effects qtmaterial3_theme_io)
 qtm3_add_test(tst_gridlist widgets/data/tst_gridlist.cpp qtmaterial3_widgets)
 qtm3_add_test(tst_themedgridlist widgets/data/tst_themedgridlist.cpp qtmaterial3_widgets)
