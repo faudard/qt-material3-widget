@@ -80,6 +80,8 @@ private Q_SLOTS:
         table.setColumnReorderingEnabled(true);
         table.setCellSelectionEnabled(true);
         table.setDragDropEnabled(true);
+        table.setInlineEditingEnabled(false);
+        table.setContextMenuEnabled(true);
         table.setSortingEnabled(true);
         table.sortByColumn(2, Qt::DescendingOrder);
 
@@ -97,6 +99,8 @@ private Q_SLOTS:
         table.setColumnReorderingEnabled(false);
         table.setCellSelectionEnabled(false);
         table.setDragDropEnabled(false);
+        table.setInlineEditingEnabled(true);
+        table.setContextMenuEnabled(false);
         table.setSortingEnabled(false);
         header->resizeSection(1, 80);
         header->moveSection(header->visualIndex(0), 0);
@@ -107,6 +111,8 @@ private Q_SLOTS:
         QVERIFY(table.columnReorderingEnabled());
         QVERIFY(table.cellSelectionEnabled());
         QVERIFY(table.dragDropEnabled());
+        QVERIFY(!table.inlineEditingEnabled());
+        QVERIFY(table.contextMenuEnabled());
         QVERIFY(table.isSortingEnabled());
         QCOMPARE(header->visualIndex(0), savedVisualIndex);
         QCOMPARE(header->sectionSize(1), savedSectionSize);
@@ -152,6 +158,8 @@ private Q_SLOTS:
         tree.setDense(true);
         tree.setMultiSelectionEnabled(true);
         tree.setDragDropEnabled(true);
+        tree.setInlineEditingEnabled(false);
+        tree.setContextMenuEnabled(true);
 
         QHeaderView* header = tree.header();
         header->resizeSection(0, 211);
@@ -167,6 +175,8 @@ private Q_SLOTS:
         tree.setDense(false);
         tree.setMultiSelectionEnabled(false);
         tree.setDragDropEnabled(false);
+        tree.setInlineEditingEnabled(true);
+        tree.setContextMenuEnabled(false);
         header->resizeSection(0, 90);
         header->moveSection(header->visualIndex(0), 0);
 
@@ -177,6 +187,8 @@ private Q_SLOTS:
         QVERIFY(tree.dense());
         QVERIFY(tree.multiSelectionEnabled());
         QVERIFY(tree.dragDropEnabled());
+        QVERIFY(!tree.inlineEditingEnabled());
+        QVERIFY(tree.contextMenuEnabled());
         QCOMPARE(header->visualIndex(0), savedVisualIndex);
         QCOMPARE(header->sectionSize(0), savedSectionSize);
         QVERIFY(
