@@ -13,8 +13,8 @@ layer.
 
 | Widget | Persisted state |
 | --- | --- |
-| `QtMaterialTable` | column order/size/visibility, sort presentation, dense mode, row/cell selection policy, multi-selection, column reordering and internal drag/drop policy |
-| `QtMaterialTreeView` | header order/size/visibility, dense/multi-selection/drag-drop policies, current item and the visible expanded hierarchy |
+| `QtMaterialTable` | column order/size/visibility, sort presentation, dense mode, row/cell selection policy, multi-selection, column reordering, internal drag/drop, inline editing and context-menu policy |
+| `QtMaterialTreeView` | header order/size/visibility, dense/multi-selection/drag-drop/editing/context-menu policies, current item and the visible expanded hierarchy |
 | `QtMaterialCommandPalette` | favorites, recent commands and fuzzy-matching preference |
 | `QtMaterialNavigationSuite` | selected destination, adaptive width class and destination enabled states |
 | `QtMaterialSplitView` | existing pane geometry/collapse schema through the uniform workspace-state naming |
@@ -71,6 +71,11 @@ splitView->restoreWorkspaceState(
 
 Applications should treat a `false` result as a normal compatibility miss and
 continue with their current/default workspace.
+
+Table and Tree View keep editing and menu ownership native: `inlineEditingEnabled`
+only selects native edit triggers (DoubleClick/F2), while `contextMenuEnabled` enables a
+`contextMenuRequested(index, globalPosition)` signal for application-owned menus. Those
+preferences are part of the workspace snapshot.
 
 ## Compatibility and fail-safe restore
 
