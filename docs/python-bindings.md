@@ -95,8 +95,7 @@ QObject ownership follows Qt rather than Python reference counting. Adaptive siz
 - Constructors with a conventional `parent` argument use Shiboken's
   parent-constructor heuristic.
 - QObject-derived QtMaterial3 wrappers request deletion on their owning thread.
-- Adaptive Shell content/supporting widgets explicitly transfer parent
-  ownership to the shell in the type system.
+- Pointer-owning Adaptive Shell composition is intentionally not bound in 1.17; it remains outside the initial Python ABI until replacement/unparenting ownership semantics have dedicated tests.
 - Tests destroy a C++ parent with `Shiboken.delete()`, verify the child wrapper
   becomes invalid, then force Python garbage collection. This guards the
   double-free case as well as stale-wrapper use.
