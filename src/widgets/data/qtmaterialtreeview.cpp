@@ -180,6 +180,18 @@ QtMaterialTreeView::QtMaterialTreeView(QWidget* parent)
     setExpandsOnDoubleClick(true);
     setIndentation(20);
     setDragDropMode(QAbstractItemView::NoDragDrop);
+    setEditTriggers(
+        QAbstractItemView::DoubleClicked
+        | QAbstractItemView::EditKeyPressed);
+    connect(
+        viewport(),
+        &QWidget::customContextMenuRequested,
+        this,
+        [this](const QPoint& position) {
+            Q_EMIT contextMenuRequested(
+                indexAt(position),
+                viewport()->mapToGlobal(position));
+        });
     connect(this, &QTreeView::expanded, this, [this](const QModelIndex&) { syncAccessibility(); });
     connect(this, &QTreeView::collapsed, this, [this](const QModelIndex&) { syncAccessibility(); });
     syncAccessibility();
@@ -512,6 +524,44 @@ void QtMaterialTreeView::setDragDropEnabled(bool enabled)
             ? QAbstractItemView::InternalMove
             : QAbstractItemView::NoDragDrop);
     Q_EMIT dragDropEnabledChanged(enabled);
+}
+
+bool QtMaterialTreeView::inlineEditingEnabled() const noexcept
+{
+    return editTriggers() != QAbstractItemView::NoEditTriggers;
+}
+
+void QtMaterialTreeView::setInlineEditingEnabled(bool enabled)
+{
+    if (inlineEditingEnabled() == enabled) {
+        return;
+    }
+
+    setEditTriggers(
+        enabled
+            ? QAbstractItemView::EditTriggers(
+                QAbstractItemView::DoubleClicked
+                | QAbstractItemView::EditKeyPressed)
+            : QAbstractItemView::NoEditTriggers);
+    Q_EMIT inlineEditingEnabledChanged(enabled);
+}
+
+bool QtMaterialTreeView::contextMenuEnabled() const noexcept
+{
+    return viewport()->contextMenuPolicy() == Qt::CustomContextMenu;
+}
+
+void QtMaterialTreeView::setContextMenuEnabled(bool enabled)
+{
+    if (contextMenuEnabled() == enabled) {
+        return;
+    }
+
+    viewport()->setContextMenuPolicy(
+        enabled
+            ? Qt::CustomContextMenu
+            : Qt::DefaultContextMenu);
+    Q_EMIT contextMenuEnabledChanged(enabled);
 }
 
 } // namespace QtMaterial
