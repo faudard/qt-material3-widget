@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <QByteArray>
+#include <QPoint>
 #include <QTreeView>
 #include <QString>
 
@@ -18,6 +19,8 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTreeView : public QTreeView
     Q_PROPERTY(bool dense READ dense WRITE setDense NOTIFY denseChanged)
     Q_PROPERTY(bool multiSelectionEnabled READ multiSelectionEnabled WRITE setMultiSelectionEnabled NOTIFY multiSelectionEnabledChanged)
     Q_PROPERTY(bool dragDropEnabled READ dragDropEnabled WRITE setDragDropEnabled NOTIFY dragDropEnabledChanged)
+    Q_PROPERTY(bool inlineEditingEnabled READ inlineEditingEnabled WRITE setInlineEditingEnabled NOTIFY inlineEditingEnabledChanged)
+    Q_PROPERTY(bool contextMenuEnabled READ contextMenuEnabled WRITE setContextMenuEnabled NOTIFY contextMenuEnabledChanged)
     Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
 
 public:
@@ -32,6 +35,12 @@ public:
 
     bool dragDropEnabled() const noexcept;
     void setDragDropEnabled(bool enabled);
+
+    bool inlineEditingEnabled() const noexcept;
+    void setInlineEditingEnabled(bool enabled);
+
+    bool contextMenuEnabled() const noexcept;
+    void setContextMenuEnabled(bool enabled);
 
     QString accessibilitySummary() const;
     QString currentItemAccessibleText() const;
@@ -56,6 +65,11 @@ Q_SIGNALS:
     void denseChanged(bool dense);
     void multiSelectionEnabledChanged(bool enabled);
     void dragDropEnabledChanged(bool enabled);
+    void inlineEditingEnabledChanged(bool enabled);
+    void contextMenuEnabledChanged(bool enabled);
+    void contextMenuRequested(
+        const QModelIndex& index,
+        const QPoint& globalPosition);
     void accessibilitySummaryChanged(const QString& summary);
 
 protected:
