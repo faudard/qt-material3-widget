@@ -626,6 +626,8 @@ QByteArray QtMaterialTable::saveWorkspaceState() const
         << columnReorderingEnabled()
         << cellSelectionEnabled()
         << dragDropEnabled()
+        << inlineEditingEnabled()
+        << contextMenuEnabled()
         << isSortingEnabled()
         << qint32(header ? header->sortIndicatorSection() : -1)
         << qint32(
@@ -654,6 +656,8 @@ bool QtMaterialTable::restoreWorkspaceState(
     bool storedColumnReordering = false;
     bool storedCellSelection = false;
     bool storedDragDrop = false;
+    bool storedInlineEditing = false;
+    bool storedContextMenu = false;
     bool storedSorting = false;
     qint32 sortSection = -1;
     qint32 sortOrder = int(Qt::AscendingOrder);
@@ -668,6 +672,8 @@ bool QtMaterialTable::restoreWorkspaceState(
         >> storedColumnReordering
         >> storedCellSelection
         >> storedDragDrop
+        >> storedInlineEditing
+        >> storedContextMenu
         >> storedSorting
         >> sortSection
         >> sortOrder;
@@ -706,6 +712,8 @@ bool QtMaterialTable::restoreWorkspaceState(
     setColumnReorderingEnabled(storedColumnReordering);
     setCellSelectionEnabled(storedCellSelection);
     setDragDropEnabled(storedDragDrop);
+    setInlineEditingEnabled(storedInlineEditing);
+    setContextMenuEnabled(storedContextMenu);
     setSortingEnabled(storedSorting);
     if (storedSorting && sortSection >= 0) {
         sortByColumn(
