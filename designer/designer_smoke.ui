@@ -53,6 +53,19 @@
    </widget></item>
    <item><widget class="QtMaterial::QtMaterialFilledButton" name="filledButton"><property name="text"><string>Continue</string></property></widget></item>
    <item><widget class="QtMaterial::QtMaterialTable" name="table"/></item>
+   <item><widget class="QtMaterial::QtMaterialAdaptiveShell" name="adaptiveShell">
+    <property name="automaticDensity"><bool>false</bool></property>
+    <property name="supportingPaneWidth"><number>360</number></property>
+   </widget></item>
+   <item><widget class="QtMaterial::QtMaterialTooltip" name="tooltip">
+    <property name="text"><string>Designer tooltip</string></property>
+    <property name="showDelay"><number>250</number></property>
+   </widget></item>
+   <item><widget class="QtMaterial::QtMaterialBadge" name="badge">
+    <property name="count"><number>7</number></property>
+    <property name="maximum"><number>99</number></property>
+    <property name="dot"><bool>false</bool></property>
+   </widget></item>
    <item><widget class="QtMaterialBottomAppBar" name="bottomAppBar"><property name="title"><string>Designer actions</string></property></widget></item>
   </layout>
  </widget>
@@ -73,6 +86,9 @@
   <customwidget><class>QtMaterial::QtMaterialSegmentedList</class><extends>QWidget</extends><header>qtmaterial/widgets/data/qtmaterialsegmentedlist.h</header></customwidget>
   <customwidget><class>QtMaterial::QtMaterialSplitButton</class><extends>QWidget</extends><header>qtmaterial/widgets/buttons/qtmaterialsplitbutton.h</header></customwidget>
   <customwidget><class>QtMaterial::QtMaterialLoadingIndicator</class><extends>QWidget</extends><header>qtmaterial/widgets/progress/qtmaterialloadingindicator.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialAdaptiveShell</class><extends>QWidget</extends><header>qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h</header><container>1</container></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialTooltip</class><extends>QWidget</extends><header>qtmaterial/widgets/surfaces/qtmaterialtooltip.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialBadge</class><extends>QWidget</extends><header>qtmaterial/widgets/data/qtmaterialbadge.h</header></customwidget>
  </customwidgets>
  <resources/>
  <connections/>
