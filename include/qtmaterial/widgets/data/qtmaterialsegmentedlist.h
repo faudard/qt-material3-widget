@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QStringList>
+
 #include "qtmaterial/widgets/data/qtmateriallist.h"
 
 namespace QtMaterial {
@@ -8,6 +10,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialSegmentedList : public QtMaterialList
 {
     Q_OBJECT
     Q_PROPERTY(bool expressive READ expressive WRITE setExpressive NOTIFY expressiveChanged)
+    Q_PROPERTY(QStringList itemLabels READ itemLabels WRITE setItemLabels NOTIFY itemLabelsChanged)
 
 public:
     explicit QtMaterialSegmentedList(QWidget* parent = nullptr);
@@ -24,8 +27,12 @@ public:
     void removeItem(QtMaterialListItem* item);
     void clear();
 
+    QStringList itemLabels() const;
+    void setItemLabels(const QStringList& labels);
+
 Q_SIGNALS:
     void expressiveChanged(bool expressive);
+    void itemLabelsChanged(const QStringList& labels);
 
 private:
     void refreshSegments();
