@@ -4,6 +4,7 @@
 #include <QAbstractItemModel>
 #include <QDataStream>
 #include <QHeaderView>
+#include <QIODevice>
 #include <QItemSelectionModel>
 #include <QVector>
 
