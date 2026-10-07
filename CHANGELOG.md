@@ -21,6 +21,7 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Native Qt button adaptation lets existing `QPushButton` instances opt into Text/Filled/FilledTonal/Outlined/Elevated Material rendering, density, effective ThemeContext updates, widget-tree migration and opt-out without replacing their Qt type or signal contract.
 - Designer 2.0 adds Material task-menu property authoring, reversible Light/Dark/Expressive previews and explicit Tabs/Adaptive Shell container extensions when Qt's Designer development API is available.
 - The Designer palette grows to 32 persistence-safe controls, adding Split Button, Button Group, Navigation Bar, Loading Indicator and Segmented List with AUTOUIC round-trip coverage.
 - Button Group, Navigation Bar and Segmented List expose serializable QStringList authoring properties for their labels.

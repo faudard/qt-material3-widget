@@ -7,6 +7,16 @@
 #include "qtmaterial/theme/qtmaterialmotiontokens.h"
 #include "qtmaterial/theme/qtmaterialelevationscale.h"
 namespace QtMaterial {
+
+enum class ButtonVariant
+{
+    Text,
+    Filled,
+    FilledTonal,
+    Outlined,
+    Elevated
+};
+
 struct QTMATERIAL3_SPECS_EXPORT ButtonSpec {
     QColor containerColor;
     QColor labelColor;

@@ -15,6 +15,12 @@ Use these pages for package-level guidance and family-level orientation. For exa
 - typed component-local overrides via `ComponentTokenOverrides`
 - token containers such as `ColorScheme`, `TypographyScale`, `ShapeScale`, `ElevationScale`, `MotionTokens`, and `StateLayer`
 
+### Native Qt adaptation
+
+- progressively adapt existing `QPushButton` instances through `QtMaterialButtonAdapter`
+- preserve native widget ownership/signals while resolving canonical Material button specs
+- use first-class Material widgets when full ripple/motion behavior is required
+
 ### Core widget infrastructure
 
 - reusable interaction and density behavior through base classes such as `QtMaterialControl` and `QtMaterialAbstractButton`
@@ -58,6 +64,7 @@ expressive-foundation
 material3-expressive-adaptive
 expressive-catalogue
 component-expansion
+native-qt-adaptation
 desktop-productivity
 desktop-workspace-state
 navigation-desktop-certification

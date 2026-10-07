@@ -351,3 +351,35 @@ Release gates:
 - Reviewed visual-regression goldens are automatically reused as documentation assets when a component/family match exists; Gallery deep links remain the fallback live visual source.
 - Dashboard and Theme Studio are documented and maintained as first-class application/theme showcases alongside the component Gallery.
 - Documentation CI validates registry, Gallery catalogue and generated page parity before Sphinx builds.
+
+
+## 1.18.0 — Native Qt Adaptation Layer
+
+Goal: let established Qt Widgets applications adopt Material 3 incrementally
+without replacing every native widget class or rewriting Designer-authored forms.
+
+Initial release scope:
+
+- `QtMaterialButtonAdapter` materializes an existing `QPushButton` as Text,
+  Filled, Filled Tonal, Outlined or Elevated while preserving its native
+  signals, ownership, object name, menu/default/checkable behavior and C++ type.
+- Adapted buttons resolve the canonical `ButtonSpecResolver` instead of
+  maintaining a parallel color/metric implementation.
+- Runtime variant/density setters and namespaced dynamic properties support both
+  C++ migration and Designer-authored forms.
+- `applyToDescendants()` enables progressive form/window migration while an
+  explicit opt-out property preserves exceptional native controls.
+- `remove()` restores the previously installed per-widget style.
+- Effective `ThemeContext` changes re-resolve adapted buttons through the same
+  widget resolution boundary used by the rest of the library.
+- Qt 5.14.2 and Qt 6 tests cover variants, density, rendering smoke, signal
+  preservation, tree adaptation and restoration.
+
+Follow-up scope:
+
+- Extend the same opt-in adapter architecture to `QCheckBox`, `QRadioButton`,
+  `QComboBox` and `QSlider` only where native semantics can be retained.
+- Add richer Designer property editors for adapter dynamic properties.
+- Keep ripple, Expressive morphing and component-specific advanced behavior in
+  first-class `QtMaterial*` widgets rather than silently emulating incomplete
+  behavior in native controls.

@@ -1,6 +1,8 @@
 set(QTMATERIAL3_WIDGETS_SOURCES
     navigation/qtmaterialitemaccessibility_p.h
     buttons/private/qtmaterialbuttonrenderhelper.cpp
+    native/qtmaterialbuttonadapter.cpp
+    resolution/qtmaterialbuttonspecresolution_p.h
     buttons/qtmaterialtextbutton.cpp
     buttons/qtmaterialfilledbutton.cpp
     buttons/qtmaterialbuttongroup.cpp
@@ -78,6 +80,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
 )
 
 set(QTMATERIAL3_WIDGETS_HEADERS
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialbuttonadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialtextbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialfilledbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialbuttongroup.h

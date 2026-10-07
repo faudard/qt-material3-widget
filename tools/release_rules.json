@@ -335,6 +335,7 @@
       "qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h",
       "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h",
       "qtmaterial/widgets/inputs/qtmaterialtextfieldvalidationgroup.h",
+      "qtmaterial/widgets/native/qtmaterialbuttonadapter.h",
       "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h",
       "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h",
       "qtmaterial/widgets/navigation/qtmaterialroute.h",
