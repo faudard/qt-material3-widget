@@ -1,5 +1,7 @@
 #include <QtTest/QtTest>
 
+#include <memory>
+
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QHeaderView>
@@ -21,10 +23,11 @@ using namespace QtMaterial;
 
 namespace {
 
-QStandardItemModel makeFlatModel()
+std::unique_ptr<QStandardItemModel> makeFlatModel()
 {
-    QStandardItemModel model(4, 2);
-    model.setHorizontalHeaderLabels(
+    auto model =
+        std::make_unique<QStandardItemModel>(4, 2);
+    model->setHorizontalHeaderLabels(
         {QStringLiteral("Name"), QStringLiteral("Value")});
     const QStringList names = {
         QStringLiteral("Gamma"),
@@ -33,9 +36,11 @@ QStandardItemModel makeFlatModel()
         QStringLiteral("Beta")
     };
     for (int row = 0; row < names.size(); ++row) {
-        model.setData(model.index(row, 0), names.at(row));
-        model.setData(
-            model.index(row, 1),
+        model->setData(
+            model->index(row, 0),
+            names.at(row));
+        model->setData(
+            model->index(row, 1),
             QStringLiteral("Value %1").arg(row));
     }
     return model;
@@ -108,15 +113,16 @@ class tst_DesktopProductivity112 : public QObject
 private Q_SLOTS:
     void tableKeepsAdvancedKeyboardSelectionNative()
     {
-        QStandardItemModel model = makeFlatModel();
+        auto model = makeFlatModel();
         QtMaterialTable table;
-        table.setModel(&model);
+        table.setModel(model.get());
         table.setMultiSelectionEnabled(true);
         table.resize(520, 260);
         table.show();
         QCoreApplication::processEvents();
 
-        const QModelIndex first = model.index(0, 0);
+        const QModelIndex first =
+            model->index(0, 0);
         table.setCurrentIndex(first);
         table.selectionModel()->select(
             first,
@@ -164,7 +170,7 @@ private Q_SLOTS:
                 QStringLiteral("Sibling")));
 
         QtMaterialTreeView tree;
-        tree.setModel(&model);
+        tree.setModel(model.get());
         tree.setMultiSelectionEnabled(true);
         tree.resize(420, 260);
         tree.show();
@@ -231,6 +237,9 @@ private Q_SLOTS:
                 .data(tableModel.index(0, 0))
                 .toString(),
             QStringLiteral("Committed"));
+        QTRY_VERIFY(
+            table.findChild<QLineEdit*>()
+            == nullptr);
 
         QTest::keyClick(
             &table,
@@ -287,14 +296,35 @@ private Q_SLOTS:
                 .data(treeModel.index(0, 0))
                 .toString(),
             QStringLiteral("Tree Committed"));
+        QTRY_VERIFY(
+            tree.findChild<QLineEdit*>()
+            == nullptr);
+
+        QTest::keyClick(
+            &tree,
+            Qt::Key_F2);
+        QTRY_VERIFY(
+            tree.findChild<QLineEdit*>()
+            != nullptr);
+        treeEditor =
+            tree.findChild<QLineEdit*>();
+        treeEditor->setText(
+            QStringLiteral("Tree Discarded"));
+        QTest::keyClick(
+            treeEditor,
+            Qt::Key_Escape);
+        QCOMPARE(
+            treeModel
+                .data(treeModel.index(0, 0))
+                .toString(),
+            QStringLiteral("Tree Committed"));
     }
 
     void sortFilterAndDragDropStayModelViewNative()
     {
-        QStandardItemModel source =
-            makeFlatModel();
+        auto source = makeFlatModel();
         QSortFilterProxyModel proxy;
-        proxy.setSourceModel(&source);
+        proxy.setSourceModel(source.get());
         proxy.setFilterKeyColumn(0);
 
         QtMaterialTable table;
@@ -343,11 +373,10 @@ private Q_SLOTS:
 
     void contextMenuHooksExposeItemAndGlobalPosition()
     {
-        QStandardItemModel model =
-            makeFlatModel();
+        auto model = makeFlatModel();
 
         QtMaterialTable table;
-        table.setModel(&model);
+        table.setModel(model.get());
         table.setContextMenuEnabled(true);
         QVERIFY(table.contextMenuEnabled());
         table.resize(480, 240);
@@ -358,7 +387,7 @@ private Q_SLOTS:
             &table,
             &QtMaterialTable::contextMenuRequested);
         const QModelIndex tableIndex =
-            model.index(0, 0);
+            model->index(0, 0);
         const QPoint tablePosition =
             table.visualRect(tableIndex).center();
         QVERIFY(
@@ -391,7 +420,7 @@ private Q_SLOTS:
             &tree,
             &QtMaterialTreeView::contextMenuRequested);
         const QModelIndex treeIndex =
-            model.index(0, 0);
+            model->index(0, 0);
         const QPoint treePosition =
             tree.visualRect(treeIndex).center();
         QVERIFY(
