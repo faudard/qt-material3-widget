@@ -379,7 +379,7 @@ void GalleryWindow::updateInspector()
             continue;
         }
 
-        const QVariant value = property.read(m_target);
+        const QVariant value = property.read(m_target.data());
         const int row = m_properties->rowCount();
         m_properties->insertRow(row);
 
@@ -436,12 +436,18 @@ void GalleryWindow::writeEditedProperty(int row, int column)
                  || text == QStringLiteral("yes") || text == QStringLiteral("on"));
     } else {
         value = valueItem->text();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        if (!value.convert(property.metaType())) {
+            return;
+        }
+#else
         if (!value.convert(property.userType())) {
             return;
         }
+#endif
     }
 
-    property.write(m_target, value);
+    property.write(m_target.data(), value);
     m_target->update();
     updateInspector();
 }
@@ -451,6 +457,8 @@ void GalleryWindow::applyStatePreview(const QString& state)
     if (!m_target) return;
 
     m_target->setEnabled(true);
+    QEvent leave(QEvent::Leave);
+    QApplication::sendEvent(m_target.data(), &leave);
     if (auto* button = qobject_cast<QAbstractButton*>(m_target.data())) {
         button->setDown(false);
     }
@@ -458,17 +466,17 @@ void GalleryWindow::applyStatePreview(const QString& state)
     const int errorTextIndex = meta->indexOfProperty("errorText");
     if (errorTextIndex >= 0) {
         const QMetaProperty property = meta->property(errorTextIndex);
-        if (property.isWritable()) property.write(m_target, QString());
+        if (property.isWritable()) property.write(m_target.data(), QString());
     }
     const int errorIndex = meta->indexOfProperty("error");
     if (errorIndex >= 0) {
         const QMetaProperty property = meta->property(errorIndex);
-        if (property.isWritable()) property.write(m_target, false);
+        if (property.isWritable()) property.write(m_target.data(), false);
     }
 
     if (state == QStringLiteral("Hover")) {
         QEvent enter(QEvent::Enter);
-        QApplication::sendEvent(m_target, &enter);
+        QApplication::sendEvent(m_target.data(), &enter);
     } else if (state == QStringLiteral("Focus")) {
         m_target->setFocus(Qt::OtherFocusReason);
     } else if (state == QStringLiteral("Pressed")) {
@@ -481,16 +489,16 @@ void GalleryWindow::applyStatePreview(const QString& state)
         } else {
             const int checkedIndex = meta->indexOfProperty("checked");
             if (checkedIndex >= 0 && meta->property(checkedIndex).isWritable()) {
-                meta->property(checkedIndex).write(m_target, true);
+                meta->property(checkedIndex).write(m_target.data(), true);
             }
         }
     } else if (state == QStringLiteral("Disabled")) {
         m_target->setEnabled(false);
     } else if (state == QStringLiteral("Error")) {
         if (errorTextIndex >= 0 && meta->property(errorTextIndex).isWritable()) {
-            meta->property(errorTextIndex).write(m_target, QStringLiteral("Example error"));
+            meta->property(errorTextIndex).write(m_target.data(), QStringLiteral("Example error"));
         } else if (errorIndex >= 0 && meta->property(errorIndex).isWritable()) {
-            meta->property(errorIndex).write(m_target, true);
+            meta->property(errorIndex).write(m_target.data(), true);
         }
     }
 
