@@ -86,7 +86,7 @@ public:
             command.text =
                 QStringLiteral("final command %1")
                     .arg(index);
-            command.keywords = {
+            command.keywords = QStringList{
                 QStringLiteral("final"),
                 QStringLiteral("resource-%1").arg(index)
             };
