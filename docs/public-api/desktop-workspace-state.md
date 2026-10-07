@@ -142,6 +142,7 @@ There is intentionally only one Split View persistence format.
 `tst_desktop_workspace_state` verifies:
 
 - full round-trip for every supported widget;
+- Table/Tree column order, size and visibility persistence;
 - Table column topology rejection;
 - Tree hierarchy/topology rejection;
 - Command Palette preference normalization;
@@ -149,5 +150,11 @@ There is intentionally only one Split View persistence format.
 - Split View schema aliasing;
 - malformed/truncated state rejection without changing the current state.
 
-The contract is exercised on the normal Qt 5.14.2 / Qt 6 cross-platform CI
-matrix and remains additive to the stable 1.x API.
+`tst_desktop_productivity_112` complements persistence with the runtime desktop
+contracts: advanced keyboard selection, inline edit commit/cancel, proxy
+sort/filter compatibility, indexed context-menu hooks, native drag/drop policy,
+exact Split View size restoration, large asynchronous provider cancellation and
+repeated Navigation Bar ↔ Rail transitions with state/focus preservation.
+
+The contracts are exercised on the normal Qt 5.14.2 / Qt 6 cross-platform CI
+matrix and remain additive to the stable 1.x API.
