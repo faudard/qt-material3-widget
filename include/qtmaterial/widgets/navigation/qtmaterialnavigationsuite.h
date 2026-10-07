@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QByteArray>
 #include <QIcon>
 #include <QString>
 
@@ -54,6 +55,19 @@ public:
 
     QString destinationAccessibleText(int index) const;
     QString accessibilitySummary() const;
+
+    /**
+     * Saves selected destination, adaptive width class and per-destination
+     * enabled state. Destination text/order is embedded as a compatibility
+     * signature; icons are deliberately not serialized.
+     */
+    QByteArray saveWorkspaceState() const;
+
+    /**
+     * Restores state only when the current destination text/order matches the
+     * saved navigation model. Incompatible payloads are rejected unchanged.
+     */
+    bool restoreWorkspaceState(const QByteArray& state);
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
