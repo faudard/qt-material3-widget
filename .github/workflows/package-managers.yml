@@ -1,0 +1,98 @@
+name: package-managers
+
+on:
+  pull_request:
+    paths:
+      - "conanfile.py"
+      - "test_package/**"
+      - "packaging/**"
+      - "cmake/QtMaterial3QtCompatibility.cmake"
+      - "docs/installation.md"
+      - "tools/check_package_manager_contracts.py"
+      - "tests/tools/test_package_manager_contracts.py"
+      - ".github/workflows/package-managers.yml"
+  workflow_dispatch:
+    inputs:
+      full_vcpkg:
+        description: "Build the complete vcpkg Qt6 overlay port"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Validate package-manager contracts
+        run: |
+          python3 tools/check_package_manager_contracts.py
+          python3 -m unittest tests.tools.test_package_manager_contracts -v
+
+  conan-qt6:
+    name: conan-qt6-${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: shared
+            shared: "True"
+            designer: "False"
+          - name: static-designer
+            shared: "False"
+            designer: "True"
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Qt and Conan
+        run: |
+          bash scripts/ci/install-ubuntu-deps.sh
+          sudo apt-get install -y qt6-tools-dev
+          pipx install "conan>=2,<3"
+      - name: Create package and run test_package
+        run: |
+          conan profile detect --force
+          conan create . --build=missing \
+            -o "qt-material3-widget/*:qt_major=6" \
+            -o "qt-material3-widget/*:shared=${{ matrix.shared }}" \
+            -o "qt-material3-widget/*:with_designer=${{ matrix.designer }}"
+
+  vcpkg-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: microsoft/vcpkg
+          path: vcpkg
+          fetch-depth: 1
+      - name: Validate vcpkg manifest formatting
+        run: |
+          ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+          ./vcpkg/vcpkg format-manifest packaging/vcpkg/ports/qt-material3-widget/vcpkg.json
+          git diff --exit-code -- packaging/vcpkg/ports/qt-material3-widget/vcpkg.json
+
+  vcpkg-full:
+    if: github.event_name == 'workflow_dispatch' && inputs.full_vcpkg
+    runs-on: ubuntu-latest
+    env:
+      VCPKG_DISABLE_METRICS: 1
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: microsoft/vcpkg
+          path: vcpkg
+          fetch-depth: 1
+      - name: Build Qt6 overlay port
+        run: |
+          ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+          ./vcpkg/vcpkg install qt-material3-widget \
+            --overlay-ports=packaging/vcpkg/ports \
+            --triplet=x64-linux

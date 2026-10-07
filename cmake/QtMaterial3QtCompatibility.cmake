@@ -44,6 +44,12 @@ set(
     CACHE STRING
     "If non-empty, require the detected Qt Core version to match exactly"
 )
+set(
+    QTMATERIAL3_EXPECT_QT_MAJOR
+    ""
+    CACHE STRING
+    "If non-empty, require the detected Qt major version to be 5 or 6"
+)
 
 function(qtmaterial3_detect_qt_version out_var)
     if(QT_VERSION_MAJOR EQUAL 5)
@@ -73,6 +79,21 @@ endfunction()
 
 function(qtmaterial3_validate_qt_compatibility)
     qtmaterial3_detect_qt_version(_qtm3_qt_version)
+
+    if(QTMATERIAL3_EXPECT_QT_MAJOR)
+        if(NOT QTMATERIAL3_EXPECT_QT_MAJOR MATCHES "^[56]$")
+            message(FATAL_ERROR
+                "QTMATERIAL3_EXPECT_QT_MAJOR must be 5 or 6; "
+                "got '${QTMATERIAL3_EXPECT_QT_MAJOR}'"
+            )
+        endif()
+        if(NOT "${QT_VERSION_MAJOR}" STREQUAL "${QTMATERIAL3_EXPECT_QT_MAJOR}")
+            message(FATAL_ERROR
+                "Qt major gate expected ${QTMATERIAL3_EXPECT_QT_MAJOR}; "
+                "detected ${QT_VERSION_MAJOR} (${_qtm3_qt_version})"
+            )
+        endif()
+    endif()
 
     if(QT_VERSION_MAJOR EQUAL 5
        AND _qtm3_qt_version VERSION_LESS QTMATERIAL3_QT5_MIN_VERSION)

@@ -1,0 +1,6 @@
+qt-material3-widget provides the QtMaterial3Widgets CMake package:
+
+    find_package(QtMaterial3Widgets CONFIG REQUIRED COMPONENTS Widgets)
+    target_link_libraries(main PRIVATE QtMaterial3::Widgets)
+
+Additional application-facing components are ThemeModel, ThemeIO, ThemeRuntime and Integration.

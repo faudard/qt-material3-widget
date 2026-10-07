@@ -1,0 +1,46 @@
+{
+  "name": "qt-material3-widget",
+  "version": "1.0.0",
+  "description": "Material 3 widgets for Qt Widgets",
+  "homepage": "https://github.com/faudard/qt-material3-widget",
+  "license": "LGPL-3.0-only",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ],
+  "default-features": [
+    "qt6"
+  ],
+  "features": {
+    "qt5": {
+      "description": "Build against Qt 5 (minimum supported version 5.14.2)",
+      "dependencies": [
+        "qt5-base"
+      ]
+    },
+    "qt6": {
+      "description": "Build against Qt 6 (minimum supported version 6.4.0)",
+      "dependencies": [
+        "qtbase"
+      ]
+    },
+    "designer-qt5": {
+      "description": "Build the Designer plugin for a Qt 5 graph; use with qt5 and no default qt6 feature",
+      "dependencies": [
+        "qt5-tools"
+      ]
+    },
+    "designer-qt6": {
+      "description": "Build the Designer plugin for a Qt 6 graph; use with qt6",
+      "dependencies": [
+        "qttools"
+      ]
+    }
+  }
+}

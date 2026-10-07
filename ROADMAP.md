@@ -334,3 +334,28 @@ Release gates:
   advanced-extension tests cover property discovery, reversible previews and container behavior.
 - Qt 5.14.2 compatibility remains fail-open for optional Designer APIs and fail-closed for
   the core palette/.ui contract.
+
+
+## 1.15.0 — Packaging / Ecosystem
+
+Goal: make the existing installed CMake package consumable through mainstream C++ package
+managers without creating a second public target model or weakening Qt 5.14.2 compatibility.
+
+Release gates:
+
+- A Conan 2 recipe builds shared and static packages while reusing the installed
+  `QtMaterial3WidgetsConfig.cmake` and canonical `QtMaterial3::*` targets.
+- Conan package identity records the selected Qt major and optional Designer-plugin build;
+  resolving a different Qt major fails closed at CMake configure time.
+- A repository-local vcpkg overlay port supports Qt 6 by default and an explicit Qt 5 feature,
+  with mixed-major feature combinations rejected.
+- vcpkg supports static/dynamic triplets and optional matching-major Designer tooling.
+- Package-manager consumers continue to use the same public CMake components as direct installs:
+  ThemeModel, ThemeIO, ThemeRuntime, Integration and Widgets.
+- Relocation remains owned by the installed CMake package; package-manager adapters do not
+  hard-code build-tree paths into consumer metadata.
+- Dedicated CI validates recipe/port metadata on every relevant pull request and executes
+  Conan shared/static consumer builds; full vcpkg source builds remain explicit because Qt
+  dependency builds are substantially heavier.
+- Existing Qt 5.14.2/MSVC v142, Qt 6, Designer, consumer, sanitizer, performance and release
+  package gates remain green.

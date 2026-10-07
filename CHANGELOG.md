@@ -21,6 +21,7 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Packaging / Ecosystem 1.15 adds a Conan 2 recipe, a Qt5/Qt6 vcpkg overlay port, package-manager contract checks and dedicated CI while preserving the installed `QtMaterial3::*` CMake target graph.
 - Designer 2.0 adds Material task-menu property authoring, reversible Light/Dark/Expressive previews and explicit Tabs/Adaptive Shell container extensions when Qt's Designer development API is available.
 - The Designer palette grows to 32 persistence-safe controls, adding Split Button, Button Group, Navigation Bar, Loading Indicator and Segmented List with AUTOUIC round-trip coverage.
 - Button Group, Navigation Bar and Segmented List expose serializable QStringList authoring properties for their labels.

@@ -95,11 +95,59 @@ cmake --install build/designer-dev --component Designer
 
 The plugin is ABI-coupled to the Qt Designer/Qt Creator instance that loads it. See the [Designer plugin guide](designer-plugin.md).
 
-## Conan and vcpkg
+## Conan 2
 
-The supported package-manager boundary for 1.6 remains the installed CMake package. The repository does not yet ship an unverified Conan recipe or vcpkg port because a recipe must preserve both the certified Qt 5.14.2 path and Qt 6 rather than silently hard-pinning one major.
+The repository ships a Conan 2 recipe that reuses the authoritative installed CMake package instead of inventing a parallel target graph. Qt remains an external ABI dependency so the recipe can preserve both the certified Qt 5.14.2 path and supported Qt 6 installations.
 
-A future registry submission should reuse the existing install/export contract and validate shared/static consumption, relocation, Qt-major selection and the optional Designer/UiPlugin dependency.
+A supported Qt must already be discoverable by CMake in the build environment. Create a Qt 6 shared package with:
+
+```bash
+conan profile detect --force
+conan create . --build=missing \
+  -o "qt-material3-widget/*:qt_major=6" \
+  -o "qt-material3-widget/*:shared=True"
+```
+
+For the certified Qt 5 family, expose the intended Qt 5 prefix to CMake and select `qt_major=5`. The recipe passes `QTMATERIAL3_EXPECT_QT_MAJOR` so accidentally resolving the wrong major fails closed.
+
+The optional Designer plugin is enabled with:
+
+```bash
+conan create . --build=missing \
+  -o "qt-material3-widget/*:qt_major=6" \
+  -o "qt-material3-widget/*:with_designer=True"
+```
+
+The package exports the existing `QtMaterial3WidgetsConfig.cmake`; consumers continue to use `find_package(QtMaterial3Widgets CONFIG REQUIRED)` and `QtMaterial3::*` targets.
+
+## vcpkg overlay port
+
+A repository-local overlay port lives at `packaging/vcpkg/ports/qt-material3-widget`. Qt 6 is the default feature. The port also exposes `qt5`, `designer-qt6` and `designer-qt5` features and rejects mixed Qt-major graphs.
+
+For Qt 6:
+
+```bash
+vcpkg install qt-material3-widget \
+  --overlay-ports=packaging/vcpkg/ports
+```
+
+For Qt 5, disable the default Qt 6 feature in the consuming manifest and request the Qt 5 feature explicitly:
+
+```json
+{
+  "dependencies": [
+    {
+      "name": "qt-material3-widget",
+      "default-features": false,
+      "features": ["qt5"]
+    }
+  ]
+}
+```
+
+Add `designer-qt5` or `designer-qt6` only when the matching Qt-major feature is selected. The port supports both static and dynamic vcpkg triplets and fixes up the installed `QtMaterial3Widgets` CMake config for relocation.
+
+Package-manager metadata is checked on every relevant pull request. Conan Qt 6 shared/static consumption is built in CI; the heavier full vcpkg build is available as an explicit package-manager workflow dispatch.
 
 ## Build options
 
