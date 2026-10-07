@@ -292,7 +292,9 @@ QByteArray QtMaterialTreeView::saveWorkspaceState() const
         << (treeHeader ? treeHeader->saveState() : QByteArray())
         << dense()
         << multiSelectionEnabled()
-        << dragDropEnabled();
+        << dragDropEnabled()
+        << inlineEditingEnabled()
+        << contextMenuEnabled();
 
     RowPath currentPath;
     int currentColumn = -1;
@@ -343,6 +345,8 @@ bool QtMaterialTreeView::restoreWorkspaceState(
     bool storedDense = false;
     bool storedMultiSelection = false;
     bool storedDragDrop = false;
+    bool storedInlineEditing = false;
+    bool storedContextMenu = false;
 
     stream
         >> storedMagic
@@ -351,7 +355,9 @@ bool QtMaterialTreeView::restoreWorkspaceState(
         >> headerState
         >> storedDense
         >> storedMultiSelection
-        >> storedDragDrop;
+        >> storedDragDrop
+        >> storedInlineEditing
+        >> storedContextMenu;
 
     RowPath currentPath;
     if (!readRowPath(&stream, &currentPath)) {
@@ -439,6 +445,8 @@ bool QtMaterialTreeView::restoreWorkspaceState(
     setDense(storedDense);
     setMultiSelectionEnabled(storedMultiSelection);
     setDragDropEnabled(storedDragDrop);
+    setInlineEditingEnabled(storedInlineEditing);
+    setContextMenuEnabled(storedContextMenu);
 
     collapseAll();
     for (const QModelIndex& index : restoredExpanded) {
