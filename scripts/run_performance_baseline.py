@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
-BENCHMARKS = (
+BASE_BENCHMARKS = (
     "benchmark_theme_pipeline",
     "benchmark_theme_manager_fanout",
     "benchmark_spec_resolution_pipeline",
@@ -18,6 +18,13 @@ BENCHMARKS = (
     "benchmark_theme_switch",
     "benchmark_ripple",
     "benchmark_widget_creation",
+)
+
+SCALE_BENCHMARKS = (
+    "benchmark_data_views_scale",
+    "benchmark_widget_scale",
+    "benchmark_command_palette_scale",
+    "benchmark_expressive_motion_scale",
 )
 
 
@@ -52,6 +59,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("build_dir", nargs="?", default="build-perf")
     parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument(
+        "--scale",
+        action="store_true",
+        help="Run the opt-in 1.14 scale contracts in addition to the normal baseline.",
+    )
+    parser.add_argument(
+        "--enforce",
+        action="store_true",
+        help="Fail when configured performance budgets are exceeded.",
+    )
     args = parser.parse_args(argv)
 
     root = args.root.resolve()
@@ -60,6 +77,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         build_dir = root / build_dir
 
     env = os.environ.copy()
+    if args.scale:
+        env["QTMATERIAL3_RUN_SCALE_PERF"] = "1"
+    if args.enforce:
+        env["QTMATERIAL3_ENFORCE_PERF_BUDGETS"] = "1"
     use_mcu = env.get("QTMATERIAL3_USE_MCU", "OFF")
 
     try:
@@ -101,7 +122,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     results_dir = build_dir / "performance-results"
     results_dir.mkdir(parents=True, exist_ok=True)
 
-    for name in BENCHMARKS:
+    benchmarks = BASE_BENCHMARKS + (SCALE_BENCHMARKS if args.scale else ())
+    for name in benchmarks:
         executable = find_executable(build_dir, name)
         if executable is None:
             print(

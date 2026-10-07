@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "mode": "report-on-pull-request-enforce-on-scheduled-or-manual-linux",
+  "optInEnvironmentVariable": "QTMATERIAL3_RUN_SCALE_PERF",
+  "enforcementEnvironmentVariable": "QTMATERIAL3_ENFORCE_PERF_BUDGETS",
+  "scenarios": {
+    "dataViews100k": {
+      "cpuBudgetMs": 3000,
+      "rssGrowthBudgetMiB": 96,
+      "cpuOverride": "QTMATERIAL3_SCALE_DATA_VIEWS_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_SCALE_DATA_VIEWS_RSS_BUDGET_MIB"
+    },
+    "widgetCreation1000": {
+      "cpuBudgetMs": 5000,
+      "rssGrowthBudgetMiB": 192,
+      "cpuOverride": "QTMATERIAL3_SCALE_WIDGET_CREATE_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_SCALE_WIDGET_CREATE_RSS_BUDGET_MIB"
+    },
+    "globalThemeSwitch1000": {
+      "cpuBudgetMs": 3000,
+      "rssGrowthBudgetMiB": 64,
+      "cpuOverride": "QTMATERIAL3_SCALE_THEME_SWITCH_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_SCALE_THEME_SWITCH_RSS_BUDGET_MIB"
+    },
+    "commandPalette50000": {
+      "cpuBudgetMs": 12000,
+      "rssGrowthBudgetMiB": 512,
+      "cpuOverride": "QTMATERIAL3_SCALE_COMMAND_PALETTE_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_SCALE_COMMAND_PALETTE_RSS_BUDGET_MIB"
+    },
+    "expressiveMotion1000": {
+      "cpuBudgetMs": 3000,
+      "rssGrowthBudgetMiB": 128,
+      "cpuOverride": "QTMATERIAL3_SCALE_EXPRESSIVE_MOTION_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_SCALE_EXPRESSIVE_MOTION_RSS_BUDGET_MIB"
+    },
+    "repeatedLifecycle10x1000": {
+      "cpuBudgetMs": 15000,
+      "rssGrowthBudgetMiB": 128,
+      "cpuOverride": "QTMATERIAL3_SCALE_LIFECYCLE_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_SCALE_LIFECYCLE_RSS_BUDGET_MIB"
+    }
+  },
+  "notes": [
+    "CPU budgets use process CPU time, not wall-clock time.",
+    "RSS budgets measure resident-memory growth from the start of each scenario.",
+    "Budgets are intentionally conservative until several scheduled runs establish stable baselines.",
+    "Pull requests report scale evidence; scheduled/manual Linux runs enforce it."
+  ]
+}
