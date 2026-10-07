@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QStringList>
 #include <QWidget>
 
 #include "ui_designer_smoke.h"
