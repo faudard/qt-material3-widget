@@ -817,6 +817,16 @@ void QtMaterialTable::keyPressEvent(
         commandModifiers == Qt::NoModifier;
 
     switch (event->key()) {
+    case Qt::Key_F2:
+        if (
+            plainActivation
+            && inlineEditingEnabled()
+            && currentIndex().isValid()) {
+            edit(currentIndex());
+            event->accept();
+            return;
+        }
+        break;
     case Qt::Key_Return:
     case Qt::Key_Enter:
     case Qt::Key_Space:
@@ -830,8 +840,10 @@ void QtMaterialTable::keyPressEvent(
         break;
     }
 
-    // Modifier-based selection (Shift/Ctrl/Meta + arrows/Space), F2 editing,
-    // Home/End and page navigation stay under QTableView ownership.
+    // Modifier-based selection (Shift/Ctrl/Meta + arrows/Space), Home/End
+    // and page navigation stay under QTableView ownership. F2 is handled
+    // explicitly above because Qt's platform EditKeyPressed mapping differs
+    // on macOS.
     QTableView::keyPressEvent(event);
 }
 
