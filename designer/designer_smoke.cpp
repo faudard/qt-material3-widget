@@ -16,7 +16,8 @@ int main(int argc, char** argv)
         || !ui.dateField || !ui.searchBar || !ui.rangeSlider || !ui.divider
         || !ui.card || !ui.table || !ui.topAppBar || !ui.bottomAppBar
         || !ui.buttonGroup || !ui.navigationBar || !ui.segmentedList
-        || !ui.splitButton || !ui.loadingIndicator) {
+        || !ui.splitButton || !ui.loadingIndicator || !ui.adaptiveShell
+        || !ui.tooltip || !ui.badge) {
         qCritical() << "designer smoke: missing widget instance";
         return 1;
     }
@@ -82,6 +83,23 @@ int main(int argc, char** argv)
                     << ui.splitButton->text() << ui.splitButton->expressive()
                     << ui.loadingIndicator->indicatorSize() << ui.loadingIndicator->isActive();
         return 10;
+    }
+    if (ui.adaptiveShell->automaticDensity()
+        || ui.adaptiveShell->supportingPaneWidth() != 360) {
+        qCritical() << "designer smoke: adaptive shell mismatch"
+                    << ui.adaptiveShell->automaticDensity()
+                    << ui.adaptiveShell->supportingPaneWidth();
+        return 11;
+    }
+    if (ui.tooltip->text() != QStringLiteral("Designer tooltip")
+        || ui.tooltip->showDelay() != 250
+        || ui.badge->count() != 7
+        || ui.badge->maximum() != 99
+        || ui.badge->isDot()) {
+        qCritical() << "designer smoke: Designer 3.0 promoted widgets mismatch"
+                    << ui.tooltip->text() << ui.tooltip->showDelay()
+                    << ui.badge->count() << ui.badge->maximum() << ui.badge->isDot();
+        return 12;
     }
 
     return 0;
