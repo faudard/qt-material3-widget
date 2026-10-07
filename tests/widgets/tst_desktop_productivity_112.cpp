@@ -18,6 +18,7 @@
 #include "qtmaterial/widgets/layouts/qtmaterialsplitview.h"
 #include "qtmaterial/widgets/navigation/qtmaterialcommandpalette.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h"
+#include "../helpers/widgettestactivation.h"
 
 using namespace QtMaterial;
 
@@ -220,9 +221,12 @@ private Q_SLOTS:
         QVERIFY(table.inlineEditingEnabled());
         table.resize(320, 160);
         table.show();
-        QCoreApplication::processEvents();
+        QVERIFY(QTest::qWaitForWindowExposed(&table));
+        activateTestWindow(&table);
         table.setCurrentIndex(
             tableModel.index(0, 0));
+        table.setFocus(Qt::OtherFocusReason);
+        QTRY_VERIFY(table.hasFocus());
 
         QTest::keyClick(
             &table,
@@ -279,9 +283,12 @@ private Q_SLOTS:
         tree.setInlineEditingEnabled(true);
         tree.resize(320, 160);
         tree.show();
-        QCoreApplication::processEvents();
+        QVERIFY(QTest::qWaitForWindowExposed(&tree));
+        activateTestWindow(&tree);
         tree.setCurrentIndex(
             treeModel.index(0, 0));
+        tree.setFocus(Qt::OtherFocusReason);
+        QTRY_VERIFY(tree.hasFocus());
 
         QTest::keyClick(
             &tree,
@@ -586,9 +593,11 @@ private Q_SLOTS:
         suite.setCurrentIndex(3);
         suite.resize(420, 100);
         suite.show();
-        QCoreApplication::processEvents();
+        QVERIFY(QTest::qWaitForWindowExposed(&suite));
+        activateTestWindow(&suite);
         suite.setFocus(
             Qt::OtherFocusReason);
+        QTRY_VERIFY(suite.hasFocus());
 
         QSignalSpy currentChanged(
             &suite,
@@ -651,7 +660,7 @@ private Q_SLOTS:
         QCOMPARE(
             currentChanged.count(),
             0);
-        QVERIFY(suite.hasFocus());
+        QTRY_VERIFY(suite.hasFocus());
         QVERIFY(
             suite.accessibilitySummary()
                 .contains(

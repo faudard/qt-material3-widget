@@ -7,6 +7,7 @@
 #include <QDataStream>
 #include <QFocusEvent>
 #include <QHeaderView>
+#include <QIODevice>
 #include <QItemSelectionModel>
 #include <QKeyEvent>
 #include <QPainter>
@@ -702,8 +703,15 @@ bool QtMaterialTable::restoreWorkspaceState(
     const QByteArray previousHeaderState =
         header->saveState();
 
+    // Validate Qt's native header payload before changing any Material policy.
+    // Some policy changes (notably density/spec application) intentionally
+    // update header metrics, so the saved header presentation must be restored
+    // last to preserve exact user widths/order/visibility.
     if (!header->restoreState(headerState)) {
         header->restoreState(previousHeaderState);
+        return false;
+    }
+    if (!header->restoreState(previousHeaderState)) {
         return false;
     }
 
@@ -719,6 +727,16 @@ bool QtMaterialTable::restoreWorkspaceState(
         sortByColumn(
             sortSection,
             static_cast<Qt::SortOrder>(sortOrder));
+    }
+
+    // Header state is authoritative for presentation. Restore it after the
+    // Material policies so setDense()/spec resolution cannot overwrite saved
+    // section sizes.
+    if (!header->restoreState(headerState)) {
+        // The exact payload was validated above. This is only a defensive
+        // rollback for an unexpected native restore failure.
+        header->restoreState(previousHeaderState);
+        return false;
     }
 
     syncAccessibility();
