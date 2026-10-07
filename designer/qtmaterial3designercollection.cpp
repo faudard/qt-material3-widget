@@ -19,6 +19,7 @@
 #include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialsplitbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
+#include "qtmaterial/widgets/data/qtmaterialbadge.h"
 #include "qtmaterial/widgets/data/qtmaterialdivider.h"
 #include "qtmaterial/widgets/data/qtmaterialpagination.h"
 #include "qtmaterial/widgets/data/qtmaterialsegmentedlist.h"
@@ -31,6 +32,7 @@
 #include "qtmaterial/widgets/inputs/qtmaterialrangeslider.h"
 #include "qtmaterial/widgets/inputs/qtmaterialsearchbar.h"
 #include "qtmaterial/widgets/inputs/qtmaterialslider.h"
+#include "qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h"
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
@@ -43,6 +45,7 @@
 #include "qtmaterial/widgets/selection/qtmaterialswitch.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialbottomappbar.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialtooltip.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialtopappbar.h"
 
 namespace {
@@ -283,6 +286,12 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
         "<string>Home</string><string>Search</string><string>Profile</string>"
         "</stringlist></property>"
         "<property name=\"currentIndex\"><number>0</number></property>");
+    addWidget<QtMaterialAdaptiveShell>(
+        widgets_, this, "QtMaterial::QtMaterialAdaptiveShell",
+        "qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h",
+        "Qt Material 3 - Layouts", "materialAdaptiveShell", "Material 3 adaptive application shell", true,
+        "<property name=\"automaticDensity\"><bool>true</bool></property>"
+        "<property name=\"supportingPaneWidth\"><number>360</number></property>");
 
     addWidget<QtMaterialCard>(
         widgets_, this, "QtMaterial::QtMaterialCard",
@@ -306,6 +315,12 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
         "Qt Material 3 - Surfaces", "materialDivider", "Material 3 divider", false,
         "<property name=\"thickness\"><number>1</number></property>"
         "<property name=\"decorative\"><bool>true</bool></property>");
+    addWidget<QtMaterialTooltip>(
+        widgets_, this, "QtMaterial::QtMaterialTooltip",
+        "qtmaterial/widgets/surfaces/qtmaterialtooltip.h",
+        "Qt Material 3 - Surfaces", "materialTooltip", "Material 3 tooltip", false,
+        "<property name=\"text\"><string>Tooltip</string></property>"
+        "<property name=\"showDelay\"><number>500</number></property>");
 
     addWidget<QtMaterialLinearProgressIndicator>(
         widgets_, this, "QtMaterial::QtMaterialLinearProgressIndicator",
@@ -323,6 +338,13 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
         "Qt Material 3 - Progress", "materialLoadingIndicator", "Material 3 Expressive loading indicator", false,
         "<property name=\"active\"><bool>false</bool></property>"
         "<property name=\"indicatorSize\"><number>44</number></property>");
+
+    addWidget<QtMaterialBadge>(
+        widgets_, this, "QtMaterial::QtMaterialBadge",
+        "qtmaterial/widgets/data/qtmaterialbadge.h",
+        "Qt Material 3 - Data", "materialBadge", "Material 3 badge", false,
+        "<property name=\"count\"><number>7</number></property>"
+        "<property name=\"maximum\"><number>99</number></property>");
 
     addWidget<QtMaterialPagination>(
         widgets_, this, "QtMaterial::QtMaterialPagination",
