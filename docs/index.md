@@ -30,7 +30,7 @@ Use the narrative pages to understand concepts, layering, and supported workflow
 - [Development rules](development/coding-rules.md)
 - [Accessibility and keyboard rules](development/accessibility-keyboard-rules.md)
 - [Release checklist](release-process.md)
-- [Final 55/55 certification](components/final-certification-55-55.md)
+- [Final 60/60 certification](components/final-certification-60-60.md)
 - [API and ABI policy](release/api-abi-policy.md)
 
 ## Installation and downstream usage
@@ -73,6 +73,7 @@ public-api/index
 api/index
 material3/references
 release-process
+components/final-certification-60-60
 components/final-certification-55-55
 release/api-abi-policy
 ```

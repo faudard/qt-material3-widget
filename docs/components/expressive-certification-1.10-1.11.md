@@ -153,3 +153,22 @@ The final command remains fail-closed until:
 - each platform records reviewer/date/evidence.
 
 No automated test or deterministic PNG replaces the native reader sessions.
+
+## Final 60/60 promotion
+
+The five standalone Expressive components are the final registry entries in the
+current 60-component catalogue. Their promotion is integrated into the unified
+Certification Center:
+
+```bash
+python tools/certification_center.py status
+python tools/certification_center.py promote
+python tools/certification_center.py promote --apply
+```
+
+Before the final mutation, `tools/promote_expressive_1_10_1_11.py` also requires
+the registered `tst_expressive_production_contracts` CTest plus the public
+headers, documentation and Gallery ownership for every promoted component.
+
+See [Final 60/60 Certification Center](final-certification-60-60.md) for the
+complete 1.5 -> 1.7 -> 1.9 -> 1.10/1.11 operator sequence.
