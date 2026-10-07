@@ -147,3 +147,30 @@ target_link_libraries(benchmark_expressive_motion_scale PRIVATE
     qtmaterial3_theme_model
     qtmaterial3_effects
 )
+
+
+# 1.21 Desktop Scale 2.0
+qtmaterial3_add_benchmark_executable(benchmark_desktop_scale_2
+    scale/benchmark_desktop_scale_2.cpp
+)
+target_link_libraries(benchmark_desktop_scale_2 PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Test
+    qtmaterial3_theme_model
+    qtmaterial3_theme_runtime
+    qtmaterial3_effects
+    qtmaterial3_widgets
+)
+
+qtmaterial3_add_benchmark_executable(benchmark_command_palette_100k
+    scale/benchmark_command_palette_100k.cpp
+)
+target_link_libraries(benchmark_command_palette_100k PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Test
+    qtmaterial3_widgets
+)

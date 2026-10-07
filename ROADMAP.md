@@ -336,6 +336,33 @@ Release gates:
   the core palette/.ui contract.
 
 
+## 1.21.0 — Desktop Scale 2.0
+
+Goal: certify QtMaterial3 under sustained, application-scale desktop workloads while keeping
+the 1.14 scale contracts stable and independently comparable.
+
+Release gates:
+
+- Table and Tree View remain responsive with 1,000,000-row/item virtual models.
+- Lazy application models can grow to 1,000,000 rows through repeated `fetchMore()`
+  without pathological tail latency or retained-memory growth.
+- Application-owned `QSortFilterProxyModel` chains are benchmarked against 1,000,000
+  source rows without changing model ownership semantics.
+- Command Palette ingests and repeatedly filters 100,000 provider results.
+- Global ThemeManager propagation survives at least 2,000 theme changes with live widgets.
+- Adaptive Shell survives resize storms across Compact, Medium, Expanded, Large and
+  ExtraLarge breakpoints without state loss or unbounded memory growth.
+- Dialog and Side Sheet construction/open/close/destruction are exercised over long cycles.
+- Shadow/pixmap cache hit behavior is measured under sustained reuse.
+- Long-run lifecycle churn measures post-warm-up RSS growth; scheduled/manual Linux runs
+  additionally capture Valgrind Massif allocation profiles.
+- Every scenario records process CPU, RSS growth, p95 and p99 latency against checked-in
+  budgets with environment overrides reserved for controlled runner calibration.
+- CI maintains a bounded per-commit performance history from canonical `main` runs and
+  surfaces current-vs-previous p95 deltas in the workflow summary.
+- Pull requests are report-only; scheduled/manual Linux runs enforce budgets.
+
+
 ## 1.16.0 — Gallery & Documentation 2.0
 
 Goal: turn the component Gallery, generated documentation, Dashboard and Theme Studio into a coherent user-facing product surface for the complete public catalogue.

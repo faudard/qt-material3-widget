@@ -27,6 +27,11 @@ SCALE_BENCHMARKS = (
     "benchmark_expressive_motion_scale",
 )
 
+DESKTOP_SCALE_2_BENCHMARKS = (
+    "benchmark_desktop_scale_2",
+    "benchmark_command_palette_100k",
+)
+
 
 def run(
     command: list[str],
@@ -65,6 +70,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="Run the opt-in 1.14 scale contracts in addition to the normal baseline.",
     )
     parser.add_argument(
+        "--desktop-scale-2",
+        action="store_true",
+        help="Run the 1.21 million-scale/soak contracts; implies --scale.",
+    )
+    parser.add_argument(
         "--enforce",
         action="store_true",
         help="Fail when configured performance budgets are exceeded.",
@@ -76,9 +86,18 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not build_dir.is_absolute():
         build_dir = root / build_dir
 
+    results_dir = build_dir / "performance-results"
+    results_dir.mkdir(parents=True, exist_ok=True)
+
     env = os.environ.copy()
-    if args.scale:
+    run_scale = args.scale or args.desktop_scale_2
+    if run_scale:
         env["QTMATERIAL3_RUN_SCALE_PERF"] = "1"
+    if args.desktop_scale_2:
+        env["QTMATERIAL3_RUN_DESKTOP_SCALE_2"] = "1"
+        env["QTMATERIAL3_DESKTOP_SCALE_JSON"] = str(
+            results_dir / "desktop-scale-2.json"
+        )
     if args.enforce:
         env["QTMATERIAL3_ENFORCE_PERF_BUDGETS"] = "1"
     use_mcu = env.get("QTMATERIAL3_USE_MCU", "OFF")
@@ -111,7 +130,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 str(build_dir),
                 "--output-on-failure",
                 "-R",
-                "performance|theme_performance",
+                "performance|theme_performance|desktop_scale_2",
             ],
             cwd=root,
             env=env,
@@ -119,10 +138,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     except subprocess.CalledProcessError as exc:
         return exc.returncode or 1
 
-    results_dir = build_dir / "performance-results"
-    results_dir.mkdir(parents=True, exist_ok=True)
-
-    benchmarks = BASE_BENCHMARKS + (SCALE_BENCHMARKS if args.scale else ())
+    benchmarks = BASE_BENCHMARKS
+    if run_scale:
+        benchmarks += SCALE_BENCHMARKS
+    if args.desktop_scale_2:
+        benchmarks += DESKTOP_SCALE_2_BENCHMARKS
     for name in benchmarks:
         executable = find_executable(build_dir, name)
         if executable is None:

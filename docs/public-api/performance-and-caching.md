@@ -131,3 +131,52 @@ time remains diagnostic because hosted-runner scheduling noise can be significan
 
 Pull requests collect report-only evidence. Scheduled and manually dispatched Linux runs
 enable strict budget enforcement on the same build directory after the report pass.
+
+
+## 1.21 Desktop Scale 2.0
+
+Desktop Scale 2.0 is the opt-in application-scale extension of the 1.14 gate. It keeps
+the existing 100k/1k/50k contracts intact and adds heavier scenarios instead of changing
+their meaning.
+
+Run the complete 1.14 + 1.21 baseline locally:
+
+```bash
+python3 scripts/run_performance_baseline.py build-perf --desktop-scale-2
+```
+
+`--desktop-scale-2` implies `--scale`. To enforce the checked-in CPU, RSS, p95 and p99
+budgets locally:
+
+```bash
+python3 scripts/run_performance_baseline.py build-perf --desktop-scale-2 --enforce
+```
+
+The 1.21 suite covers:
+
+- 1,000,000-row Table/Tree navigation,
+- lazy `fetchMore()` growth to 1,000,000 rows,
+- million-row `QSortFilterProxyModel` filtering,
+- 100,000 Command Palette results,
+- 2,000 live theme changes,
+- 5,000 adaptive resize transitions,
+- 1,000 Dialog/Side Sheet lifecycles,
+- 5,000 shadow/pixmap cache hits,
+- warmed long-run lifecycle cycles for memory-growth detection.
+
+Results are written to
+`build-perf/performance-results/desktop-scale-2.json`. The CI history helper merges that
+snapshot into a bounded `performance-history.json` ledger and emits a Markdown comparison
+against the previous canonical `main` result.
+
+Scheduled/manual Linux runs also execute:
+
+```bash
+python3 scripts/profile_desktop_scale_allocations.py \
+  build-perf \
+  --output-dir build-perf/performance-results/allocation-profile
+```
+
+That harness uses Valgrind Massif on the long-run lifecycle scenario. Massif remains
+diagnostic evidence rather than a cross-platform hard gate; CPU, RSS, p95 and p99 remain
+the deterministic budget contract.

@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "milestone": "1.21 Desktop Scale 2.0",
+  "mode": "report-on-pull-request-enforce-on-scheduled-or-manual-linux",
+  "optInEnvironmentVariable": "QTMATERIAL3_RUN_DESKTOP_SCALE_2",
+  "enforcementEnvironmentVariable": "QTMATERIAL3_ENFORCE_PERF_BUDGETS",
+  "scenarios": {
+    "dataViewsMillion": {
+      "cpuBudgetMs": 15000,
+      "rssGrowthBudgetMiB": 256,
+      "p95BudgetMs": 500,
+      "p99BudgetMs": 1000,
+      "cpuOverride": "QTMATERIAL3_DESKTOP_DATA_VIEWS_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_DESKTOP_DATA_VIEWS_RSS_BUDGET_MIB",
+      "p95Override": "QTMATERIAL3_DESKTOP_DATA_VIEWS_P95_BUDGET_MS",
+      "p99Override": "QTMATERIAL3_DESKTOP_DATA_VIEWS_P99_BUDGET_MS"
+    },
+    "lazyFetchMoreMillion": {
+      "cpuBudgetMs": 20000,
+      "rssGrowthBudgetMiB": 384,
+      "p95BudgetMs": 1500,
+      "p99BudgetMs": 2500,
+      "cpuOverride": "QTMATERIAL3_DESKTOP_FETCH_MORE_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_DESKTOP_FETCH_MORE_RSS_BUDGET_MIB",
+      "p95Override": "QTMATERIAL3_DESKTOP_FETCH_MORE_P95_BUDGET_MS",
+      "p99Override": "QTMATERIAL3_DESKTOP_FETCH_MORE_P99_BUDGET_MS"
+    },
+    "proxyFilterMillion": {
+      "cpuBudgetMs": 45000,
+      "rssGrowthBudgetMiB": 768,
+      "p95BudgetMs": 7000,
+      "p99BudgetMs": 10000,
+      "cpuOverride": "QTMATERIAL3_DESKTOP_PROXY_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_DESKTOP_PROXY_RSS_BUDGET_MIB",
+      "p95Override": "QTMATERIAL3_DESKTOP_PROXY_P95_BUDGET_MS",
+      "p99Override": "QTMATERIAL3_DESKTOP_PROXY_P99_BUDGET_MS"
+    },
+    "commandPalette100k": {
+      "cpuBudgetMs": 45000,
+      "rssGrowthBudgetMiB": 1024,
+      "p95BudgetMs": 7000,
+      "p99BudgetMs": 10000,
+      "cpuOverride": "QTMATERIAL3_DESKTOP_COMMAND_PALETTE_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_DESKTOP_COMMAND_PALETTE_RSS_BUDGET_MIB",
+      "p95Override": "QTMATERIAL3_DESKTOP_COMMAND_PALETTE_P95_BUDGET_MS",
+      "p99Override": "QTMATERIAL3_DESKTOP_COMMAND_PALETTE_P99_BUDGET_MS"
+    },
+    "themeChanges2000": {
+      "cpuBudgetMs": 60000,
+      "rssGrowthBudgetMiB": 384,
+      "p95BudgetMs": 150,
+      "p99BudgetMs": 300,
+      "cpuOverride": "QTMATERIAL3_DESKTOP_THEME_STORM_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_DESKTOP_THEME_STORM_RSS_BUDGET_MIB",
+      "p95Override": "QTMATERIAL3_DESKTOP_THEME_STORM_P95_BUDGET_MS",
+      "p99Override": "QTMATERIAL3_DESKTOP_THEME_STORM_P99_BUDGET_MS"
+    },
+    "adaptiveResizeStorm5000": {
+      "cpuBudgetMs": 30000,
+      "rssGrowthBudgetMiB": 256,
+      "p95BudgetMs": 50,
+      "p99BudgetMs": 100,
+      "cpuOverride": "QTMATERIAL3_DESKTOP_RESIZE_STORM_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_DESKTOP_RESIZE_STORM_RSS_BUDGET_MIB",
+      "p95Override": "QTMATERIAL3_DESKTOP_RESIZE_STORM_P95_BUDGET_MS",
+      "p99Override": "QTMATERIAL3_DESKTOP_RESIZE_STORM_P99_BUDGET_MS"
+    },
+    "transientSurfaces1000": {
+      "cpuBudgetMs": 30000,
+      "rssGrowthBudgetMiB": 256,
+      "p95BudgetMs": 100,
+      "p99BudgetMs": 200,
+      "cpuOverride": "QTMATERIAL3_DESKTOP_SURFACES_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_DESKTOP_SURFACES_RSS_BUDGET_MIB",
+      "p95Override": "QTMATERIAL3_DESKTOP_SURFACES_P95_BUDGET_MS",
+      "p99Override": "QTMATERIAL3_DESKTOP_SURFACES_P99_BUDGET_MS"
+    },
+    "shadowPixmapCache5000": {
+      "cpuBudgetMs": 15000,
+      "rssGrowthBudgetMiB": 256,
+      "p95BudgetMs": 10,
+      "p99BudgetMs": 25,
+      "cpuOverride": "QTMATERIAL3_DESKTOP_SHADOW_CACHE_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_DESKTOP_SHADOW_CACHE_RSS_BUDGET_MIB",
+      "p95Override": "QTMATERIAL3_DESKTOP_SHADOW_CACHE_P95_BUDGET_MS",
+      "p99Override": "QTMATERIAL3_DESKTOP_SHADOW_CACHE_P99_BUDGET_MS"
+    },
+    "longRunMemoryCycles": {
+      "cpuBudgetMs": 60000,
+      "rssGrowthBudgetMiB": 256,
+      "p95BudgetMs": 150,
+      "p99BudgetMs": 300,
+      "cpuOverride": "QTMATERIAL3_DESKTOP_LONG_RUN_CPU_BUDGET_MS",
+      "rssOverride": "QTMATERIAL3_DESKTOP_LONG_RUN_RSS_BUDGET_MIB",
+      "p95Override": "QTMATERIAL3_DESKTOP_LONG_RUN_P95_BUDGET_MS",
+      "p99Override": "QTMATERIAL3_DESKTOP_LONG_RUN_P99_BUDGET_MS"
+    }
+  },
+  "notes": [
+    "All workloads are deterministic and opt-in.",
+    "Pull requests collect full 1.21 evidence without enforcing timing budgets.",
+    "Scheduled/manual Linux runs enforce CPU, RSS growth, p95 and p99 budgets.",
+    "Long-run memory growth is measured after warm-up to reduce allocator-cache noise.",
+    "Budget overrides are intended for controlled runner calibration, not for hiding unexplained regressions."
+  ]
+}
