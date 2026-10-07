@@ -439,11 +439,20 @@ QStringList editablePropertyNames(const QWidget* widget)
     for (int index = 0; index < meta->propertyCount(); ++index) {
         const QMetaProperty property = meta->property(index);
         const QString name = QString::fromLatin1(property.name());
+        bool designable = false;
+        bool stored = false;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        designable = property.isDesignable();
+        stored = property.isStored();
+#else
+        designable = property.isDesignable(widget);
+        stored = property.isStored(widget);
+#endif
         if (!curatedProperties().contains(name)
             || !property.isReadable()
             || !property.isWritable()
-            || !property.isDesignable(widget)
-            || !property.isStored(widget)) {
+            || !designable
+            || !stored) {
             continue;
         }
 
