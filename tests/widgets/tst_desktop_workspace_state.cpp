@@ -1,5 +1,7 @@
 #include <QtTest/QtTest>
 
+#include <memory>
+
 #include <QHeaderView>
 #include <QStandardItemModel>
 
