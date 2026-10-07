@@ -2,6 +2,7 @@
 
 #include <QIcon>
 #include <QString>
+#include <QStringList>
 #include <memory>
 
 #include "qtmaterial/core/qtmaterialcontrol.h"
@@ -22,6 +23,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialNavigationBar : public QtMaterialCont
     Q_OBJECT
     Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
     Q_PROPERTY(bool labelsVisible READ labelsVisible WRITE setLabelsVisible NOTIFY labelsVisibleChanged)
+    Q_PROPERTY(QStringList destinationLabels READ destinationLabels WRITE setDestinationLabels NOTIFY destinationLabelsChanged)
     Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
 
 public:
@@ -32,6 +34,9 @@ public:
     void insertDestination(int index, const QString& text, const QIcon& icon = QIcon());
     void removeDestination(int index);
     void clearDestinations();
+
+    QStringList destinationLabels() const;
+    void setDestinationLabels(const QStringList& labels);
 
     int count() const noexcept;
     QString destinationText(int index) const;
@@ -56,6 +61,7 @@ Q_SIGNALS:
     void destinationActivated(int index);
     void destinationEnabledChanged(int index, bool enabled);
     void labelsVisibleChanged(bool visible);
+    void destinationLabelsChanged(const QStringList& labels);
     void accessibilitySummaryChanged(const QString& summary);
 
 protected:

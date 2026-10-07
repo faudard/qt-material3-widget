@@ -4,7 +4,7 @@ Qt Material 3 exposes a production-oriented custom-widget collection for Qt Desi
 
 ## Build
 
-The plugin is optional because Qt's UiPlugin development component is not required by normal library consumers.
+The plugin is optional because Qt's UiPlugin development component is not required by normal library consumers. The richer Designer 2.0 authoring extensions use Qt's `Designer` development module when it is available; builds that only provide `UiPlugin` keep the complete palette and .ui serialization support and simply omit the in-process task-menu/container helpers.
 
 ```bash
 cmake -S . -B build -DQTMATERIAL3_BUILD_DESIGNER_PLUGIN=ON
@@ -43,17 +43,17 @@ For a Qt SDK installation, the effective destination is typically the `designer`
 
 The palette intentionally contains only widgets whose useful authored state can be represented safely by Qt properties or native Designer container semantics.
 
-- **Qt Material 3 - Buttons**: Filled, Filled Tonal, Outlined, Elevated and Text buttons
+- **Qt Material 3 - Buttons**: Filled, Filled Tonal, Outlined, Elevated, Text, Split Button and Button Group
 - **Qt Material 3 - Inputs**: Combo Box, Slider, Range Slider, Outlined Text Field, Filled Text Field, Date Field and Search Bar
 - **Qt Material 3 - Selection**: Checkbox, Radio Button, Switch and Chip
-- **Qt Material 3 - Navigation**: Tabs and Breadcrumb
+- **Qt Material 3 - Navigation**: Tabs, Breadcrumb and Navigation Bar
 - **Qt Material 3 - Surfaces**: Card, Top App Bar, Bottom App Bar and Divider
-- **Qt Material 3 - Progress**: Linear and Circular progress indicators
-- **Qt Material 3 - Data**: Pagination, Table and Tree View
+- **Qt Material 3 - Progress**: Linear, Circular and Expressive Loading Indicator
+- **Qt Material 3 - Data**: Pagination, Table, Tree View and Segmented List
 
-That is 27 advertised controls.
+That is **32 advertised controls**.
 
-Controls whose meaningful content requires a list editor, model editor, task menu or custom container extension are not advertised merely to increase the palette count. They should be added together with a persistence-safe Designer extension.
+The five additions are not palette-only placeholders. Split Button and Loading Indicator already expose their authored state through ordinary Qt properties. Button Group, Navigation Bar and Segmented List now expose persistence-safe `QStringList` properties for their authored labels, so their meaningful content survives a Designer -> `.ui` -> UIC round trip.
 
 ## Property authoring
 
@@ -72,7 +72,30 @@ Outlined and Filled Text Fields expose the common authoring surface directly in 
 
 They also inherit the form-field properties such as `label`, `helperText`, `errorText` and `required`.
 
-The plugin's DOM metadata supplies useful initial values for newly dropped controls. For example, Range Slider starts with a visible 25–75 range, Date Field has an editable date format, buttons have visible labels, and App Bars have an editable title. These are only authoring defaults; the saved `.ui` owns the resulting values.
+The plugin's DOM metadata supplies useful initial values for newly dropped controls. For example, Range Slider starts with a visible 25–75 range, Date Field has an editable date format, buttons have visible labels, App Bars have an editable title, Button Group starts with Day/Week/Month, Navigation Bar with Home/Search/Profile, and Segmented List with Personal/Work/Archive. These are only authoring defaults; the saved `.ui` owns the resulting values.
+
+### Designer 2.0 task menu and property editor
+
+When Qt's `Designer` development API is present, every Qt Material 3 widget gets a task-menu entry named **Edit Material 3 properties...**. The dialog deliberately edits only persistence-safe, writable `Q_PROPERTY` values and provides native controls for booleans, integers, floating-point values, strings, enums and `QStringList` values. In a form window, changes are applied through Designer's form cursor when possible so they participate in normal `.ui` authoring instead of becoming runtime-only state.
+
+The same task menu exposes non-persistent preview actions:
+
+- **Preview Light**
+- **Preview Dark**
+- **Preview Expressive**
+- **Restore theme preview**
+
+Preview actions operate on the Qt Material 3 theme runtime inside the Designer process and are intentionally not serialized into the form.
+
+### Persistence-safe collection properties
+
+Three collection-style widgets now have explicit authored-list properties:
+
+- `QtMaterialButtonGroup::buttonLabels`
+- `QtMaterialNavigationBar::destinationLabels`
+- `QtMaterialSegmentedList::itemLabels`
+
+Designer serializes these as `<stringlist>` values. The runtime setters rebuild the corresponding item collections, so UIC-generated forms recreate the authored controls without custom post-load code.
 
 ## Real .ui workflow
 
@@ -92,7 +115,7 @@ The separate `designer/designer_smoke.ui` fixture is smaller and exists specific
 Designer integration is release-gated by complementary contracts:
 
 - collection metadata is unique and every advertised widget can be instantiated;
-- expected palette groups and the 27-widget inventory are checked;
+- expected palette groups and the 32-widget inventory are checked;
 - Text Field authoring properties must remain visible through `QMetaObject`;
 - key Designer defaults are checked in the generated DOM;
 - a real `.ui` fixture is processed by AUTOUIC, compiled and instantiated against the runtime Widgets library;
@@ -100,9 +123,11 @@ Designer integration is release-gated by complementary contracts:
 
 ### Container semantics
 
-Only widgets with genuine container semantics are advertised as Designer containers. `QtMaterialTabs` derives from `QTabWidget` and uses Designer's native tab-container editing behavior. `QtMaterialCard` remains a regular widget because its runtime API does not define child-container ownership semantics.
+Only widgets with genuine container semantics are treated as containers. `QtMaterialTabs` has an explicit `QDesignerContainerExtension` so add/insert/remove/current-page operations remain deterministic even though it subclasses `QTabWidget`. `QtMaterialAdaptiveShell` also has a two-slot container extension mapping Designer children to the shell's content and supporting panes; this extension is available to promoted/custom forms even though Adaptive Shell is not yet part of the default 32-control palette.
 
-Components such as segmented controls, navigation rails and data collections have application-owned item APIs. They are deliberately excluded until a task-menu/model extension can serialize their authored items correctly.
+`QtMaterialCard` remains a regular widget because its runtime API does not define child-container ownership semantics.
+
+The advanced task-menu and container extensions are registered once per Designer form-editor extension manager. If the Qt SDK does not ship the `Designer` development module, the plugin reports a palette-only fallback at configure time instead of making Qt 5.14.2/packaging builds fail.
 
 ## Conan and vcpkg
 

@@ -61,6 +61,7 @@ public:
 
     QVector<Destination> destinations;
     int currentIndex = -1;
+    int pendingCurrentIndex = -1;
     int hoveredIndex = -1;
     int pressedIndex = -1;
     bool labelsVisible = true;
@@ -226,6 +227,7 @@ void QtMaterialNavigationBar::insertDestination(int index, const QString& text, 
     updateGeometry();
     update();
     syncAccessibility();
+    Q_EMIT destinationLabelsChanged(destinationLabels());
 }
 
 void QtMaterialNavigationBar::removeDestination(int index)
@@ -275,11 +277,13 @@ void QtMaterialNavigationBar::removeDestination(int index)
     updateGeometry();
     update();
     syncAccessibility();
+    Q_EMIT destinationLabelsChanged(destinationLabels());
 }
 
 void QtMaterialNavigationBar::clearDestinations()
 {
-    if (d_ptr->destinations.isEmpty() && d_ptr->currentIndex == -1) {
+    const bool hadDestinations = !d_ptr->destinations.isEmpty();
+    if (!hadDestinations && d_ptr->currentIndex == -1) {
         return;
     }
 
@@ -297,6 +301,55 @@ void QtMaterialNavigationBar::clearDestinations()
     updateGeometry();
     update();
     syncAccessibility();
+    if (hadDestinations) {
+        Q_EMIT destinationLabelsChanged(destinationLabels());
+    }
+}
+
+QStringList QtMaterialNavigationBar::destinationLabels() const
+{
+    QStringList labels;
+    labels.reserve(d_ptr->destinations.size());
+    for (const auto& destination : d_ptr->destinations) {
+        labels.append(destination.text);
+    }
+    return labels;
+}
+
+void QtMaterialNavigationBar::setDestinationLabels(const QStringList& labels)
+{
+    if (destinationLabels() == labels) {
+        return;
+    }
+
+    const int previousIndex = d_ptr->currentIndex;
+    const int requestedIndex =
+        d_ptr->pendingCurrentIndex >= 0
+            ? d_ptr->pendingCurrentIndex
+            : previousIndex;
+    d_ptr->destinations.clear();
+    d_ptr->hoveredIndex = -1;
+    d_ptr->pressedIndex = -1;
+    for (const QString& label : labels) {
+        d_ptr->destinations.append({label, QIcon(), true});
+    }
+    const int nextIndex = labels.isEmpty()
+        ? -1
+        : qBound(0, requestedIndex < 0 ? 0 : requestedIndex, int(labels.size()) - 1);
+    if (!labels.isEmpty()) {
+        d_ptr->pendingCurrentIndex = -1;
+    }
+    if (d_ptr->currentIndex != nextIndex) {
+        d_ptr->currentIndex = nextIndex;
+        Q_EMIT currentIndexChanged(nextIndex);
+    }
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyStructure(this);
+#endif
+    updateGeometry();
+    update();
+    syncAccessibility();
+    Q_EMIT destinationLabelsChanged(destinationLabels());
 }
 
 int QtMaterialNavigationBar::count() const noexcept
@@ -373,7 +426,13 @@ int QtMaterialNavigationBar::currentIndex() const noexcept
 
 void QtMaterialNavigationBar::setCurrentIndex(int index)
 {
+    if (d_ptr->destinations.isEmpty() && index >= 0) {
+        d_ptr->pendingCurrentIndex = index;
+        return;
+    }
+
     if (index == -1) {
+        d_ptr->pendingCurrentIndex = -1;
         if (d_ptr->currentIndex == -1) {
             return;
         }
@@ -388,6 +447,7 @@ void QtMaterialNavigationBar::setCurrentIndex(int index)
         return;
     }
 
+    d_ptr->pendingCurrentIndex = -1;
     d_ptr->currentIndex = index;
     Q_EMIT currentIndexChanged(index);
 #ifndef QT_NO_ACCESSIBILITY
