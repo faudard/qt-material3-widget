@@ -276,6 +276,8 @@ Release gates:
 
 - `QtMaterialTable` saves/restores column presentation plus desktop interaction
   policies through a versioned `QByteArray`.
+- Table and Tree View expose explicit inline-editing and application-owned context-menu
+  policies, and those preferences participate in workspace restore.
 - `QtMaterialTreeView` saves/restores header presentation, current item and the
   visible expanded hierarchy relative to the installed model/root index.
 - `QtMaterialCommandPalette` persists favorites, recents and fuzzy-search
