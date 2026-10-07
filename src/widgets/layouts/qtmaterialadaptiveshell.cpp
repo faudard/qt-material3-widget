@@ -214,6 +214,7 @@ void QtMaterialAdaptiveShell::setSupportingPaneWidth(int width)
     }
 
     d_ptr->supportingPaneWidth = normalized;
+    emit supportingPaneWidthChanged(normalized);
     applyAdaptiveGeometry();
 }
 
