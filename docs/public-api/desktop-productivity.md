@@ -9,7 +9,10 @@ and persistence contracts instead of introducing a parallel application framewor
 `QtMaterialTreeView` derives from `QTreeView`. Applications retain ownership of their
 `QAbstractItemModel`, delegates and MIME/drop implementation. The Material layer adds
 explicit dense, multi-selection and drag/drop policies while keeping
-`canFetchMore()/fetchMore()` and lazy models native.
+`canFetchMore()/fetchMore()` and lazy models native. Inline editing is an
+explicit policy backed by native DoubleClick/F2 editing, and opt-in context
+menus emit the model index plus global position without taking ownership of
+application actions.
 
 Uniform row heights are enabled by default because large models are a primary use case.
 Focused certification keeps QTreeView keyboard navigation authoritative and covers RTL layout
@@ -22,11 +25,17 @@ state so screen-reader clients receive stable contextual text.
 
 `QtMaterialTable` remains a `QTableView`. Version 0.9 makes desktop policies explicit:
 column reordering, cell-vs-row selection and internal drag/drop can be enabled without
-replacing the application's model or delegate.
+replacing the application's model or delegate. Inline editing can be enabled/disabled
+without replacing the delegate, and opt-in context-menu requests expose the target
+`QModelIndex` and global position to application-owned menus.
 
 Sorting, resizing, hiding columns, editing and custom delegates continue to use the
-standard Qt APIs. The focused Table suite also certifies the Material accessibility summary,
-native keyboard activation, RTL header/layout propagation and desktop rendering at 100%, 125%, 150%, 175% and 200% scale equivalents.
+standard Qt APIs. Application-owned `QSortFilterProxyModel` chains remain fully supported.
+Plain Return/Enter/Space keeps the existing row-activation contract, while modified key
+sequences are delegated to `QTableView` so advanced range/toggle selection is not intercepted.
+The focused Table suite also certifies the Material accessibility summary, native keyboard
+activation/selection, RTL header/layout propagation and desktop rendering at 100%, 125%, 150%,
+175% and 200% scale equivalents.
 
 ## Pagination
 
@@ -64,7 +73,9 @@ set its duration to zero when the application's reduced-motion policy is enabled
 collapsibility of individually collapsed panes. They use a versioned envelope around
 native splitter state and reject mismatched pane counts/orientations or corrupt envelopes.
 Native `saveState()`/`restoreState()` remain available; use the extended pair when
-restoring an explicitly collapsed pane's policy matters.
+restoring an explicitly collapsed pane's policy matters. 1.12 also exposes
+`saveWorkspaceState()`/`restoreWorkspaceState()` as naming-compatible aliases for
+the same pane schema; there is no second Split View persistence format.
 Use `setPaneCollapsible` to configure per-pane collapse policies. Unconfigured panes
 inherit `childrenCollapsible`; an explicit policy takes precedence. Programmatic
 collapse temporarily enables collapse and expansion restores the previous policy.
@@ -169,8 +180,10 @@ Favorites and MRU history use stable IDs and each command appears once. `setComm
 toggles a favorite; `setFavoriteCommandIds` restores saved favorites. Activation moves its
 ID to the front of `recentCommandIds`, a deduplicated list capped at 20 entries.
 `setRecentCommandIds` restores history; `clearRecentCommands` clears it. Models without IDs
-still activate normally but do not participate in persistent favorites/history. Connect
-the corresponding change signals to application-owned settings storage if required.
+still activate normally but do not participate in persistent favorites/history.
+`saveWorkspaceState()`/`restoreWorkspaceState()` provide a versioned snapshot of
+favorites, recents and fuzzy-matching preference while providers/models/query/activation
+shortcuts remain application-owned.
 
 Up/Down cycle through enabled, selectable results; Home/End select the first/last,
 PageUp/PageDown move by a page, Enter activates, and Escape dismisses. Space also activates
@@ -181,6 +194,19 @@ and the palette describes matching results and loading status.
 Activation or dismissal returns keyboard focus to the widget that opened the palette,
 provided that widget is still alive, visible and enabled. Reopening an already visible
 palette preserves the original invoker.
+
+## Workspace persistence
+
+1.12 gives Table, Tree View, Command Palette, Navigation Suite and Split View a common
+`saveWorkspaceState()` / `restoreWorkspaceState()` convention. Payloads are versioned
+`QByteArray` values suitable for direct `QSettings` storage. Restore rejects corrupt or
+structurally incompatible state instead of partially applying it.
+
+Table requires the saved/current column count to match. Tree View validates row paths
+relative to the installed `rootIndex()` before restoring header state, expansion and
+current item. Navigation Suite verifies destination text/order before applying selected,
+adaptive-width and enabled state. See [Desktop workspace state](desktop-workspace-state.md)
+for the complete compatibility contract and examples.
 
 ## Drag and drop
 
@@ -208,3 +234,9 @@ The registered `tst_desktop_navigation_v2` suite covers fuzzy matching, provider
 stale replies/cancellation, worker-thread dispatch, failure/destruction, favorites/history,
 disabled keyboard activation, host shortcuts, location editing, overflow icons/limits,
 URL drops, extended splitter persistence, animation reversal and constraint restoration.
+
+The 1.12 `tst_desktop_productivity_112` suite adds focused desktop evidence for advanced
+Table/Tree modifier selection, F2 inline-edit commit/cancel, application-owned context-menu
+hooks, proxy sorting/filtering, native drag/drop policy, exact Split View size restoration,
+large asynchronous provider cancellation/stale-result rejection and repeated Navigation
+Bar ↔ Rail transitions without selection, enabled-state or focus loss.

@@ -59,6 +59,7 @@ material3-expressive-adaptive
 expressive-catalogue
 component-expansion
 desktop-productivity
+desktop-workspace-state
 navigation-desktop-certification
 buttons
 compact-controls

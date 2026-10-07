@@ -265,3 +265,48 @@ Release gates:
 - Chip exposes opt-in press/selected shape morphing with deterministic reduced-motion completion.
 - Existing stable List/Menu/Chip appearance remains unchanged when Expressive is disabled.
 - Visual matrices, Gallery coverage and native assistive-technology evidence are required before promotion from usable to complete.
+
+## 1.12.0 — Desktop Productivity & Workspace Persistence
+
+Goal: harden long-lived desktop workflows around the existing Qt Model/View,
+navigation and layout components without adding parallel widgets or taking
+ownership away from application models, delegates, proxies, menus or settings.
+
+Release gates:
+
+- Table and Tree View keep advanced keyboard selection under native
+  `QAbstractItemView` semantics, including modifier-based range/toggle
+  selection, Home/End/page navigation and Tree expand/collapse.
+- Table and Tree View expose explicit native inline-editing policies
+  (DoubleClick/F2 with delegate commit/cancel) and indexed context-menu hooks;
+  application code still owns editors, actions and business commands.
+- Sorting/filtering remains compatible with application-owned
+  `QSortFilterProxyModel` chains. Table column order, widths, visibility,
+  sort presentation and desktop policies round-trip through a versioned,
+  fail-safe workspace payload.
+- Tree View restores header presentation, desktop policies, current item and the
+  visible expanded hierarchy relative to the installed model/root index.
+- Native internal drag/drop remains model-owned through MIME/drop contracts for
+  Table and Tree View; enabling Material policy only configures the view.
+- Split View restores pane sizes and collapse metadata across instances through
+  its established versioned pane-state schema, also exposed under uniform
+  `saveWorkspaceState()` / `restoreWorkspaceState()` naming.
+- Command Palette remains responsive with large providers and certifies
+  asynchronous result delivery, rapid request supersession, cancellation and
+  stale-result rejection; provider/source-model ownership stays application-side.
+- Navigation Suite preserves selected destination, enabled states, destination
+  identity, keyboard focus and accessible selection while repeatedly switching
+  Navigation Bar ↔ Navigation Rail across adaptive width classes.
+- Command Palette persists favorites, recents and fuzzy-search preference, while
+  providers, source models, activation shortcuts and transient queries remain
+  application-owned.
+- Every workspace restore validates magic/version and structural compatibility
+  before applying user-visible state; corrupt or incompatible payloads fail
+  safely without partial restore.
+- `tst_desktop_workspace_state`, `tst_desktop_productivity_112` and the
+  existing Command Palette/adaptive stress suites provide executable 1.12
+  evidence for persistence plus the interaction contracts above.
+- Public documentation shows direct `QSettings` integration and specifies the
+  required model/destination setup order before restore.
+- Qt 5.14.2, Qt 6, Windows, Linux, macOS, sanitizers, installed consumers and
+  documentation gates remain green.

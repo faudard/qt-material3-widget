@@ -47,6 +47,11 @@ public:
 
     QByteArray savePaneState() const;
     bool restorePaneState(const QByteArray& state);
+
+    // Uniform 1.12 desktop workspace-state naming. These forward to the
+    // established pane-state format and do not introduce a second schema.
+    QByteArray saveWorkspaceState() const;
+    bool restoreWorkspaceState(const QByteArray& state);
     bool rememberPaneSizes() const noexcept;
     void setRememberPaneSizes(bool remember);
 
