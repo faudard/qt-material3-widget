@@ -37,13 +37,20 @@ RTL-aware placement and accessible current-item summaries. Rendering is driven b
 
 `QtMaterialTable` is the Material 3 wrapper around `QTableView`. Its contract covers
 row-oriented selection by default, regular/dense density, accessible table/current-cell/row
-summaries, keyboard activation with Return/Enter/Space and a stable `rowActivated(int)` signal.
+summaries, plain Return/Enter/Space row activation and a stable `rowActivated(int)` signal.
+Modifier-based selection and navigation are deliberately left to `QTableView`, so Shift/Ctrl
+range/toggle selection, Home/End and page movement keep native desktop behavior.
 
 The table intentionally keeps Qt's model/view architecture. Applications continue to provide a
-`QAbstractItemModel`, optional sorting/filtering proxies and custom delegates where
-domain-specific rendering is required.
+`QAbstractItemModel`, optional `QSortFilterProxyModel` chains and custom delegates where
+domain-specific rendering or editing is required. `inlineEditingEnabled` selects native
+DoubleClick/F2 edit triggers; delegate commit/cancel semantics stay unchanged. Opt-in
+`contextMenuEnabled` emits `contextMenuRequested(index, globalPosition)` and leaves creation,
+lifetime and actions of the menu to the application.
 
 For desktop workflows, `QtMaterialTable` also exposes explicit policies for column reordering,
 cell-vs-row selection and native internal drag/drop. These policies configure the underlying
-`QTableView` behavior rather than replacing Qt's model, delegate or MIME/drop contracts. See
-[Desktop and productivity components](desktop-productivity.md) for the wider 0.9 desktop surface.
+`QTableView` behavior rather than replacing Qt's model, delegate or MIME/drop contracts.
+The 1.12 workspace payload persists column order, width, visibility, sort presentation and the
+Material desktop policies. See [Desktop and productivity components](desktop-productivity.md)
+for the wider desktop surface.
