@@ -67,6 +67,30 @@
     </widget>
    </item>
    <item><widget class="QtMaterial::QtMaterialTable" name="previewTable"/></item>
+   <item>
+    <layout class="QHBoxLayout" name="designer2ControlsLayout">
+     <item><widget class="QtMaterial::QtMaterialButtonGroup" name="viewModeGroup">
+      <property name="buttonLabels"><stringlist><string>List</string><string>Board</string><string>Timeline</string></stringlist></property>
+      <property name="currentIndex"><number>0</number></property>
+     </widget></item>
+     <item><widget class="QtMaterial::QtMaterialSplitButton" name="createSplitButton">
+      <property name="text"><string>Create</string></property>
+      <property name="expressive"><bool>true</bool></property>
+     </widget></item>
+     <item><widget class="QtMaterial::QtMaterialLoadingIndicator" name="loadingIndicator">
+      <property name="active"><bool>false</bool></property>
+      <property name="indicatorSize"><number>40</number></property>
+     </widget></item>
+    </layout>
+   </item>
+   <item><widget class="QtMaterial::QtMaterialSegmentedList" name="workspaceList">
+    <property name="itemLabels"><stringlist><string>Personal</string><string>Work</string><string>Archive</string></stringlist></property>
+    <property name="expressive"><bool>true</bool></property>
+   </widget></item>
+   <item><widget class="QtMaterial::QtMaterialNavigationBar" name="navigationBar">
+    <property name="destinationLabels"><stringlist><string>Home</string><string>Search</string><string>Profile</string></stringlist></property>
+    <property name="currentIndex"><number>0</number></property>
+   </widget></item>
    <item><widget class="QtMaterial::QtMaterialLinearProgressIndicator" name="progress"><property name="value"><double>0.35</double></property></widget></item>
    <item>
     <layout class="QHBoxLayout" name="actionsLayout">
@@ -94,6 +118,11 @@
   <customwidget><class>QtMaterial::QtMaterialLinearProgressIndicator</class><extends>QWidget</extends><header>qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h</header></customwidget>
   <customwidget><class>QtMaterial::QtMaterialOutlinedButton</class><extends>QAbstractButton</extends><header>qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h</header></customwidget>
   <customwidget><class>QtMaterial::QtMaterialFilledButton</class><extends>QAbstractButton</extends><header>qtmaterial/widgets/buttons/qtmaterialfilledbutton.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialButtonGroup</class><extends>QWidget</extends><header>qtmaterial/widgets/buttons/qtmaterialbuttongroup.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialSplitButton</class><extends>QWidget</extends><header>qtmaterial/widgets/buttons/qtmaterialsplitbutton.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialLoadingIndicator</class><extends>QWidget</extends><header>qtmaterial/widgets/progress/qtmaterialloadingindicator.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialSegmentedList</class><extends>QWidget</extends><header>qtmaterial/widgets/data/qtmaterialsegmentedlist.h</header></customwidget>
+  <customwidget><class>QtMaterial::QtMaterialNavigationBar</class><extends>QWidget</extends><header>qtmaterial/widgets/navigation/qtmaterialnavigationbar.h</header></customwidget>
  </customwidgets>
  <resources/>
  <connections/>
