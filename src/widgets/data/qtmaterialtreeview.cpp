@@ -514,9 +514,13 @@ void QtMaterialTreeView::keyPressEvent(
         && event->modifiers() == Qt::NoModifier
         && inlineEditingEnabled()
         && currentIndex().isValid()) {
-        edit(currentIndex());
-        event->accept();
-        return;
+        if (QTreeView::edit(
+                currentIndex(),
+                QAbstractItemView::EditKeyPressed,
+                event)) {
+            event->accept();
+            return;
+        }
     }
 
     QTreeView::keyPressEvent(event);
