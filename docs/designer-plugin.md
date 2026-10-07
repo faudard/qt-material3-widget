@@ -51,9 +51,17 @@ The palette intentionally contains only widgets whose useful authored state can 
 - **Qt Material 3 - Progress**: Linear, Circular and Expressive Loading Indicator
 - **Qt Material 3 - Data**: Pagination, Table, Tree View and Segmented List
 
-That is **32 advertised controls**.
+That is **32 advertised controls** for Designer 2.0.
 
-The five additions are not palette-only placeholders. Split Button and Loading Indicator already expose their authored state through ordinary Qt properties. Button Group, Navigation Bar and Segmented List now expose persistence-safe `QStringList` properties for their authored labels, so their meaningful content survives a Designer -> `.ui` -> UIC round trip.
+Designer 3.0 promotes three additional persistence-safe controls for a total of **35**:
+
+- **Qt Material 3 - Layouts**: Adaptive Shell
+- **Qt Material 3 - Surfaces**: Tooltip
+- **Qt Material 3 - Data**: Badge
+
+Adaptive Shell exposes `automaticDensity` and `supportingPaneWidth` as authored Qt properties while retaining its two-slot container extension. Tooltip and Badge are ordinary property-driven controls, so all three survive Designer -> `.ui` -> UIC without application-side construction code.
+
+The Designer 2.0 additions remain non-placeholder controls. Split Button and Loading Indicator expose authored state through ordinary Qt properties. Button Group, Navigation Bar and Segmented List expose persistence-safe `QStringList` properties for their authored labels.
 
 ## Property authoring
 
@@ -74,18 +82,29 @@ They also inherit the form-field properties such as `label`, `helperText`, `erro
 
 The plugin's DOM metadata supplies useful initial values for newly dropped controls. For example, Range Slider starts with a visible 25–75 range, Date Field has an editable date format, buttons have visible labels, App Bars have an editable title, Button Group starts with Day/Week/Month, Navigation Bar with Home/Search/Profile, and Segmented List with Personal/Work/Archive. These are only authoring defaults; the saved `.ui` owns the resulting values.
 
-### Designer 2.0 task menu and property editor
+### Designer 3.0 task menu and property editor
 
-When Qt's `Designer` development API is present, every Qt Material 3 widget gets a task-menu entry named **Edit Material 3 properties...**. The dialog deliberately edits only persistence-safe, writable `Q_PROPERTY` values and provides native controls for booleans, integers, floating-point values, strings, enums and `QStringList` values. In a form window, changes are applied through Designer's form cursor when possible so they participate in normal `.ui` authoring instead of becoming runtime-only state.
+When Qt's `Designer` development API is present, every Qt Material 3 widget gets a task-menu entry named **Edit Material 3 properties...**. Designer 3.0 discovers writable/designable/stored properties declared by Material classes instead of relying on a fixed hand-maintained property-name allowlist.
 
-The same task menu exposes non-persistent preview actions:
+The editor provides specialized controls for:
 
-- **Preview Light**
-- **Preview Dark**
-- **Preview Expressive**
-- **Restore theme preview**
+- enums;
+- booleans, integers and floating-point values;
+- strings, dates, times and date-times;
+- colors;
+- real collection editing for `QStringList` properties, including add/remove/reorder;
+- resettable overrides, with **Token/default** delegating to Designer's property-reset path so theme-resolved color properties can return to their Material token.
 
-Preview actions operate on the Qt Material 3 theme runtime inside the Designer process and are intentionally not serialized into the form.
+Button Group, Navigation Bar and Segmented List therefore have visual collection editors rather than multiline text editing. In a form window, changes and resets are applied through Designer's form cursor so they participate in the normal undo/serialization workflow.
+
+The same task menu retains the non-persistent Light/Dark/Expressive actions and adds **Designer 3.0 preview...**. The preview dialog renders the selected widget without serializing preview state and can combine:
+
+- current, Compact (480), Medium (720) or Expanded (1024) logical width;
+- DPR 1x or 2x;
+- LTR or RTL;
+- current theme or six built-in theme presets: Material Default Light/Dark, Blue Light, Green Light, Amber Dark and Rose Expressive.
+
+For Adaptive Shell this makes breakpoint, automatic density, navigation mode and supporting-pane behavior inspectable from Designer without resizing the authored form. The target widget's size/direction and the process theme are restored after each capture.
 
 ### Persistence-safe collection properties
 
@@ -115,10 +134,10 @@ The separate `designer/designer_smoke.ui` fixture is smaller and exists specific
 Designer integration is release-gated by complementary contracts:
 
 - collection metadata is unique and every advertised widget can be instantiated;
-- expected palette groups and the 32-widget inventory are checked;
-- Text Field authoring properties must remain visible through `QMetaObject`;
+- expected palette groups and the 35-widget inventory are checked;
+- Material-declared persistence-safe properties, including color/token overrides and Adaptive Shell authoring properties, remain visible through `QMetaObject`;
 - key Designer defaults are checked in the generated DOM;
-- a real `.ui` fixture is processed by AUTOUIC, compiled and instantiated against the runtime Widgets library;
+- a real `.ui` fixture is processed by AUTOUIC, compiled and instantiated against the runtime Widgets library, including Adaptive Shell, Tooltip and Badge;
 - CI builds the plugin on Linux/Qt 6 and Windows Qt 5.14.2/MSVC.
 
 ### Container semantics
