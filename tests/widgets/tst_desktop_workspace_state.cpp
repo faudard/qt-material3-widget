@@ -88,6 +88,7 @@ private Q_SLOTS:
         QHeaderView* header = table.horizontalHeader();
         header->resizeSection(1, 177);
         header->moveSection(header->visualIndex(0), 2);
+        header->setSectionHidden(2, true);
 
         const int savedVisualIndex = header->visualIndex(0);
         const int savedSectionSize = header->sectionSize(1);
@@ -104,6 +105,7 @@ private Q_SLOTS:
         table.setSortingEnabled(false);
         header->resizeSection(1, 80);
         header->moveSection(header->visualIndex(0), 0);
+        header->setSectionHidden(2, false);
 
         QVERIFY(table.restoreWorkspaceState(state));
         QVERIFY(table.dense());
@@ -116,6 +118,7 @@ private Q_SLOTS:
         QVERIFY(table.isSortingEnabled());
         QCOMPARE(header->visualIndex(0), savedVisualIndex);
         QCOMPARE(header->sectionSize(1), savedSectionSize);
+        QVERIFY(header->isSectionHidden(2));
         QCOMPARE(header->sortIndicatorSection(), 2);
         QCOMPARE(header->sortIndicatorOrder(), Qt::DescendingOrder);
 
@@ -164,6 +167,7 @@ private Q_SLOTS:
         QHeaderView* header = tree.header();
         header->resizeSection(0, 211);
         header->moveSection(header->visualIndex(0), 1);
+        header->setSectionHidden(1, true);
 
         const int savedVisualIndex = header->visualIndex(0);
         const int savedSectionSize = header->sectionSize(0);
@@ -179,6 +183,7 @@ private Q_SLOTS:
         tree.setContextMenuEnabled(false);
         header->resizeSection(0, 90);
         header->moveSection(header->visualIndex(0), 0);
+        header->setSectionHidden(1, false);
 
         QVERIFY(tree.restoreWorkspaceState(state));
         QVERIFY(tree.isExpanded(root));
@@ -191,6 +196,7 @@ private Q_SLOTS:
         QVERIFY(tree.contextMenuEnabled());
         QCOMPARE(header->visualIndex(0), savedVisualIndex);
         QCOMPARE(header->sectionSize(0), savedSectionSize);
+        QVERIFY(header->isSectionHidden(1));
         QVERIFY(
             tree.currentItemAccessibleText().contains(
                 QStringLiteral("Selected requirement")));
