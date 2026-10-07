@@ -54,7 +54,7 @@ def validate(root: Path = ROOT) -> list[str]:
             errors.append(f"vcpkg manifest missing feature: {feature}")
 
     portfile = (manifest_path.parent / "portfile.cmake").read_text(encoding="utf-8")
-    if not re.search(r"\\bREF [0-9a-f]{40}\\b", portfile):
+    if not re.search(r"\bREF [0-9a-f]{40}\b", portfile):
         errors.append("vcpkg port must pin an immutable 40-character Git commit")
     for token in [
         "vcpkg_from_git(",
