@@ -16,7 +16,7 @@ private slots:
         QtMaterial3DesignerCollection collection;
         const auto widgets = collection.customWidgets();
 
-        QCOMPARE(widgets.size(), 27);
+        QCOMPARE(widgets.size(), 32);
 
         QSet<QString> names;
         for (QDesignerCustomWidgetInterface* item : widgets) {
@@ -73,6 +73,11 @@ private slots:
             QStringLiteral("QtMaterialTopAppBar"),
             QStringLiteral("QtMaterialBottomAppBar"),
             QStringLiteral("QtMaterial::QtMaterialDivider"),
+            QStringLiteral("QtMaterial::QtMaterialSplitButton"),
+            QStringLiteral("QtMaterial::QtMaterialButtonGroup"),
+            QStringLiteral("QtMaterial::QtMaterialNavigationBar"),
+            QStringLiteral("QtMaterial::QtMaterialLoadingIndicator"),
+            QStringLiteral("QtMaterial::QtMaterialSegmentedList"),
         };
         for (const QString& name : expectedWidgets)
             QVERIFY2(byName.contains(name), qPrintable(name));
@@ -109,6 +114,30 @@ private slots:
         const QString appBarDom =
             byName.value(QStringLiteral("QtMaterialTopAppBar"))->domXml();
         QVERIFY(appBarDom.contains(QStringLiteral("<property name=\"title\">")));
+
+        QWidget* buttonGroup = byName.value(
+            QStringLiteral("QtMaterial::QtMaterialButtonGroup"))->createWidget(&parent);
+        QVERIFY(buttonGroup->metaObject()->indexOfProperty("buttonLabels") >= 0);
+        const QString groupDom =
+            byName.value(QStringLiteral("QtMaterial::QtMaterialButtonGroup"))->domXml();
+        QVERIFY(groupDom.contains(QStringLiteral("<property name=\"buttonLabels\">")));
+        QVERIFY(groupDom.contains(QStringLiteral("<string>Week</string>")));
+
+        QWidget* navigationBar = byName.value(
+            QStringLiteral("QtMaterial::QtMaterialNavigationBar"))->createWidget(&parent);
+        QVERIFY(navigationBar->metaObject()->indexOfProperty("destinationLabels") >= 0);
+        const QString navigationDom =
+            byName.value(QStringLiteral("QtMaterial::QtMaterialNavigationBar"))->domXml();
+        QVERIFY(navigationDom.contains(QStringLiteral("<property name=\"destinationLabels\">")));
+        QVERIFY(navigationDom.contains(QStringLiteral("<string>Profile</string>")));
+
+        QWidget* segmentedList = byName.value(
+            QStringLiteral("QtMaterial::QtMaterialSegmentedList"))->createWidget(&parent);
+        QVERIFY(segmentedList->metaObject()->indexOfProperty("itemLabels") >= 0);
+
+        const QString splitDom =
+            byName.value(QStringLiteral("QtMaterial::QtMaterialSplitButton"))->domXml();
+        QVERIFY(splitDom.contains(QStringLiteral("<property name=\"expressive\">")));
     }
 };
 

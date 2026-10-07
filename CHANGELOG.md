@@ -21,6 +21,9 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Designer 2.0 adds Material task-menu property authoring, reversible Light/Dark/Expressive previews and explicit Tabs/Adaptive Shell container extensions when Qt's Designer development API is available.
+- The Designer palette grows to 32 persistence-safe controls, adding Split Button, Button Group, Navigation Bar, Loading Indicator and Segmented List with AUTOUIC round-trip coverage.
+- Button Group, Navigation Bar and Segmented List expose serializable QStringList authoring properties for their labels.
 - Desktop Productivity 1.12 hardens native Table/Tree keyboard selection, inline editing, proxy sort/filter compatibility, indexed context menus and drag/drop; adds fail-safe workspace persistence for Table, Tree View, Command Palette, Navigation Suite and Split View; and certifies exact split-size restore, large async/cancelled command providers and repeated Navigation Bar ↔ Rail state preservation.
 - Expressive Catalogue 1.10 adds Split Button, Button Group, Floating Toolbar and morphing Loading Indicator widgets with keyboard/accessibility contracts and reduced-motion handling.
 - Expressive Data 1.11 adds opt-in expressive List Item geometry, automatic Segmented List grouping, expressive Menu metrics and press/selected Chip shape morphing.
@@ -31,7 +34,7 @@ unless a stricter ABI policy is published.
 - Expressive FAB adds Small/Standard/Medium/Large sizing while reusing the shared shape-morph and reduced-motion pipeline.
 - Adaptive window size classes, Navigation Suite and Adaptive Shell add Compact/Medium/Expanded/Large/ExtraLarge behavior, responsive Bar/Rail navigation, supporting panes, RTL layout and automatic desktop density.
 - Material 3 catalogue coverage adds Navigation Bar, Side Sheet, Tooltip and Badge with theme-aware rendering, focused tests, Gallery examples and 1.7 maturity tracking.
-- Designer 2.0 expands the curated Qt Designer palette from 21 to 27 persistence-safe widgets, including Range Slider, Date Field, Search Bar, Top/Bottom App Bars and Divider.
+- The initial Designer foundation expanded the curated palette from 21 to 27 persistence-safe widgets, including Range Slider, Date Field, Search Bar, Top/Bottom App Bars and Divider.
 - Outlined/Filled Text Fields expose their common authored values as Qt properties for direct editing and UIC serialization.
 - A real `examples/designer-form/designerform.ui` AUTOUIC application demonstrates production `.ui` consumption.
 - The `designer-dev` CMake preset configures, builds and runs focused Designer contracts.

@@ -37,12 +37,14 @@ void QtMaterialSegmentedList::addItem(QtMaterialListItem* item)
 {
     QtMaterialList::addItem(item);
     refreshSegments();
+    Q_EMIT itemLabelsChanged(itemLabels());
 }
 
 QtMaterialListItem* QtMaterialSegmentedList::addItem(const QString& headline)
 {
     QtMaterialListItem* item = QtMaterialList::addItem(headline);
     refreshSegments();
+    Q_EMIT itemLabelsChanged(itemLabels());
     return item;
 }
 
@@ -50,6 +52,7 @@ void QtMaterialSegmentedList::insertItem(int index, QtMaterialListItem* item)
 {
     QtMaterialList::insertItem(index, item);
     refreshSegments();
+    Q_EMIT itemLabelsChanged(itemLabels());
 }
 
 QtMaterialListItem* QtMaterialSegmentedList::takeItem(int index)
@@ -61,25 +64,67 @@ QtMaterialListItem* QtMaterialSegmentedList::takeItem(int index)
             QtMaterialListItem::ExpressiveSegmentPosition::None);
     }
     refreshSegments();
+    if (item) {
+        Q_EMIT itemLabelsChanged(itemLabels());
+    }
     return item;
 }
 
 void QtMaterialSegmentedList::removeItem(int index)
 {
+    if (index < 0 || index >= count()) {
+        return;
+    }
     QtMaterialList::removeItem(index);
     refreshSegments();
+    Q_EMIT itemLabelsChanged(itemLabels());
 }
 
 void QtMaterialSegmentedList::removeItem(QtMaterialListItem* item)
 {
+    if (!item || indexOf(item) < 0) {
+        return;
+    }
     QtMaterialList::removeItem(item);
     refreshSegments();
+    Q_EMIT itemLabelsChanged(itemLabels());
 }
 
 void QtMaterialSegmentedList::clear()
 {
+    const bool hadItems = count() > 0;
     QtMaterialList::clear();
     refreshSegments();
+    if (hadItems) {
+        Q_EMIT itemLabelsChanged(itemLabels());
+    }
+}
+
+QStringList QtMaterialSegmentedList::itemLabels() const
+{
+    QStringList labels;
+    labels.reserve(count());
+    for (int index = 0; index < count(); ++index) {
+        if (const QtMaterialListItem* item = itemAt(index)) {
+            labels.append(item->headlineText());
+        }
+    }
+    return labels;
+}
+
+void QtMaterialSegmentedList::setItemLabels(const QStringList& labels)
+{
+    if (itemLabels() == labels) {
+        return;
+    }
+
+    while (count() > 0) {
+        removeItem(0);
+    }
+    for (const QString& label : labels) {
+        addItem(label);
+    }
+    Q_EMIT itemLabelsChanged(itemLabels());
 }
 
 void QtMaterialSegmentedList::refreshSegments()

@@ -310,3 +310,27 @@ Release gates:
   required model/destination setup order before restore.
 - Qt 5.14.2, Qt 6, Windows, Linux, macOS, sanitizers, installed consumers and
   documentation gates remain green.
+
+## 1.13.0 — Designer 2.0
+
+Goal: turn the Qt Designer plugin from a palette integration into a persistence-safe
+authoring environment for Material 3 desktop applications.
+
+Release gates:
+
+- The default palette grows from 27 to 32 controls only where authored state has a stable
+  `Q_PROPERTY` representation and survives Designer -> `.ui` -> UIC round trips.
+- Button Group, Navigation Bar and Segmented List expose `QStringList` authoring properties
+  for their labels instead of relying on runtime-only item construction.
+- A Material task menu provides a focused editor for writable scalar, enum and string-list
+  properties and applies changes through the active form cursor when possible.
+- Light, Dark and Expressive preview actions are available from the task menu and can restore
+  the pre-preview theme without persisting preview state into the form.
+- Explicit container extensions cover QtMaterialTabs and the two authored content slots of
+  QtMaterialAdaptiveShell.
+- The richer extension layer is compiled when Qt's Designer development module is present;
+  UiPlugin-only environments retain a functioning palette and serialization path.
+- AUTOUIC smoke coverage validates the new list properties and Expressive controls, while
+  advanced-extension tests cover property discovery, reversible previews and container behavior.
+- Qt 5.14.2 compatibility remains fail-open for optional Designer APIs and fail-closed for
+  the core palette/.ui contract.

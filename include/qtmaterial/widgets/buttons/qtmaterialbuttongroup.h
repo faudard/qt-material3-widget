@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QStringList>
 #include <QVector>
 
 #include "qtmaterial/core/qtmaterialwidget.h"
@@ -20,6 +21,7 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialButtonGroup : public QtMaterialWidget
     Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
     Q_PROPERTY(int spacing READ spacing WRITE setSpacing NOTIFY spacingChanged)
     Q_PROPERTY(bool expressive READ expressive WRITE setExpressive NOTIFY expressiveChanged)
+    Q_PROPERTY(QStringList buttonLabels READ buttonLabels WRITE setButtonLabels NOTIFY buttonLabelsChanged)
 
 public:
     explicit QtMaterialButtonGroup(QWidget* parent = nullptr);
@@ -32,6 +34,9 @@ public:
     void addButton(QtMaterialTextButton* button);
     void removeButton(QtMaterialTextButton* button);
     void clear();
+
+    QStringList buttonLabels() const;
+    void setButtonLabels(const QStringList& labels);
 
     bool isExclusive() const noexcept;
     void setExclusive(bool exclusive);
@@ -51,6 +56,7 @@ Q_SIGNALS:
     void exclusiveChanged(bool exclusive);
     void spacingChanged(int spacing);
     void expressiveChanged(bool expressive);
+    void buttonLabelsChanged(const QStringList& labels);
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event) override;
@@ -67,6 +73,7 @@ private:
     bool m_exclusive = true;
     bool m_expressive = true;
     int m_currentIndex = -1;
+    int m_pendingCurrentIndex = -1;
 };
 
 } // namespace QtMaterial
