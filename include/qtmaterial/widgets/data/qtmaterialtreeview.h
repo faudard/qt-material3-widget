@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include <QByteArray>
 #include <QTreeView>
 #include <QString>
 
@@ -34,6 +35,21 @@ public:
 
     QString accessibilitySummary() const;
     QString currentItemAccessibleText() const;
+
+    /**
+     * Saves header geometry/order, desktop policies, the current item and the
+     * visible expanded hierarchy. Model data is never serialized.
+     */
+    QByteArray saveWorkspaceState() const;
+
+    /**
+     * Restores state against the currently installed model/root index.
+     *
+     * Row paths are validated before mutation. Incompatible model topology,
+     * column counts or malformed payloads are rejected.
+     */
+    bool restoreWorkspaceState(const QByteArray& state);
+
     void setModel(QAbstractItemModel* model) override;
 
 Q_SIGNALS:
