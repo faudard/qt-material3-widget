@@ -18,6 +18,7 @@
 #include <QSpinBox>
 #include <QTabWidget>
 #include <QVariant>
+#include <QVBoxLayout>
 #include <QVector>
 #include <QWidget>
 
