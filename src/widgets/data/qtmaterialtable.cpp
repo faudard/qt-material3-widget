@@ -262,6 +262,19 @@ QtMaterialTable::QtMaterialTable(
     setShowGrid(true);
     setFocusPolicy(Qt::StrongFocus);
     setSortingEnabled(true);
+    setEditTriggers(
+        QAbstractItemView::DoubleClicked
+        | QAbstractItemView::EditKeyPressed);
+
+    connect(
+        viewport(),
+        &QWidget::customContextMenuRequested,
+        this,
+        [this](const QPoint& position) {
+            Q_EMIT contextMenuRequested(
+                indexAt(position),
+                viewport()->mapToGlobal(position));
+        });
 
     d_ptr->delegate =
         new MaterialTableDelegate(this);
@@ -453,6 +466,44 @@ void QtMaterialTable::setDragDropEnabled(bool enabled)
             : QAbstractItemView::NoDragDrop);
 
     Q_EMIT dragDropEnabledChanged(enabled);
+}
+
+bool QtMaterialTable::inlineEditingEnabled() const noexcept
+{
+    return editTriggers() != QAbstractItemView::NoEditTriggers;
+}
+
+void QtMaterialTable::setInlineEditingEnabled(bool enabled)
+{
+    if (inlineEditingEnabled() == enabled) {
+        return;
+    }
+
+    setEditTriggers(
+        enabled
+            ? QAbstractItemView::EditTriggers(
+                QAbstractItemView::DoubleClicked
+                | QAbstractItemView::EditKeyPressed)
+            : QAbstractItemView::NoEditTriggers);
+    Q_EMIT inlineEditingEnabledChanged(enabled);
+}
+
+bool QtMaterialTable::contextMenuEnabled() const noexcept
+{
+    return viewport()->contextMenuPolicy() == Qt::CustomContextMenu;
+}
+
+void QtMaterialTable::setContextMenuEnabled(bool enabled)
+{
+    if (contextMenuEnabled() == enabled) {
+        return;
+    }
+
+    viewport()->setContextMenuPolicy(
+        enabled
+            ? Qt::CustomContextMenu
+            : Qt::DefaultContextMenu);
+    Q_EMIT contextMenuEnabledChanged(enabled);
 }
 
 QString
@@ -730,17 +781,25 @@ void QtMaterialTable::keyPressEvent(
         return;
     }
 
+    const bool plainActivation =
+        event->modifiers() == Qt::NoModifier;
+
     switch (event->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter:
     case Qt::Key_Space:
-        activateCurrentRow();
-        event->accept();
-        return;
+        if (plainActivation) {
+            activateCurrentRow();
+            event->accept();
+            return;
+        }
+        break;
     default:
         break;
     }
 
+    // Modifier-based selection (Shift/Ctrl/Meta + arrows/Space), F2 editing,
+    // Home/End and page navigation stay under QTableView ownership.
     QTableView::keyPressEvent(event);
 }
 
