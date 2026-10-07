@@ -46,6 +46,10 @@ public:
     QWidget* widget(int index) const override;
     int currentIndex() const override;
     void setCurrentIndex(int index) override;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    bool canAddWidget() const override;
+    bool canRemove(int index) const override;
+#endif
     void addWidget(QWidget* widget) override;
     void insertWidget(int index, QWidget* widget) override;
     void remove(int index) override;
@@ -70,6 +74,10 @@ public:
     QWidget* widget(int index) const override;
     int currentIndex() const override;
     void setCurrentIndex(int index) override;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    bool canAddWidget() const override;
+    bool canRemove(int index) const override;
+#endif
     void addWidget(QWidget* widget) override;
     void insertWidget(int index, QWidget* widget) override;
     void remove(int index) override;
