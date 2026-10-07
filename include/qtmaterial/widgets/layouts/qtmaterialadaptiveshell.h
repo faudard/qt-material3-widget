@@ -18,6 +18,8 @@ class QtMaterialNavigationSuite;
 class QTMATERIAL3_WIDGETS_EXPORT QtMaterialAdaptiveShell : public QtMaterialWidget
 {
     Q_OBJECT
+    Q_PROPERTY(bool automaticDensity READ automaticDensity WRITE setAutomaticDensity NOTIFY automaticDensityChanged)
+    Q_PROPERTY(int supportingPaneWidth READ supportingPaneWidth WRITE setSupportingPaneWidth NOTIFY supportingPaneWidthChanged)
     Q_PROPERTY(bool supportingPaneVisible READ isSupportingPaneVisible NOTIFY supportingPaneVisibleChanged)
     Q_PROPERTY(QString accessibilitySummary READ accessibilitySummary NOTIFY accessibilitySummaryChanged)
 
@@ -50,6 +52,7 @@ signals:
     void heightSizeClassChanged(QtMaterial::WindowHeightSizeClass sizeClass);
     void resolvedDensityChanged(QtMaterial::Density density);
     void automaticDensityChanged(bool enabled);
+    void supportingPaneWidthChanged(int width);
     void supportingPaneVisibleChanged(bool visible);
     void accessibilitySummaryChanged(const QString& summary);
 

@@ -383,3 +383,32 @@ Follow-up scope:
 - Keep ripple, Expressive morphing and component-specific advanced behavior in
   first-class `QtMaterial*` widgets rather than silently emulating incomplete
   behavior in native controls.
+
+
+## 1.19.0 — Designer 3.0
+
+Goal: make Qt Designer a first-class Material 3 authoring environment for adaptive desktop forms,
+with richer property tooling and realistic non-persistent previews.
+
+Release gates:
+
+- Material widgets expose writable/designable/stored properties through the focused editor without
+  maintaining a narrow property-name allowlist; unsupported Qt/property types remain hidden.
+- QColor overrides use a dedicated color editor and resettable theme-owned values can return to
+  their Material token/default through Designer's reset/undo path.
+- Enum properties use enumerated choices, while Button Group, Navigation Bar and Segmented List
+  use visual collection editors with add/remove/reorder instead of raw multiline text.
+- Adaptive Shell exposes serializable `automaticDensity` and `supportingPaneWidth` properties
+  and retains deterministic two-slot container authoring.
+- The default palette grows from 32 to 35 persistence-safe controls by promoting Adaptive Shell,
+  Tooltip and Badge; all three are covered by Designer -> `.ui` -> UIC round-trip tests.
+- A Designer preview surface covers Compact/Medium/Expanded representative widths, DPR 1x/2x
+  and LTR/RTL without persisting those preview choices into the form.
+- Theme preview selection includes the built-in Material Default Light/Dark, Blue Light,
+  Green Light, Amber Dark and Rose Expressive presets and restores the previous process theme.
+- Existing Light/Dark/Expressive live preview actions remain reversible and compatible with the
+  richer preview dialog.
+- Qt 5.14.2 keeps the UiPlugin-only fallback; advanced Designer APIs stay optional and no runtime
+  consumer gains a Qt Designer dependency.
+- Designer collection, extension and AUTOUIC smoke contracts remain green on the supported
+  Windows Qt 5.14.2 and Qt 6 Designer lanes.

@@ -5,18 +5,32 @@
 
 #include <QAction>
 #include <QCheckBox>
+#include <QColor>
+#include <QColorDialog>
 #include <QComboBox>
+#include <QDateEdit>
+#include <QDateTimeEdit>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
+#include <QHBoxLayout>
+#include <QInputDialog>
+#include <QLabel>
 #include <QLineEdit>
+#include <QListWidget>
 #include <QMetaEnum>
 #include <QMetaProperty>
-#include <QPlainTextEdit>
+#include <QMetaType>
+#include <QPixmap>
+#include <QPointer>
+#include <QPushButton>
+#include <QScrollArea>
 #include <QSet>
+#include <QSizePolicy>
 #include <QSpinBox>
-#include <QTabWidget>
+#include <QTimeEdit>
+#include <QToolButton>
 #include <QVariant>
 #include <QVBoxLayout>
 #include <QVector>
@@ -38,62 +52,93 @@ namespace QtMaterial3Designer {
 namespace {
 
 constexpr const char* kRegisteredProperty = "_qtm3_designer_extensions_registered";
+constexpr const char* kResetRequestedProperty = "_qtm3_designer_reset_requested";
 
-const QSet<QString>& curatedProperties()
+struct ThemePresetDescriptor
 {
-    static const QSet<QString> properties = {
-        QStringLiteral("text"),
-        QStringLiteral("title"),
-        QStringLiteral("titleText"),
-        QStringLiteral("bodyText"),
-        QStringLiteral("label"),
-        QStringLiteral("labelText"),
-        QStringLiteral("placeholderText"),
-        QStringLiteral("helperText"),
-        QStringLiteral("errorText"),
-        QStringLiteral("prefixText"),
-        QStringLiteral("suffixText"),
-        QStringLiteral("required"),
-        QStringLiteral("clearable"),
-        QStringLiteral("clearButtonVisible"),
-        QStringLiteral("clearButtonEnabled"),
-        QStringLiteral("readOnly"),
-        QStringLiteral("maxLength"),
-        QStringLiteral("characterCounterEnabled"),
-        QStringLiteral("minimum"),
-        QStringLiteral("maximum"),
-        QStringLiteral("value"),
-        QStringLiteral("lowerValue"),
-        QStringLiteral("upperValue"),
-        QStringLiteral("page"),
-        QStringLiteral("pageSize"),
-        QStringLiteral("totalCount"),
-        QStringLiteral("orientation"),
-        QStringLiteral("variant"),
-        QStringLiteral("density"),
-        QStringLiteral("alignment"),
-        QStringLiteral("scrollable"),
-        QStringLiteral("indicatorHeight"),
-        QStringLiteral("overflowMode"),
-        QStringLiteral("wrapNavigation"),
-        QStringLiteral("lazyLoading"),
-        QStringLiteral("interactive"),
-        QStringLiteral("decorative"),
-        QStringLiteral("thickness"),
-        QStringLiteral("active"),
-        QStringLiteral("indicatorSize"),
-        QStringLiteral("expressive"),
-        QStringLiteral("expressiveSize"),
-        QStringLiteral("exclusive"),
-        QStringLiteral("currentIndex"),
-        QStringLiteral("spacing"),
-        QStringLiteral("expanded"),
-        QStringLiteral("labelsVisible"),
-        QStringLiteral("buttonLabels"),
-        QStringLiteral("destinationLabels"),
-        QStringLiteral("itemLabels")
+    QString id;
+    QString displayName;
+    QColor sourceColor;
+    QtMaterial::ThemeMode mode = QtMaterial::ThemeMode::Light;
+    QtMaterial::ContrastMode contrast = QtMaterial::ContrastMode::Standard;
+    QtMaterial::ThemeVariant variant = QtMaterial::ThemeVariant::TonalSpot;
+};
+
+QVector<ThemePresetDescriptor> themePresets()
+{
+    using namespace QtMaterial;
+    return {
+        {QStringLiteral("material-default-light"),
+         QObject::tr("Material Default Light"),
+         QColor(QStringLiteral("#6750A4")),
+         ThemeMode::Light,
+         ContrastMode::Standard,
+         ThemeVariant::TonalSpot},
+        {QStringLiteral("material-default-dark"),
+         QObject::tr("Material Default Dark"),
+         QColor(QStringLiteral("#6750A4")),
+         ThemeMode::Dark,
+         ContrastMode::Standard,
+         ThemeVariant::TonalSpot},
+        {QStringLiteral("blue-light"),
+         QObject::tr("Blue Light"),
+         QColor(QStringLiteral("#0B57D0")),
+         ThemeMode::Light,
+         ContrastMode::Standard,
+         ThemeVariant::TonalSpot},
+        {QStringLiteral("green-light"),
+         QObject::tr("Green Light"),
+         QColor(QStringLiteral("#146C2E")),
+         ThemeMode::Light,
+         ContrastMode::Standard,
+         ThemeVariant::TonalSpot},
+        {QStringLiteral("amber-dark"),
+         QObject::tr("Amber Dark"),
+         QColor(QStringLiteral("#B06000")),
+         ThemeMode::Dark,
+         ContrastMode::Standard,
+         ThemeVariant::TonalSpot},
+        {QStringLiteral("rose-expressive"),
+         QObject::tr("Rose Expressive"),
+         QColor(QStringLiteral("#A73E8C")),
+         ThemeMode::Light,
+         ContrastMode::Medium,
+         ThemeVariant::Expressive}
     };
-    return properties;
+}
+
+std::optional<QtMaterial::ThemeOptions>& savedPreviewOptions()
+{
+    static std::optional<QtMaterial::ThemeOptions> options;
+    return options;
+}
+
+bool optionsForPreset(
+    const QString& presetId,
+    const QtMaterial::ThemeOptions& base,
+    QtMaterial::ThemeOptions* outOptions)
+{
+    if (!outOptions) {
+        return false;
+    }
+
+    for (const ThemePresetDescriptor& preset : themePresets()) {
+        if (preset.id != presetId) {
+            continue;
+        }
+
+        QtMaterial::ThemeOptions options = base;
+        options.sourceColor = preset.sourceColor;
+        options.mode = preset.mode;
+        options.preference = preset.mode == QtMaterial::ThemeMode::Dark
+            ? QtMaterial::ThemePreference::Dark
+            : QtMaterial::ThemePreference::Light;
+        options.contrast = preset.contrast;
+        options.variant = preset.variant;
+        *outOptions = options;
+        return true;
+    }
+    return false;
 }
 
 int propertyTypeId(const QMetaProperty& property)
@@ -105,6 +150,15 @@ int propertyTypeId(const QMetaProperty& property)
 #endif
 }
 
+bool isQtMaterialMetaObject(const QMetaObject* meta)
+{
+    if (!meta) {
+        return false;
+    }
+    const QString name = QString::fromLatin1(meta->className());
+    return name.startsWith(QStringLiteral("QtMaterial"));
+}
+
 bool isQtMaterialWidget(const QWidget* widget)
 {
     if (!widget) {
@@ -112,14 +166,197 @@ bool isQtMaterialWidget(const QWidget* widget)
     }
 
     for (const QMetaObject* meta = widget->metaObject(); meta; meta = meta->superClass()) {
-        const QString name = QString::fromLatin1(meta->className());
-        if (name.startsWith(QStringLiteral("QtMaterial"))
-            || name.startsWith(QStringLiteral("QtMaterial::"))) {
+        if (isQtMaterialMetaObject(meta)) {
             return true;
         }
     }
     return false;
 }
+
+bool supportedPropertyType(const QMetaProperty& property)
+{
+    if (property.isEnumType()) {
+        return true;
+    }
+
+    switch (propertyTypeId(property)) {
+    case QMetaType::Bool:
+    case QMetaType::Int:
+    case QMetaType::UInt:
+    case QMetaType::Double:
+    case QMetaType::Float:
+    case QMetaType::QString:
+    case QMetaType::QStringList:
+    case QMetaType::QColor:
+    case QMetaType::QDate:
+    case QMetaType::QTime:
+    case QMetaType::QDateTime:
+        return true;
+    default:
+        return false;
+    }
+}
+
+QString propertyDisplayName(const QString& name)
+{
+    if (name == QStringLiteral("destinationLabels")) {
+        return QObject::tr("Navigation destinations");
+    }
+    if (name == QStringLiteral("buttonLabels")) {
+        return QObject::tr("Button group items");
+    }
+    if (name == QStringLiteral("itemLabels")) {
+        return QObject::tr("Segmented list items");
+    }
+    if (name == QStringLiteral("activeColor")) {
+        return QObject::tr("Active color / token");
+    }
+    if (name == QStringLiteral("trackColor")) {
+        return QObject::tr("Track color / token");
+    }
+    if (name == QStringLiteral("color")) {
+        return QObject::tr("Color / token");
+    }
+    return name;
+}
+
+class ColorEditor final : public QWidget
+{
+public:
+    ColorEditor(const QColor& color, QWidget* parent = nullptr)
+        : QWidget(parent)
+        , color_(color)
+    {
+        auto* layout = new QHBoxLayout(this);
+        layout->setContentsMargins(0, 0, 0, 0);
+        valueLabel_ = new QLabel(this);
+        chooseButton_ = new QPushButton(tr("Choose..."), this);
+        layout->addWidget(valueLabel_, 1);
+        layout->addWidget(chooseButton_);
+        updateLabel();
+
+        connect(chooseButton_, &QPushButton::clicked, this, [this]() {
+            const QColor initial = color_.isValid() ? color_ : QColor(Qt::white);
+            const QColor selected = QColorDialog::getColor(
+                initial,
+                this,
+                tr("Choose Material color override"),
+                QColorDialog::ShowAlphaChannel);
+            if (!selected.isValid()) {
+                return;
+            }
+            color_ = selected;
+            updateLabel();
+        });
+    }
+
+    QColor color() const
+    {
+        return color_;
+    }
+
+private:
+    void updateLabel()
+    {
+        valueLabel_->setText(
+            color_.isValid()
+                ? color_.name(QColor::HexArgb)
+                : tr("Theme token / default"));
+    }
+
+    QColor color_;
+    QLabel* valueLabel_ = nullptr;
+    QPushButton* chooseButton_ = nullptr;
+};
+
+class CollectionEditor final : public QWidget
+{
+public:
+    CollectionEditor(
+        const QStringList& values,
+        const QString& itemNoun,
+        QWidget* parent = nullptr)
+        : QWidget(parent)
+        , itemNoun_(itemNoun)
+    {
+        auto* outer = new QVBoxLayout(this);
+        outer->setContentsMargins(0, 0, 0, 0);
+
+        list_ = new QListWidget(this);
+        list_->addItems(values);
+        list_->setEditTriggers(
+            QAbstractItemView::DoubleClicked
+            | QAbstractItemView::EditKeyPressed
+            | QAbstractItemView::SelectedClicked);
+        list_->setMinimumHeight(120);
+        outer->addWidget(list_);
+
+        auto* actions = new QHBoxLayout;
+        auto* add = new QPushButton(tr("Add"), this);
+        auto* remove = new QPushButton(tr("Remove"), this);
+        auto* up = new QToolButton(this);
+        auto* down = new QToolButton(this);
+        up->setText(tr("Up"));
+        down->setText(tr("Down"));
+        actions->addWidget(add);
+        actions->addWidget(remove);
+        actions->addStretch(1);
+        actions->addWidget(up);
+        actions->addWidget(down);
+        outer->addLayout(actions);
+
+        connect(add, &QPushButton::clicked, this, [this]() {
+            bool ok = false;
+            const QString value = QInputDialog::getText(
+                this,
+                tr("Add %1").arg(itemNoun_),
+                tr("Label"),
+                QLineEdit::Normal,
+                QString(),
+                &ok);
+            if (ok && !value.trimmed().isEmpty()) {
+                list_->addItem(value.trimmed());
+                list_->setCurrentRow(list_->count() - 1);
+            }
+        });
+        connect(remove, &QPushButton::clicked, this, [this]() {
+            delete list_->takeItem(list_->currentRow());
+        });
+        connect(up, &QToolButton::clicked, this, [this]() {
+            moveCurrent(-1);
+        });
+        connect(down, &QToolButton::clicked, this, [this]() {
+            moveCurrent(1);
+        });
+    }
+
+    QStringList values() const
+    {
+        QStringList result;
+        result.reserve(list_->count());
+        for (int row = 0; row < list_->count(); ++row) {
+            result.append(list_->item(row)->text());
+        }
+        return result;
+    }
+
+private:
+    void moveCurrent(int delta)
+    {
+        const int row = list_->currentRow();
+        const int next = row + delta;
+        if (row < 0 || next < 0 || next >= list_->count()) {
+            return;
+        }
+
+        QListWidgetItem* item = list_->takeItem(row);
+        list_->insertItem(next, item);
+        list_->setCurrentRow(next);
+    }
+
+    QString itemNoun_;
+    QListWidget* list_ = nullptr;
+};
 
 struct EditorBinding
 {
@@ -131,6 +368,24 @@ struct EditorBinding
 
 QVariant editorValue(const EditorBinding& binding)
 {
+    if (auto* color = dynamic_cast<ColorEditor*>(binding.editor)) {
+        return color->color();
+    }
+    if (auto* collection = dynamic_cast<CollectionEditor*>(binding.editor)) {
+        return collection->values();
+    }
+
+    switch (propertyTypeId(binding.property)) {
+    case QMetaType::QDate:
+        return qobject_cast<QDateEdit*>(binding.editor)->date();
+    case QMetaType::QTime:
+        return qobject_cast<QTimeEdit*>(binding.editor)->time();
+    case QMetaType::QDateTime:
+        return qobject_cast<QDateTimeEdit*>(binding.editor)->dateTime();
+    default:
+        break;
+    }
+
     if (auto* check = qobject_cast<QCheckBox*>(binding.editor)) {
         return check->isChecked();
     }
@@ -143,10 +398,6 @@ QVariant editorValue(const EditorBinding& binding)
     if (auto* line = qobject_cast<QLineEdit*>(binding.editor)) {
         return line->text();
     }
-    if (auto* text = qobject_cast<QPlainTextEdit*>(binding.editor)) {
-        return text->toPlainText()
-            .split(QLatin1Char('\n'), Qt::SkipEmptyParts);
-    }
     if (auto* combo = qobject_cast<QComboBox*>(binding.editor)) {
         return combo->currentData();
     }
@@ -154,6 +405,7 @@ QVariant editorValue(const EditorBinding& binding)
 }
 
 QWidget* makeEditor(
+    const QString& propertyName,
     const QMetaProperty& property,
     const QVariant& value,
     QWidget* parent)
@@ -179,34 +431,80 @@ QWidget* makeEditor(
         check->setChecked(value.toBool());
         return check;
     }
-    case QMetaType::Int: {
+    case QMetaType::Int:
+    case QMetaType::UInt: {
         auto* spin = new QSpinBox(parent);
-        spin->setRange(-1000000, 1000000);
+        spin->setRange(propertyTypeId(property) == QMetaType::UInt ? 0 : -1000000, 1000000);
         spin->setValue(value.toInt());
         return spin;
     }
-    case QMetaType::Double: {
+    case QMetaType::Double:
+    case QMetaType::Float: {
         auto* spin = new QDoubleSpinBox(parent);
         spin->setRange(-1000000.0, 1000000.0);
         spin->setDecimals(4);
         spin->setValue(value.toDouble());
         return spin;
     }
-    case QMetaType::QString: {
-        auto* line = new QLineEdit(value.toString(), parent);
-        return line;
-    }
+    case QMetaType::QString:
+        return new QLineEdit(value.toString(), parent);
     case QMetaType::QStringList: {
-        auto* text = new QPlainTextEdit(parent);
-        text->setPlainText(value.toStringList().join(QLatin1Char('\n')));
-        text->setPlaceholderText(
-            QObject::tr("One item per line; saved as a QStringList in the .ui file."));
-        text->setMinimumHeight(96);
-        return text;
+        QString noun = QObject::tr("item");
+        if (propertyName == QStringLiteral("destinationLabels")) {
+            noun = QObject::tr("destination");
+        } else if (propertyName == QStringLiteral("buttonLabels")) {
+            noun = QObject::tr("button");
+        } else if (propertyName == QStringLiteral("itemLabels")) {
+            noun = QObject::tr("segment");
+        }
+        return new CollectionEditor(value.toStringList(), noun, parent);
+    }
+    case QMetaType::QColor:
+        return new ColorEditor(value.value<QColor>(), parent);
+    case QMetaType::QDate: {
+        auto* edit = new QDateEdit(value.toDate(), parent);
+        edit->setCalendarPopup(true);
+        return edit;
+    }
+    case QMetaType::QTime:
+        return new QTimeEdit(value.toTime(), parent);
+    case QMetaType::QDateTime: {
+        auto* edit = new QDateTimeEdit(value.toDateTime(), parent);
+        edit->setCalendarPopup(true);
+        return edit;
     }
     default:
         return nullptr;
     }
+}
+
+QWidget* makeEditorRow(
+    const QMetaProperty& property,
+    QWidget* editor,
+    QWidget* parent)
+{
+    if (!property.isResettable()) {
+        return editor;
+    }
+
+    auto* row = new QWidget(parent);
+    auto* layout = new QHBoxLayout(row);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(editor, 1);
+
+    auto* reset = new QToolButton(row);
+    reset->setText(QObject::tr("Token/default"));
+    reset->setCheckable(true);
+    reset->setToolTip(QObject::tr(
+        "Reset this property through Qt Designer so the widget resolves its Material token/default."));
+    layout->addWidget(reset);
+
+    QObject::connect(reset, &QToolButton::toggled, editor, [editor, reset](bool checked) {
+        editor->setProperty(kResetRequestedProperty, checked);
+        editor->setEnabled(!checked);
+        reset->setText(checked ? QObject::tr("Keep reset") : QObject::tr("Token/default"));
+    });
+    return row;
 }
 
 class MaterialPropertyDialog final : public QDialog
@@ -220,12 +518,24 @@ public:
         , target_(target)
         , core_(core)
     {
+        Q_UNUSED(core_);
         setWindowTitle(tr("Edit Material 3 Properties"));
-        resize(460, 360);
+        resize(640, 560);
 
         auto* layout = new QVBoxLayout(this);
-        auto* form = new QFormLayout;
-        layout->addLayout(form);
+        auto* hint = new QLabel(
+            tr("Designer 3.0 edits persistence-safe Material properties. "
+               "Collections, enums, dates and color/token overrides use specialized editors."),
+            this);
+        hint->setWordWrap(true);
+        layout->addWidget(hint);
+
+        auto* scroll = new QScrollArea(this);
+        scroll->setWidgetResizable(true);
+        auto* body = new QWidget(scroll);
+        auto* form = new QFormLayout(body);
+        scroll->setWidget(body);
+        layout->addWidget(scroll, 1);
 
         const QStringList names = editablePropertyNames(target_);
         for (const QString& name : names) {
@@ -236,14 +546,14 @@ public:
 
             const QMetaProperty property = target_->metaObject()->property(index);
             const QVariant value = property.read(target_);
-            QWidget* editor = makeEditor(property, value, this);
+            QWidget* editor = makeEditor(name, property, value, body);
             if (!editor) {
                 continue;
             }
 
-            form->addRow(name, editor);
-            bindings_.append(
-                {name.toLatin1(), property, editor, value});
+            QWidget* row = makeEditorRow(property, editor, body);
+            form->addRow(propertyDisplayName(name), row);
+            bindings_.append({name.toLatin1(), property, editor, value});
         }
 
         auto* buttons = new QDialogButtonBox(
@@ -266,12 +576,24 @@ private:
             formWindow ? formWindow->cursor() : nullptr;
 
         for (const EditorBinding& binding : bindings_) {
+            const QString name = QString::fromLatin1(binding.name);
+            if (binding.editor->property(kResetRequestedProperty).toBool()) {
+                if (cursor) {
+                    cursor->resetWidgetProperty(target_, name);
+                } else {
+                    resetPropertyToDefault(target_, name);
+                    if (formWindow) {
+                        formWindow->setDirty(true);
+                    }
+                }
+                continue;
+            }
+
             const QVariant value = editorValue(binding);
             if (!value.isValid() || value == binding.original) {
                 continue;
             }
 
-            const QString name = QString::fromLatin1(binding.name);
             if (cursor) {
                 cursor->setWidgetProperty(target_, name, value);
             } else {
@@ -289,6 +611,183 @@ private:
     QWidget* target_ = nullptr;
     QDesignerFormEditorInterface* core_ = nullptr;
     QVector<EditorBinding> bindings_;
+};
+
+struct PreviewCapture
+{
+    QPixmap pixmap;
+    QString detail;
+};
+
+PreviewCapture capturePreview(
+    QWidget* target,
+    PreviewWidth widthMode,
+    qreal dpr,
+    Qt::LayoutDirection direction)
+{
+    if (!target) {
+        return {};
+    }
+
+    const QSize originalSize = target->size();
+    const Qt::LayoutDirection originalDirection = target->layoutDirection();
+
+    const int requestedWidth = previewLogicalWidth(widthMode);
+    const int logicalWidth = requestedWidth > 0
+        ? requestedWidth
+        : qMax(240, qMax(target->width(), target->sizeHint().width()));
+    const int logicalHeight = qBound(
+        120,
+        qMax(target->height(), target->sizeHint().height()),
+        760);
+    const QSize logicalSize(logicalWidth, logicalHeight);
+
+    target->setLayoutDirection(direction);
+    target->resize(logicalSize);
+    target->ensurePolished();
+
+    const QSize pixelSize(
+        qMax(1, qRound(logicalSize.width() * dpr)),
+        qMax(1, qRound(logicalSize.height() * dpr)));
+    QPixmap pixmap(pixelSize);
+    pixmap.setDevicePixelRatio(dpr);
+    pixmap.fill(Qt::transparent);
+    target->render(&pixmap);
+
+    QString detail = QObject::tr("%1 x %2 logical px, DPR %3, %4")
+        .arg(logicalSize.width())
+        .arg(logicalSize.height())
+        .arg(dpr, 0, 'f', 0)
+        .arg(direction == Qt::RightToLeft ? QObject::tr("RTL") : QObject::tr("LTR"));
+    if (auto* shell = qobject_cast<QtMaterial::QtMaterialAdaptiveShell*>(target)) {
+        detail += QStringLiteral(" — ") + shell->accessibilitySummary();
+    }
+
+    target->resize(originalSize);
+    target->setLayoutDirection(originalDirection);
+    target->updateGeometry();
+    target->update();
+
+    return {pixmap, detail};
+}
+
+class MaterialPreviewDialog final : public QDialog
+{
+public:
+    explicit MaterialPreviewDialog(QWidget* target, QWidget* parent = nullptr)
+        : QDialog(parent)
+        , target_(target)
+    {
+        setWindowTitle(tr("Material 3 Designer Preview"));
+        resize(900, 680);
+
+        auto* root = new QVBoxLayout(this);
+        auto* controls = new QHBoxLayout;
+
+        preset_ = new QComboBox(this);
+        preset_->addItem(tr("Current theme"), QString());
+        for (const ThemePresetDescriptor& preset : themePresets()) {
+            preset_->addItem(preset.displayName, preset.id);
+        }
+
+        width_ = new QComboBox(this);
+        width_->addItem(tr("Current width"), static_cast<int>(PreviewWidth::Current));
+        width_->addItem(tr("Compact (480)"), static_cast<int>(PreviewWidth::Compact));
+        width_->addItem(tr("Medium (720)"), static_cast<int>(PreviewWidth::Medium));
+        width_->addItem(tr("Expanded (1024)"), static_cast<int>(PreviewWidth::Expanded));
+
+        dpr_ = new QComboBox(this);
+        dpr_->addItem(tr("DPR 1x"), 1.0);
+        dpr_->addItem(tr("DPR 2x"), 2.0);
+
+        direction_ = new QComboBox(this);
+        direction_->addItem(tr("LTR"), static_cast<int>(Qt::LeftToRight));
+        direction_->addItem(tr("RTL"), static_cast<int>(Qt::RightToLeft));
+
+        auto* refresh = new QPushButton(tr("Refresh"), this);
+        controls->addWidget(preset_);
+        controls->addWidget(width_);
+        controls->addWidget(dpr_);
+        controls->addWidget(direction_);
+        controls->addWidget(refresh);
+        root->addLayout(controls);
+
+        detail_ = new QLabel(this);
+        detail_->setWordWrap(true);
+        root->addWidget(detail_);
+
+        auto* scroll = new QScrollArea(this);
+        scroll->setWidgetResizable(false);
+        preview_ = new QLabel(scroll);
+        preview_->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+        preview_->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        scroll->setWidget(preview_);
+        root->addWidget(scroll, 1);
+
+        auto* buttons = new QDialogButtonBox(QDialogButtonBox::Close, this);
+        root->addWidget(buttons);
+        connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+        connect(refresh, &QPushButton::clicked, this, [this]() {
+            refreshPreview();
+        });
+
+        const auto refreshOnChange = [this](int) { refreshPreview(); };
+        connect(preset_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, refreshOnChange);
+        connect(width_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, refreshOnChange);
+        connect(dpr_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, refreshOnChange);
+        connect(direction_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, refreshOnChange);
+
+        refreshPreview();
+    }
+
+private:
+    void refreshPreview()
+    {
+        if (!target_) {
+            detail_->setText(tr("The preview target no longer exists."));
+            preview_->clear();
+            return;
+        }
+
+        auto& manager = QtMaterial::ThemeManager::instance();
+        const QtMaterial::ThemeOptions originalOptions = manager.options();
+        const QString presetId = preset_->currentData().toString();
+
+        if (!presetId.isEmpty()) {
+            QtMaterial::ThemeOptions options;
+            if (optionsForPreset(presetId, originalOptions, &options)) {
+                manager.setThemeOptions(options);
+            }
+        }
+
+        const PreviewWidth widthMode =
+            static_cast<PreviewWidth>(width_->currentData().toInt());
+        const qreal dpr = dpr_->currentData().toDouble();
+        const Qt::LayoutDirection direction =
+            static_cast<Qt::LayoutDirection>(direction_->currentData().toInt());
+
+        const PreviewCapture capture =
+            capturePreview(target_, widthMode, dpr, direction);
+
+        if (!presetId.isEmpty()) {
+            manager.setThemeOptions(originalOptions);
+        }
+
+        preview_->setPixmap(capture.pixmap);
+        const qreal ratio = qMax<qreal>(1.0, capture.pixmap.devicePixelRatio());
+        preview_->resize(
+            qRound(capture.pixmap.width() / ratio),
+            qRound(capture.pixmap.height() / ratio));
+        detail_->setText(capture.detail);
+    }
+
+    QPointer<QWidget> target_;
+    QComboBox* preset_ = nullptr;
+    QComboBox* width_ = nullptr;
+    QComboBox* dpr_ = nullptr;
+    QComboBox* direction_ = nullptr;
+    QLabel* detail_ = nullptr;
+    QLabel* preview_ = nullptr;
 };
 
 class MaterialTaskMenu final
@@ -310,6 +809,12 @@ public:
         editAction_ = new QAction(tr("Edit Material 3 properties..."), this);
         connect(editAction_, &QAction::triggered, this, [this]() {
             MaterialPropertyDialog dialog(widget_, core_, widget_);
+            dialog.exec();
+        });
+
+        previewAction_ = new QAction(tr("Designer 3.0 preview..."), this);
+        connect(previewAction_, &QAction::triggered, this, [this]() {
+            MaterialPreviewDialog dialog(widget_, widget_);
             dialog.exec();
         });
 
@@ -336,6 +841,7 @@ public:
     {
         return {
             editAction_,
+            previewAction_,
             lightAction_,
             darkAction_,
             expressiveAction_,
@@ -352,6 +858,7 @@ private:
     QWidget* widget_ = nullptr;
     QDesignerFormEditorInterface* core_ = nullptr;
     QAction* editAction_ = nullptr;
+    QAction* previewAction_ = nullptr;
     QAction* lightAction_ = nullptr;
     QAction* darkAction_ = nullptr;
     QAction* expressiveAction_ = nullptr;
@@ -420,12 +927,6 @@ protected:
     }
 };
 
-std::optional<QtMaterial::ThemeOptions>& savedPreviewOptions()
-{
-    static std::optional<QtMaterial::ThemeOptions> options;
-    return options;
-}
-
 } // namespace
 
 QStringList editablePropertyNames(const QWidget* widget)
@@ -435,42 +936,102 @@ QStringList editablePropertyNames(const QWidget* widget)
         return result;
     }
 
-    const QMetaObject* meta = widget->metaObject();
-    for (int index = 0; index < meta->propertyCount(); ++index) {
-        const QMetaProperty property = meta->property(index);
-        const QString name = QString::fromLatin1(property.name());
-        bool designable = false;
-        bool stored = false;
+    QVector<const QMetaObject*> materialMetaObjects;
+    for (const QMetaObject* meta = widget->metaObject();
+         meta && isQtMaterialMetaObject(meta);
+         meta = meta->superClass()) {
+        materialMetaObjects.prepend(meta);
+    }
+
+    for (const QMetaObject* meta : materialMetaObjects) {
+        for (int index = meta->propertyOffset(); index < meta->propertyCount(); ++index) {
+            const QMetaProperty property = meta->property(index);
+            bool designable = false;
+            bool stored = false;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        designable = property.isDesignable();
-        stored = property.isStored();
+            designable = property.isDesignable();
+            stored = property.isStored();
 #else
-        designable = property.isDesignable(widget);
-        stored = property.isStored(widget);
+            designable = property.isDesignable(widget);
+            stored = property.isStored(widget);
 #endif
-        if (!curatedProperties().contains(name)
-            || !property.isReadable()
-            || !property.isWritable()
-            || !designable
-            || !stored) {
-            continue;
-        }
+            if (!property.isReadable()
+                || !property.isWritable()
+                || !designable
+                || !stored
+                || !supportedPropertyType(property)) {
+                continue;
+            }
 
-        if (property.isEnumType()) {
-            result.append(name);
-            continue;
-        }
-
-        const int type = propertyTypeId(property);
-        if (type == QMetaType::Bool
-            || type == QMetaType::Int
-            || type == QMetaType::Double
-            || type == QMetaType::QString
-            || type == QMetaType::QStringList) {
-            result.append(name);
+            const QString name = QString::fromLatin1(property.name());
+            if (!result.contains(name)) {
+                result.append(name);
+            }
         }
     }
     return result;
+}
+
+bool propertyCanReset(const QWidget* widget, const QString& propertyName)
+{
+    if (!widget) {
+        return false;
+    }
+    const int index = widget->metaObject()->indexOfProperty(propertyName.toLatin1().constData());
+    return index >= 0 && widget->metaObject()->property(index).isResettable();
+}
+
+bool resetPropertyToDefault(QWidget* widget, const QString& propertyName)
+{
+    if (!widget) {
+        return false;
+    }
+    const int index = widget->metaObject()->indexOfProperty(propertyName.toLatin1().constData());
+    if (index < 0) {
+        return false;
+    }
+    const QMetaProperty property = widget->metaObject()->property(index);
+    return property.isResettable() && property.reset(widget);
+}
+
+QStringList designerThemePresetIds()
+{
+    QStringList result;
+    for (const ThemePresetDescriptor& preset : themePresets()) {
+        result.append(preset.id);
+    }
+    return result;
+}
+
+bool applyThemePreset(const QString& presetId)
+{
+    auto& manager = QtMaterial::ThemeManager::instance();
+    QtMaterial::ThemeOptions options;
+    if (!optionsForPreset(presetId, manager.options(), &options)) {
+        return false;
+    }
+
+    auto& saved = savedPreviewOptions();
+    if (!saved.has_value()) {
+        saved = manager.options();
+    }
+    manager.setThemeOptions(options);
+    return true;
+}
+
+int previewLogicalWidth(PreviewWidth width)
+{
+    switch (width) {
+    case PreviewWidth::Current:
+        return -1;
+    case PreviewWidth::Compact:
+        return 480;
+    case PreviewWidth::Medium:
+        return 720;
+    case PreviewWidth::Expanded:
+        return 1024;
+    }
+    return -1;
 }
 
 void applyPreviewMode(PreviewMode mode)

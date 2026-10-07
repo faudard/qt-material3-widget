@@ -16,7 +16,7 @@ private slots:
         QtMaterial3DesignerCollection collection;
         const auto widgets = collection.customWidgets();
 
-        QCOMPARE(widgets.size(), 32);
+        QCOMPARE(widgets.size(), 35);
 
         QSet<QString> names;
         for (QDesignerCustomWidgetInterface* item : widgets) {
@@ -54,6 +54,7 @@ private slots:
             QStringLiteral("Qt Material 3 - Surfaces"),
             QStringLiteral("Qt Material 3 - Progress"),
             QStringLiteral("Qt Material 3 - Data"),
+            QStringLiteral("Qt Material 3 - Layouts"),
         };
         for (const QString& group : expected)
             QVERIFY2(groups.contains(group), qPrintable(group));
@@ -78,6 +79,9 @@ private slots:
             QStringLiteral("QtMaterial::QtMaterialNavigationBar"),
             QStringLiteral("QtMaterial::QtMaterialLoadingIndicator"),
             QStringLiteral("QtMaterial::QtMaterialSegmentedList"),
+            QStringLiteral("QtMaterial::QtMaterialAdaptiveShell"),
+            QStringLiteral("QtMaterial::QtMaterialTooltip"),
+            QStringLiteral("QtMaterial::QtMaterialBadge"),
         };
         for (const QString& name : expectedWidgets)
             QVERIFY2(byName.contains(name), qPrintable(name));
@@ -138,6 +142,23 @@ private slots:
         const QString splitDom =
             byName.value(QStringLiteral("QtMaterial::QtMaterialSplitButton"))->domXml();
         QVERIFY(splitDom.contains(QStringLiteral("<property name=\"expressive\">")));
+
+        QWidget* adaptiveShell = byName.value(
+            QStringLiteral("QtMaterial::QtMaterialAdaptiveShell"))->createWidget(&parent);
+        QVERIFY(adaptiveShell->metaObject()->indexOfProperty("automaticDensity") >= 0);
+        QVERIFY(adaptiveShell->metaObject()->indexOfProperty("supportingPaneWidth") >= 0);
+        const QString adaptiveDom =
+            byName.value(QStringLiteral("QtMaterial::QtMaterialAdaptiveShell"))->domXml();
+        QVERIFY(adaptiveDom.contains(QStringLiteral("<property name=\"supportingPaneWidth\">")));
+        QVERIFY(byName.value(QStringLiteral("QtMaterial::QtMaterialAdaptiveShell"))->isContainer());
+
+        const QString tooltipDom =
+            byName.value(QStringLiteral("QtMaterial::QtMaterialTooltip"))->domXml();
+        QVERIFY(tooltipDom.contains(QStringLiteral("<property name=\"showDelay\">")));
+
+        const QString badgeDom =
+            byName.value(QStringLiteral("QtMaterial::QtMaterialBadge"))->domXml();
+        QVERIFY(badgeDom.contains(QStringLiteral("<property name=\"maximum\">")));
     }
 };
 

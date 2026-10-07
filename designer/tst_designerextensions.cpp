@@ -1,5 +1,6 @@
 #include <QtTest/QTest>
 
+#include <QColor>
 #include <QWidget>
 
 #include "qtmaterial3designerextensions.h"
@@ -7,6 +8,7 @@
 #include "qtmaterial/theme/qtmaterialthememanager.h"
 #include "qtmaterial/widgets/buttons/qtmaterialbuttongroup.h"
 #include "qtmaterial/widgets/buttons/qtmaterialsplitbutton.h"
+#include "qtmaterial/widgets/data/qtmaterialdivider.h"
 #include "qtmaterial/widgets/data/qtmaterialsegmentedlist.h"
 #include "qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
@@ -40,6 +42,19 @@ private slots:
         QtMaterialSegmentedList list;
         QVERIFY(QtMaterial3Designer::editablePropertyNames(&list)
                     .contains(QStringLiteral("itemLabels")));
+
+        QtMaterialDivider divider;
+        const QStringList dividerProperties =
+            QtMaterial3Designer::editablePropertyNames(&divider);
+        QVERIFY(dividerProperties.contains(QStringLiteral("color")));
+        QVERIFY(dividerProperties.contains(QStringLiteral("thickness")));
+
+        QtMaterialAdaptiveShell shell;
+        const QStringList shellProperties =
+            QtMaterial3Designer::editablePropertyNames(&shell);
+        QVERIFY(shellProperties.contains(QStringLiteral("automaticDensity")));
+        QVERIFY(shellProperties.contains(QStringLiteral("supportingPaneWidth")));
+        QVERIFY(!shellProperties.contains(QStringLiteral("supportingPaneVisible")));
     }
 
     void tabsContainerRoundTripsPages()
@@ -88,7 +103,30 @@ private slots:
         QCOMPARE(shell.contentWidget(), content);
     }
 
-    void previewModesAreReversible()
+    void resettableTokenPropertiesReturnToThemeDefaults()
+    {
+        QtMaterialDivider divider;
+        divider.setColor(QColor(QStringLiteral("#ff0000")));
+        QVERIFY(divider.color().isValid());
+        QVERIFY(QtMaterial3Designer::propertyCanReset(
+            &divider, QStringLiteral("color")));
+        QVERIFY(QtMaterial3Designer::resetPropertyToDefault(
+            &divider, QStringLiteral("color")));
+        QVERIFY(!divider.color().isValid());
+        QVERIFY(!QtMaterial3Designer::propertyCanReset(
+            &divider, QStringLiteral("thickness")));
+    }
+
+    void previewWidthsMatchAdaptiveBreakpoints()
+    {
+        using QtMaterial3Designer::PreviewWidth;
+        QCOMPARE(QtMaterial3Designer::previewLogicalWidth(PreviewWidth::Current), -1);
+        QCOMPARE(QtMaterial3Designer::previewLogicalWidth(PreviewWidth::Compact), 480);
+        QCOMPARE(QtMaterial3Designer::previewLogicalWidth(PreviewWidth::Medium), 720);
+        QCOMPARE(QtMaterial3Designer::previewLogicalWidth(PreviewWidth::Expanded), 1024);
+    }
+
+    void previewModesAndPresetsAreReversible()
     {
         ThemeManager& manager = ThemeManager::instance();
         const ThemeOptions original = manager.options();
@@ -105,6 +143,20 @@ private slots:
 
         QtMaterial3Designer::restorePreviewMode();
         QVERIFY(manager.options() == original);
+
+        const QStringList presets = QtMaterial3Designer::designerThemePresetIds();
+        QVERIFY(presets.contains(QStringLiteral("material-default-light")));
+        QVERIFY(presets.contains(QStringLiteral("rose-expressive")));
+        QVERIFY(QtMaterial3Designer::applyThemePreset(
+            QStringLiteral("rose-expressive")));
+        QCOMPARE(manager.options().sourceColor, QColor(QStringLiteral("#A73E8C")));
+        QCOMPARE(manager.options().variant, ThemeVariant::Expressive);
+        QCOMPARE(manager.options().contrast, ContrastMode::Medium);
+
+        QtMaterial3Designer::restorePreviewMode();
+        QVERIFY(manager.options() == original);
+        QVERIFY(!QtMaterial3Designer::applyThemePreset(
+            QStringLiteral("does-not-exist")));
     }
 };
 
