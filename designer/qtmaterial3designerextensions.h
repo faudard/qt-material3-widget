@@ -3,6 +3,7 @@
 #include <QList>
 #include <QObject>
 #include <QStringList>
+#include <Qt>
 
 #include <QtDesigner/QDesignerContainerExtension>
 
@@ -23,7 +24,21 @@ enum class PreviewMode
     Expressive
 };
 
+enum class PreviewWidth
+{
+    Current,
+    Compact,
+    Medium,
+    Expanded
+};
+
 QStringList editablePropertyNames(const QWidget* widget);
+bool propertyCanReset(const QWidget* widget, const QString& propertyName);
+bool resetPropertyToDefault(QWidget* widget, const QString& propertyName);
+
+QStringList designerThemePresetIds();
+bool applyThemePreset(const QString& presetId);
+int previewLogicalWidth(PreviewWidth width);
 
 void applyPreviewMode(PreviewMode mode);
 void restorePreviewMode();
