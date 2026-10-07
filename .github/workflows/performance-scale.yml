@@ -1,0 +1,66 @@
+name: performance-scale
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "benchmarks/**"
+      - "tests/performance/**"
+      - "src/**"
+      - "include/**"
+      - "scripts/run_performance_baseline.py"
+      - "docs/performance/**"
+      - "docs/public-api/performance-and-caching.md"
+      - "docs/release/performance-policy.md"
+      - "CMakeLists.txt"
+      - "benchmarks/CMakeLists.txt"
+      - "tests/CMakeLists.txt"
+  schedule:
+    - cron: "30 3 * * 2"
+
+concurrency:
+  group: performance-scale-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  linux-scale:
+    name: linux-scale
+    runs-on: ubuntu-24.04
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+      CTEST_OUTPUT_ON_FAILURE: 1
+      QT_QPA_PLATFORM: offscreen
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Qt/build dependencies
+        run: bash scripts/ci/install-ubuntu-deps.sh
+
+      - name: Build and collect scale baseline
+        run: python3 scripts/run_performance_baseline.py build-perf --scale
+
+      - name: Enforce CPU/RSS budgets
+        if: github.event_name != 'pull_request'
+        env:
+          QTMATERIAL3_RUN_SCALE_PERF: "1"
+          QTMATERIAL3_ENFORCE_PERF_BUDGETS: "1"
+        run: >
+          ctest --test-dir build-perf
+          --output-on-failure
+          -R "^tst_scale_performance_contracts$"
+
+      - name: Upload performance evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: performance-scale-linux
+          path: |
+            build-perf/performance-results/
+            build-perf/tests/tst_scale_performance_contracts.txt
+            build-perf/Testing/Temporary/LastTest.log
+          if-no-files-found: warn

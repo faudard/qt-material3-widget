@@ -311,6 +311,22 @@ endif()
 # Public API guardrail: every public theming header must compile as a standalone include.
 qtm3_add_test(tst_public_theming_headers public_headers/tst_public_theming_headers.cpp qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime)
 qtm3_add_test(tst_theme_performance_contracts performance/tst_theme_performance_contracts.cpp qtmaterial3_theme_model qtmaterial3_theme_io qtmaterial3_theme_runtime qtmaterial3_core qtmaterial3_specs)
+qtm3_add_test(
+    tst_scale_performance_contracts
+    performance/tst_scale_performance_contracts.cpp
+    qtmaterial3_theme_model
+    qtmaterial3_theme_io
+    qtmaterial3_theme_runtime
+    qtmaterial3_core
+    qtmaterial3_effects
+    qtmaterial3_specs
+    qtmaterial3_widgets
+)
+set_tests_properties(tst_scale_performance_contracts
+    PROPERTIES LABELS "performance;scale" TIMEOUT 180)
+if(WIN32)
+    target_link_libraries(tst_scale_performance_contracts PRIVATE Psapi)
+endif()
 
 # Release architecture cleanup tests.
 qtm3_add_test(tst_interactionstate_contracts core/tst_interactionstate_contracts.cpp qtmaterial3_core)

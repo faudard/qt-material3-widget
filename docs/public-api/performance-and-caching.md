@@ -100,3 +100,34 @@ Before a release:
 - strict performance budgets may be enabled on at least one stable CI runner,
 - visual regression and JSON golden updates must be separated from unrelated performance work,
 - any cache-key change must include a regression test.
+
+## 1.14 Performance / Scale
+
+The scale suite extends the theming micro-benchmarks with production-size workloads:
+
+- Table and Tree View backed by 100,000-row/items virtual models,
+- creation of 1,000 Material widgets,
+- global theme propagation across 1,000 live widgets,
+- a 50,000-command Command Palette provider snapshot plus fuzzy query refresh,
+- 1,000 Expressive transition controllers with repeated retarget/finish cycles,
+- repeated create/destroy cycles to catch retained-memory regressions.
+
+The heavy scale contracts are opt-in so ordinary functional CI remains deterministic:
+
+```bash
+python3 scripts/run_performance_baseline.py build-perf --scale
+```
+
+To enforce the CPU and RSS budgets:
+
+```bash
+python3 scripts/run_performance_baseline.py build-perf --scale --enforce
+```
+
+The canonical scale budget table is stored in
+`docs/performance/scale-performance-budgets.json`. Every scenario reports wall time,
+process CPU time, and resident-memory growth. CPU and RSS are the enforced metrics; wall
+time remains diagnostic because hosted-runner scheduling noise can be significant.
+
+Pull requests collect report-only evidence. Scheduled and manually dispatched Linux runs
+enable strict budget enforcement on the same build directory after the report pass.

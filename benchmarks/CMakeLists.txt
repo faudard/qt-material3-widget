@@ -99,3 +99,51 @@ if(NOT TARGET benchmark_paintcache)
   qtmaterial3_effects
  )
 endif()
+
+# 1.14 Performance / Scale
+qtmaterial3_add_benchmark_executable(benchmark_data_views_scale
+    scale/benchmark_data_views.cpp
+)
+target_link_libraries(benchmark_data_views_scale PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Test
+    qtmaterial3_widgets
+)
+
+qtmaterial3_add_benchmark_executable(benchmark_widget_scale
+    scale/benchmark_widget_scale.cpp
+)
+target_link_libraries(benchmark_widget_scale PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Test
+    qtmaterial3_theme_model
+    qtmaterial3_theme_runtime
+    qtmaterial3_widgets
+)
+
+qtmaterial3_add_benchmark_executable(benchmark_command_palette_scale
+    scale/benchmark_command_palette_scale.cpp
+)
+target_link_libraries(benchmark_command_palette_scale PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Test
+    qtmaterial3_widgets
+)
+
+qtmaterial3_add_benchmark_executable(benchmark_expressive_motion_scale
+    scale/benchmark_expressive_motion.cpp
+)
+target_link_libraries(benchmark_expressive_motion_scale PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Gui
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Test
+    qtmaterial3_theme_model
+    qtmaterial3_effects
+)
