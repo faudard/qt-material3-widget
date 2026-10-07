@@ -30,8 +30,12 @@ without replacing the delegate, and opt-in context-menu requests expose the targ
 `QModelIndex` and global position to application-owned menus.
 
 Sorting, resizing, hiding columns, editing and custom delegates continue to use the
-standard Qt APIs. The focused Table suite also certifies the Material accessibility summary,
-native keyboard activation, RTL header/layout propagation and desktop rendering at 100%, 125%, 150%, 175% and 200% scale equivalents.
+standard Qt APIs. Application-owned `QSortFilterProxyModel` chains remain fully supported.
+Plain Return/Enter/Space keeps the existing row-activation contract, while modified key
+sequences are delegated to `QTableView` so advanced range/toggle selection is not intercepted.
+The focused Table suite also certifies the Material accessibility summary, native keyboard
+activation/selection, RTL header/layout propagation and desktop rendering at 100%, 125%, 150%,
+175% and 200% scale equivalents.
 
 ## Pagination
 
@@ -230,3 +234,9 @@ The registered `tst_desktop_navigation_v2` suite covers fuzzy matching, provider
 stale replies/cancellation, worker-thread dispatch, failure/destruction, favorites/history,
 disabled keyboard activation, host shortcuts, location editing, overflow icons/limits,
 URL drops, extended splitter persistence, animation reversal and constraint restoration.
+
+The 1.12 `tst_desktop_productivity_112` suite adds focused desktop evidence for advanced
+Table/Tree modifier selection, F2 inline-edit commit/cancel, application-owned context-menu
+hooks, proxy sorting/filtering, native drag/drop policy, exact Split View size restoration,
+large asynchronous provider cancellation/stale-result rejection and repeated Navigation
+Bar ↔ Rail transitions without selection, enabled-state or focus loss.
