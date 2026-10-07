@@ -73,6 +73,7 @@ private:
     bool m_exclusive = true;
     bool m_expressive = true;
     int m_currentIndex = -1;
+    int m_pendingCurrentIndex = -1;
 };
 
 } // namespace QtMaterial
