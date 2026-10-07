@@ -4,6 +4,7 @@
 #include "qtmaterial/core/private/qtmaterialthemecontextbinding_p.h"
 #include <QAbstractItemModel>
 #include <QAccessible>
+#include <QDataStream>
 #include <QFocusEvent>
 #include <QHeaderView>
 #include <QItemSelectionModel>
@@ -552,6 +553,117 @@ QString QtMaterialTable::rowAccessibleText(
         .arg(
             cells.join(
                 QStringLiteral(", ")));
+}
+
+QByteArray QtMaterialTable::saveWorkspaceState() const
+{
+    constexpr quint32 magic = 0x514d5457; // QMTW
+    constexpr quint32 version = 1;
+
+    QByteArray state;
+    QDataStream stream(&state, QIODevice::WriteOnly);
+    stream.setVersion(QDataStream::Qt_5_12);
+
+    const QHeaderView* header = horizontalHeader();
+    stream
+        << magic
+        << version
+        << qint32(header ? header->count() : 0)
+        << (header ? header->saveState() : QByteArray())
+        << dense()
+        << multiSelectionEnabled()
+        << columnReorderingEnabled()
+        << cellSelectionEnabled()
+        << dragDropEnabled()
+        << isSortingEnabled()
+        << qint32(header ? header->sortIndicatorSection() : -1)
+        << qint32(
+            header
+                ? int(header->sortIndicatorOrder())
+                : int(Qt::AscendingOrder));
+
+    return state;
+}
+
+bool QtMaterialTable::restoreWorkspaceState(
+    const QByteArray& state)
+{
+    constexpr quint32 magic = 0x514d5457; // QMTW
+    constexpr quint32 version = 1;
+
+    QDataStream stream(state);
+    stream.setVersion(QDataStream::Qt_5_12);
+
+    quint32 storedMagic = 0;
+    quint32 storedVersion = 0;
+    qint32 sectionCount = 0;
+    QByteArray headerState;
+    bool storedDense = false;
+    bool storedMultiSelection = false;
+    bool storedColumnReordering = false;
+    bool storedCellSelection = false;
+    bool storedDragDrop = false;
+    bool storedSorting = false;
+    qint32 sortSection = -1;
+    qint32 sortOrder = int(Qt::AscendingOrder);
+
+    stream
+        >> storedMagic
+        >> storedVersion
+        >> sectionCount
+        >> headerState
+        >> storedDense
+        >> storedMultiSelection
+        >> storedColumnReordering
+        >> storedCellSelection
+        >> storedDragDrop
+        >> storedSorting
+        >> sortSection
+        >> sortOrder;
+
+    if (
+        stream.status() != QDataStream::Ok
+        || !stream.atEnd()
+        || storedMagic != magic
+        || storedVersion != version
+        || sectionCount < 0
+        || sortOrder < int(Qt::AscendingOrder)
+        || sortOrder > int(Qt::DescendingOrder)) {
+        return false;
+    }
+
+    QHeaderView* header = horizontalHeader();
+    if (!header || header->count() != sectionCount) {
+        return false;
+    }
+    if (
+        sortSection < -1
+        || sortSection >= sectionCount) {
+        return false;
+    }
+
+    const QByteArray previousHeaderState =
+        header->saveState();
+
+    if (!header->restoreState(headerState)) {
+        header->restoreState(previousHeaderState);
+        return false;
+    }
+
+    setDense(storedDense);
+    setMultiSelectionEnabled(storedMultiSelection);
+    setColumnReorderingEnabled(storedColumnReordering);
+    setCellSelectionEnabled(storedCellSelection);
+    setDragDropEnabled(storedDragDrop);
+    setSortingEnabled(storedSorting);
+    if (storedSorting && sortSection >= 0) {
+        sortByColumn(
+            sortSection,
+            static_cast<Qt::SortOrder>(sortOrder));
+    }
+
+    syncAccessibility();
+    return true;
 }
 
 void QtMaterialTable::
