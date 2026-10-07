@@ -1,5 +1,6 @@
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h"
 
+#include <QDataStream>
 #include <QFocusEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
@@ -467,6 +468,107 @@ QString QtMaterialNavigationSuite::accessibilitySummary() const
             .arg(d_ptr->destinations.at(d_ptr->currentIndex).text);
     }
     return summary;
+}
+
+QByteArray QtMaterialNavigationSuite::saveWorkspaceState() const
+{
+    constexpr quint32 magic = 0x514d4e57; // QMNW
+    constexpr quint32 version = 1;
+
+    QStringList destinationTexts;
+    destinationTexts.reserve(count());
+    for (int index = 0; index < count(); ++index) {
+        destinationTexts.push_back(destinationText(index));
+    }
+
+    QByteArray state;
+    QDataStream stream(&state, QIODevice::WriteOnly);
+    stream.setVersion(QDataStream::Qt_5_12);
+    stream
+        << magic
+        << version
+        << destinationTexts
+        << qint32(currentIndex())
+        << qint32(int(windowWidthSizeClass()))
+        << qint32(count());
+
+    for (int index = 0; index < count(); ++index) {
+        stream << isDestinationEnabled(index);
+    }
+
+    return state;
+}
+
+bool QtMaterialNavigationSuite::restoreWorkspaceState(
+    const QByteArray& state)
+{
+    constexpr quint32 magic = 0x514d4e57; // QMNW
+    constexpr quint32 version = 1;
+
+    QDataStream stream(state);
+    stream.setVersion(QDataStream::Qt_5_12);
+
+    quint32 storedMagic = 0;
+    quint32 storedVersion = 0;
+    QStringList destinationTexts;
+    qint32 storedCurrentIndex = -1;
+    qint32 storedWidthClass = int(WindowWidthSizeClass::Compact);
+    qint32 enabledCount = 0;
+
+    stream
+        >> storedMagic
+        >> storedVersion
+        >> destinationTexts
+        >> storedCurrentIndex
+        >> storedWidthClass
+        >> enabledCount;
+
+    if (
+        stream.status() != QDataStream::Ok
+        || storedMagic != magic
+        || storedVersion != version
+        || destinationTexts.size() != count()
+        || enabledCount != count()
+        || storedCurrentIndex < -1
+        || storedCurrentIndex >= count()
+        || storedWidthClass < int(WindowWidthSizeClass::Compact)
+        || storedWidthClass > int(WindowWidthSizeClass::ExtraLarge)) {
+        return false;
+    }
+
+    for (int index = 0; index < count(); ++index) {
+        if (destinationTexts.at(index) != destinationText(index)) {
+            return false;
+        }
+    }
+
+    QVector<bool> enabled;
+    enabled.reserve(enabledCount);
+    for (qint32 index = 0; index < enabledCount; ++index) {
+        bool value = false;
+        stream >> value;
+        if (stream.status() != QDataStream::Ok) {
+            return false;
+        }
+        enabled.push_back(value);
+    }
+
+    if (
+        !stream.atEnd()
+        || (
+            storedCurrentIndex >= 0
+            && !enabled.at(storedCurrentIndex))) {
+        return false;
+    }
+
+    for (int index = 0; index < enabled.size(); ++index) {
+        setDestinationEnabled(index, enabled.at(index));
+    }
+    setWindowWidthSizeClass(
+        static_cast<WindowWidthSizeClass>(storedWidthClass));
+    setCurrentIndex(storedCurrentIndex);
+    syncAccessibility();
+    return true;
 }
 
 QSize QtMaterialNavigationSuite::sizeHint() const
