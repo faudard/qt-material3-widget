@@ -151,8 +151,14 @@ private Q_SLOTS:
 
         QTest::keyClick(
             &table,
-            Qt::Key_Space);
+            Qt::Key_Enter,
+            Qt::KeypadModifier);
         QCOMPARE(activated.count(), 1);
+
+        QTest::keyClick(
+            &table,
+            Qt::Key_Space);
+        QCOMPARE(activated.count(), 2);
     }
 
     void treeKeepsAdvancedKeyboardSelectionAndExpansionNative()
@@ -363,6 +369,18 @@ private Q_SLOTS:
 
         QtMaterialTreeView tree;
         tree.setModel(&proxy);
+
+        proxy.setFilterFixedString(
+            QStringLiteral("Gamma"));
+        QCOMPARE(tree.model()->rowCount(), 1);
+        QCOMPARE(
+            tree.model()
+                ->index(0, 0)
+                .data()
+                .toString(),
+            QStringLiteral("Gamma"));
+        proxy.setFilterFixedString(QString());
+
         tree.setDragDropEnabled(true);
         QVERIFY(tree.dragDropEnabled());
         QCOMPARE(
