@@ -226,6 +226,7 @@ void QtMaterialNavigationBar::insertDestination(int index, const QString& text, 
     updateGeometry();
     update();
     syncAccessibility();
+    Q_EMIT destinationLabelsChanged(destinationLabels());
 }
 
 void QtMaterialNavigationBar::removeDestination(int index)
@@ -275,11 +276,13 @@ void QtMaterialNavigationBar::removeDestination(int index)
     updateGeometry();
     update();
     syncAccessibility();
+    Q_EMIT destinationLabelsChanged(destinationLabels());
 }
 
 void QtMaterialNavigationBar::clearDestinations()
 {
-    if (d_ptr->destinations.isEmpty() && d_ptr->currentIndex == -1) {
+    const bool hadDestinations = !d_ptr->destinations.isEmpty();
+    if (!hadDestinations && d_ptr->currentIndex == -1) {
         return;
     }
 
@@ -297,6 +300,48 @@ void QtMaterialNavigationBar::clearDestinations()
     updateGeometry();
     update();
     syncAccessibility();
+    if (hadDestinations) {
+        Q_EMIT destinationLabelsChanged(destinationLabels());
+    }
+}
+
+QStringList QtMaterialNavigationBar::destinationLabels() const
+{
+    QStringList labels;
+    labels.reserve(d_ptr->destinations.size());
+    for (const auto& destination : d_ptr->destinations) {
+        labels.append(destination.text);
+    }
+    return labels;
+}
+
+void QtMaterialNavigationBar::setDestinationLabels(const QStringList& labels)
+{
+    if (destinationLabels() == labels) {
+        return;
+    }
+
+    const int previousIndex = d_ptr->currentIndex;
+    d_ptr->destinations.clear();
+    d_ptr->hoveredIndex = -1;
+    d_ptr->pressedIndex = -1;
+    for (const QString& label : labels) {
+        d_ptr->destinations.append({label, QIcon(), true});
+    }
+    const int nextIndex = labels.isEmpty()
+        ? -1
+        : qBound(0, previousIndex < 0 ? 0 : previousIndex, labels.size() - 1);
+    if (d_ptr->currentIndex != nextIndex) {
+        d_ptr->currentIndex = nextIndex;
+        Q_EMIT currentIndexChanged(nextIndex);
+    }
+#ifndef QT_NO_ACCESSIBILITY
+    QtMaterialItemAccessibility::notifyStructure(this);
+#endif
+    updateGeometry();
+    update();
+    syncAccessibility();
+    Q_EMIT destinationLabelsChanged(destinationLabels());
 }
 
 int QtMaterialNavigationBar::count() const noexcept
