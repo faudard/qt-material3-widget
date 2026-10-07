@@ -172,6 +172,12 @@ void QtMaterialButtonGroup::setButtonLabels(const QStringList& labels)
         return;
     }
 
+    const int requestedIndex =
+        m_pendingCurrentIndex >= 0
+            ? m_pendingCurrentIndex
+            : m_currentIndex;
+    m_pendingCurrentIndex = -1;
+
     while (!m_buttons.isEmpty()) {
         QtMaterialTextButton* button = m_buttons.constLast();
         removeButton(button);
@@ -179,6 +185,10 @@ void QtMaterialButtonGroup::setButtonLabels(const QStringList& labels)
     }
     for (const QString& label : labels) {
         addButton(label);
+    }
+    if (requestedIndex >= 0
+        && requestedIndex < m_buttons.size()) {
+        setCurrentIndex(requestedIndex);
     }
     Q_EMIT buttonLabelsChanged(buttonLabels());
 }
@@ -206,6 +216,12 @@ int QtMaterialButtonGroup::currentIndex() const noexcept
 
 void QtMaterialButtonGroup::setCurrentIndex(int index)
 {
+    if (m_buttons.isEmpty() && index >= 0) {
+        m_pendingCurrentIndex = index;
+        return;
+    }
+
+    m_pendingCurrentIndex = -1;
     if (index < -1 || index >= m_buttons.size()) {
         index = -1;
     }
