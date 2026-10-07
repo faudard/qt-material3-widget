@@ -822,9 +822,13 @@ void QtMaterialTable::keyPressEvent(
             plainActivation
             && inlineEditingEnabled()
             && currentIndex().isValid()) {
-            edit(currentIndex());
-            event->accept();
-            return;
+            if (QTableView::edit(
+                    currentIndex(),
+                    QAbstractItemView::EditKeyPressed,
+                    event)) {
+                event->accept();
+                return;
+            }
         }
         break;
     case Qt::Key_Return:
