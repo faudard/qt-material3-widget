@@ -170,7 +170,7 @@ private Q_SLOTS:
                 QStringLiteral("Sibling")));
 
         QtMaterialTreeView tree;
-        tree.setModel(model.get());
+        tree.setModel(&model);
         tree.setMultiSelectionEnabled(true);
         tree.resize(420, 260);
         tree.show();
@@ -409,7 +409,7 @@ private Q_SLOTS:
                 ->mapToGlobal(tablePosition));
 
         QtMaterialTreeView tree;
-        tree.setModel(&model);
+        tree.setModel(model.get());
         tree.setContextMenuEnabled(true);
         QVERIFY(tree.contextMenuEnabled());
         tree.resize(480, 240);
