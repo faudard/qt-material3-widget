@@ -562,6 +562,18 @@ void TabsContainerExtension::setCurrentIndex(int index)
     }
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+bool TabsContainerExtension::canAddWidget() const
+{
+    return tabs_ != nullptr;
+}
+
+bool TabsContainerExtension::canRemove(int index) const
+{
+    return tabs_ && index >= 0 && index < tabs_->count();
+}
+#endif
+
 void TabsContainerExtension::addWidget(QWidget* widget)
 {
     insertWidget(count(), widget);
@@ -637,6 +649,18 @@ void AdaptiveShellContainerExtension::setCurrentIndex(int index)
         currentIndex_ = index;
     }
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+bool AdaptiveShellContainerExtension::canAddWidget() const
+{
+    return shell_ && count() < 2;
+}
+
+bool AdaptiveShellContainerExtension::canRemove(int index) const
+{
+    return shell_ && index >= 0 && index < count();
+}
+#endif
 
 void AdaptiveShellContainerExtension::addWidget(QWidget* widget)
 {
