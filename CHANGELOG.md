@@ -21,6 +21,7 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Desktop Workspace 1.12 adds versioned, fail-safe workspace-state persistence for Table, Tree View, Command Palette, Navigation Suite and Split View, plus explicit inline-editing/context-menu policies for Table and Tree View and cross-widget round-trip tests.
 - Expressive Catalogue 1.10 adds Split Button, Button Group, Floating Toolbar and morphing Loading Indicator widgets with keyboard/accessibility contracts and reduced-motion handling.
 - Expressive Data 1.11 adds opt-in expressive List Item geometry, automatic Segmented List grouping, expressive Menu metrics and press/selected Chip shape morphing.
 - Adaptive/Desktop 1.9 certification adds five-class LTR/RTL visual evidence, responsive Navigation Suite accessible focus, observable supporting-pane state, shell accessibility summaries, a native AT fixture and fail-closed promotion tooling.
