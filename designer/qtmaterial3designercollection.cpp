@@ -1,5 +1,9 @@
 #include "qtmaterial3designercollection.h"
 
+#ifdef QTMATERIAL3_HAS_DESIGNER_EXTENSIONS
+#include "qtmaterial3designerextensions.h"
+#endif
+
 #include <functional>
 #include <utility>
 
@@ -8,13 +12,16 @@
 #include <QWidget>
 #include <QtUiPlugin/QDesignerCustomWidgetInterface>
 
+#include "qtmaterial/widgets/buttons/qtmaterialbuttongroup.h"
 #include "qtmaterial/widgets/buttons/qtmaterialelevatedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialfilledtonalbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialsplitbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
 #include "qtmaterial/widgets/data/qtmaterialdivider.h"
 #include "qtmaterial/widgets/data/qtmaterialpagination.h"
+#include "qtmaterial/widgets/data/qtmaterialsegmentedlist.h"
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
 #include "qtmaterial/widgets/data/qtmaterialtreeview.h"
 #include "qtmaterial/widgets/inputs/qtmaterialcombobox.h"
@@ -25,8 +32,10 @@
 #include "qtmaterial/widgets/inputs/qtmaterialsearchbar.h"
 #include "qtmaterial/widgets/inputs/qtmaterialslider.h"
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
+#include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
 #include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
+#include "qtmaterial/widgets/progress/qtmaterialloadingindicator.h"
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
 #include "qtmaterial/widgets/selection/qtmaterialchip.h"
@@ -83,8 +92,13 @@ public:
         return widget;
     }
 
-    void initialize(QDesignerFormEditorInterface*) override
+    void initialize(QDesignerFormEditorInterface* core) override
     {
+#ifdef QTMATERIAL3_HAS_DESIGNER_EXTENSIONS
+        QtMaterial3Designer::registerExtensions(core);
+#else
+        Q_UNUSED(core);
+#endif
         initialized_ = true;
     }
 
@@ -171,6 +185,20 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
         "qtmaterial/widgets/buttons/qtmaterialtextbutton.h",
         "Qt Material 3 - Buttons", "materialTextButton", "Material 3 text button", false,
         "<property name=\"text\"><string>Text button</string></property>");
+    addWidget<QtMaterialSplitButton>(
+        widgets_, this, "QtMaterial::QtMaterialSplitButton",
+        "qtmaterial/widgets/buttons/qtmaterialsplitbutton.h",
+        "Qt Material 3 - Buttons", "materialSplitButton", "Material 3 split button", false,
+        "<property name=\"text\"><string>Create</string></property>"
+        "<property name=\"expressive\"><bool>true</bool></property>");
+    addWidget<QtMaterialButtonGroup>(
+        widgets_, this, "QtMaterial::QtMaterialButtonGroup",
+        "qtmaterial/widgets/buttons/qtmaterialbuttongroup.h",
+        "Qt Material 3 - Buttons", "materialButtonGroup", "Material 3 button group", false,
+        "<property name=\"buttonLabels\"><stringlist>"
+        "<string>Day</string><string>Week</string><string>Month</string>"
+        "</stringlist></property>"
+        "<property name=\"currentIndex\"><number>0</number></property>");
 
     addWidget<QtMaterialComboBox>(
         widgets_, this, "QtMaterial::QtMaterialComboBox",
@@ -247,6 +275,14 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
         widgets_, this, "QtMaterial::QtMaterialTabs",
         "qtmaterial/widgets/navigation/qtmaterialtabs.h",
         "Qt Material 3 - Navigation", "materialTabs", "Material 3 tabs", true);
+    addWidget<QtMaterialNavigationBar>(
+        widgets_, this, "QtMaterial::QtMaterialNavigationBar",
+        "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h",
+        "Qt Material 3 - Navigation", "materialNavigationBar", "Material 3 navigation bar", false,
+        "<property name=\"destinationLabels\"><stringlist>"
+        "<string>Home</string><string>Search</string><string>Profile</string>"
+        "</stringlist></property>"
+        "<property name=\"currentIndex\"><number>0</number></property>");
 
     addWidget<QtMaterialCard>(
         widgets_, this, "QtMaterial::QtMaterialCard",
@@ -281,6 +317,12 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
         "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h",
         "Qt Material 3 - Progress", "materialCircularProgress", "Material 3 circular progress indicator", false,
         "<property name=\"value\"><double>0.65</double></property>");
+    addWidget<QtMaterialLoadingIndicator>(
+        widgets_, this, "QtMaterial::QtMaterialLoadingIndicator",
+        "qtmaterial/widgets/progress/qtmaterialloadingindicator.h",
+        "Qt Material 3 - Progress", "materialLoadingIndicator", "Material 3 Expressive loading indicator", false,
+        "<property name=\"active\"><bool>false</bool></property>"
+        "<property name=\"indicatorSize\"><number>44</number></property>");
 
     addWidget<QtMaterialPagination>(
         widgets_, this, "QtMaterial::QtMaterialPagination",
@@ -297,6 +339,14 @@ QtMaterial3DesignerCollection::QtMaterial3DesignerCollection(QObject* parent)
         widgets_, this, "QtMaterial::QtMaterialTreeView",
         "qtmaterial/widgets/data/qtmaterialtreeview.h",
         "Qt Material 3 - Data", "materialTreeView", "Material 3 tree view");
+    addWidget<QtMaterialSegmentedList>(
+        widgets_, this, "QtMaterial::QtMaterialSegmentedList",
+        "qtmaterial/widgets/data/qtmaterialsegmentedlist.h",
+        "Qt Material 3 - Data", "materialSegmentedList", "Material 3 Expressive segmented list", false,
+        "<property name=\"itemLabels\"><stringlist>"
+        "<string>Personal</string><string>Work</string><string>Archive</string>"
+        "</stringlist></property>"
+        "<property name=\"expressive\"><bool>true</bool></property>");
 }
 
 QList<QDesignerCustomWidgetInterface*> QtMaterial3DesignerCollection::customWidgets() const
