@@ -334,3 +334,20 @@ Release gates:
   advanced-extension tests cover property discovery, reversible previews and container behavior.
 - Qt 5.14.2 compatibility remains fail-open for optional Designer APIs and fail-closed for
   the core palette/.ui contract.
+
+
+## 1.16.0 — Gallery & Documentation 2.0
+
+Goal: turn the component Gallery, generated documentation, Dashboard and Theme Studio into a coherent user-facing product surface for the complete public catalogue.
+
+Release gates:
+
+- Gallery search covers component name, family, public widget type and canonical route.
+- Family/component navigation is generated from the canonical registry and stays in parity with every documented public component.
+- Stable deep links can be entered in the Gallery and passed through the command line.
+- Preview controls cover Light/Dark, Standard/Medium/High contrast, Standard/Expressive, LTR/RTL and supported density enums.
+- The component inspector exposes the common interaction-state workbench, readable/writable Qt properties and copyable C++/.ui snippets.
+- Generated consumer documentation covers every public registry entry with Screenshot / When to use / API / States / Keyboard / Accessibility / RTL / Example sections.
+- Reviewed visual-regression goldens are automatically reused as documentation assets when a component/family match exists; Gallery deep links remain the fallback live visual source.
+- Dashboard and Theme Studio are documented and maintained as first-class application/theme showcases alongside the component Gallery.
+- Documentation CI validates registry, Gallery catalogue and generated page parity before Sphinx builds.
