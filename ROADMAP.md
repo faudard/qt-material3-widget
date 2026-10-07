@@ -265,3 +265,34 @@ Release gates:
 - Chip exposes opt-in press/selected shape morphing with deterministic reduced-motion completion.
 - Existing stable List/Menu/Chip appearance remains unchanged when Expressive is disabled.
 - Visual matrices, Gallery coverage and native assistive-technology evidence are required before promotion from usable to complete.
+
+## 1.12.0 — Desktop Workspace Persistence
+
+Goal: make long-lived Qt Widgets workspaces restore user layout and navigation
+preferences predictably without adding new widgets or coupling applications to
+a QtMaterial-specific settings service.
+
+Release gates:
+
+- `QtMaterialTable` saves/restores column presentation plus desktop interaction
+  policies through a versioned `QByteArray`.
+- `QtMaterialTreeView` saves/restores header presentation, current item and the
+  visible expanded hierarchy relative to the installed model/root index.
+- `QtMaterialCommandPalette` persists favorites, recents and fuzzy-search
+  preference while providers, source models and transient queries remain
+  application-owned.
+- `QtMaterialNavigationSuite` persists selected destination, adaptive width
+  class and enabled states and rejects state from a different destination
+  text/order signature.
+- `QtMaterialSplitView` exposes the same workspace-state naming while reusing
+  its existing pane-state schema rather than introducing a second format.
+- Every restore path validates magic/version and structural compatibility before
+  applying user-visible state; corrupt or incompatible payloads fail safely.
+- `tst_desktop_workspace_state` covers round-trip, malformed-state rejection,
+  wrong table/tree topology, navigation signature mismatch and Split View schema
+  aliasing.
+- Public documentation shows direct `QSettings` integration and specifies that
+  models/destinations must be installed before restore.
+- Qt 5.14.2, Qt 6, Windows, Linux, macOS, sanitizers, installed consumers and
+  documentation gates remain green.
+
