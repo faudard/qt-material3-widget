@@ -4,6 +4,7 @@
 
 #include <QByteArray>
 #include <QModelIndex>
+#include <QPoint>
 #include <QString>
 #include <QTableView>
 
@@ -61,6 +62,16 @@ class QTMATERIAL3_WIDGETS_EXPORT QtMaterialTable
         READ dragDropEnabled
         WRITE setDragDropEnabled
         NOTIFY dragDropEnabledChanged)
+    Q_PROPERTY(
+        bool inlineEditingEnabled
+        READ inlineEditingEnabled
+        WRITE setInlineEditingEnabled
+        NOTIFY inlineEditingEnabledChanged)
+    Q_PROPERTY(
+        bool contextMenuEnabled
+        READ contextMenuEnabled
+        WRITE setContextMenuEnabled
+        NOTIFY contextMenuEnabledChanged)
 
 public:
     explicit QtMaterialTable(
@@ -98,6 +109,12 @@ public:
 
     bool dragDropEnabled() const noexcept;
     void setDragDropEnabled(bool enabled);
+
+    bool inlineEditingEnabled() const noexcept;
+    void setInlineEditingEnabled(bool enabled);
+
+    bool contextMenuEnabled() const noexcept;
+    void setContextMenuEnabled(bool enabled);
 
     QString accessibilitySummary() const;
     QString currentCellAccessibleText() const;
@@ -137,6 +154,11 @@ Q_SIGNALS:
     void columnReorderingEnabledChanged(bool enabled);
     void cellSelectionEnabledChanged(bool enabled);
     void dragDropEnabledChanged(bool enabled);
+    void inlineEditingEnabledChanged(bool enabled);
+    void contextMenuEnabledChanged(bool enabled);
+    void contextMenuRequested(
+        const QModelIndex& index,
+        const QPoint& globalPosition);
     void accessibilitySummaryChanged(
         const QString& summary);
     void rowActivated(int row);
