@@ -380,6 +380,30 @@ Release gates:
 - Documentation CI validates registry, Gallery catalogue and generated page parity before Sphinx builds.
 
 
+## 1.17.0 — Python / PySide6 bindings
+
+Goal: provide a Qt6-only Python surface that remains a thin, ownership-safe view of the
+native QtMaterial3 library rather than a second implementation.
+
+Release gates:
+
+- Bindings are generated with Shiboken6 and load through `import QtMaterial3`.
+- The initial public Python contract covers representative Widgets plus `Theme`,
+  `ThemeBuilder`, `ThemeContext`, Expressive enums and Adaptive window-size/density enums.
+- Existing Qt `Q_PROPERTY` metadata and signals remain observable from PySide6 without
+  Python-only shadow state.
+- Qt5 stays completely outside this workstream; enabling bindings on a Qt5 build is a
+  configure-time error and the default native build remains unchanged.
+- The Python package can be built as a wheel through the PEP 517/scikit-build-core path.
+- Python examples demonstrate theming, Expressive configuration and widget usage.
+- C++ -> Python signal/property smoke coverage validates that generated wrappers exercise
+  the native implementation.
+- QObject parent/child ownership is explicitly tested: deleting a C++ parent invalidates
+  the Python child wrapper and repeated Python garbage collection must not double-delete it.
+- QObject-derived wrappers request deletion on their owning thread and the parent-constructor
+  heuristic is enabled for standard Qt-style constructors.
+- A dedicated Qt6/PySide6 CI lane builds the wheel and runs the Python contract tests.
+
 ## 1.18.0 — Native Qt Adaptation Layer
 
 Goal: let established Qt Widgets applications adopt Material 3 incrementally
@@ -441,26 +465,3 @@ Release gates:
   Windows Qt 5.14.2 and Qt 6 Designer lanes.
 
 
-## 1.17.0 — Python / PySide6 bindings
-
-Goal: provide a Qt6-only Python surface that remains a thin, ownership-safe view of the
-native QtMaterial3 library rather than a second implementation.
-
-Release gates:
-
-- Bindings are generated with Shiboken6 and load through `import QtMaterial3`.
-- The initial public Python contract covers representative Widgets plus `Theme`,
-  `ThemeBuilder`, `ThemeContext`, Expressive enums and Adaptive window-size/density enums.
-- Existing Qt `Q_PROPERTY` metadata and signals remain observable from PySide6 without
-  Python-only shadow state.
-- Qt5 stays completely outside this workstream; enabling bindings on a Qt5 build is a
-  configure-time error and the default native build remains unchanged.
-- The Python package can be built as a wheel through the PEP 517/scikit-build-core path.
-- Python examples demonstrate theming, Expressive configuration and widget usage.
-- C++ -> Python signal/property smoke coverage validates that generated wrappers exercise
-  the native implementation.
-- QObject parent/child ownership is explicitly tested: deleting a C++ parent invalidates
-  the Python child wrapper and repeated Python garbage collection must not double-delete it.
-- QObject-derived wrappers request deletion on their owning thread and the parent-constructor
-  heuristic is enabled for standard Qt-style constructors.
-- A dedicated Qt6/PySide6 CI lane builds the wheel and runs the Python contract tests.
