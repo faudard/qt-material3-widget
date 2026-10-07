@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QList>
+#include <QObject>
 #include <QStringList>
 
 #include <QtDesigner/QDesignerContainerExtension>
