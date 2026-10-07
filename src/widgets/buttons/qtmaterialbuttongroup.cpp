@@ -101,6 +101,7 @@ void QtMaterialButtonGroup::addButton(QtMaterialTextButton* button)
 
     syncButtons();
     updateGeometry();
+    Q_EMIT buttonLabelsChanged(buttonLabels());
 }
 
 void QtMaterialButtonGroup::removeButton(QtMaterialTextButton* button)
@@ -129,10 +130,12 @@ void QtMaterialButtonGroup::removeButton(QtMaterialTextButton* button)
 
     syncButtons();
     updateGeometry();
+    Q_EMIT buttonLabelsChanged(buttonLabels());
 }
 
 void QtMaterialButtonGroup::clear()
 {
+    const bool hadButtons = !m_buttons.isEmpty();
     while (!m_buttons.isEmpty()) {
         QtMaterialTextButton* button = m_buttons.takeLast();
         if (button) {
@@ -148,6 +151,36 @@ void QtMaterialButtonGroup::clear()
     }
 
     updateGeometry();
+    if (hadButtons) {
+        Q_EMIT buttonLabelsChanged(buttonLabels());
+    }
+}
+
+QStringList QtMaterialButtonGroup::buttonLabels() const
+{
+    QStringList labels;
+    labels.reserve(m_buttons.size());
+    for (QtMaterialTextButton* button : m_buttons) {
+        labels.append(button ? button->text() : QString());
+    }
+    return labels;
+}
+
+void QtMaterialButtonGroup::setButtonLabels(const QStringList& labels)
+{
+    if (buttonLabels() == labels) {
+        return;
+    }
+
+    while (!m_buttons.isEmpty()) {
+        QtMaterialTextButton* button = m_buttons.constLast();
+        removeButton(button);
+        delete button;
+    }
+    for (const QString& label : labels) {
+        addButton(label);
+    }
+    Q_EMIT buttonLabelsChanged(buttonLabels());
 }
 
 bool QtMaterialButtonGroup::isExclusive() const noexcept
