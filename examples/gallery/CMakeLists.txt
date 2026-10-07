@@ -12,6 +12,8 @@ qtmaterial3_add_example_executable(qtmaterial3_gallery
     main.cpp
     gallerywindow.cpp
     gallerywindow.h
+    gallerycatalog.cpp
+    gallerycatalog.h
     pages/buttonspage.cpp
     pages/progressindicatorspage.cpp
     pages/buttonspage.h
@@ -44,4 +46,3 @@ target_link_libraries(qtmaterial3_gallery
         qtmaterial3_effects
         qtmaterial3_widgets
 )
-

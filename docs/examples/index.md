@@ -1,20 +1,41 @@
 # Examples
 
-The examples are executable consumer documentation.
+The examples are executable consumer documentation. Gallery, Dashboard and Theme Studio are the three primary showcase entry points.
 
-## Component Gallery
+## Component Gallery 2.0
 
-`qtmaterial3_gallery` is the primary widget catalog. Use it to inspect component states, keyboard behavior, light/dark themes, contrast and LTR/RTL behavior.
+`qtmaterial3_gallery` is the complete component workbench for the current 60-component public registry.
 
-## Dashboard demo
+Use it for:
 
-`qtmaterial3_dashboard_demo` demonstrates application composition: responsive navigation, tables, profile/pricing flows, loading/empty/error/offline states, dialogs, banners, progress indicators and runtime theme controls.
+- global component/type/route search;
+- family navigation and deep links;
+- Light, Dark, Medium/High Contrast and Expressive previews;
+- LTR/RTL and density switching;
+- Default/Hover/Focus/Pressed/Selected/Disabled/Error previews where supported;
+- live writable Qt properties;
+- copyable C++ and Qt Designer `.ui` snippets.
+
+Open a component directly:
+
+```bash
+qtmaterial3_gallery --route /buttons/filled
+qtmaterial3_gallery /data/tree-view
+```
+
+## Dashboard showcase
+
+`qtmaterial3_dashboard_demo` is the application-level showcase. It demonstrates responsive navigation, analytics, tables, profile/pricing flows, loading/empty/error/offline states, dialogs, banners, progress indicators and runtime theme controls in a production-style shell.
 
 It also supports deterministic screenshot capture. See the [Dashboard showcase guide](dashboard-showcase.md).
 
+Use the Dashboard when evaluating how the component library behaves as a composed desktop application rather than in isolation.
+
 ## Theme Studio
 
-`qtmaterial3_theme_studio` is the interactive theme-authoring and inspection tool.
+`qtmaterial3_theme_studio` is the theme-authoring showcase. Use it to inspect seed-driven palettes, light/dark themes, contrast, Expressive variants and live theme propagation while authoring a theme.
+
+Together, Theme Studio + Gallery 2.0 provide the quickest workflow for authoring a theme and immediately validating it against the full component catalog.
 
 ## Theming workflows
 
