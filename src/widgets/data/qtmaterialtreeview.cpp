@@ -6,6 +6,7 @@
 #include <QHeaderView>
 #include <QIODevice>
 #include <QItemSelectionModel>
+#include <QKeyEvent>
 #include <QVector>
 
 namespace QtMaterial {
@@ -499,6 +500,26 @@ void QtMaterialTreeView::currentChanged(
 {
     QTreeView::currentChanged(current, previous);
     syncAccessibility();
+}
+
+void QtMaterialTreeView::keyPressEvent(
+    QKeyEvent* event)
+{
+    if (!event) {
+        return;
+    }
+
+    if (
+        event->key() == Qt::Key_F2
+        && event->modifiers() == Qt::NoModifier
+        && inlineEditingEnabled()
+        && currentIndex().isValid()) {
+        edit(currentIndex());
+        event->accept();
+        return;
+    }
+
+    QTreeView::keyPressEvent(event);
 }
 
 void QtMaterialTreeView::syncAccessibility()
