@@ -86,10 +86,10 @@ public:
             command.text =
                 QStringLiteral("final command %1")
                     .arg(index);
-            command.keywords = {
-                QStringLiteral("final"),
-                QStringLiteral("resource-%1").arg(index)
-            };
+            command.keywords.clear();
+            command.keywords.append(QStringLiteral("final"));
+            command.keywords.append(
+                QStringLiteral("resource-%1").arg(index));
             commands.push_back(command);
         }
 
