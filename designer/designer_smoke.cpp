@@ -12,7 +12,9 @@ int main(int argc, char** argv)
 
     if (!ui.filledButton || !ui.outlinedTextField || !ui.slider
         || !ui.dateField || !ui.searchBar || !ui.rangeSlider || !ui.divider
-        || !ui.card || !ui.table || !ui.topAppBar || !ui.bottomAppBar) {
+        || !ui.card || !ui.table || !ui.topAppBar || !ui.bottomAppBar
+        || !ui.buttonGroup || !ui.navigationBar || !ui.segmentedList
+        || !ui.splitButton || !ui.loadingIndicator) {
         return 1;
     }
 
@@ -36,6 +38,27 @@ int main(int argc, char** argv)
     if (ui.topAppBar->title() != QStringLiteral("Designer smoke")
         || ui.bottomAppBar->title() != QStringLiteral("Designer actions")) {
         return 6;
+    }
+    if (ui.buttonGroup->buttonLabels()
+            != QStringList({QStringLiteral("Day"), QStringLiteral("Week"), QStringLiteral("Month")})
+        || ui.buttonGroup->currentIndex() != 1) {
+        return 7;
+    }
+    if (ui.navigationBar->destinationLabels()
+            != QStringList({QStringLiteral("Home"), QStringLiteral("Search"), QStringLiteral("Profile")})
+        || ui.navigationBar->currentIndex() != 1) {
+        return 8;
+    }
+    if (ui.segmentedList->itemLabels()
+            != QStringList({QStringLiteral("Personal"), QStringLiteral("Work"), QStringLiteral("Archive")})
+        || !ui.segmentedList->expressive()) {
+        return 9;
+    }
+    if (ui.splitButton->text() != QStringLiteral("Create")
+        || !ui.splitButton->expressive()
+        || ui.loadingIndicator->indicatorSize() != 44
+        || ui.loadingIndicator->isActive()) {
+        return 10;
     }
 
     return 0;
