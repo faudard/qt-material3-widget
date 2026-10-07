@@ -291,11 +291,10 @@ QList<QtMaterial::QtMaterialCommand> makeCommands()
         command.text = QStringLiteral("Open resource %1").arg(i);
         command.secondaryText = QStringLiteral("Workspace item %1").arg(i % 1000);
         command.section = QStringLiteral("Section %1").arg(i % 32);
-        command.keywords = {
-            QStringLiteral("resource-%1").arg(i),
-            QStringLiteral("workspace"),
-            QStringLiteral("scale")
-        };
+        command.keywords = QStringList()
+            << QStringLiteral("resource-%1").arg(i)
+            << QStringLiteral("workspace")
+            << QStringLiteral("scale");
         commands.push_back(command);
     }
     return commands;
