@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include <QByteArray>
 #include <QModelIndex>
 #include <QString>
 #include <QTableView>
@@ -101,6 +102,23 @@ public:
     QString accessibilitySummary() const;
     QString currentCellAccessibleText() const;
     QString rowAccessibleText(int row) const;
+
+    /**
+     * Saves desktop/user view state without serializing the model itself.
+     *
+     * The versioned payload includes column order/width/visibility, sorting
+     * presentation and the Material desktop interaction policies exposed by
+     * this view.
+     */
+    QByteArray saveWorkspaceState() const;
+
+    /**
+     * Restores a state produced by saveWorkspaceState().
+     *
+     * The operation is fail-safe: malformed, incompatible or wrong-column
+     * payloads are rejected without leaving a partially restored header.
+     */
+    bool restoreWorkspaceState(const QByteArray& state);
 
     void setModel(
         QAbstractItemModel* model) override;
