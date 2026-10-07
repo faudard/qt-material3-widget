@@ -330,7 +330,7 @@ void QtMaterialNavigationBar::setDestinationLabels(const QStringList& labels)
     }
     const int nextIndex = labels.isEmpty()
         ? -1
-        : qBound(0, previousIndex < 0 ? 0 : previousIndex, labels.size() - 1);
+        : qBound(0, previousIndex < 0 ? 0 : previousIndex, int(labels.size()) - 1);
     if (d_ptr->currentIndex != nextIndex) {
         d_ptr->currentIndex = nextIndex;
         Q_EMIT currentIndexChanged(nextIndex);
