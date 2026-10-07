@@ -33,7 +33,7 @@ unless a stricter ABI policy is published.
 - Expressive FAB adds Small/Standard/Medium/Large sizing while reusing the shared shape-morph and reduced-motion pipeline.
 - Adaptive window size classes, Navigation Suite and Adaptive Shell add Compact/Medium/Expanded/Large/ExtraLarge behavior, responsive Bar/Rail navigation, supporting panes, RTL layout and automatic desktop density.
 - Material 3 catalogue coverage adds Navigation Bar, Side Sheet, Tooltip and Badge with theme-aware rendering, focused tests, Gallery examples and 1.7 maturity tracking.
-- Designer 2.0 expands the curated Qt Designer palette from 21 to 27 persistence-safe widgets, including Range Slider, Date Field, Search Bar, Top/Bottom App Bars and Divider.
+- The initial Designer foundation expanded the curated palette from 21 to 27 persistence-safe widgets, including Range Slider, Date Field, Search Bar, Top/Bottom App Bars and Divider.
 - Outlined/Filled Text Fields expose their common authored values as Qt properties for direct editing and UIC serialization.
 - A real `examples/designer-form/designerform.ui` AUTOUIC application demonstrates production `.ui` consumption.
 - The `designer-dev` CMake preset configures, builds and runs focused Designer contracts.
