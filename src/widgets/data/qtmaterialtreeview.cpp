@@ -5,6 +5,7 @@
 #include <QDataStream>
 #include <QHeaderView>
 #include <QItemSelectionModel>
+#include <QVector>
 
 namespace QtMaterial {
 namespace {
@@ -456,7 +457,7 @@ bool QtMaterialTreeView::restoreWorkspaceState(
         setCurrentIndex(restoredCurrent);
         scrollTo(restoredCurrent);
     } else {
-        setCurrentIndex({});
+        setCurrentIndex(QModelIndex());
     }
 
     syncAccessibility();
