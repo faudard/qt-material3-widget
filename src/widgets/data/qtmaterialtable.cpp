@@ -7,6 +7,7 @@
 #include <QDataStream>
 #include <QFocusEvent>
 #include <QHeaderView>
+#include <QIODevice>
 #include <QItemSelectionModel>
 #include <QKeyEvent>
 #include <QPainter>
