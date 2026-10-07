@@ -7,15 +7,6 @@
 
 namespace QtMaterial {
 
-enum class ButtonVariant
-{
-    Text,
-    Filled,
-    FilledTonal,
-    Outlined,
-    Elevated
-};
-
 /**
  * Resolves immutable specifications for the standard text-button family.
  *
