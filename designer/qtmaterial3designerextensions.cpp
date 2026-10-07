@@ -272,8 +272,8 @@ private:
             }
 
             const QString name = QString::fromLatin1(binding.name);
-            if (cursor && cursor->current() == target_) {
-                cursor->setProperty(name, value);
+            if (cursor) {
+                cursor->setWidgetProperty(target_, name, value);
             } else {
                 target_->setProperty(binding.name.constData(), value);
                 if (formWindow) {
