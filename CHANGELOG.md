@@ -21,6 +21,9 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Designer 2.0 adds Material task-menu property authoring, reversible Light/Dark/Expressive previews and explicit Tabs/Adaptive Shell container extensions when Qt's Designer development API is available.
+- The Designer palette grows to 32 persistence-safe controls, adding Split Button, Button Group, Navigation Bar, Loading Indicator and Segmented List with AUTOUIC round-trip coverage.
+- Button Group, Navigation Bar and Segmented List expose serializable QStringList authoring properties for their labels.
 - Expressive Catalogue 1.10 adds Split Button, Button Group, Floating Toolbar and morphing Loading Indicator widgets with keyboard/accessibility contracts and reduced-motion handling.
 - Expressive Data 1.11 adds opt-in expressive List Item geometry, automatic Segmented List grouping, expressive Menu metrics and press/selected Chip shape morphing.
 - Adaptive/Desktop 1.9 certification adds five-class LTR/RTL visual evidence, responsive Navigation Suite accessible focus, observable supporting-pane state, shell accessibility summaries, a native AT fixture and fail-closed promotion tooling.
