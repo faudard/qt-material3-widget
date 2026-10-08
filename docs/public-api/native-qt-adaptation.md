@@ -2,7 +2,7 @@
 
 Qt Material 3 keeps first-class Material widgets such as `QtMaterialTextButton`,
 `QtMaterialFilledButton` and `QtMaterialOutlinedButton`. Existing Qt Widgets
-applications do not have to replace every `QPushButton`, `QCheckBox`, `QRadioButton` or `QSlider` immediately, however.
+applications do not have to replace every `QPushButton`, `QCheckBox`, `QRadioButton`, `QSlider` or `QComboBox` immediately, however.
 
 The `Widgets` module provides an opt-in adapter for existing buttons:
 
@@ -152,3 +152,31 @@ supports form-wide migration, and `remove()` restores the previous style.
 The existing first-class `QtMaterialSlider` visual baseline is intentionally
 left unchanged in this adapter PR. Moving that established component onto the
 new canonical SliderSpec requires its own reviewed visual-baseline change.
+
+
+## Native combo box
+
+Existing `QComboBox` instances can use the same resolved input-field language
+without replacing their model/view stack:
+
+```cpp
+#include <qtmaterial/widgets/native/qtmaterialcomboboxadapter.h>
+
+QtMaterial::QtMaterialComboBoxAdapter::apply(
+    ui->countryCombo,
+    QtMaterial::Density::Default);
+```
+
+The adapter preserves the original `QAbstractItemModel`, popup view,
+application-provided item delegate, editable `QLineEdit`, current index/text
+and selection signals. It changes only the closed control's
+`QStyle::CC_ComboBox` rendering and geometry.
+
+The container, state layer, outline/focus ring, current-item label and arrow use
+the existing `AutocompleteSpecResolver`. `SC_ComboBoxArrow` and
+`SC_ComboBoxEditField` are RTL-aware, so Qt's native hit testing and editable
+line-edit placement stay aligned with the Material rendering.
+
+The popup remains application/Qt-owned deliberately: the adapter does not swap
+models, views or delegates. Applications that want the full Material popup
+surface and item treatment should use the first-class `QtMaterialComboBox`.
