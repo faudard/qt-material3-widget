@@ -2,6 +2,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     navigation/qtmaterialitemaccessibility_p.h
     buttons/private/qtmaterialbuttonrenderhelper.cpp
     native/qtmaterialbuttonadapter.cpp
+    native/qtmaterialcomboboxadapter.cpp
     native/qtmaterialselectionadapter.cpp
     native/qtmaterialslideradapter.cpp
     resolution/qtmaterialbuttonspecresolution_p.h
@@ -85,6 +86,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
 
 set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialbuttonadapter.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialcomboboxadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialselectionadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialslideradapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialtextbutton.h

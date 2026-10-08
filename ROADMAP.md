@@ -395,6 +395,8 @@ Initial release scope:
 - `QtMaterialSliderAdapter` materializes native `QSlider` controls through the
   real `QStyle::CC_Slider` geometry/hit-test contract while preserving range,
   value, orientation, ticks, inversion flags, signals and keyboard/mouse behavior.
+- `QtMaterialComboBoxAdapter` materializes the closed surface of native `QComboBox`
+  while preserving its model, popup view, delegate, editable line edit and selection semantics.
 - Adapted buttons resolve the canonical `ButtonSpecResolver` instead of
   maintaining a parallel color/metric implementation.
 - Runtime variant/density setters and namespaced dynamic properties support both
@@ -409,9 +411,8 @@ Initial release scope:
 
 Follow-up scope:
 
-- Extend the same opt-in adapter architecture next to `QComboBox`, including
-  editable/non-editable modes, arrow sub-controls and popup ownership, without
-  replacing Qt's model/view semantics.
+- Keep popup/model-view ownership native for adapted combo boxes and reserve full
+  Material popup behavior for `QtMaterialComboBox`.
 - Migrate the established `QtMaterialSlider` visual implementation onto the new
   canonical `SliderSpec` only with separately reviewed visual baselines.
 - Add richer Designer property editors for adapter dynamic properties.
