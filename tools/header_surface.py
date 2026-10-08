@@ -44,6 +44,8 @@ INTERNAL_HEADER_PATHS = frozenset({
     "qtmaterial/specs/qtmaterialprogressspecresolver.h",
     "qtmaterial/specs/qtmaterialsegmentedbuttonspecresolver.h",
     "qtmaterial/specs/qtmaterialselectionspecresolver.h",
+    "qtmaterial/specs/qtmaterialsliderspec.h",
+    "qtmaterial/specs/qtmaterialsliderspecresolver.h",
     "qtmaterial/specs/qtmaterialsurfacespecresolver.h",
     "qtmaterial/specs/qtmaterialtabsspecresolver.h",
     "qtmaterial/specs/qtmaterialtextfieldspecresolver.h",
