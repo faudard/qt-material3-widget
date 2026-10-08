@@ -392,6 +392,9 @@ Initial release scope:
   signals, ownership, object name, menu/default/checkable behavior and C++ type.
 - `QtMaterialSelectionAdapter` materializes native `QCheckBox` and `QRadioButton`
   controls while preserving tristate, auto-exclusive grouping, signals and C++ type.
+- `QtMaterialSliderAdapter` materializes native `QSlider` controls through the
+  real `QStyle::CC_Slider` geometry/hit-test contract while preserving range,
+  value, orientation, ticks, inversion flags, signals and keyboard/mouse behavior.
 - Adapted buttons resolve the canonical `ButtonSpecResolver` instead of
   maintaining a parallel color/metric implementation.
 - Runtime variant/density setters and namespaced dynamic properties support both
@@ -406,8 +409,11 @@ Initial release scope:
 
 Follow-up scope:
 
-- Extend the same opt-in adapter architecture next to `QSlider` and `QComboBox`
-  only where native complex-control semantics can be retained without emulation drift.
+- Extend the same opt-in adapter architecture next to `QComboBox`, including
+  editable/non-editable modes, arrow sub-controls and popup ownership, without
+  replacing Qt's model/view semantics.
+- Migrate the established `QtMaterialSlider` visual implementation onto the new
+  canonical `SliderSpec` only with separately reviewed visual baselines.
 - Add richer Designer property editors for adapter dynamic properties.
 - Keep ripple, Expressive morphing and component-specific advanced behavior in
   first-class `QtMaterial*` widgets rather than silently emulating incomplete
