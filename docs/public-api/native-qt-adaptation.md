@@ -2,7 +2,7 @@
 
 Qt Material 3 keeps first-class Material widgets such as `QtMaterialTextButton`,
 `QtMaterialFilledButton` and `QtMaterialOutlinedButton`. Existing Qt Widgets
-applications do not have to replace every `QPushButton`, `QCheckBox` or `QRadioButton` immediately, however.
+applications do not have to replace every `QPushButton`, `QCheckBox`, `QRadioButton` or `QSlider` immediately, however.
 
 The `Widgets` module provides an opt-in adapter for existing buttons:
 
@@ -120,3 +120,35 @@ QtMaterial::QtMaterialSelectionAdapter::applyToDescendants(this);
 
 Use `qtm3MaterialOptOut=true` (or `setOptOut()`) for exceptional controls.
 `remove()` restores the previously installed native style.
+
+
+## Native slider
+
+A native `QSlider` can keep its complete Qt contract while opting into
+Material track/handle/state rendering:
+
+```cpp
+#include <qtmaterial/widgets/native/qtmaterialslideradapter.h>
+
+QtMaterial::QtMaterialSliderAdapter::apply(
+    ui->volumeSlider,
+    QtMaterial::Density::Comfortable);
+```
+
+The adapter preserves the existing range, value, orientation, tick position,
+single/page steps, inverted appearance/controls, signals and keyboard/mouse
+behavior. It implements Material geometry through the native
+`QStyle::CC_Slider` sub-control contract, so the rendered handle and Qt's drag
+hit target use the same rectangle.
+
+Horizontal, vertical, RTL and inverted sliders are supported. Native tick marks
+remain delegated to the platform style while the groove, active track, state
+layer, handle and focus ring use the resolved Material `SliderSpec`.
+
+As with the other native adapters, `qtm3MaterialDensity` is live,
+`qtm3MaterialOptOut` skips exceptional controls, `applyToDescendants()`
+supports form-wide migration, and `remove()` restores the previous style.
+
+The existing first-class `QtMaterialSlider` visual baseline is intentionally
+left unchanged in this adapter PR. Moving that established component onto the
+new canonical SliderSpec requires its own reviewed visual-baseline change.
