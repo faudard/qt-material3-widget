@@ -21,6 +21,7 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Native Qt selection adaptation adds Material rendering for existing `QCheckBox` and `QRadioButton` controls while preserving tristate, auto-exclusive grouping, signals, density, RTL and effective ThemeContext behavior.
 - Designer 3.0 adds specialized color/token, enum, date/time and collection editors; token/default reset support through Designer's reset path; Compact/Medium/Expanded, DPR 1x/2x and LTR/RTL preview rendering; six theme presets; and promotes Adaptive Shell, Tooltip and Badge for a 35-control palette.
 - Adaptive Shell exposes serializable `automaticDensity` and `supportingPaneWidth` properties for no-code Designer authoring.
 - Native Qt button adaptation lets existing `QPushButton` instances opt into Text/Filled/FilledTonal/Outlined/Elevated Material rendering, density, effective ThemeContext updates, widget-tree migration and opt-out without replacing their Qt type or signal contract.

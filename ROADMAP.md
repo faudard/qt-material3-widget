@@ -390,6 +390,8 @@ Initial release scope:
 - `QtMaterialButtonAdapter` materializes an existing `QPushButton` as Text,
   Filled, Filled Tonal, Outlined or Elevated while preserving its native
   signals, ownership, object name, menu/default/checkable behavior and C++ type.
+- `QtMaterialSelectionAdapter` materializes native `QCheckBox` and `QRadioButton`
+  controls while preserving tristate, auto-exclusive grouping, signals and C++ type.
 - Adapted buttons resolve the canonical `ButtonSpecResolver` instead of
   maintaining a parallel color/metric implementation.
 - Runtime variant/density setters and namespaced dynamic properties support both
@@ -404,8 +406,8 @@ Initial release scope:
 
 Follow-up scope:
 
-- Extend the same opt-in adapter architecture to `QCheckBox`, `QRadioButton`,
-  `QComboBox` and `QSlider` only where native semantics can be retained.
+- Extend the same opt-in adapter architecture next to `QSlider` and `QComboBox`
+  only where native complex-control semantics can be retained without emulation drift.
 - Add richer Designer property editors for adapter dynamic properties.
 - Keep ripple, Expressive morphing and component-specific advanced behavior in
   first-class `QtMaterial*` widgets rather than silently emulating incomplete

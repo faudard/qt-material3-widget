@@ -2,7 +2,7 @@
 
 Qt Material 3 keeps first-class Material widgets such as `QtMaterialTextButton`,
 `QtMaterialFilledButton` and `QtMaterialOutlinedButton`. Existing Qt Widgets
-applications do not have to replace every `QPushButton` immediately, however.
+applications do not have to replace every `QPushButton`, `QCheckBox` or `QRadioButton` immediately, however.
 
 The `Widgets` module provides an opt-in adapter for existing buttons:
 
@@ -82,3 +82,41 @@ It deliberately does **not** pretend that a native `QPushButton` has become a
 full Material-specific interaction pipeline remain features of the first-class
 Material widget classes. Applications can therefore mix both approaches and
 migrate incrementally.
+
+
+## Native selection controls
+
+Existing native selection controls can opt into Material rendering without
+changing their Qt type:
+
+```cpp
+#include <qtmaterial/widgets/native/qtmaterialselectionadapter.h>
+
+QtMaterial::QtMaterialSelectionAdapter::apply(
+    ui->rememberCheckBox,
+    QtMaterial::Density::Default);
+
+QtMaterial::QtMaterialSelectionAdapter::apply(
+    ui->automaticRadioButton);
+```
+
+The adapter preserves native Qt behavior:
+
+- `QCheckBox::tristate` and `Qt::PartiallyChecked`;
+- `QRadioButton::autoExclusive` grouping;
+- existing `toggled()`, `clicked()` and state-change connections;
+- widget ownership, object names and Designer-authored forms;
+- enabled/disabled, hover, press, focus and RTL behavior.
+
+Both controls resolve the canonical `SelectionSpecResolver` through the
+effective `ThemeContext`. Density remains live through the shared
+`qtm3MaterialDensity` property.
+
+A whole form can be migrated incrementally:
+
+```cpp
+QtMaterial::QtMaterialSelectionAdapter::applyToDescendants(this);
+```
+
+Use `qtm3MaterialOptOut=true` (or `setOptOut()`) for exceptional controls.
+`remove()` restores the previously installed native style.
