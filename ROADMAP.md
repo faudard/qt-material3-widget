@@ -397,6 +397,8 @@ Initial release scope:
   value, orientation, ticks, inversion flags, signals and keyboard/mouse behavior.
 - `QtMaterialComboBoxAdapter` materializes the closed surface of native `QComboBox`
   while preserving its model, popup view, delegate, editable line edit and selection semantics.
+- `QtMaterialProgressBarAdapter` materializes native `QProgressBar` determinate and
+  indeterminate rendering while preserving range/value/orientation/text semantics.
 - Adapted buttons resolve the canonical `ButtonSpecResolver` instead of
   maintaining a parallel color/metric implementation.
 - Runtime variant/density setters and namespaced dynamic properties support both
@@ -416,6 +418,8 @@ Follow-up scope:
 - Migrate the established `QtMaterialSlider` visual implementation onto the new
   canonical `SliderSpec` only with separately reviewed visual baselines.
 - Add richer Designer property editors for adapter dynamic properties.
+- Continue with low-risk native primitives such as `QLineEdit` and `QToolButton`
+  while keeping advanced composed behavior in first-class Material components.
 - Keep ripple, Expressive morphing and component-specific advanced behavior in
   first-class `QtMaterial*` widgets rather than silently emulating incomplete
   behavior in native controls.

@@ -4,10 +4,12 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     native/qtmaterialbuttonadapter.cpp
     native/qtmaterialcomboboxadapter.cpp
     native/qtmaterialselectionadapter.cpp
+    native/qtmaterialprogressbaradapter.cpp
     native/qtmaterialslideradapter.cpp
     resolution/qtmaterialbuttonspecresolution_p.h
     resolution/qtmaterialselectionspecresolution_p.h
     resolution/qtmaterialsliderspecresolution_p.h
+    resolution/qtmaterialprogressspecresolution_p.h
     buttons/qtmaterialtextbutton.cpp
     buttons/qtmaterialfilledbutton.cpp
     buttons/qtmaterialbuttongroup.cpp
@@ -88,6 +90,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialbuttonadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialcomboboxadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialselectionadapter.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialprogressbaradapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialslideradapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialtextbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialfilledbutton.h
