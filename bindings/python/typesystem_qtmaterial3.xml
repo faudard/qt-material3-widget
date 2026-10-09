@@ -14,6 +14,7 @@
     <enum-type name="WindowHeightSizeClass"/>
     <enum-type name="QtMaterialButtonSize"/>
     <enum-type name="QtMaterialButtonShape"/>
+    <enum-type name="ChipVariant"/>
 
     <value-type name="WindowSizeClass"/>
     <value-type name="ThemeOptions"/>
@@ -62,7 +63,18 @@
     <object-type name="QtMaterialFilledTonalButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialElevatedButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialCheckbox" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialRadioButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialSwitch" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialChip" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialTooltip" delete-in-main-thread="yes" disable-wrapper="yes">
+      <enum-type name="Placement"/>
+      <modify-function signature="targetWidget()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="setTargetWidget(QWidget*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+    </object-type>
 
     <object-type name="QtMaterialOutlinedTextField" delete-in-main-thread="yes" disable-wrapper="yes">
       <enum-type name="ValidationFeedbackMode"/>
