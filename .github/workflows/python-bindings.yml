@@ -37,10 +37,18 @@ jobs:
       - name: Install Linux runtime packages
         run: bash scripts/ci/install-ubuntu-deps.sh
 
+      - name: Install matching Qt SDK
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.6.3"
+          host: linux
+          target: desktop
+          arch: gcc_64
+          cache: true
+
       - name: Build wheel
         env:
-          PIP_EXTRA_INDEX_URL: https://download.qt.io/official_releases/QtForPython/
-          PIP_TRUSTED_HOST: download.qt.io
+          CMAKE_PREFIX_PATH: ${{ env.QT_ROOT_DIR }}
         run: |
           python -m pip install --upgrade pip build
           python -m build bindings/python --wheel --outdir wheelhouse
