@@ -28,6 +28,7 @@ private slots:
     void declaredOnlyAndPropertyChanges();
     void dynamicallyCreatedControlsAndInternalBarriers();
     void reparentingAndOptOut();
+    void watchedRootCrossesNativeBarrier();
     void overlappingWatchRootsAndManualOwnership();
     void externalStyleReplacementAndSignals();
     void destructionDuringPendingReconciliation();
@@ -136,6 +137,31 @@ void tst_NativeRuntimeWatcher::reparentingAndOptOut()
     button->setParent(&elsewhere);
     QTRY_VERIFY(!QtMaterialNativeAdapter::isApplied(button));
     QVERIFY(QtMaterialNativeAdapter::unwatch(&watchedForm));
+}
+
+void tst_NativeRuntimeWatcher::watchedRootCrossesNativeBarrier()
+{
+    QWidget form;
+    QPushButton button(&form);
+    QComboBox nativeParent;
+    QtMaterialComboBox materialParent;
+
+    QVERIFY(QtMaterialNativeAdapter::watch(
+        &form, QtMaterialNativeAdapter::WatchPolicy::AllSupported));
+    QVERIFY(QtMaterialNativeAdapter::isApplied(&button));
+
+    form.setParent(&nativeParent);
+    QTRY_VERIFY(!QtMaterialNativeAdapter::isApplied(&button));
+    QVERIFY(QtMaterialNativeAdapter::isWatched(&form));
+
+    form.setParent(&materialParent);
+    QCoreApplication::processEvents();
+    QVERIFY(!QtMaterialNativeAdapter::isApplied(&button));
+
+    form.setParent(nullptr);
+    QTRY_VERIFY(QtMaterialNativeAdapter::isApplied(&button));
+    QVERIFY(QtMaterialNativeAdapter::unwatch(&form));
+    QVERIFY(!QtMaterialNativeAdapter::isApplied(&button));
 }
 
 void tst_NativeRuntimeWatcher::overlappingWatchRootsAndManualOwnership()
