@@ -39,9 +39,19 @@ public:
 
     struct Options
     {
-        Density density = Density::Default;
-        ButtonVariant buttonVariant = ButtonVariant::Text;
-        TextFieldVariant textFieldVariant = TextFieldVariant::Outlined;
+        Options(
+            Density densityValue = Density::Default,
+            ButtonVariant buttonVariantValue = ButtonVariant::Text,
+            TextFieldVariant textFieldVariantValue = TextFieldVariant::Outlined) noexcept
+            : density(densityValue)
+            , buttonVariant(buttonVariantValue)
+            , textFieldVariant(textFieldVariantValue)
+        {
+        }
+
+        Density density;
+        ButtonVariant buttonVariant;
+        TextFieldVariant textFieldVariant;
     };
 
     static WidgetKind kind(const QWidget* widget);
