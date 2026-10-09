@@ -176,7 +176,7 @@ set_target_properties(${_qtm3_python_extension} PROPERTIES
 if(UNIX AND NOT APPLE)
     set_target_properties(${_qtm3_python_extension} PROPERTIES
         BUILD_RPATH "${_qtm3_shiboken_module_path};${_qtm3_pyside_path}"
-        INSTALL_RPATH "\\$ORIGIN/../shiboken6;\\$ORIGIN/../PySide6"
+        INSTALL_RPATH "$ORIGIN/../shiboken6;$ORIGIN/../PySide6"
     )
 elseif(APPLE)
     set_target_properties(${_qtm3_python_extension} PROPERTIES
