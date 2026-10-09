@@ -2,7 +2,7 @@
 
 Qt Material 3 keeps first-class Material widgets such as `QtMaterialTextButton`,
 `QtMaterialFilledButton` and `QtMaterialOutlinedButton`. Existing Qt Widgets
-applications do not have to replace every `QPushButton`, `QCheckBox`, `QRadioButton`, `QSlider`, `QComboBox` or `QProgressBar` immediately, however.
+applications do not have to replace every `QPushButton`, `QCheckBox`, `QRadioButton`, `QSlider`, `QComboBox`, `QProgressBar` or `QLineEdit` immediately, however.
 
 The `Widgets` module provides an opt-in adapter for existing buttons:
 
@@ -207,3 +207,34 @@ rendered.
 
 `applyToDescendants()`, `qtm3MaterialOptOut` and `remove()` provide the
 same incremental migration/restoration behavior as the other adapters.
+
+
+## Native line edit
+
+Existing `QLineEdit` controls can use Material outlined or filled text-field
+surfaces without replacing the editor object:
+
+```cpp
+#include <qtmaterial/widgets/native/qtmateriallineeditadapter.h>
+
+QtMaterial::QtMaterialLineEditAdapter::apply(
+    ui->nameEdit,
+    QtMaterial::QtMaterialLineEditAdapter::Variant::Outlined,
+    QtMaterial::Density::Default);
+```
+
+The adapter preserves the native validator, input mask, completer, echo mode,
+clear button/actions, text margins, selection and all `QLineEdit` signals.
+It changes the panel through `PE_PanelLineEdit`, resolves the editable content
+rectangle through `SE_LineEditContents`, and applies Material typography/text
+colors through the native palette.
+
+Both `Outlined` and `Filled` variants use the existing
+`TextFieldSpecResolver`. Dynamic `qtm3MaterialTextFieldVariant` and
+`qtm3MaterialDensity` properties remain live after adaptation.
+`applyToDescendants()`, `qtm3MaterialOptOut` and `remove()` follow the
+same progressive-migration contract as the other native adapters.
+
+Full labels, supporting/error text, leading/trailing accessory layout and
+Material validation UX remain responsibilities of the first-class
+`QtMaterialOutlinedTextField` / `QtMaterialFilledTextField` components.
