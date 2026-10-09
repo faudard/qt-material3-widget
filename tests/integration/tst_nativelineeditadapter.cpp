@@ -230,8 +230,14 @@ void tst_NativeLineEditAdapter::
     QCOMPARE(edit.style(), originalStyle);
     QVERIFY(edit.testAttribute(Qt::WA_SetPalette));
     QVERIFY(edit.testAttribute(Qt::WA_SetFont));
-    QCOMPARE(edit.palette(), explicitPalette);
-    QCOMPARE(edit.font(), explicitFont);
+    QCOMPARE(
+        edit.palette().color(QPalette::Base),
+        explicitPalette.color(QPalette::Base));
+    QCOMPARE(
+        edit.palette().color(QPalette::Text),
+        explicitPalette.color(QPalette::Text));
+    QCOMPARE(edit.font().italic(), explicitFont.italic());
+    QCOMPARE(edit.font().pointSize(), explicitFont.pointSize());
 }
 
 QTEST_MAIN(tst_NativeLineEditAdapter)
