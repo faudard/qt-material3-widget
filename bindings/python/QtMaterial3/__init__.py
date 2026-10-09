@@ -1,5 +1,11 @@
 """Qt6/PySide6 bindings for Qt Material 3 Widgets."""
 
+# Import the Qt for Python runtime first, so libpyside6 and its Qt types are
+# available even when QtMaterial3 is the first module imported in a process.
+# Otherwise direct `import QtMaterial3` can fail on Linux with a missing
+# libpyside6.abi3.so despite imports after PySide6 appearing to work.
+from PySide6 import QtWidgets as _pyside_widgets
+
 from . import _QtMaterial3 as _native
 
 QtMaterial = _native.QtMaterial
