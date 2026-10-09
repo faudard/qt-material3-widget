@@ -52,6 +52,18 @@
     <property name="bodyText"><string>Created entirely from a .ui form.</string></property>
    </widget></item>
    <item><widget class="QtMaterial::QtMaterialFilledButton" name="filledButton"><property name="text"><string>Continue</string></property></widget></item>
+   <item><widget class="QPushButton" name="nativeMaterialButton">
+    <property name="text"><string>Native Material</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialVariant" stdset="0"><string>filled-tonal</string></property>
+    <property name="qtm3MaterialDensity" stdset="0"><string>compact</string></property>
+    <property name="qtm3MaterialOptOut" stdset="0"><bool>false</bool></property>
+   </widget></item>
+   <item><widget class="QLineEdit" name="nativeOptedOutLineEdit">
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialTextFieldVariant" stdset="0"><string>filled</string></property>
+    <property name="qtm3MaterialOptOut" stdset="0"><bool>true</bool></property>
+   </widget></item>
    <item><widget class="QtMaterial::QtMaterialTable" name="table"/></item>
    <item><widget class="QtMaterial::QtMaterialAdaptiveShell" name="adaptiveShell">
     <property name="automaticDensity"><bool>false</bool></property>

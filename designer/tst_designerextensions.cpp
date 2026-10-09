@@ -1,6 +1,10 @@
 #include <QtTest/QTest>
 
 #include <QColor>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QProgressBar>
 #include <QWidget>
 
 #include "qtmaterial3designerextensions.h"
@@ -13,6 +17,7 @@
 #include "qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
+#include "qtmaterial/widgets/native/qtmaterialnativeadapter.h"
 
 using namespace QtMaterial;
 
@@ -21,6 +26,55 @@ class DesignerExtensionsTest : public QObject
     Q_OBJECT
 
 private slots:
+    void nativePoliciesUseStrictDynamicPropertyTypes()
+    {
+        QPushButton button;
+        const QStringList names = QtMaterial3Designer::nativeEditablePropertyNames(&button);
+        QVERIFY(names.contains(QStringLiteral("qtm3MaterialAdapt")));
+        QVERIFY(names.contains(QStringLiteral("qtm3MaterialVariant")));
+        QVERIFY(names.contains(QStringLiteral("qtm3MaterialDensity")));
+        QVERIFY(names.contains(QStringLiteral("qtm3MaterialOptOut")));
+        QVERIFY(!names.contains(QStringLiteral("qtm3MaterialTextFieldVariant")));
+
+        QVERIFY(QtMaterial3Designer::setNativeDesignerProperty(
+            &button, QStringLiteral("qtm3MaterialAdapt"), true));
+        QVERIFY(QtMaterial3Designer::setNativeDesignerProperty(
+            &button, QStringLiteral("qtm3MaterialVariant"), QStringLiteral("filled-tonal")));
+        QVERIFY(QtMaterial3Designer::setNativeDesignerProperty(
+            &button, QStringLiteral("qtm3MaterialDensity"), QStringLiteral("compact")));
+        QVERIFY(!QtMaterial3Designer::setNativeDesignerProperty(
+            &button, QStringLiteral("qtm3MaterialAdapt"), QStringLiteral("true")));
+        QVERIFY(!QtMaterial3Designer::setNativeDesignerProperty(
+            &button, QStringLiteral("qtm3MaterialVariant"), QStringLiteral("invalid")));
+        QVERIFY(!QtMaterial3Designer::setNativeDesignerProperty(
+            &button, QStringLiteral("unknown"), true));
+        QCOMPARE(button.property("qtm3MaterialVariant").toString(), QStringLiteral("filled-tonal"));
+        QVERIFY(QtMaterialNativeAdapter::applyDeclared(&button));
+        QVERIFY(QtMaterialNativeAdapter::isApplied(&button));
+        QCOMPARE(button.metaObject()->className(), "QPushButton");
+        QVERIFY(QtMaterialNativeAdapter::remove(&button));
+
+        QVERIFY(QtMaterial3Designer::setNativeDesignerProperty(
+            &button, QStringLiteral("qtm3MaterialOptOut"), true));
+        QVERIFY(!QtMaterialNativeAdapter::applyDeclared(&button));
+        QVERIFY(QtMaterial3Designer::resetNativeDesignerProperties(&button));
+        QCOMPARE(button.property("qtm3MaterialAdapt").toBool(), false);
+        QCOMPARE(button.property("qtm3MaterialVariant").toString(), QStringLiteral("text"));
+        QCOMPARE(button.property("qtm3MaterialDensity").toString(), QStringLiteral("default"));
+        QCOMPARE(button.property("qtm3MaterialOptOut").toBool(), false);
+
+        QLineEdit lineEdit;
+        QVERIFY(QtMaterial3Designer::nativeEditablePropertyNames(&lineEdit)
+                    .contains(QStringLiteral("qtm3MaterialTextFieldVariant")));
+        QVERIFY(!QtMaterial3Designer::nativeEditablePropertyNames(&lineEdit)
+                    .contains(QStringLiteral("qtm3MaterialVariant")));
+        QProgressBar progress;
+        QVERIFY(!QtMaterial3Designer::nativeEditablePropertyNames(&progress)
+                    .contains(QStringLiteral("qtm3MaterialDensity")));
+        QtMaterialSplitButton firstClass;
+        QVERIFY(QtMaterial3Designer::nativeEditablePropertyNames(&firstClass).isEmpty());
+    }
+
     void exposesCuratedEditableProperties()
     {
         QtMaterialSplitButton split;

@@ -21,6 +21,49 @@ ctest --preset designer-dev
 
 The plugin must be built with a Qt/toolchain ABI compatible with the Qt Designer or Qt Creator instance that loads it. This matters especially on Windows and for side-by-side Qt installations.
 
+## 1.19.1 — Native Qt controls (no promotion)
+
+With Qt Designer development headers available, the Material task-menu
+extension also recognizes supported **standard** widgets: `QPushButton`,
+`QToolButton`, `QCheckBox`, `QRadioButton`, `QSlider`, `QComboBox`,
+`QLineEdit` and `QProgressBar`. Select the control and choose
+**Configure native Material 3...** from its task menu. It stays a standard Qt
+widget in Designer and in the generated `ui_*.h`.
+
+The editor writes the existing facade's opt-in dynamic properties:
+
+| Dynamic property | Type | Values | Scope |
+| --- | --- | --- | --- |
+| `qtm3MaterialAdapt` | bool | true / false | all supported native controls |
+| `qtm3MaterialOptOut` | bool | true / false | all; overrides adapt |
+| `qtm3MaterialVariant` | string | text, filled, filled-tonal, outlined, elevated | QPushButton, QToolButton |
+| `qtm3MaterialDensity` | string | default, compact, comfortable | all except QProgressBar |
+| `qtm3MaterialTextFieldVariant` | string | outlined, filled | QLineEdit |
+
+Qt Designer uses the dynamic-property sheet and form-window cursor for
+serializable edits and value undo/redo. **Reset** returns to explicit defaults;
+it does not delete the dynamic property itself. The standard Designer property
+editor can remove a dynamic property entirely. For widgets not yet configured,
+the editor avoids creating default-valued dynamic properties.
+
+After generated UIC initialization, opt into adaptation in the application:
+
+```cpp
+ui->setupUi(this);
+QtMaterial::QtMaterialNativeAdapter::applyDeclaredToDescendants(this);
+```
+
+The Designer plugin does **not** apply the runtime adaptation itself and does
+not link into consumer applications. Adaptation is reversible via
+`QtMaterialNativeAdapter::removeFromDescendants()` and preserves the native
+control's class, identity, signals and existing Qt connections.
+
+**Gate:** `designer_ui_smoke` exercises AUTOUIC serialization of two standard
+Qt controls, runtime opt-in, opt-out, class identity and removal.
+`designer_extensions_contract` covers the property/type/value matrix and
+reset. A full interactive Designer undo/redo UI test requires the Qt Designer
+host; the test suite does not claim to automate that host.
+
 ## Install and package
 
 A normal install places the plugin below `${CMAKE_INSTALL_LIBDIR}/qt<major>/plugins/designer` unless `QTMATERIAL3_DESIGNER_PLUGIN_INSTALL_DIR` is overridden.

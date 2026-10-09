@@ -3,6 +3,8 @@
 #include <QStringList>
 #include <QWidget>
 
+#include "qtmaterial/widgets/native/qtmaterialnativeadapter.h"
+
 #include "ui_designer_smoke.h"
 
 int main(int argc, char** argv)
@@ -17,7 +19,8 @@ int main(int argc, char** argv)
         || !ui.card || !ui.table || !ui.topAppBar || !ui.bottomAppBar
         || !ui.buttonGroup || !ui.navigationBar || !ui.segmentedList
         || !ui.splitButton || !ui.loadingIndicator || !ui.adaptiveShell
-        || !ui.tooltip || !ui.badge) {
+        || !ui.tooltip || !ui.badge || !ui.nativeMaterialButton
+        || !ui.nativeOptedOutLineEdit) {
         qCritical() << "designer smoke: missing widget instance";
         return 1;
     }
@@ -100,6 +103,36 @@ int main(int argc, char** argv)
                     << ui.tooltip->text() << ui.tooltip->showDelay()
                     << ui.badge->count() << ui.badge->maximum() << ui.badge->isDot();
         return 12;
+    }
+
+    // AUTOUIC preserves native class identity and writes dynamic properties
+    // before the runtime opt-in pass. The opted-out line edit stays untouched.
+    if (!ui.nativeMaterialButton->property("qtm3MaterialAdapt").toBool()
+        || ui.nativeMaterialButton->property("qtm3MaterialVariant").toString()
+            != QStringLiteral("filled-tonal")
+        || ui.nativeMaterialButton->property("qtm3MaterialDensity").toString()
+            != QStringLiteral("compact")
+        || ui.nativeMaterialButton->property("qtm3MaterialOptOut").toBool()
+        || !ui.nativeOptedOutLineEdit->property("qtm3MaterialOptOut").toBool()
+        || ui.nativeOptedOutLineEdit->property("qtm3MaterialTextFieldVariant").toString()
+            != QStringLiteral("filled")) {
+        qCritical() << "designer smoke: native dynamic-property round-trip mismatch";
+        return 13;
+    }
+    using QtMaterial::QtMaterialNativeAdapter;
+    if (!QtMaterialNativeAdapter::isDeclared(ui.nativeMaterialButton)
+        || !QtMaterialNativeAdapter::applyDeclaredToDescendants(&form)
+        || !QtMaterialNativeAdapter::isApplied(ui.nativeMaterialButton)
+        || QtMaterialNativeAdapter::isApplied(ui.nativeOptedOutLineEdit)
+        || QString::fromLatin1(ui.nativeMaterialButton->metaObject()->className())
+            != QStringLiteral("QPushButton")) {
+        qCritical() << "designer smoke: native policy was not applied correctly";
+        return 14;
+    }
+    if (!QtMaterialNativeAdapter::remove(ui.nativeMaterialButton)
+        || QtMaterialNativeAdapter::isApplied(ui.nativeMaterialButton)) {
+        qCritical() << "designer smoke: native policy cannot be removed";
+        return 15;
     }
 
     return 0;

@@ -36,6 +36,8 @@
 #include <QVector>
 #include <QWidget>
 
+#include <QtDesigner/QDesignerDynamicPropertySheetExtension>
+#include <QtDesigner/QDesignerPropertySheetExtension>
 #include <QtDesigner/QDesignerFormEditorInterface>
 #include <QtDesigner/QDesignerFormWindowCursorInterface>
 #include <QtDesigner/QDesignerFormWindowInterface>
@@ -47,6 +49,7 @@
 #include "qtmaterial/theme/qtmaterialthemeoptions.h"
 #include "qtmaterial/widgets/layouts/qtmaterialadaptiveshell.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
+#include "qtmaterial/widgets/native/qtmaterialnativeadapter.h"
 
 namespace QtMaterial3Designer {
 namespace {
@@ -790,6 +793,153 @@ private:
     QLabel* preview_ = nullptr;
 };
 
+
+class NativeMaterialPolicyDialog final : public QDialog
+{
+public:
+    NativeMaterialPolicyDialog(
+        QWidget* target,
+        QDesignerFormEditorInterface* core,
+        QWidget* parent = nullptr)
+        : QDialog(parent)
+        , target_(target)
+        , core_(core)
+    {
+        setWindowTitle(tr("Native Qt Material adaptation"));
+        auto* outer = new QVBoxLayout(this);
+        auto* help = new QLabel(
+            tr("Keep the original Qt widget class. These opt-in dynamic "
+               "properties are saved in the .ui file; call "
+               "QtMaterialNativeAdapter::applyDeclaredToDescendants() "
+               "after setupUi() in the application."),
+            this);
+        help->setWordWrap(true);
+        outer->addWidget(help);
+        auto* form = new QFormLayout;
+        outer->addLayout(form);
+
+        enabled_ = new QCheckBox(tr("Enable Material adaptation"), this);
+        enabled_->setChecked(target_->property("qtm3MaterialAdapt").toBool());
+        form->addRow(tr("Material"), enabled_);
+        optOut_ = new QCheckBox(tr("Opt out of Material adaptation"), this);
+        optOut_->setToolTip(tr("An opt-out takes precedence over an enabled declaration."));
+        optOut_->setChecked(target_->property("qtm3MaterialOptOut").toBool());
+        form->addRow(tr("Exception"), optOut_);
+
+        const QStringList names = nativeEditablePropertyNames(target_);
+        if (names.contains(QStringLiteral("qtm3MaterialVariant"))) {
+            variant_ = new QComboBox(this);
+            variant_->addItem(tr("Text"), QStringLiteral("text"));
+            variant_->addItem(tr("Filled"), QStringLiteral("filled"));
+            variant_->addItem(tr("Filled tonal"), QStringLiteral("filled-tonal"));
+            variant_->addItem(tr("Outlined"), QStringLiteral("outlined"));
+            variant_->addItem(tr("Elevated"), QStringLiteral("elevated"));
+            form->addRow(tr("Button variant"), variant_);
+            selectValue(variant_, QStringLiteral("qtm3MaterialVariant"));
+        }
+        if (names.contains(QStringLiteral("qtm3MaterialDensity"))) {
+            density_ = new QComboBox(this);
+            density_->addItem(tr("Default"), QStringLiteral("default"));
+            density_->addItem(tr("Compact"), QStringLiteral("compact"));
+            density_->addItem(tr("Comfortable"), QStringLiteral("comfortable"));
+            form->addRow(tr("Density"), density_);
+            selectValue(density_, QStringLiteral("qtm3MaterialDensity"));
+        }
+        if (names.contains(QStringLiteral("qtm3MaterialTextFieldVariant"))) {
+            textFieldVariant_ = new QComboBox(this);
+            textFieldVariant_->addItem(tr("Outlined"), QStringLiteral("outlined"));
+            textFieldVariant_->addItem(tr("Filled"), QStringLiteral("filled"));
+            form->addRow(tr("Text field variant"), textFieldVariant_);
+            selectValue(textFieldVariant_, QStringLiteral("qtm3MaterialTextFieldVariant"));
+        }
+
+        auto* buttons = new QDialogButtonBox(
+            QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Reset,
+            this);
+        outer->addWidget(buttons);
+        connect(buttons->button(QDialogButtonBox::Reset),
+                &QPushButton::clicked, this, [this]() {
+            enabled_->setChecked(false);
+            optOut_->setChecked(false);
+            if (variant_) variant_->setCurrentIndex(0);
+            if (density_) density_->setCurrentIndex(0);
+            if (textFieldVariant_) textFieldVariant_->setCurrentIndex(0);
+        });
+        connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
+            if (applyChanges()) {
+                accept();
+            }
+        });
+        connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    }
+
+private:
+    void selectValue(QComboBox* combo, const QString& name)
+    {
+        const QVariant stored = target_->property(name.toLatin1().constData());
+        const QString value = stored.isValid()
+            ? stored.toString().trimmed().toLower()
+            : nativeDesignerDefault(name).toString();
+        const int index = combo->findData(value);
+        if (index >= 0) {
+            combo->setCurrentIndex(index);
+        }
+    }
+
+    bool applyChanges()
+    {
+        if (!target_) {
+            return false;
+        }
+        const QStringList names = nativeEditablePropertyNames(target_);
+        if (names.isEmpty()) {
+            return false;
+        }
+        const QDesignerFormWindowInterface* form =
+            QDesignerFormWindowInterface::findFormWindow(target_);
+        // beginCommand/endCommand group Designer's undoable cursor operations.
+        QDesignerFormWindowInterface* writableForm =
+            const_cast<QDesignerFormWindowInterface*>(form);
+        if (writableForm) {
+            writableForm->beginCommand(tr("Configure native Material properties"));
+        }
+        bool ok = true;
+        const auto set = [this, &ok](const QString& key, const QVariant& value) {
+            if (!ok) {
+                return;
+            }
+            const QVariant previous = target_->property(key.toLatin1().constData());
+            if (previous.isValid() && previous == value) {
+                return;
+            }
+            // Do not add no-op default declarations to an unconfigured control.
+            if (!previous.isValid() && value == nativeDesignerDefault(key)) {
+                return;
+            }
+            ok = setNativeDesignerProperty(target_, key, value, core_);
+        };
+        set(QStringLiteral("qtm3MaterialAdapt"), enabled_->isChecked());
+        set(QStringLiteral("qtm3MaterialOptOut"), optOut_->isChecked());
+        if (variant_) set(QStringLiteral("qtm3MaterialVariant"), variant_->currentData());
+        if (density_) set(QStringLiteral("qtm3MaterialDensity"), density_->currentData());
+        if (textFieldVariant_) {
+            set(QStringLiteral("qtm3MaterialTextFieldVariant"), textFieldVariant_->currentData());
+        }
+        if (writableForm) {
+            writableForm->endCommand();
+        }
+        return ok;
+    }
+
+    QPointer<QWidget> target_;
+    QDesignerFormEditorInterface* core_ = nullptr;
+    QCheckBox* enabled_ = nullptr;
+    QCheckBox* optOut_ = nullptr;
+    QComboBox* variant_ = nullptr;
+    QComboBox* density_ = nullptr;
+    QComboBox* textFieldVariant_ = nullptr;
+};
+
 class MaterialTaskMenu final
     : public QObject
     , public QDesignerTaskMenuExtension
@@ -806,6 +956,15 @@ public:
         , widget_(widget)
         , core_(core)
     {
+        if (!isQtMaterialWidget(widget_)) {
+            editAction_ = new QAction(tr("Configure native Material 3..."), this);
+            connect(editAction_, &QAction::triggered, this, [this]() {
+                if (!widget_) return;
+                NativeMaterialPolicyDialog dialog(widget_, core_, widget_);
+                dialog.exec();
+            });
+            return;
+        }
         editAction_ = new QAction(tr("Edit Material 3 properties..."), this);
         connect(editAction_, &QAction::triggered, this, [this]() {
             MaterialPropertyDialog dialog(widget_, core_, widget_);
@@ -839,6 +998,9 @@ public:
 
     QList<QAction*> taskActions() const override
     {
+        if (!previewAction_) {
+            return {editAction_};
+        }
         return {
             editAction_,
             previewAction_,
@@ -888,7 +1050,8 @@ protected:
             return nullptr;
         }
         auto* widget = qobject_cast<QWidget*>(object);
-        if (!isQtMaterialWidget(widget)) {
+        if (!isQtMaterialWidget(widget)
+            && nativeEditablePropertyNames(widget).isEmpty()) {
             return nullptr;
         }
         return new MaterialTaskMenu(widget, core_, parent);
@@ -928,6 +1091,154 @@ protected:
 };
 
 } // namespace
+
+
+QStringList nativeEditablePropertyNames(const QWidget* widget)
+{
+    using Kind = QtMaterial::QtMaterialNativeAdapter::WidgetKind;
+    const Kind kind = QtMaterial::QtMaterialNativeAdapter::kind(widget);
+    if (kind == Kind::Unsupported) {
+        return {};
+    }
+
+    QStringList properties = {
+        QStringLiteral("qtm3MaterialAdapt"),
+        QStringLiteral("qtm3MaterialOptOut")
+    };
+    if (kind != Kind::ProgressBar) {
+        properties.append(QStringLiteral("qtm3MaterialDensity"));
+    }
+    if (kind == Kind::PushButton || kind == Kind::ToolButton) {
+        properties.append(QStringLiteral("qtm3MaterialVariant"));
+    }
+    if (kind == Kind::LineEdit) {
+        properties.append(QStringLiteral("qtm3MaterialTextFieldVariant"));
+    }
+    return properties;
+}
+
+QVariant nativeDesignerDefault(const QString& propertyName)
+{
+    if (propertyName == QStringLiteral("qtm3MaterialAdapt")
+        || propertyName == QStringLiteral("qtm3MaterialOptOut")) {
+        return QVariant(false);
+    }
+    if (propertyName == QStringLiteral("qtm3MaterialDensity")) {
+        return QStringLiteral("default");
+    }
+    if (propertyName == QStringLiteral("qtm3MaterialVariant")) {
+        return QStringLiteral("text");
+    }
+    if (propertyName == QStringLiteral("qtm3MaterialTextFieldVariant")) {
+        return QStringLiteral("outlined");
+    }
+    return {};
+}
+
+bool setNativeDesignerProperty(
+    QWidget* widget,
+    const QString& propertyName,
+    const QVariant& value,
+    QDesignerFormEditorInterface* core)
+{
+    if (!nativeEditablePropertyNames(widget).contains(propertyName)
+        || !value.isValid()) {
+        return false;
+    }
+    const bool boolean = propertyName == QStringLiteral("qtm3MaterialAdapt")
+        || propertyName == QStringLiteral("qtm3MaterialOptOut");
+    QVariant normalized;
+    if (boolean) {
+        // Do not let Designer write strings such as "false" as truthy booleans.
+        if (value.userType() != QMetaType::Bool) {
+            return false;
+        }
+        normalized = value.toBool();
+    } else {
+        if (value.userType() != QMetaType::QString) {
+            return false;
+        }
+        normalized = value.toString().trimmed().toLower();
+        QStringList allowed;
+        if (propertyName == QStringLiteral("qtm3MaterialDensity")) {
+            allowed = {QStringLiteral("default"), QStringLiteral("compact"),
+                       QStringLiteral("comfortable")};
+        } else if (propertyName == QStringLiteral("qtm3MaterialVariant")) {
+            allowed = {QStringLiteral("text"), QStringLiteral("filled"),
+                       QStringLiteral("filled-tonal"), QStringLiteral("outlined"),
+                       QStringLiteral("elevated")};
+        } else {
+            allowed = {QStringLiteral("outlined"), QStringLiteral("filled")};
+        }
+        if (!allowed.contains(normalized.toString())) {
+            return false;
+        }
+    }
+    const QByteArray key = propertyName.toLatin1();
+    const QVariant previous = widget->property(key.constData());
+    if (previous.isValid() && previous == normalized) {
+        return true;
+    }
+
+    QDesignerFormWindowInterface* form =
+        QDesignerFormWindowInterface::findFormWindow(widget);
+    if (!form) {
+        return widget->setProperty(key.constData(), normalized);
+    }
+    if (!core || !core->extensionManager() || !form->cursor()) {
+        return false;
+    }
+
+    QExtensionManager* manager = core->extensionManager();
+    auto* sheet = qt_extension<QDesignerPropertySheetExtension*>(manager, widget);
+    auto* dynamic = qt_extension<QDesignerDynamicPropertySheetExtension*>(manager, widget);
+    if (!sheet || !dynamic) {
+        return false;
+    }
+
+    if (sheet->indexOf(propertyName) < 0) {
+        // The Designer property sheet must know about an authored dynamic
+        // property: setting QObject::setProperty alone does not serialize it.
+        if (!dynamic->dynamicPropertiesAllowed()
+            || !dynamic->canAddDynamicProperty(propertyName)
+            || dynamic->addDynamicProperty(propertyName, nativeDesignerDefault(propertyName)) < 0) {
+            return false;
+        }
+    }
+
+    // Cursor writes participate in Designer's undo/redo history, unlike
+    // property-sheet setProperty or direct QObject::setProperty.
+    form->cursor()->setWidgetProperty(widget, propertyName, normalized);
+    form->setDirty(true);
+    return widget->property(key.constData()) == normalized;
+}
+
+bool resetNativeDesignerProperties(
+    QWidget* widget,
+    QDesignerFormEditorInterface* core)
+{
+    const QStringList names = nativeEditablePropertyNames(widget);
+    if (names.isEmpty()) {
+        return false;
+    }
+    QDesignerFormWindowInterface* form =
+        QDesignerFormWindowInterface::findFormWindow(widget);
+    if (form) {
+        form->beginCommand(QObject::tr("Reset native Material properties"));
+    }
+    bool ok = true;
+    for (const QString& name : names) {
+        const QByteArray key = name.toLatin1();
+        const QVariant previous = widget->property(key.constData());
+        if (previous.isValid() && previous != nativeDesignerDefault(name)) {
+            ok = setNativeDesignerProperty(widget, name, nativeDesignerDefault(name), core) && ok;
+        }
+    }
+    if (form) {
+        form->endCommand();
+    }
+    return ok;
+}
 
 QStringList editablePropertyNames(const QWidget* widget)
 {
