@@ -95,6 +95,34 @@ public:
      */
     static int removeFromDescendants(QWidget* root);
 
+    /**
+     * Opt-in live adaptation for a form. DeclaredOnly (the default) adapts
+     * only controls with qtm3MaterialAdapt=true. AllSupported adapts every
+     * supported native control unless it has opted out.
+     *
+     * Watches are idempotent and scoped to root. Child creation, removal,
+     * reparenting, declaration changes and style replacement are monitored.
+     * Calling watch again on the same root updates its policy/options.
+     * A supported native control is a traversal barrier, and first-class
+     * Material widget internals are never watched.
+     *
+     * Must be called on the GUI thread, with a QApplication running.
+     */
+    enum class WatchPolicy
+    {
+        DeclaredOnly,
+        AllSupported
+    };
+
+    static bool watch(
+        QWidget* root,
+        WatchPolicy policy = WatchPolicy::DeclaredOnly,
+        const Options& options = Options());
+
+    /** Stop monitoring root. Removes only adaptations owned by the watcher. */
+    static bool unwatch(QWidget* root);
+    static bool isWatched(const QWidget* root);
+
     static const char* adaptPropertyName() noexcept;
 };
 

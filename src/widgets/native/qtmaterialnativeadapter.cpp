@@ -1,6 +1,15 @@
 #include "qtmaterial/widgets/native/qtmaterialnativeadapter.h"
 
+#include <QApplication>
 #include <QCheckBox>
+#include <QDynamicPropertyChangeEvent>
+#include <QEvent>
+#include <QHash>
+#include <QPointer>
+#include <QSet>
+#include <QStyle>
+#include <QTimer>
+#include <QVector>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QProgressBar>
@@ -10,6 +19,8 @@
 #include <QToolButton>
 #include <QVariant>
 #include <QWidget>
+
+#include <algorithm>
 
 #include "qtmaterial/widgets/native/qtmaterialbuttonadapter.h"
 #include "qtmaterial/widgets/native/qtmaterialcomboboxadapter.h"
@@ -162,6 +173,340 @@ QtMaterialNativeAdapter::Options declaredOptions(
         textFieldVariantFromDeclared(
             widget->property(kTextFieldVariantProperty),
             fallback.textFieldVariant));
+}
+
+
+bool sameOptions(
+    const QtMaterialNativeAdapter::Options& left,
+    const QtMaterialNativeAdapter::Options& right)
+{
+    return left.density == right.density
+        && left.buttonVariant == right.buttonVariant
+        && left.textFieldVariant == right.textFieldVariant;
+}
+
+// A watcher is not allowed to take ownership of implementation details
+// exposed as QWidget children of a native control.
+bool hasNativeControlAncestor(const QWidget* widget)
+{
+    for (const QWidget* parent = widget ? widget->parentWidget() : nullptr;
+         parent;
+         parent = parent->parentWidget()) {
+        if (QtMaterialNativeAdapter::isSupported(parent)
+            || hasMaterialClassName(parent)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+class NativeRuntimeWatcher final : public QObject
+{
+public:
+    explicit NativeRuntimeWatcher(QObject* parent)
+        : QObject(parent)
+    {
+    }
+
+    bool watch(
+        QWidget* root,
+        QtMaterialNativeAdapter::WatchPolicy policy,
+        const QtMaterialNativeAdapter::Options& options)
+    {
+        if (!root || isInsideFirstClassMaterialWidget(root)
+            || hasNativeControlAncestor(root)) {
+            return false;
+        }
+
+        auto it = m_roots.find(root);
+        if (it != m_roots.end()
+            && it->policy == policy
+            && sameOptions(it->options, options)) {
+            return true;
+        }
+
+        m_roots.insert(root, RootSpec{policy, options});
+        reconcile();
+        return true;
+    }
+
+    bool unwatch(QWidget* root)
+    {
+        if (!root || !m_roots.remove(root)) {
+            return false;
+        }
+        reconcile();
+        return true;
+    }
+
+    bool isWatched(const QWidget* root) const
+    {
+        return root && m_roots.contains(const_cast<QWidget*>(root));
+    }
+
+protected:
+    bool eventFilter(QObject* object, QEvent* event) override
+    {
+        switch (event->type()) {
+        case QEvent::ChildAdded:
+        case QEvent::ChildRemoved:
+        case QEvent::ParentChange:
+        case QEvent::StyleChange:
+            scheduleReconcile();
+            break;
+        case QEvent::DynamicPropertyChange: {
+            const QByteArray propertyName =
+                static_cast<QDynamicPropertyChangeEvent*>(event)
+                    ->propertyName();
+            if (propertyName == kAdaptProperty
+                || propertyName == "qtm3MaterialOptOut"
+                || propertyName == kVariantProperty
+                || propertyName == kDensityProperty
+                || propertyName == kTextFieldVariantProperty) {
+                scheduleReconcile();
+            }
+            break;
+        }
+        default:
+            break;
+        }
+        // Never consume Qt's events: normal signals, focus, input and style
+        // notification behavior must be preserved.
+        return QObject::eventFilter(object, event);
+    }
+
+private:
+    struct RootSpec
+    {
+        QtMaterialNativeAdapter::WatchPolicy policy;
+        QtMaterialNativeAdapter::Options options;
+    };
+
+    struct Desired
+    {
+        QtMaterialNativeAdapter::Options options;
+    };
+
+    struct Managed
+    {
+        QtMaterialNativeAdapter::Options options;
+        QPointer<QStyle> installedStyle;
+        QVariant originalVariant;
+        QVariant originalDensity;
+        QVariant originalTextFieldVariant;
+    };
+
+    void scheduleReconcile()
+    {
+        if (m_reconciling || m_pending) {
+            return;
+        }
+        m_pending = true;
+        // ChildAdded is emitted before the derived QWidget constructor has
+        // completed. Defer discovery rather than inspecting a half-built
+        // control; multiple events in one turn are coalesced.
+        QTimer::singleShot(0, this, [this]() {
+            m_pending = false;
+            reconcile();
+        });
+    }
+
+    static int depth(const QWidget* widget)
+    {
+        int result = 0;
+        for (auto* current = widget; current;
+             current = current->parentWidget()) {
+            ++result;
+        }
+        return result;
+    }
+
+    void collect(
+        QWidget* widget,
+        const RootSpec& spec,
+        QSet<QWidget*>& observed,
+        QHash<QWidget*, Desired>& desired)
+    {
+        if (!widget || isInsideFirstClassMaterialWidget(widget)) {
+            return;
+        }
+
+        observed.insert(widget);
+        if (QtMaterialNativeAdapter::isSupported(widget)) {
+            const bool eligible =
+                !QtMaterialNativeAdapter::isOptedOut(widget)
+                && (spec.policy
+                        == QtMaterialNativeAdapter::WatchPolicy::AllSupported
+                    || QtMaterialNativeAdapter::isDeclared(widget));
+            if (eligible) {
+                const auto options =
+                    spec.policy
+                        == QtMaterialNativeAdapter::WatchPolicy::DeclaredOnly
+                    ? declaredOptions(widget, spec.options)
+                    : spec.options;
+                desired.insert(widget, Desired{options});
+            } else {
+                // A deeper watched root can override a shallower one.
+                desired.remove(widget);
+            }
+            // Native implementations (combo line edits, clear buttons, popup
+            // widgets) are never descended into, including on opt-out.
+            return;
+        }
+
+        const auto children = directChildWidgets(widget);
+        for (QWidget* child : children) {
+            collect(child, spec, observed, desired);
+        }
+    }
+
+    void observe(QWidget* widget)
+    {
+        if (m_observed.contains(widget)) {
+            return;
+        }
+        m_observed.insert(widget);
+        widget->installEventFilter(this);
+        m_destroyConnections.insert(
+            widget,
+            QObject::connect(
+                widget, &QObject::destroyed, this,
+                [this, widget]() {
+                    m_observed.remove(widget);
+                    m_destroyConnections.remove(widget);
+                    m_managed.remove(widget);
+                    m_roots.remove(widget);
+                    scheduleReconcile();
+                }));
+    }
+
+    static void restoreProperties(QWidget* widget, const Managed& record)
+    {
+        widget->setProperty(kVariantProperty, record.originalVariant);
+        widget->setProperty(kDensityProperty, record.originalDensity);
+        widget->setProperty(
+            kTextFieldVariantProperty, record.originalTextFieldVariant);
+    }
+
+    void release(QWidget* widget, const Managed& record)
+    {
+        if (!widget) {
+            return;
+        }
+        // Do not overwrite an application-installed replacement QStyle.
+        // The specialized adapter already checks its own style ownership.
+        if (QtMaterialNativeAdapter::isApplied(widget)) {
+            QtMaterialNativeAdapter::remove(widget);
+        }
+        restoreProperties(widget, record);
+    }
+
+    void reconcile()
+    {
+        if (m_reconciling) {
+            return;
+        }
+        m_reconciling = true;
+
+        QSet<QWidget*> observed;
+        QHash<QWidget*, Desired> desired;
+
+        QVector<QWidget*> roots = m_roots.keys().toVector();
+        // Nearest watch root wins when watches overlap.
+        std::sort(
+            roots.begin(), roots.end(),
+            [](const QWidget* left, const QWidget* right) {
+                return depth(left) < depth(right);
+            });
+        for (QWidget* root : roots) {
+            // Keep observing the registered root even when reparented into a
+            // protected native/Material subtree. Its ParentChange event
+            // must re-enable discovery if it moves back out later.
+            observed.insert(root);
+            if (!isInsideFirstClassMaterialWidget(root)
+                && !hasNativeControlAncestor(root)) {
+                collect(root, m_roots.value(root), observed, desired);
+            }
+        }
+
+        // First release no-longer-eligible or externally restyled widgets.
+        for (auto it = m_managed.begin(); it != m_managed.end();) {
+            QWidget* widget = it.key();
+            const auto wanted = desired.constFind(widget);
+            const bool noLongerManaged = wanted == desired.cend();
+            const bool styleReplaced =
+                !noLongerManaged
+                && widget->style() != it->installedStyle.data();
+            const bool optionsChanged =
+                !noLongerManaged
+                && !sameOptions(wanted->options, it->options);
+            const bool externallyRemoved =
+                !noLongerManaged
+                && !QtMaterialNativeAdapter::isApplied(widget);
+
+            if (noLongerManaged || styleReplaced || optionsChanged
+                || externallyRemoved) {
+                const Managed previous = it.value();
+                it = m_managed.erase(it);
+                // Only undo changes made by this controller.
+                release(widget, previous);
+            } else {
+                ++it;
+            }
+        }
+
+        // The specialized adapters may create QObject implementation
+        // children and emit StyleChange. Do not react recursively.
+        for (auto it = desired.cbegin(); it != desired.cend(); ++it) {
+            QWidget* widget = it.key();
+            if (m_managed.contains(widget)
+                || QtMaterialNativeAdapter::isApplied(widget)) {
+                // Pre-existing manual adaptations are never owned/removed.
+                continue;
+            }
+
+            Managed record{
+                it->options,
+                QPointer<QStyle>(),
+                widget->property(kVariantProperty),
+                widget->property(kDensityProperty),
+                widget->property(kTextFieldVariantProperty)};
+            if (QtMaterialNativeAdapter::apply(widget, it->options)) {
+                record.installedStyle = widget->style();
+                m_managed.insert(widget, record);
+            }
+        }
+
+        for (QWidget* widget : observed) {
+            observe(widget);
+        }
+        const auto previous = m_observed;
+        for (QWidget* widget : previous) {
+            if (!observed.contains(widget)) {
+                widget->removeEventFilter(this);
+                QObject::disconnect(m_destroyConnections.take(widget));
+                m_observed.remove(widget);
+            }
+        }
+
+        m_reconciling = false;
+    }
+
+    QHash<QWidget*, RootSpec> m_roots;
+    QSet<QWidget*> m_observed;
+    QHash<QWidget*, QMetaObject::Connection> m_destroyConnections;
+    QHash<QWidget*, Managed> m_managed;
+    bool m_reconciling = false;
+    bool m_pending = false;
+};
+
+NativeRuntimeWatcher* nativeRuntimeWatcher(bool create)
+{
+    static QPointer<NativeRuntimeWatcher> watcher;
+    if (!watcher && create && qApp) {
+        watcher = new NativeRuntimeWatcher(qApp);
+    }
+    return watcher.data();
 }
 
 } // namespace
@@ -573,6 +918,27 @@ int QtMaterialNativeAdapter::removeFromDescendants(
         count += removeFromDescendants(child);
     }
     return count;
+}
+
+bool QtMaterialNativeAdapter::watch(
+    QWidget* root,
+    WatchPolicy policy,
+    const Options& options)
+{
+    NativeRuntimeWatcher* watcher = nativeRuntimeWatcher(true);
+    return watcher && watcher->watch(root, policy, options);
+}
+
+bool QtMaterialNativeAdapter::unwatch(QWidget* root)
+{
+    NativeRuntimeWatcher* watcher = nativeRuntimeWatcher(false);
+    return watcher && watcher->unwatch(root);
+}
+
+bool QtMaterialNativeAdapter::isWatched(const QWidget* root)
+{
+    NativeRuntimeWatcher* watcher = nativeRuntimeWatcher(false);
+    return watcher && watcher->isWatched(root);
 }
 
 const char*
