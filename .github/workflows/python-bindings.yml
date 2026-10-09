@@ -92,8 +92,19 @@ jobs:
           brew install llvm
           echo "LLVM_INSTALL_DIR=$(brew --prefix llvm)" >> "$GITHUB_ENV"
 
-      - name: Install wheel toolchain
-        run: python -m pip install --upgrade pip build packaging
+      - name: Configure Windows LLVM / libclang headers
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $clang = (Get-Command clang.exe -ErrorAction Stop).Source
+          $llvmRoot = Split-Path (Split-Path $clang -Parent) -Parent
+          if (-not (Test-Path (Join-Path $llvmRoot "lib\clang"))) {
+            throw "LLVM resource headers missing below $llvmRoot"
+          }
+          "LLVM_INSTALL_DIR=$llvmRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "CLANG_INSTALL_DIR=$llvmRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+${win_needle}        run: python -m pip install --upgrade pip build packaging
 
       - name: Build wheel
         env:
@@ -119,7 +130,7 @@ jobs:
       - name: Check installed dependencies and ABI
         run: |
           python -m pip check
-          python bindings/python/pyside_config.py --verify-abi
+          python bindings/python/pyside_config.py --verify-runtime-abi
 
       - name: Run native Python ownership contracts
         env:
