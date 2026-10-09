@@ -21,6 +21,7 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- PySide6 1.17.3 adds native Route/NavigationItem/NavigationModel bindings, route-enabled Tabs and non-owning model lifetime/signal tests.
 - PySide6 1.17.2 exposes native Material Tabs (QTabWidget) and Menu with navigation enums, item signals, page ownership tests and explicit boundaries for route/controller APIs.
 - PySide6 1.17.1 extends the native Python surface with RadioButton, Chip/ChipVariant and Tooltip/Placement; wheel CI covers signals, properties and QObject lifetime.
 - Declarative native `.ui` migration adds `qtm3MaterialAdapt`, per-widget dynamic-property overrides and barrier-safe `applyDeclaredToDescendants()` so Designer-authored forms can opt individual native controls into Material adaptation without code-side type dispatch.

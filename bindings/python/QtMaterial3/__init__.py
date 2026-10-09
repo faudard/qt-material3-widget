@@ -26,6 +26,9 @@ TabsVariant = QtMaterial.TabsVariant
 TabsDensity = QtMaterial.TabsDensity
 TabsAlignment = QtMaterial.TabsAlignment
 TabsOverflowMode = QtMaterial.TabsOverflowMode
+QtMaterialRoute = QtMaterial.QtMaterialRoute
+QtMaterialNavigationItem = QtMaterial.QtMaterialNavigationItem
+QtMaterialNavigationModel = QtMaterial.QtMaterialNavigationModel
 WindowSizeClass = QtMaterial.WindowSizeClass
 WindowWidthSizeClass = QtMaterial.WindowWidthSizeClass
 WindowHeightSizeClass = QtMaterial.WindowHeightSizeClass
@@ -37,6 +40,7 @@ __all__ = [
     "Widgets", "QtMaterial", "Theme", "ThemeBuilder", "ThemeContext", "ThemeOptions",
     "ThemeMode", "ContrastMode", "ThemePreference", "ThemeVariant",
     "ColorBackendPolicy", "MotionScheme", "Density", "ChipVariant", "TabsVariant", "TabsDensity",
-    "TabsAlignment", "TabsOverflowMode", "WindowSizeClass",
+    "TabsAlignment", "TabsOverflowMode", "QtMaterialRoute",
+    "QtMaterialNavigationItem", "QtMaterialNavigationModel", "WindowSizeClass",
     "WindowWidthSizeClass", "WindowHeightSizeClass",
 ]

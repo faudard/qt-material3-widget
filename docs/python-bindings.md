@@ -144,6 +144,41 @@ pointer-transfer rules have separately verified tests.
 See `bindings/python/examples/tabs_menu.py` and
 `bindings/python/tests/test_navigation_bindings.py`.
 
+## Routes and navigation model (1.17.3)
+
+The native `QtMaterialRoute` value type normalizes paths, and
+`QtMaterialNavigationItem` and `QtMaterialNavigationModel` expose the
+C++ `QAbstractListModel` surface to PySide6. The route overloads on
+`QtMaterialTabs` and its `navigationModel` property now accept the native
+bindings.
+
+```python
+from QtMaterial3 import QtMaterialRoute, QtMaterialNavigationModel, QtMaterialNavigationItem, Widgets
+
+tabs = Widgets.QtMaterialTabs()
+route = QtMaterialRoute("settings//profile/")
+# tabs.setRoute(existing_tab_index, route)
+
+model = QtMaterialNavigationModel()
+item = QtMaterialNavigationItem()
+item.id, item.route, item.label = "settings", "/settings", "Settings"
+model.addItem(item)
+tabs.setNavigationModel(model)
+```
+
+**Ownership contract:** `QtMaterialTabs::setNavigationModel()` stores
+only a C++ `QPointer` and does not take ownership of the model. Assign a
+Qt parent to the model or retain a strong Python reference while tabs use
+it. `navigationModel()` returns a borrowed reference, and nulls on model
+destruction. Python-facing tests validate detaching, destruction and the
+native model's `selectedIdChanged`/`selectedRouteChanged` signals.
+
+The abstract navigation controller and callback-based lazy tab factories
+remain outside this version; wrapping them requires separate tests of
+references, QObject destruction, disconnects and cross-widget ownership.
+
+See `bindings/python/examples/navigation_model_routes.py`.
+
 ## QObject ownership
 
 QObject ownership follows Qt rather than Python reference counting. Adaptive size/density enums are bound in 1.17; pointer-owning Adaptive Shell composition remains outside the initial Python ABI until replacement/unparenting semantics have a dedicated binding contract.

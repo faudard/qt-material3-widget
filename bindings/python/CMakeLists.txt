@@ -75,6 +75,9 @@ set(_qtm3_python_types
     QtMaterialCard
     QtMaterialNavigationBar
     QtMaterialNavigationRail
+    QtMaterialRoute
+    QtMaterialNavigationItem
+    QtMaterialNavigationModel
     QtMaterialTabs
     QtMaterialLinearProgressIndicator
     QtMaterialCircularProgressIndicator
