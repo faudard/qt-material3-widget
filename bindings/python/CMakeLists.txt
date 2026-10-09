@@ -56,6 +56,7 @@ set(_qtm3_python_types
     QtMaterialWidget
     QtMaterialControl
     QtMaterialSurface
+    QtMaterialOverlaySurface
     QtMaterialAbstractButton
     QtMaterialSelectionControl
     QtMaterialFormFieldControl
@@ -73,6 +74,11 @@ set(_qtm3_python_types
     QtMaterialOutlinedTextField
     QtMaterialFilledTextField
     QtMaterialCard
+    QtMaterialDialog
+    QtMaterialSnackbar
+    QtMaterialBadge
+    QtMaterialPagination
+    QtMaterialDivider
     QtMaterialNavigationBar
     QtMaterialNavigationRail
     QtMaterialRoute
@@ -222,6 +228,14 @@ if(QTMATERIAL3_BUILD_TESTS)
         COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_bindings.py"
     )
     set_tests_properties(python_bindings_contract PROPERTIES
+        ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR};QT_QPA_PLATFORM=offscreen"
+    )
+
+    add_test(
+        NAME python_bindings_catalogue_2
+        COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_catalogue_2.py"
+    )
+    set_tests_properties(python_bindings_catalogue_2 PROPERTIES
         ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR};QT_QPA_PLATFORM=offscreen"
     )
 endif()
