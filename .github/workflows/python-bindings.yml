@@ -29,10 +29,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      # PySide6 wheels provide the matching Qt 6.6.3 headers and CMake package.
-      # Avoid installing Ubuntu's unrelated Qt 6 development packages and a
-      # second Qt SDK: the root CMakeLists.txt already selects PySide6/Qt.
-      - name: Set up Python 3.11
+      # The PySide6 6.6.3 wheel supplies the runtime, not a complete Qt SDK
+      # with Qt6Config.cmake. Match the PySide6 ABI with Qt 6.6.3 from aqt,
+      # but do not install the unrelated distro qt6-base-dev packages.
+      - name: Install matching Qt SDK
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.6.3"
+          host: linux
+          target: desktop
+          arch: gcc_64
+          cache: true
+
+      - name: Restore Python 3.11 after Qt setup
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
@@ -49,6 +58,8 @@ jobs:
           echo "LLVM_INSTALL_DIR=$(llvm-config --prefix)" >> "$GITHUB_ENV"
 
       - name: Build wheel
+        env:
+          CMAKE_PREFIX_PATH: ${{ env.QT_ROOT_DIR }}
         run: |
           python --version
           python -m pip install --upgrade pip build
