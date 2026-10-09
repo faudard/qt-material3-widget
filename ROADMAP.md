@@ -433,7 +433,7 @@ Release gates:
   upstream PySide6 6.6.3's <3.13 restriction.
 - Audit local wheel platform/Python tags, package payload, runtime dependency
   pin and native extension before installing.
-- Run installed wheel contract tests on Ubuntu 3.11/3.12, Windows 3.11 and
+- Run installed wheel contract tests on Ubuntu 3.10/3.11/3.12, Windows 3.11 and
   macOS 3.11; keep jobs required, not `continue-on-error`.
 - Stress C++ QObject parent destruction, Python GC, reparenting and borrowed
   NavigationModel/Tooltip associations without expanding the exported ABI.
