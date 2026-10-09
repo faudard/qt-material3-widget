@@ -27,5 +27,8 @@
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 #include "qtmaterial/widgets/progress/qtmaterialloadingindicator.h"
 #include "qtmaterial/widgets/selection/qtmaterialcheckbox.h"
+#include "qtmaterial/widgets/selection/qtmaterialradiobutton.h"
+#include "qtmaterial/widgets/selection/qtmaterialchip.h"
+#include "qtmaterial/widgets/surfaces/qtmaterialtooltip.h"
 #include "qtmaterial/widgets/selection/qtmaterialswitch.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialcard.h"
