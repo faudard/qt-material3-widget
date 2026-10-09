@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<typesystem package="_QtMaterial3">
+  <load-typesystem name="typesystem_widgets.xml" generate="no"/>
+
+  <namespace-type name="QtMaterial">
+    <enum-type name="ThemeMode"/>
+    <enum-type name="ContrastMode"/>
+    <enum-type name="ThemePreference"/>
+    <enum-type name="ThemeVariant"/>
+    <enum-type name="ColorBackendPolicy"/>
+    <enum-type name="MotionScheme"/>
+    <enum-type name="Density"/>
+    <enum-type name="WindowWidthSizeClass"/>
+    <enum-type name="WindowHeightSizeClass"/>
+    <enum-type name="QtMaterialButtonSize"/>
+    <enum-type name="QtMaterialButtonShape"/>
+
+    <value-type name="WindowSizeClass"/>
+    <value-type name="ThemeOptions"/>
+    <value-type name="Theme"/>
+    <value-type name="ThemeBuilder"/>
+
+    <object-type name="ThemeContext" delete-in-owner-thread="yes"/>
+    <!-- ThemeContextHost is a non-QObject, pure C++ mix-in with a protected
+         constructor. It is intentionally not a Python type: exposed widgets
+         inherit their QObject/QWidget Python base and implement themeContext()
+         directly. Shiboken 6.6.3 otherwise emits an invalid Py_tp_init. -->
+
+    <object-type name="QtMaterialWidget" delete-in-main-thread="yes" disable-wrapper="yes">
+      <modify-function signature="themeContext()const">
+        <modify-argument index="return">
+          <define-ownership class="target" owner="default"/>
+        </modify-argument>
+      </modify-function>
+      <modify-function signature="effectiveThemeContext()const">
+        <modify-argument index="return">
+          <define-ownership class="target" owner="default"/>
+        </modify-argument>
+      </modify-function>
+    </object-type>
+    <object-type name="QtMaterialControl" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialSurface" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialAbstractButton" delete-in-main-thread="yes" disable-wrapper="yes">
+      <modify-function signature="themeContext()const">
+        <modify-argument index="return">
+          <define-ownership class="target" owner="default"/>
+        </modify-argument>
+      </modify-function>
+      <modify-function signature="effectiveThemeContext()const">
+        <modify-argument index="return">
+          <define-ownership class="target" owner="default"/>
+        </modify-argument>
+      </modify-function>
+    </object-type>
+    <object-type name="QtMaterialSelectionControl" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialFormFieldControl" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialInputControl" delete-in-main-thread="yes" disable-wrapper="yes"/>
+
+    <object-type name="QtMaterialTextButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialFilledButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialOutlinedButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialFilledTonalButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialElevatedButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialCheckbox" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialSwitch" delete-in-main-thread="yes" disable-wrapper="yes"/>
+
+    <object-type name="QtMaterialOutlinedTextField" delete-in-main-thread="yes" disable-wrapper="yes">
+      <enum-type name="ValidationFeedbackMode"/>
+      <enum-type name="RequiredValidationMode"/>
+      <enum-type name="ErrorDisplayMode"/>
+      <enum-type name="EndActionMode"/>
+    </object-type>
+    <object-type name="QtMaterialFilledTextField" delete-in-main-thread="yes" disable-wrapper="yes"/>
+
+    <object-type name="QtMaterialCard" delete-in-main-thread="yes" disable-wrapper="yes">
+      <enum-type name="Variant"/>
+    </object-type>
+
+    <object-type name="QtMaterialNavigationBar" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialNavigationRail" delete-in-main-thread="yes" disable-wrapper="yes"/>
+
+    <object-type name="QtMaterialLinearProgressIndicator" delete-in-main-thread="yes" disable-wrapper="yes">
+      <enum-type name="Mode"/>
+      <modify-function signature="asyncState()const" remove="all"/>
+      <modify-function signature="setAsyncState(const QtMaterialAsyncState&amp;)" remove="all"/>
+      <modify-function signature="spec()const" remove="all"/>
+      <modify-function signature="setSpec(const ProgressIndicatorSpec&amp;)" remove="all"/>
+    </object-type>
+    <object-type name="QtMaterialCircularProgressIndicator" delete-in-main-thread="yes" disable-wrapper="yes">
+      <modify-function signature="spec()const" remove="all"/>
+      <modify-function signature="setSpec(const ProgressIndicatorSpec&amp;)" remove="all"/>
+    </object-type>
+    <object-type name="QtMaterialLoadingIndicator" delete-in-main-thread="yes" disable-wrapper="yes"/>
+  </namespace-type>
+</typesystem>

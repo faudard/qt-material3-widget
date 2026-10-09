@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -17,6 +18,43 @@ def window_id(output: str) -> int | None:
     if not match:
         return None
     return int(match.group(1), 16) or None
+
+
+def wait_for_display(timeout: float) -> None:
+    """Wait until the X server accepts the same connection Openbox will use.
+
+    xvfb-run can publish DISPLAY before its X server is ready to accept
+    connections. Starting Openbox immediately then exits with
+    "Failed to open the display", before any Qt/ASan test has run.
+    """
+    display = os.environ.get("DISPLAY")
+    if not display:
+        raise RuntimeError("DISPLAY is unset; start this command with xvfb-run")
+
+    deadline = time.monotonic() + timeout
+    last_error = ""
+    while time.monotonic() < deadline:
+        remaining = deadline - time.monotonic()
+        try:
+            probe = subprocess.run(
+                ["xprop", "-root"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=min(1.0, remaining),
+                check=False,
+            )
+            if probe.returncode == 0:
+                return
+            last_error = probe.stderr.strip()
+        except subprocess.TimeoutExpired:
+            last_error = "X display probe timed out"
+        time.sleep(min(0.1, max(0.0, deadline - time.monotonic())))
+
+    raise RuntimeError(
+        f"X display {display!r} did not become ready within {timeout:g} seconds"
+        + (f": {last_error}" if last_error else "")
+    )
 
 
 def wait_for_manager(manager: subprocess.Popen, timeout: float) -> None:
@@ -60,6 +98,7 @@ def main(argv: list[str] | None = None) -> int:
     manager = None
     with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as log:
         try:
+            wait_for_display(args.startup_timeout)
             manager = subprocess.Popen(["openbox", "--sm-disable"], stdout=log, stderr=log)
             wait_for_manager(manager, args.startup_timeout)
             print("Openbox ready; starting " + command[0], flush=True)

@@ -16,6 +16,7 @@ Use the narrative pages to understand concepts, layering, and supported workflow
 - [Getting started in 5 minutes](getting-started.md)
 - [Installation](installation.md)
 - [Themes](themes.md)
+- [Python / PySide6 bindings](python-bindings.md)
 - [Widgets](widgets/index.md)
 - [Reviewed visual references](visual-reference.md)
 - [Examples](examples/index.md)
@@ -63,6 +64,7 @@ target_link_libraries(my-app
 getting-started
 installation
 themes
+python-bindings
 widgets/index
 widgets/components/index
 visual-reference

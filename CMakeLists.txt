@@ -36,6 +36,7 @@ option(QTMATERIAL3_BUILD_TESTS "Build tests" ${_qtm3_default_build_tests})
 option(QTMATERIAL3_BUILD_EXAMPLES "Build examples" ${QTMATERIAL3_IS_TOP_LEVEL})
 option(QTMATERIAL3_BUILD_BENCHMARKS "Build benchmark executables" OFF)
 option(QTMATERIAL3_BUILD_DESIGNER_PLUGIN "Build the optional Qt Designer custom-widget plugin" OFF)
+option(QTMATERIAL3_BUILD_PYTHON_BINDINGS "Build the optional Qt6/PySide6 bindings with Shiboken6" OFF)
 option(QTMATERIAL3_INSTALL "Install QtMaterial3 targets and package config" ${QTMATERIAL3_IS_TOP_LEVEL})
 option(QTMATERIAL3_USE_MCU "Use Material Color Utilities backend" OFF)
 
@@ -43,8 +44,32 @@ if(QTMATERIAL3_BUILD_TESTS AND NOT QTMATERIAL3_IS_TOP_LEVEL)
     enable_testing()
 endif()
 
+if(QTMATERIAL3_BUILD_PYTHON_BINDINGS)
+    find_package(Python 3.10 REQUIRED COMPONENTS Interpreter)
+    execute_process(
+        COMMAND "${Python_EXECUTABLE}" -c
+            "from pathlib import Path; import PySide6; print(Path(PySide6.__file__).resolve().parent / 'Qt')"
+        RESULT_VARIABLE _qtm3_pyside6_prefix_result
+        OUTPUT_VARIABLE QTMATERIAL3_PYSIDE6_QT_PREFIX
+        ERROR_VARIABLE _qtm3_pyside6_prefix_error
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if(NOT _qtm3_pyside6_prefix_result EQUAL 0 OR NOT QTMATERIAL3_PYSIDE6_QT_PREFIX)
+        message(FATAL_ERROR
+            "QTMATERIAL3_BUILD_PYTHON_BINDINGS requires PySide6 in ${Python_EXECUTABLE}: "
+            "${_qtm3_pyside6_prefix_error}"
+        )
+    endif()
+    list(PREPEND CMAKE_PREFIX_PATH "${QTMATERIAL3_PYSIDE6_QT_PREFIX}")
+    set(QT_DEFAULT_MAJOR_VERSION 6)
+endif()
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
+
+if(QTMATERIAL3_BUILD_PYTHON_BINDINGS AND NOT QT_VERSION_MAJOR EQUAL 6)
+    message(FATAL_ERROR "QtMaterial3 Python bindings are Qt6/PySide6-only")
+endif()
 
 set(
     QTMATERIAL3_DESIGNER_PLUGIN_INSTALL_DIR
@@ -78,6 +103,10 @@ if(QTMATERIAL3_ENABLE_ARCHITECTURE_CHECKS)
 endif()
 
 add_subdirectory(src)
+
+if(QTMATERIAL3_BUILD_PYTHON_BINDINGS)
+    add_subdirectory(bindings/python)
+endif()
 
 set(QTMATERIAL3_INSTALL_TARGETS
     qtmaterial3_foundation
