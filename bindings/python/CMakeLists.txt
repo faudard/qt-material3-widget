@@ -97,19 +97,28 @@ foreach(_qtm3_python_type IN LISTS _qtm3_python_types)
 endforeach()
 
 set(_qtm3_shiboken_include_options)
+set(_qtm3_shiboken_framework_options)
 foreach(_qtm3_qt_target IN ITEMS Qt6::Core Qt6::Gui Qt6::Widgets)
     get_target_property(_qtm3_qt_includes
         ${_qtm3_qt_target} INTERFACE_INCLUDE_DIRECTORIES)
     foreach(_qtm3_include IN LISTS _qtm3_qt_includes)
         if(_qtm3_include AND NOT _qtm3_include MATCHES "^\\$<")
             list(APPEND _qtm3_shiboken_include_options "-I${_qtm3_include}")
+            # Apple's Qt SDK uses framework-relative <QtCore/...> includes.
+            # Clang's -I framework/Headers alone cannot resolve that syntax.
+            if(APPLE AND _qtm3_include MATCHES "^(.*)/[^/]+\\.framework/Headers$")
+                list(APPEND _qtm3_shiboken_framework_options "-F${CMAKE_MATCH_1}")
+            endif()
         endif()
     endforeach()
 endforeach()
 list(REMOVE_DUPLICATES _qtm3_shiboken_include_options)
+list(REMOVE_DUPLICATES _qtm3_shiboken_framework_options)
 
 set(_qtm3_shiboken_options
     --generator-set=shiboken
+    --language-level=c++17
+    ${_qtm3_shiboken_framework_options}
     --enable-parent-ctor-heuristic
     --enable-pyside-extensions
     --enable-return-value-heuristic
