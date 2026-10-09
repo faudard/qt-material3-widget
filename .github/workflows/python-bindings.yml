@@ -30,6 +30,10 @@ jobs:
       matrix:
         include:
           - os: ubuntu-24.04
+            python: "3.10"
+            host: linux
+            arch: gcc_64
+          - os: ubuntu-24.04
             python: "3.11"
             host: linux
             arch: gcc_64
