@@ -46,7 +46,7 @@ python bindings/python/pyside_config.py --verify-abi
 ```
 
 The GitHub Actions `Python bindings` workflow builds wheels for Ubuntu
-(CPython 3.11 and 3.12), macOS (3.11) and Windows (3.11), audits wheel tags,
+(CPython 3.10, 3.11 and 3.12), macOS (3.11) and Windows (3.11), audits wheel tags,
 packaged Python facade/native extension and the pinned dependency, installs the
 wheel, runs `pip check`, imports in Python's isolated mode and executes all
 ownership contracts. In particular the stress tests check:
