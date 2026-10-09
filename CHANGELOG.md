@@ -21,6 +21,7 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- PySide6 1.17.2 exposes native Material Tabs (QTabWidget) and Menu with navigation enums, item signals, page ownership tests and explicit boundaries for route/controller APIs.
 - PySide6 1.17.1 extends the native Python surface with RadioButton, Chip/ChipVariant and Tooltip/Placement; wheel CI covers signals, properties and QObject lifetime.
 - Qt6-only PySide6/Shiboken6 bindings add `import QtMaterial3`, representative Widgets, Theme/ThemeBuilder/ThemeContext, Expressive/Adaptive enums, Python examples, wheel packaging and QObject ownership tests.
 - Native Qt line-edit adaptation adds Outlined/Filled Material field surfaces for existing `QLineEdit` controls while preserving validators, input masks, completers, echo mode, actions, margins, signals, density and effective ThemeContext updates.
