@@ -17,6 +17,9 @@ QtMaterialFilledTextField = QtMaterial.QtMaterialFilledTextField
 QtMaterialCard = QtMaterial.QtMaterialCard
 QtMaterialNavigationBar = QtMaterial.QtMaterialNavigationBar
 QtMaterialNavigationRail = QtMaterial.QtMaterialNavigationRail
+QtMaterialTabs = QtMaterial.QtMaterialTabs
+from . import _QtMaterial3 as _native
+QtMaterialMenu = _native.QtMaterialMenu
 QtMaterialLinearProgressIndicator = QtMaterial.QtMaterialLinearProgressIndicator
 QtMaterialCircularProgressIndicator = QtMaterial.QtMaterialCircularProgressIndicator
 QtMaterialLoadingIndicator = QtMaterial.QtMaterialLoadingIndicator

@@ -75,6 +75,7 @@ set(_qtm3_python_types
     QtMaterialCard
     QtMaterialNavigationBar
     QtMaterialNavigationRail
+    QtMaterialTabs
     QtMaterialLinearProgressIndicator
     QtMaterialCircularProgressIndicator
     QtMaterialLoadingIndicator
@@ -83,6 +84,7 @@ set(_qtm3_python_types
 set(_qtm3_python_generated_sources
     "${_qtm3_python_generated_dir}/_qtmaterial3_module_wrapper.cpp"
     "${_qtm3_python_generated_dir}/qtmaterial_wrapper.cpp"
+    "${_qtm3_python_generated_dir}/qtmaterialmenu_wrapper.cpp"
 )
 foreach(_qtm3_python_type IN LISTS _qtm3_python_types)
     string(TOLOWER "${_qtm3_python_type}" _qtm3_python_type_lower)

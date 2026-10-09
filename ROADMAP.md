@@ -411,6 +411,13 @@ Release gates:
 - Validate the wheel with QObject ownership and target-destruction contracts.
 - Keep complex composite owners such as Adaptive Shell outside this incremental binding step.
 
+### 1.17.2 — Python navigation
+
+- Expose the native `QtMaterialTabs` (QTabWidget-compatible) and global-namespace `QtMaterialMenu` in `Widgets`.
+- Export tab style/density/alignment/overflow enums and native Menu item APIs.
+- Verify standard tab-page QObject ownership, parent destruction, native signals and properties.
+- Defer `std::function` tab factories, `QtMaterialRoute`, navigation models/controllers and custom specs until their Python type-conversion and pointer-transfer contracts are tested.
+
 ## 1.18.0 — Native Qt Adaptation Layer
 
 Goal: let established Qt Widgets applications adopt Material 3 incrementally
