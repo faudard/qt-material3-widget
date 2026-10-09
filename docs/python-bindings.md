@@ -17,14 +17,12 @@ A source checkout can build a wheel with:
 
 ```bash
 python -m pip install --upgrade build
-PIP_EXTRA_INDEX_URL=https://download.qt.io/official_releases/QtForPython/ \
-PIP_TRUSTED_HOST=download.qt.io \
 python -m build bindings/python --wheel --outdir wheelhouse
 python -m pip install wheelhouse/qtmaterial3_widgets-*.whl
 ```
 
-The extra Qt package index is required for the matching `shiboken6_generator`
-wheel. Qt publishes that generator separately from the normal PyPI package set.
+The build requires a Qt 6.6.3 development SDK matching the PySide6/Shiboken6
+minor version. The dedicated CI lane installs that SDK before invoking PEP 517.
 
 The PEP 517 build installs the matching PySide6/Shiboken6 generator toolchain,
 configures the native project with `QTMATERIAL3_BUILD_PYTHON_BINDINGS=ON`, and
@@ -35,7 +33,7 @@ packages the generated extension together with the small Python facade.
 Install CMake 3.22+ and matching PySide6/Shiboken6 packages in the Python interpreter used by CMake, then configure:
 
 ```bash
-python -m pip install PySide6==6.4.2 shiboken6==6.4.2 shiboken6-generator==6.4.2
+python -m pip install PySide6==6.6.3 shiboken6==6.6.3 shiboken6-generator==6.6.3
 cmake -S . -B build-python \
   -DQTMATERIAL3_BUILD_PYTHON_BINDINGS=ON \
   -DQTMATERIAL3_BUILD_TESTS=ON \
