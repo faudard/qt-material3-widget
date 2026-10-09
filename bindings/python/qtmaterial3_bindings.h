@@ -25,6 +25,8 @@
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
 #include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
+#include "qtmaterial/widgets/navigation/qtmaterialroute.h"
+#include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
 #include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 #include "qtmaterial/widgets/progress/qtmaterialloadingindicator.h"
