@@ -399,6 +399,8 @@ Initial release scope:
   while preserving its model, popup view, delegate, editable line edit and selection semantics.
 - `QtMaterialProgressBarAdapter` materializes native `QProgressBar` determinate and
   indeterminate rendering while preserving range/value/orientation/text semantics.
+- `QtMaterialLineEditAdapter` materializes native `QLineEdit` as Outlined or Filled
+  while preserving validators, masks, completers, echo mode, actions, margins and signals.
 - Adapted buttons resolve the canonical `ButtonSpecResolver` instead of
   maintaining a parallel color/metric implementation.
 - Runtime variant/density setters and namespaced dynamic properties support both
@@ -418,8 +420,8 @@ Follow-up scope:
 - Migrate the established `QtMaterialSlider` visual implementation onto the new
   canonical `SliderSpec` only with separately reviewed visual baselines.
 - Add richer Designer property editors for adapter dynamic properties.
-- Continue with low-risk native primitives such as `QLineEdit` and `QToolButton`
-  while keeping advanced composed behavior in first-class Material components.
+- Continue with low-risk native primitives such as `QToolButton` while keeping
+  advanced composed behavior in first-class Material components.
 - Keep ripple, Expressive morphing and component-specific advanced behavior in
   first-class `QtMaterial*` widgets rather than silently emulating incomplete
   behavior in native controls.
