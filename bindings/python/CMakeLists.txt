@@ -53,7 +53,6 @@ set(_qtm3_python_types
     Theme
     ThemeBuilder
     ThemeContext
-    ThemeContextHost
     QtMaterialWidget
     QtMaterialControl
     QtMaterialSurface
