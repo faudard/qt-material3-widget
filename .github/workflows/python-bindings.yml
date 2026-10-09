@@ -103,6 +103,14 @@ jobs:
           }
           "LLVM_INSTALL_DIR=$llvmRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           "CLANG_INSTALL_DIR=$llvmRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          # Qt 6.6.3's msvc2019_64 SDK is built with the v142 ABI. The
+          # hosted VS2022 v143 STL (MSVC 14.44) is too new for Shiboken
+          # 6.6.3's libclang parser on template-heavy Qt headers.
+          $v142 = Get-ChildItem "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC" -Directory |
+            Where-Object { $_.Name -like "14.2*" } | Sort-Object Name -Descending | Select-Object -First 1
+          if (-not $v142) { throw "MSVC v142 toolset missing on Windows runner" }
+          "CMAKE_GENERATOR_TOOLSET=v142" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Shiboken/Qt msvc2019_64: selected $($v142.FullName)"
 
       - name: Install wheel toolchain
         run: python -m pip install --upgrade pip build packaging
