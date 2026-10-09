@@ -419,7 +419,14 @@ private:
                 return depth(left) < depth(right);
             });
         for (QWidget* root : roots) {
-            collect(root, m_roots.value(root), observed, desired);
+            // Keep observing the registered root even when reparented into a
+            // protected native/Material subtree. Its ParentChange event
+            // must re-enable discovery if it moves back out later.
+            observed.insert(root);
+            if (!isInsideFirstClassMaterialWidget(root)
+                && !hasNativeControlAncestor(root)) {
+                collect(root, m_roots.value(root), observed, desired);
+            }
         }
 
         // First release no-longer-eligible or externally restyled widgets.
