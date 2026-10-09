@@ -21,7 +21,7 @@
     <value-type name="ThemeBuilder"/>
 
     <object-type name="ThemeContext" delete-in-owner-thread="yes"/>
-    <object-type name="ThemeContextHost" force-abstract="yes" disable-wrapper="yes"/>
+    <object-type name="ThemeContextHost" private="yes" disable-wrapper="yes"/>
 
     <object-type name="QtMaterialWidget" delete-in-main-thread="yes" disable-wrapper="yes">
       <modify-function signature="themeContext()const">
