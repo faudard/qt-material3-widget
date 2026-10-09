@@ -47,6 +47,16 @@ jobs:
           python-version: "3.11"
           cache: pip
 
+      - name: Install Shiboken parser toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y llvm g++-10
+          sudo mkdir -p /opt/rh/gcc-toolset-10/root/usr/bin
+          sudo cp /usr/bin/g++-10 /opt/rh/gcc-toolset-10/root/usr/bin/c++
+          sudo mkdir -p /opt/rh/gcc-toolset-10/root/usr/lib/gcc/x86_64-linux-gnu/10
+          sudo cp /usr/lib/gcc/x86_64-linux-gnu/10/cc1plus /opt/rh/gcc-toolset-10/root/usr/lib/gcc/x86_64-linux-gnu/10/
+          echo "LLVM_INSTALL_DIR=$(llvm-config --prefix)" >> "$GITHUB_ENV"
+
       - name: Build wheel
         env:
           CMAKE_PREFIX_PATH: ${{ env.QT_ROOT_DIR }}
