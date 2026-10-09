@@ -23,6 +23,8 @@
 #include "qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
+#include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
+#include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 #include "qtmaterial/widgets/progress/qtmaterialcircularprogressindicator.h"
 #include "qtmaterial/widgets/progress/qtmateriallinearprogressindicator.h"
 #include "qtmaterial/widgets/progress/qtmaterialloadingindicator.h"
