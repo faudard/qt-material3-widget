@@ -2,7 +2,7 @@
 
 Qt Material 3 keeps first-class Material widgets such as `QtMaterialTextButton`,
 `QtMaterialFilledButton` and `QtMaterialOutlinedButton`. Existing Qt Widgets
-applications do not have to replace every `QPushButton`, `QCheckBox`, `QRadioButton`, `QSlider`, `QComboBox`, `QProgressBar` or `QLineEdit` immediately, however.
+applications do not have to replace every `QPushButton`, `QCheckBox`, `QRadioButton`, `QSlider`, `QComboBox`, `QProgressBar`, `QLineEdit` or `QToolButton` immediately, however.
 
 The `Widgets` module provides an opt-in adapter for existing buttons:
 
@@ -238,3 +238,32 @@ same progressive-migration contract as the other native adapters.
 Full labels, supporting/error text, leading/trailing accessory layout and
 Material validation UX remain responsibilities of the first-class
 `QtMaterialOutlinedTextField` / `QtMaterialFilledTextField` components.
+
+
+## Native tool button
+
+Existing `QToolButton` instances can opt into the same Material button
+variants without replacing their action/menu contract:
+
+```cpp
+#include <qtmaterial/widgets/native/qtmaterialtoolbuttonadapter.h>
+
+QtMaterial::QtMaterialToolButtonAdapter::apply(
+    ui->toolsButton,
+    QtMaterial::ButtonVariant::FilledTonal,
+    QtMaterial::Density::Compact);
+```
+
+The adapter preserves `defaultAction()`, menu ownership, all three popup
+modes, `autoRaise`, checkable state, `toolButtonStyle`, icon/text and native
+signals. Rendering is implemented through `QStyle::CC_ToolButton`.
+
+For `MenuButtonPopup`, `SC_ToolButton` and `SC_ToolButtonMenu` get distinct
+LTR/RTL-aware rectangles and matching hit testing. `DelayedPopup` and
+`InstantPopup` remain a single native target. The menu indicator is rendered
+with Material icon color while the control uses the canonical
+`ButtonSpecResolver`.
+
+`qtm3MaterialVariant`, `qtm3MaterialDensity`,
+`qtm3MaterialOptOut`, `applyToDescendants()` and `remove()` follow the
+same progressive migration contract as the native push-button adapter.
