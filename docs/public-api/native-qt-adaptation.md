@@ -339,3 +339,61 @@ a supported control is never traversed internally, even when that control is
 not marked for adaptation. This prevents properties on implementation children
 from accidentally restyling an editable combo box, clear button or other native
 internals.
+
+
+## Live form adaptation — Native Runtime 2.0 (1.18.1)
+
+`applyToDescendants()` is a **one-shot** migration. To track controls added
+later, install an **explicit opt-in watch** on a form:
+
+```cpp
+#include <qtmaterial/widgets/native/qtmaterialnativeadapter.h>
+
+using Adapter = QtMaterial::QtMaterialNativeAdapter;
+
+// Default: only native controls with qtm3MaterialAdapt=true.
+// Existing .ui declarations and controls created after watch() are honored.
+Adapter::watch(ui->centralWidget);
+
+// Alternative: intentionally adapt every supported native control.
+Adapter::Options options;
+options.density = QtMaterial::Density::Compact;
+Adapter::watch(
+    ui->centralWidget,
+    Adapter::WatchPolicy::AllSupported,
+    options);
+
+// Before ending migration (or before destroying the form):
+Adapter::unwatch(ui->centralWidget);
+```
+
+The default `WatchPolicy::DeclaredOnly` does **not** silently adapt a whole
+form. In this mode, `qtm3MaterialAdapt=true` is mandatory per control;
+`qtm3MaterialOptOut=true` always excludes a control. Use
+`WatchPolicy::AllSupported` only when the entire form is intentionally
+in scope. `watch()` is idempotent and updates the policy/options for an
+already-watched root; `unwatch()` is safe to call only once and
+`isWatched()` reports whether the root is currently registered.
+
+The controller reacts to child insertion/removal, destruction, reparenting,
+dynamic opt-in/opt-out properties and widget style replacement. Newly
+constructed controls and bursts of change are discovered on the **next Qt
+event-loop turn** (queued/coalesced) so no half-constructed QObject is
+inspected. A widget moving out of scope is restored; a widget entering scope
+is adapted. Overlapping form watches are supported, with the *nearest watched
+root* deciding the options. Existing adaptations installed manually are never
+removed by `unwatch()`; only adaptations owned by the watcher are undone.
+Original declared variant/density properties are restored on teardown.
+
+A native control remains a traversal barrier, even if excluded: the editable
+line edit inside `QComboBox`, clear buttons inside `QLineEdit`, and the
+private children of first-class `QtMaterial*` controls are not monitored
+or adapted. Directly trying to watch such an internal child is rejected.
+The watcher lives for the QApplication's lifetime but disconnects removed
+widgets and automatically unregisters destroyed roots.
+
+Like all Qt Widgets APIs, call `watch()` and `unwatch()` on the GUI thread
+after constructing a `QApplication`. The watcher never filters/consumes input
+events or modifies signal connections. To turn off adaptation for one watched
+control, use `setOptOut(widget, true)` or update its declarative property;
+calling `remove(widget)` alone while it remains opted in is temporary.
