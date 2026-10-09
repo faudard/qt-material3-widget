@@ -210,6 +210,8 @@ void tst_NativeRuntimeWatcher::externalStyleReplacementAndSignals()
     // the new QStyle as the baseline, not a stale prior native style.
     QStyle* external = QStyleFactory::create(QStringLiteral("Fusion"));
     QVERIFY(external);
+    // QWidget::setStyle() does not take ownership of the supplied QStyle.
+    external->setParent(&form);
     button->setStyle(external);
     QTRY_VERIFY(
         QtMaterialNativeAdapter::isApplied(button)
