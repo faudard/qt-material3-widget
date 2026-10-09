@@ -97,6 +97,7 @@ set(QTMATERIAL3_PUBLIC_HEADERS
     "qtmaterial/widgets/native/qtmaterialbuttonadapter.h"
     "qtmaterial/widgets/native/qtmaterialcomboboxadapter.h"
     "qtmaterial/widgets/native/qtmateriallineeditadapter.h"
+    "qtmaterial/widgets/native/qtmaterialnativeadapter.h"
     "qtmaterial/widgets/native/qtmaterialprogressbaradapter.h"
     "qtmaterial/widgets/native/qtmaterialselectionadapter.h"
     "qtmaterial/widgets/native/qtmaterialslideradapter.h"

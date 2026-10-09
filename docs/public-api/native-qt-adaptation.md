@@ -267,3 +267,38 @@ with Material icon color while the control uses the canonical
 `qtm3MaterialVariant`, `qtm3MaterialDensity`,
 `qtm3MaterialOptOut`, `applyToDescendants()` and `remove()` follow the
 same progressive migration contract as the native push-button adapter.
+
+
+## Unified native adapter facade
+
+Applications migrating a whole existing form do not need to dispatch manually
+to every specialized adapter. `QtMaterialNativeAdapter` detects the supported
+native widget type and forwards to the canonical adapter:
+
+```cpp
+#include <qtmaterial/widgets/native/qtmaterialnativeadapter.h>
+
+QtMaterial::QtMaterialNativeAdapter::Options options;
+options.density = QtMaterial::Density::Compact;
+options.buttonVariant = QtMaterial::ButtonVariant::FilledTonal;
+options.textFieldVariant =
+    QtMaterial::QtMaterialNativeAdapter::TextFieldVariant::Outlined;
+
+const int adapted =
+    QtMaterial::QtMaterialNativeAdapter::applyToDescendants(
+        ui->centralWidget,
+        options);
+```
+
+The facade supports `QPushButton`, `QToolButton`, `QCheckBox`,
+`QRadioButton`, `QSlider`, `QComboBox`, `QLineEdit` and
+`QProgressBar`. `kind()`, `isSupported()`, `apply()`, `remove()`,
+`isApplied()`, `setOptOut()` and `removeFromDescendants()` expose one
+consistent migration API.
+
+Traversal is intentionally conservative. A supported native control is a leaf
+barrier, so implementation children such as an editable combo box's internal
+`QLineEdit` or a line edit's clear button are not adapted separately.
+First-class `QtMaterial*` widgets and their internal children are also skipped:
+the facade is for adapting native Qt widgets, not restyling the library's own
+components.
