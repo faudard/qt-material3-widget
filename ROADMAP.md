@@ -425,6 +425,22 @@ Release gates:
 - Enable Tabs route overloads and borrowed NavigationModel association; test strong references, destruction and QPointer nulling.
 - Defer controller subclasses, callback factories and C++ factory ownership transfer to a follow-up with dedicated tests.
 
+### 1.17.4 — Python Reliability (ABI / ownership / wheels)
+
+- Keep the proven Qt6.6.3/Shiboken6.6.3 toolchain; reject mixing PySide6,
+  Shiboken, Qt SDK and runtime patches at CMake configure time.
+- Correct `requires-python` to CPython 3.10–3.12, 64-bit, in line with
+  upstream PySide6 6.6.3's <3.13 restriction.
+- Audit local wheel platform/Python tags, package payload, runtime dependency
+  pin and native extension before installing.
+- Run installed wheel contract tests on Ubuntu 3.11/3.12, Windows 3.11 and
+  macOS 3.11; keep jobs required, not `continue-on-error`.
+- Stress C++ QObject parent destruction, Python GC, reparenting and borrowed
+  NavigationModel/Tooltip associations without expanding the exported ABI.
+- Gate completion on **real** cross-OS green checks. Wheel publishing,
+  manylinux/delocate/delvewheel repair, and ABI expansion remain separate tasks.
+
+
 ## 1.18.0 — Native Qt Adaptation Layer
 
 Goal: let established Qt Widgets applications adopt Material 3 incrementally
