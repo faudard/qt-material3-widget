@@ -22,6 +22,7 @@ unless a stricter ABI policy is published.
 
 ### Added
 - Qt6-only PySide6/Shiboken6 bindings add `import QtMaterial3`, representative Widgets, Theme/ThemeBuilder/ThemeContext, Expressive/Adaptive enums, Python examples, wheel packaging and QObject ownership tests.
+- Native Qt line-edit adaptation adds Outlined/Filled Material field surfaces for existing `QLineEdit` controls while preserving validators, input masks, completers, echo mode, actions, margins, signals, density and effective ThemeContext updates.
 - Native Qt progress-bar adaptation adds Material determinate/indeterminate rendering for existing `QProgressBar` controls while preserving range/value, orientation, inverted appearance, text formatting, signals and reduced-motion behavior.
 - Native Qt combo-box adaptation adds Material closed-field rendering for existing `QComboBox` controls while preserving models, popup views, delegates, editable line edits, selection signals, RTL geometry, density and effective ThemeContext updates.
 - Native Qt slider adaptation adds Material track/handle/state rendering for existing `QSlider` controls while preserving native range/value/orientation/ticks/inversion, hit-test geometry, signals, keyboard/mouse behavior, density and effective ThemeContext updates.

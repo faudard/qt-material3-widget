@@ -6,9 +6,30 @@
 #include "qtmaterial/specs/qtmaterialautocompletespecresolver.h"
 #include "qtmaterial/specs/qtmaterialautocompletepopupspecresolver.h"
 #include "qtmaterial/specs/qtmaterialdataspecresolver.h"
+#include "qtmaterial/specs/qtmaterialtextfieldspecresolver.h"
 
 namespace QtMaterial {
 namespace InputSpecResolution {
+
+inline TextFieldSpec outlinedTextFieldSpec(
+    const QtMaterialThemeContextBinding* binding,
+    Density density = Density::Default)
+{
+    Q_ASSERT(binding);
+    return TextFieldSpecResolver().outlinedTextFieldSpec(
+        binding->theme(),
+        density);
+}
+
+inline TextFieldSpec filledTextFieldSpec(
+    const QtMaterialThemeContextBinding* binding,
+    Density density = Density::Default)
+{
+    Q_ASSERT(binding);
+    return TextFieldSpecResolver().filledTextFieldSpec(
+        binding->theme(),
+        density);
+}
 
 inline AutocompleteSpec autocompleteSpec(
     const QtMaterialThemeContextBinding* binding,
