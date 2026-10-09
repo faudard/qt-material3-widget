@@ -108,6 +108,42 @@ size_class = QtMaterial3.WindowSizeClass.fromLogicalSize(520, 700)
 assert size_class.width == QtMaterial3.WindowWidthSizeClass.Compact
 ```
 
+## Tabs and Menu (1.17.2)
+
+`Widgets.QtMaterialTabs` wraps the native `QtMaterialTabs` subclass of
+`QTabWidget`, preserving standard PySide6 tab pages and selection signals.
+The enums `TabsVariant`, `TabsDensity`, `TabsAlignment` and
+`TabsOverflowMode` are exported at package level.
+
+`Widgets.QtMaterialMenu` is exported from the *global* C++ namespace
+(the native class is not in `QtMaterial`). It supports native item
+management, accessibility descriptions and the `activated` and
+`expressiveChanged` signals.
+
+```python
+from PySide6.QtWidgets import QWidget
+from QtMaterial3 import Widgets, TabsVariant
+
+tabs = Widgets.QtMaterialTabs()
+tabs.setVariant(TabsVariant.Secondary)
+tabs.addTab(QWidget(), "Overview")
+tabs.setTabId(0, "overview")
+
+menu = Widgets.QtMaterialMenu()
+menu.addItem("Overview")
+menu.activated.connect(tabs.setCurrentIndex)
+```
+
+**Ownership boundary:** Tabs owns page widgets through Qt's standard
+`QTabWidget` parenting. Menu items are C++ value entries. A parent widget
+owns and destroys its Tabs/Menu children. The binding intentionally defers
+custom tab factories, route values, navigation-model/controller bindings and
+custom `TabsSpec`/`MenuSpec` structures until those conversions and
+pointer-transfer rules have separately verified tests.
+
+See `bindings/python/examples/tabs_menu.py` and
+`bindings/python/tests/test_navigation_bindings.py`.
+
 ## QObject ownership
 
 QObject ownership follows Qt rather than Python reference counting. Adaptive size/density enums are bound in 1.17; pointer-owning Adaptive Shell composition remains outside the initial Python ABI until replacement/unparenting semantics have a dedicated binding contract.
