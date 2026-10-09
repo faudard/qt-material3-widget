@@ -6,6 +6,7 @@
 #include <QPointer>
 #include <QPushButton>
 #include <QSignalSpy>
+#include <QStyle>
 #include <QSlider>
 #include <QStyleFactory>
 #include <QVBoxLayout>
