@@ -1183,7 +1183,10 @@ bool setNativeDesignerProperty(
     QDesignerFormWindowInterface* form =
         QDesignerFormWindowInterface::findFormWindow(widget);
     if (!form) {
-        return widget->setProperty(key.constData(), normalized);
+        // QObject::setProperty returns false when creating a *new* dynamic
+        // property, even when the insertion succeeds.
+        widget->setProperty(key.constData(), normalized);
+        return widget->property(key.constData()) == normalized;
     }
     if (!core || !core->extensionManager() || !form->cursor()) {
         return false;
