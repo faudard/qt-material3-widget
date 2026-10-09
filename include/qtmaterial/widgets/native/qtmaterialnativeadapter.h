@@ -61,6 +61,12 @@ public:
         QWidget* widget,
         const Options& options = Options());
 
+    static bool applyDeclared(
+        QWidget* widget,
+        const Options& fallback = Options());
+
+    static bool isDeclared(const QWidget* widget);
+
     static bool remove(QWidget* widget);
     static bool isApplied(const QWidget* widget);
 
@@ -78,12 +84,18 @@ public:
         QWidget* root,
         const Options& options = Options());
 
+    static int applyDeclaredToDescendants(
+        QWidget* root,
+        const Options& fallback = Options());
+
     /**
      * Removes facade-managed specialized adapters below root.
      *
      * The same traversal barriers as applyToDescendants() are used.
      */
     static int removeFromDescendants(QWidget* root);
+
+    static const char* adaptPropertyName() noexcept;
 };
 
 } // namespace QtMaterial
