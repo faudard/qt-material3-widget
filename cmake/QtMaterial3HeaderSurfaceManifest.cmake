@@ -96,6 +96,7 @@ set(QTMATERIAL3_PUBLIC_HEADERS
     "qtmaterial/widgets/layouts/qtmaterialsplitview.h"
     "qtmaterial/widgets/native/qtmaterialbuttonadapter.h"
     "qtmaterial/widgets/native/qtmaterialcomboboxadapter.h"
+    "qtmaterial/widgets/native/qtmaterialprogressbaradapter.h"
     "qtmaterial/widgets/native/qtmaterialselectionadapter.h"
     "qtmaterial/widgets/native/qtmaterialslideradapter.h"
     "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"

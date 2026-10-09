@@ -2,7 +2,7 @@
 
 Qt Material 3 keeps first-class Material widgets such as `QtMaterialTextButton`,
 `QtMaterialFilledButton` and `QtMaterialOutlinedButton`. Existing Qt Widgets
-applications do not have to replace every `QPushButton`, `QCheckBox`, `QRadioButton`, `QSlider` or `QComboBox` immediately, however.
+applications do not have to replace every `QPushButton`, `QCheckBox`, `QRadioButton`, `QSlider`, `QComboBox` or `QProgressBar` immediately, however.
 
 The `Widgets` module provides an opt-in adapter for existing buttons:
 
@@ -180,3 +180,30 @@ line-edit placement stay aligned with the Material rendering.
 The popup remains application/Qt-owned deliberately: the adapter does not swap
 models, views or delegates. Applications that want the full Material popup
 surface and item treatment should use the first-class `QtMaterialComboBox`.
+
+
+## Native progress bar
+
+Existing `QProgressBar` controls can opt into Material linear-progress
+rendering without changing their range/value contract:
+
+```cpp
+#include <qtmaterial/widgets/native/qtmaterialprogressbaradapter.h>
+
+QtMaterial::QtMaterialProgressBarAdapter::apply(
+    ui->downloadProgress);
+```
+
+The adapter preserves minimum/maximum/value, horizontal or vertical
+orientation, `invertedAppearance`, text visibility/format and
+`valueChanged()`. Determinate rendering uses the canonical
+`ProgressIndicatorSpec`; native busy mode (`minimum == maximum == 0`) is
+rendered as an animated Material segment.
+
+The indeterminate animation follows the effective ThemeContext's
+`reducedMotion` setting. Native progress text continues through the platform
+`CE_ProgressBarLabel` path, while the track and active segment are Material
+rendered.
+
+`applyToDescendants()`, `qtm3MaterialOptOut` and `remove()` provide the
+same incremental migration/restoration behavior as the other adapters.
