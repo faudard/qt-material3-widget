@@ -404,6 +404,13 @@ Release gates:
   heuristic is enabled for standard Qt-style constructors.
 - A dedicated Qt6/PySide6 CI lane builds the wheel and runs the Python contract tests.
 
+### 1.17.1 — Python selection/chip/tooltip bindings
+
+- Extend the Qt6-only Shiboken surface with RadioButton, Chip and Tooltip.
+- Expose ChipVariant, Tooltip.Placement, Qt signals/properties and non-owning tooltip targets.
+- Validate the wheel with QObject ownership and target-destruction contracts.
+- Keep complex composite owners such as Adaptive Shell outside this incremental binding step.
+
 ## 1.18.0 — Native Qt Adaptation Layer
 
 Goal: let established Qt Widgets applications adopt Material 3 incrementally

@@ -66,7 +66,10 @@ set(_qtm3_python_types
     QtMaterialFilledTonalButton
     QtMaterialElevatedButton
     QtMaterialCheckbox
+    QtMaterialRadioButton
     QtMaterialSwitch
+    QtMaterialChip
+    QtMaterialTooltip
     QtMaterialOutlinedTextField
     QtMaterialFilledTextField
     QtMaterialCard

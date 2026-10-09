@@ -21,6 +21,7 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- PySide6 1.17.1 extends the native Python surface with RadioButton, Chip/ChipVariant and Tooltip/Placement; wheel CI covers signals, properties and QObject lifetime.
 - Declarative native `.ui` migration adds `qtm3MaterialAdapt`, per-widget dynamic-property overrides and barrier-safe `applyDeclaredToDescendants()` so Designer-authored forms can opt individual native controls into Material adaptation without code-side type dispatch.
 - Unified native-adapter facade auto-dispatches supported Qt widgets to their specialized Material adapters, with shared density/button/text-field options, conservative tree traversal, unified opt-out/removal and protection for first-class QtMaterial widgets and native implementation children.
 - Native Qt tool-button adaptation adds Material button variants for existing `QToolButton` controls while preserving default actions, menus/popup modes, autoRaise, checkable state, tool-button layout, signals, density and RTL split-menu hit testing.

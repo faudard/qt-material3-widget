@@ -75,6 +75,24 @@ families rather than promising all 60 components in one ABI step:
 - Navigation Bar and Navigation Rail;
 - linear, circular and Expressive loading indicators.
 
+1.17.1 additionally exposes `QtMaterialRadioButton`, `QtMaterialChip` and
+`QtMaterialTooltip`. `QtMaterialChip` uses the native `QtMaterial3.ChipVariant`
+enum (`Assist`, `Filter`, `Input`, `Suggestion`); the tooltip exposes its
+nested `Placement` enum. Its `targetWidget` is a **non-owning** C++ `QPointer`:
+assigning a target does not make the tooltip its owner.
+
+```python
+from QtMaterial3 import Widgets, ChipVariant
+
+chip = Widgets.QtMaterialChip("Only favorites")
+chip.setVariant(ChipVariant.Filter)
+chip.setChecked(True)
+
+tooltip = Widgets.QtMaterialTooltip()
+tooltip.setText("Filter the list")
+tooltip.setTargetWidget(chip)
+```
+
 They are available under `QtMaterial3.Widgets`. Existing Qt properties and
 signals are the binding contract, so normal PySide6 patterns such as
 `widget.setProperty(...)`, property assignment and signal connections call
@@ -107,4 +125,7 @@ Application code should still prefer ordinary Qt parent/child ownership for
 widgets and use `deleteLater()` when object lifetime crosses queued event-loop
 work.
 
-See `bindings/python/examples/basic_theme.py` for a complete runnable example.
+See `bindings/python/examples/basic_theme.py` and
+`bindings/python/examples/selection_chips_tooltip.py` for runnable examples.
+The dedicated wheel CI covers these additional Q_PROPERTY, signal, enum and
+QObject lifetime contracts.
