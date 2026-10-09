@@ -1161,14 +1161,14 @@ bool setNativeDesignerProperty(
         normalized = value.toString().trimmed().toLower();
         QStringList allowed;
         if (propertyName == QStringLiteral("qtm3MaterialDensity")) {
-            allowed = {QStringLiteral("default"), QStringLiteral("compact"),
-                       QStringLiteral("comfortable")};
+            allowed = QStringList{QStringLiteral("default"), QStringLiteral("compact"),
+                                  QStringLiteral("comfortable")};
         } else if (propertyName == QStringLiteral("qtm3MaterialVariant")) {
-            allowed = {QStringLiteral("text"), QStringLiteral("filled"),
-                       QStringLiteral("filled-tonal"), QStringLiteral("outlined"),
-                       QStringLiteral("elevated")};
+            allowed = QStringList{QStringLiteral("text"), QStringLiteral("filled"),
+                                  QStringLiteral("filled-tonal"), QStringLiteral("outlined"),
+                                  QStringLiteral("elevated")};
         } else {
-            allowed = {QStringLiteral("outlined"), QStringLiteral("filled")};
+            allowed = QStringList{QStringLiteral("outlined"), QStringLiteral("filled")};
         }
         if (!allowed.contains(normalized.toString())) {
             return false;
