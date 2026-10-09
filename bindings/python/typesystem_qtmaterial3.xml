@@ -24,6 +24,8 @@
     <value-type name="ThemeOptions"/>
     <value-type name="Theme"/>
     <value-type name="ThemeBuilder"/>
+    <value-type name="QtMaterialRoute"/>
+    <value-type name="QtMaterialNavigationItem"/>
 
     <object-type name="ThemeContext" delete-in-owner-thread="yes"/>
     <!-- ThemeContextHost is a non-QObject, pure C++ mix-in with a protected
@@ -94,6 +96,9 @@
 
     <object-type name="QtMaterialNavigationBar" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialNavigationRail" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialNavigationModel" delete-in-main-thread="yes" disable-wrapper="yes">
+      <enum-type name="Role"/>
+    </object-type>
     <!-- Bind the QTabWidget-compatible surface first; navigation factories,
          routes and controller pointers need separate lifetime contracts. -->
     <object-type name="QtMaterialTabs" delete-in-main-thread="yes" disable-wrapper="yes">
@@ -102,12 +107,13 @@
       <modify-function signature="setSpec(const TabsSpec&amp;)" remove="all"/>
       <modify-function signature="setTabFactory(int,std::function&lt;QWidget*()>)" remove="all"/>
       <modify-function signature="setTabFactory(const QtMaterialRoute&amp;,std::function&lt;QWidget*()>)" remove="all"/>
-      <modify-function signature="setRoute(int,const QtMaterialRoute&amp;)" remove="all"/>
-      <modify-function signature="route(int)const" remove="all"/>
-      <modify-function signature="indexOfRoute(const QtMaterialRoute&amp;)const" remove="all"/>
-      <modify-function signature="navigateTo(const QtMaterialRoute&amp;)" remove="all"/>
-      <modify-function signature="setNavigationModel(QtMaterialNavigationModel*)" remove="all"/>
-      <modify-function signature="navigationModel()const" remove="all"/>
+      <!-- Tabs stores a non-owning QPointer to the navigation model. -->
+      <modify-function signature="navigationModel()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="setNavigationModel(QtMaterialNavigationModel*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
       <modify-function signature="bindToController(QtMaterialNavigationController*)" remove="all"/>
       <modify-function signature="unbindController(QtMaterialNavigationController*)" remove="all"/>
       <modify-function signature="boundControllers()const" remove="all"/>
