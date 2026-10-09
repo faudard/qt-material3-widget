@@ -341,6 +341,7 @@
       "qtmaterial/widgets/native/qtmaterialprogressbaradapter.h",
       "qtmaterial/widgets/native/qtmaterialselectionadapter.h",
       "qtmaterial/widgets/native/qtmaterialslideradapter.h",
+      "qtmaterial/widgets/native/qtmaterialtoolbuttonadapter.h",
       "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h",
       "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h",
       "qtmaterial/widgets/navigation/qtmaterialroute.h",

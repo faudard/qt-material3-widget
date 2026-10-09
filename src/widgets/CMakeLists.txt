@@ -7,6 +7,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     native/qtmaterialselectionadapter.cpp
     native/qtmaterialprogressbaradapter.cpp
     native/qtmaterialslideradapter.cpp
+    native/qtmaterialtoolbuttonadapter.cpp
     resolution/qtmaterialbuttonspecresolution_p.h
     resolution/qtmaterialselectionspecresolution_p.h
     resolution/qtmaterialsliderspecresolution_p.h
@@ -94,6 +95,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialselectionadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialprogressbaradapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialslideradapter.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialtoolbuttonadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialtextbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialfilledbutton.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/buttons/qtmaterialbuttongroup.h
