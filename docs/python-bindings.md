@@ -42,7 +42,10 @@ the loaded Qt runtime (`PySide6.QtCore.qVersion()`) and the selected Qt SDK
 To inspect the installed wheel toolchain:
 
 ```bash
+# Build environment (generator installed by PEP 517)
 python bindings/python/pyside_config.py --verify-abi
+# Installed wheel environment (generator is not a runtime dependency)
+python bindings/python/pyside_config.py --verify-runtime-abi
 ```
 
 The GitHub Actions `Python bindings` workflow builds wheels for Ubuntu
