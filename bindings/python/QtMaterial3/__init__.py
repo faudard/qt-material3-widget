@@ -21,6 +21,7 @@ ThemeVariant = QtMaterial.ThemeVariant
 ColorBackendPolicy = QtMaterial.ColorBackendPolicy
 MotionScheme = QtMaterial.MotionScheme
 Density = QtMaterial.Density
+ChipVariant = QtMaterial.ChipVariant
 WindowSizeClass = QtMaterial.WindowSizeClass
 WindowWidthSizeClass = QtMaterial.WindowWidthSizeClass
 WindowHeightSizeClass = QtMaterial.WindowHeightSizeClass
@@ -31,6 +32,6 @@ __version__ = "1.0.0"
 __all__ = [
     "Widgets", "QtMaterial", "Theme", "ThemeBuilder", "ThemeContext", "ThemeOptions",
     "ThemeMode", "ContrastMode", "ThemePreference", "ThemeVariant",
-    "ColorBackendPolicy", "MotionScheme", "Density", "WindowSizeClass",
+    "ColorBackendPolicy", "MotionScheme", "Density", "ChipVariant", "WindowSizeClass",
     "WindowWidthSizeClass", "WindowHeightSizeClass",
 ]
