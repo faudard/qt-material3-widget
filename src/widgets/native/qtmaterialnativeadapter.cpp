@@ -8,6 +8,7 @@
 #include <QRadioButton>
 #include <QSlider>
 #include <QToolButton>
+#include <QVariant>
 #include <QWidget>
 
 #include "qtmaterial/widgets/native/qtmaterialbuttonadapter.h"
@@ -20,6 +21,11 @@
 
 namespace QtMaterial {
 namespace {
+
+constexpr char kAdaptProperty[] = "qtm3MaterialAdapt";
+constexpr char kVariantProperty[] = "qtm3MaterialVariant";
+constexpr char kDensityProperty[] = "qtm3MaterialDensity";
+constexpr char kTextFieldVariantProperty[] = "qtm3MaterialTextFieldVariant";
 
 bool hasMaterialClassName(const QWidget* widget)
 {
@@ -64,6 +70,98 @@ QList<QWidget*> directChildWidgets(QWidget* widget)
     return widget->findChildren<QWidget*>(
         QString(),
         Qt::FindDirectChildrenOnly);
+}
+
+Density densityFromDeclared(
+    const QVariant& value,
+    Density fallback)
+{
+    if (!value.isValid()) {
+        return fallback;
+    }
+
+    const QString name =
+        value.toString().trimmed().toLower();
+    if (name == QStringLiteral("compact")) {
+        return Density::Compact;
+    }
+    if (name == QStringLiteral("comfortable")) {
+        return Density::Comfortable;
+    }
+    if (name == QStringLiteral("default")) {
+        return Density::Default;
+    }
+    return fallback;
+}
+
+ButtonVariant buttonVariantFromDeclared(
+    const QVariant& value,
+    ButtonVariant fallback)
+{
+    if (!value.isValid()) {
+        return fallback;
+    }
+
+    const QString name =
+        value.toString().trimmed().toLower();
+    if (name == QStringLiteral("text")) {
+        return ButtonVariant::Text;
+    }
+    if (name == QStringLiteral("filled")) {
+        return ButtonVariant::Filled;
+    }
+    if (name == QStringLiteral("filled-tonal")
+        || name == QStringLiteral("filledtonal")
+        || name == QStringLiteral("tonal")) {
+        return ButtonVariant::FilledTonal;
+    }
+    if (name == QStringLiteral("outlined")) {
+        return ButtonVariant::Outlined;
+    }
+    if (name == QStringLiteral("elevated")) {
+        return ButtonVariant::Elevated;
+    }
+    return fallback;
+}
+
+QtMaterialNativeAdapter::TextFieldVariant
+textFieldVariantFromDeclared(
+    const QVariant& value,
+    QtMaterialNativeAdapter::TextFieldVariant fallback)
+{
+    if (!value.isValid()) {
+        return fallback;
+    }
+
+    const QString name =
+        value.toString().trimmed().toLower();
+    if (name == QStringLiteral("filled")) {
+        return QtMaterialNativeAdapter::TextFieldVariant::Filled;
+    }
+    if (name == QStringLiteral("outlined")) {
+        return QtMaterialNativeAdapter::TextFieldVariant::Outlined;
+    }
+    return fallback;
+}
+
+QtMaterialNativeAdapter::Options declaredOptions(
+    const QWidget* widget,
+    const QtMaterialNativeAdapter::Options& fallback)
+{
+    if (!widget) {
+        return fallback;
+    }
+
+    return QtMaterialNativeAdapter::Options(
+        densityFromDeclared(
+            widget->property(kDensityProperty),
+            fallback.density),
+        buttonVariantFromDeclared(
+            widget->property(kVariantProperty),
+            fallback.buttonVariant),
+        textFieldVariantFromDeclared(
+            widget->property(kTextFieldVariantProperty),
+            fallback.textFieldVariant));
 }
 
 } // namespace
@@ -173,6 +271,27 @@ bool QtMaterialNativeAdapter::apply(
     default:
         return false;
     }
+}
+
+bool QtMaterialNativeAdapter::applyDeclared(
+    QWidget* widget,
+    const Options& fallback)
+{
+    if (!isDeclared(widget)) {
+        return false;
+    }
+
+    return apply(
+        widget,
+        declaredOptions(widget, fallback));
+}
+
+bool QtMaterialNativeAdapter::isDeclared(
+    const QWidget* widget)
+{
+    return widget
+        && isSupported(widget)
+        && widget->property(kAdaptProperty).toBool();
 }
 
 bool QtMaterialNativeAdapter::remove(QWidget* widget)
@@ -413,6 +532,30 @@ int QtMaterialNativeAdapter::applyToDescendants(
     return count;
 }
 
+int QtMaterialNativeAdapter::applyDeclaredToDescendants(
+    QWidget* root,
+    const Options& fallback)
+{
+    if (!root || isInsideFirstClassMaterialWidget(root)) {
+        return 0;
+    }
+
+    if (kind(root) != WidgetKind::Unsupported) {
+        // A supported control is always a traversal barrier, even when it is
+        // not declared. Native implementation children remain untouched.
+        return applyDeclared(root, fallback) ? 1 : 0;
+    }
+
+    int count = 0;
+    const auto children = directChildWidgets(root);
+    for (QWidget* child : children) {
+        count += applyDeclaredToDescendants(
+            child,
+            fallback);
+    }
+    return count;
+}
+
 int QtMaterialNativeAdapter::removeFromDescendants(
     QWidget* root)
 {
@@ -430,6 +573,12 @@ int QtMaterialNativeAdapter::removeFromDescendants(
         count += removeFromDescendants(child);
     }
     return count;
+}
+
+const char*
+QtMaterialNativeAdapter::adaptPropertyName() noexcept
+{
+    return kAdaptProperty;
 }
 
 } // namespace QtMaterial

@@ -35,6 +35,8 @@ private slots:
     void traversalUsesNativeControlBarriers();
     void skipsFirstClassMaterialWidgets();
     void optOutAndRemoveTreeAreUnified();
+    void declarativePropertiesOverrideFallbacks();
+    void declarativeTraversalIsOptInAndBarrierSafe();
 };
 
 void tst_NativeAdapterFacade::
@@ -249,6 +251,107 @@ void tst_NativeAdapterFacade::
         !QtMaterialNativeAdapter::isOptedOut(slider));
     QVERIFY(
         QtMaterialNativeAdapter::apply(slider));
+}
+
+void tst_NativeAdapterFacade::
+    declarativePropertiesOverrideFallbacks()
+{
+    QPushButton button;
+    button.setProperty(
+        QtMaterialNativeAdapter::adaptPropertyName(),
+        true);
+    button.setProperty(
+        "qtm3MaterialVariant",
+        QStringLiteral("elevated"));
+    button.setProperty(
+        "qtm3MaterialDensity",
+        QStringLiteral("compact"));
+
+    QtMaterialNativeAdapter::Options fallback(
+        Density::Comfortable,
+        ButtonVariant::Outlined,
+        QtMaterialNativeAdapter::TextFieldVariant::Filled);
+
+    QVERIFY(
+        QtMaterialNativeAdapter::isDeclared(&button));
+    QVERIFY(
+        QtMaterialNativeAdapter::applyDeclared(
+            &button,
+            fallback));
+    QCOMPARE(
+        int(QtMaterialButtonAdapter::variant(&button)),
+        int(ButtonVariant::Elevated));
+    QCOMPARE(
+        int(QtMaterialButtonAdapter::density(&button)),
+        int(Density::Compact));
+
+    QLineEdit edit;
+    edit.setProperty(
+        QtMaterialNativeAdapter::adaptPropertyName(),
+        true);
+    edit.setProperty(
+        "qtm3MaterialTextFieldVariant",
+        QStringLiteral("outlined"));
+    QVERIFY(
+        QtMaterialNativeAdapter::applyDeclared(
+            &edit,
+            fallback));
+    QCOMPARE(
+        int(QtMaterialLineEditAdapter::variant(&edit)),
+        int(QtMaterialLineEditAdapter::Variant::Outlined));
+    QCOMPARE(
+        int(QtMaterialLineEditAdapter::density(&edit)),
+        int(Density::Comfortable));
+}
+
+void tst_NativeAdapterFacade::
+    declarativeTraversalIsOptInAndBarrierSafe()
+{
+    QWidget root;
+    auto* layout = new QVBoxLayout(&root);
+
+    auto* declared = new QPushButton(&root);
+    declared->setProperty(
+        QtMaterialNativeAdapter::adaptPropertyName(),
+        true);
+    layout->addWidget(declared);
+
+    auto* untouched = new QSlider(&root);
+    layout->addWidget(untouched);
+
+    auto* combo = new QComboBox(&root);
+    combo->setEditable(true);
+    layout->addWidget(combo);
+    QVERIFY(combo->lineEdit());
+    combo->lineEdit()->setProperty(
+        QtMaterialNativeAdapter::adaptPropertyName(),
+        true);
+
+    auto* optedOut = new QLineEdit(&root);
+    optedOut->setProperty(
+        QtMaterialNativeAdapter::adaptPropertyName(),
+        true);
+    QtMaterialNativeAdapter::setOptOut(
+        optedOut,
+        true);
+    layout->addWidget(optedOut);
+
+    QCOMPARE(
+        QtMaterialNativeAdapter::
+            applyDeclaredToDescendants(&root),
+        1);
+
+    QVERIFY(
+        QtMaterialNativeAdapter::isApplied(declared));
+    QVERIFY(
+        !QtMaterialNativeAdapter::isApplied(untouched));
+    QVERIFY(
+        !QtMaterialNativeAdapter::isApplied(combo));
+    QVERIFY(
+        !QtMaterialLineEditAdapter::isApplied(
+            combo->lineEdit()));
+    QVERIFY(
+        !QtMaterialNativeAdapter::isApplied(optedOut));
 }
 
 QTEST_MAIN(tst_NativeAdapterFacade)
