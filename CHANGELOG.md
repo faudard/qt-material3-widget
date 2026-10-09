@@ -21,6 +21,8 @@ unless a stricter ABI policy is published.
 - Segmented Button now keeps its accessible description synchronized after programmatic segment, selection and mode changes.
 
 ### Added
+- Declarative native `.ui` migration adds `qtm3MaterialAdapt`, per-widget dynamic-property overrides and barrier-safe `applyDeclaredToDescendants()` so Designer-authored forms can opt individual native controls into Material adaptation without code-side type dispatch.
+- Unified native-adapter facade auto-dispatches supported Qt widgets to their specialized Material adapters, with shared density/button/text-field options, conservative tree traversal, unified opt-out/removal and protection for first-class QtMaterial widgets and native implementation children.
 - Native Qt tool-button adaptation adds Material button variants for existing `QToolButton` controls while preserving default actions, menus/popup modes, autoRaise, checkable state, tool-button layout, signals, density and RTL split-menu hit testing.
 - Qt6-only PySide6/Shiboken6 bindings add `import QtMaterial3`, representative Widgets, Theme/ThemeBuilder/ThemeContext, Expressive/Adaptive enums, Python examples, wheel packaging and QObject ownership tests.
 - Native Qt line-edit adaptation adds Outlined/Filled Material field surfaces for existing `QLineEdit` controls while preserving validators, input masks, completers, echo mode, actions, margins, signals, density and effective ThemeContext updates.

@@ -427,6 +427,8 @@ Initial release scope:
   while preserving validators, masks, completers, echo mode, actions, margins and signals.
 - `QtMaterialToolButtonAdapter` materializes native `QToolButton` variants while
   preserving default actions, popup modes, menus, autoRaise, checkable state and tool-button layout.
+- `QtMaterialNativeAdapter` provides typed auto-dispatch, unified options, opt-out,
+  apply/remove tree traversal and barriers around native implementation children and first-class Material widgets.
 - Adapted buttons resolve the canonical `ButtonSpecResolver` instead of
   maintaining a parallel color/metric implementation.
 - Runtime variant/density setters and namespaced dynamic properties support both
@@ -446,8 +448,10 @@ Follow-up scope:
 - Migrate the established `QtMaterialSlider` visual implementation onto the new
   canonical `SliderSpec` only with separately reviewed visual baselines.
 - Add richer Designer property editors for adapter dynamic properties.
-- Add a typed native-adapter facade for applying/removing the appropriate adapter
-  without requiring application code to dispatch on each supported Qt widget class.
+- Declarative `.ui` migration uses `qtm3MaterialAdapt` plus namespaced variant/
+  density properties and a barrier-safe `applyDeclaredToDescendants()` pass.
+- Add richer Designer property editors for these native-adapter dynamic properties
+  so common values can be authored without manually adding string properties.
 - Keep ripple, Expressive morphing and component-specific advanced behavior in
   first-class `QtMaterial*` widgets rather than silently emulating incomplete
   behavior in native controls.

@@ -4,6 +4,7 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     native/qtmaterialbuttonadapter.cpp
     native/qtmaterialcomboboxadapter.cpp
     native/qtmateriallineeditadapter.cpp
+    native/qtmaterialnativeadapter.cpp
     native/qtmaterialselectionadapter.cpp
     native/qtmaterialprogressbaradapter.cpp
     native/qtmaterialslideradapter.cpp
@@ -92,6 +93,7 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialbuttonadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialcomboboxadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmateriallineeditadapter.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialnativeadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialselectionadapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialprogressbaradapter.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/native/qtmaterialslideradapter.h
