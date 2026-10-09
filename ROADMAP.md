@@ -404,6 +404,27 @@ Release gates:
   heuristic is enabled for standard Qt-style constructors.
 - A dedicated Qt6/PySide6 CI lane builds the wheel and runs the Python contract tests.
 
+### 1.17.1 — Python selection/chip/tooltip bindings
+
+- Extend the Qt6-only Shiboken surface with RadioButton, Chip and Tooltip.
+- Expose ChipVariant, Tooltip.Placement, Qt signals/properties and non-owning tooltip targets.
+- Validate the wheel with QObject ownership and target-destruction contracts.
+- Keep complex composite owners such as Adaptive Shell outside this incremental binding step.
+
+### 1.17.2 — Python navigation
+
+- Expose the native `QtMaterialTabs` (QTabWidget-compatible) and global-namespace `QtMaterialMenu` in `Widgets`.
+- Export tab style/density/alignment/overflow enums and native Menu item APIs.
+- Verify standard tab-page QObject ownership, parent destruction, native signals and properties.
+- Defer `std::function` tab factories, `QtMaterialRoute`, navigation models/controllers and custom specs until their Python type-conversion and pointer-transfer contracts are tested.
+
+### 1.17.3 — PySide6 routes and navigation models
+
+- Expose native route value types and navigation-item data, preserving route normalization and C++ model roles.
+- Bind the QAbstractListModel-derived NavigationModel and its selection signals/slots.
+- Enable Tabs route overloads and borrowed NavigationModel association; test strong references, destruction and QPointer nulling.
+- Defer controller subclasses, callback factories and C++ factory ownership transfer to a follow-up with dedicated tests.
+
 ## 1.18.0 — Native Qt Adaptation Layer
 
 Goal: let established Qt Widgets applications adopt Material 3 incrementally

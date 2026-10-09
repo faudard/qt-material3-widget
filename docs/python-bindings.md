@@ -75,6 +75,24 @@ families rather than promising all 60 components in one ABI step:
 - Navigation Bar and Navigation Rail;
 - linear, circular and Expressive loading indicators.
 
+1.17.1 additionally exposes `QtMaterialRadioButton`, `QtMaterialChip` and
+`QtMaterialTooltip`. `QtMaterialChip` uses the native `QtMaterial3.ChipVariant`
+enum (`Assist`, `Filter`, `Input`, `Suggestion`); the tooltip exposes its
+nested `Placement` enum. Its `targetWidget` is a **non-owning** C++ `QPointer`:
+assigning a target does not make the tooltip its owner.
+
+```python
+from QtMaterial3 import Widgets, ChipVariant
+
+chip = Widgets.QtMaterialChip("Only favorites")
+chip.setVariant(ChipVariant.Filter)
+chip.setChecked(True)
+
+tooltip = Widgets.QtMaterialTooltip()
+tooltip.setText("Filter the list")
+tooltip.setTargetWidget(chip)
+```
+
 They are available under `QtMaterial3.Widgets`. Existing Qt properties and
 signals are the binding contract, so normal PySide6 patterns such as
 `widget.setProperty(...)`, property assignment and signal connections call
@@ -89,6 +107,77 @@ the native C++ implementation.
 size_class = QtMaterial3.WindowSizeClass.fromLogicalSize(520, 700)
 assert size_class.width == QtMaterial3.WindowWidthSizeClass.Compact
 ```
+
+## Tabs and Menu (1.17.2)
+
+`Widgets.QtMaterialTabs` wraps the native `QtMaterialTabs` subclass of
+`QTabWidget`, preserving standard PySide6 tab pages and selection signals.
+The enums `TabsVariant`, `TabsDensity`, `TabsAlignment` and
+`TabsOverflowMode` are exported at package level.
+
+`Widgets.QtMaterialMenu` is exported from the *global* C++ namespace
+(the native class is not in `QtMaterial`). It supports native item
+management, accessibility descriptions and the `activated` and
+`expressiveChanged` signals.
+
+```python
+from PySide6.QtWidgets import QWidget
+from QtMaterial3 import Widgets, TabsVariant
+
+tabs = Widgets.QtMaterialTabs()
+tabs.setVariant(TabsVariant.Secondary)
+tabs.addTab(QWidget(), "Overview")
+tabs.setTabId(0, "overview")
+
+menu = Widgets.QtMaterialMenu()
+menu.addItem("Overview")
+menu.activated.connect(tabs.setCurrentIndex)
+```
+
+**Ownership boundary:** Tabs owns page widgets through Qt's standard
+`QTabWidget` parenting. Menu items are C++ value entries. A parent widget
+owns and destroys its Tabs/Menu children. The binding intentionally defers
+custom tab factories, route values, navigation-model/controller bindings and
+custom `TabsSpec`/`MenuSpec` structures until those conversions and
+pointer-transfer rules have separately verified tests.
+
+See `bindings/python/examples/tabs_menu.py` and
+`bindings/python/tests/test_navigation_bindings.py`.
+
+## Routes and navigation model (1.17.3)
+
+The native `QtMaterialRoute` value type normalizes paths, and
+`QtMaterialNavigationItem` and `QtMaterialNavigationModel` expose the
+C++ `QAbstractListModel` surface to PySide6. The route overloads on
+`QtMaterialTabs` and its `navigationModel` property now accept the native
+bindings.
+
+```python
+from QtMaterial3 import QtMaterialRoute, QtMaterialNavigationModel, QtMaterialNavigationItem, Widgets
+
+tabs = Widgets.QtMaterialTabs()
+route = QtMaterialRoute("settings//profile/")
+# tabs.setRoute(existing_tab_index, route)
+
+model = QtMaterialNavigationModel()
+item = QtMaterialNavigationItem()
+item.id, item.route, item.label = "settings", "/settings", "Settings"
+model.addItem(item)
+tabs.setNavigationModel(model)
+```
+
+**Ownership contract:** `QtMaterialTabs::setNavigationModel()` stores
+only a C++ `QPointer` and does not take ownership of the model. Assign a
+Qt parent to the model or retain a strong Python reference while tabs use
+it. `navigationModel()` returns a borrowed reference, and nulls on model
+destruction. Python-facing tests validate detaching, destruction and the
+native model's `selectedIdChanged`/`selectedRouteChanged` signals.
+
+The abstract navigation controller and callback-based lazy tab factories
+remain outside this version; wrapping them requires separate tests of
+references, QObject destruction, disconnects and cross-widget ownership.
+
+See `bindings/python/examples/navigation_model_routes.py`.
 
 ## QObject ownership
 
@@ -107,4 +196,7 @@ Application code should still prefer ordinary Qt parent/child ownership for
 widgets and use `deleteLater()` when object lifetime crosses queued event-loop
 work.
 
-See `bindings/python/examples/basic_theme.py` for a complete runnable example.
+See `bindings/python/examples/basic_theme.py` and
+`bindings/python/examples/selection_chips_tooltip.py` for runnable examples.
+The dedicated wheel CI covers these additional Q_PROPERTY, signal, enum and
+QObject lifetime contracts.

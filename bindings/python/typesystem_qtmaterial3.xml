@@ -14,11 +14,18 @@
     <enum-type name="WindowHeightSizeClass"/>
     <enum-type name="QtMaterialButtonSize"/>
     <enum-type name="QtMaterialButtonShape"/>
+    <enum-type name="ChipVariant"/>
+    <enum-type name="TabsVariant"/>
+    <enum-type name="TabsDensity"/>
+    <enum-type name="TabsAlignment"/>
+    <enum-type name="TabsOverflowMode"/>
 
     <value-type name="WindowSizeClass"/>
     <value-type name="ThemeOptions"/>
     <value-type name="Theme"/>
     <value-type name="ThemeBuilder"/>
+    <value-type name="QtMaterialRoute"/>
+    <value-type name="QtMaterialNavigationItem"/>
 
     <object-type name="ThemeContext" delete-in-owner-thread="yes"/>
     <!-- ThemeContextHost is a non-QObject, pure C++ mix-in with a protected
@@ -62,7 +69,18 @@
     <object-type name="QtMaterialFilledTonalButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialElevatedButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialCheckbox" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialRadioButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialSwitch" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialChip" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialTooltip" delete-in-main-thread="yes" disable-wrapper="yes">
+      <enum-type name="Placement"/>
+      <modify-function signature="targetWidget()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="setTargetWidget(QWidget*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+    </object-type>
 
     <object-type name="QtMaterialOutlinedTextField" delete-in-main-thread="yes" disable-wrapper="yes">
       <enum-type name="ValidationFeedbackMode"/>
@@ -78,6 +96,34 @@
 
     <object-type name="QtMaterialNavigationBar" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialNavigationRail" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialNavigationModel" delete-in-main-thread="yes" disable-wrapper="yes">
+      <enum-type name="Role"/>
+    </object-type>
+    <!-- Bind the QTabWidget-compatible surface first; navigation factories,
+         routes and controller pointers need separate lifetime contracts. -->
+    <object-type name="QtMaterialTabs" delete-in-main-thread="yes" disable-wrapper="yes">
+      <modify-function signature="spec()const" remove="all"/>
+      <modify-function signature="authoredSpec()const" remove="all"/>
+      <modify-function signature="setSpec(const TabsSpec&amp;)" remove="all"/>
+      <modify-function signature="setTabFactory(int,std::function&lt;QWidget*()>)" remove="all"/>
+      <modify-function signature="setTabFactory(const QtMaterialRoute&amp;,std::function&lt;QWidget*()>)" remove="all"/>
+      <!-- Tabs stores a non-owning QPointer to the navigation model. -->
+      <modify-function signature="navigationModel()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="setNavigationModel(QtMaterialNavigationModel*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="bindToController(QtMaterialNavigationController*)" remove="all"/>
+      <modify-function signature="unbindController(QtMaterialNavigationController*)" remove="all"/>
+      <modify-function signature="boundControllers()const" remove="all"/>
+      <modify-function signature="themeContext()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="effectiveThemeContext()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+    </object-type>
 
     <object-type name="QtMaterialLinearProgressIndicator" delete-in-main-thread="yes" disable-wrapper="yes">
       <enum-type name="Mode"/>
@@ -92,4 +138,17 @@
     </object-type>
     <object-type name="QtMaterialLoadingIndicator" delete-in-main-thread="yes" disable-wrapper="yes"/>
   </namespace-type>
+
+  <!-- Unlike other widgets, QtMaterialMenu is in the global C++ namespace. -->
+  <object-type name="QtMaterialMenu" delete-in-main-thread="yes" disable-wrapper="yes">
+    <enum-type name="ItemRole"/>
+    <modify-function signature="spec()const" remove="all"/>
+    <modify-function signature="setSpec(const QtMaterial::MenuSpec&amp;)" remove="all"/>
+    <modify-function signature="themeContext()const">
+      <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+    </modify-function>
+    <modify-function signature="effectiveThemeContext()const">
+      <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+    </modify-function>
+  </object-type>
 </typesystem>
