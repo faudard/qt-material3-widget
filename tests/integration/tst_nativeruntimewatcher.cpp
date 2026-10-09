@@ -9,6 +9,7 @@
 #include <QStyle>
 #include <QSlider>
 #include <QStyleFactory>
+#include <QToolButton>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -75,6 +76,7 @@ void tst_NativeRuntimeWatcher::dynamicallyCreatedControlsAndInternalBarriers()
     combo->addItem(QStringLiteral("One"));
     auto* edit = new QLineEdit(&form);
     edit->setClearButtonEnabled(true);
+    edit->setText(QStringLiteral("text"));
     auto* button = new QPushButton(&form);
 
     QTRY_VERIFY(QtMaterialNativeAdapter::isApplied(combo));
@@ -82,6 +84,11 @@ void tst_NativeRuntimeWatcher::dynamicallyCreatedControlsAndInternalBarriers()
     QTRY_VERIFY(QtMaterialNativeAdapter::isApplied(button));
     QVERIFY(combo->lineEdit());
     QVERIFY(!QtMaterialNativeAdapter::isApplied(combo->lineEdit()));
+    const auto clearButtons = edit->findChildren<QToolButton*>();
+    QVERIFY(!clearButtons.isEmpty());
+    for (QToolButton* clearButton : clearButtons) {
+        QVERIFY(!QtMaterialNativeAdapter::isApplied(clearButton));
+    }
 
     // Qt internals must remain untouched even if explicitly declared.
     combo->lineEdit()->setProperty(
