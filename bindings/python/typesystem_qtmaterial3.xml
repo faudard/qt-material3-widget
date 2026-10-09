@@ -21,7 +21,11 @@
     <value-type name="ThemeBuilder"/>
 
     <object-type name="ThemeContext" delete-in-owner-thread="yes"/>
-    <object-type name="ThemeContextHost" private="yes" disable-wrapper="yes"/>
+    <!-- The non-QObject C++ interface has a protected constructor and pure virtual functions.
+         Explicitly mark it abstract so Shiboken never emits an invalid Py_tp_init
+         reference (Sbk_QtMaterial_ThemeContextHost_Init). Keep the type entry so
+         multiple-inheritance relationships remain available to the extractor. -->
+    <object-type name="ThemeContextHost" private="yes" disable-wrapper="yes" force-abstract="yes"/>
 
     <object-type name="QtMaterialWidget" delete-in-main-thread="yes" disable-wrapper="yes">
       <modify-function signature="themeContext()const">
