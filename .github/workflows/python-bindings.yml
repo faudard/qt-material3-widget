@@ -29,11 +29,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.11"
-          cache: pip
-
       - name: Install Linux runtime packages
         run: bash scripts/ci/install-ubuntu-deps.sh
 
@@ -46,10 +41,17 @@ jobs:
           arch: gcc_64
           cache: true
 
+      - name: Restore Python 3.11 after Qt setup
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
       - name: Build wheel
         env:
           CMAKE_PREFIX_PATH: ${{ env.QT_ROOT_DIR }}
         run: |
+          python --version
           python -m pip install --upgrade pip build
           python -m build bindings/python --wheel --outdir wheelhouse
 
