@@ -441,6 +441,23 @@ Release gates:
   manylinux/delocate/delvewheel repair, and ABI expansion remain separate tasks.
 
 
+### 1.17.9 — Python Navigation 3.0 (session + prefetch)
+
+- Expose `NavigationSession` to coordinate native `QtMaterialTabs` and
+  `AsyncLazyTabs` by normalized route identity rather than mutable index.
+- Add back/forward navigation history, branching, canonical `currentRoute()`
+  and opt-in `prefetchNeighbors()` with bounded radius and pending jobs.
+- Serialize/restore a versioned, bounded JSON-compatible snapshot with
+  history cursor and per-route state; reject incompatible schemas and skip
+  removed routes without retaining C++ pointers or QWidget objects.
+- Preserve worker-side plain-data loading and GUI-thread-only QWidget
+  creation; avoid changing Shiboken's native C++ callback ABI.
+- Gate on Ubuntu CPython 3.10/3.11/3.12, Windows 3.11, macOS 3.11,
+  wheel payload audit, QObject lifetime, reordered/removed tab recovery,
+  stale navigation stress and invalid-state rejection.
+- Follow-up scope: explicit persisted state providers, LRU cache eviction,
+  deep-link serialization and opt-in asyncio integrations.
+
 ### 1.17.8 — Async Lazy Tabs / cancellation & GUI-thread rendering
 
 - Add `AsyncLazyTabs` for bounded background **data** loading and
