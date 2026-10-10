@@ -42,7 +42,7 @@ class AsyncLazyTabsContracts(unittest.TestCase):
             return {"title": "Data ready"}
         def render(data):
             render_ident.append(threading.get_ident())
-            self.assertIs(QThread.currentThread(), self.app.thread())
+            self.assertEqual(QThread.currentThread(), self.app.thread())
             return QLabel(data["title"])
         async_tabs.pageReady.connect(lambda index, widget: ready.append((index, widget)))
         idx = async_tabs.addAsyncTab("Data", loader, render, route="/data")
