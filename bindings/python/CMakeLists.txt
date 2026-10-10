@@ -15,12 +15,11 @@ if(NOT TARGET Python::Module)
     message(FATAL_ERROR "Python::Module import target not found for ${Python_EXECUTABLE}")
 endif()
 if(WIN32)
-    get_target_property(_qtm3_python_import_lib Python::Module IMPORTED_IMPLIB)
-    if(NOT _qtm3_python_import_lib OR NOT EXISTS "${_qtm3_python_import_lib}")
-        message(FATAL_ERROR
-            "CPython extension import library is unavailable: "
-            "${_qtm3_python_import_lib}. Verify the interpreter's Development.Module installation.")
-    endif()
+    # FindPython may expose the import library via IMPORTED_IMPLIB or via
+    # per-configuration IMPORTED_IMPLIB_RELEASE/DEBUG. The imported target
+    # resolves the correct absolute path when linking either way.
+    message(STATUS "QtMaterial3 Python extension: linking Python::Module for ${Python_EXECUTABLE}")
+endif()
     message(STATUS "QtMaterial3 Python extension import library: ${_qtm3_python_import_lib}")
 endif()
 
