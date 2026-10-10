@@ -441,6 +441,24 @@ Release gates:
   manylinux/delocate/delvewheel repair, and ABI expansion remain separate tasks.
 
 
+### 1.17.8 — Async Lazy Tabs / cancellation & GUI-thread rendering
+
+- Add `AsyncLazyTabs` for bounded background **data** loading and
+  `QWidget` rendering exclusively in Qt's GUI thread, without extending the
+  Shiboken `std::function` ABI.
+- Use cooperative `threading.Event` cancellation, per-page generation tokens,
+  and immutable page identity to reject stale results after navigation,
+  retries, reordering, unregistration and parent destruction.
+- Keep two modes: cancel outstanding data on navigation away (default) or
+  cache completed data without rendering an inactive tab.
+- Fail safely via GUI-thread `loadFailed`, retry with cached data for renderer
+  failures, and shut down the worker pool nonblocking during Qt destruction.
+- Gate on installed wheels Ubuntu CPython 3.10/3.11/3.12, Windows 3.11 and
+  macOS 3.11 with tests for threading boundaries, bounded execution, ownership,
+  late arrivals and rapid navigation.
+- Defer actual `asyncio`/qasync event-loop integration and raw C++
+  callback bridging to a separate workstream.
+
 ### 1.17.7 — Python Lazy Tabs factories (Qt-owned bridge)
 
 - Introduce an opt-in `LazyTabs` QObject helper, parented to native
