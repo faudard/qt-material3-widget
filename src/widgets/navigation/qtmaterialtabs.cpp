@@ -740,6 +740,21 @@ QtMaterialTabs::QtMaterialTabs(const TabsSpec& spec, QWidget* parent)
     }
 
     connect(this, &QTabWidget::currentChanged, this, &QtMaterialTabs::onCurrentTabChanged);
+    // QTabWidget reorders pages and tab labels when QTabBar moves. Our
+    // per-tab metadata (route, id, badge, lazy factory, load state) must move
+    // with the page, not remain attached to the old numeric index.
+    connect(tabBar(), &QTabBar::tabMoved, this, [this](int from, int to) {
+        if (from < 0 || to < 0 || from >= d_ptr->descriptors.size()
+            || to >= d_ptr->descriptors.size() || from == to) {
+            return;
+        }
+        d_ptr->descriptors.move(from, to);
+        updateAllAutomationMetadata();
+        syncNavigationModelFromTabs();
+        syncNavigationModelSelectionFromCurrentTab();
+        syncAccessibilityState();
+        emitCurrentRouteIfChanged();
+    });
     d_ptr->themeBinding =
         new QtMaterialThemeContextBinding(this, this);
     connect(
