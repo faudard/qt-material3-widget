@@ -97,6 +97,8 @@ set(_qtm3_python_types
     QtMaterialRoute
     QtMaterialNavigationItem
     QtMaterialNavigationModel
+    QtMaterialNavigationController
+    QtMaterialStackedWidgetController
     QtMaterialTabs
     QtMaterialLinearProgressIndicator
     QtMaterialCircularProgressIndicator

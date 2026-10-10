@@ -67,6 +67,47 @@ code-signing, notarization, release publication or compatibility with arbitrary
 system Qt versions. Do not publish wheels as cross-machine compatible without a
 separate deployment and binary-dependency audit.
 
+## Navigation controller bridge (1.17.6)
+
+`QtMaterialStackedWidgetController` is a native QObject controller for a
+PySide6 `QStackedWidget`. `QtMaterialNavigationController` is an abstract
+C++ interface: it can be used for native type checks, not instantiated or
+implemented as a Python subclass.
+
+```python
+from PySide6.QtWidgets import QStackedWidget, QWidget
+from QtMaterial3 import QtMaterialStackedWidgetController, Widgets
+
+stack = QStackedWidget()
+stack.addWidget(QWidget())
+stack.addWidget(QWidget())
+
+tabs = Widgets.QtMaterialTabs()
+tabs.addTab(QWidget(), "Overview")
+tabs.addTab(QWidget(), "Settings")
+
+controller = QtMaterialStackedWidgetController(stack)
+tabs.bindToController(controller)
+stack.setCurrentIndex(1)
+assert tabs.currentIndex() == 1
+tabs.unbindController(controller)
+```
+
+**Borrowed pointers and ownership:** The controller holds its `QStackedWidget`
+through a native `QPointer`; the stack is **not** transferred or reparented.
+Tabs holds the controller through `QPointer`, so binding also does **not**
+make Tabs its owner. Keep the stack/controller alive with Qt parents or
+Python references for as long as navigation is needed. Destroying the
+stack makes `stackedWidget()` return `None` and `currentIndex()` return
+`-1`. Destroying the controller disconnects Qt signals automatically;
+explicit `unbindController()` also stops index propagation. Do not rely on
+`boundControllers()` from Python; its C++ `QVector` pointer conversion is
+deferred together with callback-based tab factories.
+
+The installed-wheel CI executes `tests/test_navigation_controller.py` on
+Ubuntu, macOS and Windows, including repeated connect/disconnect and
+parent destruction.
+
 ## Direct CMake development build
 
 Install CMake 3.22+ and matching PySide6/Shiboken6 packages in the Python interpreter used by CMake, then configure:

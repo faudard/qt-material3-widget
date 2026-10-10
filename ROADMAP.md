@@ -441,6 +441,18 @@ Release gates:
   manylinux/delocate/delvewheel repair, and ABI expansion remain separate tasks.
 
 
+### 1.17.6 — Python navigation controller ownership
+
+- Expose the abstract native `QtMaterialNavigationController` interface and the
+  concrete `QtMaterialStackedWidgetController` adapter without Python subclasses.
+- Allow `QtMaterialTabs.bindToController()` / `unbindController()` while
+  keeping both controller and `QStackedWidget` **borrowed** (never transferred).
+- Verify bidirectional index synchronization, explicit disconnect, destruction
+  of the stack or controller's external Qt parent, and repeated binding cycles.
+- Preserve all 1.17.4 cross-OS wheel/ABI/ownership gates; leave
+  `std::function<QWidget*()>` factories and controller subclasses out of scope.
+
+
 ## 1.18.0 — Native Qt Adaptation Layer
 
 Goal: let established Qt Widgets applications adopt Material 3 incrementally

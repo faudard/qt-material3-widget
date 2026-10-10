@@ -153,8 +153,20 @@
     <object-type name="QtMaterialNavigationModel" delete-in-main-thread="yes" disable-wrapper="yes">
       <enum-type name="Role"/>
     </object-type>
-    <!-- Bind the QTabWidget-compatible surface first; navigation factories,
-         routes and controller pointers need separate lifetime contracts. -->
+    <!-- Abstract navigation controller and concrete stacked-widget adapter:
+         Python cannot instantiate the abstract interface; controllers and
+         stacks stay externally owned and are tracked by C++ QPointer. -->
+    <object-type name="QtMaterialNavigationController" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialStackedWidgetController" delete-in-main-thread="yes" disable-wrapper="yes">
+      <modify-function signature="QtMaterialStackedWidgetController(QStackedWidget*,QObject*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="stackedWidget()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+    </object-type>
+    <!-- Factories using std::function remain deferred; controllers are
+         exposed with explicit non-owning pointer contracts. -->
     <object-type name="QtMaterialTabs" delete-in-main-thread="yes" disable-wrapper="yes">
       <modify-function signature="spec()const" remove="all"/>
       <modify-function signature="authoredSpec()const" remove="all"/>
@@ -168,8 +180,12 @@
       <modify-function signature="setNavigationModel(QtMaterialNavigationModel*)">
         <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
       </modify-function>
-      <modify-function signature="bindToController(QtMaterialNavigationController*)" remove="all"/>
-      <modify-function signature="unbindController(QtMaterialNavigationController*)" remove="all"/>
+      <modify-function signature="bindToController(QtMaterialNavigationController*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="unbindController(QtMaterialNavigationController*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
       <modify-function signature="boundControllers()const" remove="all"/>
       <modify-function signature="themeContext()const">
         <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
