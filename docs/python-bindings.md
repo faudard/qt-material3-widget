@@ -67,6 +67,67 @@ code-signing, notarization, release publication or compatibility with arbitrary
 system Qt versions. Do not publish wheels as cross-machine compatible without a
 separate deployment and binary-dependency audit.
 
+## Python Navigation Persistence 2.0 (1.17.10)
+
+`NavigationSession` now supports **opt-in live form capture/restore** and an
+**LRU cap on prefetched data only**.
+
+```python
+from QtMaterial3 import AsyncLazyTabs, NavigationSession, Widgets
+
+tabs = Widgets.QtMaterialTabs()
+pages = AsyncLazyTabs(tabs, cancel_on_leave=False)
+# Add /home and /account destinations with addAsyncTab(...)
+session = NavigationSession(
+    pages, prefetch_radius=1, max_pending=2, max_cached_pages=2
+)
+session.registerForm("/account")
+# Edit the form on /account, then navigate elsewhere:
+snapshot = session.saveState()
+# After recreating the tabs/pages on restart:
+session.restoreState(snapshot)
+```
+
+**Widget form snapshots:** `snapshotForm(root)` and `restoreForm(root, state)`
+capture named `QLineEdit`, `QCheckBox`, `QRadioButton`, `QComboBox`,
+`QSpinBox`, `QDoubleSpinBox`, `QSlider`, `QPlainTextEdit` and
+`QTextEdit` values. They never store widget pointers and never create
+or destroy children. Forms are matched by unique `objectName()`.
+Duplicate names are omitted. Fields with an empty name, a
+`navigationPersist = false` Qt dynamic property, password/hidden echo
+mode or sensitive name (password, token, secret, credential, API key, auth)
+are excluded. **This is a conservative convenience filter, not a general
+data-loss-prevention mechanism:** applications must explicitly opt out other
+private fields and encrypt stored user data as appropriate.
+
+`session.registerForm("/account")` enables automatic snapshot on leaving
+a loaded page and restores saved values after the destination's
+`AsyncLazyTabs.pageReady` event. Custom forms can register
+`registerStateProvider(route, capture_widget, apply_widget_state)`,
+where both callbacks run on the Qt GUI thread and state must remain JSON
+compatible. `unregisterStateProvider(route)` releases callbacks. Exceptions
+are reported by `stateProviderFailed(route, traceback)`, without throwing
+through native Qt signal dispatch. `saveState()` captures loaded registered
+forms before serializing, while `restoreState()` applies state to both
+existing and subsequently loaded pages.
+
+**Prefetch LRU:** `max_cached_pages` limits the number of *inactive,
+completed* plain-data payloads kept by `AsyncLazyTabs`. Pages already
+rendered as `QWidget` are never evicted by this feature, and active,
+in-flight or externally owned widgets are never destroyed. Once a cached
+payload is evicted, navigating to the page requests the loader again.
+`cacheEvicted(index)` reports each eviction.
+`AsyncLazyTabs.hasCachedData(index)` and `evictCachedData(index)`
+provide direct, GUI-thread-only cache controls. This is an **entry-count
+budget**, not an exact byte-size limit: applications should separately
+limit individual data payloads.
+
+The saved snapshot remains version 1 and JSON compatible; no native
+pointers, callback functions or cached worker results are serialized.
+The installed-wheel test suite checks form state round-trips, duplicate
+names, sensitive-value exclusions, provider lifetime/errors and LRU
+eviction on the same five-platform Python reliability matrix.
+
 ## Python Navigation Session 3.0 (1.17.9)
 
 `NavigationSession` coordinates native `QtMaterialTabs` and a
