@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NativeRoundtripForm</class>
+ <widget class="QWidget" name="NativeRoundtripForm">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>500</width><height>720</height></rect></property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item><widget class="QPushButton" name="pushFilled">
+    <property name="text"><string>Save</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialVariant" stdset="0"><string>filled</string></property>
+    <property name="qtm3MaterialDensity" stdset="0"><string>compact</string></property>
+   </widget></item>
+   <item><widget class="QToolButton" name="toolOutlined">
+    <property name="text"><string>More</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialVariant" stdset="0"><string>outlined</string></property>
+    <property name="qtm3MaterialDensity" stdset="0"><string>comfortable</string></property>
+   </widget></item>
+   <item><widget class="QCheckBox" name="checkMaterial">
+    <property name="text"><string>Remember</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialDensity" stdset="0"><string>compact</string></property>
+   </widget></item>
+   <item><widget class="QRadioButton" name="radioMaterial">
+    <property name="text"><string>Choice</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialDensity" stdset="0"><string>comfortable</string></property>
+   </widget></item>
+   <item><widget class="QSlider" name="sliderMaterial">
+    <property name="orientation"><enum>Qt::Horizontal</enum></property>
+    <property name="value"><number>31</number></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialDensity" stdset="0"><string>compact</string></property>
+   </widget></item>
+   <item><widget class="QComboBox" name="comboMaterial">
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialDensity" stdset="0"><string>comfortable</string></property>
+    <item><property name="text"><string>Alpha</string></property></item>
+    <item><property name="text"><string>Beta</string></property></item>
+   </widget></item>
+   <item><widget class="QLineEdit" name="fieldFilled">
+    <property name="placeholderText"><string>Account</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialTextFieldVariant" stdset="0"><string>filled</string></property>
+    <property name="qtm3MaterialDensity" stdset="0"><string>compact</string></property>
+   </widget></item>
+   <item><widget class="QProgressBar" name="progressMaterial">
+    <property name="value"><number>56</number></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+   </widget></item>
+   <item><widget class="QPushButton" name="optedOutButton">
+    <property name="text"><string>Do not adapt</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialOptOut" stdset="0"><bool>true</bool></property>
+   </widget></item>
+   <item><widget class="QPushButton" name="undeclaredButton">
+    <property name="text"><string>Unchanged</string></property>
+   </widget></item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
