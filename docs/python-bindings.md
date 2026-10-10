@@ -67,6 +67,55 @@ code-signing, notarization, release publication or compatibility with arbitrary
 system Qt versions. Do not publish wheels as cross-machine compatible without a
 separate deployment and binary-dependency audit.
 
+## Python lazy tab pages (1.17.7)
+
+`LazyTabs` is a Qt-owned Python `QObject` helper for the native
+`Widgets.QtMaterialTabs`. It implements lazy page factories without passing
+Python closures into Shiboken's unsupported
+`std::function<QWidget*()>` binding.
+
+```python
+from PySide6.QtWidgets import QLabel, QWidget
+from QtMaterial3 import LazyTabs, Widgets
+
+tabs = Widgets.QtMaterialTabs()
+lazy = LazyTabs(tabs)  # QObject child of tabs
+lazy.addLazyTab("Home", lambda: QLabel("Home"))
+lazy.addLazyTab("Settings", lambda: QLabel("Settings"), route="/settings")
+tabs.setCurrentIndex(1)  # constructs Settings exactly once
+assert lazy.isLoaded(1)
+```
+
+The currently selected first tab is built immediately. Other pages are built
+upon their first selection. Factories return a **live QWidget** without a
+different owning parent. After creation the widget is reparented into the
+tab's placeholder layout; Qt owns it and destroys it with its tab/container.
+Factory failures are recorded in `lastError(index)` and emitted through
+`loadFailed(index, traceback)`, **not thrown across Qt signal callbacks**.
+Calling `ensureLoaded(index)` retries a failed factory; reentrant calls cannot
+start duplicate creation. `pageLoaded(index, widget)` signals success.
+
+Use `registerTab(index, factory)` for an existing **empty** tab,
+`unregisterTab(index)` to release a callback while preserving an already
+created widget, or `removeLazyTab(index)` to remove an entry while returning
+its detached native tab page. As with `QTabWidget.removeTab`, the caller
+must decide what to do with a removed QWidget (for example `deleteLater()`).
+Registrations track **page identity**, not tab indices, so moves do not
+accidentally attach content to another page.
+
+The native `QtMaterialTabs.setTabFactory(..., std::function)` remains
+excluded from the Shiboken ABI. `LazyTabs` provides equivalent page-on-first-
+visit behavior in Python, not the same C++ `isTabLoaded()` state. In
+particular use `lazy.isLoaded()`, not `tabs.isTabLoaded()`, for Python
+registered factories. Asynchronous coroutines and background/threaded
+QWidget construction are not supported: factories run on Qt's UI thread.
+
+The installed-wheel suite covers Linux 3.10–3.12, macOS and Windows and tests
+lazy activation, error reporting/retry, reentrant calls, ownership, deletion,
+and factory reference release. See
+`bindings/python/tests/test_lazy_tabs.py` and
+`bindings/python/examples/lazy_tabs.py`.
+
 ## Navigation controller bridge (1.17.6)
 
 `QtMaterialStackedWidgetController` is a native QObject controller for a
