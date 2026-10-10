@@ -23,7 +23,9 @@ _MAX_FIELDS = 256
 
 def _eligible(widget: QWidget) -> bool:
     name = widget.objectName()
-    if not name or _SENSITIVE.search(name):
+    # Qt creates named implementation-detail children inside composite
+    # controls (e.g. qt_spinbox_lineedit); they are not author-owned fields.
+    if not name or name.startswith("qt_") or _SENSITIVE.search(name):
         return False
     if widget.property("navigationPersist") is False:
         return False
