@@ -9,6 +9,7 @@
 #include <QPixmap>
 #include <QSignalSpy>
 #include <QStyle>
+#include <QVBoxLayout>
 #include <QWidget>
 #include "QAccessibleInterface"
 
@@ -24,6 +25,7 @@
 #include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialoutlinedbutton.h"
 #include "qtmaterial/widgets/buttons/qtmaterialtextbutton.h"
+#include "../../helpers/widgettestactivation.h"
 
 namespace {
 
@@ -196,18 +198,31 @@ void tst_ButtonContracts::apiBasics()
 void tst_ButtonContracts::keyboardActivation()
 {
     for (const ButtonCase& testCase : buttonCases()) {
+        // Qt reparents the button when it is added to this form's layout.
+        // The owning unique_ptr must be destroyed BEFORE the parent form;
+        // otherwise QWidget::deleteChildren() deletes it a second time.
+        QWidget window;
+        QVBoxLayout layout(&window);
         std::unique_ptr<QAbstractButton> button(testCase.create());
         configureCommonButton(button.get(), testCase);
 
+        // macOS does not necessarily activate a freshly exposed top-level
+        // button. Test focus on a child of an activated form, just as the
+        // dedicated keyboard-activation contract does. Keep real focus
+        // assertions: we must not turn keyboard testing into direct events
+        // sent to an unfocused widget.
+        layout.addWidget(button.get());
         button->resize(button->sizeHint().expandedTo(testCase.minimumTouchTarget));
-        button->show();
-        QVERIFY2(QTest::qWaitForWindowExposed(button.get()), contextMessage(testCase, "window exposed").constData());
+        window.show();
+        QVERIFY2(QTest::qWaitForWindowExposed(&window),
+                 contextMessage(testCase, "form window exposed").constData());
+        activateTestWindow(&window);
 
         QSignalSpy clickedSpy(button.get(), &QAbstractButton::clicked);
         QVERIFY2(clickedSpy.isValid(), contextMessage(testCase, "clicked spy is valid").constData());
 
         button->setFocus(Qt::TabFocusReason);
-        QVERIFY2(button->hasFocus(), contextMessage(testCase, "button accepts keyboard focus").constData());
+        QTRY_VERIFY_WITH_TIMEOUT(button->hasFocus(), 5000);
 
         QTest::keyClick(button.get(), Qt::Key_Space);
         QVERIFY2(clickedSpy.count() >= 1, contextMessage(testCase, "Space activates button").constData());

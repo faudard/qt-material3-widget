@@ -521,3 +521,24 @@ Release gates:
   consumer gains a Qt Designer dependency.
 - Designer collection, extension and AUTOUIC smoke contracts remain green on the supported
   Windows Qt 5.14.2 and Qt 6 Designer lanes.
+
+## 1.19.1 — Designer Native Integration
+
+Goal: author opt-in Material policy on standard Qt Widgets in Designer without
+class promotion or any runtime Qt Designer dependency.
+
+Release gates:
+
+- The task menu exposes an explicit native adaptation editor for the standard
+  QPushButton/QToolButton, selection, slider, combo, line edit and progress controls.
+- Adaptation, opt-out, variant and density are serialized as typed dynamic properties
+  understood by `QtMaterialNativeAdapter`; unsupported combinations are rejected.
+- The Designer form cursor handles undoable property-value edits and grouped reset
+  back to explicit defaults; removal of a dynamic property remains in the standard
+  Designer property editor.
+- AUTOUIC preserves native class identity and the dynamic declarations, and a single
+  runtime `applyDeclaredToDescendants()` opt-in applies only eligible widgets.
+- The native facade's implementation-child traversal barriers, opt-out, removal and
+  existing Qt signal connections are preserved.
+- Qt 5.14.2 and Qt 6 build/test the Designer fixture, with a palette-only fallback
+  when the optional Qt Designer development API is unavailable.

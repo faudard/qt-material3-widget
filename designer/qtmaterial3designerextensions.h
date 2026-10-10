@@ -3,6 +3,7 @@
 #include <QList>
 #include <QObject>
 #include <QStringList>
+#include <QVariant>
 #include <Qt>
 
 #include <QtDesigner/QDesignerContainerExtension>
@@ -31,6 +32,18 @@ enum class PreviewWidth
     Medium,
     Expanded
 };
+
+// Native Qt controls are authored with dynamic properties; their class never changes.
+QStringList nativeEditablePropertyNames(const QWidget* widget);
+QVariant nativeDesignerDefault(const QString& propertyName);
+bool setNativeDesignerProperty(
+    QWidget* widget,
+    const QString& propertyName,
+    const QVariant& value,
+    QDesignerFormEditorInterface* core = nullptr);
+bool resetNativeDesignerProperties(
+    QWidget* widget,
+    QDesignerFormEditorInterface* core = nullptr);
 
 QStringList editablePropertyNames(const QWidget* widget);
 bool propertyCanReset(const QWidget* widget, const QString& propertyName);
