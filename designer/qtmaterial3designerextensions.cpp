@@ -31,6 +31,8 @@
 #include <QSpinBox>
 #include <QTimeEdit>
 #include <QToolButton>
+#include <QUndoCommand>
+#include <QUndoStack>
 #include <QVariant>
 #include <QVBoxLayout>
 #include <QVector>
@@ -794,6 +796,104 @@ private:
 };
 
 
+// Qt Designer's cursor records the value change in its undo stack, but
+// QDesignerDynamicPropertySheetExtension::addDynamicProperty() does not.
+// Keep declaration creation/removal in that *same* history so undoing an
+// initial edit removes the authored property entirely (including from .ui).
+class NativeDeclarationCommand final : public QUndoCommand
+{
+public:
+    enum class Operation { Insert, Erase };
+
+    NativeDeclarationCommand(
+        QWidget* widget,
+        QExtensionManager* manager,
+        const QString& name,
+        const QVariant& value,
+        bool originallyChanged,
+        Operation operation)
+        : widget_(widget)
+        , manager_(manager)
+        , name_(name)
+        , value_(value)
+        , originallyChanged_(originallyChanged)
+        , operation_(operation)
+    {
+        setText(operation == Operation::Insert
+                    ? QObject::tr("Add native Material declaration")
+                    : QObject::tr("Remove native Material declaration"));
+    }
+
+    void redo() override
+    {
+        succeeded_ = operation_ == Operation::Insert
+            ? insert(true)
+            : erase();
+    }
+
+    void undo() override
+    {
+        if (!succeeded_) {
+            return;
+        }
+        if (operation_ == Operation::Insert) {
+            erase();
+        } else {
+            insert(originallyChanged_);
+        }
+    }
+
+    bool succeeded() const { return succeeded_; }
+
+private:
+    bool insert(bool markChanged)
+    {
+        if (!widget_ || !manager_) {
+            return false;
+        }
+        auto* sheet = qt_extension<QDesignerPropertySheetExtension*>(
+            manager_.data(), widget_.data());
+        auto* dynamic = qt_extension<QDesignerDynamicPropertySheetExtension*>(
+            manager_.data(), widget_.data());
+        if (!sheet || !dynamic || sheet->indexOf(name_) >= 0
+            || !dynamic->dynamicPropertiesAllowed()
+            || !dynamic->canAddDynamicProperty(name_)) {
+            return false;
+        }
+        const int index = dynamic->addDynamicProperty(name_, value_);
+        if (index < 0) {
+            return false;
+        }
+        sheet->setChanged(index, markChanged);
+        return true;
+    }
+
+    bool erase()
+    {
+        if (!widget_ || !manager_) {
+            return false;
+        }
+        auto* sheet = qt_extension<QDesignerPropertySheetExtension*>(
+            manager_.data(), widget_.data());
+        auto* dynamic = qt_extension<QDesignerDynamicPropertySheetExtension*>(
+            manager_.data(), widget_.data());
+        if (!sheet || !dynamic) {
+            return false;
+        }
+        const int index = sheet->indexOf(name_);
+        return index >= 0 && dynamic->isDynamicProperty(index)
+            && dynamic->removeDynamicProperty(index);
+    }
+
+    QPointer<QWidget> widget_;
+    QPointer<QExtensionManager> manager_;
+    QString name_;
+    QVariant value_;
+    bool originallyChanged_ = false;
+    bool succeeded_ = false;
+    Operation operation_;
+};
+
 class NativeMaterialPolicyDialog final : public QDialog
 {
 public:
@@ -857,6 +957,15 @@ public:
             QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Reset,
             this);
         outer->addWidget(buttons);
+        auto* removeDeclarations = buttons->addButton(
+            tr("Remove Material declarations"), QDialogButtonBox::ActionRole);
+        removeDeclarations->setToolTip(
+            tr("Delete authored qtm3Material* properties; Undo restores them in Designer."));
+        connect(removeDeclarations, &QPushButton::clicked, this, [this]() {
+            if (target_ && clearNativeDesignerProperties(target_, core_)) {
+                accept();
+            }
+        });
         connect(buttons->button(QDialogButtonBox::Reset),
                 &QPushButton::clicked, this, [this]() {
             enabled_->setChecked(false);
@@ -1199,19 +1308,31 @@ bool setNativeDesignerProperty(
         return false;
     }
 
-    if (sheet->indexOf(propertyName) < 0) {
-        // The Designer property sheet must know about an authored dynamic
-        // property: setting QObject::setProperty alone does not serialize it.
-        if (!dynamic->dynamicPropertiesAllowed()
-            || !dynamic->canAddDynamicProperty(propertyName)
-            || dynamic->addDynamicProperty(propertyName, nativeDesignerDefault(propertyName)) < 0) {
+    const bool isNew = sheet->indexOf(propertyName) < 0;
+    if (isNew) {
+        // The registration and cursor value edit must be a *single* undo
+        // transaction. Otherwise Undo resets the value but leaves a stray
+        // dynamic property in Designer's saved .ui document.
+        if (!form->commandHistory() || !dynamic->dynamicPropertiesAllowed()
+            || !dynamic->canAddDynamicProperty(propertyName)) {
+            return false;
+        }
+        form->beginCommand(QObject::tr("Set native Material declaration"));
+        auto* command = new NativeDeclarationCommand(
+            widget, manager, propertyName, nativeDesignerDefault(propertyName),
+            true, NativeDeclarationCommand::Operation::Insert);
+        form->commandHistory()->push(command);
+        if (!command->succeeded()) {
+            form->endCommand();
             return false;
         }
     }
 
-    // Cursor writes participate in Designer's undo/redo history, unlike
-    // property-sheet setProperty or direct QObject::setProperty.
+    // Cursor edits are recorded by the Designer host on its undo stack.
     form->cursor()->setWidgetProperty(widget, propertyName, normalized);
+    if (isNew) {
+        form->endCommand();
+    }
     form->setDirty(true);
     return widget->property(key.constData()) == normalized;
 }
@@ -1241,6 +1362,65 @@ bool resetNativeDesignerProperties(
         form->endCommand();
     }
     return ok;
+}
+
+bool clearNativeDesignerProperties(
+    QWidget* widget,
+    QDesignerFormEditorInterface* core)
+{
+    const QStringList names = nativeEditablePropertyNames(widget);
+    if (names.isEmpty()) {
+        return false;
+    }
+
+    QDesignerFormWindowInterface* form =
+        QDesignerFormWindowInterface::findFormWindow(widget);
+    if (!form) {
+        // A standalone widget (outside Designer) owns its dynamic properties
+        // through QObject; an invalid QVariant removes a dynamic property.
+        bool removed = false;
+        for (const QString& name : names) {
+            const QByteArray key = name.toLatin1();
+            if (!widget->dynamicPropertyNames().contains(key)) {
+                continue;
+            }
+            widget->setProperty(key.constData(), QVariant());
+            removed = !widget->dynamicPropertyNames().contains(key) || removed;
+        }
+        return removed;
+    }
+
+    if (!core || !core->extensionManager() || !form->commandHistory()) {
+        return false;
+    }
+
+    QExtensionManager* manager = core->extensionManager();
+    auto* sheet = qt_extension<QDesignerPropertySheetExtension*>(manager, widget);
+    auto* dynamic = qt_extension<QDesignerDynamicPropertySheetExtension*>(manager, widget);
+    if (!sheet || !dynamic) {
+        return false;
+    }
+
+    bool removed = false;
+    bool ok = true;
+    form->beginCommand(QObject::tr("Remove native Material declarations"));
+    for (const QString& name : names) {
+        const int index = sheet->indexOf(name);
+        if (index < 0 || !dynamic->isDynamicProperty(index)) {
+            continue;
+        }
+        auto* command = new NativeDeclarationCommand(
+            widget, manager, name, sheet->property(index),
+            sheet->isChanged(index), NativeDeclarationCommand::Operation::Erase);
+        form->commandHistory()->push(command);
+        removed = command->succeeded() || removed;
+        ok = command->succeeded() && ok;
+    }
+    form->endCommand();
+    if (removed) {
+        form->setDirty(true);
+    }
+    return removed && ok;
 }
 
 QStringList editablePropertyNames(const QWidget* widget)

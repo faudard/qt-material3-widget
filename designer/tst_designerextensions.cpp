@@ -79,6 +79,42 @@ private slots:
         QVERIFY(QtMaterial3Designer::nativeEditablePropertyNames(&firstClass).isEmpty());
     }
 
+    void removingNativeDeclarationsIsDistinctFromReset()
+    {
+        QPushButton button;
+        QVERIFY(QtMaterial3Designer::setNativeDesignerProperty(
+            &button, QStringLiteral("qtm3MaterialAdapt"), true));
+        QVERIFY(QtMaterial3Designer::setNativeDesignerProperty(
+            &button, QStringLiteral("qtm3MaterialVariant"), QStringLiteral("filled")));
+        QVERIFY(QtMaterial3Designer::setNativeDesignerProperty(
+            &button, QStringLiteral("qtm3MaterialOptOut"), true));
+
+        // Reset preserves authored property names and writes canonical defaults.
+        QVERIFY(QtMaterial3Designer::resetNativeDesignerProperties(&button));
+        QCOMPARE(button.property("qtm3MaterialAdapt").toBool(), false);
+        QVERIFY(button.dynamicPropertyNames().contains("qtm3MaterialAdapt"));
+        QVERIFY(button.dynamicPropertyNames().contains("qtm3MaterialVariant"));
+
+        // Clear removes the declarations (not just the effective values).
+        QVERIFY(QtMaterial3Designer::clearNativeDesignerProperties(&button));
+        QVERIFY(!button.dynamicPropertyNames().contains("qtm3MaterialAdapt"));
+        QVERIFY(!button.dynamicPropertyNames().contains("qtm3MaterialVariant"));
+        QVERIFY(!button.dynamicPropertyNames().contains("qtm3MaterialOptOut"));
+        QVERIFY(!QtMaterialNativeAdapter::isDeclared(&button));
+        QVERIFY(!QtMaterialNativeAdapter::applyDeclared(&button));
+        QVERIFY(!QtMaterial3Designer::clearNativeDesignerProperties(&button));
+
+        // A new declaration remains possible following a removal.
+        QVERIFY(QtMaterial3Designer::setNativeDesignerProperty(
+            &button, QStringLiteral("qtm3MaterialAdapt"), true));
+        QVERIFY(QtMaterialNativeAdapter::applyDeclared(&button));
+        QVERIFY(QtMaterialNativeAdapter::remove(&button));
+        QVERIFY(QtMaterial3Designer::clearNativeDesignerProperties(&button));
+
+        QtMaterialSplitButton material;
+        QVERIFY(!QtMaterial3Designer::clearNativeDesignerProperties(&material));
+    }
+
     void nativePolicyMatrixRejectsUnsupportedDeclarations()
     {
         QPushButton push;

@@ -40,11 +40,15 @@ The editor writes the existing facade's opt-in dynamic properties:
 | `qtm3MaterialDensity` | string | default, compact, comfortable | all except QProgressBar |
 | `qtm3MaterialTextFieldVariant` | string | outlined, filled | QLineEdit |
 
-Qt Designer uses the dynamic-property sheet and form-window cursor for
-serializable edits and value undo/redo. **Reset** returns to explicit defaults;
-it does not delete the dynamic property itself. The standard Designer property
-editor can remove a dynamic property entirely. For widgets not yet configured,
-the editor avoids creating default-valued dynamic properties.
+Qt Designer uses its dynamic-property sheet, form-window cursor and
+**form command history** together. A newly registered property and its initial
+value are one Undo/Redo operation; Undo removes the declaration itself.
+**Reset** returns existing properties to explicit defaults without deleting
+their names. The separate **Remove Material declarations** action deletes
+all authored native Material properties in one undoable group; Redo removes
+them again. Widgets without authored declarations are left unchanged.
+For widgets not yet configured, the editor avoids creating default-valued
+dynamic properties.
 
 After generated UIC initialization, opt into adaptation in the application:
 
@@ -81,6 +85,38 @@ This covers `.ui` → UIC → runtime, **not** the interactive Designer
 save/reopen or host-level Undo/Redo functionality. Those still require
 testing with a running Designer/Qt Creator host and are not claimed as
 automatically certified.
+
+## 1.19.3 — Designer host undoable declarations
+
+Native property creation is now represented by an explicit registration
+command in Designer's `commandHistory()`, grouped with the existing form
+cursor value edit. This matters for the **first** edit: Undo must remove
+the new declaration, not leave its default behind in the saved `.ui`.
+A separate command erases all authored native Material declarations
+without losing the ability to restore them with Undo.
+
+`designer_extensions_contract` automatically checks standalone reset
+versus removal, clean property-name lists and re-declaration. These tests
+do **not** emulate Qt Designer's internal undo stack or file writer.
+
+**Interactive Qt Designer validation gate (Qt 5.14.2 and Qt 6):**
+
+1. Open a form containing an ordinary QPushButton (not a promoted widget);
+   use **Configure native Material 3...** to enable adaptation and choose
+   Filled Tonal / Compact.
+2. Save the form and verify the emitted `qtm3Material*` dynamic properties
+   are typed and use `stdset="0"`. Undo once, save again and verify the
+   newly declared properties are gone. Redo and verify they return.
+3. With the declarations present, choose **Reset** and verify values
+   return to defaults but declarations remain. Undo restores prior values.
+4. Choose **Remove Material declarations**, save, and verify the names
+   disappear entirely. Undo restores the names and previous values; Redo
+   removes them again.
+5. Reopen the form and verify the QPushButton remains a QPushButton; UIC
+   and `applyDeclaredToDescendants()` preserve runtime behavior.
+
+Mark this gate complete only after running it against a live Designer host.
+C++ compilation and AUTOUIC cannot establish real host Undo/Redo behavior.
 
 ## Install and package
 
