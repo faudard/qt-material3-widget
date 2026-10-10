@@ -38,10 +38,11 @@ WindowWidthSizeClass = QtMaterial.WindowWidthSizeClass
 WindowHeightSizeClass = QtMaterial.WindowHeightSizeClass
 
 from . import Widgets
+from .LazyTabs import LazyTabs
 
 __version__ = "1.0.0"
 __all__ = [
-    "Widgets", "QtMaterial", "Theme", "ThemeBuilder", "ThemeContext", "ThemeOptions",
+    "Widgets", "LazyTabs", "QtMaterial", "Theme", "ThemeBuilder", "ThemeContext", "ThemeOptions",
     "ThemeMode", "ContrastMode", "ThemePreference", "ThemeVariant",
     "ColorBackendPolicy", "MotionScheme", "Density", "ChipVariant", "SnackbarDuration",
     "SnackbarDismissReason", "TabsVariant", "TabsDensity",

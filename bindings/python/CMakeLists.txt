@@ -234,6 +234,11 @@ configure_file(
     "${_qtm3_python_package_dir}/Widgets.py"
     COPYONLY
 )
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/LazyTabs.py"
+    "${_qtm3_python_package_dir}/LazyTabs.py"
+    COPYONLY
+)
 
 install(
     TARGETS ${_qtm3_python_extension}
@@ -244,6 +249,7 @@ install(
     FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/__init__.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/Widgets.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/LazyTabs.py"
     DESTINATION QtMaterial3
 )
 
@@ -253,6 +259,13 @@ if(QTMATERIAL3_BUILD_TESTS)
         COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_bindings.py"
     )
     set_tests_properties(python_bindings_contract PROPERTIES
+        ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR};QT_QPA_PLATFORM=offscreen"
+    )
+    add_test(
+        NAME python_bindings_lazy_tabs
+        COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_lazy_tabs.py"
+    )
+    set_tests_properties(python_bindings_lazy_tabs PROPERTIES
         ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR};QT_QPA_PLATFORM=offscreen"
     )
     add_test(

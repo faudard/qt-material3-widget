@@ -29,7 +29,8 @@ def check_wheel(directory: Path) -> None:
 
     with zipfile.ZipFile(wheel) as archive:
         contents = set(archive.namelist())
-        for path in ("QtMaterial3/__init__.py", "QtMaterial3/Widgets.py"):
+        for path in ("QtMaterial3/__init__.py", "QtMaterial3/Widgets.py",
+                     "QtMaterial3/LazyTabs.py"):
             if path not in contents:
                 raise AssertionError(f"Missing wheel facade: {path}")
         native = [
