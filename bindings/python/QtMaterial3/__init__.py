@@ -22,6 +22,8 @@ ColorBackendPolicy = QtMaterial.ColorBackendPolicy
 MotionScheme = QtMaterial.MotionScheme
 Density = QtMaterial.Density
 ChipVariant = QtMaterial.ChipVariant
+SnackbarDuration = QtMaterial.SnackbarDuration
+SnackbarDismissReason = QtMaterial.SnackbarDismissReason
 TabsVariant = QtMaterial.TabsVariant
 TabsDensity = QtMaterial.TabsDensity
 TabsAlignment = QtMaterial.TabsAlignment
@@ -39,7 +41,8 @@ __version__ = "1.0.0"
 __all__ = [
     "Widgets", "QtMaterial", "Theme", "ThemeBuilder", "ThemeContext", "ThemeOptions",
     "ThemeMode", "ContrastMode", "ThemePreference", "ThemeVariant",
-    "ColorBackendPolicy", "MotionScheme", "Density", "ChipVariant", "TabsVariant", "TabsDensity",
+    "ColorBackendPolicy", "MotionScheme", "Density", "ChipVariant", "SnackbarDuration",
+    "SnackbarDismissReason", "TabsVariant", "TabsDensity",
     "TabsAlignment", "TabsOverflowMode", "QtMaterialRoute",
     "QtMaterialNavigationItem", "QtMaterialNavigationModel", "WindowSizeClass",
     "WindowWidthSizeClass", "WindowHeightSizeClass",

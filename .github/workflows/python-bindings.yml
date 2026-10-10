@@ -163,4 +163,4 @@ jobs:
         env:
           QT_QPA_PLATFORM: offscreen
         run: |
-          python -I -c "import QtMaterial3; from QtMaterial3 import Widgets; from PySide6.QtCore import qVersion; assert QtMaterial3.ThemeBuilder; assert Widgets.QtMaterialFilledButton; assert qVersion() == '6.6.3'"
+          python -I -c "import QtMaterial3; from QtMaterial3 import Widgets; from PySide6.QtCore import qVersion; assert QtMaterial3.ThemeBuilder; assert Widgets.QtMaterialFilledButton; assert qVersion() == '6.6.3'; assert all(getattr(Widgets, name) for name in ('QtMaterialDialog', 'QtMaterialSnackbar', 'QtMaterialBadge', 'QtMaterialPagination', 'QtMaterialDivider')); assert QtMaterial3.SnackbarDuration.Indefinite"

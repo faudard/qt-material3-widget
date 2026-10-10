@@ -137,6 +137,54 @@ signals are the binding contract, so normal PySide6 patterns such as
 `widget.setProperty(...)`, property assignment and signal connections call
 the native C++ implementation.
 
+## Python Catalogue 2.0 (1.17.5)
+
+Five additional native widgets are bound, **Qt 6 / PySide6 only**:
+
+| Widget | Supported surface | Explicitly deferred |
+| --- | --- | --- |
+| `QtMaterialDialog` | title/supporting text, dismiss/restore-focus flags, open/close/reject signals, borrowed focus/default-button pointers | `setBodyWidget` / `bodyWidget` (reparent/replacement) |
+| `QtMaterialSnackbar` | text/action/duration/dismiss controls, lifecycle/action signals, progress/interaction properties | `SnackbarRequest` value payload and queue/host composition |
+| `QtMaterialBadge` | count, maximum, dot, display text and signals | — |
+| `QtMaterialPagination` | page/pageSize/totalCount, options, range, signals, borrowed theme context | `PaginationSpec` |
+| `QtMaterialDivider` | orientation, insets, thickness, color, decorative/label properties and signals | static allocating factories |
+
+`QtMaterialSnackbar` uses native `SnackbarDuration` and
+`SnackbarDismissReason` enums, exported under `QtMaterial3`.
+`QtMaterialOverlaySurface.setHostWidget()`, Dialog focus/default-button
+setters and Pagination theme-context setters accept **borrowed pointers**;
+they do not reparent or acquire the supplied QObject. Keep the referents alive
+while in use. When destroyed, C++ `QPointer` becomes null.
+
+```python
+from QtMaterial3 import Widgets, SnackbarDuration
+
+badge = Widgets.QtMaterialBadge()
+badge.setCount(12)
+
+pagination = Widgets.QtMaterialPagination()
+pagination.setTotalCount(150)
+pagination.setPageSize(25)
+
+snackbar = Widgets.QtMaterialSnackbar()
+snackbar.setText("Saved")
+snackbar.setDuration(SnackbarDuration.Indefinite)
+snackbar.setActionText("Undo")
+
+dialog = Widgets.QtMaterialDialog()
+dialog.setTitleText("Confirm changes")
+dialog.rejected.connect(lambda: print("Cancelled"))
+```
+
+The wheel-contract lane covers imports, native properties/signals,
+QObject parent destruction, Shiboken wrapper invalidation and repeated
+allocation/collection for all five classes. See
+`bindings/python/tests/test_catalogue_2.py` and
+`bindings/python/examples/catalogue_2.py`.
+
+NavigationController, custom Tabs factories and C++ callback wrappers remain
+**outside 1.17.5** pending explicit ownership/disconnect/cancellation tests.
+
 ## Adaptive enums
 
 `WindowSizeClass`, `WindowWidthSizeClass`, `WindowHeightSizeClass` and
