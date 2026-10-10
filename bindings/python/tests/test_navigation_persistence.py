@@ -143,6 +143,23 @@ class NavigationPersistenceContracts(unittest.TestCase):
         Shiboken.delete(other_tabs)
         self.assertFalse(Shiboken.isValid(session))
 
+    def test_restore_overwrites_existing_form_on_same_widget_instance(self):
+        tabs, pages = self.make_pages()
+        session = NavigationSession(pages, prefetch_radius=0)
+        session.registerForm("/form")
+        session.navigate("/form")
+        self.wait_for(lambda: pages.isReady(1))
+        form = pages._entry(1).content
+        field(form, "username").setText("Original")
+        snapshot = session.saveState()
+
+        field(form, "username").setText("Changed locally")
+        self.assertEqual(field(form, "username").text(), "Changed locally")
+        self.assertTrue(session.restoreState(snapshot))
+        self.assertIs(pages._entry(1).content, form)
+        self.assertEqual(field(form, "username").text(), "Original")
+        Shiboken.delete(tabs)
+
     def test_unregistration_releases_callback_captures(self):
         class Capture:
             pass
