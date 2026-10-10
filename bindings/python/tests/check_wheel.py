@@ -31,7 +31,7 @@ def check_wheel(directory: Path) -> None:
         contents = set(archive.namelist())
         for path in ("QtMaterial3/__init__.py", "QtMaterial3/Widgets.py",
                      "QtMaterial3/LazyTabs.py", "QtMaterial3/AsyncLazyTabs.py",
-                     "QtMaterial3/NavigationSession.py"):
+                     "QtMaterial3/NavigationSession.py", "QtMaterial3/FormState.py"):
             if path not in contents:
                 raise AssertionError(f"Missing wheel facade: {path}")
         native = [
