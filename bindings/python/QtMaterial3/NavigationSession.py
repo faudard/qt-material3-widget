@@ -72,7 +72,8 @@ class NavigationSession(QObject):
 
     def _require_gui(self) -> None:
         if (self._closed or not Shiboken.isValid(self._tabs)
-                or not Shiboken.isValid(self._pages)):
+                or not Shiboken.isValid(self._pages)
+                or getattr(self._pages, "_closed", False)):
             raise RuntimeError("NavigationSession has been closed or destroyed")
         if QThread.currentThread() != self.thread():
             raise RuntimeError("NavigationSession is restricted to the Qt GUI thread")
@@ -91,6 +92,8 @@ class NavigationSession(QObject):
         return normalized
 
     def _index(self, path: str) -> int:
+        if not path:
+            return -1
         matches = [
             index for index in range(self._tabs.count())
             if self._route(index) == path
@@ -185,7 +188,7 @@ class NavigationSession(QObject):
     def prefetchNeighbors(self) -> list[int]:
         """Bound pending data jobs; render only when AsyncLazyTabs activates tab."""
         self._require_gui()
-        if self._radius == 0:
+        if self._radius == 0 or getattr(self._pages, "_closed", False):
             return []
         current = self._tabs.currentIndex()
         if current < 0:
@@ -236,7 +239,9 @@ class NavigationSession(QObject):
         if isinstance(data, str):
             data = json.loads(data)
         data = _json_copy(data)
-        if not isinstance(data, dict) or data.get("version") != 1:
+        if (not isinstance(data, dict)
+                or type(data.get("version")) is not int
+                or data["version"] != 1):
             raise ValueError("Unsupported navigation session schema")
         history = data.get("history")
         cursor = data.get("cursor")
