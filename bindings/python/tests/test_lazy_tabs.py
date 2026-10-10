@@ -92,6 +92,25 @@ class LazyTabsContracts(unittest.TestCase):
         self.assertIsNone(lazy.lastError(1))
         Shiboken.delete(tabs)
 
+    def test_reordering_tracks_page_identity_not_stale_index(self):
+        tabs = Widgets.QtMaterialTabs()
+        lazy = LazyTabs(tabs)
+        calls = []
+        lazy.addLazyTab("First", lambda: QLabel("First"))
+        lazy.addLazyTab("Second", lambda: (calls.append("second"), QLabel("Second"))[1])
+        lazy.addLazyTab("Third", lambda: (calls.append("third"), QLabel("Third"))[1])
+        third_page = tabs.widget(2)
+
+        tabs.tabBar().moveTab(2, 1)
+        self.assertIs(tabs.widget(1), third_page)
+        tabs.setCurrentIndex(1)
+        self.assertEqual(calls, ["third"])
+        self.assertEqual(lazy.ensureLoaded(1).text(), "Third")
+        tabs.setCurrentIndex(2)
+        self.assertEqual(calls, ["third", "second"])
+        self.assertEqual(lazy.ensureLoaded(2).text(), "Second")
+        Shiboken.delete(tabs)
+
     def test_reentrant_factory_is_called_once(self):
         tabs = Widgets.QtMaterialTabs()
         lazy = LazyTabs(tabs)
