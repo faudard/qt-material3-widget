@@ -575,3 +575,22 @@ Release gates:
   Designer development module for the UIC/runtime test.
 - Interactive host save/reopen and Undo/Redo remain a distinct manual gate;
   this milestone does not falsely mark them as automated.
+
+## 1.19.3 — Designer Host Undoable Declarations
+
+Goal: make the **existence** of native policy properties reversible inside the
+actual Designer form's undo stack, not just their value.
+
+Release gates:
+
+- New dynamic-property registration and initial cursor value edit share one
+  Designer undo macro; Undo removes the property from the .ui definition.
+- The task menu offers separate Reset (preserve authored names) and Remove
+  Material declarations (erase names) operations with distinct semantics.
+- Removal is grouped using Designer's command history, and Undo restores
+  original types/values/changed flags; Redo deletes the names again.
+- Standalone QWidget tests cover Reset vs Remove, repeated deletion and
+  adding declarations again, on Qt 5.14.2 and Qt 6.
+- Interactive Designer save/reopen and host Undo/Redo remain a manual gate,
+  documented in docs/designer-plugin.md. No automated host certification
+  is claimed unless a real Designer-host runner is introduced.

@@ -44,6 +44,11 @@ bool setNativeDesignerProperty(
 bool resetNativeDesignerProperties(
     QWidget* widget,
     QDesignerFormEditorInterface* core = nullptr);
+// Remove authored dynamic declarations; unlike reset, this erases names from .ui.
+// In a Designer form, the operation is grouped and reversible through Undo/Redo.
+bool clearNativeDesignerProperties(
+    QWidget* widget,
+    QDesignerFormEditorInterface* core = nullptr);
 
 QStringList editablePropertyNames(const QWidget* widget);
 bool propertyCanReset(const QWidget* widget, const QString& propertyName);
