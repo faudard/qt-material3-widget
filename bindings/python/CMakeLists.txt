@@ -6,7 +6,23 @@ if(CMAKE_VERSION VERSION_LESS 3.22)
     message(FATAL_ERROR "QtMaterial3 Python bindings require CMake 3.22 or newer")
 endif()
 
-find_package(Python 3.10 REQUIRED COMPONENTS Interpreter Development)
+# The generated extension needs the CPython import library on Windows.
+# Link the imported CMake target rather than an unqualified python311.lib:
+# isolated PEP 517 build environments do not put the host Python 'libs'
+# directory in the MSVC linker search path.
+find_package(Python 3.10 REQUIRED COMPONENTS Interpreter Development.Module)
+if(NOT TARGET Python::Module)
+    message(FATAL_ERROR "Python::Module import target not found for ${Python_EXECUTABLE}")
+endif()
+if(WIN32)
+    get_target_property(_qtm3_python_import_lib Python::Module IMPORTED_IMPLIB)
+    if(NOT _qtm3_python_import_lib OR NOT EXISTS "${_qtm3_python_import_lib}")
+        message(FATAL_ERROR
+            "CPython extension import library is unavailable: "
+            "${_qtm3_python_import_lib}. Verify the interpreter's Development.Module installation.")
+    endif()
+    message(STATUS "QtMaterial3 Python extension import library: ${_qtm3_python_import_lib}")
+endif()
 
 set(_qtm3_pyside_config "${CMAKE_CURRENT_SOURCE_DIR}/pyside_config.py")
 
@@ -170,6 +186,7 @@ target_include_directories(${_qtm3_python_extension}
 
 target_link_libraries(${_qtm3_python_extension}
     PRIVATE
+        Python::Module
         qtmaterial3_widgets
         qtmaterial3_theme_runtime
         qtmaterial3_theme_model
