@@ -542,3 +542,24 @@ Release gates:
   existing Qt signal connections are preserved.
 - Qt 5.14.2 and Qt 6 build/test the Designer fixture, with a palette-only fallback
   when the optional Qt Designer development API is unavailable.
+
+## 1.19.2 — Designer Native Round-trip Matrix
+
+Goal: certify typed .ui policy declarations across all eight native widget
+kinds, not only the QPushButton and QLineEdit smoke cases.
+
+Release gates:
+
+- Dedicated AUTOUIC form covers QPushButton, QToolButton, QCheckBox,
+  QRadioButton, QSlider, QComboBox, QLineEdit and QProgressBar.
+- The fixture includes explicit opt-out and an undeclared native control.
+- UIC keeps native class identity, bool/string types, ordinary values and
+  signal behavior for every relevant control.
+- Runtime opt-in is idempotent, skips non-declared / opted-out controls,
+  and can be removed and reapplied without leaking facade state.
+- Designer extension unit tests reject unsupported property/widget
+  combinations, invalid enum-like values and mistyped values.
+- Qt 5.14.2 and Qt 6 CI exercise the new matrix without requiring the
+  Designer development module for the UIC/runtime test.
+- Interactive host save/reopen and Undo/Redo remain a distinct manual gate;
+  this milestone does not falsely mark them as automated.

@@ -64,6 +64,24 @@ Qt controls, runtime opt-in, opt-out, class identity and removal.
 reset. A full interactive Designer undo/redo UI test requires the Qt Designer
 host; the test suite does not claim to automate that host.
 
+## 1.19.2 — Native round-trip matrix
+
+The `designer_native_roundtrip` gate compiles `designer/native_roundtrip.ui`
+with AUTOUIC using standard Qt Widgets. It checks **all eight supported
+native control families** (buttons, selection, slider, combo, input and
+progress) plus an explicit opt-out and an undeclared button.
+
+The test verifies exact native class identity, typed `bool` and `QString`
+dynamic declarations, ordinary Qt control values and signals, initial
+runtime adaptation, repeated application and reversible removal. An extended
+`designer_extensions_contract` also checks that unsupported widget/property
+combinations and mistyped values are rejected.
+
+This covers `.ui` → UIC → runtime, **not** the interactive Designer
+save/reopen or host-level Undo/Redo functionality. Those still require
+testing with a running Designer/Qt Creator host and are not claimed as
+automatically certified.
+
 ## Install and package
 
 A normal install places the plugin below `${CMAKE_INSTALL_LIBDIR}/qt<major>/plugins/designer` unless `QTMATERIAL3_DESIGNER_PLUGIN_INSTALL_DIR` is overridden.

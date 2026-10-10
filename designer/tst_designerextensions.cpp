@@ -5,6 +5,10 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QProgressBar>
+#include <QToolButton>
+#include <QCheckBox>
+#include <QRadioButton>
+#include <QSlider>
 #include <QWidget>
 
 #include "qtmaterial3designerextensions.h"
@@ -73,6 +77,61 @@ private slots:
                     .contains(QStringLiteral("qtm3MaterialDensity")));
         QtMaterialSplitButton firstClass;
         QVERIFY(QtMaterial3Designer::nativeEditablePropertyNames(&firstClass).isEmpty());
+    }
+
+    void nativePolicyMatrixRejectsUnsupportedDeclarations()
+    {
+        QPushButton push;
+        QToolButton tool;
+        QCheckBox check;
+        QRadioButton radio;
+        QSlider slider;
+        QComboBox combo;
+        QLineEdit line;
+        QProgressBar progress;
+        const QList<QWidget*> controls = {
+            &push, &tool, &check, &radio, &slider, &combo, &line, &progress
+        };
+        for (QWidget* control : controls) {
+            const QStringList names =
+                QtMaterial3Designer::nativeEditablePropertyNames(control);
+            QVERIFY(names.contains(QStringLiteral("qtm3MaterialAdapt")));
+            QVERIFY(names.contains(QStringLiteral("qtm3MaterialOptOut")));
+            QVERIFY(QtMaterial3Designer::setNativeDesignerProperty(
+                control, QStringLiteral("qtm3MaterialAdapt"), true));
+            QVERIFY(!QtMaterial3Designer::setNativeDesignerProperty(
+                control, QStringLiteral("qtm3MaterialAdapt"), QStringLiteral("true")));
+            QVERIFY(!QtMaterial3Designer::setNativeDesignerProperty(
+                control, QStringLiteral("qtm3MaterialOptOut"), 1));
+            QVERIFY(!QtMaterial3Designer::setNativeDesignerProperty(
+                control, QStringLiteral("notAProperty"), true));
+        }
+
+        const QString variant = QStringLiteral("qtm3MaterialVariant");
+        const QString fieldVariant = QStringLiteral("qtm3MaterialTextFieldVariant");
+        const QString density = QStringLiteral("qtm3MaterialDensity");
+        QVERIFY(QtMaterial3Designer::setNativeDesignerProperty(
+            &tool, variant, QStringLiteral("elevated")));
+        QVERIFY(QtMaterial3Designer::setNativeDesignerProperty(
+            &line, fieldVariant, QStringLiteral("filled")));
+        QVERIFY(!QtMaterial3Designer::setNativeDesignerProperty(
+            &check, variant, QStringLiteral("outlined")));
+        QVERIFY(!QtMaterial3Designer::setNativeDesignerProperty(
+            &push, fieldVariant, QStringLiteral("filled")));
+        QVERIFY(!QtMaterial3Designer::setNativeDesignerProperty(
+            &progress, density, QStringLiteral("compact")));
+        QVERIFY(!QtMaterial3Designer::setNativeDesignerProperty(
+            &slider, density, QStringLiteral("narrow")));
+        QCOMPARE(tool.property("qtm3MaterialVariant").toString(),
+                 QStringLiteral("elevated"));
+        QCOMPARE(line.property("qtm3MaterialTextFieldVariant").toString(),
+                 QStringLiteral("filled"));
+        QCOMPARE(progress.property("qtm3MaterialDensity").isValid(), false);
+
+        for (QWidget* control : controls) {
+            QVERIFY(QtMaterial3Designer::resetNativeDesignerProperties(control));
+            QCOMPARE(control->property("qtm3MaterialAdapt").toBool(), false);
+        }
     }
 
     void exposesCuratedEditableProperties()

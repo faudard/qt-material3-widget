@@ -100,6 +100,27 @@ if(QTMATERIAL3_BUILD_TESTS)
     set_target_properties(tst_qtmaterial3_designer_ui_smoke PROPERTIES AUTOUIC ON)
     add_test(NAME designer_ui_smoke COMMAND tst_qtmaterial3_designer_ui_smoke)
 
+    # 1.19.2: AUTOUIC must deserialize native Material declarations for
+    # every supported Qt widget kind (including opt-out and no declaration).
+    add_executable(tst_qtmaterial3_native_roundtrip
+        tst_native_roundtrip.cpp
+        native_roundtrip.ui
+    )
+    target_link_libraries(tst_qtmaterial3_native_roundtrip
+        PRIVATE
+            Qt${QT_VERSION_MAJOR}::Test
+            Qt${QT_VERSION_MAJOR}::Widgets
+            qtmaterial3_widgets
+    )
+    target_include_directories(tst_qtmaterial3_native_roundtrip
+        PRIVATE "${PROJECT_SOURCE_DIR}/include"
+    )
+    set_target_properties(tst_qtmaterial3_native_roundtrip PROPERTIES
+        AUTOMOC ON
+        AUTOUIC ON
+    )
+    add_test(NAME designer_native_roundtrip COMMAND tst_qtmaterial3_native_roundtrip)
+
     if(TARGET Qt${QT_VERSION_MAJOR}::Designer)
         add_executable(tst_qtmaterial3_designer_extensions
             tst_designerextensions.cpp
