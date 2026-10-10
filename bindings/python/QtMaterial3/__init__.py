@@ -31,6 +31,8 @@ TabsOverflowMode = QtMaterial.TabsOverflowMode
 QtMaterialRoute = QtMaterial.QtMaterialRoute
 QtMaterialNavigationItem = QtMaterial.QtMaterialNavigationItem
 QtMaterialNavigationModel = QtMaterial.QtMaterialNavigationModel
+QtMaterialNavigationController = QtMaterial.QtMaterialNavigationController
+QtMaterialStackedWidgetController = QtMaterial.QtMaterialStackedWidgetController
 WindowSizeClass = QtMaterial.WindowSizeClass
 WindowWidthSizeClass = QtMaterial.WindowWidthSizeClass
 WindowHeightSizeClass = QtMaterial.WindowHeightSizeClass
@@ -44,6 +46,7 @@ __all__ = [
     "ColorBackendPolicy", "MotionScheme", "Density", "ChipVariant", "SnackbarDuration",
     "SnackbarDismissReason", "TabsVariant", "TabsDensity",
     "TabsAlignment", "TabsOverflowMode", "QtMaterialRoute",
-    "QtMaterialNavigationItem", "QtMaterialNavigationModel", "WindowSizeClass",
+    "QtMaterialNavigationItem", "QtMaterialNavigationModel",
+    "QtMaterialNavigationController", "QtMaterialStackedWidgetController", "WindowSizeClass",
     "WindowWidthSizeClass", "WindowHeightSizeClass",
 ]
