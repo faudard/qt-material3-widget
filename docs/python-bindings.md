@@ -28,6 +28,45 @@ The PEP 517 build installs the matching PySide6/Shiboken6 generator toolchain,
 configures the native project with `QTMATERIAL3_BUILD_PYTHON_BINDINGS=ON`, and
 packages the generated extension together with the small Python facade.
 
+## Wheel reliability / ABI contract (1.17.4)
+
+The **supported build matrix** is CPython **3.10–3.12**, 64-bit, with
+**PySide6, PySide6-Essentials, PySide6-Addons, shiboken6 and
+shiboken6-generator all exactly at 6.6.3**, and a matching **Qt 6.6.3
+development SDK**. PySide6 6.6.3 itself declares Python < 3.13, so Python
+3.13/3.14 are intentionally rejected rather than advertising unusable wheels.
+
+The CMake configure step now checks Python, the installed distribution versions,
+the loaded Qt runtime (`PySide6.QtCore.qVersion()`) and the selected Qt SDK
+(`Qt6Core_VERSION`). A mismatch stops the build before Shiboken generates code.
+To inspect the installed wheel toolchain:
+
+```bash
+# Build environment (generator installed by PEP 517)
+python bindings/python/pyside_config.py --verify-abi
+# Installed wheel environment (generator is not a runtime dependency)
+python bindings/python/pyside_config.py --verify-runtime-abi
+```
+
+The GitHub Actions `Python bindings` workflow builds wheels for Ubuntu
+(CPython 3.10, 3.11 and 3.12), macOS (3.11) and Windows (3.11), audits wheel tags,
+packaged Python facade/native extension and the pinned dependency, installs the
+wheel, runs `pip check`, imports in Python's isolated mode and executes all
+ownership contracts. In particular the stress tests check:
+
+- parent-owned QObject destruction invalidates every child wrapper;
+- unparenting permits a widget to outlive its former parent;
+- Tooltip's target is borrowed and goes null when its parent is destroyed;
+- Tabs never assumes ownership of its NavigationModel, including after detaching
+  or the model's external Qt parent is destroyed.
+
+**Build-time wheel is not a universal binary:** the wheel tag must match the
+build host/CPython ABI and architecture. The CI audit verifies local wheel
+integrity, **not** `manylinux` repair, redistribution portability,
+code-signing, notarization, release publication or compatibility with arbitrary
+system Qt versions. Do not publish wheels as cross-machine compatible without a
+separate deployment and binary-dependency audit.
+
 ## Direct CMake development build
 
 Install CMake 3.22+ and matching PySide6/Shiboken6 packages in the Python interpreter used by CMake, then configure:

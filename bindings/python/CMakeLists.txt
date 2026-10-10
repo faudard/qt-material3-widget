@@ -6,7 +6,20 @@ if(CMAKE_VERSION VERSION_LESS 3.22)
     message(FATAL_ERROR "QtMaterial3 Python bindings require CMake 3.22 or newer")
 endif()
 
-find_package(Python 3.10 REQUIRED COMPONENTS Interpreter Development)
+# The generated extension needs the CPython import library on Windows.
+# Link the imported CMake target rather than an unqualified python311.lib:
+# isolated PEP 517 build environments do not put the host Python 'libs'
+# directory in the MSVC linker search path.
+find_package(Python 3.10 REQUIRED COMPONENTS Interpreter Development.Module)
+if(NOT TARGET Python::Module)
+    message(FATAL_ERROR "Python::Module import target not found for ${Python_EXECUTABLE}")
+endif()
+if(WIN32)
+    # FindPython may expose the import library via IMPORTED_IMPLIB or via
+    # per-configuration IMPORTED_IMPLIB_RELEASE/DEBUG. The imported target
+    # resolves the correct absolute path when linking either way.
+    message(STATUS "QtMaterial3 Python extension: linking Python::Module for ${Python_EXECUTABLE}")
+endif()
 
 set(_qtm3_pyside_config "${CMAKE_CURRENT_SOURCE_DIR}/pyside_config.py")
 
@@ -103,19 +116,28 @@ foreach(_qtm3_python_type IN LISTS _qtm3_python_types)
 endforeach()
 
 set(_qtm3_shiboken_include_options)
+set(_qtm3_shiboken_framework_options)
 foreach(_qtm3_qt_target IN ITEMS Qt6::Core Qt6::Gui Qt6::Widgets)
     get_target_property(_qtm3_qt_includes
         ${_qtm3_qt_target} INTERFACE_INCLUDE_DIRECTORIES)
     foreach(_qtm3_include IN LISTS _qtm3_qt_includes)
         if(_qtm3_include AND NOT _qtm3_include MATCHES "^\\$<")
             list(APPEND _qtm3_shiboken_include_options "-I${_qtm3_include}")
+            # Apple's Qt SDK uses framework-relative <QtCore/...> includes.
+            # Clang's -I framework/Headers alone cannot resolve that syntax.
+            if(APPLE AND _qtm3_include MATCHES "^(.*)/[^/]+\\.framework/Headers$")
+                list(APPEND _qtm3_shiboken_framework_options "-F${CMAKE_MATCH_1}")
+            endif()
         endif()
     endforeach()
 endforeach()
 list(REMOVE_DUPLICATES _qtm3_shiboken_include_options)
+list(REMOVE_DUPLICATES _qtm3_shiboken_framework_options)
 
 set(_qtm3_shiboken_options
     --generator-set=shiboken
+    --language-level=c++17
+    ${_qtm3_shiboken_framework_options}
     --enable-parent-ctor-heuristic
     --enable-pyside-extensions
     --enable-return-value-heuristic
@@ -167,6 +189,7 @@ target_include_directories(${_qtm3_python_extension}
 
 target_link_libraries(${_qtm3_python_extension}
     PRIVATE
+        Python::Module
         qtmaterial3_widgets
         qtmaterial3_theme_runtime
         qtmaterial3_theme_model
@@ -230,7 +253,6 @@ if(QTMATERIAL3_BUILD_TESTS)
     set_tests_properties(python_bindings_contract PROPERTIES
         ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR};QT_QPA_PLATFORM=offscreen"
     )
-
     add_test(
         NAME python_bindings_catalogue_2
         COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_catalogue_2.py"

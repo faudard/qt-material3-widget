@@ -46,6 +46,18 @@ endif()
 
 if(QTMATERIAL3_BUILD_PYTHON_BINDINGS)
     find_package(Python 3.10 REQUIRED COMPONENTS Interpreter)
+    # Fail before compiling against a different PySide/Shiboken/Qt ABI.
+    execute_process(
+        COMMAND "${Python_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/bindings/python/pyside_config.py" --qt-version
+        RESULT_VARIABLE _qtm3_abi_result
+        OUTPUT_VARIABLE QTMATERIAL3_PYSIDE6_RUNTIME_QT_VERSION
+        ERROR_VARIABLE _qtm3_abi_error
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if(NOT _qtm3_abi_result EQUAL 0)
+        message(FATAL_ERROR "QtMaterial3 Python ABI preflight failed: ${_qtm3_abi_error}")
+    endif()
     execute_process(
         COMMAND "${Python_EXECUTABLE}" -c
             "from pathlib import Path; import PySide6; print(Path(PySide6.__file__).resolve().parent / 'Qt')"
@@ -69,6 +81,16 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets)
 
 if(QTMATERIAL3_BUILD_PYTHON_BINDINGS AND NOT QT_VERSION_MAJOR EQUAL 6)
     message(FATAL_ERROR "QtMaterial3 Python bindings are Qt6/PySide6-only")
+endif()
+
+if(QTMATERIAL3_BUILD_PYTHON_BINDINGS)
+    if(NOT Qt6Core_VERSION VERSION_EQUAL QTMATERIAL3_PYSIDE6_RUNTIME_QT_VERSION)
+        message(FATAL_ERROR
+            "Qt SDK ${Qt6Core_VERSION} must exactly match the PySide6 "
+            "runtime ${QTMATERIAL3_PYSIDE6_RUNTIME_QT_VERSION}; "
+            "set CMAKE_PREFIX_PATH to the matching Qt SDK.")
+    endif()
+    message(STATUS "QtMaterial3 Python ABI: PySide6/Shiboken6/Qt SDK ${Qt6Core_VERSION}")
 endif()
 
 set(

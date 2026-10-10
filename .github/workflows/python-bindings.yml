@@ -22,32 +22,60 @@ permissions:
 
 jobs:
   wheel-and-contract:
-    name: PySide6 / Shiboken6 wheel
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    name: Wheel + ABI + ownership (${{ matrix.os }}, py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            python: "3.10"
+            host: linux
+            arch: gcc_64
+          - os: ubuntu-24.04
+            python: "3.11"
+            host: linux
+            arch: gcc_64
+          - os: ubuntu-24.04
+            python: "3.12"
+            host: linux
+            arch: gcc_64
+          - os: macos-14
+            python: "3.11"
+            host: mac
+            arch: clang_64
+          - os: windows-2022
+            python: "3.11"
+            host: windows
+            arch: win64_msvc2019_64
 
     steps:
       - uses: actions/checkout@v6
 
-      # The PySide6 6.6.3 wheel supplies the runtime, not a complete Qt SDK
-      # with Qt6Config.cmake. Match the PySide6 ABI with Qt 6.6.3 from aqt,
-      # but do not install the unrelated distro qt6-base-dev packages.
-      - name: Install matching Qt SDK
+      # This is a build-time SDK, not an alternative runtime. The Python
+      # preflight additionally rejects any mismatch between Qt SDK and wheels.
+      - name: Install matching Qt 6.6.3 SDK
         uses: jurplel/install-qt-action@v4
         with:
           version: "6.6.3"
-          host: linux
+          host: ${{ matrix.host }}
           target: desktop
-          arch: gcc_64
+          arch: ${{ matrix.arch }}
           cache: true
 
-      - name: Restore Python 3.11 after Qt setup
+      - name: Select supported CPython
         uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python }}
           cache: pip
+          cache-dependency-path: bindings/python/pyproject.toml
 
-      - name: Install Shiboken parser toolchain
+      # Keep the proven Ubuntu Shiboken 6.6.3 parser/GCC 10 layout. Qt's
+      # native binaries and generator must share the same compiler ABI.
+      - name: Install Linux Shiboken parser toolchain
+        if: runner.os == 'Linux'
+        shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install -y llvm g++-10
@@ -57,35 +85,82 @@ jobs:
           sudo cp /usr/lib/gcc/x86_64-linux-gnu/10/cc1plus /opt/rh/gcc-toolset-10/root/usr/lib/gcc/x86_64-linux-gnu/10/
           echo "LLVM_INSTALL_DIR=$(llvm-config --prefix)" >> "$GITHUB_ENV"
 
+      - name: Install macOS libclang for Shiboken parser
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          brew install llvm
+          echo "LLVM_INSTALL_DIR=$(brew --prefix llvm)" >> "$GITHUB_ENV"
+
+      - name: Install matching Windows Shiboken clang resource headers
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # Shiboken 6.6 uses older libclang. Do not use LLVM 20's headers:
+          # libclang cannot parse the newer x86 builtin intrinsics.
+          $url = "https://download.qt.io/development_releases/prebuilt/libclang/libclang-release_100-based-windows-vs2019_64.7z"
+          $archive = Join-Path $env:RUNNER_TEMP "libclang-10-qt.7z"
+          Invoke-WebRequest -Uri $url -OutFile $archive -MaximumRedirection 10
+          $expected = "22c53cad6b0fe27e1f2e6ed0afca4bce68b658851d95279762e21d073103318f"
+          $actual = (Get-FileHash -Path $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne $expected) { throw "Qt libclang archive SHA256 mismatch: $actual" }
+          $destination = Join-Path $env:RUNNER_TEMP "qt-libclang10"
+          New-Item -ItemType Directory -Path $destination -Force | Out-Null
+          & 7z x -y $archive "-o$destination" | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw "Failed to extract pinned Qt libclang archive" }
+          $clangRoot = Join-Path $destination "libclang"
+          if (-not (Test-Path (Join-Path $clangRoot "lib\clang"))) { $clangRoot = $destination }
+          if (-not (Test-Path (Join-Path $clangRoot "lib\clang"))) {
+            throw "Qt libclang resource headers not found in $destination"
+          }
+          "LLVM_INSTALL_DIR=$clangRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "CLANG_INSTALL_DIR=$clangRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Pinned Qt libclang intrinsic headers: $clangRoot"
+
+          # Qt 6.6 msvc2019_64: select MSVC v142 rather than the runner's v143.
+          $v142 = Get-ChildItem "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC" -Directory |
+            Where-Object { $_.Name -like "14.2*" } | Sort-Object Name -Descending | Select-Object -First 1
+          if (-not $v142) { throw "MSVC v142 toolset missing on Windows runner" }
+          "CMAKE_GENERATOR_TOOLSET=v142" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Using $($v142.FullName)"
+
+      - name: Install wheel toolchain
+        run: python -m pip install --upgrade pip build packaging
+
       - name: Build wheel
         env:
           CMAKE_PREFIX_PATH: ${{ env.QT_ROOT_DIR }}
-        run: |
-          python --version
-          python -m pip install --upgrade pip build
-          python -m build bindings/python --wheel --outdir wheelhouse
+        run: python -m build bindings/python --wheel --outdir wheelhouse
 
-      - name: Install wheel
-        run: python -m pip install wheelhouse/*.whl
+      - name: Audit wheel tags, payload and runtime metadata
+        run: python bindings/python/tests/check_wheel.py wheelhouse
 
-      - name: Run C++ ↔ Python and ownership contracts
-        env:
-          QT_QPA_PLATFORM: offscreen
-        run: python -m unittest discover -s bindings/python/tests -v
-
-      - name: Import smoke
-        env:
-          QT_QPA_PLATFORM: offscreen
+      - name: Install built wheel (not checkout sources)
+        shell: bash
         run: |
           python - <<'PY'
-          import QtMaterial3
-          from QtMaterial3 import Widgets
-          assert QtMaterial3.ThemeBuilder
-          assert Widgets.QtMaterialFilledButton
-          for name in (
-              "QtMaterialDialog", "QtMaterialSnackbar", "QtMaterialBadge",
-              "QtMaterialPagination", "QtMaterialDivider",
-          ):
-              assert getattr(Widgets, name)
-          assert QtMaterial3.SnackbarDuration.Indefinite
+          from pathlib import Path
+          import subprocess
+          import sys
+
+          wheels = list(Path("wheelhouse").glob("*.whl"))
+          assert len(wheels) == 1, wheels
+          subprocess.check_call([sys.executable, "-m", "pip", "install", str(wheels[0])])
           PY
+
+      - name: Check installed dependencies and ABI
+        run: |
+          python -m pip check
+          python bindings/python/pyside_config.py --verify-runtime-abi
+
+      - name: Run native Python ownership contracts
+        env:
+          QT_QPA_PLATFORM: offscreen
+          PYTHONFAULTHANDLER: "1"
+        run: python -m unittest discover -s bindings/python/tests -p "test_*.py" -v
+
+      - name: Verify isolated import from installed wheel
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          python -I -c "import QtMaterial3; from QtMaterial3 import Widgets; from PySide6.QtCore import qVersion; assert QtMaterial3.ThemeBuilder; assert Widgets.QtMaterialFilledButton; assert qVersion() == '6.6.3'; assert all(getattr(Widgets, name) for name in ('QtMaterialDialog', 'QtMaterialSnackbar', 'QtMaterialBadge', 'QtMaterialPagination', 'QtMaterialDivider')); assert QtMaterial3.SnackbarDuration.Indefinite"

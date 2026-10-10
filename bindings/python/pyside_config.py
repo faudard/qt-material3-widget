@@ -10,6 +10,7 @@ from __future__ import annotations
 import glob
 import importlib
 import importlib.machinery
+import importlib.metadata
 import os
 import sys
 import sysconfig
@@ -51,7 +52,54 @@ def extension_suffix() -> str:
     return importlib.machinery.EXTENSION_SUFFIXES[0]
 
 
+# Pinned at the ABI proven by the 1.17.0–1.17.3 wheel lane.
+# PySide6 6.6.3 explicitly requires CPython < 3.13 on PyPI.
+EXPECTED_QT_VERSION = "6.6.3"
+
+
+def check_abi(*, require_generator: bool = True) -> str:
+    if sys.implementation.name != "cpython":
+        raise RuntimeError("QtMaterial3 wheels require CPython")
+    if not ((3, 10) <= sys.version_info[:2] < (3, 13)):
+        raise RuntimeError(
+            "QtMaterial3/PySide6 6.6.3 supports CPython 3.10–3.12, "
+            f"not {sys.version_info.major}.{sys.version_info.minor}"
+        )
+    if sys.maxsize <= 2**32:
+        raise RuntimeError("QtMaterial3 wheels require a 64-bit Python interpreter")
+
+    names = ["PySide6", "PySide6-Essentials", "PySide6-Addons", "shiboken6"]
+    # The generator is a PEP 517 build dependency and is deliberately absent
+    # from a clean installation of the published runtime wheel.
+    if require_generator:
+        names.append("shiboken6-generator")
+    versions = {name: importlib.metadata.version(name) for name in names}
+    mismatched = {name: version for name, version in versions.items()
+                  if version != EXPECTED_QT_VERSION}
+    if mismatched:
+        raise RuntimeError(
+            f"PySide6/Shiboken ABI mismatch: expected {EXPECTED_QT_VERSION}; "
+            f"found {mismatched}"
+        )
+
+    from PySide6.QtCore import qVersion
+
+    runtime_version = qVersion()
+    if runtime_version != EXPECTED_QT_VERSION:
+        raise RuntimeError(
+            f"Qt runtime {runtime_version} does not match "
+            f"PySide6/Shiboken {EXPECTED_QT_VERSION}"
+        )
+    return runtime_version
+
+
 OPTIONS = {
+    "--verify-abi": lambda: "QtMaterial3 build ABI verified: Qt " + check_abi(),
+    "--verify-runtime-abi": lambda: (
+        "QtMaterial3 runtime ABI verified: Qt "
+        + check_abi(require_generator=False)
+    ),
+    "--qt-version": check_abi,
     "--shiboken-module-path": lambda: package_path("shiboken6"),
     "--shiboken-generator-path": lambda: package_path("shiboken6_generator"),
     "--pyside-path": lambda: package_path("PySide6"),
