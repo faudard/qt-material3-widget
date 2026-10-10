@@ -441,6 +441,23 @@ Release gates:
   manylinux/delocate/delvewheel repair, and ABI expansion remain separate tasks.
 
 
+### 1.17.10 — Navigation Persistence 2.0 (forms + data cache LRU)
+
+- Add safe, explicit form snapshots by unique QObject `objectName()` for
+  named Qt input controls without persisting pointers, layouts or callbacks.
+- Default-exclude password-mode fields, sensitive names and controls with
+  `navigationPersist=false`; duplicate names are not serialized.
+- Register per-route capture/restore providers, automatic capture on page
+  changes and restoration upon async `pageReady` in the Qt GUI thread.
+- Add a bounded LRU of completed, inactive **plain-data** prefetch payloads;
+  never implicitly delete an active, rendered or externally owned QWidget.
+- Preserve version-1 JSON session format and 256 KiB snapshot limit.
+- Gate on Linux CPython 3.10–3.12, macOS 3.11 and Windows 3.11 wheels,
+  security opt-outs, callbacks/GC, Qt ownership, route changes, restarts,
+  stale result handling and cache eviction/reload.
+- Explicit future scope: encrypted persistent storage adapters, typed state
+  migrations, stronger byte-budgeted caching and asyncio integration.
+
 ### 1.17.9 — Python Navigation 3.0 (session + prefetch)
 
 - Expose `NavigationSession` to coordinate native `QtMaterialTabs` and
