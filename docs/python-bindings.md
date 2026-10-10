@@ -67,6 +67,67 @@ code-signing, notarization, release publication or compatibility with arbitrary
 system Qt versions. Do not publish wheels as cross-machine compatible without a
 separate deployment and binary-dependency audit.
 
+## Python Navigation Session 3.0 (1.17.9)
+
+`NavigationSession` coordinates native `QtMaterialTabs` and a
+`QtMaterial3.AsyncLazyTabs` instance. It manages route history, JSON
+snapshots and bounded prefetching. **It never creates QWidget instances
+from background workers and does not own tab pages.**
+
+```python
+import json
+from QtMaterial3 import AsyncLazyTabs, NavigationSession, Widgets
+
+tabs = Widgets.QtMaterialTabs()
+pages = AsyncLazyTabs(tabs, max_workers=2, cancel_on_leave=False)
+# Register native tabs with distinct routes using pages.addAsyncTab(...)
+session = NavigationSession(pages, prefetch_radius=1, max_pending=2)
+
+session.navigate("/settings")
+session.back()
+session.forward()
+
+session.setPageState("/settings", {"filter": "active"})
+serialized = json.dumps(session.saveState())
+# On the next launch, register all tabs/routes before restoring:
+session.restoreState(serialized)
+```
+
+**History uses canonical route paths**, not tab indices. Moving tab positions
+does not change history. When a route disappears, back/forward skip it;
+restoring a session filters removed routes. Duplicate or missing destinations
+cannot be selected with `navigate()`. Normal navigation after `back()`
+truncates the old forward branch.
+
+**Portable session schema:** `saveState()` returns a detached JSON-compatible
+dictionary: `version=1`, `history`, `cursor`, `currentRoute` and
+per-route `pages`. `restoreState()` accepts a dictionary or JSON string,
+validates it before modifying navigation and rejects incompatible versions.
+Stored page values must be JSON-serializable plain data (not QObjects);
+the serialized snapshot limit is 256 KiB. Restore saved values in application
+logic using `pageState(route)`. The helper does not serialize QWidget
+instances, pending jobs, model pointers or live Python callbacks.
+
+**Bounded prefetch:** `prefetch_radius=1` schedules loaders for adjacent
+tabs after navigation, while `max_pending=2` limits how many data loads may
+be running or queued. `prefetchNeighbors()` may also be called explicitly.
+As in 1.17.8, completed data for inactive tabs remains cached and is
+rendered only on activation. For aggressive prefetch reuse, prefer
+`AsyncLazyTabs(cancel_on_leave=False)`; with `True`, active requests are
+cancelled on departure. Prefetch cannot force arbitrary blocking worker code
+to stop and does not impose a global CPU/memory budget on user data.
+
+All operations on `NavigationSession` must run on the Qt GUI thread;
+destruction of Tabs destroys the session. It never takes ownership of the
+AsyncLazyTabs manager or QWidget page content. `close()` disables session
+navigation and timers but leaves existing native tabs/pages untouched.
+
+Cross-platform installed-wheel tests cover route history, history truncation,
+tab reorderings, invalid route/snapshot validation, state deep-copying,
+prefetch limits and QObject destruction. See
+`bindings/python/tests/test_navigation_session.py` and
+`bindings/python/examples/navigation_session.py`.
+
 ## Async Python Lazy Tabs (1.17.8)
 
 `AsyncLazyTabs` adds **background data loading** to native
