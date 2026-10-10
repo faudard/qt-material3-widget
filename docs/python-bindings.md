@@ -67,6 +67,71 @@ code-signing, notarization, release publication or compatibility with arbitrary
 system Qt versions. Do not publish wheels as cross-machine compatible without a
 separate deployment and binary-dependency audit.
 
+## Async Python Lazy Tabs (1.17.8)
+
+`AsyncLazyTabs` adds **background data loading** to native
+`QtMaterialTabs`, while keeping all `QWidget` creation on the Qt GUI
+thread. It is a separate opt-in `QObject` helper from 1.17.7
+`LazyTabs` and does **not** bind C++ `std::function<QWidget*()>`.
+
+```python
+from PySide6.QtWidgets import QLabel
+from QtMaterial3 import AsyncLazyTabs, Widgets
+
+tabs = Widgets.QtMaterialTabs()
+pages = AsyncLazyTabs(tabs, max_workers=2, cancel_on_leave=True)
+
+def load(cancel):
+    # Worker thread: ordinary Python I/O or computation; check cancel often.
+    if cancel.is_set():
+        return None
+    return {"message": "Loaded"}
+
+def render(data):
+    # GUI thread only: it is safe to create and parent QWidgets here.
+    return QLabel(data["message"])
+
+pages.addAsyncTab("Home", load, render, route="/home")
+pages.loadFailed.connect(lambda index, error: print(index, error))
+pages.pageReady.connect(lambda index, widget: print("Ready", index))
+```
+
+Each page's loader receives a `threading.Event` cancellation token and must
+return **plain Python data**, not a `QWidget` or other `QObject`. The
+renderer executes only on the Qt GUI thread and must return a live `QWidget`
+without an unrelated parent. The returned widget is reparented to the native
+tab placeholder and follows Qt ownership.
+
+By default `cancel_on_leave=True`: moving away while loading sets the
+token and invalidates that request's generation. Cancellation is
+**cooperative**: it cannot forcibly stop arbitrary Python I/O or CPU work.
+Late results from cancelled, superseded or removed tabs are discarded, not
+rendered. `cancel_on_leave=False` allows background data to finish and cache
+until the user selects that page again, still rendering only the active page.
+The bounded worker pool defaults to two threads (configurable 1–8).
+
+- `addAsyncTab`, `registerAsyncTab`, `unregisterAsyncTab` and
+  `removeAsyncTab` manage registrations by placeholder identity, so tab
+  reorderings cannot remap callbacks.
+- `requestPage(index)` starts/retries data loading, `cancelPage(index)`
+  invalidates an outstanding request, `isLoading(index)` and
+  `isReady(index)` report progress, and `lastError(index)` exposes the
+  latest traceback.
+- `pageReady`, `loadFailed` and `pageCancelled` are delivered on the
+  GUI thread. A failing renderer can be retried using cached data without
+  re-running the loader.
+- `close()` cancels tasks and releases callbacks without waiting for
+  blocking workers; callers must still ensure their worker functions terminate
+  promptly. Destruction of the owning Tabs has the same nonblocking cleanup.
+
+Never perform QWidget work in the background loader. This is a threaded data
+pipeline, **not asyncio coroutine integration**. Threaded work may still
+outlive its cancellation briefly if an I/O operation ignores the token. The
+installed-wheel CI checks thread identity, cancellation, stale results, retries,
+tab reorderings and QObject deletion on Ubuntu, Windows and macOS.
+See `bindings/python/tests/test_async_lazy_tabs.py` and
+`bindings/python/examples/async_lazy_tabs.py`.
+
 ## Python lazy tab pages (1.17.7)
 
 `LazyTabs` is a Qt-owned Python `QObject` helper for the native
