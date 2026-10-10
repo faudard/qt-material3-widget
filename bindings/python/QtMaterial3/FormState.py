@@ -6,9 +6,11 @@ never persisted. Snapshots are JSON-compatible and contain no QObject.
 """
 from __future__ import annotations
 
+import json
 import re
 from typing import Any
 
+from PySide6.QtCore import QThread
 from PySide6.QtWidgets import (
     QCheckBox, QComboBox, QDoubleSpinBox, QLineEdit, QPlainTextEdit,
     QRadioButton, QSlider, QSpinBox, QTextEdit, QWidget,
@@ -89,6 +91,8 @@ def snapshotForm(root: QWidget) -> dict[str, Any]:
     """Capture uniquely named, non-secret inputs under a live Qt widget."""
     if not isinstance(root, QWidget) or not Shiboken.isValid(root):
         raise TypeError("snapshotForm requires a live QWidget")
+    if QThread.currentThread() != root.thread():
+        raise RuntimeError("Form snapshots must run on the Qt GUI thread")
     elements = [root, *root.findChildren(QWidget)]
     fields: dict[str, dict[str, Any]] = {}
     duplicates: set[str] = set()
@@ -107,7 +111,10 @@ def snapshotForm(root: QWidget) -> dict[str, Any]:
             fields[name] = record
     for name in duplicates:
         fields.pop(name, None)
-    return {"version": _VERSION, "fields": fields}
+    result = {"version": _VERSION, "fields": fields}
+    if len(json.dumps(result, ensure_ascii=False).encode("utf-8")) > 262144:
+        raise ValueError("Form snapshot exceeds the 256 KiB limit")
+    return result
 
 
 def restoreForm(root: QWidget, state: dict[str, Any]) -> int:
@@ -118,6 +125,8 @@ def restoreForm(root: QWidget, state: dict[str, Any]) -> int:
     """
     if not isinstance(root, QWidget) or not Shiboken.isValid(root):
         raise TypeError("restoreForm requires a live QWidget")
+    if QThread.currentThread() != root.thread():
+        raise RuntimeError("Form restoration must run on the Qt GUI thread")
     if (not isinstance(state, dict) or type(state.get("version")) is not int
             or state["version"] != _VERSION or not isinstance(state.get("fields"), dict)
             or len(state["fields"]) > _MAX_FIELDS):
