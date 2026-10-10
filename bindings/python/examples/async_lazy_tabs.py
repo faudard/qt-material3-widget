@@ -1,7 +1,5 @@
 """Async Material tabs: load data in a thread, construct widgets on the GUI thread."""
 
-import time
-
 from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
 from QtMaterial3 import AsyncLazyTabs, Widgets
 
