@@ -82,4 +82,10 @@ jobs:
           from QtMaterial3 import Widgets
           assert QtMaterial3.ThemeBuilder
           assert Widgets.QtMaterialFilledButton
+          for name in (
+              "QtMaterialDialog", "QtMaterialSnackbar", "QtMaterialBadge",
+              "QtMaterialPagination", "QtMaterialDivider",
+          ):
+              assert getattr(Widgets, name)
+          assert QtMaterial3.SnackbarDuration.Indefinite
           PY

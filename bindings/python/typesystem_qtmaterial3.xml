@@ -15,6 +15,8 @@
     <enum-type name="QtMaterialButtonSize"/>
     <enum-type name="QtMaterialButtonShape"/>
     <enum-type name="ChipVariant"/>
+    <enum-type name="SnackbarDuration"/>
+    <enum-type name="SnackbarDismissReason"/>
     <enum-type name="TabsVariant"/>
     <enum-type name="TabsDensity"/>
     <enum-type name="TabsAlignment"/>
@@ -47,6 +49,15 @@
     </object-type>
     <object-type name="QtMaterialControl" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialSurface" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <!-- Host pointer is borrowed and tracked by C++ QPointer. -->
+    <object-type name="QtMaterialOverlaySurface" delete-in-main-thread="yes" disable-wrapper="yes">
+      <modify-function signature="hostWidget()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="setHostWidget(QWidget*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+    </object-type>
     <object-type name="QtMaterialAbstractButton" delete-in-main-thread="yes" disable-wrapper="yes">
       <modify-function signature="themeContext()const">
         <modify-argument index="return">
@@ -92,6 +103,49 @@
 
     <object-type name="QtMaterialCard" delete-in-main-thread="yes" disable-wrapper="yes">
       <enum-type name="Variant"/>
+    </object-type>
+
+    <!-- 1.17.5: only tested value/property-driven surfaces. -->
+    <object-type name="QtMaterialDialog" delete-in-main-thread="yes" disable-wrapper="yes">
+      <!-- Body replacement reparents/detaches widgets: future ownership gate. -->
+      <modify-function signature="setBodyWidget(QWidget*)" remove="all"/>
+      <modify-function signature="bodyWidget()const" remove="all"/>
+      <modify-function signature="initialFocusWidget()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="setInitialFocusWidget(QWidget*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="defaultButton()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="setDefaultButton(QAbstractButton*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+    </object-type>
+    <object-type name="QtMaterialSnackbar" delete-in-main-thread="yes" disable-wrapper="yes">
+      <!-- Request payload/queue contracts remain outside this catalogue. -->
+      <modify-function signature="setRequest(const SnackbarRequest&amp;)" remove="all"/>
+      <modify-function signature="request()const" remove="all"/>
+    </object-type>
+    <object-type name="QtMaterialBadge" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialPagination" delete-in-main-thread="yes" disable-wrapper="yes">
+      <modify-function signature="spec()const" remove="all"/>
+      <modify-function signature="setSpec(const PaginationSpec&amp;)" remove="all"/>
+      <modify-function signature="themeContext()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="effectiveThemeContext()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="setThemeContext(ThemeContext*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+    </object-type>
+    <object-type name="QtMaterialDivider" delete-in-main-thread="yes" disable-wrapper="yes">
+      <!-- Static factories allocate widgets; defer their return ownership gate. -->
+      <modify-function signature="horizontal(QWidget*)" remove="all"/>
+      <modify-function signature="vertical(QWidget*)" remove="all"/>
     </object-type>
 
     <object-type name="QtMaterialNavigationBar" delete-in-main-thread="yes" disable-wrapper="yes"/>
