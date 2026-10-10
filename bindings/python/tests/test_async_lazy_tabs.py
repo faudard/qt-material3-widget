@@ -58,6 +58,29 @@ class AsyncLazyTabsContracts(unittest.TestCase):
         Shiboken.delete(tabs)
         self.assertFalse(Shiboken.isValid(async_tabs))
 
+    def test_immediate_switch_cancels_initially_selected_page(self):
+        tabs = Widgets.QtMaterialTabs()
+        async_tabs = AsyncLazyTabs(tabs)
+        started = threading.Event()
+        released = threading.Event()
+        cancelled = threading.Event()
+        def first_loader(token):
+            started.set()
+            released.wait(timeout=3.0)
+            if token.is_set():
+                cancelled.set()
+            return "too late"
+        async_tabs.addAsyncTab("Initial", first_loader, lambda s: QLabel(s))
+        self.wait_for(started.is_set)
+        async_tabs.addAsyncTab("Next", lambda _: "ready", lambda s: QLabel(s))
+        tabs.setCurrentIndex(1)
+        self.assertFalse(async_tabs.isLoading(0))
+        released.set()
+        self.wait_for(cancelled.is_set)
+        self.wait_for(lambda: async_tabs.isReady(1))
+        self.assertFalse(async_tabs.isReady(0))
+        Shiboken.delete(tabs)
+
     def test_change_tab_cancels_pending_and_ignores_stale_result(self):
         tabs = Widgets.QtMaterialTabs()
         async_tabs = AsyncLazyTabs(tabs, max_workers=2)
