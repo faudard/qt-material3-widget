@@ -82,7 +82,8 @@ class AsyncLazyTabs(QObject):
         )
         self._closed = False
         self._cancel_on_leave = bool(cancel_on_leave)
-        self._current_key: int | None = None
+        current = tabs.currentWidget()
+        self._current_key: int | None = id(current) if current is not None else None
         self._timer = QTimer(self)
         self._timer.setInterval(poll_interval_ms)
         self._timer.timeout.connect(self._drain)
@@ -170,6 +171,7 @@ class AsyncLazyTabs(QObject):
             lambda *_args, token=key: ref() is not None and ref()._discard(token)
         )
         if index == self._tabs.currentIndex():
+            self._current_key = key
             self.requestPage(index)
 
     def cancelPage(self, index: int) -> bool:
