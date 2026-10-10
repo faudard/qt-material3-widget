@@ -20,8 +20,6 @@ if(WIN32)
     # resolves the correct absolute path when linking either way.
     message(STATUS "QtMaterial3 Python extension: linking Python::Module for ${Python_EXECUTABLE}")
 endif()
-    message(STATUS "QtMaterial3 Python extension import library: ${_qtm3_python_import_lib}")
-endif()
 
 set(_qtm3_pyside_config "${CMAKE_CURRENT_SOURCE_DIR}/pyside_config.py")
 
