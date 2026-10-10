@@ -198,6 +198,11 @@ void tst_ButtonContracts::apiBasics()
 void tst_ButtonContracts::keyboardActivation()
 {
     for (const ButtonCase& testCase : buttonCases()) {
+        // Qt reparents the button when it is added to this form's layout.
+        // The owning unique_ptr must be destroyed BEFORE the parent form;
+        // otherwise QWidget::deleteChildren() deletes it a second time.
+        QWidget window;
+        QVBoxLayout layout(&window);
         std::unique_ptr<QAbstractButton> button(testCase.create());
         configureCommonButton(button.get(), testCase);
 
@@ -206,8 +211,6 @@ void tst_ButtonContracts::keyboardActivation()
         // dedicated keyboard-activation contract does. Keep real focus
         // assertions: we must not turn keyboard testing into direct events
         // sent to an unfocused widget.
-        QWidget window;
-        QVBoxLayout layout(&window);
         layout.addWidget(button.get());
         button->resize(button->sizeHint().expandedTo(testCase.minimumTouchTarget));
         window.show();
