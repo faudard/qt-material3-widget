@@ -441,6 +441,21 @@ Release gates:
   manylinux/delocate/delvewheel repair, and ABI expansion remain separate tasks.
 
 
+### 1.17.7 — Python Lazy Tabs factories (Qt-owned bridge)
+
+- Introduce an opt-in `LazyTabs` QObject helper, parented to native
+  `QtMaterialTabs`, to defer construction of page widgets to first selection.
+- Retain Python factories only while registered; release them on unregister,
+  tab removal, page destruction or Qt parent destruction.
+- Report factory exceptions through a Qt signal and support retries without
+  reentrant duplicate construction; transfer completed widgets to their tab
+  placeholders under Qt ownership, never to the Python helper.
+- Preserve `QtMaterialRoute` tab navigation and page identity across index
+  changes; reject widgets already parented into an unrelated form.
+- Test source and installed wheels on the existing 5-way OS/Python matrix.
+- Keep C++ `std::function<QWidget*()>` Shiboken overloads, Python subclassed
+  abstract controllers, and asynchronous/threaded page creation out of scope.
+
 ### 1.17.6 — Python navigation controller ownership
 
 - Expose the abstract native `QtMaterialNavigationController` interface and the
