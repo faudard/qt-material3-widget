@@ -249,6 +249,11 @@ configure_file(
     "${_qtm3_python_package_dir}/NavigationSession.py"
     COPYONLY
 )
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/FormState.py"
+    "${_qtm3_python_package_dir}/FormState.py"
+    COPYONLY
+)
 
 install(
     TARGETS ${_qtm3_python_extension}
@@ -262,6 +267,7 @@ install(
         "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/LazyTabs.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/AsyncLazyTabs.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/NavigationSession.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/FormState.py"
     DESTINATION QtMaterial3
 )
 
@@ -271,6 +277,13 @@ if(QTMATERIAL3_BUILD_TESTS)
         COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_bindings.py"
     )
     set_tests_properties(python_bindings_contract PROPERTIES
+        ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR};QT_QPA_PLATFORM=offscreen"
+    )
+    add_test(
+        NAME python_bindings_navigation_persistence
+        COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_navigation_persistence.py"
+    )
+    set_tests_properties(python_bindings_navigation_persistence PROPERTIES
         ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR};QT_QPA_PLATFORM=offscreen"
     )
     add_test(
