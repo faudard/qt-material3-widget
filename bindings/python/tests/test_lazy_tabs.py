@@ -132,7 +132,7 @@ class LazyTabsContracts(unittest.TestCase):
         lazy.addLazyTab("First", lambda: QWidget())
         holder = Capture()
         ref = weakref.ref(holder)
-        factory = lambda: (holder, QWidget())[1]
+        factory = lambda h=holder: (h, QWidget())[1]
         lazy.addLazyTab("Never loaded", factory)
         del factory, holder
         gc.collect()
