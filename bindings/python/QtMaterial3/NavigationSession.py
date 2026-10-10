@@ -66,7 +66,14 @@ class NavigationSession(QObject):
         self._prefetch_timer = QTimer(self)
         self._prefetch_timer.setSingleShot(True)
         self._prefetch_timer.timeout.connect(self.prefetchNeighbors)
+        # QTabWidget may emit currentChanged *before* QtMaterialTabs has
+        # finished reindexing its descriptors on insert/remove. Coalesce
+        # these notifications until the native operation has settled.
+        self._sync_timer = QTimer(self)
+        self._sync_timer.setSingleShot(True)
+        self._sync_timer.timeout.connect(self._record_current)
         tabs.currentChanged.connect(self._on_current_changed)
+        tabs.currentRouteChanged.connect(self._on_current_route_changed)
         tabs.routeChanged.connect(self._on_route_changed)
         self._record_current()
 
@@ -119,11 +126,16 @@ class NavigationSession(QObject):
         self._schedule_prefetch()
 
     def _on_current_changed(self, _index: int) -> None:
-        self._record_current()
+        if not self._restoring and not self._closed:
+            self._sync_timer.start(0)
+
+    def _on_current_route_changed(self, _route: object) -> None:
+        if not self._restoring and not self._closed:
+            self._sync_timer.start(0)
 
     def _on_route_changed(self, index: int, _route: object) -> None:
-        if index == self._tabs.currentIndex():
-            self._record_current()
+        if index == self._tabs.currentIndex() and not self._restoring:
+            self._sync_timer.start(0)
 
     def _schedule_prefetch(self) -> None:
         if self._radius and not self._restoring and not self._closed:
@@ -156,8 +168,8 @@ class NavigationSession(QObject):
             return False
         if index != self._tabs.currentIndex():
             self._tabs.setCurrentIndex(index)
-        else:
-            self._record_current()
+        self._sync_timer.stop()
+        self._record_current()
         return True
 
     def _travel(self, direction: int) -> bool:
@@ -296,5 +308,6 @@ class NavigationSession(QObject):
         self._require_gui()
         self._closed = True
         self._prefetch_timer.stop()
+        self._sync_timer.stop()
         self._history.clear()
         self._states.clear()
