@@ -62,6 +62,7 @@ class AsyncLazyTabs(QObject):
     """
 
     pageReady = Signal(int, QWidget)
+    dataReady = Signal(int)
     loadFailed = Signal(int, str)
     pageCancelled = Signal(int)
 
@@ -205,6 +206,22 @@ class AsyncLazyTabs(QObject):
         return bool(entry and entry.content is not None
                     and Shiboken.isValid(entry.content))
 
+    def hasCachedData(self, index: int) -> bool:
+        """Check whether preloaded data awaits GUI-thread widget rendering."""
+        entry = self._entry(index)
+        return bool(entry is not None and entry.payload is not _MISSING
+                    and entry.content is None)
+
+    def evictCachedData(self, index: int) -> bool:
+        """Discard inactive, finished plain data; never destroy a QWidget."""
+        entry = self._entry(index)
+        if (entry is None or entry.payload is _MISSING
+                or entry.future is not None or entry.content is not None
+                or self._tabs.currentIndex() == index):
+            return False
+        entry.payload = _MISSING
+        return True
+
     def lastError(self, index: int) -> str | None:
         entry = self._entry(index)
         return entry.error if entry else None
@@ -301,7 +318,13 @@ class AsyncLazyTabs(QObject):
                 self.loadFailed.emit(index, error)
             else:
                 entry.payload = payload
-                self._render(entry)
+                self.dataReady.emit(index)
+                # The receiver may have evicted cached data or removed the
+                # tab. Never render a stale entry after signal callbacks.
+                if (self._pages.get(key) is entry
+                        and Shiboken.isValid(entry.placeholder)
+                        and entry.payload is not _MISSING):
+                    self._render(entry)
         if not any(entry.future is not None for entry in self._pages.values()):
             self._timer.stop()
 
