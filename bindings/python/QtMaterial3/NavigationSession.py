@@ -412,6 +412,9 @@ class NavigationSession(QObject):
             self._history = retained
             self._cursor = new_cursor
             self._states = normalized_states
+            # Existing forms must receive restored values even if the same
+            # QWidget instance previously had locally captured state.
+            self._applied.clear()
             if target:
                 self._tabs.setCurrentIndex(self._index(target))
         finally:
