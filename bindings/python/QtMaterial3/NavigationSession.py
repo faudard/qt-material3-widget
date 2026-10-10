@@ -7,12 +7,14 @@ mutable tab positions or live QWidget pointers.
 from __future__ import annotations
 
 import json
-from typing import Any
+import traceback
+from typing import Any, Callable
 
 from PySide6.QtCore import QObject, QThread, QTimer, Signal
 from shiboken6 import Shiboken
 
 from .AsyncLazyTabs import AsyncLazyTabs
+from .FormState import snapshotForm, restoreForm
 from . import QtMaterialRoute
 from .Widgets import QtMaterialTabs
 
@@ -36,9 +38,12 @@ class NavigationSession(QObject):
     routeChanged = Signal(str)
     historyChanged = Signal(bool, bool)
     prefetchStarted = Signal(int)
+    cacheEvicted = Signal(int)
+    stateProviderFailed = Signal(str, str)
 
     def __init__(self, pages: AsyncLazyTabs, *, prefetch_radius: int = 1,
-                 max_pending: int = 2, max_history: int = 100):
+                 max_pending: int = 2, max_history: int = 100,
+                 max_cached_pages: int = 4):
         if not isinstance(pages, AsyncLazyTabs) or not Shiboken.isValid(pages):
             raise TypeError("NavigationSession requires live AsyncLazyTabs")
         if isinstance(prefetch_radius, bool) or not 0 <= prefetch_radius <= 5:
@@ -47,6 +52,8 @@ class NavigationSession(QObject):
             raise ValueError("max_pending must be 1..8")
         if isinstance(max_history, bool) or not 1 <= max_history <= 1000:
             raise ValueError("max_history must be 1..1000")
+        if type(max_cached_pages) is not int or not 0 <= max_cached_pages <= 64:
+            raise ValueError("max_cached_pages must be 0..64")
         tabs = pages.parent()
         if not isinstance(tabs, QtMaterialTabs) or not Shiboken.isValid(tabs):
             raise TypeError("AsyncLazyTabs must be parented to QtMaterialTabs")
@@ -57,6 +64,10 @@ class NavigationSession(QObject):
         self._radius = prefetch_radius
         self._limit = max_pending
         self._max_history = max_history
+        self._max_cached_pages = max_cached_pages
+        self._cached_keys: list[int] = []
+        self._providers: dict[str, tuple[Callable, Callable]] = {}
+        self._applied: dict[str, int] = {}
         self._history: list[str] = []
         self._cursor = -1
         self._states: dict[str, Any] = {}
@@ -75,6 +86,8 @@ class NavigationSession(QObject):
         tabs.currentChanged.connect(self._on_current_changed)
         tabs.currentRouteChanged.connect(self._on_current_route_changed)
         tabs.routeChanged.connect(self._on_route_changed)
+        pages.dataReady.connect(self._on_data_ready)
+        pages.pageReady.connect(self._on_page_ready)
         self._record_current()
 
     def _require_gui(self) -> None:
@@ -127,6 +140,8 @@ class NavigationSession(QObject):
 
     def _on_current_changed(self, _index: int) -> None:
         if not self._restoring and not self._closed:
+            if 0 <= self._cursor < len(self._history):
+                self._capture_route(self._history[self._cursor])
             self._sync_timer.start(0)
 
     def _on_current_route_changed(self, _route: object) -> None:
@@ -167,6 +182,8 @@ class NavigationSession(QObject):
         if index < 0:
             return False
         if index != self._tabs.currentIndex():
+            if 0 <= self._cursor < len(self._history):
+                self._capture_route(self._history[self._cursor])
             self._tabs.setCurrentIndex(index)
         self._sync_timer.stop()
         self._record_current()
@@ -178,6 +195,8 @@ class NavigationSession(QObject):
         while 0 <= target < len(self._history):
             index = self._index(self._history[target])
             if index >= 0:
+                if 0 <= self._cursor < len(self._history):
+                    self._capture_route(self._history[self._cursor])
                 self._cursor = target
                 self._restoring = True
                 try:
@@ -220,6 +239,99 @@ class NavigationSession(QObject):
                     self.prefetchStarted.emit(index)
         return started
 
+    def _on_data_ready(self, index: int) -> None:
+        """Keep only a bounded LRU of inactive, prefetched plain data."""
+        if self._closed or not Shiboken.isValid(self._tabs):
+            return
+        if not 0 <= index < self._tabs.count():
+            return
+        page = self._tabs.widget(index)
+        key = id(page)
+        if key in self._cached_keys:
+            self._cached_keys.remove(key)
+        if index != self._tabs.currentIndex() and self._pages.hasCachedData(index):
+            self._cached_keys.append(key)
+        self._trim_cache()
+
+    def _trim_cache(self) -> None:
+        while len(self._cached_keys) > self._max_cached_pages:
+            key = self._cached_keys.pop(0)
+            for index in range(self._tabs.count()):
+                if id(self._tabs.widget(index)) == key:
+                    if self._pages.evictCachedData(index):
+                        self.cacheEvicted.emit(index)
+                    break
+
+    def _on_page_ready(self, index: int, widget: object) -> None:
+        if self._closed or not Shiboken.isValid(self._tabs):
+            return
+        key = id(self._tabs.widget(index)) if 0 <= index < self._tabs.count() else None
+        if key in self._cached_keys:
+            self._cached_keys.remove(key)
+        path = self._route(index)
+        if path:
+            self._restore_route(path)
+
+    def registerStateProvider(
+        self, route: str, capture: Callable[[object], Any],
+        apply: Callable[[object, Any], None],
+    ) -> None:
+        """Register optional GUI-thread state callbacks for a loaded page."""
+        self._require_gui()
+        path = self._normalize(route)
+        if self._index(path) < 0:
+            raise ValueError("Cannot register a missing or ambiguous route")
+        if not callable(capture) or not callable(apply):
+            raise TypeError("State provider callbacks must be callable")
+        if path in self._providers:
+            raise ValueError("State provider already registered")
+        self._providers[path] = (capture, apply)
+        self._restore_route(path)
+
+    def registerForm(self, route: str) -> None:
+        """Persist safe, named Qt input values through FormState helpers."""
+        self.registerStateProvider(route, snapshotForm, restoreForm)
+
+    def unregisterStateProvider(self, route: str) -> bool:
+        self._require_gui()
+        path = self._normalize(route)
+        self._applied.pop(path, None)
+        return self._providers.pop(path, None) is not None
+
+    def _content_for_route(self, route: str):
+        index = self._index(route)
+        if index < 0 or not self._pages.isReady(index):
+            return None
+        entry = self._pages._entry(index)
+        return entry.content if entry is not None else None
+
+    def _capture_route(self, route: str) -> None:
+        if self._closed or route not in self._providers:
+            return
+        content = self._content_for_route(route)
+        if content is None:
+            return
+        try:
+            value = self._providers[route][0](content)
+            self.setPageState(route, value)
+            # Capturing a current form must not replay it into the same
+            # instance; it already contains the values we just captured.
+            self._applied[route] = id(content)
+        except Exception:
+            self.stateProviderFailed.emit(route, traceback.format_exc())
+
+    def _restore_route(self, route: str) -> None:
+        if self._closed or route not in self._providers or route not in self._states:
+            return
+        content = self._content_for_route(route)
+        if content is None or self._applied.get(route) == id(content):
+            return
+        try:
+            self._providers[route][1](content, _json_copy(self._states[route]))
+            self._applied[route] = id(content)
+        except Exception:
+            self.stateProviderFailed.emit(route, traceback.format_exc())
+
     def setPageState(self, route: str, value: Any) -> None:
         self._require_gui()
         path = self._normalize(route)
@@ -229,6 +341,7 @@ class NavigationSession(QObject):
         new_state[path] = _json_copy(value)
         _json_copy(new_state)
         self._states = new_state
+        self._applied.pop(path, None)
 
     def pageState(self, route: str, default: Any = None) -> Any:
         self._require_gui()
@@ -237,6 +350,8 @@ class NavigationSession(QObject):
 
     def saveState(self) -> dict[str, Any]:
         self._require_gui()
+        for path in tuple(self._providers):
+            self._capture_route(path)
         return _json_copy({
             "version": 1,
             "history": self._history,
@@ -290,6 +405,8 @@ class NavigationSession(QObject):
             if self._index(path) >= 0
         }
         target = retained[new_cursor] if retained and new_cursor >= 0 else ""
+        for path in tuple(self._providers):
+            self._capture_route(path)
         self._restoring = True
         try:
             self._history = retained
@@ -301,6 +418,8 @@ class NavigationSession(QObject):
             self._restoring = False
         self.historyChanged.emit(self.canGoBack(), self.canGoForward())
         self.routeChanged.emit(self.currentRoute())
+        for path in tuple(self._providers):
+            self._restore_route(path)
         self._schedule_prefetch()
         return bool(target)
 
@@ -311,3 +430,6 @@ class NavigationSession(QObject):
         self._sync_timer.stop()
         self._history.clear()
         self._states.clear()
+        self._cached_keys.clear()
+        self._providers.clear()
+        self._applied.clear()
