@@ -25,6 +25,7 @@
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationrail.h"
 #include "qtmaterial/widgets/navigation/qtmaterialtabs.h"
+#include "qtmaterial/widgets/navigation/qtmaterialnavigationcontroller.h"
 #include "qtmaterial/widgets/navigation/qtmaterialmenu.h"
 #include "qtmaterial/widgets/navigation/qtmaterialroute.h"
 #include "qtmaterial/widgets/navigation/model/qtmaterialnavigationmodel.h"
