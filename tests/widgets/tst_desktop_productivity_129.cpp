@@ -20,8 +20,8 @@ constexpr int kIdRole = Qt::UserRole + 42;
 void fillTable(QStandardItemModel* model)
 {
     model->setColumnCount(3);
-    const struct Record { const char* group; int priority; const char* status; const char* id; }
-        records[] = {
+    struct Record { const char* group; int priority; const char* status; const char* id; };
+    const Record records[] = {
             {"B", 2, "open", "id-b"},
             {"A", 5, "closed", "id-a"},
             {"A", 9, "open", "id-c"},
