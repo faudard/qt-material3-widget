@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0"><class>Designer4Settings</class>
+<widget class="QWidget" name="Designer4Settings">
+<property name="geometry"><rect><x>0</x><y>0</y><width>800</width><height>640</height></rect></property>
+<property name="windowTitle"><string>Designer4Settings</string></property>
+<layout class="QVBoxLayout" name="rootLayout"><item><widget class="QtMaterialTopAppBar" name="topBar"><property name="title"><string>Settings</string></property></widget></item>
+<item><widget class="QtMaterial::QtMaterialCard" name="settingsCard"><property name="titleText"><string>Workspace preferences</string></property><property name="bodyText"><string>Configure your environment.</string></property></widget></item>
+<item><widget class="QCheckBox" name="notifications"><property name="text"><string>Enable notifications</string></property><property name="checked"><bool>true</bool></property></widget></item>
+<item><widget class="QComboBox" name="locale"><item><property name="text"><string>English</string></property></item><item><property name="text"><string>Francais</string></property></item></widget></item>
+<item><widget class="QPushButton" name="saveSettings"><property name="text"><string>Save changes</string></property><property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property><property name="qtm3MaterialVariant" stdset="0"><string>filled-tonal</string></property><property name="qtm3MaterialDensity" stdset="0"><string>compact</string></property></widget></item></layout>
+</widget>
+<customwidgets><customwidget><class>QtMaterialTopAppBar</class><extends>QWidget</extends><header>qtmaterial/widgets/surfaces/qtmaterialtopappbar.h</header></customwidget>
+<customwidget><class>QtMaterial::QtMaterialCard</class><extends>QWidget</extends><header>qtmaterial/widgets/surfaces/qtmaterialcard.h</header></customwidget></customwidgets>
+<resources/><connections/></ui>
