@@ -1,6 +1,6 @@
 # Qt Material 3 Widgets — proposed roadmap 1.22.0 to 2.0.0
 
-> **Status: proposal, not a release announcement.** This document extends [ROADMAP.md](../ROADMAP.md); the existing 0.x–1.21 commitments remain unchanged.
+> **Status: proposal, not a release announcement.** This document extends [ROADMAP.md](https://github.com/faudard/qt-material3-widget/blob/main/ROADMAP.md); the existing 0.x–1.21 commitments remain unchanged.
 >
 > **Authoritative maturity data:** [component registry](components/component-registry.json). On 2026-10-22, `STATUS.md` reported 60 tracked components, 43 `complete` and 17 `usable`. These are a dated baseline, not guaranteed current figures.
 >
