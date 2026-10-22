@@ -2,6 +2,11 @@ name: release-readiness
 
 on:
   workflow_dispatch:
+  # Validate workflow and window-manager changes before merge.
+  pull_request:
+    paths:
+      - ".github/workflows/release-readiness.yml"
+      - "scripts/ci/run-with-openbox.py"
   push:
     tags:
       - "v*"
