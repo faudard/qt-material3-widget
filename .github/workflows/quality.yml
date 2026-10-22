@@ -36,6 +36,19 @@ jobs:
       - name: Report final 60/60 certification readiness
         run: python tools/certification_center.py status
 
+      - name: Validate 1.22 certification evidence contracts
+        run: |
+          python tools/certification_report_1_22.py --validate --format json --output build/certification/health-1.22.json
+          python tools/certification_report_1_22.py --format markdown --output build/certification/health-1.22.md
+
+      - name: Upload 1.22 certification health
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: certification-health-1-22
+          path: build/certification/health-1.22.*
+          if-no-files-found: warn
+
       - name: Check patch whitespace
         run: git diff --check
 
