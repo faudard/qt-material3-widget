@@ -397,3 +397,31 @@ after constructing a `QApplication`. The watcher never filters/consumes input
 events or modifies signal connections. To turn off adaptation for one watched
 control, use `setOptOut(widget, true)` or update its declarative property;
 calling `remove(widget)` alone while it remains opted in is temporary.
+
+## Native Runtime 3.0 (planned 1.24) — authored overrides and reversible watches
+
+For both `DeclaredOnly` and `AllSupported` watches, a widget's explicitly
+authored `qtm3MaterialVariant`, `qtm3MaterialDensity` and
+`qtm3MaterialTextFieldVariant` values override the form-wide fallback.
+A declaration is *not* required for those overrides in `AllSupported` mode;
+`qtm3MaterialOptOut=true` remains authoritative in either mode.
+
+`watch(root, policy, newOptions)` updates default options on already adapted
+controls that do not have an explicit override. Adapter-generated dynamic
+properties must not accidentally freeze those defaults. Application changes
+to override properties while watched (including removing an override) take
+effect on reconciliation. `unwatch()` restores application-authored values
+rather than retaining the adapter's synthetic defaults.
+
+This is still native Qt behavior: signal/slot connections, combo models and
+delegates, validators, actions and popup ownership stay with the application.
+The adaptation does not create Material-only label/supporting-text behavior
+on `QLineEdit` or replace a native `QComboBox` popup.
+
+The runnable [native adoption example](../examples/native-runtime-adoption.md)
+uses a real AUTOUIC form and a model/validator assigned in C++.
+
+**Certification status:** tests and an example are implementation evidence,
+not an NVDA/Orca/VoiceOver or real-platform certification. The 1.24 release
+gate in [the proposed roadmap](../roadmap-2.0.md) remains separate from
+merging this implementation.
