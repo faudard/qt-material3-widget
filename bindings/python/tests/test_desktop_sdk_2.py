@@ -7,7 +7,7 @@ import unittest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtCore import QByteArray
+from PySide6.QtCore import QByteArray, QSortFilterProxyModel
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import QApplication, QTableView, QTreeView, QWidget
 from shiboken6 import Shiboken
@@ -44,9 +44,13 @@ class DesktopSdk2Contracts(unittest.TestCase):
         model.setHorizontalHeaderLabels(["Task", "Owner"])
         model.setItem(0, 0, QStandardItem("Release"))
         model.setItem(1, 0, QStandardItem("Review"))
+        proxy = QSortFilterProxyModel(owner)
+        proxy.setSourceModel(model)
         view = Widgets.QtMaterialTable()
-        view.setModel(model)
-        self.assertIs(view.model(), model)
+        view.setModel(proxy)
+        self.assertIs(view.model(), proxy)
+        self.assertIs(proxy.sourceModel(), model)
+        self.assertIs(proxy.parent(), owner)
         self.assertIs(model.parent(), owner)
         view.setDense(True)
         view.setMultiSelectionEnabled(True)
@@ -63,6 +67,7 @@ class DesktopSdk2Contracts(unittest.TestCase):
             restore_workspace_state(view, "wrong type")  # type: ignore[arg-type]
         Shiboken.delete(view)
         self.assertTrue(Shiboken.isValid(model))
+        self.assertTrue(Shiboken.isValid(proxy))
         Shiboken.delete(owner)
 
     def test_tree_external_model_and_state_roundtrip(self):
