@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="/studio">
+    <file alias="component-registry.json">../docs/components/component-registry.json</file>
+  </qresource>
+</RCC>

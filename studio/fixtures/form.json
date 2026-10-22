@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "name": "form",
+  "canvas": {"width": 840, "height": 600},
+  "appearance": {"theme": "light", "density": "standard", "direction": "ltr"},
+  "elements": [
+    {"id": "email", "component": "input.text.outlined", "rect": {"x": 40, "y": 50, "width": 360, "height": 60}, "properties": {"text": "Email"}},
+    {"id": "accept", "component": "selection.checkbox", "rect": {"x": 40, "y": 138, "width": 360, "height": 50}, "properties": {"text": "I agree"}},
+    {"id": "submit", "component": "button.filled", "rect": {"x": 40, "y": 220, "width": 180, "height": 48}, "properties": {"text": "Submit"}}
+  ]
+}
