@@ -47,6 +47,10 @@ Together, Theme Studio + Gallery 2.0 provide the quickest workflow for authoring
 
 See the [Qt Designer plugin guide](../designer-plugin.md) for plugin installation and the supported palette.
 
+## Native Runtime 3.0 adoption
+
+`qtmaterial3_native_adoption` runs a native Qt Widgets `.ui` form with opt-in Material styling, untouched native controls, runtime insertions, model and validator ownership, and reversible opt-out. See the [Native Runtime adoption guide](native-runtime-adoption.md).
+
 ## Build examples
 
 Examples are enabled by default when the repository is the top-level CMake project:

@@ -378,6 +378,9 @@ void tst_NativeRuntimeWatcher::rapidControlLifetimeChurnAcrossIndependentRoots()
         ephemeral->setProperty("qtm3MaterialVariant", QStringLiteral("text"));
         QTRY_COMPARE(int(QtMaterialButtonAdapter::variant(ephemeral)),
                      int(ButtonVariant::Text));
+        ephemeral->setProperty("qtm3MaterialVariant", QVariant());
+        QTRY_COMPARE(int(QtMaterialButtonAdapter::variant(ephemeral)),
+                     int(ButtonVariant::Filled));
         ephemeral->setParent(&right);
         QTRY_COMPARE(int(QtMaterialButtonAdapter::variant(ephemeral)),
                      int(ButtonVariant::Outlined));

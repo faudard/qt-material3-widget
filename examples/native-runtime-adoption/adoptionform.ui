@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NativeAdoptionForm</class>
+ <widget class="QWidget" name="NativeAdoptionForm">
+  <property name="windowTitle"><string>Native Runtime 3.0 — incremental adoption</string></property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item><widget class="QLabel" name="introLabel">
+    <property name="text"><string>Existing native controls: only explicitly declared widgets adopt Material style.</string></property>
+   </widget></item>
+   <item><widget class="QPushButton" name="saveButton">
+    <property name="text"><string>Save (filled Material)</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialVariant" stdset="0"><string>filled</string></property>
+    <property name="qtm3MaterialDensity" stdset="0"><string>compact</string></property>
+   </widget></item>
+   <item><widget class="QToolButton" name="moreButton">
+    <property name="text"><string>Native action/menu</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialVariant" stdset="0"><string>filled-tonal</string></property>
+   </widget></item>
+   <item><widget class="QCheckBox" name="consentCheck">
+    <property name="text"><string>I agree (native QCheckBox)</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+   </widget></item>
+   <item><widget class="QRadioButton" name="radioChoice">
+    <property name="text"><string>Native QRadioButton</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+   </widget></item>
+   <item><widget class="QSlider" name="prioritySlider">
+    <property name="orientation"><enum>Qt::Horizontal</enum></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+   </widget></item>
+   <item><widget class="QComboBox" name="categoryCombo">
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+   </widget></item>
+   <item><widget class="QLineEdit" name="ageEdit">
+    <property name="placeholderText"><string>Age (0–120)</string></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+    <property name="qtm3MaterialTextFieldVariant" stdset="0"><string>outlined</string></property>
+   </widget></item>
+   <item><widget class="QProgressBar" name="progressBar">
+    <property name="value"><number>0</number></property>
+    <property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property>
+   </widget></item>
+   <item><widget class="QPushButton" name="untouchedButton">
+    <property name="text"><string>Unadapted native QPushButton</string></property>
+   </widget></item>
+   <item><widget class="QCheckBox" name="excludeButton">
+    <property name="text"><string>Opt out the Save button (reversible)</string></property>
+   </widget></item>
+   <item><widget class="QLabel" name="statusLabel">
+    <property name="text"><string>Ready</string></property>
+   </widget></item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
