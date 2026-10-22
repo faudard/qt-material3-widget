@@ -3,6 +3,12 @@
 The canonical component maturity source is `docs/components/component-registry.json`.
 This roadmap defines release-level goals; it does not override the registry.
 
+## Proposed next roadmap (1.22.0 → 2.0.0)
+
+The proposed milestones from Quality & Certification 2.0 through the Qt Material 3 Desktop SDK 2.0
+are detailed in [docs/roadmap-2.0.md](docs/roadmap-2.0.md). These are future goals,
+not released functionality; existing milestones below remain authoritative for earlier work.
+
 ## 0.5.0 — Foundation Release
 
 Goal: make qt-material3-widget a reproducibly buildable, installable and externally consumable
