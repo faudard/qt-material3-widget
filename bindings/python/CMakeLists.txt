@@ -94,6 +94,10 @@ set(_qtm3_python_types
     QtMaterialDivider
     QtMaterialNavigationBar
     QtMaterialNavigationRail
+    QtMaterialNavigationSuite
+    QtMaterialBreadcrumb
+    QtMaterialTable
+    QtMaterialTreeView
     QtMaterialRoute
     QtMaterialNavigationItem
     QtMaterialNavigationModel
@@ -262,10 +266,19 @@ install(
         "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/LazyTabs.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/AsyncLazyTabs.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/NavigationSession.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/WorkspaceState.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/py.typed"
     DESTINATION QtMaterial3
 )
 
 if(QTMATERIAL3_BUILD_TESTS)
+    add_test(
+        NAME python_bindings_desktop_sdk_2
+        COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_desktop_sdk_2.py"
+    )
+    set_tests_properties(python_bindings_desktop_sdk_2 PROPERTIES
+        ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR};QT_QPA_PLATFORM=offscreen"
+    )
     add_test(
         NAME python_bindings_contract
         COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_bindings.py"

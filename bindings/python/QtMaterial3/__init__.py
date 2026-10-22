@@ -24,6 +24,7 @@ Density = QtMaterial.Density
 ChipVariant = QtMaterial.ChipVariant
 SnackbarDuration = QtMaterial.SnackbarDuration
 SnackbarDismissReason = QtMaterial.SnackbarDismissReason
+NavigationSuiteType = QtMaterial.NavigationSuiteType
 TabsVariant = QtMaterial.TabsVariant
 TabsDensity = QtMaterial.TabsDensity
 TabsAlignment = QtMaterial.TabsAlignment
@@ -41,13 +42,15 @@ from . import Widgets
 from .LazyTabs import LazyTabs
 from .AsyncLazyTabs import AsyncLazyTabs
 from .NavigationSession import NavigationSession
+from .WorkspaceState import WorkspaceStateful, save_workspace_state, restore_workspace_state
 
 __version__ = "1.0.0"
 __all__ = [
-    "Widgets", "LazyTabs", "AsyncLazyTabs", "NavigationSession", "QtMaterial", "Theme", "ThemeBuilder", "ThemeContext", "ThemeOptions",
+    "Widgets", "LazyTabs", "AsyncLazyTabs", "NavigationSession",
+    "WorkspaceStateful", "save_workspace_state", "restore_workspace_state", "QtMaterial", "Theme", "ThemeBuilder", "ThemeContext", "ThemeOptions",
     "ThemeMode", "ContrastMode", "ThemePreference", "ThemeVariant",
     "ColorBackendPolicy", "MotionScheme", "Density", "ChipVariant", "SnackbarDuration",
-    "SnackbarDismissReason", "TabsVariant", "TabsDensity",
+    "SnackbarDismissReason", "NavigationSuiteType", "TabsVariant", "TabsDensity",
     "TabsAlignment", "TabsOverflowMode", "QtMaterialRoute",
     "QtMaterialNavigationItem", "QtMaterialNavigationModel",
     "QtMaterialNavigationController", "QtMaterialStackedWidgetController", "WindowSizeClass",

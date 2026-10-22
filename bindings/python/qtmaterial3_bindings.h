@@ -43,3 +43,7 @@
 #include "qtmaterial/widgets/data/qtmaterialbadge.h"
 #include "qtmaterial/widgets/data/qtmaterialpagination.h"
 #include "qtmaterial/widgets/data/qtmaterialdivider.h"
+#include "qtmaterial/widgets/data/qtmaterialtable.h"
+#include "qtmaterial/widgets/data/qtmaterialtreeview.h"
+#include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
+#include "qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h"
