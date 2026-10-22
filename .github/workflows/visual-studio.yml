@@ -41,3 +41,13 @@ jobs:
           build/studio-ci/studio/qtmaterial3_visual_studio --export-cpp studio/fixtures/form.json build/studio-ci/generated/cpp
           grep -F 'QtMaterial::QtMaterialFilledButton' build/studio-ci/generated/form.ui
           grep -F 'QtMaterial3::qtmaterial3_widgets' build/studio-ci/generated/cpp/CMakeLists.txt
+          /usr/lib/qt6/libexec/uic build/studio-ci/generated/form.ui -o build/studio-ci/generated/ui_form.h
+      - name: Install SDK and compile/run generated C++ application
+        env:
+          QT_QPA_PLATFORM: offscreen
+          QTMATERIAL3_STUDIO_SMOKE: "1"
+        run: |
+          cmake --install build/studio-ci --prefix "${PWD}/build/studio-ci/stage"
+          cmake -S build/studio-ci/generated/cpp -B build/studio-ci/generated-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${PWD}/build/studio-ci/stage"
+          cmake --build build/studio-ci/generated-build --parallel 2
+          build/studio-ci/generated-build/studio_generated
