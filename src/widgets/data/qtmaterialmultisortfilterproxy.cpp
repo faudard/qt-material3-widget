@@ -34,6 +34,9 @@ bool QtMaterialMultiSortFilterProxy::setSortKeys(const QVector<SortKey>& keys)
     // The primary and secondary directions are handled in lessThan. Keep
     // the proxy's own global sort direction ascending to avoid double reversal.
     if (!m_sortKeys.isEmpty()) {
+        // A change to secondary keys must re-sort even if Qt's primary
+        // column/order pair has not changed since the previous call.
+        invalidate();
         sort(0, Qt::AscendingOrder);
     } else {
         invalidate();
