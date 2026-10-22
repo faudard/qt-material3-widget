@@ -219,7 +219,7 @@ bool exportCpp(const Document& d, const QString& dir, QString* error)
     if (!QDir().mkpath(dir)) return fail(error, "Cannot create output directory");
     QByteArray out;
     QTextStream s(&out, QIODevice::WriteOnly);
-    s << "#include <QApplication>\n#include <QByteArray>\n#include <QWidget>\n";
+    s << "#include <QApplication>\n#include <QByteArray>\n#include <QWidget>\n#include <QTimer>\n";
     QSet<QString> used;
     for (const Item& i : d.items) used.insert(i.component);
     for (const Component& c : whitelist())
@@ -240,7 +240,10 @@ bool exportCpp(const Document& d, const QString& dir, QString* error)
           << "(QString::fromUtf8(QByteArray::fromHex(\"" << i.text.toUtf8().toHex()
           << "\")));\n";
     }
-    s << " window.show();\n return app.exec();\n}\n";
+    s << " window.show();\n"
+      << " if (qEnvironmentVariableIsSet(\"QTMATERIAL3_STUDIO_SMOKE\"))\n"
+      << "  QTimer::singleShot(0, &app, &QCoreApplication::quit);\n"
+      << " return app.exec();\n}\n";
     s.flush();
     const QByteArray cmake = R"cmake(cmake_minimum_required(VERSION 3.21)
 project(studio_generated LANGUAGES CXX)
