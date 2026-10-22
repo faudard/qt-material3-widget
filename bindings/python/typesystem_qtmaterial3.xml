@@ -17,6 +17,7 @@
     <enum-type name="ChipVariant"/>
     <enum-type name="SnackbarDuration"/>
     <enum-type name="SnackbarDismissReason"/>
+    <enum-type name="NavigationSuiteType"/>
     <enum-type name="TabsVariant"/>
     <enum-type name="TabsDensity"/>
     <enum-type name="TabsAlignment"/>
@@ -150,6 +151,31 @@
 
     <object-type name="QtMaterialNavigationBar" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialNavigationRail" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialNavigationSuite" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialBreadcrumb" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <!-- Model/View ownership is retained by application code. The views do not
+         transfer models or delegates to Python or to the Material SDK. -->
+    <object-type name="QtMaterialTable" delete-in-main-thread="yes" disable-wrapper="yes">
+      <modify-function signature="spec()const" remove="all"/>
+      <modify-function signature="setSpec(const TableSpec&amp;)" remove="all"/>
+      <modify-function signature="setModel(QAbstractItemModel*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="themeContext()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="effectiveThemeContext()const">
+        <modify-argument index="return"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+      <modify-function signature="setThemeContext(ThemeContext*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+    </object-type>
+    <object-type name="QtMaterialTreeView" delete-in-main-thread="yes" disable-wrapper="yes">
+      <modify-function signature="setModel(QAbstractItemModel*)">
+        <modify-argument index="1"><define-ownership class="target" owner="default"/></modify-argument>
+      </modify-function>
+    </object-type>
     <object-type name="QtMaterialNavigationModel" delete-in-main-thread="yes" disable-wrapper="yes">
       <enum-type name="Role"/>
     </object-type>
