@@ -2,6 +2,11 @@ name: release-readiness
 
 on:
   workflow_dispatch:
+  # Validate workflow and window-manager changes before merge.
+  pull_request:
+    paths:
+      - ".github/workflows/release-readiness.yml"
+      - "scripts/ci/run-with-openbox.py"
   push:
     tags:
       - "v*"
@@ -107,7 +112,9 @@ jobs:
             cmake \
             ninja-build \
             g++ \
-            xvfb
+            xvfb \
+            x11-utils \
+            openbox
 
       - name: Install Qt 6 dependencies
         if: matrix.qt_major == 6
@@ -138,7 +145,10 @@ jobs:
 
       - name: Test
         run: |
-          xvfb-run -a ctest \
+          # Exercise keyboard focus with a real window manager, as in ci.yml.
+          # Xvfb alone does not assign active windows or keyboard focus.
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            python3 scripts/ci/run-with-openbox.py -- ctest \
             --test-dir build \
             --build-config Release \
             --output-on-failure
