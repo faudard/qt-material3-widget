@@ -66,6 +66,7 @@ expressive-catalogue
 component-expansion
 native-qt-adaptation
 desktop-productivity
+desktop-productivity-3
 desktop-workspace-state
 navigation-desktop-certification
 buttons
