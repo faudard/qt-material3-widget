@@ -1,5 +1,9 @@
 # Desktop and productivity components
 
+For the 1.29 multi-key proxy, stable-ID selection restoration, and persistent
+Explorer/Dashboard/Settings reference application, see
+[Desktop Productivity 3.0](desktop-productivity-3.md).
+
 The desktop components extend the Qt Widgets surface for large desktop applications. These widgets
 are Qt desktop adaptations: they preserve native Model/View, focus, selection, drag/drop
 and persistence contracts instead of introducing a parallel application framework.
