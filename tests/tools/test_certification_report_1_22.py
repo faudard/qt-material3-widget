@@ -23,6 +23,7 @@ class CertificationHealth122Tests(unittest.TestCase):
         self.registry = self.root / "docs/components/component-registry.json"
         self.ledger = self.root / "docs/components/fixture-ledger.json"
         self.registry.parent.mkdir(parents=True)
+        self.original_milestones = dict(center.MILESTONES)
         self.scope = patch.dict(center.MILESTONES, {
             "1.7": {
                 "name": "Fixture",
@@ -155,7 +156,8 @@ class CertificationHealth122Tests(unittest.TestCase):
 
     def test_canonical_repository_has_17_identified_usable_components(self):
         # Contract against the tracked 1.22 baseline; no manual statuses invented.
-        actual = health.build_report(health.ROOT)
+        with patch.dict(center.MILESTONES, self.original_milestones, clear=True):
+            actual = health.build_report(health.ROOT)
         self.assertEqual(actual["summary"]["tracked"], 60)
         self.assertEqual(actual["summary"]["notComplete"], 17)
         self.assertEqual(actual["summary"]["maturity"]["complete"], 43)
