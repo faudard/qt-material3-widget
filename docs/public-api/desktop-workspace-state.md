@@ -1,5 +1,9 @@
 # Desktop workspace state
 
+For opt-in, stable-ID selection persistence across changing proxy sort/filter
+chains, see [Desktop Productivity 3.0](desktop-productivity-3.md). The 1.12
+payloads documented below remain unchanged.
+
 QtMaterial3 desktop applications can persist user workspace preferences without
 serializing application data or introducing a framework-specific settings
 service.
