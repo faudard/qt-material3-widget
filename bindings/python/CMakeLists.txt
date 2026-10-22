@@ -253,6 +253,16 @@ configure_file(
     "${_qtm3_python_package_dir}/NavigationSession.py"
     COPYONLY
 )
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/WorkspaceState.py"
+    "${_qtm3_python_package_dir}/WorkspaceState.py"
+    COPYONLY
+)
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/QtMaterial3/py.typed"
+    "${_qtm3_python_package_dir}/py.typed"
+    COPYONLY
+)
 
 install(
     TARGETS ${_qtm3_python_extension}
