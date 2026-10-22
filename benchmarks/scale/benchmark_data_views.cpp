@@ -39,6 +39,9 @@ public:
         if (role == Qt::DisplayRole || role == Qt::AccessibleTextRole) {
             return QStringLiteral("R%1 C%2").arg(index.row()).arg(index.column());
         }
+        if (role == Qt::UserRole) {
+            return index.column() == 0 ? index.row() : index.row() % 17;
+        }
         return {};
     }
 };
@@ -115,6 +118,7 @@ private slots:
         LargeTableModel model;
         QtMaterial::QtMaterialMultiSortFilterProxy multi;
         multi.setSourceModel(&model);
+        multi.setSortRole(Qt::UserRole);
         QSortFilterProxyModel applicationProxy;
         applicationProxy.setSourceModel(&multi);
 
