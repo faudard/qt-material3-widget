@@ -367,8 +367,9 @@ void tst_NativeRuntimeWatcher::rapidControlLifetimeChurnAcrossIndependentRoots()
         Adapter::Options(Density::Comfortable, ButtonVariant::Outlined)));
 
     QPushButton stable(&right);
-    QCOMPARE(int(QtMaterialButtonAdapter::variant(&stable)),
-             int(ButtonVariant::Outlined));
+    // ChildAdded discovery is deliberately queued until construction ends.
+    QTRY_COMPARE(int(QtMaterialButtonAdapter::variant(&stable)),
+                 int(ButtonVariant::Outlined));
     for (int i = 0; i < 40; ++i) {
         auto* ephemeral = new QPushButton(&left);
         QPointer<QPushButton> tracked(ephemeral);
