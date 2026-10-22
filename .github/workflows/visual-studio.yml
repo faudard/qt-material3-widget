@@ -1,0 +1,43 @@
+name: Visual Studio 1.26 (opt-in tool)
+on:
+  pull_request:
+    paths:
+      - 'studio/**'
+      - 'CMakeLists.txt'
+      - '.github/workflows/visual-studio.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  studio-qt6:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Qt and graphics test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ninja-build qt6-base-dev qt6-base-dev-tools libgl1-mesa-dev
+      - name: Configure
+        run: >
+          cmake -S . -B build/studio-ci -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DQTMATERIAL3_BUILD_VISUAL_STUDIO=ON
+          -DQTMATERIAL3_BUILD_TESTS=ON
+          -DQTMATERIAL3_BUILD_EXAMPLES=OFF
+          -DQTMATERIAL3_ENABLE_ARCHITECTURE_CHECKS=OFF
+      - name: Compile the tool and its contracts
+        run: cmake --build build/studio-ci --target qtmaterial3_visual_studio tst_studio_document --parallel 2
+      - name: Contract tests
+        run: ctest --test-dir build/studio-ci -R '^studio_document_contract$' --output-on-failure
+      - name: Load and export fixture
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          mkdir -p build/studio-ci/generated
+          build/studio-ci/studio/qtmaterial3_visual_studio --check studio/fixtures/form.json
+          build/studio-ci/studio/qtmaterial3_visual_studio --export-ui studio/fixtures/form.json build/studio-ci/generated/form.ui
+          build/studio-ci/studio/qtmaterial3_visual_studio --export-cpp studio/fixtures/form.json build/studio-ci/generated/cpp
+          grep -F 'QtMaterial::QtMaterialFilledButton' build/studio-ci/generated/form.ui
+          grep -F 'QtMaterial3::qtmaterial3_widgets' build/studio-ci/generated/cpp/CMakeLists.txt
