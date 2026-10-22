@@ -2,6 +2,7 @@
 
 #include <QSortFilterProxyModel>
 #include <QString>
+#include <QStringList>
 #include <QVector>
 
 #include "qtmaterial/qtmaterialglobal.h"
