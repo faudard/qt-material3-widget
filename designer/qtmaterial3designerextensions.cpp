@@ -1,6 +1,7 @@
 #include "qtmaterial3designerextensions.h"
 
 #include <algorithm>
+#include <limits>
 #include <optional>
 
 #include <QAction>
@@ -439,7 +440,8 @@ QWidget* makeEditor(
     case QMetaType::Int:
     case QMetaType::UInt: {
         auto* spin = new QSpinBox(parent);
-        spin->setRange(propertyTypeId(property) == QMetaType::UInt ? 0 : -1000000, 1000000);
+        spin->setRange(propertyTypeId(property) == QMetaType::UInt ? 0 : std::numeric_limits<int>::min(),
+                       std::numeric_limits<int>::max());
         spin->setValue(value.toInt());
         return spin;
     }
@@ -529,7 +531,7 @@ public:
 
         auto* layout = new QVBoxLayout(this);
         auto* hint = new QLabel(
-            tr("Designer 3.0 edits persistence-safe Material properties. "
+            tr("Designer 4.0 edits persistence-safe Material properties. "
                "Collections, enums, dates and color/token overrides use specialized editors."),
             this);
         hint->setWordWrap(true);
@@ -561,6 +563,30 @@ public:
             bindings_.append({name.toLatin1(), property, editor, value});
         }
 
+        // Show authors what cannot safely be serialized into a .ui file.
+        QStringList excluded;
+        for (const QMetaObject* meta = target_->metaObject();
+             meta && isQtMaterialMetaObject(meta);
+             meta = meta->superClass()) {
+            for (int i = meta->propertyOffset(); i < meta->propertyCount(); ++i) {
+                const QMetaProperty property = meta->property(i);
+                const QString name = QString::fromLatin1(property.name());
+                if (property.isReadable() && property.isWritable()
+                    && !names.contains(name)) {
+                    excluded.append(name);
+                }
+            }
+        }
+        excluded.removeDuplicates();
+        if (!excluded.isEmpty()) {
+            auto* warning = new QLabel(
+                tr("Not editable in a .ui form (runtime-only or unsupported): %1")
+                    .arg(excluded.join(QStringLiteral(", "))),
+                this);
+            warning->setWordWrap(true);
+            layout->addWidget(warning);
+        }
+
         auto* buttons = new QDialogButtonBox(
             QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
             this);
@@ -575,40 +601,59 @@ public:
 private:
     void applyChanges()
     {
+        if (!target_) {
+            return;
+        }
         QDesignerFormWindowInterface* formWindow =
             QDesignerFormWindowInterface::findFormWindow(target_);
         QDesignerFormWindowCursorInterface* cursor =
             formWindow ? formWindow->cursor() : nullptr;
 
+        struct Change {
+            QString name;
+            QByteArray key;
+            QVariant value;
+            bool reset = false;
+        };
+        QVector<Change> changes;
         for (const EditorBinding& binding : bindings_) {
             const QString name = QString::fromLatin1(binding.name);
             if (binding.editor->property(kResetRequestedProperty).toBool()) {
-                if (cursor) {
-                    cursor->resetWidgetProperty(target_, name);
-                } else {
-                    resetPropertyToDefault(target_, name);
-                    if (formWindow) {
-                        formWindow->setDirty(true);
-                    }
+                if (binding.property.isResettable()) {
+                    changes.append({name, binding.name, QVariant(), true});
                 }
                 continue;
             }
-
             const QVariant value = editorValue(binding);
-            if (!value.isValid() || value == binding.original) {
-                continue;
-            }
-
-            if (cursor) {
-                cursor->setWidgetProperty(target_, name, value);
-            } else {
-                target_->setProperty(binding.name.constData(), value);
-                if (formWindow) {
-                    formWindow->setDirty(true);
-                }
+            if (value.isValid() && value != binding.original) {
+                changes.append({name, binding.name, value, false});
             }
         }
-
+        if (changes.isEmpty()) {
+            return;
+        }
+        if (cursor) {
+            // All edits, including token resets, must be undone together.
+            formWindow->beginCommand(tr("Edit Material 3 properties"));
+        }
+        for (const Change& change : changes) {
+            if (cursor) {
+                if (change.reset) {
+                    cursor->resetWidgetProperty(target_, change.name);
+                } else {
+                    cursor->setWidgetProperty(target_, change.name, change.value);
+                }
+            } else if (change.reset) {
+                resetPropertyToDefault(target_, change.name);
+            } else {
+                target_->setProperty(change.key.constData(), change.value);
+            }
+        }
+        if (cursor) {
+            formWindow->endCommand();
+        } else if (formWindow) {
+            formWindow->setDirty(true);
+        }
         target_->updateGeometry();
         target_->update();
     }
@@ -1080,7 +1125,7 @@ public:
             dialog.exec();
         });
 
-        previewAction_ = new QAction(tr("Designer 3.0 preview..."), this);
+        previewAction_ = new QAction(tr("Designer 4.0 preview..."), this);
         connect(previewAction_, &QAction::triggered, this, [this]() {
             MaterialPreviewDialog dialog(widget_, widget_);
             dialog.exec();

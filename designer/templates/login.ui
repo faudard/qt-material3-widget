@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0"><class>Designer4Login</class>
+<widget class="QWidget" name="Designer4Login">
+<property name="geometry"><rect><x>0</x><y>0</y><width>800</width><height>640</height></rect></property>
+<property name="windowTitle"><string>Designer4Login</string></property>
+<layout class="QVBoxLayout" name="rootLayout"><item><widget class="QtMaterialTopAppBar" name="topBar"><property name="title"><string>Sign in</string></property></widget></item>
+<item><widget class="QtMaterial::QtMaterialOutlinedTextField" name="accountName"><property name="label"><string>Account</string></property><property name="placeholderText"><string>name@example.com</string></property></widget></item>
+<item><widget class="QLineEdit" name="password"><property name="placeholderText"><string>Password</string></property><property name="echoMode"><enum>QLineEdit::Password</enum></property><property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property><property name="qtm3MaterialTextFieldVariant" stdset="0"><string>outlined</string></property></widget></item>
+<item><widget class="QCheckBox" name="rememberMe"><property name="text"><string>Remember me</string></property></widget></item>
+<item><widget class="QPushButton" name="signIn"><property name="text"><string>Continue</string></property><property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property><property name="qtm3MaterialVariant" stdset="0"><string>filled</string></property></widget></item></layout>
+</widget>
+<customwidgets><customwidget><class>QtMaterialTopAppBar</class><extends>QWidget</extends><header>qtmaterial/widgets/surfaces/qtmaterialtopappbar.h</header></customwidget>
+<customwidget><class>QtMaterial::QtMaterialOutlinedTextField</class><extends>QWidget</extends><header>qtmaterial/widgets/inputs/qtmaterialoutlinedtextfield.h</header></customwidget></customwidgets>
+<resources/><connections/></ui>

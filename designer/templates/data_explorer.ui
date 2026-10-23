@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0"><class>Designer4DataExplorer</class>
+<widget class="QWidget" name="Designer4DataExplorer">
+<property name="geometry"><rect><x>0</x><y>0</y><width>800</width><height>640</height></rect></property>
+<property name="windowTitle"><string>Designer4DataExplorer</string></property>
+<layout class="QVBoxLayout" name="rootLayout"><item><widget class="QtMaterialTopAppBar" name="topBar"><property name="title"><string>Data explorer</string></property></widget></item>
+<item><widget class="QLineEdit" name="searchRecords"><property name="placeholderText"><string>Filter records</string></property><property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property><property name="qtm3MaterialTextFieldVariant" stdset="0"><string>filled</string></property><property name="qtm3MaterialDensity" stdset="0"><string>compact</string></property></widget></item>
+<item><layout class="QHBoxLayout" name="explorerLayout"><item><widget class="QTreeView" name="folders"></widget></item>
+<item><widget class="QTableView" name="records"></widget></item></layout></item>
+<item><widget class="QPushButton" name="newRecord"><property name="text"><string>New record</string></property><property name="qtm3MaterialAdapt" stdset="0"><bool>true</bool></property><property name="qtm3MaterialVariant" stdset="0"><string>elevated</string></property></widget></item></layout>
+</widget>
+<customwidgets><customwidget><class>QtMaterialTopAppBar</class><extends>QWidget</extends><header>qtmaterial/widgets/surfaces/qtmaterialtopappbar.h</header></customwidget></customwidgets>
+<resources/><connections/></ui>
