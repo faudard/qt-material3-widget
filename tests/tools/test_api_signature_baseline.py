@@ -165,6 +165,11 @@ class ApiSignatureBaselineTests(unittest.TestCase):
         # Removal of constexpr in the declaration still breaks the baseline.
         without_constexpr = signature("int", None)
         self.assertFalse(api.is_source_compatible([without_constexpr], [old_xml]))
+        # Constructors and conversion operators have no return type.
+        ctor_old = signature("constexpr", "yes")
+        ctor_new = signature("", "yes")
+        self.assertEqual(api.compare([ctor_new], [ctor_old]), ([], []))
+        self.assertFalse(api.is_source_compatible([signature("", None)], [ctor_old]))
 
     def test_enum_initializer_change_is_breaking(self):
         with tempfile.TemporaryDirectory() as before_tmp, tempfile.TemporaryDirectory() as after_tmp:

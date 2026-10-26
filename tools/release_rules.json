@@ -332,6 +332,8 @@
       "qtmaterial/widgets/compact/qtmaterialfilterchip.h",
       "qtmaterial/widgets/compact/qtmaterialinputchip.h",
       "qtmaterial/widgets/data/qtmateriallistitem.h",
+      "qtmaterial/widgets/data/qtmaterialmultisortfilterproxy.h",
+      "qtmaterial/widgets/data/qtmaterialselectionstate.h",
       "qtmaterial/widgets/inputs/common/qtmaterialformfieldcontrol.h",
       "qtmaterial/widgets/inputs/common/qtmaterialinputcontrol.h",
       "qtmaterial/widgets/inputs/qtmaterialtextfieldvalidationgroup.h",
