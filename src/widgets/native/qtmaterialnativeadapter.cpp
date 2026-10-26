@@ -257,6 +257,11 @@ public:
         return widget && m_managed.contains(const_cast<QWidget*>(widget));
     }
 
+    void reconcileImmediately()
+    {
+        reconcile();
+    }
+
 protected:
     bool eventFilter(QObject* object, QEvent* event) override
     {
@@ -831,6 +836,9 @@ void QtMaterialNativeAdapter::setOptOut(
     NativeRuntimeWatcher* watcher = nativeRuntimeWatcher(false);
     if (watcher && watcher->manages(widget)) {
         widget->setProperty("qtm3MaterialOptOut", excluded);
+        // Preserve the synchronous removal contract of setOptOut(), while
+        // keeping the controller in charge of property restoration.
+        watcher->reconcileImmediately();
         return;
     }
 
