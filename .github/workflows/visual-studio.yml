@@ -28,7 +28,9 @@ jobs:
           -DQTMATERIAL3_BUILD_EXAMPLES=OFF
           -DQTMATERIAL3_ENABLE_ARCHITECTURE_CHECKS=OFF
       - name: Compile the tool and its contracts
-        run: cmake --build build/studio-ci --target qtmaterial3_visual_studio tst_studio_document --parallel 2
+        # Install the complete SDK, not only the Studio executable and one
+        # test target: cmake --install also needs ThemeIO and sibling libs.
+        run: cmake --build build/studio-ci --parallel 2
       - name: Contract tests
         run: ctest --test-dir build/studio-ci -R '^studio_document_contract$' --output-on-failure
       - name: Load and export fixture

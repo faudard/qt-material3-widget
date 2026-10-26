@@ -252,6 +252,11 @@ public:
         return root && m_roots.contains(const_cast<QWidget*>(root));
     }
 
+    bool manages(const QWidget* widget) const
+    {
+        return widget && m_managed.contains(const_cast<QWidget*>(widget));
+    }
+
 protected:
     bool eventFilter(QObject* object, QEvent* event) override
     {
@@ -815,6 +820,17 @@ void QtMaterialNativeAdapter::setOptOut(
     bool excluded)
 {
     if (!widget) {
+        return;
+    }
+
+    // A watched adapter owns the synthetic variant/density properties.
+    // Set opt-out first and let its watcher release the adapter and restore
+    // the last application-authored values. Calling a specialized setOptOut
+    // here would remove synthetic properties *before* emitting opt-out, and
+    // those removal events could be mistaken for authored property changes.
+    NativeRuntimeWatcher* watcher = nativeRuntimeWatcher(false);
+    if (watcher && watcher->manages(widget)) {
+        widget->setProperty("qtm3MaterialOptOut", excluded);
         return;
     }
 

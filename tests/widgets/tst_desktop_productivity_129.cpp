@@ -191,19 +191,24 @@ private Q_SLOTS:
         QtMaterialTreeView tree;
         tree.setModel(&model);
         tree.expand(model.index(0, 0));
+        // QTreeView is allowed to request lazy data during view setup.
+        // Only the snapshot API itself promises not to call fetchMore().
+        QCoreApplication::processEvents();
+        const int fetchesBeforeSnapshot = model.fetches;
         const QModelIndex current = model.index(0, 0, model.index(0, 0));
         tree.selectionModel()->select(current, QItemSelectionModel::ClearAndSelect);
         tree.selectionModel()->setCurrentIndex(current, QItemSelectionModel::NoUpdate);
         const QByteArray state = QtMaterialSelectionState::save(&tree, kIdRole);
         QVERIFY(!state.isEmpty());
+        QCOMPARE(model.fetches, fetchesBeforeSnapshot);
 
         tree.selectionModel()->clearSelection();
         QVERIFY(QtMaterialSelectionState::restore(&tree, state, kIdRole));
         QCOMPARE(tree.currentIndex().data(kIdRole).toString(), QStringLiteral("child"));
         QCOMPARE(tree.selectionModel()->selectedIndexes().size(), 1);
-        QCOMPARE(model.fetches, 0);
+        QCOMPARE(model.fetches, fetchesBeforeSnapshot);
         QVERIFY(!QtMaterialSelectionState::restore(&tree, state, kIdRole, 1));
-        QCOMPARE(model.fetches, 0);
+        QCOMPARE(model.fetches, fetchesBeforeSnapshot);
     }
 
     void commandPaletteStateAndSourceOwnership()
