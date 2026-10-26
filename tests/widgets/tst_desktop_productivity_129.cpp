@@ -191,13 +191,13 @@ private Q_SLOTS:
         QtMaterialTreeView tree;
         tree.setModel(&model);
         tree.expand(model.index(0, 0));
-        // QTreeView is allowed to request lazy data during view setup.
-        // Only the snapshot API itself promises not to call fetchMore().
-        QCoreApplication::processEvents();
-        const int fetchesBeforeSnapshot = model.fetches;
         const QModelIndex current = model.index(0, 0, model.index(0, 0));
         tree.selectionModel()->select(current, QItemSelectionModel::ClearAndSelect);
         tree.selectionModel()->setCurrentIndex(current, QItemSelectionModel::NoUpdate);
+        // Qt's tree view may fetch while binding/expanding/selecting.
+        // The snapshot API must not fetch additional lazy model rows.
+        QCoreApplication::processEvents();
+        const int fetchesBeforeSnapshot = model.fetches;
         const QByteArray state = QtMaterialSelectionState::save(&tree, kIdRole);
         QVERIFY(!state.isEmpty());
         QCOMPARE(model.fetches, fetchesBeforeSnapshot);
