@@ -35,6 +35,7 @@ endif()
 option(QTMATERIAL3_BUILD_TESTS "Build tests" ${_qtm3_default_build_tests})
 option(QTMATERIAL3_BUILD_EXAMPLES "Build examples" ${QTMATERIAL3_IS_TOP_LEVEL})
 option(QTMATERIAL3_BUILD_BENCHMARKS "Build benchmark executables" OFF)
+option(QTMATERIAL3_BUILD_VISUAL_STUDIO "Build optional Material Visual UI Studio" OFF)
 option(QTMATERIAL3_BUILD_DESIGNER_PLUGIN "Build the optional Qt Designer custom-widget plugin" OFF)
 option(QTMATERIAL3_BUILD_PYTHON_BINDINGS "Build the optional Qt6/PySide6 bindings with Shiboken6" OFF)
 option(QTMATERIAL3_INSTALL "Install QtMaterial3 targets and package config" ${QTMATERIAL3_IS_TOP_LEVEL})
@@ -125,6 +126,10 @@ if(QTMATERIAL3_ENABLE_ARCHITECTURE_CHECKS)
 endif()
 
 add_subdirectory(src)
+
+if(QTMATERIAL3_BUILD_VISUAL_STUDIO)
+    add_subdirectory(studio)
+endif()
 
 if(QTMATERIAL3_BUILD_PYTHON_BINDINGS)
     add_subdirectory(bindings/python)

@@ -121,6 +121,31 @@ if(QTMATERIAL3_BUILD_TESTS)
     )
     add_test(NAME designer_native_roundtrip COMMAND tst_qtmaterial3_native_roundtrip)
 
+    # Designer 4.0: compile real .ui forms with AUTOUIC (Qt Designer not needed at runtime).
+    add_executable(tst_qtmaterial3_designer_templates
+        tst_designer_templates.cpp
+        templates/settings.ui
+        templates/login.ui
+        templates/dashboard.ui
+        templates/data_explorer.ui
+        templates/responsive_navigation.ui
+    )
+    target_link_libraries(tst_qtmaterial3_designer_templates
+        PRIVATE Qt${QT_VERSION_MAJOR}::Test
+                Qt${QT_VERSION_MAJOR}::Widgets
+                qtmaterial3_widgets
+    )
+    target_include_directories(tst_qtmaterial3_designer_templates
+        PRIVATE "${PROJECT_SOURCE_DIR}/include"
+    )
+    set_target_properties(tst_qtmaterial3_designer_templates PROPERTIES
+        AUTOMOC ON
+        AUTOUIC ON
+        AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/templates"
+    )
+    add_test(NAME designer_4_templates_roundtrip
+        COMMAND tst_qtmaterial3_designer_templates)
+
     if(TARGET Qt${QT_VERSION_MAJOR}::Designer)
         add_executable(tst_qtmaterial3_designer_extensions
             tst_designerextensions.cpp
