@@ -54,6 +54,8 @@ public:
 
     void setPopupVisible(bool visible);
     bool isPopupVisible() const noexcept;
+    // Internal: a native Qt::Popup dismissal must not reopen on focus.
+    bool wasDismissedByPlatform() const noexcept;
 
     void setFilterText(const QString& text);
     QString filterText() const;

@@ -288,7 +288,9 @@ bool QtMaterialAutocomplete::eventFilter(QObject* watched, QEvent* event)
                 return true;
             }
         }
-        if (event->type() == QEvent::FocusIn) {
+        if (event->type() == QEvent::FocusIn
+            && d_ptr->m_popup
+            && !d_ptr->m_popup->wasDismissedByPlatform()) {
             updateFilterText(this, d_ptr.get());
         }
         if (event->type() == QEvent::FocusOut) {

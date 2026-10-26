@@ -61,6 +61,7 @@ struct QtMaterialAutocompletePopupPrivate {
     QListView* m_view = nullptr;
     QString m_filterText;
     bool m_popupVisible = false;
+    bool m_dismissedByPlatform = false;
 
     bool m_effectivePopupVisible = false;
 };
@@ -314,6 +315,10 @@ QString QtMaterialAutocompletePopup::currentCompletion() const
 void QtMaterialAutocompletePopup::setPopupVisible(
     bool visible)
 {
+    if (visible) {
+        // A new edit or explicit re-open ends the dismissal guard.
+        d_ptr->m_dismissedByPlatform = false;
+    }
     d_ptr->m_popupVisible = visible;
     refreshPopupVisibility();
 }
@@ -322,6 +327,11 @@ bool
 QtMaterialAutocompletePopup::isPopupVisible() const noexcept
 {
     return d_ptr->m_effectivePopupVisible;
+}
+
+bool QtMaterialAutocompletePopup::wasDismissedByPlatform() const noexcept
+{
+    return d_ptr->m_dismissedByPlatform;
 }
 
 void QtMaterialAutocompletePopup::setFilterText(
@@ -679,6 +689,12 @@ void QtMaterialAutocompletePopup::
 
 bool QtMaterialAutocompletePopup::event(QEvent* event)
 {
+    // A platform-triggered Hide must clear the requested state before
+    // QWidget dispatch restores focus to the anchor.
+    if (event && event->type() == QEvent::Hide && d_ptr->m_popupVisible) {
+        d_ptr->m_dismissedByPlatform = true;
+        d_ptr->m_popupVisible = false;
+    }
     const bool handled = QWidget::event(event);
 
     if (event) {
