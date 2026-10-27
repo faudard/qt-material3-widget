@@ -253,7 +253,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(QtMaterial3Widgets REQUIRED CONFIG)
 add_executable(studio_generated main.cpp)
-target_link_libraries(studio_generated PRIVATE Qt${QT_VERSION_MAJOR}::Widgets QtMaterial3::qtmaterial3_widgets)
+target_link_libraries(studio_generated PRIVATE Qt${QT_VERSION_MAJOR}::Widgets QtMaterial3::Widgets)
 )cmake";
     if (!writeFile(QDir(dir).filePath("main.cpp"), out, error)) return false;
     return writeFile(QDir(dir).filePath("CMakeLists.txt"), cmake, error);
