@@ -503,3 +503,7 @@ See `bindings/python/examples/basic_theme.py` and
 `bindings/python/examples/selection_chips_tooltip.py` for runnable examples.
 The dedicated wheel CI covers these additional Q_PROPERTY, signal, enum and
 QObject lifetime contracts.
+
+## 1.28 desktop SDK workstream
+
+See [Python SDK 2.0 parity and qualification](python-sdk-2.0.md) for new native Table, Tree View, Breadcrumb and Navigation Suite bindings, typed workspace-state helpers, ownership boundaries, example usage and wheel certification gates. This milestone is not a published wheel release.

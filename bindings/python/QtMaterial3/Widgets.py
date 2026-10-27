@@ -22,6 +22,10 @@ QtMaterialPagination = QtMaterial.QtMaterialPagination
 QtMaterialDivider = QtMaterial.QtMaterialDivider
 QtMaterialNavigationBar = QtMaterial.QtMaterialNavigationBar
 QtMaterialNavigationRail = QtMaterial.QtMaterialNavigationRail
+QtMaterialNavigationSuite = QtMaterial.QtMaterialNavigationSuite
+QtMaterialBreadcrumb = QtMaterial.QtMaterialBreadcrumb
+QtMaterialTable = QtMaterial.QtMaterialTable
+QtMaterialTreeView = QtMaterial.QtMaterialTreeView
 QtMaterialTabs = QtMaterial.QtMaterialTabs
 from . import _QtMaterial3 as _native
 QtMaterialMenu = _native.QtMaterialMenu

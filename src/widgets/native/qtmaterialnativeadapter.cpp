@@ -155,6 +155,19 @@ textFieldVariantFromDeclared(
     return fallback;
 }
 
+QtMaterialNativeAdapter::Options declaredOptionsFromValues(
+    const QVariant& density,
+    const QVariant& buttonVariant,
+    const QVariant& textFieldVariant,
+    const QtMaterialNativeAdapter::Options& fallback)
+{
+    return QtMaterialNativeAdapter::Options(
+        densityFromDeclared(density, fallback.density),
+        buttonVariantFromDeclared(buttonVariant, fallback.buttonVariant),
+        textFieldVariantFromDeclared(
+            textFieldVariant, fallback.textFieldVariant));
+}
+
 QtMaterialNativeAdapter::Options declaredOptions(
     const QWidget* widget,
     const QtMaterialNativeAdapter::Options& fallback)
@@ -163,16 +176,11 @@ QtMaterialNativeAdapter::Options declaredOptions(
         return fallback;
     }
 
-    return QtMaterialNativeAdapter::Options(
-        densityFromDeclared(
-            widget->property(kDensityProperty),
-            fallback.density),
-        buttonVariantFromDeclared(
-            widget->property(kVariantProperty),
-            fallback.buttonVariant),
-        textFieldVariantFromDeclared(
-            widget->property(kTextFieldVariantProperty),
-            fallback.textFieldVariant));
+    return declaredOptionsFromValues(
+        widget->property(kDensityProperty),
+        widget->property(kVariantProperty),
+        widget->property(kTextFieldVariantProperty),
+        fallback);
 }
 
 
@@ -244,6 +252,16 @@ public:
         return root && m_roots.contains(const_cast<QWidget*>(root));
     }
 
+    bool manages(const QWidget* widget) const
+    {
+        return widget && m_managed.contains(const_cast<QWidget*>(widget));
+    }
+
+    void reconcileImmediately()
+    {
+        reconcile();
+    }
+
 protected:
     bool eventFilter(QObject* object, QEvent* event) override
     {
@@ -263,6 +281,28 @@ protected:
                 || propertyName == kVariantProperty
                 || propertyName == kDensityProperty
                 || propertyName == kTextFieldVariantProperty) {
+                // Changes from an application or a Designer form are not
+                // replaced by the values our adapter last installed.
+                // Reconciliation itself changes these properties too: that
+                // internal traffic must not be recorded as user authoring.
+                if (!m_reconciling) {
+                    auto* widget = qobject_cast<QWidget*>(object);
+                    auto managed = m_managed.find(widget);
+                    if (managed != m_managed.end()) {
+                        const QVariant value =
+                            widget->property(propertyName.constData());
+                        if (propertyName == kVariantProperty
+                            && value != managed->installedVariant) {
+                            managed->originalVariant = value;
+                        } else if (propertyName == kDensityProperty
+                                   && value != managed->installedDensity) {
+                            managed->originalDensity = value;
+                        } else if (propertyName == kTextFieldVariantProperty
+                                   && value != managed->installedTextFieldVariant) {
+                            managed->originalTextFieldVariant = value;
+                        }
+                    }
+                }
                 scheduleReconcile();
             }
             break;
@@ -291,9 +331,14 @@ private:
     {
         QtMaterialNativeAdapter::Options options;
         QPointer<QStyle> installedStyle;
+        // Preserve properties authored by the application, independently of
+        // values written by the specialized adapters while the watch is live.
         QVariant originalVariant;
         QVariant originalDensity;
         QVariant originalTextFieldVariant;
+        QVariant installedVariant;
+        QVariant installedDensity;
+        QVariant installedTextFieldVariant;
     };
 
     void scheduleReconcile()
@@ -339,11 +384,20 @@ private:
                         == QtMaterialNativeAdapter::WatchPolicy::AllSupported
                     || QtMaterialNativeAdapter::isDeclared(widget));
             if (eligible) {
-                const auto options =
-                    spec.policy
-                        == QtMaterialNativeAdapter::WatchPolicy::DeclaredOnly
-                    ? declaredOptions(widget, spec.options)
-                    : spec.options;
+                // Both policies support per-widget overrides. A specialized
+                // adapter writes its resolved variant/density back to dynamic
+                // properties, so for managed controls consult the last
+                // application-authored values rather than those synthetic
+                // properties. Otherwise a fallback update would be ignored.
+                auto options = declaredOptions(widget, spec.options);
+                const auto managed = m_managed.constFind(widget);
+                if (managed != m_managed.cend()) {
+                    options = declaredOptionsFromValues(
+                        managed->originalDensity,
+                        managed->originalVariant,
+                        managed->originalTextFieldVariant,
+                        spec.options);
+                }
                 desired.insert(widget, Desired{options});
             } else {
                 // A deeper watched root can override a shallower one.
@@ -443,9 +497,20 @@ private:
             const bool externallyRemoved =
                 !noLongerManaged
                 && !QtMaterialNativeAdapter::isApplied(widget);
+            // Authored properties can change and change back before the
+            // deferred reconciliation runs. Even when the desired options
+            // still match, the adapter's live properties may no longer
+            // describe those options (e.g. a cleared button variant reads
+            // as Text instead of the watched root's Filled default).
+            const bool propertiesChanged =
+                !noLongerManaged
+                && (widget->property(kVariantProperty) != it->installedVariant
+                    || widget->property(kDensityProperty) != it->installedDensity
+                    || widget->property(kTextFieldVariantProperty)
+                        != it->installedTextFieldVariant);
 
             if (noLongerManaged || styleReplaced || optionsChanged
-                || externallyRemoved) {
+                || externallyRemoved || propertiesChanged) {
                 const Managed previous = it.value();
                 it = m_managed.erase(it);
                 // Only undo changes made by this controller.
@@ -473,6 +538,10 @@ private:
                 widget->property(kTextFieldVariantProperty)};
             if (QtMaterialNativeAdapter::apply(widget, it->options)) {
                 record.installedStyle = widget->style();
+                record.installedVariant = widget->property(kVariantProperty);
+                record.installedDensity = widget->property(kDensityProperty);
+                record.installedTextFieldVariant =
+                    widget->property(kTextFieldVariantProperty);
                 m_managed.insert(widget, record);
             }
         }
@@ -767,6 +836,20 @@ void QtMaterialNativeAdapter::setOptOut(
     bool excluded)
 {
     if (!widget) {
+        return;
+    }
+
+    // A watched adapter owns the synthetic variant/density properties.
+    // Set opt-out first and let its watcher release the adapter and restore
+    // the last application-authored values. Calling a specialized setOptOut
+    // here would remove synthetic properties *before* emitting opt-out, and
+    // those removal events could be mistaken for authored property changes.
+    NativeRuntimeWatcher* watcher = nativeRuntimeWatcher(false);
+    if (watcher && watcher->manages(widget)) {
+        widget->setProperty("qtm3MaterialOptOut", excluded);
+        // Preserve the synchronous removal contract of setOptOut(), while
+        // keeping the controller in charge of property restoration.
+        watcher->reconcileImmediately();
         return;
     }
 

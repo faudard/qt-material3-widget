@@ -3,8 +3,10 @@
 #include <QAbstractItemModel>
 #include <QAbstractTableModel>
 #include <QApplication>
+#include <QSortFilterProxyModel>
 
 #include "qtmaterial/widgets/data/qtmaterialtable.h"
+#include "qtmaterial/widgets/data/qtmaterialmultisortfilterproxy.h"
 #include "qtmaterial/widgets/data/qtmaterialtreeview.h"
 
 namespace {
@@ -36,6 +38,9 @@ public:
         }
         if (role == Qt::DisplayRole || role == Qt::AccessibleTextRole) {
             return QStringLiteral("R%1 C%2").arg(index.row()).arg(index.column());
+        }
+        if (role == Qt::UserRole) {
+            return index.column() == 0 ? index.row() : index.row() % 17;
         }
         return {};
     }
@@ -102,6 +107,32 @@ private slots:
             table.setModel(&model);
             table.show();
             const QModelIndex tail = model.index(kRowCount - 1, 0);
+            table.setCurrentIndex(tail);
+            table.scrollTo(tail, QAbstractItemView::PositionAtBottom);
+            QApplication::processEvents();
+        }
+    }
+
+    void table100kMultiSortProxyChainTailNavigation()
+    {
+        LargeTableModel model;
+        QtMaterial::QtMaterialMultiSortFilterProxy multi;
+        multi.setSourceModel(&model);
+        multi.setSortRole(Qt::UserRole);
+        QSortFilterProxyModel applicationProxy;
+        applicationProxy.setSourceModel(&multi);
+
+        QBENCHMARK_ONCE {
+            multi.setSortKeys({{0, Qt::AscendingOrder},
+                               {1, Qt::DescendingOrder}});
+            QtMaterial::QtMaterialTable table;
+            table.setAttribute(Qt::WA_DontShowOnScreen);
+            table.setSortingEnabled(false);
+            table.resize(1200, 720);
+            table.setModel(&applicationProxy);
+            table.show();
+            const QModelIndex tail = applicationProxy.mapFromSource(
+                multi.mapFromSource(model.index(kRowCount - 1, 0)));
             table.setCurrentIndex(tail);
             table.scrollTo(tail, QAbstractItemView::PositionAtBottom);
             QApplication::processEvents();

@@ -5,11 +5,13 @@ option(QTMATERIAL3_BUILD_CONSUMER_EXAMPLES
 
 add_subdirectory(gallery)
 add_subdirectory(dashboard-demo)
+add_subdirectory(desktop-productivity-3)
 add_subdirectory(theme-studio)
 add_subdirectory(designer-form)
 add_subdirectory(accessibility-certification)
 add_subdirectory(material3-catalogue-certification)
 add_subdirectory(adaptive-desktop-certification)
+add_subdirectory(native-runtime-adoption)
 
 if(QTMATERIAL3_BUILD_CONSUMER_EXAMPLES)
     add_subdirectory(minimal-consumer)

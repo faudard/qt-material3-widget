@@ -32,6 +32,8 @@ private slots:
     void overlappingWatchRootsAndManualOwnership();
     void externalStyleReplacementAndSignals();
     void destructionDuringPendingReconciliation();
+    void allSupportedOverridesAndWatchOptionChanges();
+    void rapidControlLifetimeChurnAcrossIndependentRoots();
 };
 
 void tst_NativeRuntimeWatcher::declaredOnlyAndPropertyChanges()
@@ -288,6 +290,115 @@ void tst_NativeRuntimeWatcher::destructionDuringPendingReconciliation()
     QVERIFY(QtMaterialNativeAdapter::isApplied(&newButton));
     QVERIFY(QtMaterialNativeAdapter::unwatch(&fresh));
     QVERIFY(!QtMaterialNativeAdapter::isApplied(&newButton));
+}
+
+
+void tst_NativeRuntimeWatcher::allSupportedOverridesAndWatchOptionChanges()
+{
+    QWidget form;
+    QPushButton authored(&form);
+    QPushButton inherited(&form);
+    authored.setProperty("qtm3MaterialVariant", QStringLiteral("filled"));
+    authored.setProperty("qtm3MaterialDensity", QStringLiteral("compact"));
+
+    using Adapter = QtMaterialNativeAdapter;
+    Adapter::Options first(
+        Density::Comfortable, ButtonVariant::Outlined);
+    QVERIFY(Adapter::watch(&form, Adapter::WatchPolicy::AllSupported, first));
+    QCOMPARE(int(QtMaterialButtonAdapter::variant(&authored)),
+             int(ButtonVariant::Filled));
+    QCOMPARE(int(QtMaterialButtonAdapter::density(&authored)),
+             int(Density::Compact));
+    QCOMPARE(int(QtMaterialButtonAdapter::variant(&inherited)),
+             int(ButtonVariant::Outlined));
+
+    // A new form-wide default must not be blocked by synthetic properties
+    // written to previously adapted controls.
+    Adapter::Options second(Density::Default, ButtonVariant::Text);
+    QVERIFY(Adapter::watch(&form, Adapter::WatchPolicy::AllSupported, second));
+    QTRY_COMPARE(int(QtMaterialButtonAdapter::variant(&inherited)),
+                 int(ButtonVariant::Text));
+    QCOMPARE(int(QtMaterialButtonAdapter::density(&inherited)),
+             int(Density::Default));
+    QCOMPARE(int(QtMaterialButtonAdapter::variant(&authored)),
+             int(ButtonVariant::Filled));
+
+    // A user-authored change while adapted wins, including a later removal.
+    inherited.setProperty("qtm3MaterialVariant", QStringLiteral("elevated"));
+    QTRY_COMPARE(int(QtMaterialButtonAdapter::variant(&inherited)),
+                 int(ButtonVariant::Elevated));
+    inherited.setProperty("qtm3MaterialVariant", QVariant());
+    QTRY_COMPARE(int(QtMaterialButtonAdapter::variant(&inherited)),
+                 int(ButtonVariant::Text));
+
+    authored.setProperty("qtm3MaterialDensity", QStringLiteral("comfortable"));
+    QTRY_COMPARE(int(QtMaterialButtonAdapter::density(&authored)),
+                 int(Density::Comfortable));
+    Adapter::setOptOut(&authored, true);
+    QTRY_VERIFY(!Adapter::isApplied(&authored));
+    QCOMPARE(authored.property("qtm3MaterialVariant").toString(),
+             QStringLiteral("filled"));
+    QCOMPARE(authored.property("qtm3MaterialDensity").toString(),
+             QStringLiteral("comfortable"));
+    Adapter::setOptOut(&authored, false);
+    QTRY_VERIFY(Adapter::isApplied(&authored));
+
+    QVERIFY(Adapter::unwatch(&form));
+    QVERIFY(!Adapter::isApplied(&authored));
+    QVERIFY(!Adapter::isApplied(&inherited));
+    QCOMPARE(authored.property("qtm3MaterialVariant").toString(),
+             QStringLiteral("filled"));
+    QCOMPARE(authored.property("qtm3MaterialDensity").toString(),
+             QStringLiteral("comfortable"));
+    QVERIFY(!inherited.property("qtm3MaterialVariant").isValid());
+    QVERIFY(!inherited.property("qtm3MaterialDensity").isValid());
+}
+
+void tst_NativeRuntimeWatcher::rapidControlLifetimeChurnAcrossIndependentRoots()
+{
+    QWidget left;
+    QWidget right;
+    using Adapter = QtMaterialNativeAdapter;
+    QVERIFY(Adapter::watch(
+        &left, Adapter::WatchPolicy::AllSupported,
+        Adapter::Options(Density::Compact, ButtonVariant::Filled)));
+    QVERIFY(Adapter::watch(
+        &right, Adapter::WatchPolicy::AllSupported,
+        Adapter::Options(Density::Comfortable, ButtonVariant::Outlined)));
+
+    QPushButton stable(&right);
+    // ChildAdded discovery is deliberately queued until construction ends.
+    QTRY_COMPARE(int(QtMaterialButtonAdapter::variant(&stable)),
+                 int(ButtonVariant::Outlined));
+    for (int i = 0; i < 40; ++i) {
+        auto* ephemeral = new QPushButton(&left);
+        QPointer<QPushButton> tracked(ephemeral);
+        QTRY_VERIFY(Adapter::isApplied(ephemeral));
+        // The newly discovered control must inherit its watched root's
+        // default before the application edits its dynamic properties.
+        QCOMPARE(int(QtMaterialButtonAdapter::variant(ephemeral)),
+                 int(ButtonVariant::Filled));
+        QCOMPARE(int(QtMaterialButtonAdapter::variant(ephemeral)),
+                 int(ButtonVariant::Filled));
+        ephemeral->setProperty("qtm3MaterialVariant", QStringLiteral("text"));
+        QTRY_COMPARE(int(QtMaterialButtonAdapter::variant(ephemeral)),
+                     int(ButtonVariant::Text));
+        ephemeral->setProperty("qtm3MaterialVariant", QVariant());
+        QTRY_COMPARE(int(QtMaterialButtonAdapter::variant(ephemeral)),
+                     int(ButtonVariant::Filled));
+        ephemeral->setParent(&right);
+        QTRY_COMPARE(int(QtMaterialButtonAdapter::variant(ephemeral)),
+                     int(ButtonVariant::Outlined));
+        delete ephemeral;
+        QVERIFY(tracked.isNull());
+        QCoreApplication::processEvents();
+    }
+    QVERIFY(Adapter::isApplied(&stable));
+    QCOMPARE(int(QtMaterialButtonAdapter::variant(&stable)),
+             int(ButtonVariant::Outlined));
+    QVERIFY(Adapter::unwatch(&left));
+    QVERIFY(Adapter::unwatch(&right));
+    QVERIFY(!Adapter::isApplied(&stable));
 }
 
 QTEST_MAIN(tst_NativeRuntimeWatcher)

@@ -121,6 +121,15 @@ def _member_signature(
     kind = member.get("kind", "")
     qualified_name = _qualified_name(compound, member)
     type_text = _normalize(_text(member.find("type")))
+    # Recent Doxygen releases keep constexpr in a memberdef attribute,
+    # whereas older releases also emitted it in <type>. Canonicalize
+    # both representations so a toolchain upgrade is not an ABI break.
+    # The qualifier remains part of the signature: removing constexpr
+    # from a declaration must still be reported as a source API change.
+    if member.get("constexpr") == "yes" and type_text not in {"constexpr", ""} and not type_text.startswith("constexpr "):
+        type_text = "constexpr " + type_text
+    elif member.get("constexpr") == "yes" and not type_text:
+        type_text = "constexpr"
     args = _normalize(_text(member.find("argsstring")))
     attrs = ",".join(
         f"{key}={member.get(key)}"

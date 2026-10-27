@@ -258,3 +258,61 @@ The CMake install/export contract is the package-manager boundary for 1.6. A fut
 - package-manager cache/relocation behavior.
 
 This keeps package-manager support testable instead of shipping an unverified manifest.
+
+## 1.25 — Designer 4.0 authoring templates
+
+Five editable templates are shipped in designer/templates/:
+
+| Template | Content |
+| --- | --- |
+| settings.ui | Settings form, theme-adapted native button, density declaration |
+| login.ui | Account field, password echo mode, native Material fields |
+| dashboard.ui | Top App Bar, Card, progress bar, Material action |
+| data_explorer.ui | Native QTreeView / QTableView (models remain application-owned) |
+| responsive_navigation.ui | Navigation Bar destinations, tab pages, Adaptive Shell configuration |
+
+Use Qt Designer to open each template, edit and save it as an application form.
+They are ordinary .ui files and link only the runtime library after AUTOUIC.
+If a form has qtm3Material* properties, call
+QtMaterialNativeAdapter::applyDeclaredToDescendants(root) after setupUi().
+No Designer plugin or Qt::Designer module is needed by deployed applications.
+
+The Material property task menu now batches changes and token resets into
+one native Designer cursor transaction. The dialog lists writable Material
+properties that cannot be represented by its persistence-safe editors,
+rather than silently claiming that they will serialize. Numeric editing
+no longer clamps signed values to the previous arbitrary +/-1,000,000 range.
+The specialized collection, enum and color/token editors remain available.
+
+**Known limitation:** Adaptive Shell automaticDensity and supportingPaneWidth
+are serializable Qt properties; arbitrary content/supporting widget pointers
+are not. The responsive template demonstrates the former and deliberately
+does not claim that adding custom runtime-owned shell pages survives UIC.
+
+### Qualification and release-gate evidence
+
+The designer_4_templates_roundtrip CTest target compiles the five .ui files
+through AUTOUIC, instantiates generated forms and checks typed properties,
+dynamic declarations, tab pages, native class identity, and adaptation cleanup.
+This is NOT a test in a running Qt Designer or Qt Creator Form Editor host.
+
+Real-host certification remains pending until an engineer performs and records
+the following for both Qt 5.14.2 and a qualified Qt 6 host. Record the OS,
+tool/Qt version, date, logs/screenshots and the resulting saved forms:
+
+1. Load each template, change properties, save, close and reopen it.
+2. Verify string-list navigation labels, variants, density and native
+   qtm3Material* declarations remain correctly typed after saving.
+3. Edit two Material properties at once; Undo must revert both, Redo must
+   reapply both. Save after each and inspect the .ui diff.
+4. Reset a QColor override to its Material token; Undo must restore the
+   override. Distinguish native Reset (keeps authored names) from Remove
+   Material declarations (removes them); verify Undo/Redo and stdset="0".
+5. Exercise theme, RTL, Compact/Medium/Expanded widths and 1x/2x DPR
+   preview, close it and confirm the form geometry/theme/direction recover.
+6. Run UIC on each saved form, compile a separate installed-package
+   consumer, and record any missing container-slot or serialization support.
+
+Do not mark the 1.25 real-host release gate complete on AUTOUIC output alone.
+If Qt Designer development headers are missing, retain the existing
+Qt::UiPlugin-only palette fallback without advertising task-menu features.

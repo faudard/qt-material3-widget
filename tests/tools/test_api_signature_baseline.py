@@ -145,6 +145,32 @@ class ApiSignatureBaselineTests(unittest.TestCase):
             public,
         )
 
+    def test_constexpr_is_preserved_across_doxygen_xml_representations(self):
+        import xml.etree.ElementTree as ET
+
+        def signature(type_text: str, constexpr: str | None) -> str:
+            attributes = {"kind": "function", "prot": "public", "static": "yes"}
+            if constexpr is not None:
+                attributes["constexpr"] = constexpr
+            member = ET.Element("memberdef", attributes)
+            ET.SubElement(member, "type").text = type_text
+            ET.SubElement(member, "name").text = "f"
+            ET.SubElement(member, "argsstring").text = "()"
+            return api._member_signature("QtMaterial::Foo", "public-static-func", member)
+
+        old_xml = signature("constexpr int", "yes")
+        new_xml = signature("int", "yes")
+        removed, added = api.compare([new_xml], [old_xml])
+        self.assertEqual((removed, added), ([], []))
+        # Removal of constexpr in the declaration still breaks the baseline.
+        without_constexpr = signature("int", None)
+        self.assertFalse(api.is_source_compatible([without_constexpr], [old_xml]))
+        # Constructors and conversion operators have no return type.
+        ctor_old = signature("constexpr", "yes")
+        ctor_new = signature("", "yes")
+        self.assertEqual(api.compare([ctor_new], [ctor_old]), ([], []))
+        self.assertFalse(api.is_source_compatible([signature("", None)], [ctor_old]))
+
     def test_enum_initializer_change_is_breaking(self):
         with tempfile.TemporaryDirectory() as before_tmp, tempfile.TemporaryDirectory() as after_tmp:
             before = Path(before_tmp) / "xml"

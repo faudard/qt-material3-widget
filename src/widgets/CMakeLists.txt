@@ -79,6 +79,8 @@ set(QTMATERIAL3_WIDGETS_SOURCES
     inputs/qtmaterialautocomplete.cpp
     qtmaterialdatepicker.cpp
     data/qtmaterialtable.cpp
+    data/qtmaterialmultisortfilterproxy.cpp
+    data/qtmaterialselectionstate.cpp
     data/qtmaterialgridlist.cpp
     data/qtmaterialcarousel.cpp
     data/qtmaterialpagination.cpp
@@ -160,6 +162,8 @@ set(QTMATERIAL3_WIDGETS_HEADERS
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/inputs/qtmaterialautocomplete.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/qtmaterialdatepicker.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialtable.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialmultisortfilterproxy.h
+    ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialselectionstate.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialgridlist.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialcarousel.h
     ${PROJECT_SOURCE_DIR}/include/qtmaterial/widgets/data/qtmaterialpagination.h

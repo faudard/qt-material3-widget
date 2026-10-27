@@ -143,6 +143,10 @@ void tst_Autocomplete::nativePopupDismissalStaysDismissed() {
  field.resize(field.width() + 20, field.height());
  QCoreApplication::processEvents();
  QVERIFY(!field.isPopupVisible());
+
+ // A new edit must be able to reopen suggestions after native dismissal.
+ field.setText(QStringLiteral("Al"));
+ QTRY_VERIFY(field.isPopupVisible());
 }
 
 void tst_Autocomplete::destroyingVisiblePopupIsSafe() {
