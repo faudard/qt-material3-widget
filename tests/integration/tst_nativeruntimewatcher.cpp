@@ -374,6 +374,10 @@ void tst_NativeRuntimeWatcher::rapidControlLifetimeChurnAcrossIndependentRoots()
         auto* ephemeral = new QPushButton(&left);
         QPointer<QPushButton> tracked(ephemeral);
         QTRY_VERIFY(Adapter::isApplied(ephemeral));
+        // The newly discovered control must inherit its watched root's
+        // default before the application edits its dynamic properties.
+        QCOMPARE(int(QtMaterialButtonAdapter::variant(ephemeral)),
+                 int(ButtonVariant::Filled));
         QCOMPARE(int(QtMaterialButtonAdapter::variant(ephemeral)),
                  int(ButtonVariant::Filled));
         ephemeral->setProperty("qtm3MaterialVariant", QStringLiteral("text"));
