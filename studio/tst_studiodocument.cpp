@@ -65,7 +65,7 @@ private slots:
         QVERIFY(cpp.contains(d.items[0].text.toUtf8().toHex()));
         QVERIFY(!cpp.contains("A < B &"));
         QFile cmake(dir + "/CMakeLists.txt"); QVERIFY(cmake.open(QIODevice::ReadOnly));
-        QVERIFY(cmake.readAll().contains("QtMaterial3::qtmaterial3_widgets"));
+        QVERIFY(cmake.readAll().contains("QtMaterial3::Widgets"));
     }
 };
 QTEST_GUILESS_MAIN(StudioDocumentTest)
