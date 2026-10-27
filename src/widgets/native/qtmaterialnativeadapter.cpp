@@ -497,9 +497,20 @@ private:
             const bool externallyRemoved =
                 !noLongerManaged
                 && !QtMaterialNativeAdapter::isApplied(widget);
+            // Authored properties can change and change back before the
+            // deferred reconciliation runs. Even when the desired options
+            // still match, the adapter's live properties may no longer
+            // describe those options (e.g. a cleared button variant reads
+            // as Text instead of the watched root's Filled default).
+            const bool propertiesChanged =
+                !noLongerManaged
+                && (widget->property(kVariantProperty) != it->installedVariant
+                    || widget->property(kDensityProperty) != it->installedDensity
+                    || widget->property(kTextFieldVariantProperty)
+                        != it->installedTextFieldVariant);
 
             if (noLongerManaged || styleReplaced || optionsChanged
-                || externallyRemoved) {
+                || externallyRemoved || propertiesChanged) {
                 const Managed previous = it.value();
                 it = m_managed.erase(it);
                 // Only undo changes made by this controller.
