@@ -42,7 +42,7 @@ jobs:
           build/studio-ci/studio/qtmaterial3_visual_studio --export-ui studio/fixtures/form.json build/studio-ci/generated/form.ui
           build/studio-ci/studio/qtmaterial3_visual_studio --export-cpp studio/fixtures/form.json build/studio-ci/generated/cpp
           grep -F 'QtMaterial::QtMaterialFilledButton' build/studio-ci/generated/form.ui
-          grep -F 'QtMaterial3::qtmaterial3_widgets' build/studio-ci/generated/cpp/CMakeLists.txt
+          grep -F 'QtMaterial3::Widgets' build/studio-ci/generated/cpp/CMakeLists.txt
           /usr/lib/qt6/libexec/uic build/studio-ci/generated/form.ui -o build/studio-ci/generated/ui_form.h
       - name: Install SDK and compile/run generated C++ application
         env:
