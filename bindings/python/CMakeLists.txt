@@ -74,6 +74,13 @@ set(_qtm3_python_types
     QtMaterialSelectionControl
     QtMaterialFormFieldControl
     QtMaterialInputControl
+    QtMaterialIconButton
+    QtMaterialFab
+    QtMaterialExtendedFab
+    QtMaterialSlider
+    QtMaterialRangeSlider
+    QtMaterialFilterChip
+    QtMaterialInputChip
     QtMaterialTextButton
     QtMaterialFilledButton
     QtMaterialOutlinedButton
@@ -159,6 +166,10 @@ set(_qtm3_shiboken_options
 set(_qtm3_binding_header "${CMAKE_CURRENT_SOURCE_DIR}/qtmaterial3_bindings.h")
 set(_qtm3_typesystem "${CMAKE_CURRENT_SOURCE_DIR}/typesystem_qtmaterial3.xml")
 
+# Track native headers parsed by Shiboken in incremental builds.
+file(GLOB_RECURSE _qtm3_python_native_headers CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/include/qtmaterial/*.h")
+
 add_custom_command(
     OUTPUT ${_qtm3_python_generated_sources}
     COMMAND "${_qtm3_shiboken_executable}"
@@ -168,6 +179,7 @@ add_custom_command(
     DEPENDS
         "${_qtm3_binding_header}"
         "${_qtm3_typesystem}"
+        ${_qtm3_python_native_headers}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     COMMENT "Generating QtMaterial3 Python bindings with Shiboken6"
     VERBATIM
@@ -282,6 +294,13 @@ install(
 )
 
 if(QTMATERIAL3_BUILD_TESTS)
+    add_test(
+        NAME python_bindings_common_controls
+        COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_common_controls.py"
+    )
+    set_tests_properties(python_bindings_common_controls PROPERTIES
+        ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR};QT_QPA_PLATFORM=offscreen"
+    )
     add_test(
         NAME python_bindings_desktop_sdk_2
         COMMAND "${Python_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_desktop_sdk_2.py"

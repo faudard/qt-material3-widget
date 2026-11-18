@@ -7,7 +7,7 @@
 | Workflow | Native C++ implementation | Python exposure | Contract |
 | --- | --- | --- | --- |
 | Themes | Theme, ThemeBuilder, ThemeContext | Existing | One native implementation; borrowed ThemeContext where documented |
-| Controls | Buttons, Checkbox, Radio, Switch, Chip, Text Fields | Existing | Native QWidget properties and signals |
+| Controls | Buttons, IconButton, FAB, Extended FAB, Checkbox, Radio, Switch, Chip, FilterChip, InputChip, Text Fields, Slider, RangeSlider | Seven additional native bindings in the completion increment | Native QWidget properties, methods and signals |
 | Navigation | Tabs, Route, NavigationModel, controllers, Bar, Rail | Existing | AsyncLazyTabs/NavigationSession are optional Python orchestration |
 | Responsive navigation | NavigationSuite, Breadcrumb | **New in 1.28** | Native destinations, adaptive size, breadcrumb items and signals |
 | Modal feedback | Dialog, Snackbar, Tooltip, Badge | Existing | Application-owned actions; complex callback/queue APIs deferred |
@@ -39,4 +39,6 @@ The desktop example combines NavigationSuite, Breadcrumb, an application-owned Q
 
 The existing wheel CI builds and installs **one wheel per runner**: Linux CPython 3.10, 3.11, 3.12; macOS 3.11; Windows 3.11. Each advertised target must pass pinned ABI preflight, wheel-tag and payload checks, import from the installed wheel, lifecycle/ownership tests and async navigation cancellation tests. The 1.28 desktop tests join that matrix and CTest.
 
-Passing these checks is necessary but does **not** prove manylinux repair, notarization, universal relocatability or PyPI publication. Until final PR checks pass, this remains an unqualified 1.28 development increment.
+Passing these checks is necessary but does **not** prove manylinux repair, notarization, universal relocatability or PyPI publication. The reference desktop example is now exercised in smoke mode by the common-controls contract on each runner (navigation, slider, theme switching, opening/dismissing the dialog and native models). Launch it manually with `python bindings/python/examples/desktop_workspace.py --smoke` for a noninteractive run.
+
+Until final PR checks pass, this remains an unqualified 1.28 development increment. Full-catalogue bindings, generated API stubs and repair/relocation of publishable wheels remain separate work.
