@@ -13,6 +13,7 @@ if str(TOOLS) not in sys.path:
 
 import certification_center as center
 import certification_report_1_22 as health
+import export_certification_review_pack as review_pack
 
 
 class CertificationHealth122Tests(unittest.TestCase):
@@ -171,6 +172,22 @@ class CertificationHealth122Tests(unittest.TestCase):
         self.write()
         self.assertTrue(any("inconsistent component contract" in issue
                             for issue in health.build_report(self.root)["issues"]))
+
+    def test_review_pack_exports_pending_templates_and_protects_sessions(self):
+        output = self.root / "review"
+        review_pack.export_pack(output, self.root)
+        sessions = list((output / "sessions").glob("*.json"))
+        self.assertEqual(len(sessions), 3)
+        session = json.loads(sessions[0].read_text(encoding="utf-8"))
+        self.assertEqual(session["reviewer"], "")
+        self.assertEqual(session["checks"]["navigation.bar"]["activation"], "pending")
+        worklist = (output / "review-worklist.md").read_text(encoding="utf-8")
+        self.assertIn("tests/visual/goldens/test.png: missing", worklist)
+        self.assertIn("navigation.bar", worklist)
+        original = sessions[0].read_text(encoding="utf-8")
+        with self.assertRaises(FileExistsError):
+            review_pack.export_pack(output, self.root)
+        self.assertEqual(sessions[0].read_text(encoding="utf-8"), original)
 
     def test_forged_at_pass_is_rejected(self):
         self.evidence["platforms"]["windows-nvda"]["status"] = "pass"
