@@ -1,5 +1,6 @@
 #include <QtTest/QtTest>
 #include <QSignalSpy>
+#include <QFontMetrics>
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 
 class tst_Filledbutton : public QObject
@@ -8,6 +9,7 @@ class tst_Filledbutton : public QObject
 private slots:
     void basicConstruction();
     void keyboardActivation();
+    void preferredWidthIncludesPaintInset();
 };
 
 void tst_Filledbutton::basicConstruction()
@@ -34,6 +36,21 @@ void tst_Filledbutton::keyboardActivation()
 
     QTest::keyClick(&widget, Qt::Key_Return);
     QVERIFY(clickedSpy.count() >= 2);
+}
+
+void tst_Filledbutton::preferredWidthIncludesPaintInset()
+{
+    class InspectableButton : public QtMaterial::QtMaterialFilledButton {
+    public:
+        using QtMaterial::QtMaterialTextButton::currentButtonSpec;
+    };
+    InspectableButton button;
+    button.setText(QStringLiteral("Primary action with a long label"));
+    const int width = button.sizeHint().width();
+    const auto& spec = button.currentButtonSpec();
+    const QFont labelFont = spec.hasResolvedLabelFont ? spec.labelFont : button.font();
+    QVERIFY(width - 2 - 2 * spec.horizontalPadding
+            >= QFontMetrics(labelFont).horizontalAdvance(button.text()));
 }
 
 QTEST_MAIN(tst_Filledbutton)
