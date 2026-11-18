@@ -237,7 +237,8 @@ QSize QtMaterialTextButton::sizeHint() const
  const int contentLeft = layout.hasIcon ? qMin(layout.iconRect.left(), layout.textRect.left())
                                         : layout.textRect.left();
  const int contentWidth = qMax(0, contentRight - contentLeft + 1);
- const int width = qMax(88, contentWidth + 2 * spec.horizontalPadding);
+ // Filled and outlined paint paths inset the container by one pixel per side.
+ const int width = qMax(88, contentWidth + 2 * spec.horizontalPadding + 2);
  return QSize(width, spec.touchTarget.height());
 }
 
