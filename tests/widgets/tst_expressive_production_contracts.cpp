@@ -165,6 +165,21 @@ private Q_SLOTS:
         QCOMPARE(list.currentIndex(), 1);
     }
 
+    void generatedGroupSegmentsKeepPreferredWidth()
+    {
+        QtMaterialButtonGroup group;
+        auto* day = group.addButton(QStringLiteral("Day"));
+        auto* week = group.addButton(QStringLiteral("Week"));
+        auto* month = group.addButton(QStringLiteral("Month"));
+        group.ensurePolished();
+        group.resize(group.sizeHint());
+        group.layout()->activate();
+        for (auto* button : {day, week, month}) {
+            QCOMPARE(button->sizePolicy().horizontalPolicy(), QSizePolicy::Minimum);
+            QVERIFY(button->width() >= button->sizeHint().width());
+        }
+    }
+
     void dpr2RenderingSmoke()
     {
         QtMaterialSplitButton split(QStringLiteral("Create"));
