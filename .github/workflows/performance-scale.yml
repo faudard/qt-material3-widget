@@ -17,6 +17,9 @@ on:
       - "CMakeLists.txt"
       - "benchmarks/CMakeLists.txt"
       - "tests/CMakeLists.txt"
+  push:
+    tags:
+      - "v*"
   schedule:
     - cron: "30 3 * * 2"
 
@@ -61,6 +64,7 @@ jobs:
           python3 scripts/run_performance_baseline.py
           build-perf
           --desktop-scale-2
+          ${{ github.event_name != 'pull_request' && '--enforce' || '' }}
 
       - name: Update per-commit performance history
         run: |
@@ -72,17 +76,6 @@ jobs:
 
       - name: Publish performance summary
         run: cat build-perf/performance-results/performance-summary.md >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Enforce CPU/RSS/p95/p99 budgets
-        if: github.event_name != 'pull_request'
-        env:
-          QTMATERIAL3_RUN_SCALE_PERF: "1"
-          QTMATERIAL3_RUN_DESKTOP_SCALE_2: "1"
-          QTMATERIAL3_ENFORCE_PERF_BUDGETS: "1"
-        run: >
-          ctest --test-dir build-perf
-          --output-on-failure
-          -R "^(tst_scale_performance_contracts|tst_desktop_scale_2_contracts)$"
 
       - name: Install heap profiler
         if: github.event_name != 'pull_request'
