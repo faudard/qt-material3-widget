@@ -1,5 +1,6 @@
 #include "qtmaterial/theme/qtmaterialthemebuilder.h"
 #include "qtmaterial/theme/qtmaterialaccessibilitytokens.h"
+#include "qtmaterial/theme/qtmaterialthemevalidation.h"
 #include "qtmaterialmcuadapter_p.h"
 
 #include <QtGlobal>
@@ -435,29 +436,72 @@ void ThemeBuilder::applyContrastAdjustments(Theme& theme, ContrastMode contrast)
     const QColor white(Qt::white);
     const QColor black(Qt::black);
     const bool dark = theme.isDark();
-    const QColor towardForeground = dark ? white : black;
     const QColor towardDivider = dark ? white : black;
     const qreal textAmount = (contrast == ContrastMode::Medium) ? 0.12 : 0.24;
     const qreal outlineAmount = (contrast == ContrastMode::Medium) ? 0.10 : 0.20;
+    const double targetRatio = contrast == ContrastMode::High ? 7.0 : 4.5;
 
-    const ColorRole foregroundRoles[] = {
-        ColorRole::OnPrimary,
-        ColorRole::OnSecondary,
-        ColorRole::OnTertiary,
-        ColorRole::OnSurface,
-        ColorRole::OnSurfaceVariant,
-        ColorRole::OnPrimaryFixed,
-        ColorRole::OnPrimaryFixedVariant,
-        ColorRole::OnSecondaryFixed,
-        ColorRole::OnSecondaryFixedVariant,
-        ColorRole::OnTertiaryFixed,
-        ColorRole::OnTertiaryFixedVariant
+    struct RolePair {
+        ColorRole foreground;
+        ColorRole background;
+        bool adjustBackground;
+    };
+    const RolePair pairs[] = {
+        {ColorRole::OnPrimary, ColorRole::Primary, true},
+        {ColorRole::OnSecondary, ColorRole::Secondary, true},
+        {ColorRole::OnTertiary, ColorRole::Tertiary, true},
+        {ColorRole::OnSurface, ColorRole::Surface, false},
+        {ColorRole::OnSurfaceVariant, ColorRole::SurfaceVariant, false},
+        {ColorRole::OnPrimaryFixed, ColorRole::PrimaryFixedDim, false},
+        {ColorRole::OnPrimaryFixedVariant, ColorRole::PrimaryFixedDim, false},
+        {ColorRole::OnSecondaryFixed, ColorRole::SecondaryFixedDim, false},
+        {ColorRole::OnSecondaryFixedVariant, ColorRole::SecondaryFixedDim, false},
+        {ColorRole::OnTertiaryFixed, ColorRole::TertiaryFixedDim, false},
+        {ColorRole::OnTertiaryFixedVariant, ColorRole::TertiaryFixedDim, false}
     };
 
-    for (ColorRole role : foregroundRoles) {
-        if (scheme.contains(role)) {
-            scheme.setColor(role, adjustColorTowards(scheme.color(role), towardForeground, textAmount));
+    for (const RolePair& pair : pairs) {
+        if (!scheme.contains(pair.foreground) || !scheme.contains(pair.background)) {
+            continue;
         }
+        const QColor foreground = scheme.color(pair.foreground);
+        const QColor background = scheme.color(pair.background);
+        const bool useWhite = colorContrastRatio(white, background)
+            >= colorContrastRatio(black, background);
+        const QColor extreme = useWhite ? white : black;
+        QColor adjusted = adjustColorTowards(foreground, extreme, textAmount);
+        const double initialRatio = colorContrastRatio(foreground, background);
+        if (colorContrastRatio(adjusted, background) < initialRatio) {
+            adjusted = foreground;
+        }
+        // Do not assume all on-colors have the polarity of the surface text.
+        // Move toward the contrasting endpoint before changing the accent fill.
+        if (colorContrastRatio(adjusted, background) < targetRatio) {
+            for (int percent = 1; percent <= 100; ++percent) {
+                const QColor candidate = adjustColorTowards(
+                    foreground, extreme, percent / 100.0);
+                if (colorContrastRatio(candidate, background)
+                    > colorContrastRatio(adjusted, background)) {
+                    adjusted = candidate;
+                }
+                if (colorContrastRatio(adjusted, background) >= targetRatio) {
+                    break;
+                }
+            }
+        }
+        if (pair.adjustBackground
+            && colorContrastRatio(adjusted, background) < targetRatio) {
+            const QColor opposite = useWhite ? black : white;
+            for (int percent = 1; percent <= 100; ++percent) {
+                const QColor candidate = adjustColorTowards(
+                    background, opposite, percent / 100.0);
+                if (colorContrastRatio(adjusted, candidate) >= targetRatio) {
+                    scheme.setColor(pair.background, candidate);
+                    break;
+                }
+            }
+        }
+        scheme.setColor(pair.foreground, adjusted);
     }
 
     if (scheme.contains(ColorRole::Outline)) {
