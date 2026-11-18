@@ -1,6 +1,7 @@
 #include <QtTest/QtTest>
 #include <QSignalSpy>
-#include <QFontMetrics>
+#include <QFontMetricsF>
+#include <QtMath>
 #include "qtmaterial/widgets/buttons/qtmaterialfilledbutton.h"
 
 class tst_Filledbutton : public QObject
@@ -45,12 +46,20 @@ void tst_Filledbutton::preferredWidthIncludesPaintInset()
         using QtMaterial::QtMaterialTextButton::currentButtonSpec;
     };
     InspectableButton button;
-    button.setText(QStringLiteral("Primary action with a long label"));
-    const int width = button.sizeHint().width();
-    const auto& spec = button.currentButtonSpec();
-    const QFont labelFont = spec.hasResolvedLabelFont ? spec.labelFont : button.font();
-    QVERIFY(width - 2 - 2 * spec.horizontalPadding
-            >= QFontMetrics(labelFont).horizontalAdvance(button.text()));
+    button.setExpressive(true);
+    for (const QString& label : {QStringLiteral("Month"),
+                                 QStringLiteral("Week"),
+                                 QStringLiteral("Primary action with a long label")}) {
+        button.setText(label);
+        button.ensurePolished();
+        const int width = button.sizeHint().width();
+        const auto& spec = button.currentButtonSpec();
+        const QFont labelFont = spec.hasResolvedLabelFont ? spec.labelFont : button.font();
+        const int budget = width - 2 - 2 * spec.horizontalPadding;
+        const QFontMetricsF metrics(labelFont);
+        QVERIFY(budget >= qCeil(metrics.horizontalAdvance(label)));
+        QCOMPARE(metrics.elidedText(label, Qt::ElideRight, budget), label);
+    }
 }
 
 QTEST_MAIN(tst_Filledbutton)
