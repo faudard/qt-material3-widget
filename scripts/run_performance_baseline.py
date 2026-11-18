@@ -110,6 +110,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 str(root),
                 "-B",
                 str(build_dir),
+                "-DCMAKE_BUILD_TYPE=Release",
                 "-DQTMATERIAL3_BUILD_TESTS=ON",
                 "-DQTMATERIAL3_BUILD_EXAMPLES=OFF",
                 "-DQTMATERIAL3_BUILD_BENCHMARKS=ON",
@@ -119,7 +120,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             env=env,
         )
         run(
-            ["cmake", "--build", str(build_dir)],
+            ["cmake", "--build", str(build_dir), "--config", "Release"],
             cwd=root,
             env=env,
         )
@@ -129,6 +130,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "--test-dir",
                 str(build_dir),
                 "--output-on-failure",
+                "--no-tests=error",
+                "-C", "Release",
                 "-R",
                 "performance|theme_performance|desktop_scale_2",
             ],
@@ -143,6 +146,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         benchmarks += SCALE_BENCHMARKS
     if args.desktop_scale_2:
         benchmarks += DESKTOP_SCALE_2_BENCHMARKS
+    failures = []
     for name in benchmarks:
         executable = find_executable(build_dir, name)
         if executable is None:
@@ -150,10 +154,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                 f"warning: benchmark executable not found: {name}",
                 flush=True,
             )
+            failures.append(f"{name}: missing executable")
             continue
 
         print(f"==> {name}")
         output = results_dir / f"{name}.txt"
+        if output.exists():
+            output.unlink()
         completed = run(
             [str(executable), "-o", f"{output},txt"],
             cwd=root,
@@ -161,15 +168,20 @@ def main(argv: Sequence[str] | None = None) -> int:
             check=False,
         )
         if completed.returncode != 0:
+            failures.append(f"{name}: exit {completed.returncode}")
             print(
                 f"warning: {name} returned {completed.returncode}",
                 flush=True,
             )
-        if output.is_file():
+        if output.is_file() and output.stat().st_size:
             print(output.read_text(encoding="utf-8", errors="replace"))
+        else:
+            failures.append(f"{name}: missing or empty result")
 
     print(f"Performance results written to {results_dir}")
-    return 0
+    for failure in failures:
+        print(f"Incomplete evidence: {failure}")
+    return 1 if failures and args.enforce else 0
 
 
 if __name__ == "__main__":
