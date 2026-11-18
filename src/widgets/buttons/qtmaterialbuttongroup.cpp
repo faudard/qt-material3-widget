@@ -17,10 +17,8 @@ QtMaterialButtonGroup::QtMaterialButtonGroup(QWidget* parent)
     setFocusPolicy(Qt::NoFocus);
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(2);
-    m_layout->setDirection(
-        layoutDirection() == Qt::RightToLeft
-            ? QBoxLayout::RightToLeft
-            : QBoxLayout::LeftToRight);
+    // QBoxLayout already mirrors horizontal logical order in RTL.
+    m_layout->setDirection(QBoxLayout::LeftToRight);
 }
 
 QtMaterialButtonGroup::~QtMaterialButtonGroup()
@@ -309,10 +307,7 @@ void QtMaterialButtonGroup::changeEvent(QEvent* event)
 {
     QtMaterialWidget::changeEvent(event);
     if (event && event->type() == QEvent::LayoutDirectionChange) {
-        m_layout->setDirection(
-            layoutDirection() == Qt::RightToLeft
-                ? QBoxLayout::RightToLeft
-                : QBoxLayout::LeftToRight);
+        m_layout->invalidate();
     }
 }
 
