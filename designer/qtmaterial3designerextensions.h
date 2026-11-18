@@ -9,6 +9,7 @@
 #include <QtDesigner/QDesignerContainerExtension>
 
 class QDesignerFormEditorInterface;
+class QDialog;
 class QWidget;
 
 namespace QtMaterial {
@@ -50,6 +51,9 @@ bool clearNativeDesignerProperties(
     QWidget* widget,
     QDesignerFormEditorInterface* core = nullptr);
 
+// Shared dialog implementation for task-menu authoring and standalone contract tests.
+QDialog* createMaterialPropertyDialog(QWidget* target,
+    QDesignerFormEditorInterface* core = nullptr, QWidget* parent = nullptr);
 QStringList editablePropertyNames(const QWidget* widget);
 bool propertyCanReset(const QWidget* widget, const QString& propertyName);
 bool resetPropertyToDefault(QWidget* widget, const QString& propertyName);
