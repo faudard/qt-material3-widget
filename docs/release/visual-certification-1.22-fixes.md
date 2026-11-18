@@ -34,3 +34,35 @@ review, commit the matching PNGs and repeatability provenance, rerun strict CI,
 and record the real human review using `tools/certification_center.py review-visual`.
 The visual ledger stays pending in this PR; native screen-reader evidence and
 separate DPR 2.0 and motion checks remain required for certification.
+
+
+## Refresh after visual acceptance
+
+The pinned CI comparisons intentionally fail against superseded PNGs. A rerun
+without changing the checked-in references cannot fix those failures.
+Download the four evidence artifacts from the **same** successful capture
+run (the overall run may be red due to strict comparisons only):
+
+    gh run download <RUN_ID> --dir build/review --pattern '*-visual-evidence'
+
+The reports specify the actual rendered source SHA (for pull requests this can
+be the synthetic merge SHA rather than the branch head). Obtain it from a
+repeatability JSON file, fetch it into the local Git checkout if required, and
+perform a read-only preflight:
+
+    git fetch origin <RENDERED_SOURCE_SHA>
+    python tools/refresh_visual_baselines_1_22.py --artifacts build/review --run-id <RUN_ID> --source-commit <RENDERED_SOURCE_SHA>
+
+The importer reuses all four independent repeatability checkers and rejects
+mixed commits, inconsistent reports or differing production/test sources.
+After reviewing every changed/new image, repeat with
+`--apply --confirm-reviewed`, review the resulting Git diff and commit the
+PNGs and provenance JSON. This does not promote component maturity or mark
+the certification ledgers as passed. Re-run strict CI on the updated branch.
+
+Previous runs 44292887900 and 44347279314 are historical candidates, not
+approved baselines. The latter shows a translucent Side Sheet scrim and the
+correct Adaptive RTL order, but the Month segment still exhibited elision.
+The follow-up changes fractional text metrics to avoid rounding a preferred
+label width down before painting. Requalify the new render; do not import
+the historical candidates after this source change.
