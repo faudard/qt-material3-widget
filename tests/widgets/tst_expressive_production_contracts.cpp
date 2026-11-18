@@ -115,7 +115,9 @@ private Q_SLOTS:
 
         group.setLayoutDirection(Qt::RightToLeft);
         auto* groupLayout = static_cast<QBoxLayout*>(group.layout());
-        QCOMPARE(groupLayout->direction(), QBoxLayout::RightToLeft);
+        QCOMPARE(groupLayout->direction(), QBoxLayout::LeftToRight);
+        groupLayout->activate();
+        QVERIFY(first->geometry().center().x() > second->geometry().center().x());
         second->setFocus(Qt::TabFocusReason);
         QTest::keyClick(second, Qt::Key_Right);
         QTRY_VERIFY(first->hasFocus());
@@ -134,7 +136,9 @@ private Q_SLOTS:
 
         toolbar.setLayoutDirection(Qt::RightToLeft);
         auto* toolbarLayout = static_cast<QBoxLayout*>(toolbar.layout());
-        QCOMPARE(toolbarLayout->direction(), QBoxLayout::RightToLeft);
+        QCOMPARE(toolbarLayout->direction(), QBoxLayout::LeftToRight);
+        toolbarLayout->activate();
+        QVERIFY(edit->geometry().center().x() > share->geometry().center().x());
         share->setFocus(Qt::TabFocusReason);
         QTest::keyClick(share, Qt::Key_Right);
         QTRY_VERIFY(edit->hasFocus());
