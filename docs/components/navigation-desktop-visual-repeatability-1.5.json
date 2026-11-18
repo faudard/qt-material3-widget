@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "a72dac30794983b5d16068535cc0069bee574d1d",
+  "renderer": {
+    "qtVersion": "6.4.0",
+    "style": "fusion",
+    "platform": "xcb",
+    "scaleFactor": "1",
+    "fontDpi": "96"
+  },
+  "repeatable": true,
+  "visualReview": "pending",
+  "images": [
+    {
+      "name": "navigation_primary_matrix_light_standard",
+      "width": 866,
+      "height": 818,
+      "pngSha256": "0b1bf1b3f8675c4d62e0bbf484522e376a82c13d1acfe2bba6cc67e2c5faacbd",
+      "pixelSha256": "dec089de9d50c56b97333fa1b7bc91f06d3aea752df1ca579c31f347267851cf"
+    },
+    {
+      "name": "navigation_primary_matrix_dark_standard",
+      "width": 866,
+      "height": 818,
+      "pngSha256": "e6d9c0187b45632c5deb56bad54996dc8110526f5dd8b9395326473f6e4f8814",
+      "pixelSha256": "327b17c7a22bc963357432c7c3c5611206f2b64874b8388da899a095ee78ccef"
+    },
+    {
+      "name": "navigation_primary_matrix_light_high",
+      "width": 866,
+      "height": 818,
+      "pngSha256": "c9293585320eb18389b260503ad7e1ea4989d85719017b52220b3d973f9d5b97",
+      "pixelSha256": "dec3cc3806844081e726631822b75961153d98344cd837cf2a904509f1aa9292"
+    },
+    {
+      "name": "navigation_desktop_matrix_light_standard",
+      "width": 983,
+      "height": 826,
+      "pngSha256": "0c11239abc155fb41254850b175defc72d8a001ebbcce62dfae2ef6dc42852f0",
+      "pixelSha256": "3439282be217e0e1fa15fb61df32fb72728f9332318803b5ace4374c00808c12"
+    },
+    {
+      "name": "navigation_desktop_matrix_dark_standard",
+      "width": 983,
+      "height": 826,
+      "pngSha256": "2c2d1ae04e6b726d43fd0cc905d13ca0dffde001cd4a3f21d410e1d67ee3a499",
+      "pixelSha256": "8fe0635decad58193d95572649d15bc461dcab5449d41fac8e5256f79a79d932"
+    },
+    {
+      "name": "navigation_desktop_matrix_light_high",
+      "width": 983,
+      "height": 826,
+      "pngSha256": "26c39419d4376f8a3805e8a4d9b73c2bc24948638d4243695f42bf3ff3b97e7e",
+      "pixelSha256": "35a7426d56d120a63611e544570f60c0eeffe20e9a82a417ad744a7a820df865"
+    },
+    {
+      "name": "navigation_split_matrix_light_standard",
+      "width": 967,
+      "height": 560,
+      "pngSha256": "357f207123a47a0027fdd0a68ff9ab8ac5897060ef88b7c6fa30393da7b389f1",
+      "pixelSha256": "6ed75049fb9ec2d1fd220463a65de29a48a749e62a964c596352be4ca15cc8b2"
+    },
+    {
+      "name": "navigation_split_matrix_dark_standard",
+      "width": 967,
+      "height": 560,
+      "pngSha256": "7c6469b503ba75cd40cec0fdf13655a9c6e45f7802926665311d1a15d3801368",
+      "pixelSha256": "26b0de711f8072fa6167c4b8813181122d20ffa36c418c87f7f1daaa4eb0d097"
+    },
+    {
+      "name": "navigation_split_matrix_light_high",
+      "width": 967,
+      "height": 560,
+      "pngSha256": "c70388796ff958b913e975c1254e2afda1e2090d03c6cd11f8c62ba23c0b7f7f",
+      "pixelSha256": "2d5ac7a12b6448414a540a47da2a09fbeaa9a4506f0773c2333bb35318103659"
+    },
+    {
+      "name": "navigation_focus_tabs_light_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "031b36e2d325a44565106cee3474138d33009d0b327a3cf2d2004407d4517271",
+      "pixelSha256": "08d03a7901f6057071214799de06eacfbf4e84de0842acb97a60990366516ce1"
+    },
+    {
+      "name": "navigation_focus_tabs_dark_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "6864060fca8f93087bed4b10b7f1a7d3548bdcf0663d4374131bc32b495face1",
+      "pixelSha256": "ed613292b2b229202b06ea897c26863e69fb9d5e3a1d0e4983e715de18838625"
+    },
+    {
+      "name": "navigation_focus_tabs_light_high",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "12cb75050db3c6eea61d2f7839bf9a95a56dd0bea6efb88984a3dc3a8a28e039",
+      "pixelSha256": "6f30476f37ad3917ba4fd9e09975965e678e01128811f870a762e7b05a23c445"
+    },
+    {
+      "name": "navigation_focus_rail_light_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "c61c0376aabf1b0ddff515cf9a0699b36fa6943935114527db225b614a687e78",
+      "pixelSha256": "9feb85c3c23f9aea9f5f238944f46f96056b16188e1a4b464ef4ff1c3e5b11a6"
+    },
+    {
+      "name": "navigation_focus_rail_dark_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "02fc3b30f647fc2c299aab88895053fa444497ac8605e58729daaf89cc483e8b",
+      "pixelSha256": "72cef57b431c1d3fffb02ae91af2b5ce90d385cd994e72cd8da20d02aeaab81a"
+    },
+    {
+      "name": "navigation_focus_rail_light_high",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "1dbf7a1f0d1b95c3a0c470548662816de9d45f0df5b718ffa15e590ecdaf86eb",
+      "pixelSha256": "6925a77bb5c8095dc948fffd1198c7001018cacfc0710c3e7ce3c16dff6a73d1"
+    },
+    {
+      "name": "navigation_focus_menu_light_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "5cbea9b5f5ae061ebb9e10909941b081e607896934220063e0f416f2a1093d08",
+      "pixelSha256": "2a3c9d52b613307eb63e1d5b40e15c898887b5e552a6ec169b271e655dba0ba0"
+    },
+    {
+      "name": "navigation_focus_menu_dark_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "1c9d1402f266aa84349942200e3fc499d290215f950ed4d65330211d83f61339",
+      "pixelSha256": "459ddb22c910b08c88d350cdf9a7172b3e67cdd2af6fb7cb21e4ff3ad94a0795"
+    },
+    {
+      "name": "navigation_focus_menu_light_high",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "fc1feb7a026f996c8299bb156263e868c1739376f8aece8de082fa2b91f7a60e",
+      "pixelSha256": "8e36f251e5d4bba341a6963face42e194d8cb1bada662ab2ea124a480cb21543"
+    },
+    {
+      "name": "navigation_focus_breadcrumb_light_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "76f089c4f1136c7eb4fb5a899d5200b45fa87eed7fa0c50730c41984e51cf04a",
+      "pixelSha256": "8aae787aad017a6c8b40a25b214b9d0546e55878d4b830e7510a44bf493aecfc"
+    },
+    {
+      "name": "navigation_focus_breadcrumb_dark_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "098a2c948d0e014f73bc118380a7b04b20943d61dcd9b9014b3da424155dffa6",
+      "pixelSha256": "7b28970171139ec1fc89010e779b0859924078df6d132099e6feb584d1c72614"
+    },
+    {
+      "name": "navigation_focus_breadcrumb_light_high",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "2e4debf608a3626cce8fdebd1410b4b9297d3583cd77cd9f061fcc631737735e",
+      "pixelSha256": "ac582ab68d095b63b6b350471b01bb659f82c1049ebf510c8bb0aec6f7d11ea8"
+    },
+    {
+      "name": "navigation_focus_palette_light_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "3eed145b3d8c9cd3a9763eda29e9bb4eb604667d7314fc3db7ac97de0dee605e",
+      "pixelSha256": "6333b606434e0029ffcab753dba778b3f9b60e6c29e0a158c8b12925ba26725f"
+    },
+    {
+      "name": "navigation_focus_palette_dark_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "a3e4891cd37077a40ae7ed70d4f01bbfd45fc13965d63bfdc10c879c3a03bd8b",
+      "pixelSha256": "def629ba5a8c52c5fba580f60c88cdef1d96f1e1c32385bed70da84fc8d977d6"
+    },
+    {
+      "name": "navigation_focus_palette_light_high",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "e78c1262b96d31a37adeb9cd56f64bb99f94d239ade157b57ba06dd64e4bf69a",
+      "pixelSha256": "d3115eec21d084ecb5f4ef20fecbcabdcadf6bb014ad848bcfeda5a107cfb03c"
+    },
+    {
+      "name": "navigation_focus_split_light_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "6c41da7e1814a575589f32bdc3b5b4849d40c4044db665f134064366cacef7c5",
+      "pixelSha256": "abfce4d499ce819571f2e3286f316af134f00178afc70497a39d848a2355479a"
+    },
+    {
+      "name": "navigation_focus_split_dark_standard",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "1aea0cc070377e2fb000c8c0ce93c6b8307f475f8ed0f685b557d1809d32f04b",
+      "pixelSha256": "395f589049fa82b9f821b58ca6fa559bd6bfb802672487d7dc06f42adf5696b3"
+    },
+    {
+      "name": "navigation_focus_split_light_high",
+      "width": 720,
+      "height": 420,
+      "pngSha256": "10035f5736e14d083f55e2ffe48035ba6aabb725a32ada59c06332e2eae9c0c5",
+      "pixelSha256": "d4fc4a7dc9087067f05fb671185155c280216b02201fe0e972a87c40729de710"
+    }
+  ],
+  "sourceRunId": 44361342912,
+  "sourceArtifactId": 14455334847,
+  "sourceArtifactName": "navigation-desktop-visual-evidence"
+}

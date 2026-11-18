@@ -1,9 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "db30c1c1a7c822c1dd7cff2cf9fe0ee3c10a9306",
-  "sourceRunId": 37295121374,
-  "sourceArtifactId": 11337969085,
-  "sourceArtifactName": "missing-material3-visual-evidence",
+  "sourceCommit": "a72dac30794983b5d16068535cc0069bee574d1d",
   "renderer": {
     "qtVersion": "6.4.0",
     "style": "fusion",
@@ -16,24 +13,27 @@
   "images": [
     {
       "name": "missing_material3_matrix_light_standard",
-      "width": 1062,
-      "height": 870,
-      "pngSha256": "c17cc63dc1f87cb0340d6dab693cd796bbfdb7199c537e210dc0ee99d531ad35",
-      "pixelSha256": "8c966d03fe46f92ed0942a4439c0f34855636a33578a554778605f598346bff6"
+      "width": 1162,
+      "height": 1070,
+      "pngSha256": "822bfc9d962cfc33510e81eeaa109b53574dad110e0843bc28a4db39b6949b8d",
+      "pixelSha256": "159b3af308e43a366673a770457ad5d1cd05933dce70efa0415ad9abce4ca0c7"
     },
     {
       "name": "missing_material3_matrix_dark_standard",
-      "width": 1062,
-      "height": 870,
-      "pngSha256": "ca91328d468f002f92e60e7ed61b2c97264bd64bb006814dd1b2d6ef57804b8a",
-      "pixelSha256": "008a9181d293f85097694d58794af9a6aac170567c2396d732c7bc3f2648d538"
+      "width": 1162,
+      "height": 1070,
+      "pngSha256": "5d5c129c142e4c41ed475a722aaf1a65f69fcc5e4e6945c2aa310c5d05dffab9",
+      "pixelSha256": "043353016a79212dd2b1ca04fde9ba994391818b51a3fd3de18e0f7698e2a855"
     },
     {
       "name": "missing_material3_matrix_light_high",
-      "width": 1062,
-      "height": 870,
-      "pngSha256": "f3291af5ae162840cce021926e65710d94d2cc2079c3f9cf5b781e8b3989a289",
-      "pixelSha256": "0c7e0cf2352a8f97a4d299cea4d2952b07e32f0041b3c0b3c508671ed4c7cec6"
+      "width": 1162,
+      "height": 1070,
+      "pngSha256": "b8b036770435cc2513e34dfaf683b14747b6133476e78fa8666ddc5139e01206",
+      "pixelSha256": "476615e4714a26b842f13aac43d8df2ee8f641f95f1d25e91791b3551aa07124"
     }
-  ]
+  ],
+  "sourceRunId": 44361342912,
+  "sourceArtifactId": 14456184750,
+  "sourceArtifactName": "missing-material3-visual-evidence"
 }
