@@ -33,7 +33,10 @@ counts, reviewer/date/evidence provenance, visual review states, renderer
 metadata, required vs. missing committed goldens and component-level next
 actions. --validate fails on malformed contracts or unsupported claims but
 **does not fail on honestly pending manual reviews**; --require-complete is the
-release gate and currently expected to fail.
+release gate and currently expected to fail. All 60 tracked components are
+in scope for this final gate, including the 11 components whose historical
+releaseScope flag is still false. Expressive Menu and Chip integration checks
+are reported separately from the 17 standalone components.
 
 CI runs --validate plus the Python unit suite and publishes machine-readable
 JSON and human-readable Markdown as downloadable Actions artifacts. It does
@@ -61,6 +64,15 @@ identity, date, evidence artifact/link and reproducible failures, then run:
 
     python tools/certification_center.py record --session build/at-session.json --confirm-native-session
     python tools/certification_center.py status
+
+For a ready-to-use review worklist and all outstanding session templates:
+
+    python tools/export_certification_review_pack.py --output build/certification/review-pack
+
+Use a fresh output directory on each export; existing session files are never
+overwritten. The same pack is available in the Quality CI artifact, including
+Gallery routes, exact check names and required golden paths. Its pending
+checklists are not certification evidence on their own.
 
 Repeat for all three platforms and all four milestone contracts. Do not mark
 checks pass solely because a QtTest, QAccessible or headless smoke test is
