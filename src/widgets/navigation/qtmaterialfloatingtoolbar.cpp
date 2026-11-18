@@ -305,10 +305,9 @@ void QtMaterialFloatingToolbar::syncLayoutDirection()
         return;
     }
 
-    m_layout->setDirection(
-        layoutDirection() == Qt::RightToLeft
-            ? QBoxLayout::RightToLeft
-            : QBoxLayout::LeftToRight);
+    // Horizontal QBoxLayout handles RTL automatically.
+    m_layout->setDirection(QBoxLayout::LeftToRight);
+    m_layout->invalidate();
 }
 
 void QtMaterialFloatingToolbar::focusIndex(int index)
