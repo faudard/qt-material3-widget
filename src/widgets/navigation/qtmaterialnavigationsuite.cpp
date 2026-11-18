@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPixmap>
+#include <QStyle>
 #include <QStringList>
 
 #include "qtmaterial/effects/qtmaterialfocusindicator.h"
@@ -41,13 +42,14 @@ struct QtMaterialNavigationSuitePrivate
             : NavigationSuiteType::NavigationRail;
     }
 
-    QRect itemRect(const QSize& size, int index) const
+    QRect itemRect(const QSize& size, int index, Qt::LayoutDirection direction) const
     {
         if (navigationType() == NavigationSuiteType::NavigationBar) {
             const int count = qMax(1, destinations.size());
             const int left = (index * size.width()) / count;
             const int right = ((index + 1) * size.width()) / count;
-            return QRect(left, 0, qMax(0, right - left), qMin(80, size.height()));
+            return QStyle::visualRect(direction, QRect(QPoint(0, 0), size),
+                QRect(left, 0, qMax(0, right - left), qMin(80, size.height())));
         }
 
         const int y =
@@ -56,9 +58,9 @@ struct QtMaterialNavigationSuitePrivate
         return QRect(0, y, spec.railWidth, spec.itemHeight);
     }
 
-    QRect indicatorRect(const QSize& size, int index) const
+    QRect indicatorRect(const QSize& size, int index, Qt::LayoutDirection direction) const
     {
-        const QRect item = itemRect(size, index);
+        const QRect item = itemRect(size, index, direction);
         if (navigationType() == NavigationSuiteType::NavigationBar) {
             const int width = qMax(24, qMin(64, item.width() - 8));
             return QRect(
@@ -75,10 +77,10 @@ struct QtMaterialNavigationSuitePrivate
             spec.indicatorSize.height());
     }
 
-    int indexAt(const QSize& size, const QPoint& position) const
+    int indexAt(const QSize& size, const QPoint& position, Qt::LayoutDirection direction) const
     {
         for (int index = 0; index < destinations.size(); ++index) {
-            if (itemRect(size, index).contains(position)) {
+            if (itemRect(size, index, direction).contains(position)) {
                 return index;
             }
         }
@@ -191,7 +193,7 @@ QtMaterialNavigationSuite::QtMaterialNavigationSuite(QWidget* parent)
             };
             access.rect = [suite](int index) {
                 suite->ensureSpecResolved();
-                return suite->d_ptr->itemRect(suite->size(), index);
+                return suite->d_ptr->itemRect(suite->size(), index, suite->layoutDirection());
             };
             access.role = [](int) { return QAccessible::ListItem; };
             access.state = [suite](int index) {
@@ -600,7 +602,7 @@ void QtMaterialNavigationSuite::mouseMoveEvent(QMouseEvent* event)
 {
     ensureSpecResolved();
 
-    const int candidate = d_ptr->indexAt(size(), event->pos());
+    const int candidate = d_ptr->indexAt(size(), event->pos(), layoutDirection());
     const int nextHover =
         isEnabled() && d_ptr->enabledIndex(candidate)
             ? candidate
@@ -619,7 +621,7 @@ void QtMaterialNavigationSuite::mousePressEvent(QMouseEvent* event)
     ensureSpecResolved();
 
     if (event->button() == Qt::LeftButton) {
-        const int candidate = d_ptr->indexAt(size(), event->pos());
+        const int candidate = d_ptr->indexAt(size(), event->pos(), layoutDirection());
         if (isEnabled() && d_ptr->enabledIndex(candidate)) {
             d_ptr->pressedIndex = candidate;
             update();
@@ -640,7 +642,7 @@ void QtMaterialNavigationSuite::mouseReleaseEvent(QMouseEvent* event)
 
     if (event->button() == Qt::LeftButton
         && pressed >= 0
-        && pressed == d_ptr->indexAt(size(), event->pos())
+        && pressed == d_ptr->indexAt(size(), event->pos(), layoutDirection())
         && isEnabled()
         && d_ptr->enabledIndex(pressed)) {
         setCurrentIndex(pressed);
@@ -738,8 +740,8 @@ void QtMaterialNavigationSuite::paintEvent(QPaintEvent*)
     }
 
     for (int index = 0; index < d_ptr->destinations.size(); ++index) {
-        const QRect item = d_ptr->itemRect(size(), index);
-        const QRect indicator = d_ptr->indicatorRect(size(), index);
+        const QRect item = d_ptr->itemRect(size(), index, layoutDirection());
+        const QRect indicator = d_ptr->indicatorRect(size(), index, layoutDirection());
         const bool selected = index == d_ptr->currentIndex;
         const bool destinationEnabled =
             isEnabled() && d_ptr->destinations.at(index).enabled;
@@ -817,7 +819,7 @@ void QtMaterialNavigationSuite::paintEvent(QPaintEvent*)
             theme().interactions())
         && d_ptr->enabledIndex(d_ptr->currentIndex)) {
         const QRectF focusRect =
-            QRectF(d_ptr->indicatorRect(size(), d_ptr->currentIndex))
+            QRectF(d_ptr->indicatorRect(size(), d_ptr->currentIndex, layoutDirection()))
                 .adjusted(
                     -d_ptr->spec.focusRingWidth,
                     -d_ptr->spec.focusRingWidth,
