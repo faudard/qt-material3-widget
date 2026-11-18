@@ -41,12 +41,17 @@ jobs:
           python tools/certification_report_1_22.py --validate --format json --output build/certification/health-1.22.json
           python tools/certification_report_1_22.py --format markdown --output build/certification/health-1.22.md
 
+      - name: Export 1.22 reviewer session pack
+        run: python tools/export_certification_review_pack.py --output build/certification/review-pack
+
       - name: Upload 1.22 certification health
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: certification-health-1-22
-          path: build/certification/health-1.22.*
+          path: |
+            build/certification/health-1.22.*
+            build/certification/review-pack/
           if-no-files-found: warn
 
       - name: Check patch whitespace
