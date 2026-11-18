@@ -184,6 +184,7 @@ jobs:
           -DQTMATERIAL3_USE_MCU=${{ matrix.use-mcu }}
 
       - name: Build
+        id: build
         run: cmake --build build --config Release --parallel
 
       - name: Test Linux
@@ -194,7 +195,7 @@ jobs:
             python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure
 
       - name: Compare reviewed Navigation goldens
-        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && matrix.name == 'ubuntu-qt6.4.0-floor' }}
         shell: bash
         env:
           QTMATERIAL3_VISUAL_STRICT: "1"
@@ -209,7 +210,7 @@ jobs:
             python3 scripts/ci/run-with-openbox.py -- ctest --test-dir build --build-config Release --output-on-failure -R "^tst_navigation_visual_goldens$"
 
       - name: Render Navigation evidence twice
-        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && matrix.name == 'ubuntu-qt6.4.0-floor' }}
         shell: bash
         env:
           QTMATERIAL3_UPDATE_VISUAL_GOLDENS: "1"
@@ -242,7 +243,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Render Missing Material 3 evidence twice
-        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && matrix.name == 'ubuntu-qt6.4.0-floor' }}
         shell: bash
         env:
           QTMATERIAL3_UPDATE_VISUAL_GOLDENS: "1"
@@ -263,7 +264,7 @@ jobs:
             --output build/missing-material3-repeatability.json
 
       - name: Compare committed Missing Material 3 goldens
-        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && matrix.name == 'ubuntu-qt6.4.0-floor' }}
         shell: bash
         env:
           QTMATERIAL3_VISUAL_STRICT: "1"
@@ -290,7 +291,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Render Expressive Catalogue evidence twice
-        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && matrix.name == 'ubuntu-qt6.4.0-floor' }}
         shell: bash
         env:
           QTMATERIAL3_UPDATE_VISUAL_GOLDENS: "1"
@@ -322,7 +323,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Render Adaptive Desktop evidence twice
-        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && matrix.name == 'ubuntu-qt6.4.0-floor' }}
         shell: bash
         env:
           QTMATERIAL3_UPDATE_VISUAL_GOLDENS: "1"
@@ -343,7 +344,7 @@ jobs:
             --output build/adaptive-desktop-repeatability.json
 
       - name: Compare committed Adaptive Desktop goldens
-        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && matrix.name == 'ubuntu-qt6.4.0-floor' }}
         shell: bash
         env:
           QTMATERIAL3_VISUAL_STRICT: "1"
@@ -370,7 +371,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Generate family visual candidate goldens
-        if: matrix.name == 'ubuntu-qt6.4.0-floor'
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && matrix.name == 'ubuntu-qt6.4.0-floor' }}
         shell: bash
         env:
           QTMATERIAL3_UPDATE_VISUAL_GOLDENS: "1"
