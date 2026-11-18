@@ -774,11 +774,12 @@ void QtMaterialMenu::paintEvent(QPaintEvent*)
             continue;
         }
 
+        const bool enabled = isEnabled() && item.enabled;
         qreal stateOpacity = 0.0;
-        if (index == d_ptr->pressedIndex) {
+        if (enabled && index == d_ptr->pressedIndex) {
             stateOpacity =
                 d_ptr->spec.pressStateLayerOpacity;
-        } else if (index == d_ptr->currentIndex) {
+        } else if (enabled && index == d_ptr->currentIndex) {
             stateOpacity = hasFocus()
             ? d_ptr->spec.focusStateLayerOpacity
             : d_ptr->spec.hoverStateLayerOpacity;
@@ -798,13 +799,13 @@ void QtMaterialMenu::paintEvent(QPaintEvent*)
             row.right()
             - d_ptr->spec.itemPadding.right();
 
-        const QColor labelColor = item.enabled
+        const QColor labelColor = enabled
                                       ? d_ptr->spec.itemLabelColor
                                       : d_ptr->spec.disabledItemLabelColor;
-        const QColor iconColor = item.enabled
+        const QColor iconColor = enabled
                                      ? d_ptr->spec.itemIconColor
                                      : d_ptr->spec.disabledItemIconColor;
-        const QColor shortcutColor = item.enabled
+        const QColor shortcutColor = enabled
                                          ? d_ptr->spec.shortcutColor
                                          : d_ptr->spec.disabledShortcutColor;
 
@@ -819,7 +820,8 @@ void QtMaterialMenu::paintEvent(QPaintEvent*)
             if (item.checked) {
                 painter.setFont(d_ptr->spec.labelFont);
                 painter.setPen(
-                    d_ptr->spec.checkedIndicatorColor);
+                    enabled ? d_ptr->spec.checkedIndicatorColor
+                            : d_ptr->spec.disabledItemIconColor);
                 painter.drawText(
                     checkRect,
                     Qt::AlignCenter,
@@ -844,7 +846,7 @@ void QtMaterialMenu::paintEvent(QPaintEvent*)
                 QSize(
                     d_ptr->spec.iconSize,
                     d_ptr->spec.iconSize),
-                item.enabled
+                enabled
                     ? QIcon::Normal
                     : QIcon::Disabled);
             if (!pixmap.isNull()) {
@@ -907,7 +909,7 @@ void QtMaterialMenu::paintEvent(QPaintEvent*)
             item.text);
     }
 
-    if (hasFocus()) {
+    if (isEnabled() && hasFocus()) {
         painter.setBrush(Qt::NoBrush);
         painter.setPen(
             QPen(
