@@ -1,6 +1,12 @@
 #include <QtTest/QTest>
 
+#include <limits>
 #include <QColor>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QDoubleSpinBox>
+#include <QListWidget>
+#include <QScopedPointer>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QPushButton>
@@ -24,6 +30,16 @@
 #include "qtmaterial/widgets/native/qtmaterialnativeadapter.h"
 
 using namespace QtMaterial;
+
+class QtMaterialPropertyFixture : public QWidget
+{
+    Q_OBJECT
+    Q_PROPERTY(double precise MEMBER precise)
+    Q_PROPERTY(uint unsignedValue MEMBER unsignedValue)
+public:
+    double precise = 0.123456789;
+    uint unsignedValue = std::numeric_limits<uint>::max();
+};
 
 class DesignerExtensionsTest : public QObject
 {
@@ -204,6 +220,63 @@ private slots:
         QVERIFY(shellProperties.contains(QStringLiteral("automaticDensity")));
         QVERIFY(shellProperties.contains(QStringLiteral("supportingPaneWidth")));
         QVERIFY(!shellProperties.contains(QStringLiteral("supportingPaneVisible")));
+    }
+
+    void propertyDialogNoOpAndCancelPreserveOriginalValues()
+    {
+        QtMaterialPropertyFixture fixture;
+        const double original = fixture.precise;
+        const uint originalUnsigned = fixture.unsignedValue;
+        {
+            QScopedPointer<QDialog> dialog(QtMaterial3Designer::createMaterialPropertyDialog(&fixture));
+            QVERIFY(dialog);
+            auto* editor = dialog->findChild<QDoubleSpinBox*>(QStringLiteral("unsignedValue"));
+            QVERIFY(editor);
+            QCOMPARE(editor->value(), static_cast<double>(originalUnsigned));
+            auto* buttons = dialog->findChild<QDialogButtonBox*>();
+            QVERIFY(buttons);
+            buttons->button(QDialogButtonBox::Ok)->click();
+            QCOMPARE(dialog->result(), int(QDialog::Accepted));
+            QCOMPARE(fixture.precise, original);
+            QCOMPARE(fixture.unsignedValue, originalUnsigned);
+        }
+        {
+            QScopedPointer<QDialog> dialog(QtMaterial3Designer::createMaterialPropertyDialog(&fixture));
+            auto* editor = dialog->findChild<QDoubleSpinBox*>(QStringLiteral("unsignedValue"));
+            QVERIFY(editor);
+            editor->setValue(42);
+            dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Cancel)->click();
+            QCOMPARE(fixture.unsignedValue, originalUnsigned);
+        }
+        {
+            QScopedPointer<QDialog> dialog(QtMaterial3Designer::createMaterialPropertyDialog(&fixture));
+            auto* editor = dialog->findChild<QDoubleSpinBox*>(QStringLiteral("unsignedValue"));
+            QVERIFY(editor);
+            const uint changedValue = originalUnsigned - 1;
+            editor->setValue(static_cast<double>(changedValue));
+            dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+            QCOMPARE(fixture.unsignedValue, changedValue);
+            QCOMPARE(fixture.precise, original);
+        }
+    }
+
+    void collectionEditorItemsAreEditableAndPersistOnAccept()
+    {
+        QtMaterialNavigationBar bar;
+        bar.setDestinationLabels({QStringLiteral("Home"), QStringLiteral("Account")});
+        QScopedPointer<QDialog> dialog(QtMaterial3Designer::createMaterialPropertyDialog(&bar));
+        QVERIFY(dialog);
+        auto* collection = dialog->findChild<QWidget*>(QStringLiteral("destinationLabels"));
+        QVERIFY(collection);
+        auto* list = collection->findChild<QListWidget*>();
+        QVERIFY(list);
+        QCOMPARE(list->count(), 2);
+        for (int i = 0; i < list->count(); ++i) {
+            QVERIFY(list->item(i)->flags().testFlag(Qt::ItemIsEditable));
+        }
+        list->item(1)->setText(QStringLiteral("Profile"));
+        dialog->findChild<QDialogButtonBox*>()->button(QDialogButtonBox::Ok)->click();
+        QCOMPARE(bar.destinationLabels(), QStringList({QStringLiteral("Home"), QStringLiteral("Profile")}));
     }
 
     void tabsContainerRoundTripsPages()

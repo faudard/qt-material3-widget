@@ -64,6 +64,12 @@ if(QTMATERIAL3_INSTALL)
         DESTINATION "${CMAKE_INSTALL_DATADIR}/doc/qt-material3-widget/designer"
         COMPONENT Designer
     )
+    install(
+        DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/templates/"
+        DESTINATION "${CMAKE_INSTALL_DATADIR}/doc/qt-material3-widget/designer/templates"
+        COMPONENT Designer
+        FILES_MATCHING PATTERN "*.ui"
+    )
 endif()
 
 if(QTMATERIAL3_BUILD_TESTS)

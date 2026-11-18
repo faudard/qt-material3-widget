@@ -132,7 +132,7 @@ The Designer payload is also an explicit CMake install component:
 cmake --install build --component Designer
 ```
 
-The component contains the plugin plus this integration guide. It assumes the matching Qt Material 3 runtime libraries have already been installed into the same prefix.
+The component contains the plugin, this integration guide and the five editable Designer 4.0 templates under `share/doc/qt-material3-widget/designer/templates` (relative to the usual install prefix). It assumes the matching Qt Material 3 runtime libraries have already been installed into the same prefix.
 
 For a Qt SDK installation, the effective destination is typically the `designer` directory below Qt's plugin directory. Qt Designer lists loaded custom widgets in **Help > About Plugins**; Qt Creator exposes equivalent Form Editor plugin diagnostics.
 
@@ -194,7 +194,7 @@ The editor provides specialized controls for:
 
 Button Group, Navigation Bar and Segmented List therefore have visual collection editors rather than multiline text editing. In a form window, changes and resets are applied through Designer's form cursor so they participate in the normal undo/serialization workflow.
 
-The same task menu retains the non-persistent Light/Dark/Expressive actions and adds **Designer 3.0 preview...**. The preview dialog renders the selected widget without serializing preview state and can combine:
+The same task menu retains the non-persistent Light/Dark/Expressive actions and adds **Designer 4.0 preview...**. The preview dialog renders the selected widget without serializing preview state and can combine:
 
 - current, Compact (480), Medium (720) or Expanded (1024) logical width;
 - DPR 1x or 2x;
@@ -239,7 +239,7 @@ Designer integration is release-gated by complementary contracts:
 
 ### Container semantics
 
-Only widgets with genuine container semantics are treated as containers. `QtMaterialTabs` has an explicit `QDesignerContainerExtension` so add/insert/remove/current-page operations remain deterministic even though it subclasses `QTabWidget`. `QtMaterialAdaptiveShell` also has a two-slot container extension mapping Designer children to the shell's content and supporting panes; this extension is available to promoted/custom forms even though Adaptive Shell is not yet part of the default 32-control palette.
+Only widgets with genuine container semantics are treated as containers. `QtMaterialTabs` has an explicit `QDesignerContainerExtension` so add/insert/remove/current-page operations remain deterministic even though it subclasses `QTabWidget`. `QtMaterialAdaptiveShell` also has a two-slot container extension mapping Designer children to the shell's content and supporting panes; Adaptive Shell is included in the 35-control palette; arbitrary shell slot ownership is not yet a supported UIC round-trip.
 
 `QtMaterialCard` remains a regular widget because its runtime API does not define child-container ownership semantics.
 
@@ -282,7 +282,9 @@ one native Designer cursor transaction. The dialog lists writable Material
 properties that cannot be represented by its persistence-safe editors,
 rather than silently claiming that they will serialize. Numeric editing
 no longer clamps signed values to the previous arbitrary +/-1,000,000 range.
-The specialized collection, enum and color/token editors remain available.
+The specialized collection, enum and color/token editors remain available. Collection rows are editable in-place. Unsigned integer properties support their full 32-bit range. Unchanged editor values are never written back (including rounded floating-point or normalized date values); floating-point edits retain the existing four-decimal editor precision and range. QFlags combinations are excluded until a dedicated flags editor is available.
+
+The standalone `designer_extensions_contract` test exercises the actual property dialog for no-op, Cancel, unsigned integer edits and collection-label edits. It does not replace real-host Undo/Redo validation.
 
 **Known limitation:** Adaptive Shell automaticDensity and supportingPaneWidth
 are serializable Qt properties; arbitrary content/supporting widget pointers
