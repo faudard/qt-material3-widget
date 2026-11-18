@@ -47,3 +47,11 @@
 #include "qtmaterial/widgets/data/qtmaterialtreeview.h"
 #include "qtmaterial/widgets/navigation/qtmaterialbreadcrumb.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationsuite.h"
+
+#include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
+#include "qtmaterial/widgets/buttons/qtmaterialfab.h"
+#include "qtmaterial/widgets/buttons/qtmaterialextendedfab.h"
+#include "qtmaterial/widgets/inputs/qtmaterialslider.h"
+#include "qtmaterial/widgets/inputs/qtmaterialrangeslider.h"
+#include "qtmaterial/widgets/compact/qtmaterialfilterchip.h"
+#include "qtmaterial/widgets/compact/qtmaterialinputchip.h"

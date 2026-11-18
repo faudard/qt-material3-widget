@@ -1,4 +1,4 @@
-"""Widget aliases exported by the first QtMaterial3 PySide6 binding surface."""
+"""Native widget aliases exported by the QtMaterial3 PySide6 SDK."""
 
 from . import QtMaterial
 
@@ -32,5 +32,13 @@ QtMaterialMenu = _native.QtMaterialMenu
 QtMaterialLinearProgressIndicator = QtMaterial.QtMaterialLinearProgressIndicator
 QtMaterialCircularProgressIndicator = QtMaterial.QtMaterialCircularProgressIndicator
 QtMaterialLoadingIndicator = QtMaterial.QtMaterialLoadingIndicator
+
+QtMaterialIconButton = QtMaterial.QtMaterialIconButton
+QtMaterialFab = QtMaterial.QtMaterialFab
+QtMaterialExtendedFab = QtMaterial.QtMaterialExtendedFab
+QtMaterialSlider = QtMaterial.QtMaterialSlider
+QtMaterialRangeSlider = QtMaterial.QtMaterialRangeSlider
+QtMaterialFilterChip = QtMaterial.QtMaterialFilterChip
+QtMaterialInputChip = QtMaterial.QtMaterialInputChip
 
 __all__ = [name for name in globals() if name.startswith("QtMaterial")]

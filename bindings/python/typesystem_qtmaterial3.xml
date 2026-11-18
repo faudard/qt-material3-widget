@@ -15,6 +15,8 @@
     <enum-type name="QtMaterialButtonSize"/>
     <enum-type name="QtMaterialButtonShape"/>
     <enum-type name="ChipVariant"/>
+    <enum-type name="QtMaterialFabVariant"/>
+    <enum-type name="QtMaterialFabSize"/>
     <enum-type name="SnackbarDuration"/>
     <enum-type name="SnackbarDismissReason"/>
     <enum-type name="NavigationSuiteType"/>
@@ -75,6 +77,13 @@
     <object-type name="QtMaterialFormFieldControl" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialInputControl" delete-in-main-thread="yes" disable-wrapper="yes"/>
 
+    <object-type name="QtMaterialIconButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialFab" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialExtendedFab" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialSlider" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialRangeSlider" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialFilterChip" delete-in-main-thread="yes" disable-wrapper="yes"/>
+    <object-type name="QtMaterialInputChip" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialTextButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialFilledButton" delete-in-main-thread="yes" disable-wrapper="yes"/>
     <object-type name="QtMaterialOutlinedButton" delete-in-main-thread="yes" disable-wrapper="yes"/>

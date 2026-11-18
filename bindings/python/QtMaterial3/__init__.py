@@ -22,6 +22,8 @@ ColorBackendPolicy = QtMaterial.ColorBackendPolicy
 MotionScheme = QtMaterial.MotionScheme
 Density = QtMaterial.Density
 ChipVariant = QtMaterial.ChipVariant
+QtMaterialFabVariant = QtMaterial.QtMaterialFabVariant
+QtMaterialFabSize = QtMaterial.QtMaterialFabSize
 SnackbarDuration = QtMaterial.SnackbarDuration
 SnackbarDismissReason = QtMaterial.SnackbarDismissReason
 NavigationSuiteType = QtMaterial.NavigationSuiteType
@@ -50,6 +52,7 @@ __all__ = [
     "WorkspaceStateful", "save_workspace_state", "restore_workspace_state", "QtMaterial", "Theme", "ThemeBuilder", "ThemeContext", "ThemeOptions",
     "ThemeMode", "ContrastMode", "ThemePreference", "ThemeVariant",
     "ColorBackendPolicy", "MotionScheme", "Density", "ChipVariant", "SnackbarDuration",
+    "QtMaterialFabVariant", "QtMaterialFabSize",
     "SnackbarDismissReason", "NavigationSuiteType", "TabsVariant", "TabsDensity",
     "TabsAlignment", "TabsOverflowMode", "QtMaterialRoute",
     "QtMaterialNavigationItem", "QtMaterialNavigationModel",
