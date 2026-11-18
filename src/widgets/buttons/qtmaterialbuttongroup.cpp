@@ -51,6 +51,11 @@ QtMaterialTextButton* QtMaterialButtonGroup::buttonAt(int index) const
 QtMaterialFilledButton* QtMaterialButtonGroup::addButton(const QString& text)
 {
     auto* button = new QtMaterialFilledButton(text, this);
+    auto policy = button->sizePolicy();
+    // Generated segments keep their full preferred label width. Caller-owned
+    // buttons added through addButton(button) retain their own size policy.
+    policy.setHorizontalPolicy(QSizePolicy::Minimum);
+    button->setSizePolicy(policy);
     addButton(button);
     return button;
 }
