@@ -72,18 +72,23 @@ inline NavigationBarSpec navigationBarSpec(
 struct SideSheetSpec
 {
     QColor containerColor;
+    QColor scrimColor;
 };
 
 inline SideSheetSpec sideSheetSpec(
     const Theme& theme,
     const QPalette& palette)
 {
+    // Match the modal dialog scrim opacity rather than using the opaque token.
+    QColor scrim = resolvedColor(theme, ColorRole::Scrim, palette, QPalette::Shadow);
+    scrim.setAlphaF(scrim.alphaF() * 0.32);
     return {
         resolvedColor(
             theme,
             ColorRole::SurfaceContainerLow,
             palette,
-            QPalette::Window)
+            QPalette::Window),
+        scrim
     };
 }
 

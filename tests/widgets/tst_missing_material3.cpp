@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "qtmaterial/effects/qtmaterialscrimwidget.h"
 #include "qtmaterial/widgets/data/qtmaterialbadge.h"
 #include "qtmaterial/widgets/navigation/qtmaterialnavigationbar.h"
 #include "qtmaterial/widgets/surfaces/qtmaterialsidesheet.h"
@@ -149,6 +150,13 @@ void MissingMaterial3Test::sideSheetLifecycle()
     QCOMPARE(sheet.height(), host.height());
     QVERIFY(sheet.width() >= sheet.minimumSizeHint().width());
     QVERIFY(openSpy.count() >= 1);
+
+    auto* scrim = host.findChild<QtMaterialScrimWidget*>(
+        QStringLiteral("qtmaterial_side_sheet_scrim"));
+    QVERIFY(scrim);
+    QVERIFY(scrim->isVisible());
+    QVERIFY(scrim->scrimColor().alphaF() > 0.0);
+    QVERIFY(scrim->scrimColor().alphaF() <= 0.32 + 1.0 / 255.0);
 
     QTest::keyClick(&sheet, Qt::Key_Escape);
     QVERIFY(!sheet.isOpen());

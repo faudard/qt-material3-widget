@@ -147,7 +147,8 @@ void QtMaterialFilledButton::resizeEvent(QResizeEvent* event)
 
 void QtMaterialFilledButton::changeEvent(QEvent* event)
 {
- if (event->type() == QEvent::FontChange || event->type() == QEvent::StyleChange) {
+ if (event->type() == QEvent::FontChange || event->type() == QEvent::StyleChange
+     || event->type() == QEvent::LayoutDirectionChange) {
   d->invalidateLayout(*this);
  }
  QtMaterialTextButton::changeEvent(event);

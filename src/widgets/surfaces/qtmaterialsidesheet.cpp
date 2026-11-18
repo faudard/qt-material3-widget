@@ -364,6 +364,10 @@ void QtMaterialSideSheet::syncGeometryToHost()
 void QtMaterialSideSheet::themeChangedEvent(const QtMaterial::Theme& theme)
 {
     QtMaterialOverlaySurface::themeChangedEvent(theme);
+    if (d_ptr && d_ptr->scrim) {
+        d_ptr->scrim->setScrimColor(
+            MissingMaterial3SpecResolution::sideSheetSpec(theme, palette()).scrimColor);
+    }
     update();
 }
 
@@ -485,6 +489,8 @@ void QtMaterialSideSheet::syncScrim()
         d_ptr->scrim->installEventFilter(this);
     }
 
+    d_ptr->scrim->setScrimColor(
+        MissingMaterial3SpecResolution::sideSheetSpec(theme(), palette()).scrimColor);
     d_ptr->scrim->setGeometry(host->rect());
     d_ptr->scrim->show();
     d_ptr->scrim->raise();

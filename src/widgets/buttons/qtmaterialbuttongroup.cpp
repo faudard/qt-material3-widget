@@ -17,10 +17,8 @@ QtMaterialButtonGroup::QtMaterialButtonGroup(QWidget* parent)
     setFocusPolicy(Qt::NoFocus);
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(2);
-    m_layout->setDirection(
-        layoutDirection() == Qt::RightToLeft
-            ? QBoxLayout::RightToLeft
-            : QBoxLayout::LeftToRight);
+    // QBoxLayout already mirrors horizontal logical order in RTL.
+    m_layout->setDirection(QBoxLayout::LeftToRight);
 }
 
 QtMaterialButtonGroup::~QtMaterialButtonGroup()
@@ -53,6 +51,11 @@ QtMaterialTextButton* QtMaterialButtonGroup::buttonAt(int index) const
 QtMaterialFilledButton* QtMaterialButtonGroup::addButton(const QString& text)
 {
     auto* button = new QtMaterialFilledButton(text, this);
+    auto policy = button->sizePolicy();
+    // Generated segments keep their full preferred label width. Caller-owned
+    // buttons added through addButton(button) retain their own size policy.
+    policy.setHorizontalPolicy(QSizePolicy::Minimum);
+    button->setSizePolicy(policy);
     addButton(button);
     return button;
 }
@@ -309,10 +312,7 @@ void QtMaterialButtonGroup::changeEvent(QEvent* event)
 {
     QtMaterialWidget::changeEvent(event);
     if (event && event->type() == QEvent::LayoutDirectionChange) {
-        m_layout->setDirection(
-            layoutDirection() == Qt::RightToLeft
-                ? QBoxLayout::RightToLeft
-                : QBoxLayout::LeftToRight);
+        m_layout->invalidate();
     }
 }
 

@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPixmap>
+#include <QStyle>
 
 #include "qtmaterial/specs/qtmaterialdataspecresolver.h"
 
@@ -458,6 +459,12 @@ void QtMaterialListItem::paintEvent(
     const int iconSize =
         spec.iconSize;
 
+    const auto visualRect = [this](const QRect& logical) {
+        return QStyle::visualRect(layoutDirection(), rect(), logical);
+    };
+    const Qt::Alignment textAlignment = Qt::AlignVCenter | Qt::AlignAbsolute
+        | (layoutDirection() == Qt::RightToLeft ? Qt::AlignRight : Qt::AlignLeft);
+
     int textLeft = horizontalPadding;
 
     const bool leadingSlot =
@@ -480,7 +487,7 @@ void QtMaterialListItem::paintEvent(
         paintTintedIcon(
             &painter,
             d_ptr->leadingIcon,
-            iconRect,
+            visualRect(iconRect),
             leadingIconColor,
             enabled);
 
@@ -515,7 +522,7 @@ void QtMaterialListItem::paintEvent(
         paintTintedIcon(
             &painter,
             d_ptr->trailingIcon,
-            iconRect,
+            visualRect(iconRect),
             trailingIconColor,
             enabled);
 
@@ -560,37 +567,34 @@ void QtMaterialListItem::paintEvent(
                 (height() - contentHeight) / 2);
 
         painter.drawText(
-            QRect(
+            visualRect(QRect(
                 textLeft,
                 top,
                 availableWidth,
-                headlineHeight),
-            Qt::AlignLeft
-                | Qt::AlignVCenter,
+                headlineHeight)),
+            textAlignment,
             headline);
 
         painter.setPen(supportingColor);
         painter.setFont(spec.supportingFont);
         painter.drawText(
-            QRect(
+            visualRect(QRect(
                 textLeft,
                 top
                     + headlineHeight
                     + spec.supportingTopSpacing,
                 availableWidth,
-                supportingHeight),
-            Qt::AlignLeft
-                | Qt::AlignVCenter,
+                supportingHeight)),
+            textAlignment,
             d_ptr->supportingText);
     } else {
         painter.drawText(
-            QRect(
+            visualRect(QRect(
                 textLeft,
                 0,
                 availableWidth,
-                height()),
-            Qt::AlignLeft
-                | Qt::AlignVCenter,
+                height())),
+            textAlignment,
             headline);
     }
 
@@ -613,11 +617,11 @@ void QtMaterialListItem::paintEvent(
                     - endInset);
 
         painter.fillRect(
-            QRect(
+            visualRect(QRect(
                 startInset,
                 qMax(0, height() - 1),
                 dividerWidth,
-                1),
+                1)),
             spec.dividerColor);
     }
 }

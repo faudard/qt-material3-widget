@@ -2,7 +2,7 @@
 #include <QtGlobal>
 
 #include <QAbstractButton>
-#include <QFontMetrics>
+#include <QFontMetricsF>
 #include <QIcon>
 #include <QPainter>
 #include <QPixmapCache>
@@ -114,7 +114,8 @@ ContentLayout layoutContent(
     const bool rtl = button && button->layoutDirection() == Qt::RightToLeft;
     layout.hasIcon = hasIcon;
 
-    QFontMetrics metrics(font);
+    // Preserve fractional glyph advances until the final pixel allocation.
+    const QFontMetricsF metrics(font);
 
     int iconBlockWidth = 0;
     if (hasIcon) {
@@ -125,10 +126,13 @@ ContentLayout layoutContent(
     }
 
     const int textWidthBudget = qMax(0, availableWidth - iconBlockWidth);
-    layout.elidedText = metrics.elidedText(text, Qt::ElideRight, textWidthBudget);
+    const int fullTextWidth = qCeil(metrics.horizontalAdvance(text));
+    layout.elidedText = fullTextWidth <= textWidthBudget
+        ? text
+        : metrics.elidedText(text, Qt::ElideRight, textWidthBudget);
 
-    const int textWidth = metrics.horizontalAdvance(layout.elidedText);
-    const int textHeight = metrics.height();
+    const int textWidth = qCeil(metrics.horizontalAdvance(layout.elidedText));
+    const int textHeight = qCeil(metrics.height());
     const bool hasVisibleText = !layout.elidedText.isEmpty();
     const int spacing = (hasIcon && hasVisibleText) ? spec.iconSpacing : 0;
     const int contentWidth = textWidth + (hasIcon ? spec.iconSize : 0) + spacing;

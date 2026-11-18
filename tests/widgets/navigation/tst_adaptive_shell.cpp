@@ -69,6 +69,34 @@ private slots:
         QCOMPARE(navigation.currentIndex(), 2);
     }
 
+    void compactRtlMirrorsHitTestingAndAccessibleGeometry()
+    {
+        QtMaterialNavigationSuite navigation;
+        navigation.addDestination(QStringLiteral("Home"));
+        navigation.addDestination(QStringLiteral("Search"));
+        navigation.addDestination(QStringLiteral("Settings"));
+        navigation.setWindowWidthSizeClass(WindowWidthSizeClass::Compact);
+        navigation.resize(360, 80);
+        navigation.setLayoutDirection(Qt::RightToLeft);
+        navigation.show();
+        QCoreApplication::processEvents();
+
+        QTest::mouseClick(&navigation, Qt::LeftButton, Qt::NoModifier, QPoint(300, 40));
+        QCOMPARE(navigation.currentIndex(), 0);
+        QTest::keyClick(&navigation, Qt::Key_Left);
+        QCOMPARE(navigation.currentIndex(), 1);
+        QTest::mouseClick(&navigation, Qt::LeftButton, Qt::NoModifier, QPoint(60, 40));
+        QCOMPARE(navigation.currentIndex(), 2);
+#ifndef QT_NO_ACCESSIBILITY
+        auto* accessible = QAccessible::queryAccessibleInterface(&navigation);
+        QVERIFY(accessible);
+        QVERIFY(accessible->child(0));
+        QVERIFY(accessible->child(2));
+        QVERIFY(accessible->child(0)->rect().center().x()
+                > accessible->child(2)->rect().center().x());
+#endif
+    }
+
     void shellChangesNavigationDensityAndSecondaryPane()
     {
         QtMaterialAdaptiveShell shell;

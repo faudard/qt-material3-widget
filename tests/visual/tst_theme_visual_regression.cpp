@@ -13,6 +13,8 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <QPalette>
+#include <QPainter>
+#include <QPixmap>
 #include <QSlider>
 #include <QStringListModel>
 #include <QStandardItemModel>
@@ -84,6 +86,63 @@
 using namespace QtMaterial;
 
 namespace {
+
+// Draw fixed, antialiased glyphs instead of using platform icon themes.
+enum class FixtureIcon { Home, Search, Settings, Projects, Edit, Share, More };
+
+QIcon fixtureIcon(FixtureIcon kind)
+{
+    QPixmap pixmap(24, 24);
+    pixmap.fill(Qt::transparent);
+    QPainter p(&pixmap);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    switch (kind) {
+    case FixtureIcon::Home:
+        p.drawLine(3, 11, 12, 3);
+        p.drawLine(12, 3, 21, 11);
+        p.drawRect(6, 10, 12, 10);
+        break;
+    case FixtureIcon::Search:
+        p.drawEllipse(QRect(4, 4, 12, 12));
+        p.drawLine(14, 14, 20, 20);
+        break;
+    case FixtureIcon::Settings:
+        p.drawEllipse(QRect(7, 7, 10, 10));
+        p.drawLine(12, 3, 12, 7);
+        p.drawLine(12, 17, 12, 21);
+        p.drawLine(3, 12, 7, 12);
+        p.drawLine(17, 12, 21, 12);
+        break;
+    case FixtureIcon::Projects:
+        p.drawRect(3, 7, 18, 13);
+        p.drawLine(3, 7, 3, 4);
+        p.drawLine(3, 4, 10, 4);
+        p.drawLine(10, 4, 13, 7);
+        break;
+    case FixtureIcon::Edit:
+        p.drawLine(5, 19, 19, 5);
+        p.drawLine(5, 19, 5, 14);
+        p.drawLine(5, 19, 10, 19);
+        break;
+    case FixtureIcon::Share:
+        p.drawLine(6, 12, 18, 6);
+        p.drawLine(6, 12, 18, 18);
+        p.drawEllipse(QRect(3, 9, 6, 6));
+        p.drawEllipse(QRect(15, 3, 6, 6));
+        p.drawEllipse(QRect(15, 15, 6, 6));
+        break;
+    case FixtureIcon::More:
+        p.setBrush(Qt::black);
+        p.setPen(Qt::NoPen);
+        for (int x : {5, 12, 19}) {
+            p.drawEllipse(QPoint(x, 12), 2, 2);
+        }
+        break;
+    }
+    p.end();
+    return QIcon(pixmap);
+}
 
 Theme makeTheme(ThemeMode mode, ContrastMode contrast, const QColor& seed = QColor(QStringLiteral("#6750A4")))
 {
@@ -1042,12 +1101,14 @@ QWidget* buildExpressiveCatalogueStateMatrix(const Theme& theme)
         group->setCurrentIndex(row == 2 ? 1 : 0);
         group->setEnabled(enabled);
         group->setLayoutDirection(direction);
+        // The certification matrix is not a constrained-width elision test.
+        group->setMinimumWidth(group->sizeHint().width());
         layout->addWidget(group, row, 2);
 
         auto* toolbar = new QtMaterialFloatingToolbar(root);
-        toolbar->addAction(QIcon(), QStringLiteral("Edit"));
-        toolbar->addAction(QIcon(), QStringLiteral("Share"));
-        toolbar->addAction(QIcon(), QStringLiteral("More"));
+        toolbar->addAction(fixtureIcon(FixtureIcon::Edit), QStringLiteral("Edit"));
+        toolbar->addAction(fixtureIcon(FixtureIcon::Share), QStringLiteral("Share"));
+        toolbar->addAction(fixtureIcon(FixtureIcon::More), QStringLiteral("More"));
         toolbar->setExpanded(row != 2);
         toolbar->setEnabled(enabled);
         toolbar->setLayoutDirection(direction);
@@ -1127,9 +1188,9 @@ QWidget* buildMissingMaterial3StateMatrix(const Theme& theme)
             row == 4 ? Qt::RightToLeft : Qt::LeftToRight;
 
         auto* bar = new QtMaterialNavigationBar(root);
-        bar->addDestination(QStringLiteral("Home"));
-        bar->addDestination(QStringLiteral("Search"));
-        bar->addDestination(QStringLiteral("Settings"));
+        bar->addDestination(QStringLiteral("Home"), fixtureIcon(FixtureIcon::Home));
+        bar->addDestination(QStringLiteral("Search"), fixtureIcon(FixtureIcon::Search));
+        bar->addDestination(QStringLiteral("Settings"), fixtureIcon(FixtureIcon::Settings));
         bar->setCurrentIndex(row == 2 ? 2 : 1);
         bar->setDestinationEnabled(2, row != 3);
         bar->setLabelsVisible(row != 2);
@@ -1140,7 +1201,9 @@ QWidget* buildMissingMaterial3StateMatrix(const Theme& theme)
 
         auto* sheetHost = new QWidget(root);
         sheetHost->setObjectName(QStringLiteral("missingMaterial3SideSheetHost"));
-        sheetHost->setFixedSize(320, 190);
+        sheetHost->setFixedSize(420, 240);
+        sheetHost->setAutoFillBackground(true);
+        sheetHost->setPalette(QtMaterialPaletteAdapter::toPalette(theme, sheetHost->palette()));
         auto* sheet = new QtMaterialSideSheet(sheetHost);
         sheet->setTitleText(row == 2
             ? QStringLiteral("Filters")
@@ -1211,10 +1274,10 @@ QWidget* buildAdaptiveDesktopFixture(
     shell->setSupportingPaneWidth(360);
 
     auto* navigation = shell->navigationSuite();
-    navigation->addDestination(QStringLiteral("Home"));
-    navigation->addDestination(QStringLiteral("Search"));
-    navigation->addDestination(QStringLiteral("Projects"));
-    navigation->addDestination(QStringLiteral("Settings"));
+    navigation->addDestination(QStringLiteral("Home"), fixtureIcon(FixtureIcon::Home));
+    navigation->addDestination(QStringLiteral("Search"), fixtureIcon(FixtureIcon::Search));
+    navigation->addDestination(QStringLiteral("Projects"), fixtureIcon(FixtureIcon::Projects));
+    navigation->addDestination(QStringLiteral("Settings"), fixtureIcon(FixtureIcon::Settings));
     navigation->setDestinationEnabled(2, false);
     navigation->setCurrentIndex(1);
 
@@ -1241,7 +1304,7 @@ QWidget* buildAdaptiveDesktopFixture(
     contentButton->setText(QStringLiteral("Primary action"));
     contentLayout->addWidget(contentTitle);
     contentLayout->addWidget(contentInfo);
-    contentLayout->addWidget(contentButton, 0, Qt::AlignLeft);
+    contentLayout->addWidget(contentButton, 0, Qt::AlignLeading);
     contentLayout->addStretch(1);
 
     auto* supporting = new QWidget;

@@ -66,22 +66,28 @@ private Q_SLOTS:
     void rtlMirrorsExpressiveHorizontalLayouts()
     {
         QtMaterialButtonGroup group;
-        group.addButton(QStringLiteral("One"));
-        group.addButton(QStringLiteral("Two"));
+        auto* one = group.addButton(QStringLiteral("One"));
+        auto* two = group.addButton(QStringLiteral("Two"));
+        group.resize(group.sizeHint());
         group.setLayoutDirection(Qt::RightToLeft);
 
         auto* groupLayout = static_cast<QBoxLayout*>(group.layout());
         QVERIFY(groupLayout);
-        QCOMPARE(groupLayout->direction(), QBoxLayout::RightToLeft);
+        QCOMPARE(groupLayout->direction(), QBoxLayout::LeftToRight);
+        groupLayout->activate();
+        QVERIFY(one->geometry().center().x() > two->geometry().center().x());
 
         QtMaterialFloatingToolbar toolbar;
-        toolbar.addAction(QIcon(), QStringLiteral("First"));
-        toolbar.addAction(QIcon(), QStringLiteral("Second"));
+        auto* first = toolbar.addAction(QIcon(), QStringLiteral("First"));
+        auto* second = toolbar.addAction(QIcon(), QStringLiteral("Second"));
+        toolbar.resize(toolbar.sizeHint());
         toolbar.setLayoutDirection(Qt::RightToLeft);
 
         auto* toolbarLayout = static_cast<QBoxLayout*>(toolbar.layout());
         QVERIFY(toolbarLayout);
-        QCOMPARE(toolbarLayout->direction(), QBoxLayout::RightToLeft);
+        QCOMPARE(toolbarLayout->direction(), QBoxLayout::LeftToRight);
+        toolbarLayout->activate();
+        QVERIFY(first->geometry().center().x() > second->geometry().center().x());
 
         toolbar.setOrientation(Qt::Vertical);
         QCOMPARE(toolbarLayout->direction(), QBoxLayout::TopToBottom);
