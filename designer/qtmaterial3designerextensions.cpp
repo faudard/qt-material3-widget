@@ -182,7 +182,7 @@ bool isQtMaterialWidget(const QWidget* widget)
 bool supportedPropertyType(const QMetaProperty& property)
 {
     if (property.isEnumType()) {
-        return true;
+        return !property.isFlagType();
     }
 
     switch (propertyTypeId(property)) {
@@ -289,7 +289,9 @@ public:
         outer->setContentsMargins(0, 0, 0, 0);
 
         list_ = new QListWidget(this);
-        list_->addItems(values);
+        for (const QString& value : values) {
+            appendItem(value);
+        }
         list_->setEditTriggers(
             QAbstractItemView::DoubleClicked
             | QAbstractItemView::EditKeyPressed
@@ -321,7 +323,7 @@ public:
                 QString(),
                 &ok);
             if (ok && !value.trimmed().isEmpty()) {
-                list_->addItem(value.trimmed());
+                appendItem(value.trimmed());
                 list_->setCurrentRow(list_->count() - 1);
             }
         });
@@ -347,6 +349,12 @@ public:
     }
 
 private:
+    void appendItem(const QString& value)
+    {
+        auto* item = new QListWidgetItem(value, list_);
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+    }
+
     void moveCurrent(int delta)
     {
         const int row = list_->currentRow();
@@ -369,7 +377,7 @@ struct EditorBinding
     QByteArray name;
     QMetaProperty property;
     QWidget* editor = nullptr;
-    QVariant original;
+    QVariant initialEditorValue;
 };
 
 QVariant editorValue(const EditorBinding& binding)
@@ -381,7 +389,13 @@ QVariant editorValue(const EditorBinding& binding)
         return collection->values();
     }
 
+    if (binding.property.isEnumType()) {
+        return qobject_cast<QComboBox*>(binding.editor)->currentData();
+    }
     switch (propertyTypeId(binding.property)) {
+    case QMetaType::UInt:
+        return QVariant::fromValue(static_cast<uint>(
+            qobject_cast<QDoubleSpinBox*>(binding.editor)->value()));
     case QMetaType::QDate:
         return qobject_cast<QDateEdit*>(binding.editor)->date();
     case QMetaType::QTime:
@@ -425,9 +439,7 @@ QWidget* makeEditor(
                 metaEnum.value(index));
         }
         const int current = combo->findData(value.toInt());
-        if (current >= 0) {
-            combo->setCurrentIndex(current);
-        }
+        combo->setCurrentIndex(current);
         return combo;
     }
 
@@ -437,12 +449,18 @@ QWidget* makeEditor(
         check->setChecked(value.toBool());
         return check;
     }
-    case QMetaType::Int:
-    case QMetaType::UInt: {
+    case QMetaType::Int: {
         auto* spin = new QSpinBox(parent);
-        spin->setRange(propertyTypeId(property) == QMetaType::UInt ? 0 : std::numeric_limits<int>::min(),
-                       std::numeric_limits<int>::max());
+        spin->setRange(std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
         spin->setValue(value.toInt());
+        return spin;
+    }
+    case QMetaType::UInt: {
+        // A double exactly represents every 32-bit unsigned integer.
+        auto* spin = new QDoubleSpinBox(parent);
+        spin->setDecimals(0);
+        spin->setRange(0, std::numeric_limits<uint>::max());
+        spin->setValue(value.toUInt());
         return spin;
     }
     case QMetaType::Double:
@@ -560,7 +578,10 @@ public:
 
             QWidget* row = makeEditorRow(property, editor, body);
             form->addRow(propertyDisplayName(name), row);
-            bindings_.append({name.toLatin1(), property, editor, value});
+            editor->setObjectName(name);
+            EditorBinding binding{name.toLatin1(), property, editor, QVariant()};
+            binding.initialEditorValue = editorValue(binding);
+            bindings_.append(binding);
         }
 
         // Show authors what cannot safely be serialized into a .ui file.
@@ -625,7 +646,7 @@ private:
                 continue;
             }
             const QVariant value = editorValue(binding);
-            if (value.isValid() && value != binding.original) {
+            if (value.isValid() && value != binding.initialEditorValue) {
                 changes.append({name, binding.name, value, false});
             }
         }
@@ -658,7 +679,7 @@ private:
         target_->update();
     }
 
-    QWidget* target_ = nullptr;
+    QPointer<QWidget> target_;
     QDesignerFormEditorInterface* core_ = nullptr;
     QVector<EditorBinding> bindings_;
 };
@@ -1246,6 +1267,10 @@ protected:
 
 } // namespace
 
+QDialog* createMaterialPropertyDialog(QWidget* target, QDesignerFormEditorInterface* core, QWidget* parent)
+{
+    return target ? new MaterialPropertyDialog(target, core, parent) : nullptr;
+}
 
 QStringList nativeEditablePropertyNames(const QWidget* widget)
 {
