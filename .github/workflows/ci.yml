@@ -646,6 +646,18 @@ jobs:
           cpack -G TGZ
           cpack -G ZIP
 
+      - name: Verify relocated ZIP and TGZ SDK consumers
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          archives=(build-release/qt-material3-widget-*.tar.gz build-release/qt-material3-widget-*.zip)
+          test "${#archives[@]}" -eq 2
+          python3 -m unittest discover -s tests/tools -p test_sdk_consumer.py -v
+          for archive in "${archives[@]}"; do
+            python3 scripts/ci/run-consumer-matrix.py --archive "$archive" --build-root "$PWD/build-release/archive-consumers"
+          done
+
       - name: Build source archives
         working-directory: build-release
         run: |
@@ -668,6 +680,7 @@ jobs:
           path: |
             build-release/qt-material3-widget-*.tar.gz
             build-release/qt-material3-widget-*.zip
+            build-release/qt-material3-widget-*.sha256
           if-no-files-found: error
 
   examples-benchmarks:
