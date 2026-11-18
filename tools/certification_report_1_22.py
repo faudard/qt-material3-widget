@@ -44,6 +44,7 @@ def build_report(root=ROOT):
     """Invalid contracts become issues. Pending manual reviews are blockers, not issues."""
     issues = []
     components = {}
+    integration_checks = []
     for item in registry.load_registry(root):
         cid = item["id"]
         if cid in components:
@@ -58,6 +59,7 @@ def build_report(root=ROOT):
         components[cid] = {
             "id": cid, "name": item.get("name", cid), "maturity": maturity,
             "releaseScope": item.get("releaseScope", True),
+            "galleryRoute": item.get("galleryRoute", ""),
             "axisGaps": gaps, "declaredGaps": axes.get("gaps", []),
             "nextActions": axes.get("nextActions", []),
             "registryEvidence": "docs/components/component-registry.json",
@@ -79,6 +81,36 @@ def build_report(root=ROOT):
             platforms = {}
         if set(platforms) != set(READERS):
             issues.append(f"{source}: expected three native screen-reader platforms")
+        contracts = {}
+        for platform in READERS:
+            record = platforms.get(platform, {})
+            checks = record.get("components", {}) if isinstance(record, dict) else {}
+            contracts[platform] = checks if isinstance(checks, dict) else {}
+        expected = set(required).union(*(set(contract) for contract in contracts.values()))
+        for platform, contract in contracts.items():
+            if set(contract) != expected:
+                issues.append(f"{source}/{platform}: inconsistent component contract")
+        for cid in sorted(expected - set(required)):
+            if cid not in components:
+                issues.append(f"{source}: unknown integration component {cid}")
+            integration_checks.append({
+                "id": cid, "milestone": version, "ledger": source,
+                "platforms": [
+                    {"platform": platform, "checks": contracts[platform].get(cid, {})}
+                    for platform in READERS
+                ],
+            })
+        for cid in sorted(expected):
+            check_names = set().union(*(
+                set(contract[cid]) for contract in contracts.values()
+                if isinstance(contract.get(cid), dict)
+            ))
+            for platform, contract in contracts.items():
+                checks = contract.get(cid)
+                if not isinstance(checks, dict) or not checks or set(checks) != check_names:
+                    issues.append(f"{source}/{platform}/{cid}: inconsistent check contract")
+                elif any(value not in center.RESULTS for value in checks.values()):
+                    issues.append(f"{source}/{platform}/{cid}: invalid check results")
         for cid in required:
             if cid not in components:
                 issues.append(f"{source}: unknown required component {cid}")
@@ -86,7 +118,9 @@ def build_report(root=ROOT):
             sessions = []
             for platform, reader in READERS.items():
                 record = platforms.get(platform, {})
-                checks = record.get("components", {}).get(cid) if isinstance(record.get("components"), dict) else None
+                if not isinstance(record, dict):
+                    record = {}
+                checks = contracts[platform].get(cid)
                 if record.get("screenReader") != reader:
                     issues.append(f"{source}/{platform}: wrong screen reader")
                 if not isinstance(checks, dict) or not checks:
@@ -168,14 +202,18 @@ def build_report(root=ROOT):
                         components[cid]["blockers"].append(f"{version}: human visual review pending")
 
     for cid, row in components.items():
-        if row["releaseScope"] and row["maturity"] != "complete":
+        # The historical releaseScope flag is not the final catalogue target.
+        if row["maturity"] != "complete":
+            row["blockers"].append("registry maturity is not complete")
             if not row["nativeAT"]:
                 issues.append(f"{cid}: release component has no native AT certification ledger")
             row["blockers"].extend(f"registry axis {gap['axis']}={gap['score']}"
                                    for gap in row["axisGaps"])
+        if not row["releaseScope"]:
+            row["blockers"].append("not yet promoted into release scope")
     rows = sorted(components.values(), key=lambda c: (c["maturity"] == "complete", c["id"]))
     counts = Counter(row["maturity"] for row in rows)
-    blocked = sum(bool(row["blockers"]) and row["releaseScope"] for row in rows)
+    blocked = sum(bool(row["blockers"]) for row in rows)
     return {
         "schemaVersion": 1, "milestone": "1.22.0",
         "summary": {
@@ -184,7 +222,7 @@ def build_report(root=ROOT):
             "releaseBlocked": blocked, "validationIssues": len(issues),
             "readyForPromotion": blocked == 0 and not issues,
         },
-        "issues": issues, "components": rows,
+        "issues": issues, "components": rows, "integrationChecks": integration_checks,
     }
 
 
@@ -201,7 +239,7 @@ def markdown(data):
         "| --- | --- | --- | --- | --- |",
     ]
     for c in data["components"]:
-        if not c["releaseScope"] or not c["blockers"]:
+        if not c["blockers"]:
             continue
         axes = ", ".join(f"{a['axis']}={a['score']}" for a in c["axisGaps"]) or "none"
         at = ", ".join(f"{x['milestone']}:{'approved' if x['certified'] else 'pending'}"
@@ -214,6 +252,17 @@ def markdown(data):
         ) or "N/A"
         sources = ", ".join(x["ledger"] for x in c["nativeAT"]) or c["registryEvidence"]
         lines.append(f"| {c['id']} | {axes} | {at} | {visual} | {sources} |")
+    if data["integrationChecks"]:
+        lines += ["", "## Additional integration checks", "",
+                  "| Milestone | Component | Platform | Checks not passed |",
+                  "| --- | --- | --- | --- |"]
+        for integration in data["integrationChecks"]:
+            for platform in integration["platforms"]:
+                checks = platform["checks"]
+                pending = ", ".join(name for name, state in checks.items()
+                                    if state != "pass") if isinstance(checks, dict) else "invalid"
+                lines.append(f"| {integration['milestone']} | {integration['id']} | "
+                             f"{platform['platform']} | {pending or 'none'} |")
     lines += ["", "## Outstanding validation issues", ""]
     if data["issues"]:
         lines.extend("- " + error for error in data["issues"])
@@ -221,8 +270,11 @@ def markdown(data):
         lines.append("No malformed evidence contracts. Pending reviews remain open blockers.")
     lines += ["", "## Next actions", ""]
     for c in data["components"]:
-        if c["releaseScope"] and c["blockers"]:
+        if c["blockers"]:
             lines.append("### " + c["id"])
+            if c["galleryRoute"]:
+                lines.append("- Gallery: " + c["galleryRoute"])
+            lines.extend("- Blocker: " + blocker for blocker in c["blockers"])
             lines.extend("- " + str(action) for action in c["nextActions"])
             for gate in c["nativeAT"]:
                 for platform in gate["platforms"]:
