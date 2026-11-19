@@ -16,6 +16,7 @@ private slots:
     void resolvesFabColorVariants();
     void resolvesIconButtonRuntimeValues();
     void resolvesComponentOverrides();
+    void disabledIconColorKeepsMaterialOpacity();
 };
 
 void tst_ActionButtonSpecResolver::resolvesFabRuntimeValues()
@@ -158,6 +159,28 @@ void tst_ActionButtonSpecResolver::resolvesComponentOverrides()
     QCOMPARE(spec.cornerRadius, 7.0);
     QCOMPARE(spec.pressStateLayerOpacity, 0.19);
     QCOMPARE(spec.containerDiameter, 60);
+}
+
+void tst_ActionButtonSpecResolver::disabledIconColorKeepsMaterialOpacity()
+{
+    ThemeBuilder builder;
+    for (bool dark : {false, true}) {
+        Theme theme = dark
+            ? builder.buildDarkFromSeed(QColor("#6750A4"))
+            : builder.buildLightFromSeed(QColor("#6750A4"));
+        auto spec = ActionButtonSpecResolver().iconButtonSpec(theme);
+        QVERIFY(spec.disabledIconColor.alphaF() < spec.iconColor.alphaF());
+        QVERIFY(qAbs(spec.disabledIconColor.alphaF() - 0.38) < 0.005);
+        ComponentTokenOverride tokens;
+        tokens.colors.insert(ColorRole::OnSurfaceVariant, QColor("#123456"));
+        theme.componentOverrides().setOverride(ComponentId::IconButton, tokens);
+        spec = ActionButtonSpecResolver().iconButtonSpec(theme);
+        QVERIFY(qAbs(spec.disabledIconColor.alphaF() - 0.38) < 0.005);
+        tokens.custom.insert(QStringLiteral("disabledIconColor"), QColor("#778899"));
+        theme.componentOverrides().setOverride(ComponentId::IconButton, tokens);
+        QCOMPARE(ActionButtonSpecResolver().iconButtonSpec(theme).disabledIconColor,
+                 QColor("#778899"));
+    }
 }
 
 QTEST_MAIN(tst_ActionButtonSpecResolver)
