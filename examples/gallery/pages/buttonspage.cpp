@@ -1,6 +1,7 @@
 #include "buttonspage.h"
 
 #include <QFrame>
+#include <QCheckBox>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -326,6 +327,26 @@ ButtonsPage::ButtonsPage(QWidget* parent)
     catalogueRow->addWidget(buttonGroup);
     catalogueRow->addStretch(1);
     root->addLayout(catalogueRow);
+
+    auto* catalogueStatus = new QLabel(tr("No expressive button action yet"), this);
+    catalogueStatus->setAccessibleName(tr("Last expressive button action"));
+    auto* disableSplit = new QCheckBox(tr("Disable split button"), this);
+    auto* disableWeek = new QCheckBox(tr("Disable Week segment"), this);
+    root->addWidget(disableSplit);
+    root->addWidget(disableWeek);
+    root->addWidget(catalogueStatus);
+    connect(disableSplit, &QCheckBox::toggled, splitButton, &QWidget::setDisabled);
+    connect(disableWeek, &QCheckBox::toggled, buttonGroup, [buttonGroup](bool disabled) {
+        buttonGroup->buttonAt(1)->setDisabled(disabled);
+    });
+    connect(splitButton, &QtMaterial::QtMaterialSplitButton::primaryTriggered,
+            catalogueStatus, [catalogueStatus] { catalogueStatus->setText(QObject::tr("Primary action triggered")); });
+    connect(splitButton, &QtMaterial::QtMaterialSplitButton::secondaryTriggered,
+            catalogueStatus, [catalogueStatus] { catalogueStatus->setText(QObject::tr("Secondary action triggered")); });
+    connect(buttonGroup, &QtMaterial::QtMaterialButtonGroup::buttonTriggered,
+            catalogueStatus, [catalogueStatus, buttonGroup](int index) {
+                catalogueStatus->setText(QObject::tr("Group action: %1").arg(buttonGroup->buttonAt(index)->text()));
+            });
 
  // BEGIN GENERATED BUTTONS MATURITY GALLERY COVERAGE
  root->addWidget(separator(this));
