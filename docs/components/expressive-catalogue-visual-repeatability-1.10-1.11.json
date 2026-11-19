@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "a72dac30794983b5d16068535cc0069bee574d1d",
+  "renderer": {
+    "qtVersion": "6.4.0",
+    "style": "fusion",
+    "platform": "xcb",
+    "scaleFactor": "1",
+    "fontDpi": "96"
+  },
+  "repeatable": true,
+  "visualReview": "pending",
+  "images": [
+    {
+      "name": "expressive_catalogue_matrix_light_standard",
+      "width": 1552,
+      "height": 942,
+      "pngSha256": "0b3fc51809634de7dca3bbcad96f1007d67aedc35edc49d0095dae10287c1eb9",
+      "pixelSha256": "c9687c6ebf808869913f7bb70a0c0e6564e4a8667027e131f124704e0e1bfc7b"
+    },
+    {
+      "name": "expressive_catalogue_matrix_dark_standard",
+      "width": 1552,
+      "height": 942,
+      "pngSha256": "bb2c138789a4cc815c809787af923c556c9b94575bdae7ba0919e1d26faa2113",
+      "pixelSha256": "f499efa6a5f4ebd1bca1326bbfa7842e90266bb85ab5879bd76cd0179fa81aae"
+    },
+    {
+      "name": "expressive_catalogue_matrix_light_high",
+      "width": 1552,
+      "height": 942,
+      "pngSha256": "ef0106a798f0f2a644adebae5f9a73efd8d27b0e8e25afad95ca638868846bc4",
+      "pixelSha256": "9583a3101dbfa957584fda9c7c1939b617acd67a2d4cc11c2235c470aaa38fcc"
+    }
+  ],
+  "sourceRunId": 44361342912,
+  "sourceArtifactId": 14455729620,
+  "sourceArtifactName": "expressive-catalogue-visual-evidence"
+}

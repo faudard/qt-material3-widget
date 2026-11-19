@@ -24,7 +24,7 @@
     "status": "pending",
     "reviewer": "",
     "reviewedAt": "",
-    "evidence": "",
+    "evidence": "docs/components/expressive-catalogue-visual-repeatability-1.10-1.11.json; GitHub Actions run 44361342912 / artifact 14455729620; visual review pending",
     "requiredGoldens": [
       "tests/visual/goldens/expressive_catalogue_matrix_light_standard.png",
       "tests/visual/goldens/expressive_catalogue_matrix_dark_standard.png",
