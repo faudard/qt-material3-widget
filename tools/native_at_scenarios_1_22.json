@@ -1,0 +1,111 @@
+{
+  "navigation.rail": {
+    "traversal": "Tab into the rail; move using Up/Down and Tab out. Check destination names, logical order and disabled skipping.",
+    "stateAnnouncements": "Select a different destination, then explore selected and disabled destinations. Record name, role and selected/unavailable announcements.",
+    "activation": "Activate an enabled destination with Enter/Space and try a disabled destination. Exactly the enabled destination changes selection.",
+    "focus": "Move focus away and return; verify the focused destination and visible focus ring agree; repeat RTL."
+  },
+  "navigation.tabs": {
+    "traversal": "Tab into the tab strip; use Left/Right, Home/End where supported; check disabled skipping and tab panel reading order.",
+    "stateAnnouncements": "Explore selected and unselected tabs plus a disabled tab; record role/name and selected/unavailable state.",
+    "activation": "Activate another tab with keyboard; verify the corresponding panel is exposed and disabled tabs cannot activate.",
+    "focus": "Navigate into the selected panel and back; verify focus remains predictable across tab changes and RTL."
+  },
+  "navigation.menu": {
+    "traversal": "Open menu using keyboard; use Up/Down, inspect checkable and disabled rows; verify disabled rows cannot receive activation.",
+    "stateAnnouncements": "Explore normal, checked/unchecked and disabled entries. Record names, roles, checked and unavailable state.",
+    "activation": "Activate enabled entry, reopen and toggle checkable entry; disabled entry must not invoke its action.",
+    "focus": "Close with Escape and check focus returns to the invoking control; repeat keyboard activation.",
+    "expressiveState": "Enable expressive Menu styling; inspect checked, unchecked and disabled rows. Names and semantic states must remain equivalent to standard Menu."
+  },
+  "navigation.breadcrumb": {
+    "traversal": "Tab through the visible path segments and overflow menu; narrow the view and inspect the hidden path entries.",
+    "stateAnnouncements": "Explore current and ancestor segments, overflow and editable location; verify distinguishable names and current-location context.",
+    "activation": "Open overflow using keys and activate an ancestor; use Ctrl+L and Enter to submit a location; verify intended path change.",
+    "focus": "Use Ctrl+L then Escape; verify focus restoration; activate a segment and check accessible focus in RTL."
+  },
+  "navigation.command-palette": {
+    "traversal": "Open the palette from a focusable invoker, type a query and use Up/Down through the results; inspect groups and empty results.",
+    "stateAnnouncements": "Record accessible query name, result names, highlighted result and empty/no-result feedback.",
+    "activation": "Choose a command with Enter; exactly that command executes. Repeat with a query with no valid result.",
+    "focus": "Open the palette, verify query focus, dismiss using Escape and verify original focus returns."
+  },
+  "layout.split-view": {
+    "traversal": "Tab to each splitter handle and its adjacent pane controls; repeat horizontal and vertical orientations.",
+    "stateAnnouncements": "Inspect accessible splitter name, divider role, orientation/value where exported and collapsed state/context.",
+    "activation": "Use physical arrow keys, Shift modifiers, Home/End and Enter collapse/restore as supported. Check constraints and the correct adjacent panes.",
+    "focus": "Keep focus on the divider while resizing/collapsing; verify visible and spoken focus; repeat RTL."
+  },
+  "navigation.bar": {
+    "traversal": "Tab into bar and navigate with horizontal arrows; repeat RTL and verify disabled destination skipping.",
+    "stateAnnouncements": "Explore destination names including icon-only presentation; record selected and unavailable state.",
+    "activation": "Activate enabled destination by keyboard and verify selection; attempt disabled activation, which must not change selection.",
+    "focus": "Tab away and back; verify item-level accessible focus and visible indicator agree."
+  },
+  "surface.side-sheet": {
+    "focusContainment": "Open modal sheet from a keyboard-focused invoker; cycle Tab and Shift+Tab. Focus stays in sheet while modal.",
+    "titleAnnouncement": "Record actual announcement on opening, including sheet title and meaningful dialog/panel context.",
+    "dismissal": "Press Escape; verify sheet and modal scrim disappear and host is available again.",
+    "focusRestoration": "Dismiss from an interior focusable child; check focus returns to the original invoker."
+  },
+  "surface.tooltip": {
+    "focusTrigger": "Use Tab, not pointer hover, to focus the target. Wait for configured delay and verify tooltip appears.",
+    "announcement": "Record the target name and tooltip text actually spoken by the native reader.",
+    "dismissal": "Move focus away or dismiss using the supported keyboard action; tooltip disappears without a stale announcement.",
+    "focusPreservation": "Check focus remains on the target while tooltip opens and closes; continue Tab traversal."
+  },
+  "data.badge": {
+    "numericAnnouncement": "Set a numeric count and explore badge/owning context; record the notification count spoken.",
+    "overflowAnnouncement": "Set a count above the configured maximum; verify spoken overflow meaning is understandable, not misleading.",
+    "dotAnnouncement": "Switch to dot mode; verify new-content meaning is accessible without a fictitious number.",
+    "dynamicUpdate": "Change count/dot state while reader is active; record whether updated state is exposed or announced. Do not infer speech from Qt signals."
+  },
+  "navigation.suite": {
+    "traversal": "Explore bar in Compact and rail in Medium; use horizontal then vertical arrows; check names and disabled skipping.",
+    "stateAnnouncements": "Record selected, focused and disabled destination states in both presentations.",
+    "activation": "Activate destinations in Compact and Medium with keys; verify selected index and intended page.",
+    "focusAcrossModeSwitch": "Focus a destination and resize across 600 px boundary in both directions; verify same logical selection and meaningful focus."
+  },
+  "layout.adaptive-shell": {
+    "responsiveComposition": "Resize through Compact, Medium, Expanded, Large and ExtraLarge; explore navigation and main content in each.",
+    "contentFocusPreservation": "Focus a main content control; resize through breakpoints and confirm focus remains on the same control when visible.",
+    "supportingPaneTransition": "Resize across supporting-pane visibility threshold; verify hidden content leaves reader traversal and visible content reappears.",
+    "rtlReadingOrder": "Switch RTL and repeat Compact and Expanded; compare spoken reading order with logical navigation, main and supporting content."
+  },
+  "button.split": {
+    "primaryAction": "Focus primary action, activate with Space/Enter, verify only primary action fires and record announcement.",
+    "secondaryAction": "Focus trailing action, record its distinct name, activate it and verify only the secondary action fires.",
+    "focusOrder": "Tab and Shift+Tab between both actions and neighbors; repeat RTL, verify distinct focus targets.",
+    "disabledState": "Disable split button; inspect unavailable state and verify neither action fires."
+  },
+  "button.group": {
+    "traversal": "Tab into group; use Left/Right and Home/End; inspect logical action names and skip disabled children.",
+    "checkedState": "Select a different action in exclusive mode; record checked/unchecked transitions and group context.",
+    "activation": "Activate using Space/Enter; verify the intended action and selection change exactly once.",
+    "rtlTraversal": "Switch RTL; compare Left/Right focus movement with visual order and logical action identity."
+  },
+  "navigation.floating-toolbar": {
+    "traversal": "Tab to named actions; use arrows and Home/End; check disabled actions and visible focus.",
+    "collapsedState": "Collapse and expand toolbar; inspect visible actions and record whether hidden actions are excluded from reader traversal.",
+    "activation": "Activate each available named action using keyboard; verify exactly the intended action fires; disabled actions do not fire.",
+    "orientation": "Switch horizontal to vertical and RTL; verify arrow navigation, accessible names and focus order match the orientation."
+  },
+  "progress.loading-indicator": {
+    "busyAnnouncement": "Start loading; explore indicator using native reader/object navigation and record actual busy/in-progress announcement.",
+    "idleAnnouncement": "Stop loading; record actual idle/completed state; stale busy announcement must not remain.",
+    "reducedMotionState": "Enable reduced motion; confirm static rendering without losing the current accessible loading state.",
+    "stateChange": "Toggle active to idle and back while reader is active; record actual transition announcements or lack thereof."
+  },
+  "data.segmented-list": {
+    "traversal": "Explore list and items with keyboard and reader navigation; verify named rows and disabled skipping.",
+    "selectionState": "Change selection; record selected/unselected states and list context.",
+    "activation": "Activate focused list item using Enter/Space; verify correct item and event, not merely a visual highlight.",
+    "segmentContext": "Inspect first/middle/last and single-item groups after insert/remove; verify names, item order and meaningful list/selection context."
+  },
+  "compact.chip": {
+    "checkedState": "Use expressive Filter Chip; toggle checked state and record checked/unchecked announcements.",
+    "activation": "Activate using Space/Enter; verify exactly one intended action; repeat disabled.",
+    "removal": "Use a removable expressive chip; focus and remove with Delete/Backspace or supported close action; verify correct chip disappears.",
+    "focus": "Traverse eligible chips using Tab/Shift+Tab; after removal check focus remains meaningful and no stale removed item is exposed."
+  }
+}

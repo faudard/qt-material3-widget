@@ -44,6 +44,12 @@ jobs:
       - name: Export 1.22 reviewer session pack
         run: python tools/export_certification_review_pack.py --output build/certification/review-pack
 
+      - name: Verify all committed 1.22 baseline PNG hashes
+        run: python tools/verify_visual_baselines_1_22.py --output build/certification/visual-integrity.json
+
+      - name: Export detailed native screen-reader procedures
+        run: python tools/native_at_review_1_22.py prepare --output build/certification/review-pack/native-detailed
+
       - name: Upload 1.22 certification health
         if: always()
         uses: actions/upload-artifact@v6
@@ -51,6 +57,7 @@ jobs:
           name: certification-health-1-22
           path: |
             build/certification/health-1.22.*
+            build/certification/visual-integrity.json
             build/certification/review-pack/
           if-no-files-found: warn
 
