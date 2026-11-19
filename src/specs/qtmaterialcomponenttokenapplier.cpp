@@ -810,10 +810,11 @@ void applyIconButtonComponentTokens(
             &spec->selectedIconColor,
             tokens,
             ColorRole::OnPrimaryContainer);
-        applyColor(
-            &spec->disabledIconColor,
-            tokens,
-            ColorRole::OnSurfaceVariant);
+        // A general foreground override must retain the disabled opacity.
+        if (tokens.colors.contains(ColorRole::OnSurfaceVariant)) {
+            spec->disabledIconColor = tokens.colors.value(ColorRole::OnSurfaceVariant);
+            spec->disabledIconColor.setAlphaF(spec->disabledIconColor.alphaF() * 0.38);
+        }
         applyColor(
             &spec->stateLayerColor,
             tokens,
