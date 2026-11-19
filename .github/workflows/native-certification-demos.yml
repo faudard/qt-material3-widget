@@ -1,0 +1,131 @@
+name: Native certification demos
+
+on:
+  pull_request:
+    paths:
+      - 'examples/**'
+      - 'src/**'
+      - 'include/**'
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'scripts/ci/package-certification-demos.py'
+      - '.github/workflows/native-certification-demos.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: native-demos-${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: windows-qt5.14.2-x64
+            os: windows-2022
+            qt: '5.14.2'
+            arch: win64_msvc2017_64
+          - name: windows-qt6.7.3-x64
+            os: windows-2022
+            qt: '6.7.3'
+            arch: win64_msvc2019_64
+          - name: ubuntu-24.04-x64
+            os: ubuntu-24.04
+            qt: system
+            arch: ''
+          - name: macos-qt6.8.3-arm64
+            os: macos-15
+            qt: '6.8.3'
+            arch: clang_64
+          - name: macos-qt6.8.3-x64
+            os: macos-15-intel
+            qt: '6.8.3'
+            arch: clang_64
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: System Qt and build tools
+        if: runner.os == 'Linux'
+        run: bash scripts/ci/install-ubuntu-deps.sh
+      - name: Windows compiler tools
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install ninja --no-progress -y
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $installationPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $installationPath) { throw "Visual Studio installation not found" }
+          $vsDevCmd = Join-Path $installationPath "Common7\Tools\VsDevCmd.bat"
+          $command = '"' + $vsDevCmd + '" -no_logo -arch=x64 -host_arch=x64 -vcvars_ver=14.29 && set'
+          $environment = cmd.exe /d /s /c $command
+          if ($LASTEXITCODE -ne 0) { throw "VsDevCmd failed" }
+          $persist = @("PATH", "INCLUDE", "LIB", "LIBPATH", "VCINSTALLDIR", "VCToolsInstallDir", "VCToolsVersion", "VSINSTALLDIR", "VisualStudioVersion", "WindowsSdkDir", "WindowsSDKVersion", "UniversalCRTSdkDir", "UCRTVersion")
+          foreach ($line in $environment) {
+            if ($line -match '^([^=]+)=(.*)$') {
+              $name = $matches[1]
+              if ($persist -contains $name) {
+                "$name=$($matches[2])" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+              }
+            }
+          }
+      - name: macOS build tools
+        if: runner.os == 'macOS'
+        run: brew install ninja || true
+      - name: Install Qt
+        if: runner.os != 'Linux'
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ matrix.qt }}
+          host: ${{ runner.os == 'Windows' && 'windows' || 'mac' }}
+          target: desktop
+          arch: ${{ matrix.arch }}
+          cache: true
+      - name: Configure static project libraries
+        shell: bash
+        run: >-
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DBUILD_SHARED_LIBS=OFF
+          -DQTMATERIAL3_BUILD_TESTS=OFF
+          -DQTMATERIAL3_BUILD_EXAMPLES=ON
+          -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=OFF
+          -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=OFF
+          -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
+          -DQTMATERIAL3_USE_MCU=OFF
+      - name: Build only the four existing demos
+        run: >-
+          cmake --build build --parallel 2 --target
+          qtmaterial3_accessibility_certification
+          qtmaterial3_catalogue_certification
+          qtmaterial3_adaptive_desktop_certification
+          qtmaterial3_gallery
+      - name: Deploy and smoke test
+        shell: bash
+        run: |
+          version='${{ matrix.qt }}'
+          if [[ "$version" == system ]]; then
+            version="$(qmake6 -query QT_VERSION)"
+          fi
+          python scripts/ci/package-certification-demos.py --build build --output dist/native-demos --qt-version "$version"
+      - name: Archive Linux
+        if: runner.os == 'Linux'
+        run: tar -czf native-demos-${{ matrix.name }}.tar.gz -C dist native-demos
+      - name: Archive macOS bundles preserving links and modes
+        if: runner.os == 'macOS'
+        run: ditto -c -k --keepParent dist/native-demos native-demos-${{ matrix.name }}.zip
+      - name: Archive Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Compress-Archive -Path dist/native-demos -DestinationPath native-demos-${{ matrix.name }}.zip
+      - name: Publish offline project binaries
+        uses: actions/upload-artifact@v6
+        with:
+          name: native-demos-${{ matrix.name }}
+          path: |
+            native-demos-${{ matrix.name }}.zip
+            native-demos-${{ matrix.name }}.tar.gz
+          if-no-files-found: error
