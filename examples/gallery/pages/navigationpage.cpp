@@ -1,6 +1,8 @@
 #include "navigationpage.h"
 
 #include <QHBoxLayout>
+#include <QCheckBox>
+#include "qtmaterial/widgets/buttons/qtmaterialiconbutton.h"
 #include <QLabel>
 #include <QStackedWidget>
 #include <QStyle>
@@ -106,14 +108,44 @@ NavigationPage::NavigationPage(QWidget* parent)
         new QtMaterialMenu(this);
     expressiveMenu->setExpressive(true);
     expressiveMenu->addItem(QStringLiteral("Open"));
-    expressiveMenu->addItem(QStringLiteral("Rename"));
-    expressiveMenu->addItem(QStringLiteral("Share"));
+    const int renameIndex = expressiveMenu->addItem(QStringLiteral("Rename"));
+    expressiveMenu->setItemCheckable(renameIndex, true);
+    expressiveMenu->setItemChecked(renameIndex, true);
+    const int shareIndex = expressiveMenu->addItem(QStringLiteral("Share"));
+    expressiveMenu->setItemEnabled(shareIndex, false);
     expressiveMenu->setMinimumWidth(220);
 
     expressiveRow->addWidget(floatingToolbar, 0, Qt::AlignTop);
     expressiveRow->addWidget(expressiveMenu, 0, Qt::AlignTop);
     expressiveRow->addStretch(1);
     layout->addLayout(expressiveRow);
+    auto* collapseToolbar = new QCheckBox(tr("Collapse floating toolbar"), this);
+    auto* verticalToolbar = new QCheckBox(tr("Vertical floating toolbar"), this);
+    auto* disableToolbar = new QCheckBox(tr("Disable floating toolbar"), this);
+    auto* standardMenu = new QCheckBox(tr("Use standard menu styling"), this);
+    auto* expressiveStatus = new QLabel(tr("No navigation action yet"), this);
+    expressiveStatus->setAccessibleName(tr("Last expressive navigation action"));
+    for (auto* control : {collapseToolbar, verticalToolbar, disableToolbar, standardMenu}) {
+        layout->addWidget(control);
+    }
+    layout->addWidget(expressiveStatus);
+    connect(collapseToolbar, &QCheckBox::toggled, floatingToolbar, [floatingToolbar](bool collapsed) {
+        floatingToolbar->setExpanded(!collapsed);
+    });
+    connect(verticalToolbar, &QCheckBox::toggled, floatingToolbar, [floatingToolbar](bool vertical) {
+        floatingToolbar->setOrientation(vertical ? Qt::Vertical : Qt::Horizontal);
+    });
+    connect(disableToolbar, &QCheckBox::toggled, floatingToolbar, &QWidget::setDisabled);
+    connect(standardMenu, &QCheckBox::toggled, expressiveMenu, [expressiveMenu](bool standard) {
+        expressiveMenu->setExpressive(!standard);
+    });
+    connect(floatingToolbar, &QtMaterial::QtMaterialFloatingToolbar::actionTriggered,
+            expressiveStatus, [expressiveStatus, floatingToolbar](int index) {
+                expressiveStatus->setText(QObject::tr("Toolbar action: %1").arg(floatingToolbar->itemAt(index)->accessibleName()));
+            });
+    connect(expressiveMenu, &QtMaterialMenu::activated, expressiveStatus, [expressiveStatus](int index) {
+        expressiveStatus->setText(QObject::tr("Menu action %1").arg(index + 1));
+    });
 
     auto* railRow = new QHBoxLayout;
     railRow->setSpacing(16);

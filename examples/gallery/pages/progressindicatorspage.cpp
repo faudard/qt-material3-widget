@@ -1,6 +1,8 @@
 #include "progressindicatorspage.h"
 
 #include <QFrame>
+#include <QCheckBox>
+#include "qtmaterial/theme/qtmaterialthememanager.h"
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSlider>
@@ -127,6 +129,19 @@ ProgressIndicatorsPage::ProgressIndicatorsPage(QWidget* parent)
     loadingRow->addWidget(loadingLarge);
     loadingRow->addStretch();
     expressiveCard->layout()->addItem(loadingRow);
+    auto* activeLoading = new QCheckBox(tr("Loading active"), expressiveCard);
+    activeLoading->setChecked(loadingSmall->isActive());
+    auto* reduceMotion = new QCheckBox(tr("Reduced motion"), expressiveCard);
+    reduceMotion->setChecked(QtMaterial::ThemeManager::instance().theme().accessibility().reducedMotion);
+    expressiveCard->layout()->addWidget(activeLoading);
+    expressiveCard->layout()->addWidget(reduceMotion);
+    connect(activeLoading, &QCheckBox::toggled, loadingSmall, &QtMaterial::QtMaterialLoadingIndicator::setActive);
+    connect(activeLoading, &QCheckBox::toggled, loadingLarge, &QtMaterial::QtMaterialLoadingIndicator::setActive);
+    connect(reduceMotion, &QCheckBox::toggled, this, [](bool reduced) {
+        auto theme = QtMaterial::ThemeManager::instance().theme();
+        theme.accessibility().reducedMotion = reduced;
+        QtMaterial::ThemeManager::instance().setTheme(theme);
+    });
 
     root->addStretch();
 }

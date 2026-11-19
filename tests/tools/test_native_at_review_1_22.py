@@ -75,6 +75,18 @@ class NativeReviewTests(unittest.TestCase):
                 native.prepare(output)
             self.assertEqual(files[0].read_bytes(), original)
 
+    def test_guides_use_existing_demos_and_expressive_controls(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            native.prepare(output)
+            for milestone, executable in native.EXECUTABLES.items():
+                guide = output / (milestone.replace("/", "-") + "-windows-nvda.md")
+                self.assertIn(executable, guide.read_text(encoding="utf-8"))
+            expressive = (output / "1.10-1.11-windows-nvda.md").read_text(encoding="utf-8")
+            self.assertIn("--route /navigation/floating-toolbar", expressive)
+            self.assertIn("Loading active and Reduced motion", expressive)
+            self.assertIn("Restore input chip", expressive)
+
     def test_record_keeps_raw_observations_and_reports_failure(self):
         session = self.completed_fixture()
         session["checks"]["data.badge"]["dotAnnouncement"] = "fail"

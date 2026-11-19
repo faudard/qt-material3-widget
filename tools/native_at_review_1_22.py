@@ -14,6 +14,21 @@ import certification_center as center
 ROOT = center.ROOT
 SCENARIOS_PATH = Path(__file__).with_name("native_at_scenarios_1_22.json")
 PLATFORMS = ("windows-nvda", "linux-orca", "macos-voiceover")
+EXECUTABLES = {
+    "1.5": "qtmaterial3_accessibility_certification",
+    "1.7": "qtmaterial3_catalogue_certification",
+    "1.9": "qtmaterial3_adaptive_desktop_certification",
+    "1.10/1.11": "qtmaterial3_gallery",
+}
+GALLERY_EXERCISES = {
+    "button.split": "Disable split button; inspect Last expressive button action.",
+    "button.group": "Disable Week segment; inspect Last expressive button action; use Direction in theme toolbar.",
+    "navigation.floating-toolbar": "Collapse/Vertical/Disable floating toolbar controls; inspect last navigation action.",
+    "progress.loading-indicator": "Loading active and Reduced motion checkboxes.",
+    "data.segmented-list": "Disable Work item, Remove last segment and Restore three segments controls.",
+    "navigation.menu": "Use the Expressive menu next to Floating Toolbar on Navigation page; Use standard menu styling toggles the variant.",
+    "compact.chip": "Expressive chips, Disable filter chip and Restore input chip controls.",
+}
 METADATA = ("osVersion", "screenReaderVersion", "qtVersion", "locale", "sourceCommit")
 
 
@@ -40,17 +55,26 @@ def worklist(milestone, platform, session, routes):
     procedures = scenarios()
     lines = [
         f"# {milestone} — {session['screenReader']} ({platform})", "",
-        "Use the real reader with a visible, interactive Gallery build. A Qt accessibility",
+        "Use the real reader with the existing interactive demo. A Qt accessibility",
         "tree, CTest pass, screenshot or simulated speech is not native AT evidence.", "",
         "Record OS, reader version, Qt version, locale and the source commit of the tested build.",
         "Record the actual spoken words and observed behavior for every check; mark fail",
         "when expected semantics are absent. If the fixture cannot exercise a case, leave",
         "it pending and describe the missing fixture. Do not substitute an assumed pass.", "",
-        "To open a Gallery deep link: qtmaterial3_gallery --route <route>", "",
+        f"Preferred executable: `{EXECUTABLES[milestone]}`", "",
+        "In the downloaded CI bundle see README.txt and source.json. Record the exact tested source SHA.", "",
     ]
     for cid, checks in session["checks"].items():
         route = routes[cid]
-        lines += [f"## {cid}", "", f"Gallery: `{route}`", ""]
+        lines += [f"## {cid}", ""]
+        if milestone == "1.10/1.11":
+            if cid == "navigation.menu":
+                route = routes["navigation.floating-toolbar"]
+            lines += [f"Launch: `qtmaterial3_gallery --route {route}`", "",
+                      GALLERY_EXERCISES[cid], ""]
+        else:
+            lines += [f"Open the {cid} section in {EXECUTABLES[milestone]}.",
+                      "", f"Gallery fallback: `{route}`", ""]
         for check in checks:
             instruction = procedures.get(cid, {}).get(check)
             if not instruction:

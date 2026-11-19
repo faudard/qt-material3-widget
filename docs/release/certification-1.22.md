@@ -85,9 +85,36 @@ On a checkout containing the tested Gallery build:
 
     python tools/native_at_review_1_22.py prepare --output build/native-review
 
-Start the actual screen reader, open the named Gallery route with
-`qtmaterial3_gallery --route <route>` and follow the corresponding Markdown
-guide. Use NVDA on Windows, Orca on a Linux accessibility-enabled graphical
+Start the actual screen reader and follow the corresponding Markdown guide.
+Use the existing certification executable for each family:
+
+| Milestone | Existing executable |
+| --- | --- |
+| 1.5 | qtmaterial3_accessibility_certification |
+| 1.7 | qtmaterial3_catalogue_certification |
+| 1.9 | qtmaterial3_adaptive_desktop_certification |
+| 1.10/1.11 | qtmaterial3_gallery --route <route> |
+
+Gallery now exposes the needed interactive Expressive controls (including
+action feedback, disabling, collapse, orientation, reduced motion, list
+mutation and chip restoration). No separate demo has been introduced.
+
+The **Native certification demos** workflow builds these same targets
+against static QtMaterial3 project libraries and publishes per-platform
+archives for Windows Qt 5.14.2/6.7.3 x64, Ubuntu 24.04 x64, and macOS
+Qt 6.8.3 Intel/Apple Silicon. Download the matching artifact and extract
+the inner archive, preserving relative paths. Windows includes Qt runtime
+DLLs/plugins (the Visual C++ x64 redistributable may still be needed);
+macOS contains ad-hoc-signed, non-notarized app bundles. On Ubuntu 24.04
+the executables use the system Qt 6 runtime: the same distribution packages
+used by CI (e.g. install qt6-base-dev, qt6-qpa-plugins and orca); a compiler
+or project build is not required. These packages are intended for testing
+on matching platforms, not a cross-distribution release installer.
+
+Record the exact commit and Qt version in the archive's source.json. On macOS
+launch Gallery via its bundle executable with the route argument, or use
+the normal Gallery navigation. The package startup smoke checks only process
+startup; they are not screen-reader certification. Use NVDA on Windows, Orca on a Linux accessibility-enabled graphical
 session, or VoiceOver on macOS, not the offscreen Qt platform or a simulated
 reader. Record the actual reader and OS versions, tested Qt build, locale,
 full Git SHA of the build (`git rev-parse HEAD`), reviewer/date and a reusable
