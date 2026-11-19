@@ -24,7 +24,8 @@ def find_binary(build, name, directory, system):
     suffix = ".exe" if system == "Windows" else ""
     candidates = [build / "bin" / (name + suffix),
                   build / "examples" / directory / (name + suffix),
-                  build / "examples" / directory / "Release" / (name + suffix)]
+                  build / "examples" / directory / "Release" / (name + suffix),
+                  build / "examples" / directory / (name + ".app") / "Contents" / "MacOS" / name]
     for candidate in candidates:
         if candidate.is_file():
             return candidate
