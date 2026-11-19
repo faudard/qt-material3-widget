@@ -9,7 +9,6 @@ import platform
 import plistlib
 import shutil
 import subprocess
-import sys
 from pathlib import Path
 
 DEMOS = {
@@ -41,7 +40,9 @@ def smoke(binary, output):
     env = {k: v for k, v in os.environ.items()
            if k not in ("QT_PLUGIN_PATH", "QT_QPA_PLATFORM_PLUGIN_PATH",
                         "LD_LIBRARY_PATH", "DYLD_LIBRARY_PATH", "DYLD_FRAMEWORK_PATH")}
-    env["QT_QPA_PLATFORM"] = "offscreen"
+    # macdeployqt deploys Cocoa but intentionally omits offscreen. Exercise the
+    # real packaged Cocoa plugin on the macOS graphical runner instead.
+    env["QT_QPA_PLATFORM"] = "cocoa" if platform.system() == "Darwin" else "offscreen"
     with subprocess.Popen([str(binary)], cwd=output, env=env,
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
         try:
