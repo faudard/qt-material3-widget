@@ -48,6 +48,8 @@ QComboBox* labeledCombo(
     auto* text = new QLabel(label, parent);
     auto* combo = new QComboBox(parent);
     combo->addItems(values);
+    text->setBuddy(combo);
+    combo->setAccessibleName(label);
     layout->addWidget(text);
     layout->addWidget(combo);
     return combo;
