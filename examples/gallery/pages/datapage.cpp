@@ -1,6 +1,8 @@
 #include "datapage.h"
 
 #include <QHBoxLayout>
+#include <QCheckBox>
+#include <QPushButton>
 #include <QLabel>
 #include <QStandardItem>
 #include <QStandardItemModel>
@@ -51,6 +53,32 @@ DataPage::DataPage(QWidget* parent)
     segmentedList->setCurrentIndex(0);
     segmentedList->setMinimumHeight(210);
     layout->addWidget(segmentedList);
+    auto* disableWork = new QCheckBox(tr("Disable Work item"), this);
+    auto* removeLast = new QPushButton(tr("Remove last segment"), this);
+    auto* resetSegments = new QPushButton(tr("Restore three segments"), this);
+    auto* segmentedStatus = new QLabel(tr("No segmented list action yet"), this);
+    segmentedStatus->setAccessibleName(tr("Last segmented list action"));
+    layout->addWidget(disableWork);
+    layout->addWidget(removeLast);
+    layout->addWidget(resetSegments);
+    layout->addWidget(segmentedStatus);
+    connect(disableWork, &QCheckBox::toggled, segmentedList, [segmentedList](bool disabled) {
+        if (segmentedList->count() > 1) segmentedList->setItemEnabled(1, !disabled);
+    });
+    connect(removeLast, &QPushButton::clicked, segmentedList, [segmentedList] {
+        if (segmentedList->count() > 1) segmentedList->removeItem(segmentedList->count() - 1);
+    });
+    connect(resetSegments, &QPushButton::clicked, segmentedList, [segmentedList, disableWork] {
+        segmentedList->clear();
+        for (const auto& label : {QStringLiteral("Personal"), QStringLiteral("Work"), QStringLiteral("Shared")}) {
+            segmentedList->addItem(label);
+        }
+        segmentedList->setCurrentIndex(0);
+        segmentedList->setItemEnabled(1, !disableWork->isChecked());
+    });
+    connect(segmentedList, &QtMaterial::QtMaterialList::itemActivated, segmentedStatus, [segmentedStatus](int index) {
+        segmentedStatus->setText(QObject::tr("Activated segment %1").arg(index + 1));
+    });
 
     layout->addWidget(new QtMaterial::QtMaterialDivider(this));
 
