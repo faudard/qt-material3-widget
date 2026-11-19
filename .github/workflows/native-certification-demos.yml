@@ -86,16 +86,20 @@ jobs:
           cache: true
       - name: Configure static project libraries
         shell: bash
-        run: >-
-          cmake -S . -B build -G Ninja
-          -DCMAKE_BUILD_TYPE=Release
-          -DBUILD_SHARED_LIBS=OFF
-          -DQTMATERIAL3_BUILD_TESTS=OFF
-          -DQTMATERIAL3_BUILD_EXAMPLES=ON
-          -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=OFF
-          -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=OFF
-          -DQTMATERIAL3_BUILD_BENCHMARKS=OFF
-          -DQTMATERIAL3_USE_MCU=OFF
+        run: |
+          compiler=()
+          if [[ "${{ runner.os }}" == Windows ]]; then
+            compiler=(-DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl "-DQTMATERIAL3_EXPECT_QT_VERSION=${{ matrix.qt }}")
+          fi
+          cmake -S . -B build -G Ninja "${compiler[@]}" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DQTMATERIAL3_BUILD_TESTS=OFF \
+            -DQTMATERIAL3_BUILD_EXAMPLES=ON \
+            -DQTMATERIAL3_BUILD_CONSUMER_EXAMPLES=OFF \
+            -DQTMATERIAL3_BUILD_THEMING_EXAMPLES=OFF \
+            -DQTMATERIAL3_BUILD_BENCHMARKS=OFF \
+            -DQTMATERIAL3_USE_MCU=OFF
       - name: Build only the four existing demos
         run: >-
           cmake --build build --parallel 2 --target
