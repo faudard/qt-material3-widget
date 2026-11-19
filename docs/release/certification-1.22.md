@@ -74,6 +74,42 @@ overwritten. The same pack is available in the Quality CI artifact, including
 Gallery routes, exact check names and required golden paths. Its pending
 checklists are not certification evidence on their own.
 
+### Detailed native review sessions (1.22 final closure)
+
+Quality CI now publishes 12 version-2 JSON templates and 12 matching step-by-step
+Markdown guides inside `certification-health-1-22/review-pack/native-detailed`.
+They cover all 76 milestone-specific scenarios (228 executions across the three
+native readers), including Expressive Menu and Chip integration checks.
+
+On a checkout containing the tested Gallery build:
+
+    python tools/native_at_review_1_22.py prepare --output build/native-review
+
+Start the actual screen reader, open the named Gallery route with
+`qtmaterial3_gallery --route <route>` and follow the corresponding Markdown
+guide. Use NVDA on Windows, Orca on a Linux accessibility-enabled graphical
+session, or VoiceOver on macOS, not the offscreen Qt platform or a simulated
+reader. Record the actual reader and OS versions, tested Qt build, locale,
+full Git SHA of the build (`git rev-parse HEAD`), reviewer/date and a reusable
+evidence location (speech log, recording or dated session report).
+For each check record pass/fail and actual announced words or observed behavior
+in observations. If a Gallery fixture lacks the necessary state/control,
+leave the check pending and document what must be added; do not assume success.
+The JSON can be edited in multiple sessions before recording the final results.
+
+    python tools/native_at_review_1_22.py validate --session build/native-review/1.7-windows-nvda.json
+    python tools/native_at_review_1_22.py record --session build/native-review/1.7-windows-nvda.json --confirm-native-session
+
+The detailed recorder rejects incomplete observation sets, missing environment
+metadata and tested builds that differ in implementation, headers, Gallery or
+runtime tests. It stores the original detailed session in
+`docs/components/native-at-1.22/` and updates the existing version-1 ledger
+through the certification center. Commit both files in the evidence PR. A
+replacement real run requires `--replace`. The original version-1 recorder
+remains compatible; the detailed recorder is the recommended 1.22 workflow.
+This is a human-recorded evidence contract, not a machine-verifiable guarantee
+that an actual reader was used.
+
 Repeat for all three platforms and all four milestone contracts. Do not mark
 checks pass solely because a QtTest, QAccessible or headless smoke test is
 green. For a failing session, retain the failure and reproducer; do not raise
@@ -95,6 +131,16 @@ To record a review after confirming **every committed** required golden was
 inspected (not a screenshot attachment absent from the repo):
 
     python tools/certification_center.py review-visual --milestone 1.9 --status pass --reviewer "Actual reviewer" --reviewed-at YYYY-MM-DD --evidence "CI run/artifact and written review" --confirm-reviewed-all-goldens
+
+Before sign-off, verify the 63 committed reference PNGs and the four
+repeatability reports from merged PR #133:
+
+    python tools/verify_visual_baselines_1_22.py
+
+This verifies the recorded SHA256, dimensions, source commit, family and pinned
+renderer. Quality CI enforces it as a separate integrity check. It neither
+marks a review passed nor claims that high-DPI, animations or disabled-state
+appearance have been manually approved.
 
 Use the existing tools/check_*visual_repeatability.py checkers to verify
 capture metadata. Candidate, approved review and checked-in golden are three
