@@ -71,7 +71,8 @@ IconButtonSpec ActionButtonSpecResolver::iconButtonSpec(
             ColorRole::OnPrimaryContainer);
     spec.disabledIconColor =
         theme.colorScheme().color(
-            ColorRole::OnSurfaceVariant);
+            ColorRole::OnSurface);
+    spec.disabledIconColor.setAlphaF(spec.disabledIconColor.alphaF() * 0.38);
     spec.stateLayerColor = spec.iconColor;
     spec.focusRingColor =
         theme.colorScheme().color(ColorRole::Primary);
